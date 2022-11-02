@@ -1,15 +1,22 @@
 import Home from '../views/app/home';
 import Login from '../views/auth/login';
 
-export type IAppRoutes = typeof AppRoutes[0];
+export interface IAppRoute {
+    name: string;
+    icon: string;
+    component: (params: any) => JSX.Element;
+    options: any;
+    submenus: IAppRoute | [];
+    users: string | string[];
+}
 
-const AppRoutes = [
+const AppRoutes: IAppRoute[] = [
     {
         name: 'Dashboard',
         icon: '',
         component: Home,
         options: { title: 'Dashboard' },
-        submenu: [],
+        submenus: [],
         users: 'admin,tenant,user',
     },
     // {
@@ -17,7 +24,7 @@ const AppRoutes = [
     //     icon: '',
     //     component: require('../views/app/profile'),
     //     options: { title: 'Profile' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'admin,tenant,user',
     // },
     // {
@@ -25,7 +32,7 @@ const AppRoutes = [
     //     icon: '',
     //     component: require('../views/app/compliance'),
     //     options: { title: 'compliance' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'tenant,user',
     // },
     // {
@@ -33,7 +40,7 @@ const AppRoutes = [
     //     icon: '',
     //     component: require('../views/app/permissions'),
     //     options: { title: 'Permissions' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'tenant,user',
     // },
     // {
@@ -41,7 +48,7 @@ const AppRoutes = [
     //     icon: '',
     //     component: require('../views/app/service-report'),
     //     options: { title: 'Service report' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'tenant,user',
     // },
     // {
@@ -49,7 +56,7 @@ const AppRoutes = [
     //     icon: '',
     //     component: require('../views/app/settings'),
     //     options: { title: 'Settings' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'tenant,user',
     // },
     // {
@@ -57,18 +64,18 @@ const AppRoutes = [
     //     icon: '',
     //     component: require('../views/app/workforce-management'),
     //     options: { title: 'Workforce management' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'admin,user',
     // },
 ];
 
-const AuthRoutes = [
+const AuthRoutes: IAppRoute[] = [
     {
         name: 'Login',
         icon: '',
         component: Login,
         options: { title: 'Login' },
-        submenu: [],
+        submenus: [],
         users: 'all',
     },
     // {
@@ -76,7 +83,7 @@ const AuthRoutes = [
     //     icon: '',
     //     component: require('../views/auth/verify-account'),
     //     options: { title: 'Verify account' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'all',
     // },
     // {
@@ -84,7 +91,7 @@ const AuthRoutes = [
     //     icon: '',
     //     component: require('../views/auth/create-account'),
     //     options: { title: 'Create account' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'all',
     // },
     // {
@@ -92,13 +99,9 @@ const AuthRoutes = [
     //     icon: '',
     //     component: require('../views/auth/forgot-password'),
     //     options: { title: 'Forgot password' },
-    //     submenu: [],
+    //     submenus: [],
     //     users: 'all',
     // },
 ];
 
-const IAppRouteNames = Object.fromEntries(
-    AppRoutes.map(route => [route.name, route.name])
-);
-
-export { AppRoutes, AuthRoutes, IAppRouteNames };
+export { AppRoutes, AuthRoutes };

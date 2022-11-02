@@ -3,13 +3,10 @@ import { Button, Center, Heading, HStack, VStack } from 'native-base';
 import { Image } from 'react-native';
 import { ToggleDarkMode } from '../../../components/utils/ToggleDarkMode';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IAppRouteNames } from '../../../config/navigation';
+import { ParamListBase } from '@react-navigation/native';
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
-const Home = ({
-    navigation,
-    route,
-}: NativeStackScreenProps<IAppRouteNames>) => {
+const Home = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
     return (
         <Center
             px={4}

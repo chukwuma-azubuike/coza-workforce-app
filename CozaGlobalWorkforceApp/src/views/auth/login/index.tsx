@@ -4,10 +4,12 @@ import {
     Center,
     FormControl,
     Heading,
-    Input,
+    Radio,
+    Slider,
     Stack,
     VStack,
 } from 'native-base';
+import { InputComponent } from '../../../components/atoms/input';
 
 const Login = () => {
     return (
@@ -17,18 +19,37 @@ const Login = () => {
                 <Box alignItems="center" w="100%">
                     <FormControl>
                         <Stack w="100%" space="xl">
-                            <Input
-                                w="100%"
-                                size="xl"
+                            <InputComponent
                                 type="email"
                                 placeholder="jondoe@gmail.com"
                             />
-                            <Input
-                                w="100%"
-                                size="xl"
+                            <InputComponent
                                 type="password"
                                 placeholder="password"
                             />
+                            <Radio.Group
+                                name="myRadioGroup"
+                                accessibilityLabel="favorite number"
+                            >
+                                <Radio value="new" my={1}>
+                                    New
+                                </Radio>
+                                <Radio value="returning" my={1}>
+                                    Returning
+                                </Radio>
+                            </Radio.Group>
+                            <Slider
+                                defaultValue={70}
+                                minValue={0}
+                                maxValue={100}
+                                accessibilityLabel="hello world"
+                                step={10}
+                            >
+                                <Slider.Track shadow={2}>
+                                    <Slider.FilledTrack />
+                                </Slider.Track>
+                                <Slider.Thumb shadow={3} />
+                            </Slider>
                         </Stack>
                     </FormControl>
                 </Box>
