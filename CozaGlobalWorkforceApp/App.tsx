@@ -1,40 +1,18 @@
-import React from "react";
-import {
-  Center,
-  Heading,
-  HStack,
-  NativeBaseProvider,
-  VStack,
-} from "native-base";
-import { ToggleDarkMode } from "./src/components/utils/ToggleDarkMode";
-import { Image } from "react-native";
-const cozaIcon = require("./src/assets/images/COZA-Logo-black.png");
+import React from 'react';
+import { extendTheme, NativeBaseProvider } from 'native-base';
+import Views from './src/views';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { extendedTheme, THEME_CONFIG } from './src/config/appConfig';
+
+const theme = extendTheme(extendedTheme);
 
 const App = () => {
-  return (
-    <NativeBaseProvider>
-      <Center
-        _dark={{ bg: "blueGray.900" }}
-        _light={{ bg: "blueGray.50" }}
-        px={4}
-        flex={1}
-      >
-        <VStack space={5} alignItems="center">
-          <HStack>
-            <Image
-              resizeMode="center"
-              source={cozaIcon}
-              style={{
-                width: 150,
-                height: 150,
-              }}
-            />
-          </HStack>
-          <Heading size="lg">COZA Workforce App</Heading>
-          <ToggleDarkMode />
-        </VStack>
-      </Center>
-    </NativeBaseProvider>
-  );
+    return (
+        <NativeBaseProvider theme={theme}>
+            <SafeAreaProvider>
+                <Views />
+            </SafeAreaProvider>
+        </NativeBaseProvider>
+    );
 };
 export default App;

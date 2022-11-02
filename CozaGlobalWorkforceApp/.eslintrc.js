@@ -1,4 +1,8 @@
 module.exports = {
-  root: true,
-  extends: "@react-native-community",
+    root: true,
+    extends: '@react-native-community',
+    lib: [
+        "es2019",
+        "esnext"
+    ]
 };
