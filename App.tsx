@@ -13,11 +13,11 @@ const App = () => {
     return (
         <Provider store={store}>
             {/* <SSRProvider> */}
-                <NativeBaseProvider theme={theme}>
-                    <SafeAreaProvider>
-                        <Views />
-                    </SafeAreaProvider>
-                </NativeBaseProvider>
+            <NativeBaseProvider theme={theme}>
+                <SafeAreaProvider>
+                    <Views />
+                </SafeAreaProvider>
+            </NativeBaseProvider>
             {/* </SSRProvider> */}
         </Provider>
     );
