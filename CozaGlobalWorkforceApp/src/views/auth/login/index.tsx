@@ -38,7 +38,7 @@ const Login = () => {
                                     Returning
                                 </Radio>
                             </Radio.Group>
-                            <Slider
+                            {/* <Slider
                                 defaultValue={70}
                                 minValue={0}
                                 maxValue={100}
@@ -49,7 +49,7 @@ const Login = () => {
                                     <Slider.FilledTrack />
                                 </Slider.Track>
                                 <Slider.Thumb shadow={3} />
-                            </Slider>
+                            </Slider> */}
                         </Stack>
                     </FormControl>
                 </Box>
