@@ -2,7 +2,7 @@ import { extendTheme } from 'native-base';
 
 const THEME_CONFIG = {
     borderRadius: 'lg',
-    gray: 'gray'
+    gray: 'gray',
 };
 
 const extendedTheme = extendTheme({
