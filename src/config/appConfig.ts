@@ -1,12 +1,8 @@
 import { extendTheme } from 'native-base';
 
 const THEME_CONFIG = {
-    brand: {
-        primary: '#6B079C',
-        900: '#8287af',
-        800: '#7c83db',
-        700: '#b3bef6',
-    },
+    borderRadius: 'lg',
+    gray: 'gray'
 };
 
 const extendedTheme = extendTheme({

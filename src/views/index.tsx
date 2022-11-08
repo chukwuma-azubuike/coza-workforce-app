@@ -9,9 +9,9 @@ const Views: React.FC = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator>
-                {/* In App Routing */}
+                {/* Auth Routing */}
                 <Stack.Group>
-                    {AppRoutes.map((route, index) => (
+                    {AuthRoutes.map((route, index) => (
                         <Stack.Screen
                             key={index}
                             name={route.name}
@@ -20,9 +20,9 @@ const Views: React.FC = () => {
                         />
                     ))}
                 </Stack.Group>
-                {/* Auth Routing */}
+                {/* In App Routing */}
                 <Stack.Group>
-                    {AuthRoutes.map((route, index) => (
+                    {AppRoutes.map((route, index) => (
                         <Stack.Screen
                             key={index}
                             name={route.name}

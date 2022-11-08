@@ -1,7 +1,9 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Home from '../views/app/home';
+import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
+import Register from '../views/auth/register';
 
 export interface IAppRoute {
     name: string;
@@ -75,10 +77,26 @@ const AppRoutes: IAppRoute[] = [
 
 const AuthRoutes: IAppRoute[] = [
     {
+        name: 'Welcome',
+        icon: '',
+        component: AuthHome,
+        options: { title: 'Welcome' },
+        submenus: [],
+        users: 'all',
+    },
+    {
         name: 'Login',
         icon: '',
         component: Login,
         options: { title: 'Login' },
+        submenus: [],
+        users: 'all',
+    },
+    {
+        name: 'Register',
+        icon: '',
+        component: Register,
+        options: { title: 'Register' },
         submenus: [],
         users: 'all',
     },
@@ -87,14 +105,6 @@ const AuthRoutes: IAppRoute[] = [
     //     icon: '',
     //     component: require('../views/auth/verify-account'),
     //     options: { title: 'Verify account' },
-    //     submenus: [],
-    //     users: 'all',
-    // },
-    // {
-    //     name: 'Create account',
-    //     icon: '',
-    //     component: require('../views/auth/create-account'),
-    //     options: { title: 'Create account' },
     //     submenus: [],
     //     users: 'all',
     // },
