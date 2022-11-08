@@ -5,13 +5,14 @@ import {
     FormControl,
     Heading,
     Radio,
-    Slider,
     Stack,
     VStack,
 } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const Login = () => {
+const Login: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     return (
         <Center flex={1}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
@@ -38,18 +39,6 @@ const Login = () => {
                                     Returning
                                 </Radio>
                             </Radio.Group>
-                            {/* <Slider
-                                defaultValue={70}
-                                minValue={0}
-                                maxValue={100}
-                                accessibilityLabel="hello world"
-                                step={10}
-                            >
-                                <Slider.Track shadow={2}>
-                                    <Slider.FilledTrack />
-                                </Slider.Track>
-                                <Slider.Thumb shadow={3} />
-                            </Slider> */}
                         </Stack>
                     </FormControl>
                 </Box>

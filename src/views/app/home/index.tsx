@@ -1,12 +1,15 @@
 import React from 'react';
-import { Button, Center, Heading, HStack, VStack } from 'native-base';
+import { Center, Heading, HStack, VStack } from 'native-base';
 import { Image } from 'react-native';
 import { ToggleDarkMode } from '../../../components/utils/ToggleDarkMode';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
+import { ButtonComponent } from '../../../components/atoms/button';
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
-const Home = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
+const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
+    navigation,
+}) => {
     return (
         <Center
             px={4}
@@ -27,9 +30,12 @@ const Home = ({ navigation }: NativeStackScreenProps<ParamListBase>) => {
                 </HStack>
                 <Heading size="lg">COZA Workforce App</Heading>
                 <ToggleDarkMode />
-                <Button onPress={() => navigation.navigate('Login')}>
+                <ButtonComponent
+                    size="md"
+                    onPress={() => navigation.navigate('Login')}
+                >
                     Login
-                </Button>
+                </ButtonComponent>
             </VStack>
         </Center>
     );

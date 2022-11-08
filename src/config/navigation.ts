@@ -1,10 +1,14 @@
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Home from '../views/app/home';
 import Login from '../views/auth/login';
 
 export interface IAppRoute {
     name: string;
     icon: string;
-    component: (params: any) => JSX.Element;
+    component: React.FC<
+        NativeStackScreenProps<ParamListBase, string, undefined>
+    >;
     options: any;
     submenus: IAppRoute | [];
     users: string | string[];

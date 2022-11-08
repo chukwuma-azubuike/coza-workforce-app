@@ -9,7 +9,7 @@ import store from './src/store';
 
 const theme = extendTheme(extendedTheme);
 
-const App = () => {
+const App: React.FC<JSX.Element> = () => {
     return (
         <Provider store={store}>
             {/* <SSRProvider> */}
