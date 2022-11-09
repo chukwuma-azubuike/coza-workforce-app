@@ -4,6 +4,7 @@ import {
     Center,
     FormControl,
     Heading,
+    HStack,
     Stack,
     VStack,
     WarningOutlineIcon,
@@ -14,45 +15,19 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 
-const Register: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
+const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
+    navigation,
+}) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(true);
 
     return (
         <ViewWrapper>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                    <Heading textAlign="left">Register</Heading>
+                    <Heading textAlign="left">And finally </Heading>
                     <Box alignItems="center" w="100%">
                         <FormControl>
                             <Stack w="100%" space={1}>
-                                <FormControl.Label>
-                                    First name
-                                </FormControl.Label>
-                                <InputComponent placeholder="John" isRequired />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                                <FormControl.Label>Email</FormControl.Label>
-                                <InputComponent
-                                    type="email"
-                                    isRequired
-                                    placeholder="jondoe@gmail.com"
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    Enter correct email format
-                                </FormControl.ErrorMessage>
-                                <FormControl.Label>
-                                    Department
-                                </FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    isDisabled
-                                    placeholder="Quality Control"
-                                />
                                 <FormControl.Label>Password</FormControl.Label>
                                 <InputComponent
                                     type={showPassword ? 'text' : 'password'}
@@ -101,9 +76,28 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                                 >
                                     Password doesn't match
                                 </FormControl.ErrorMessage>
-                                <ButtonComponent mt={4}>
-                                    Continue
-                                </ButtonComponent>
+                                <HStack
+                                    space={4}
+                                    justifyContent="space-between"
+                                >
+                                    <ButtonComponent
+                                        onPress={() => navigation.goBack()}
+                                        width={160}
+                                        secondary
+                                        mt={4}
+                                    >
+                                        Go back
+                                    </ButtonComponent>
+                                    <ButtonComponent
+                                        onPress={() =>
+                                            navigation.navigate('Dashboard')
+                                        }
+                                        width={160}
+                                        mt={4}
+                                    >
+                                        Register
+                                    </ButtonComponent>
+                                </HStack>
                             </Stack>
                         </FormControl>
                     </Box>
@@ -113,4 +107,4 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     );
 };
 
-export default Register;
+export default RegisterStepFour;

@@ -1,4 +1,7 @@
-import { Input, Pressable } from 'native-base';
+import {
+    Input,
+    Pressable,
+} from 'native-base';
 import { IInputProps } from 'native-base/lib/typescript/components/primitives/Input/types';
 import React from 'react';
 import { Icon } from '@rneui/themed';
@@ -9,6 +12,7 @@ interface IInputComponentProps extends IInputProps {
     rightIcon?: { name: string; type?: string };
     onIconPress?: () => void;
 }
+
 const InputComponent = (props: IInputComponentProps) => {
     const { leftIcon, rightIcon, onIconPress } = props;
 

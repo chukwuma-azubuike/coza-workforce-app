@@ -29,6 +29,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                                 <InputComponent
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="password"
+                                    isRequired
                                     leftIcon={{
                                         name: 'lock-closed-outline',
                                         type: 'ionicon',

@@ -8,7 +8,7 @@ const Stack = createNativeStackNavigator();
 const Views: React.FC = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {/* Auth Routing */}
                 <Stack.Group>
                     {AuthRoutes.map((route, index) => (

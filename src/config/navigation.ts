@@ -3,7 +3,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Home from '../views/app/home';
 import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
-import Register from '../views/auth/register';
+import RegisterStepOne from '../views/auth/register/register-step-one';
+import RegisterStepTwo from '../views/auth/register/register-step-two';
+import RegisterStepThree from '../views/auth/register/register-step-three';
+import RegisterStepFour from '../views/auth/register/register-step-four';
 
 export interface IAppRoute {
     name: string;
@@ -93,9 +96,33 @@ const AuthRoutes: IAppRoute[] = [
         users: 'all',
     },
     {
-        name: 'Register',
+        name: 'RegisterStepOne',
         icon: '',
-        component: Register,
+        component: RegisterStepOne,
+        options: { title: 'Register' },
+        submenus: [],
+        users: 'all',
+    },
+    {
+        name: 'RegisterStepTwo',
+        icon: '',
+        component: RegisterStepTwo,
+        options: { title: 'Register' },
+        submenus: [],
+        users: 'all',
+    },
+    {
+        name: 'RegisterStepThree',
+        icon: '',
+        component: RegisterStepThree,
+        options: { title: 'Register' },
+        submenus: [],
+        users: 'all',
+    },
+    {
+        name: 'RegisterStepFour',
+        icon: '',
+        component: RegisterStepFour,
         options: { title: 'Register' },
         submenus: [],
         users: 'all',

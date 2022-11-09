@@ -7,13 +7,13 @@ interface IButtonComponent extends IButtonProps {
 }
 
 const ButtonComponent = (props: IButtonComponent) => {
-    const { secondary } = props;
+    const { secondary, width } = props;
     return (
         <Button
             size="lg"
             shadow={2}
             {...props}
-            width="full"
+            width={width ? width : 'full'}
             padding={3}
             isLoadingText="Loading..."
             borderRadius={THEME_CONFIG.borderRadius}
