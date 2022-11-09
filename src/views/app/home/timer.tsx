@@ -12,7 +12,11 @@ const Timer: React.FC = () => {
 
     timer();
 
-    return <Text color='primary.100' fontSize="3xl">{time}</Text>;
+    return (
+        <Text color="primary.100" fontSize="3xl">
+            {time}
+        </Text>
+    );
 };
 
 export default memo(Timer);

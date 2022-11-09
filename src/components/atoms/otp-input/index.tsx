@@ -1,9 +1,7 @@
 import React from 'react';
 
 const OTPInput = () => {
-    return (
-        <></>
-    );
+    return <></>;
 };
 
 export default OTPInput;

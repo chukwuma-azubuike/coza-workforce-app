@@ -86,7 +86,10 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
-                                <HStack space={4} justifyContent='space-between'>
+                                <HStack
+                                    space={4}
+                                    justifyContent="space-between"
+                                >
                                     <ButtonComponent
                                         onPress={() => navigation.goBack()}
                                         width={160}

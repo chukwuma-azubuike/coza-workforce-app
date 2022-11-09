@@ -24,7 +24,6 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     const [loading, setLoading] = React.useState<boolean>(false);
     const [success, setSuccess] = React.useState<boolean>(false);
 
-
     const handleClick = () => {
         setModalVisible(true);
     };

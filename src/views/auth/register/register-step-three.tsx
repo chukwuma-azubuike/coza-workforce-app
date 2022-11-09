@@ -76,10 +76,7 @@ const RegisterStepThree: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 <FormControl.Label>
                                     Date of Birth
                                 </FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    placeholder="DOB"
-                                />
+                                <InputComponent isRequired placeholder="DOB" />
                                 <HStack
                                     space={4}
                                     justifyContent="space-between"

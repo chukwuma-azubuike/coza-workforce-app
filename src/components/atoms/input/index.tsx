@@ -1,7 +1,4 @@
-import {
-    Input,
-    Pressable,
-} from 'native-base';
+import { Input, Pressable } from 'native-base';
 import { IInputProps } from 'native-base/lib/typescript/components/primitives/Input/types';
 import React from 'react';
 import { Icon } from '@rneui/themed';
