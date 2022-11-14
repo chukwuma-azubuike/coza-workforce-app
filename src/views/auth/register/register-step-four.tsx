@@ -18,13 +18,18 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
-    const [showPassword, setShowPassword] = React.useState<boolean>(true);
+    const [showPassword, setShowPassword] = React.useState<boolean>(false);
+
+    const handleIconPress = () => setShowPassword(prev => !prev);
+    const handleBackPress = () => navigation.goBack();
+
+    const handleSubmit = () => navigation.navigate('App');
 
     return (
         <ViewWrapper>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                    <Heading textAlign="left">And finally </Heading>
+                    <Heading textAlign="left">Create a new password</Heading>
                     <Box alignItems="center" w="100%">
                         <FormControl>
                             <Stack w="100%" space={1}>
@@ -42,9 +47,7 @@ const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                             : 'eye-outline',
                                         type: 'ionicon',
                                     }}
-                                    onIconPress={() =>
-                                        setShowPassword(prev => !prev)
-                                    }
+                                    onIconPress={handleIconPress}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
@@ -67,9 +70,7 @@ const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                             : 'eye-outline',
                                         type: 'ionicon',
                                     }}
-                                    onIconPress={() => {
-                                        setShowPassword(prev => !prev);
-                                    }}
+                                    onIconPress={handleIconPress}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
@@ -81,7 +82,7 @@ const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                     justifyContent="space-between"
                                 >
                                     <ButtonComponent
-                                        onPress={() => navigation.goBack()}
+                                        onPress={handleBackPress}
                                         width={160}
                                         secondary
                                         mt={4}
@@ -89,9 +90,7 @@ const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         Go back
                                     </ButtonComponent>
                                     <ButtonComponent
-                                        onPress={() =>
-                                            navigation.navigate('Dashboard')
-                                        }
+                                        onPress={handleSubmit}
                                         width={160}
                                         mt={4}
                                     >

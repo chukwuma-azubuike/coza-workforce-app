@@ -1,21 +1,33 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Text } from 'native-base';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 
 const Timer: React.FC = () => {
-    const [time, setTime] = useState<string>(moment().format('LTS'));
+    const [time, setTime] = useState<Moment>(moment());
 
     const timer = () =>
         setInterval(() => {
-            setTime(moment().format('LTS'));
+            setTime(moment());
         }, 1000);
 
-    timer();
+    useEffect(() => {
+        timer();
+    }, []);
 
     return (
-        <Text color="primary.100" fontSize="3xl">
-            {time}
-        </Text>
+        <>
+            <Text _dark={{ color: 'gray.50' }} color="gray.600" fontSize="4xl">
+                {time.format('LT')}
+            </Text>
+            <Text
+                _dark={{ color: 'gray.50' }}
+                fontWeight="light"
+                color="gray.400"
+                fontSize="md"
+            >
+                {time.format('dddd ll')}
+            </Text>
+        </>
     );
 };
 

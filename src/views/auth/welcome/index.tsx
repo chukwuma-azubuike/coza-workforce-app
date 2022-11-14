@@ -69,7 +69,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         resizeMode="center"
                     />
                     <Heading size="lg">COZA Workforce App</Heading>
-                    <Text color="primary.50">
+                    <Text color="gray.400">
                         Workers to Gather | Together | To get there
                     </Text>
                     <FormControl>
@@ -79,7 +79,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 placeholder="jondoe@gmail.com"
                                 leftIcon={{
                                     name: 'mail-outline',
-                                    type: 'ionicons',
+                                    type: 'ionicon',
                                 }}
                                 isRequired
                             />

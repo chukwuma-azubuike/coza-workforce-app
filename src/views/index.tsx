@@ -1,37 +1,37 @@
 import * as React from 'react';
-import { AppRoutes, AuthRoutes } from '../config/navigation';
-import { NavigationContainer } from '@react-navigation/native';
+import {
+    NavigationContainer,
+    DefaultTheme,
+    DarkTheme,
+} from '@react-navigation/native';
+import AppRoute from '../routes/app';
+import { useColorScheme } from 'react-native';
+import { THEME_CONFIG } from '../config/appConfig';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AuthRoute from '../routes/auth';
+const RootStack = createNativeStackNavigator();
 
-const Stack = createNativeStackNavigator();
+const theme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        primary: THEME_CONFIG.primary,
+    },
+};
 
-const Views: React.FC = () => {
+interface IAppState {
+    isLoggedIn: boolean;
+}
+
+const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
+    const scheme = useColorScheme();
+
     return (
-        <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                {/* Auth Routing */}
-                <Stack.Group>
-                    {AuthRoutes.map((route, index) => (
-                        <Stack.Screen
-                            key={index}
-                            name={route.name}
-                            options={route.options}
-                            component={route.component}
-                        />
-                    ))}
-                </Stack.Group>
-                {/* In App Routing */}
-                <Stack.Group>
-                    {AppRoutes.map((route, index) => (
-                        <Stack.Screen
-                            key={index}
-                            name={route.name}
-                            options={route.options}
-                            component={route.component}
-                        />
-                    ))}
-                </Stack.Group>
-            </Stack.Navigator>
+        <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
+            <RootStack.Navigator screenOptions={{ headerShown: false }}>
+                <RootStack.Screen name="Auth" component={AuthRoute} />
+                <RootStack.Screen name="App" component={AppRoute} />
+            </RootStack.Navigator>
         </NavigationContainer>
     );
 };

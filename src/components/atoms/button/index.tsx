@@ -18,10 +18,10 @@ const ButtonComponent = (props: IButtonComponent) => {
             isLoadingText="Loading..."
             borderRadius={THEME_CONFIG.borderRadius}
             _text={{
-                color: secondary ? 'primary.50' : 'white',
+                color: secondary ? 'primary.900' : 'white',
                 fontSize: 'xl',
             }}
-            background={`${secondary ? 'white' : 'primary.50'}`}
+            background={`${secondary ? 'white' : 'primary.900'}`}
         >
             {props.children}
         </Button>

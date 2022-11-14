@@ -12,5 +12,6 @@ module.exports = {
                 verbose: false,
             },
         ],
+        'react-native-reanimated/plugin', // react native reanimated must always be listes last
     ],
 };

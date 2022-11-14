@@ -18,16 +18,90 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
+    const handleBackPress = () => navigation.goBack();
+    const handleContinuePress = () => navigation.navigate('RegisterStepThree');
+
     return (
-        <ViewWrapper>
+        <ViewWrapper scroll>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
                         <FormControl>
                             <Stack w="100%" space={1}>
+                                <FormControl.Label>
+                                    Occupation
+                                </FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'briefcase-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    placeholder="Enter your occupation"
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+                                <FormControl.Label>
+                                    Place of work
+                                </FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'organization',
+                                        type: 'octicon',
+                                    }}
+                                    placeholder="Enter your place of work"
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+
+                                <FormControl.Label>
+                                    Next of Kin
+                                </FormControl.Label>
+                                <InputComponent
+                                    leftIcon={{
+                                        name: 'person-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    placeholder="Enter their name"
+                                    isRequired
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+                                <FormControl.Label>
+                                    Next of Kin Contact
+                                </FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'call-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    keyboardType="phone-pad"
+                                    placeholder="07066846465"
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    Enter correct phone number format
+                                </FormControl.ErrorMessage>
+
                                 <FormControl.Label>Gender</FormControl.Label>
                                 <InputComponent
+                                    leftIcon={{
+                                        name: 'male-female-outline',
+                                        type: 'ionicon',
+                                    }}
                                     isRequired
                                     placeholder="Enter your gender"
                                 />
@@ -40,6 +114,10 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                     Marital status
                                 </FormControl.Label>
                                 <InputComponent
+                                    leftIcon={{
+                                        name: 'ring',
+                                        type: 'material-community',
+                                    }}
                                     isRequired
                                     placeholder="Enter your marital status"
                                 />
@@ -52,46 +130,20 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                     Date of Birth
                                 </FormControl.Label>
                                 <InputComponent
+                                    leftIcon={{
+                                        name: 'birthday-cake',
+                                        type: 'font-awesome',
+                                    }}
                                     isRequired
-                                    isDisabled
                                     placeholder="DOB"
                                 />
-                                <FormControl.Label>Facebook</FormControl.Label>
-                                <InputComponent
-                                    placeholder="Enter your facebook handle"
-                                    isRequired
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                                <FormControl.Label>Instagram</FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    placeholder="Enter your instagram handle"
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                                <FormControl.Label>Twitter</FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    placeholder="Enter your twitter handle"
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
+
                                 <HStack
                                     space={4}
                                     justifyContent="space-between"
                                 >
                                     <ButtonComponent
-                                        onPress={() => navigation.goBack()}
+                                        onPress={handleBackPress}
                                         width={160}
                                         secondary
                                         mt={4}
@@ -99,11 +151,7 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         Go back
                                     </ButtonComponent>
                                     <ButtonComponent
-                                        onPress={() =>
-                                            navigation.navigate(
-                                                'RegisterStepThree'
-                                            )
-                                        }
+                                        onPress={handleContinuePress}
                                         width={160}
                                         mt={4}
                                     >

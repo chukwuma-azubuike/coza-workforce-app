@@ -7,7 +7,9 @@ import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
-    const [showPassword, setShowPassword] = React.useState<boolean>(true);
+    const [showPassword, setShowPassword] = React.useState<boolean>(false);
+
+    const handleIconPress = () => setShowPassword(prev => !prev);
 
     return (
         <ViewWrapper>
@@ -40,9 +42,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                                             : 'eye-outline',
                                         type: 'ionicon',
                                     }}
-                                    onIconPress={() =>
-                                        setShowPassword(prev => !prev)
-                                    }
+                                    onIconPress={handleIconPress}
                                 />
                                 <ButtonComponent mt={4}>Login</ButtonComponent>
                             </Stack>

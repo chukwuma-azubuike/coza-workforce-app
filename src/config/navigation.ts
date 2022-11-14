@@ -1,147 +1,190 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Home from '../views/app/home';
+import React from 'react';
 import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
-import RegisterStepOne from '../views/auth/register/register-step-one';
-import RegisterStepTwo from '../views/auth/register/register-step-two';
-import RegisterStepThree from '../views/auth/register/register-step-three';
 import RegisterStepFour from '../views/auth/register/register-step-four';
+import RegisterStepOne from '../views/auth/register/register-step-one';
+import RegisterStepThree from '../views/auth/register/register-step-three';
+import RegisterStepTwo from '../views/auth/register/register-step-two';
+import Home from '../views/app/home';
+import Attendance from '../views/app/attendance';
+import Compliance from '../views/app/compliance';
+import Permissions from '../views/app/permissions';
+import Notifications from '../views/app/notifications';
+import Profile from '../views/app/profile';
+import Reports from '../views/app/reports';
+import Settings from '../views/app/settings';
+import WorkforceManagement from '../views/app/Workforce-management';
+import WorkforcePermissions from '../views/app/workforce-permission';
+import More from '../views/app/more';
 
 export interface IAppRoute {
     name: string;
-    icon: string;
     component: React.FC<
         NativeStackScreenProps<ParamListBase, string, undefined>
     >;
     options: any;
     submenus: IAppRoute | [];
-    users: string | string[];
+    users: string[] | [];
+    inMenuBar: boolean;
 }
 
 const AppRoutes: IAppRoute[] = [
     {
-        name: 'Dashboard',
-        icon: '',
+        name: 'Home',
         component: Home,
-        options: { title: 'Dashboard' },
+        options: { title: 'Home' },
         submenus: [],
-        users: 'admin,tenant,user',
+        users: [],
+        inMenuBar: true,
     },
-    // {
-    //     name: 'Profile',
-    //     icon: '',
-    //     component: require('../views/app/profile'),
-    //     options: { title: 'Profile' },
-    //     submenus: [],
-    //     users: 'admin,tenant,user',
-    // },
-    // {
-    //     name: 'Compliance',
-    //     icon: '',
-    //     component: require('../views/app/compliance'),
-    //     options: { title: 'compliance' },
-    //     submenus: [],
-    //     users: 'tenant,user',
-    // },
-    // {
-    //     name: 'Permissions',
-    //     icon: '',
-    //     component: require('../views/app/permissions'),
-    //     options: { title: 'Permissions' },
-    //     submenus: [],
-    //     users: 'tenant,user',
-    // },
-    // {
-    //     name: 'Service report',
-    //     icon: '',
-    //     component: require('../views/app/service-report'),
-    //     options: { title: 'Service report' },
-    //     submenus: [],
-    //     users: 'tenant,user',
-    // },
-    // {
-    //     name: 'Settings',
-    //     icon: '',
-    //     component: require('../views/app/settings'),
-    //     options: { title: 'Settings' },
-    //     submenus: [],
-    //     users: 'tenant,user',
-    // },
-    // {
-    //     name: 'Workforce management',
-    //     icon: '',
-    //     component: require('../views/app/workforce-management'),
-    //     options: { title: 'Workforce management' },
-    //     submenus: [],
-    //     users: 'admin,user',
-    // },
+    {
+        name: 'Attendance',
+        component: Attendance,
+        options: { title: 'Attendance' },
+        submenus: [],
+        users: [],
+        inMenuBar: true,
+    },
+    {
+        name: 'Permissions',
+        component: Permissions,
+        options: { title: 'Permissions' },
+        submenus: [],
+        users: [],
+        inMenuBar: true,
+    },
+    {
+        name: 'Notifications',
+        component: Notifications,
+        options: { title: 'Notifications' },
+        submenus: [],
+        users: [],
+        inMenuBar: true,
+    },
+    {
+        name: 'More',
+        component: More,
+        options: { title: 'More' },
+        submenus: [],
+        users: ['admin'],
+        inMenuBar: true,
+    },
+    {
+        name: 'Profile',
+        component: Profile,
+        options: { title: 'Profile' },
+        submenus: [],
+        users: ['admin'],
+        inMenuBar: false,
+    },
+    {
+        name: 'Compliance',
+        component: Compliance,
+        options: { title: 'Compliance' },
+        submenus: [],
+        users: ['admin'],
+        inMenuBar: false,
+    },
+    {
+        name: 'Workforce permissions',
+        component: WorkforcePermissions,
+        options: { title: 'Workforce permissions' },
+        submenus: [],
+        users: ['admin'],
+        inMenuBar: false,
+    },
+    {
+        name: 'Report',
+        component: Reports,
+        options: { title: 'Report' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD'],
+        inMenuBar: false,
+    },
+    {
+        name: 'Settings',
+        component: Settings,
+        options: { title: 'Settings' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+    },
+    {
+        name: 'Workforce management',
+        component: WorkforceManagement,
+        options: { title: 'Workforce management' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD'],
+        inMenuBar: false,
+    },
 ];
 
 const AuthRoutes: IAppRoute[] = [
     {
         name: 'Welcome',
-        icon: '',
         component: AuthHome,
         options: { title: 'Welcome' },
         submenus: [],
-        users: 'all',
+        users: [],
+        inMenuBar: false,
     },
     {
         name: 'Login',
-        icon: '',
         component: Login,
         options: { title: 'Login' },
         submenus: [],
-        users: 'all',
+        users: [],
+        inMenuBar: false,
     },
     {
         name: 'RegisterStepOne',
-        icon: '',
         component: RegisterStepOne,
         options: { title: 'Register' },
         submenus: [],
-        users: 'all',
+        users: [],
+        inMenuBar: false,
     },
     {
         name: 'RegisterStepTwo',
-        icon: '',
         component: RegisterStepTwo,
         options: { title: 'Register' },
         submenus: [],
-        users: 'all',
+        users: [],
+        inMenuBar: false,
     },
     {
         name: 'RegisterStepThree',
-        icon: '',
         component: RegisterStepThree,
         options: { title: 'Register' },
         submenus: [],
-        users: 'all',
+        users: [],
+        inMenuBar: false,
     },
     {
         name: 'RegisterStepFour',
-        icon: '',
         component: RegisterStepFour,
         options: { title: 'Register' },
         submenus: [],
-        users: 'all',
+        users: [],
+        inMenuBar: false,
     },
     // {
     //     name: 'Verify account',
-    //     icon: '',
+    //
     //     component: require('../views/auth/verify-account'),
     //     options: { title: 'Verify account' },
     //     submenus: [],
-    //     users: 'all',
+    //     users: [],
     // },
     // {
     //     name: 'Forgot password',
-    //     icon: '',
+    //
     //     component: require('../views/auth/forgot-password'),
     //     options: { title: 'Forgot password' },
     //     submenus: [],
-    //     users: 'all',
+    //     users: [],
     // },
 ];
 

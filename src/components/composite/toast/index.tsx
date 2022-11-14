@@ -38,6 +38,8 @@ const ToastUI = ({
 }: IToastProps) => {
     const toast = useToast();
 
+    const handlePress = () => toast.close(id);
+
     return (
         <Alert
             maxWidth="100%"
@@ -80,7 +82,7 @@ const ToastUI = ({
                                         ? 'lightText'
                                         : 'darkText',
                             }}
-                            onPress={() => toast.close(id)}
+                            onPress={handlePress}
                         />
                     ) : null}
                 </HStack>

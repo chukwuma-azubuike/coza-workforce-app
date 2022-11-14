@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import { extendTheme, NativeBaseProvider } from 'native-base';
 import Views from './src/views';
@@ -13,7 +14,7 @@ const App: React.FC<JSX.Element> = () => {
         <Provider store={store}>
             <NativeBaseProvider theme={theme}>
                 <SafeAreaProvider>
-                    <Views />
+                    <Views isLoggedIn={true} />
                 </SafeAreaProvider>
             </NativeBaseProvider>
         </Provider>

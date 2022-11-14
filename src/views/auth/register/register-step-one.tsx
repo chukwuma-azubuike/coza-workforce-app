@@ -17,8 +17,10 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
+    const handleContinuePress = () => navigation.navigate('RegisterStepTwo');
+
     return (
-        <ViewWrapper>
+        <ViewWrapper scroll>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
@@ -28,7 +30,28 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 <FormControl.Label>
                                     First name
                                 </FormControl.Label>
-                                <InputComponent placeholder="John" isRequired />
+                                <InputComponent
+                                    leftIcon={{
+                                        name: 'person-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    placeholder="John"
+                                    isRequired
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+                                <FormControl.Label>Last name</FormControl.Label>
+                                <InputComponent
+                                    leftIcon={{
+                                        name: 'person-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    placeholder="Doe"
+                                    isRequired
+                                />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
@@ -36,6 +59,10 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 </FormControl.ErrorMessage>
                                 <FormControl.Label>Email</FormControl.Label>
                                 <InputComponent
+                                    leftIcon={{
+                                        name: 'mail-outline',
+                                        type: 'ionicon',
+                                    }}
                                     type="email"
                                     isRequired
                                     keyboardType="email-address"
@@ -51,6 +78,10 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 </FormControl.Label>
                                 <InputComponent
                                     isRequired
+                                    leftIcon={{
+                                        name: 'call-outline',
+                                        type: 'ionicon',
+                                    }}
                                     keyboardType="phone-pad"
                                     placeholder="07066846465"
                                 />
@@ -59,40 +90,34 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 >
                                     Enter correct phone number format
                                 </FormControl.ErrorMessage>
+                                <FormControl.Label>Address</FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'home',
+                                        type: 'antdesign',
+                                    }}
+                                    placeholder="Enter your home address"
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
                                 <FormControl.Label>
                                     Department
                                 </FormControl.Label>
                                 <InputComponent
-                                    isRequired
+                                    leftIcon={{
+                                        name: 'organization',
+                                        type: 'octicon',
+                                    }}
                                     isDisabled
+                                    isRequired
                                     placeholder="Quality Control"
                                 />
-                                <FormControl.Label>Address</FormControl.Label>
-                                <InputComponent
-                                    placeholder="Enter your home address"
-                                    isRequired
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                                <FormControl.Label>
-                                    Occupation
-                                </FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    placeholder="Enter your occupation"
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
                                 <ButtonComponent
-                                    onPress={() =>
-                                        navigation.navigate('RegisterStepTwo')
-                                    }
+                                    onPress={handleContinuePress}
                                     mt={4}
                                 >
                                     Continue
