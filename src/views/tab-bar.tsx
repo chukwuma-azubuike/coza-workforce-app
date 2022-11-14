@@ -12,7 +12,7 @@ const inMenuBar = AppRoutes.map(route => {
 
 const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
     return (
-        <HStack justifyContent="space-around" px={2} bg="white">
+        <HStack justifyContent="space-around" px={2} bg="gray.100">
             {state.routes.map(
                 (route: RouteProp<ParamListBase>, index: number) => {
                     if (!inMenuBar.includes(route.name)) return;
@@ -66,9 +66,9 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             iconName = 'hand-left-outline';
                             iconType = 'ionicon';
                             break;
-                        case 'Notifications':
-                            iconName = 'notifications-outline';
-                            iconType = 'ionicon';
+                        case 'Tickets':
+                            iconName = 'ticket-confirmation-outline';
+                            iconType = 'material-community';
                             break;
                         case 'More':
                             iconName = 'menu-outline';

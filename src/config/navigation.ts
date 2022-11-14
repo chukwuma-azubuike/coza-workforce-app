@@ -18,6 +18,7 @@ import Settings from '../views/app/settings';
 import WorkforceManagement from '../views/app/Workforce-management';
 import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
+import Tickets from '../views/app/tickets';
 
 export interface IAppRoute {
     name: string;
@@ -56,20 +57,20 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: true,
     },
     {
-        name: 'Notifications',
-        component: Notifications,
-        options: { title: 'Notifications' },
+        name: 'Tickets',
+        component: Tickets,
+        options: { title: 'Tickets' },
         submenus: [],
         users: [],
         inMenuBar: true,
     },
     {
-        name: 'More',
-        component: More,
-        options: { title: 'More' },
+        name: 'Notifications',
+        component: Notifications,
+        options: { title: 'Notifications' },
         submenus: [],
-        users: ['admin'],
-        inMenuBar: true,
+        users: [],
+        inMenuBar: false,
     },
     {
         name: 'Profile',
@@ -118,6 +119,14 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: ['admin', 'HOD', 'AHOD'],
         inMenuBar: false,
+    },
+    {
+        name: 'More',
+        component: More,
+        options: { title: 'More' },
+        submenus: [],
+        users: [],
+        inMenuBar: true,
     },
 ];
 

@@ -31,7 +31,13 @@ const Stat = ({ time, label, icon, iconType }: typeof CLOCK_STATS[0]) => {
                 size={25}
                 name={icon}
                 type={iconType}
-                color={THEME_CONFIG.primaryLight}
+                color={
+                    label === 'Clock out'
+                        ? THEME_CONFIG.rose
+                        : label === 'Service hrs'
+                        ? THEME_CONFIG.gray
+                        : THEME_CONFIG.primaryLight
+                }
             />
             <Text fontWeight="bold" fontSize="md" color="gray.600">
                 {time}

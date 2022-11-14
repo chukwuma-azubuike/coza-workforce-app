@@ -1,5 +1,5 @@
-import { ITextAreaProps, TextArea } from 'native-base';
 import React from 'react';
+import { ITextAreaProps, TextArea } from 'native-base';
 
 interface ITextAreaComponent extends ITextAreaProps {}
 

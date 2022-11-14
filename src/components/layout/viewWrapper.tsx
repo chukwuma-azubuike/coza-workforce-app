@@ -16,29 +16,20 @@ interface IViewWrapper
 
 const ViewWrapper = (props: IViewWrapper) => {
     const { scroll } = props;
-    return scroll ? (
-        <ScrollView
-            {...props}
+    const ActiveView = scroll ? ScrollView : View;
+
+    return (
+        <ActiveView
             pt={6}
             pb={48}
+            {...props}
             height="full"
+            _dark={{ bg: 'blueGray.900' }}
+            _light={{ bg: 'white' }}
             contentContainerStyle={{ paddingBottom: 48 }}
-            _dark={{ bg: 'blueGray.900' }}
-            _light={{ bg: 'blueGray.50' }}
         >
             {props.children}
-        </ScrollView>
-    ) : (
-        <View
-            {...props}
-            pt={6}
-            pb={48}
-            height="full"
-            _dark={{ bg: 'blueGray.900' }}
-            _light={{ bg: 'blueGray.50' }}
-        >
-            {props.children}
-        </View>
+        </ActiveView>
     );
 };
 

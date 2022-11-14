@@ -11,6 +11,8 @@ const THEME_CONFIG = {
     info: '#0284C7',
     warning: '#EA580C',
     error: '#DC2626',
+    rose: '#F87171',
+    lightRose: '#FECDD3',
 };
 
 const extendedTheme = extendTheme({

@@ -19,12 +19,6 @@ const TabRoutes: React.FC = () => {
                     key={index}
                     name={route.name}
                     component={route.component}
-                    options={
-                        route.name === 'Notifications' && {
-                            ...route.options,
-                            tabBarBadge: 6,
-                        }
-                    }
                 />
             ))}
         </Tab.Navigator>

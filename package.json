@@ -25,6 +25,7 @@
         "@types/redux-logger": "^3.0.9",
         "husky": "^8.0.1",
         "jetifier": "^2.0.0",
+        "lottie-react-native": "^5.1.4",
         "moment": "^2.29.4",
         "native-base": "3.4.0",
         "react": "^18.2.0",

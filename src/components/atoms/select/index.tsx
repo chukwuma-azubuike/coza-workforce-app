@@ -1,5 +1,5 @@
-import { ISelectItemProps, ISelectProps, Select } from 'native-base';
 import React from 'react';
+import { ISelectItemProps, ISelectProps, Select } from 'native-base';
 
 interface ISelectComponent extends ISelectProps {}
 interface ISelectItemComponent extends ISelectItemProps {}
