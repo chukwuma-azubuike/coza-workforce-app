@@ -21,7 +21,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                         isFocused = true;
                         return;
                     }
-                    
+
                     const { options } = descriptors[route.key];
                     const label =
                         options.tabBarLabel !== undefined
