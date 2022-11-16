@@ -8,6 +8,7 @@ const THEME_CONFIG = {
     success: '#16A34A',
     gray: '#71717A',
     lightGray: '#A1A1AA',
+    veryLightGray:'#D4D4D8',
     info: '#0284C7',
     warning: '#EA580C',
     error: '#DC2626',

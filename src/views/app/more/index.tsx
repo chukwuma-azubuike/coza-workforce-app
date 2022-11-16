@@ -11,11 +11,22 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     const handlePress = (route: IAppRoute) => () =>
         navigation.navigate(route.name);
 
+    const filteredRoutes = React.useMemo(
+        () =>
+            AppRoutes.filter(
+                route =>
+                    !route.inMenuBar &&
+                    route.name !== 'Profile' &&
+                    route.name !== 'Notifications'
+            ),
+        [AppRoutes]
+    );
+
     return (
         <ViewWrapper>
             <VStack>
                 <List>
-                    {AppRoutes.map((route, idx) => (
+                    {filteredRoutes.map((route, idx) => (
                         <List.Item key={idx} onPress={handlePress(route)}>
                             {route.name}
                         </List.Item>

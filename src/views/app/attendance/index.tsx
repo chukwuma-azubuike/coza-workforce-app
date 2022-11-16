@@ -1,11 +1,17 @@
 import React from 'react';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { Text } from 'native-base';
+import FlatListComponent from '../../../components/composite/flat-list';
+import { Box } from 'native-base';
+import { columns, data } from './flatListConfig';
+import { MonthPicker } from '../../../components/composite/date-picker';
 
 const Attendance: React.FC = () => {
     return (
-        <ViewWrapper scroll>
-            <Text>Attendance</Text>
+        <ViewWrapper>
+            <Box>
+                <MonthPicker />
+                <FlatListComponent columns={columns} data={data} />
+            </Box>
         </ViewWrapper>
     );
 };

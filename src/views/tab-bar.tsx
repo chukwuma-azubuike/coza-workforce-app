@@ -15,8 +15,13 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
         <HStack justifyContent="space-around" px={2} bg="gray.100">
             {state.routes.map(
                 (route: RouteProp<ParamListBase>, index: number) => {
-                    if (!inMenuBar.includes(route.name)) return;
+                    let isFocused = state.index === index;
 
+                    if (!inMenuBar.includes(route.name)) {
+                        isFocused = true;
+                        return;
+                    }
+                    
                     const { options } = descriptors[route.key];
                     const label =
                         options.tabBarLabel !== undefined
@@ -24,8 +29,6 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             : options.title !== undefined
                             ? options.title
                             : route.name;
-
-                    const isFocused = state.index === index;
 
                     const onPress = () => {
                         const event = navigation.emit({
@@ -59,8 +62,8 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             iconType = 'antdesign';
                             break;
                         case 'Attendance':
-                            iconName = 'timer-outline';
-                            iconType = 'ionicon';
+                            iconName = 'checklist';
+                            iconType = 'octicon';
                             break;
                         case 'Permissions':
                             iconName = 'hand-left-outline';

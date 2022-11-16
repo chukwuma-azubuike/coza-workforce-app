@@ -81,6 +81,14 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
     },
     {
+        name: 'Report',
+        component: Reports,
+        options: { title: 'Report' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD'],
+        inMenuBar: false,
+    },
+    {
         name: 'Compliance',
         component: Compliance,
         options: { title: 'Compliance' },
@@ -97,9 +105,9 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
     },
     {
-        name: 'Report',
-        component: Reports,
-        options: { title: 'Report' },
+        name: 'Workforce management',
+        component: WorkforceManagement,
+        options: { title: 'Workforce management' },
         submenus: [],
         users: ['admin', 'HOD', 'AHOD'],
         inMenuBar: false,
@@ -110,14 +118,6 @@ const AppRoutes: IAppRoute[] = [
         options: { title: 'Settings' },
         submenus: [],
         users: [],
-        inMenuBar: false,
-    },
-    {
-        name: 'Workforce management',
-        component: WorkforceManagement,
-        options: { title: 'Workforce management' },
-        submenus: [],
-        users: ['admin', 'HOD', 'AHOD'],
         inMenuBar: false,
     },
     {

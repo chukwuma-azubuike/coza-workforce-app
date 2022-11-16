@@ -11,7 +11,10 @@ const TabRoutes: React.FC = () => {
     return (
         <Tab.Navigator
             tabBar={props => <TabBar {...props} />}
-            screenOptions={{ headerShown: false }}
+            screenOptions={{
+                headerTitleAlign: 'center',
+                headerStyle: { height: 80 },
+            }}
         >
             {/* In App Routing */}
             {AppRoutes.map((route, index) => (
@@ -19,6 +22,13 @@ const TabRoutes: React.FC = () => {
                     key={index}
                     name={route.name}
                     component={route.component}
+                    options={{
+                        headerShown: route.name !== 'Home',
+                        headerBackgroundContainerStyle: {
+                            justifyContent: 'center',
+                            alignContent: 'center',
+                        },
+                    }}
                 />
             ))}
         </Tab.Navigator>
