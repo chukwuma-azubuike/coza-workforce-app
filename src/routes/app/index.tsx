@@ -15,6 +15,7 @@ const TabRoutes: React.FC = () => {
                 headerTitleAlign: 'center',
                 headerStyle: { height: 80 },
             }}
+            backBehavior="history"
         >
             {/* In App Routing */}
             {AppRoutes.map((route, index) => (

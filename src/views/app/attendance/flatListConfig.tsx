@@ -36,10 +36,17 @@ const data = [
     },
     {
         id: '28694a0f-3da1-471f-bd96-142456e29d72',
-        clockIn: '6:45 AM',
-        clockOut: '12:47 PM',
+        clockIn: null,
+        clockOut: null,
         date: '2022-11-03T00:18:29+01:00',
-        hours: '07h 30m',
+        hours: '0h 0m',
+    },
+    {
+        id: '58694a0f-3da1-471f-bd96-142456e29c78',
+        clockIn: '4:45 PM',
+        clockOut: '8:22 PM',
+        date: '2022-11-07T00:18:29+01:00',
+        hours: '04h 30m',
     },
 ];
 
@@ -71,31 +78,34 @@ const columns: IFlatListColumn[] = [
         title: 'Clock In',
         dataIndex: 'clockIn',
         render: (elm: typeof data[0], key) => (
-            <HStack key={key} alignItems="center">
+            <HStack
+                key={key}
+                alignItems="center"
+            >
                 <Icon
-                    color={THEME_CONFIG.gray}
+                    color={THEME_CONFIG.primaryLight}
                     name="arrow-down-right"
                     type="feather"
                     size={18}
                 />
                 <Text
                     _dark={{
-                        color: 'green.300',
+                        color: elm.clockIn ? 'green.300' : 'red.300',
                     }}
-                    color="green.500"
+                    color={elm.clockIn ? 'green.500' : 'red.500'}
                 >
-                    {elm.clockIn}
+                    {elm.clockIn ? elm.clockIn : '--:--'}
                 </Text>
             </HStack>
         ),
     },
     {
-        title: 'Clock In',
+        title: 'Clock Out',
         dataIndex: 'clockOut',
         render: (elm: typeof data[0], key) => (
             <HStack key={key} alignItems="center">
                 <Icon
-                    color={THEME_CONFIG.gray}
+                    color={THEME_CONFIG.primaryLight}
                     name="arrow-up-right"
                     type="feather"
                     size={18}
@@ -106,7 +116,7 @@ const columns: IFlatListColumn[] = [
                         color: 'warmGray.200',
                     }}
                 >
-                    {elm.clockOut}
+                    {elm.clockOut ? elm.clockOut : '--:--'}
                 </Text>
             </HStack>
         ),

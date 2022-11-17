@@ -6,7 +6,7 @@ import { Text, TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
 import { AppRoutes } from '../config/navigation';
 
-const inMenuBar = AppRoutes.map(route => {
+const inMenuBarNames = AppRoutes.map(route => {
     if (route.inMenuBar) return route.name;
 });
 
@@ -17,7 +17,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                 (route: RouteProp<ParamListBase>, index: number) => {
                     let isFocused = state.index === index;
 
-                    if (!inMenuBar.includes(route.name)) {
+                    if (!inMenuBarNames.includes(route.name)) {
                         isFocused = true;
                         return;
                     }

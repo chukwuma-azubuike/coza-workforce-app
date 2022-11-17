@@ -1,11 +1,11 @@
 import React from 'react';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { Text } from 'native-base';
+import Empty from '../../../components/atoms/empty';
 
 const WorkforcePermissions: React.FC = () => {
     return (
         <ViewWrapper>
-            <Text>WorkforcePermissions</Text>
+            <Empty />
         </ViewWrapper>
     );
 };

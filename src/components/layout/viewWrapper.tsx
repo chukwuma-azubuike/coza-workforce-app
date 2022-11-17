@@ -2,6 +2,7 @@ import React, { ReactChildren } from 'react';
 import { ScrollView, View } from 'native-base';
 import { ViewProps } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
+import Empty from '../atoms/empty';
 
 interface IViewWrapper
     extends ViewProps,
@@ -10,7 +11,7 @@ interface IViewWrapper
                 InterfaceViewProps & React.RefAttributes<unknown>
             >
         > {
-    children: JSX.Element | ReactChildren;
+    children?: JSX.Element | ReactChildren;
     scroll?: boolean;
 }
 
@@ -28,7 +29,7 @@ const ViewWrapper = (props: IViewWrapper) => {
             _light={{ bg: 'white' }}
             contentContainerStyle={{ paddingBottom: 48 }}
         >
-            {props.children}
+            {props.children ? props.children : <Empty />}
         </ActiveView>
     );
 };

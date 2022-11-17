@@ -19,6 +19,8 @@ import WorkforceManagement from '../views/app/Workforce-management';
 import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
+import { IIconTypes } from '../utils/types';
+import ServiceManagement from '../views/app/service-management';
 
 export interface IAppRoute {
     name: string;
@@ -29,6 +31,7 @@ export interface IAppRoute {
     submenus: IAppRoute | [];
     users: string[] | [];
     inMenuBar: boolean;
+    icon: { name: string; type: IIconTypes };
 }
 
 const AppRoutes: IAppRoute[] = [
@@ -39,6 +42,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        icon: { name: 'home', type: 'antdesign' },
     },
     {
         name: 'Attendance',
@@ -47,6 +51,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        icon: { name: 'checklist', type: 'octicon' },
     },
     {
         name: 'Permissions',
@@ -55,6 +60,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        icon: { name: 'hand-left-outline', type: 'ionicon' },
     },
     {
         name: 'Tickets',
@@ -63,6 +69,10 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        icon: {
+            name: 'ticket-confirmation-outline',
+            type: 'material-community',
+        },
     },
     {
         name: 'Notifications',
@@ -71,46 +81,61 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: false,
+        icon: { name: 'notifications-outline', type: 'ionicon' },
     },
     {
         name: 'Profile',
         component: Profile,
         options: { title: 'Profile' },
         submenus: [],
-        users: ['admin'],
+        users: [],
         inMenuBar: false,
+        icon: { name: 'person-outline', type: 'ionicon' },
     },
     {
-        name: 'Report',
+        name: 'Reports',
         component: Reports,
-        options: { title: 'Report' },
+        options: { title: 'Reports' },
         submenus: [],
-        users: ['admin', 'HOD', 'AHOD'],
+        users: ['admin', 'HOD', 'AHOD', 'QC', 'campus-pastor', 'global-pastor'],
         inMenuBar: false,
+        icon: { name: 'graph', type: 'octicon' },
     },
     {
         name: 'Compliance',
         component: Compliance,
         options: { title: 'Compliance' },
         submenus: [],
-        users: ['admin'],
+        users: ['QC'],
         inMenuBar: false,
+        icon: { name: 'check-square', type: 'feather' },
     },
     {
         name: 'Workforce permissions',
         component: WorkforcePermissions,
         options: { title: 'Workforce permissions' },
         submenus: [],
-        users: ['admin'],
+        users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
         inMenuBar: false,
+        icon: { name: 'hand-left-outline', type: 'ionicon' },
+    },
+    {
+        name: 'Service management',
+        component: ServiceManagement,
+        options: { title: 'Service management' },
+        submenus: [],
+        users: ['QC', 'programs'],
+        inMenuBar: false,
+        icon: { name: 'church', type: 'material-community' },
     },
     {
         name: 'Workforce management',
         component: WorkforceManagement,
         options: { title: 'Workforce management' },
         submenus: [],
-        users: ['admin', 'HOD', 'AHOD'],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
         inMenuBar: false,
+        icon: { name: 'database-cog-outline', type: 'material-community' },
     },
     {
         name: 'Settings',
@@ -119,6 +144,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: false,
+        icon: { name: 'settings-outline', type: 'ionicon' },
     },
     {
         name: 'More',
@@ -127,10 +153,11 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        icon: { name: 'menu-outline', type: 'ionicon' },
     },
 ];
 
-const AuthRoutes: IAppRoute[] = [
+const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     {
         name: 'Welcome',
         component: AuthHome,
