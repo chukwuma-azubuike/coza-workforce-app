@@ -78,10 +78,7 @@ const columns: IFlatListColumn[] = [
         title: 'Clock In',
         dataIndex: 'clockIn',
         render: (elm: typeof data[0], key) => (
-            <HStack
-                key={key}
-                alignItems="center"
-            >
+            <HStack key={key} alignItems="center">
                 <Icon
                     color={THEME_CONFIG.primaryLight}
                     name="arrow-down-right"
