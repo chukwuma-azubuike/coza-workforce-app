@@ -3,10 +3,11 @@ import { Input, Pressable } from 'native-base';
 import { IInputProps } from 'native-base/lib/typescript/components/primitives/Input/types';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { IIconTypes } from '../../../utils/types';
 
-interface IInputComponentProps extends IInputProps {
-    leftIcon?: { name: string; type?: string };
-    rightIcon?: { name: string; type?: string };
+export interface IInputComponentProps extends IInputProps {
+    leftIcon?: { name: string; type?: IIconTypes };
+    rightIcon?: { name: string; type?: IIconTypes };
     onIconPress?: () => void;
 }
 
@@ -17,7 +18,7 @@ const InputComponent = (props: IInputComponentProps) => {
         <Input
             p={3}
             w="100%"
-            size="2xl"
+            size="lg"
             _light={{
                 bg: 'coolGray.100',
             }}
@@ -29,6 +30,7 @@ const InputComponent = (props: IInputComponentProps) => {
             InputLeftElement={
                 leftIcon ? (
                     <Icon
+                        size={22}
                         name={leftIcon.name}
                         type={leftIcon.type}
                         color={THEME_CONFIG.gray}
@@ -40,6 +42,7 @@ const InputComponent = (props: IInputComponentProps) => {
                 rightIcon ? (
                     <Pressable onPress={onIconPress}>
                         <Icon
+                            size={22}
                             type={rightIcon.type}
                             name={rightIcon.name}
                             color={THEME_CONFIG.gray}

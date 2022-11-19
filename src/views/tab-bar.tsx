@@ -12,7 +12,13 @@ const inMenuBarNames = AppRoutes.map(route => {
 
 const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
     return (
-        <HStack justifyContent="space-around" px={2} bg="gray.100">
+        <HStack
+            px={2}
+            bg="gray.100"
+            borderTopWidth={0.5}
+            borderColor="gray.300"
+            justifyContent="space-around"
+        >
             {state.routes.map(
                 (route: RouteProp<ParamListBase>, index: number) => {
                     let isFocused = state.index === index;

@@ -49,13 +49,13 @@ const ClockButton = () => {
                     h={200}
                     shadow={9}
                     borderRadius="full"
-                    backgroundColor={clockedIn ? 'rose.400' : 'primary.900'}
+                    backgroundColor={clockedIn ? 'rose.400' : 'primary.600'}
                 >
                     <TouchableNativeFeedback
                         onPress={handlePress}
                         accessibilityRole="button"
                         background={TouchableNativeFeedback.Ripple(
-                            THEME_CONFIG.lightGray,
+                            '#000000BF',
                             true,
                             120
                         )}

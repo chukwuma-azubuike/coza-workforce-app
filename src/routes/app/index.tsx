@@ -1,11 +1,25 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AppRoutes } from '../../config/navigation';
+import { AppRoutes, IAppRoute } from '../../config/navigation';
 import TabBar from '../../views/tab-bar';
 
 const Tab = createBottomTabNavigator();
 const AppStack = createNativeStackNavigator();
+
+const flattenNestedRoutes = (routes: IAppRoute[]) => {
+    const allRoutes: IAppRoute[] = [];
+
+    routes.forEach(route => {
+        allRoutes.push(route);
+        if (route.submenus.length > 0) {
+            // Apply recursion for nested submenu routes.
+            allRoutes.push(...flattenNestedRoutes(route.submenus));
+        }
+    });
+
+    return allRoutes;
+};
 
 const TabRoutes: React.FC = () => {
     return (
@@ -18,7 +32,7 @@ const TabRoutes: React.FC = () => {
             backBehavior="history"
         >
             {/* In App Routing */}
-            {AppRoutes.map((route, index) => (
+            {flattenNestedRoutes(AppRoutes).map((route, index) => (
                 <Tab.Screen
                     key={index}
                     name={route.name}

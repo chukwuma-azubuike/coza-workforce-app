@@ -21,6 +21,7 @@ import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
 import { IIconTypes } from '../utils/types';
 import ServiceManagement from '../views/app/service-management';
+import RequestPermission from '../views/app/permissions/request-permission';
 
 export interface IAppRoute {
     name: string;
@@ -28,7 +29,7 @@ export interface IAppRoute {
         NativeStackScreenProps<ParamListBase, string, undefined>
     >;
     options: any;
-    submenus: IAppRoute | [];
+    submenus: IAppRoute[] | [];
     users: string[] | [];
     inMenuBar: boolean;
     icon: { name: string; type: IIconTypes };
@@ -57,7 +58,17 @@ const AppRoutes: IAppRoute[] = [
         name: 'Permissions',
         component: Permissions,
         options: { title: 'Permissions' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'Request permission',
+                component: RequestPermission,
+                options: { title: 'Request permission' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'hand-left-outline', type: 'ionicon' },
+            },
+        ],
         users: [],
         inMenuBar: true,
         icon: { name: 'hand-left-outline', type: 'ionicon' },

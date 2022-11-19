@@ -1,9 +1,14 @@
 import React from 'react';
-import { HStack, Text } from 'native-base';
+import { FormControl, HStack, Text, VStack } from 'native-base';
 import { Swipeable } from 'react-native-gesture-handler';
 import moment from 'moment';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { InputComponent } from '../../atoms/input';
+import DateTimePicker, {
+    DateTimePickerEvent,
+} from '@react-native-community/datetimepicker';
+import { TextInput } from 'react-native';
 
 const MonthPicker = () => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
@@ -37,9 +42,9 @@ const MonthPicker = () => {
                 />
                 <HStack
                     w="full"
+                    space={2}
                     justifyContent="center"
                     alignItems="center"
-                    space={2}
                 >
                     <Icon
                         size={20}
@@ -47,7 +52,7 @@ const MonthPicker = () => {
                         type="antdesign"
                         color={THEME_CONFIG.primary}
                     />
-                    <Text bold fontSize="md" color="primary.900">
+                    <Text bold fontSize="md" color="primary.600">
                         {moment().format('MMMM y')}
                     </Text>
                 </HStack>
@@ -62,4 +67,58 @@ const MonthPicker = () => {
     );
 };
 
-export { MonthPicker };
+interface IDateTimePickerProps {
+    label?: string;
+    minimumDate?: Date;
+    maximumDate?: Date;
+}
+
+const DateTimePickerComponent: React.ForwardRefExoticComponent<
+    IDateTimePickerProps & React.RefAttributes<any>
+> = React.forwardRef(
+    ({ label, minimumDate, maximumDate }: IDateTimePickerProps, ref) => {
+        const [date, setDate] = React.useState<Date>(new Date());
+        const [show, setShow] = React.useState<boolean>(false);
+
+        const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
+            selectedDate && setDate(selectedDate);
+            setShow(false);
+        };
+
+        const handlePress = () => setShow(true);
+        const handleTouchCancel = () => setShow(false);
+
+        return (
+            <VStack w={160}>
+                <FormControl.Label>{label}</FormControl.Label>
+                <InputComponent
+                    isRequired
+                    leftIcon={{
+                        name: 'calendar',
+                        type: 'antdesign',
+                    }}
+                    onPressIn={handlePress}
+                    showSoftInputOnFocus={false}
+                    ref={ref as React.MutableRefObject<any>}
+                    value={moment(date).format('DD MMM, yy')}
+                    placeholder={moment().format('DD MMM, yy')}
+                />
+                {/* <TextInput
+                    ref={ref}
+                    value={moment(date).format('DD MMM, yy')}
+                /> */}
+                {show && (
+                    <DateTimePicker
+                        value={date}
+                        onChange={onChange}
+                        minimumDate={minimumDate}
+                        maximumDate={maximumDate}
+                        onTouchCancel={handleTouchCancel}
+                    />
+                )}
+            </VStack>
+        );
+    }
+);
+
+export { MonthPicker, DateTimePickerComponent };

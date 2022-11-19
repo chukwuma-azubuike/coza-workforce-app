@@ -44,4 +44,13 @@ Reinstalls the app for ios
 
 formats the code to prettier configuration
 
+### FIX DEPENDENCY ISSUES
+
+If you get an error pointing to the DatePicker library - react-native-community_datetimepicker, do this:
+
+Go to: CozaGlobalWorkforceApp/node_modules/@react-native-community/datetimepicker/android/src/main/java/com/reactcommunity/rndatetimepicker/Common.java:76:
+
+* Add "final" just before the "@NonNull Context activityContext" to define the Class methods properly.
+* Run `yarn android` and it should work this time.
+
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
