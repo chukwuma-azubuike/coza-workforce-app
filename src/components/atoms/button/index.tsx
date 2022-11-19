@@ -53,7 +53,7 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
                 fontSize: 'xl',
             }}
             variant={secondary ? 'outline' : 'solid'}
-            shadow={shadow ? shadow : secondary ? "none" : 2}
+            shadow={shadow ? shadow : secondary ? 'none' : 2}
         >
             {props.children}
         </Button>
