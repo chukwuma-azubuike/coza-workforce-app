@@ -7,18 +7,41 @@ import { extendedTheme } from './src/config/appConfig';
 import { Provider } from 'react-redux';
 import store from './src/store';
 import { SafeAreaView } from 'react-native';
+import { IModalProps } from './types/app';
+import useRootModal from './src/hooks/modal/useRootModal';
+import ModalProvider from './src/providers/modal-provider';
 
 const theme = extendTheme(extendedTheme);
 
 const App: React.FC<JSX.Element> = () => {
+    const modalInitialState: Pick<
+        IModalProps,
+        'open' | 'render' | 'message' | 'button'
+    > = {
+        open: false,
+        render: null,
+        button: true,
+        message: 'null',
+    };
+
+    const { setMessage, showButton } = useRootModal(modalInitialState);
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
-                <NativeBaseProvider theme={theme}>
-                    <SafeAreaProvider>
-                        <Views isLoggedIn={true} />
-                    </SafeAreaProvider>
-                </NativeBaseProvider>
+                <ModalProvider
+                    modalState={{
+                        ...modalInitialState,
+                        showButton,
+                        setMessage,
+                    }}
+                >
+                    <NativeBaseProvider theme={theme}>
+                        <SafeAreaProvider>
+                            <Views isLoggedIn={true} />
+                        </SafeAreaProvider>
+                    </NativeBaseProvider>
+                </ModalProvider>
             </Provider>
         </SafeAreaView>
     );

@@ -10,20 +10,23 @@ import {
     WarningOutlineIcon,
 } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { IRegistrationPageStep } from '.';
 
-const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
+const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
+    values,
     navigation,
+    onStepPress,
+    handleSubmit,
+    handleChange,
 }) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
     const handleIconPress = () => setShowPassword(prev => !prev);
-    const handleBackPress = () => navigation.goBack();
+    const handleBackPress = () => onStepPress(2);
 
-    const handleSubmit = () => navigation.navigate('App');
+    const onSubmit = () => navigation?.navigate('App');
 
     return (
         <ViewWrapper>
@@ -48,6 +51,7 @@ const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         type: 'ionicon',
                                     }}
                                     onIconPress={handleIconPress}
+                                    onChangeText={handleChange('password')}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
@@ -90,7 +94,7 @@ const RegisterStepFour: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         Go back
                                     </ButtonComponent>
                                     <ButtonComponent
-                                        onPress={handleSubmit}
+                                        onPress={onSubmit}
                                         width={160}
                                         mt={4}
                                     >

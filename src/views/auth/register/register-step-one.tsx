@@ -9,15 +9,16 @@ import {
     WarningOutlineIcon,
 } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { IRegistrationPageStep } from '.';
 
-const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
+const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
+    values,
+    handleChange,
+    onStepPress,
 }) => {
-    const handleContinuePress = () => navigation.navigate('RegisterStepTwo');
+    const handlePress = () => onStepPress(1);
 
     return (
         <ViewWrapper scroll>
@@ -25,8 +26,8 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
-                        <FormControl>
-                            <Stack w="100%" space={1}>
+                        <Stack w="100%" space={1}>
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     First name
                                 </FormControl.Label>
@@ -35,20 +36,26 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         name: 'person-outline',
                                         type: 'ionicon',
                                     }}
+                                    onChangeText={handleChange('firstName')}
                                     placeholder="John"
                                     isRequired
+                                    value={values.firstName}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>Last name</FormControl.Label>
                                 <InputComponent
                                     leftIcon={{
                                         name: 'person-outline',
                                         type: 'ionicon',
                                     }}
+                                    onChangeText={handleChange('lastName')}
+                                    value={values.lastName}
                                     placeholder="Doe"
                                     isRequired
                                 />
@@ -57,14 +64,19 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>Email</FormControl.Label>
                                 <InputComponent
                                     leftIcon={{
                                         name: 'mail-outline',
                                         type: 'ionicon',
                                     }}
+                                    onChangeText={handleChange('email')}
                                     type="email"
+                                    isDisabled
                                     isRequired
+                                    value={values.email}
                                     keyboardType="email-address"
                                     placeholder="jondoe@gmail.com"
                                 />
@@ -73,6 +85,8 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 >
                                     Enter correct email format
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     Phone number
                                 </FormControl.Label>
@@ -82,6 +96,8 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         name: 'call-outline',
                                         type: 'ionicon',
                                     }}
+                                    onChangeText={handleChange('phoneNumber')}
+                                    value={values.phoneNumber}
                                     keyboardType="phone-pad"
                                     placeholder="07066846465"
                                 />
@@ -90,6 +106,8 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 >
                                     Enter correct phone number format
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>Address</FormControl.Label>
                                 <InputComponent
                                     isRequired
@@ -97,6 +115,8 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         name: 'home',
                                         type: 'antdesign',
                                     }}
+                                    onChangeText={handleChange('address')}
+                                    value={values.address}
                                     placeholder="Enter your home address"
                                 />
                                 <FormControl.ErrorMessage
@@ -104,6 +124,8 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl>
                                 <FormControl.Label>
                                     Department
                                 </FormControl.Label>
@@ -112,18 +134,17 @@ const RegisterStepOne: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         name: 'organization',
                                         type: 'octicon',
                                     }}
+                                    onChangeText={handleChange('department')}
                                     isDisabled
                                     isRequired
+                                    value={values.department.name}
                                     placeholder="Quality Control"
                                 />
-                                <ButtonComponent
-                                    onPress={handleContinuePress}
-                                    mt={4}
-                                >
-                                    Continue
-                                </ButtonComponent>
-                            </Stack>
-                        </FormControl>
+                            </FormControl>
+                            <ButtonComponent onPress={handlePress} mt={4}>
+                                Continue
+                            </ButtonComponent>
+                        </Stack>
                     </Box>
                 </VStack>
             </Center>

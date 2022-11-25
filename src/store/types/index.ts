@@ -5,7 +5,11 @@ export interface ILog {
 }
 
 // Authentication
-export interface IAuthParams extends Omit<IUser, 'id' | 'imageUrl'> {
+export interface IAuthParams
+    extends Omit<
+        IUser,
+        'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'
+    > {
     password: string;
 }
 
@@ -18,7 +22,6 @@ export interface IUser {
     id: string;
     email: string;
     phoneNumber: string;
-    imageUrl: string;
     firstName: string;
     lastName: string;
     address: string;
@@ -28,14 +31,29 @@ export interface IUser {
     };
     occupation: string;
     placeOfWork: string;
-    gender: 'MALE' | 'FEMALE';
+    gender: 'M' | 'F';
     maritalStatus: string;
-    birthday: string;
     socialMedia: {
         facebook: string;
         instagram: string;
         twitter: string;
     };
+    department: {
+        id: string;
+        name: string;
+    };
+    campus: {
+        id: string;
+        name: string;
+    };
+    role: {
+        id: string;
+        name: string;
+    };
+    birthDay: string;
+    pictureUrl: string;
+    isVerified: boolean;
+    isActivated: boolean;
 }
 
 // Attendance

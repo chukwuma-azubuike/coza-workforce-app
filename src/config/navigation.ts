@@ -3,10 +3,6 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
-import RegisterStepFour from '../views/auth/register/register-step-four';
-import RegisterStepOne from '../views/auth/register/register-step-one';
-import RegisterStepThree from '../views/auth/register/register-step-three';
-import RegisterStepTwo from '../views/auth/register/register-step-two';
 import Home from '../views/app/home';
 import Attendance from '../views/app/attendance';
 import Compliance from '../views/app/compliance';
@@ -22,6 +18,7 @@ import Tickets from '../views/app/tickets';
 import { IIconTypes } from '../utils/types';
 import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
+import Register from '../views/auth/register';
 
 export interface IAppRoute {
     name: string;
@@ -186,32 +183,8 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         inMenuBar: false,
     },
     {
-        name: 'RegisterStepOne',
-        component: RegisterStepOne,
-        options: { title: 'Register' },
-        submenus: [],
-        users: [],
-        inMenuBar: false,
-    },
-    {
-        name: 'RegisterStepTwo',
-        component: RegisterStepTwo,
-        options: { title: 'Register' },
-        submenus: [],
-        users: [],
-        inMenuBar: false,
-    },
-    {
-        name: 'RegisterStepThree',
-        component: RegisterStepThree,
-        options: { title: 'Register' },
-        submenus: [],
-        users: [],
-        inMenuBar: false,
-    },
-    {
-        name: 'RegisterStepFour',
-        component: RegisterStepFour,
+        name: 'Register',
+        component: Register,
         options: { title: 'Register' },
         submenus: [],
         users: [],

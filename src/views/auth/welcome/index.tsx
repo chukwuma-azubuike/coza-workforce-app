@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-    FormControl,
-    Heading,
-    Modal,
-    Spinner,
-    Text,
-    VStack,
-} from 'native-base';
+import { FormControl, Heading, Modal, Text, VStack } from 'native-base';
 import { Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -14,6 +7,7 @@ import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { InputComponent } from '../../../components/atoms/input';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
+import OTPInput from '../../../components/atoms/otp-input';
 
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
@@ -28,13 +22,6 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         setModalVisible(true);
     };
 
-    const handleChange = (e: string) => {
-        if (e.length === 6) {
-            // Api call
-            setLoading(true);
-        }
-    };
-
     React.useEffect(() => {
         if (loading) {
             setTimeout(() => {
@@ -42,7 +29,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 setSuccess(true);
             }, 2000);
             setTimeout(() => {
-                navigation.navigate('RegisterStepOne');
+                navigation.navigate('Register');
             }, 4000);
             setTimeout(() => {
                 setSuccess(false);
@@ -98,24 +85,21 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             >
                 <Modal.Content minW={200} backgroundColor="gray.200">
                     <Modal.Body>
-                        {loading ? (
-                            <Spinner size="lg" />
-                        ) : success ? (
-                            <ModalAlertComponent
-                                description="You can now continue your registration"
-                                iconName="checkmark-circle"
-                                iconType="ionicon"
-                                status="success"
-                            />
-                        ) : (
-                            <>
-                                <FormControl.Label>OTP code</FormControl.Label>
-                                <InputComponent
-                                    maxLength={6}
-                                    onChangeText={handleChange}
-                                />
-                            </>
-                        )}
+                        <OTPInput
+                            render={
+                                success ? (
+                                    <ModalAlertComponent
+                                        description="You can now continue your registration"
+                                        iconName="checkmark-circle"
+                                        iconType="ionicon"
+                                        status="success"
+                                    />
+                                ) : null
+                            }
+                            done={success}
+                            loading={loading}
+                            successCallBack={setLoading}
+                        />
                     </Modal.Body>
                 </Modal.Content>
             </Modal>

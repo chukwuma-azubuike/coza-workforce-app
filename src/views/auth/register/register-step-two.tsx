@@ -10,16 +10,17 @@ import {
     WarningOutlineIcon,
 } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { IRegistrationPageStep } from '.';
 
-const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
+const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
+    values,
+    onStepPress,
+    handleChange,
 }) => {
-    const handleBackPress = () => navigation.goBack();
-    const handleContinuePress = () => navigation.navigate('RegisterStepThree');
+    const handleBackPress = () => onStepPress(0);
+    const handleContinuePress = () => onStepPress(2);
 
     return (
         <ViewWrapper scroll>
@@ -27,57 +28,70 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
-                        <FormControl>
-                            <Stack w="100%" space={1}>
+                        <Stack w="100%" space={1}>
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     Occupation
                                 </FormControl.Label>
                                 <InputComponent
                                     isRequired
+                                    value={values.occupation}
                                     leftIcon={{
                                         name: 'briefcase-outline',
                                         type: 'ionicon',
                                     }}
                                     placeholder="Enter your occupation"
+                                    onChangeText={handleChange('occupation')}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     Place of work
                                 </FormControl.Label>
                                 <InputComponent
                                     isRequired
+                                    value={values.placeOfWork}
                                     leftIcon={{
                                         name: 'organization',
                                         type: 'octicon',
                                     }}
                                     placeholder="Enter your place of work"
+                                    onChangeText={handleChange('placeOfWork')}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
-
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     Next of Kin
                                 </FormControl.Label>
                                 <InputComponent
+                                    value={values.nextOfKin.name}
                                     leftIcon={{
                                         name: 'person-outline',
                                         type: 'ionicon',
                                     }}
                                     placeholder="Enter their name"
                                     isRequired
+                                    onChangeText={handleChange(
+                                        'nextOfKin.name'
+                                    )}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     Next of Kin Contact
                                 </FormControl.Label>
@@ -89,13 +103,18 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                     }}
                                     keyboardType="phone-pad"
                                     placeholder="07066846465"
+                                    onChangeText={handleChange(
+                                        'nextOfKin.phoneNumber'
+                                    )}
+                                    value={values.nextOfKin.phoneNumber}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     Enter correct phone number format
                                 </FormControl.ErrorMessage>
-
+                            </FormControl>
+                            <FormControl isRequired>
                                 <FormControl.Label>Gender</FormControl.Label>
                                 <InputComponent
                                     leftIcon={{
@@ -103,13 +122,18 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         type: 'ionicon',
                                     }}
                                     isRequired
+                                    value={values.gender}
                                     placeholder="Enter your gender"
+                                    onChangeText={handleChange('gender')}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+
+                            <FormControl isRequired>
                                 <FormControl.Label>
                                     Marital status
                                 </FormControl.Label>
@@ -119,25 +143,17 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         type: 'material-community',
                                     }}
                                     isRequired
+                                    value={values.maritalStatus}
                                     placeholder="Enter your marital status"
+                                    onChangeText={handleChange('maritalStatus')}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
-                                <FormControl.Label>
-                                    Date of Birth
-                                </FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'birthday-cake',
-                                        type: 'font-awesome',
-                                    }}
-                                    isRequired
-                                    placeholder="DOB"
-                                />
-
+                            </FormControl>
+                            <FormControl>
                                 <HStack
                                     space={4}
                                     justifyContent="space-between"
@@ -158,8 +174,8 @@ const RegisterStepTwo: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         Continue
                                     </ButtonComponent>
                                 </HStack>
-                            </Stack>
-                        </FormControl>
+                            </FormControl>
+                        </Stack>
                     </Box>
                 </VStack>
             </Center>

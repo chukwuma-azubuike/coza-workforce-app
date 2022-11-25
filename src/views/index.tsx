@@ -9,6 +9,8 @@ import { useColorScheme } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthRoute from '../routes/auth';
+import NotificationModal from '../components/composite/notification-modal';
+import useModal from '../hooks/modal/useModal';
 const RootStack = createNativeStackNavigator();
 
 const theme = {
@@ -26,13 +28,23 @@ interface IAppState {
 const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     const scheme = useColorScheme();
 
+    const { open, render, message, handleOpen } = useModal();
+
     return (
-        <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
-            <RootStack.Navigator screenOptions={{ headerShown: false }}>
-                <RootStack.Screen name="Auth" component={AuthRoute} />
-                <RootStack.Screen name="App" component={AppRoute} />
-            </RootStack.Navigator>
-        </NavigationContainer>
+        <>
+            <NotificationModal
+                open={open}
+                render={render}
+                message={message}
+                handleOpen={handleOpen}
+            />
+            <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
+                <RootStack.Navigator screenOptions={{ headerShown: false }}>
+                    <RootStack.Screen name="Auth" component={AuthRoute} />
+                    <RootStack.Screen name="App" component={AppRoute} />
+                </RootStack.Navigator>
+            </NavigationContainer>
+        </>
     );
 };
 

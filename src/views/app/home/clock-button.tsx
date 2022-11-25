@@ -11,11 +11,14 @@ import {
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableNativeFeedback } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import useModal from '../../../hooks/modal/useModal';
+import moment from 'moment';
 
 const ClockButton = () => {
     const [clockedIn, setClockedIn] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+
+    const { setMessage, handleOpen } = useModal();
 
     const handlePress = () => {
         if (!isLoading) {
@@ -23,6 +26,8 @@ const ClockButton = () => {
             setTimeout(() => {
                 setClockedIn(prev => !prev);
                 setIsLoading(false);
+                setMessage(`You clocked in at ${moment().format('LT')}`);
+                handleOpen(true);
             }, 2000);
         }
     };
