@@ -18,7 +18,7 @@ const ClockButton = () => {
     const [clockedIn, setClockedIn] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-    const { setMessage, handleOpen } = useModal();
+    const { setModalState } = useModal();
 
     const handlePress = () => {
         if (!isLoading) {
@@ -26,8 +26,11 @@ const ClockButton = () => {
             setTimeout(() => {
                 setClockedIn(prev => !prev);
                 setIsLoading(false);
-                setMessage(`You clocked in at ${moment().format('LT')}`);
-                handleOpen(true);
+                setModalState({
+                    duration: 6,
+                    button: true,
+                    message: `You clocked in at ${moment().format('LT')}`,
+                });
             }, 2000);
         }
     };

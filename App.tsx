@@ -14,26 +14,25 @@ import ModalProvider from './src/providers/modal-provider';
 const theme = extendTheme(extendedTheme);
 
 const App: React.FC<JSX.Element> = () => {
-    const modalInitialState: Pick<
-        IModalProps,
-        'open' | 'render' | 'message' | 'button'
-    > = {
-        open: false,
-        render: null,
-        button: true,
-        message: 'null',
+    const modalInitialState: Pick<IModalProps, 'modalState'> = {
+        modalState: {
+            open: false,
+            render: null,
+            button: true,
+            message: null,
+        },
     };
 
-    const { setMessage, showButton } = useRootModal(modalInitialState);
+    const { setModalState } = useRootModal(modalInitialState.modalState);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
                 <ModalProvider
-                    modalState={{
-                        ...modalInitialState,
-                        showButton,
-                        setMessage,
+                    initialModalState={{
+                        // Initialised and also hydrated
+                        ...modalInitialState.modalState,
+                        ...setModalState,
                     }}
                 >
                     <NativeBaseProvider theme={theme}>

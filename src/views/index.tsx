@@ -28,15 +28,13 @@ interface IAppState {
 const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     const scheme = useColorScheme();
 
-    const { open, render, message, handleOpen } = useModal();
+    const { modalState, setModalState } = useModal();
 
     return (
         <>
             <NotificationModal
-                open={open}
-                render={render}
-                message={message}
-                handleOpen={handleOpen}
+                modalState={modalState}
+                setModalState={setModalState}
             />
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>

@@ -4,36 +4,43 @@ import Modal from 'react-native-modal';
 import { IModalProps } from '../../../../types/app';
 import ButtonComponent from '../../atoms/button';
 
-interface INotificationModalProps
-    extends Pick<IModalProps, 'render' | 'message' | 'handleOpen' | 'open'> {
-    button?: boolean;
-}
+interface INotificationModalProps extends IModalProps {}
 
 const NotificationModal: React.FC<INotificationModalProps> = ({
-    open,
-    render,
-    button,
-    message,
-    handleOpen,
+    modalState,
+    setModalState,
 }) => {
+    const { render, button, message, duration } = modalState;
+
     const hideModal = () => {
-        handleOpen(false);
+        setModalState(prev => {
+            return { ...prev, open: false };
+        });
     };
 
     useEffect(() => {
-        handleOpen(true);
-        // setTimeout(() => handleOpen(false), 5000);
+        if (message || render) {
+            setModalState(prev => {
+                return { ...prev, open: true };
+            });
+        }
+        setTimeout(
+            () => {
+                setModalState({ open: false });
+            },
+            duration ? duration * 1000 : 5000 // Modal timeout
+        );
     }, [message, render]);
 
     return (
-        <Modal isVisible={open} onBackdropPress={hideModal}>
+        <Modal isVisible={modalState.open} onBackdropPress={hideModal}>
             <Center>
                 <Card bgColor="gray.100" w="full">
                     <VStack space={2}>
                         {render ? (
                             render
                         ) : (
-                            <Text fontSize="lg" textAlign="center">
+                            <Text my={4} fontSize="xl" textAlign="center">
                                 {message}
                             </Text>
                         )}
