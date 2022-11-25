@@ -5,6 +5,7 @@ import { AddButtonComponent } from '../../../components/atoms/button';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import PermissionStats from './permission-stats';
+import PermissionsList from './permissions-list';
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
@@ -18,7 +19,8 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             <>
                 {/* <Empty message="You haven't requested any permissions." /> */}
                 <PermissionStats />
-                <AddButtonComponent onPress={handlePress} />
+                <AddButtonComponent zIndex={10} onPress={handlePress} />
+                <PermissionsList />
             </>
         </ViewWrapper>
     );

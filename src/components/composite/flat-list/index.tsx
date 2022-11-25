@@ -1,5 +1,9 @@
 import React from 'react';
 import { Box, FlatList, HStack, Text } from 'native-base';
+import { Dimensions } from 'react-native';
+
+var width = Dimensions.get('window').width; //full width
+var height = Dimensions.get('screen').height; //full height
 
 export interface IFlatListColumn {
     title?: string;
@@ -19,12 +23,12 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
     );
 
     return (
-        <Box>
+        <Box height={height - 290}>
             <FlatList
                 data={data}
                 keyExtractor={item => item.id}
                 ListHeaderComponent={() =>
-                    titles.length > 0 ? (
+                    titles[0] ? (
                         <Box bg="gray.50" py={3}>
                             <HStack justifyContent="space-evenly">
                                 {titles.map((title, idx) => (
@@ -62,6 +66,7 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
                                         _dark={{
                                             color: 'warmGray.200',
                                         }}
+                                        key={idx}
                                     >
                                         {item[column.dataIndex as never]}
                                     </Text>

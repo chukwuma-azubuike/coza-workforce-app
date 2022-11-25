@@ -16,7 +16,7 @@ const PermissionStats: React.FC = () => {
 
     return (
         <>
-            <VictoryPie
+            {/* <VictoryPie
                 radius={80}
                 data={data}
                 innerRadius={70}
@@ -29,19 +29,26 @@ const PermissionStats: React.FC = () => {
                     'Vacation',
                     'Unused',
                 ]}
-            />
-            <HStack justifyContent="space-evenly">
+            /> */}
+            <HStack
+                py={2}
+                bg="gray.50"
+                borderTopWidth={0.2}
+                borderColor="gray.300"
+                borderBottomWidth={0.2}
+                justifyContent="space-evenly"
+            >
                 <Center>
-                    <Text color="gray.400" fontSize="xs">
-                        Total permissions
+                    <Text color="primary.600" fontSize="sm">
+                        Total Requests
                     </Text>
                     <Text bold color="primary.600" fontSize="2xl">
                         10
                     </Text>
                 </Center>
                 <Center>
-                    <Text color="red.500" fontSize="xs">
-                        Permissions used
+                    <Text color="red.500" fontSize="sm">
+                        Total Approved
                     </Text>
                     <Text bold color="red.500" fontSize="2xl">
                         4
