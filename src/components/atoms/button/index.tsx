@@ -37,14 +37,14 @@ interface IButtonComponent extends IButtonProps {
 }
 
 const ButtonComponent: React.FC<IButtonComponent> = props => {
-    const { borderRadius, secondary, shadow, width } = props;
+    const { borderRadius, secondary, shadow, width, isLoadingText } = props;
     return (
         <Button
             size="lg"
             {...props}
             padding={3}
             width={width ? width : 'full'}
-            isLoadingText="Loading..."
+            isLoadingText={isLoadingText ? isLoadingText : 'Loading...'}
             borderRadius={
                 borderRadius ? borderRadius : THEME_CONFIG.borderRadius
             }

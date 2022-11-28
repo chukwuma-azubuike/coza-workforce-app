@@ -1,8 +1,16 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { IAttendance, IUser } from '../types';
+import { IAttendance, ICampus, IUser } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'attendance';
+
+interface IGetCampusByIdResponse {
+    status: number;
+    message: string;
+    isError: boolean;
+    isSuccessful: boolean;
+    data: ICampus;
+}
 
 export const attendanceServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -21,10 +29,18 @@ export const attendanceServiceSlice = createApi({
         getAttendance: endpoint.query<void, Pick<IUser, 'id'>>({
             query: id => `/${SERVICE_URL}/${id}`,
         }),
+
+        getCampusById: endpoint.query<IGetCampusByIdResponse, string>({
+            query: campusId => `/campus/getCampus/${campusId}`,
+        }),
+
         // Add your endpoints here
     }),
 });
 
 // Use exported hook in relevant components
-export const { useGetAttendanceQuery, usePostAttendanceMutation } =
-    attendanceServiceSlice;
+export const {
+    useGetAttendanceQuery,
+    useGetCampusByIdQuery,
+    usePostAttendanceMutation,
+} = attendanceServiceSlice;

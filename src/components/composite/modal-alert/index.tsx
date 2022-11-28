@@ -16,12 +16,14 @@ const ModalAlertComponent = (props: IModalAlertComponentProps) => {
     return (
         <Alert w="100%" status={status} variant="outline-light">
             <Icon
-                size={75}
+                size={60}
                 type={iconType}
                 name={iconName}
                 color={THEME_CONFIG[status]}
             />
-            <Text>{description}</Text>
+            <Text py={2} fontSize="md" textAlign="center" color="gray.600">
+                {description}
+            </Text>
         </Alert>
     );
 };

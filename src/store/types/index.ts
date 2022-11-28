@@ -4,6 +4,16 @@ export interface ILog {
     dateUpdated: string;
 }
 
+export interface IDefaultResponse<D> {
+    status: number;
+    message: string;
+    isError: boolean;
+    isSuccessful: boolean;
+    data: D;
+}
+
+export type IStatus = 'APPROVED' | 'UNAPPROVED' | 'PENDING';
+
 // Authentication
 export interface IAuthParams
     extends Omit<
@@ -13,9 +23,9 @@ export interface IAuthParams
     password: string;
 }
 
-export type ILogin = Pick<IAuthParams, 'email' | 'password'>;
+export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
 
-export type IRegister = IAuthParams;
+export type IRegisterPayload = IAuthParams;
 
 // Users
 export interface IUser {
@@ -57,13 +67,13 @@ export interface IUser {
 }
 
 // Attendance
-export interface IAttendance {
+export interface IAttendance extends ILog {
+    _id: string;
     xCoordinate: number;
     yCoordinate: number;
 }
 
 // Compliance
-
 export interface ITicket extends ILog {
     ticketId: string;
     category: string;
@@ -71,4 +81,31 @@ export interface ITicket extends ILog {
     code: string;
     contestComment: string;
     contestReplyComment: string;
+}
+
+// Permissions
+export interface IPermission extends ILog {
+    _id: string;
+    startDate: string;
+    endDate: string;
+    category: string;
+    description: string;
+    status: IStatus;
+    requestor: IUser;
+}
+
+// Campus
+export interface ICampus extends ILog {
+    location: {
+        coordinates: number[];
+    };
+    _id: string;
+    campusName: string;
+    description: string;
+    address: string;
+    LGA: string;
+    state: string;
+    country: string;
+    dateOfBirth: string;
+    __v: number;
 }

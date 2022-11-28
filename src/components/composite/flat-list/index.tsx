@@ -32,7 +32,7 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
                         <Box bg="gray.50" py={3}>
                             <HStack justifyContent="space-evenly">
                                 {titles.map((title, idx) => (
-                                    <Text semi-bold key={idx}>
+                                    <Text semi-bold key={`title-${idx}`}>
                                         {title}
                                     </Text>
                                 ))}

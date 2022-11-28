@@ -7,24 +7,25 @@ import { Animated, SafeAreaView, Text } from 'react-native';
 import React, { useState } from 'react';
 
 import {
-    CodeField,
     Cursor,
+    CodeField,
     useBlurOnFulfill,
     useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
 
 import styles, {
-    ACTIVE_CELL_BG_COLOR,
-    CELL_BORDER_RADIUS,
     CELL_SIZE,
+    CELL_BORDER_RADIUS,
+    ACTIVE_CELL_BG_COLOR,
     DEFAULT_CELL_BG_COLOR,
     NOT_EMPTY_CELL_BG_COLOR,
 } from './styles';
+
 import { Spinner } from 'native-base';
 
 const { Value, Text: AnimatedText } = Animated;
 
-const CELL_COUNT = 6;
+export const CELL_COUNT = 6;
 
 const animationsColor = [...new Array(CELL_COUNT)].map(() => new Value(0));
 const animationsScale = [...new Array(CELL_COUNT)].map(() => new Value(1));
@@ -54,15 +55,18 @@ const animateCell = ({
 const OTPInput = ({
     successCallBack,
     render,
+    value,
+    setValue,
     loading,
     done,
 }: {
-    render?: Element | null;
     done: boolean;
+    value: string;
+    setValue: React.Dispatch<React.SetStateAction<string>>;
     loading: boolean;
-    successCallBack: (props: any) => void;
+    render?: Element | null;
+    successCallBack?: (props: any) => void;
 }) => {
-    const [value, setValue] = useState('');
     const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({
         value,
@@ -128,9 +132,9 @@ const OTPInput = ({
 
     const handleChange = (e: string) => {
         setValue(e);
-        if (e.length === 6) {
+        if (e.length === CELL_COUNT) {
             // Api call
-            successCallBack(true);
+            // successCallBack(true);
         }
     };
 

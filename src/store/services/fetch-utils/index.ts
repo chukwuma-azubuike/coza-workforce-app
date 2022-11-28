@@ -1,6 +1,6 @@
 import { IStore } from '../..';
 import { API_BASE_URL } from '@env';
-import { fetchBaseQuery } from '@reduxjs/toolkit/query';
+import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export class fetchUtils {
     static baseQuery = fetchBaseQuery({

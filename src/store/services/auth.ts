@@ -1,26 +1,69 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ILogin, IRegister } from '../types';
+import {
+    IDefaultResponse,
+    ILoginPayload,
+    IRegisterPayload,
+    IUser,
+} from '../types';
 import { fetchUtils } from './fetch-utils';
 
-const SERVICE_URL = 'auth';
+const SERVICE_URL = 'account';
+
+export type ISendOTPResponse = IDefaultResponse<{
+    isOTPSent: boolean;
+    email: string;
+}>;
+
+export interface IVerifyEmailOTPPayload extends Pick<IUser, 'email'> {
+    otp: number;
+}
+
+export interface IOTPResponse {
+    __v: number;
+    OTP: number;
+    isExpired: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export type IVerifyEmailOTPResponse = IDefaultResponse<IUser & IOTPResponse>;
+
+export type ILoginResponse = IDefaultResponse<IUser>;
+
+export type IRegisterResponse = IDefaultResponse<IUser>;
 
 export const authServiceSlice = createApi({
-    reducerPath: SERVICE_URL,
+    reducerPath: 'auth',
 
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        login: endpoint.mutation<void, ILogin>({
+        sendOTP: endpoint.query<ISendOTPResponse, string>({
+            query: email => `/${SERVICE_URL}/send-otp/${email}`,
+        }),
+
+        validateEmailOTP: endpoint.query<
+            IVerifyEmailOTPResponse,
+            IVerifyEmailOTPPayload
+        >({
             query: body => ({
-                url: `${SERVICE_URL}/login`,
+                url: `/${SERVICE_URL}/validate-otp`,
+                method: 'PATCH',
+                body,
+            }),
+        }),
+
+        login: endpoint.mutation<ILoginResponse, ILoginPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/login`,
                 method: 'POST',
                 body,
             }),
         }),
 
-        register: endpoint.mutation<void, IRegister>({
+        register: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
             query: body => ({
-                url: `${SERVICE_URL}/register`,
+                url: `/${SERVICE_URL}/register`,
                 method: 'POST',
                 body,
             }),
@@ -30,4 +73,9 @@ export const authServiceSlice = createApi({
 });
 
 // Use exported hook in relevant components
-export const { useLoginMutation, useRegisterMutation } = authServiceSlice;
+export const {
+    useSendOTPQuery,
+    useLoginMutation,
+    useRegisterMutation,
+    useValidateEmailOTPQuery,
+} = authServiceSlice;

@@ -10,7 +10,7 @@ const Clocker: React.FC = () => {
 
     return (
         <Center p={4} _dark={{ bg: 'black' }}>
-            <VStack space={16} pb={24} pt={4} alignItems="center">
+            <VStack space={16} pb={24} alignItems="center">
                 <Text fontSize="xl" color="gray.500" fontWeight="light">
                     COZA SUNDAY
                 </Text>

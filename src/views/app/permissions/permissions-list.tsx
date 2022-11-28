@@ -3,6 +3,7 @@ import React from 'react';
 import FlatListComponent, {
     IFlatListColumn,
 } from '../../../components/composite/flat-list';
+import { IStatus } from '../../../store/types';
 import Utils from '../../../utils';
 
 interface IPermissionListRow {
@@ -11,7 +12,7 @@ interface IPermissionListRow {
     endDate: string;
     description: string;
     category: string;
-    status: 'APPROVED' | 'UNAPPROVED' | 'PENDING';
+    status: IStatus;
 }
 const PermissionListRow: React.FC<IPermissionListRow> = ({
     status,
