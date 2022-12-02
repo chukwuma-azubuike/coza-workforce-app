@@ -3,6 +3,15 @@ import React from 'react';
 import { AvatarComponentWithoutBadge } from '../../../components/atoms/avatar';
 import { Line } from '../../../components/atoms/line';
 
+type TICKET = {
+    offender: string;
+    image: string;
+    ticket_description: string;
+    offense: string;
+    ticket_type: string;
+    department: string;
+};
+
 type Props = {
     data: {
         date: string;
@@ -16,7 +25,7 @@ type Props = {
             date: string;
         }[];
     };
-    handlePress: (component: string, data: {}) => void;
+    handlePress: (component: string, data: TICKET) => void;
 };
 
 const TicketsByDate: React.FC<Props> = ({ data, handlePress }) => {
@@ -57,8 +66,13 @@ const TicketsByDate: React.FC<Props> = ({ data, handlePress }) => {
                             borderRadius="7px"
                             borderColor={'#767575'}
                             borderWidth="0.5"
+                            minWidth={'65px'}
                         >
-                            <Text color={'#fff'} fontWeight="bold">
+                            <Text
+                                color={'#fff'}
+                                fontSize={'10px'}
+                                fontWeight="bold"
+                            >
                                 {ticket?.offense}
                             </Text>
                         </Center>
