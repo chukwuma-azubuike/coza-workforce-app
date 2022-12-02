@@ -1,29 +1,49 @@
-import { Alert, Text } from 'native-base';
-import { Icon } from '@rneui/themed';
 import React from 'react';
+import { Alert, VStack, Text } from 'native-base';
+import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { IIconTypes } from '../../../utils/types';
 
 interface IModalAlertComponentProps {
     status: 'info' | 'warning' | 'success' | 'error';
-    description: string;
+    description: string | JSX.Element;
+    iconType: IIconTypes;
     iconName: string;
-    iconType: string;
+    color?: string;
 }
 
-const ModalAlertComponent = (props: IModalAlertComponentProps) => {
-    const { status, description, iconName, iconType } = props;
+const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
+    const { status, description, iconName, iconType, color } = props;
 
     return (
-        <Alert w="100%" status={status} variant="outline-light">
-            <Icon
-                size={60}
-                type={iconType}
-                name={iconName}
-                color={THEME_CONFIG[status]}
-            />
-            <Text py={2} fontSize="md" textAlign="center" color="gray.600">
-                {description}
-            </Text>
+        <Alert
+            w="100%"
+            height="xs"
+            status={status}
+            backgroundColor="gray.800"
+            borderRadius={THEME_CONFIG.borderRadius}
+        >
+            <VStack justifyContent="center" h="full">
+                <Icon
+                    size={90}
+                    type={iconType}
+                    name={iconName}
+                    color={color ? color : THEME_CONFIG[status]}
+                />
+                {typeof description === 'string' ? (
+                    <Text
+                        py={6}
+                        semi-bold
+                        fontSize="xl"
+                        textAlign="center"
+                        color={color ? color : 'white'}
+                    >
+                        {description}
+                    </Text>
+                ) : (
+                    description
+                )}
+            </VStack>
         </Alert>
     );
 };

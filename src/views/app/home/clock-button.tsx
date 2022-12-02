@@ -13,8 +13,14 @@ import LottieView from 'lottie-react-native';
 import { TouchableNativeFeedback } from 'react-native';
 import useModal from '../../../hooks/modal/useModal';
 import moment from 'moment';
+import ModalAlertComponent from '../../../components/composite/modal-alert';
+import { THEME_CONFIG } from '../../../config/appConfig';
 
-const ClockButton = () => {
+interface IClockButtonProps {
+    isInRange: boolean;
+}
+
+const ClockButton = ({ isInRange }: IClockButtonProps) => {
     const [clockedIn, setClockedIn] = React.useState<boolean>(false);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
@@ -24,12 +30,33 @@ const ClockButton = () => {
         if (!isLoading) {
             setIsLoading(prev => !prev);
             setTimeout(() => {
-                setClockedIn(prev => !prev);
+                isInRange && setClockedIn(prev => !prev);
                 setIsLoading(false);
                 setModalState({
                     duration: 6,
-                    button: true,
-                    message: `You clocked in at ${moment().format('LT')}`,
+                    render: (
+                        <ModalAlertComponent
+                            description={
+                                isInRange
+                                    ? `You clocked in at ${moment().format(
+                                          'LT'
+                                      )}`
+                                    : 'Your are not within range of any campus!'
+                            }
+                            iconType={
+                                isInRange ? 'material-community' : 'ionicon'
+                            }
+                            color={
+                                isInRange
+                                    ? THEME_CONFIG.primaryLight
+                                    : undefined
+                            }
+                            iconName={
+                                isInRange ? 'timer-outline' : 'warning-outline'
+                            }
+                            status={isInRange ? 'success' : 'warning'}
+                        />
+                    ),
                 });
             }, 2000);
         }
@@ -37,7 +64,7 @@ const ClockButton = () => {
 
     return (
         <Pressable>
-            {!clockedIn && (
+            {isInRange && !clockedIn && (
                 <LottieView
                     source={require('../../../assets/json/clock-button-animation.json')}
                     resizeMode="cover"

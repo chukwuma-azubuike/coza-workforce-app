@@ -1,4 +1,4 @@
-import { Card, Center, Text, VStack } from 'native-base';
+import { Center, Text, VStack } from 'native-base';
 import React, { useEffect } from 'react';
 import Modal from 'react-native-modal';
 import { IModalProps } from '../../../../types/app';
@@ -10,7 +10,7 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
     modalState,
     setModalState,
 }) => {
-    const { render, button, message, duration } = modalState;
+    const { open, render, button, message, duration } = modalState;
 
     const hideModal = () => {
         setModalState(prev => {
@@ -33,27 +33,27 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
     }, [message, render]);
 
     return (
-        <Modal isVisible={modalState.open} onBackdropPress={hideModal}>
+        <Modal isVisible={open} onBackdropPress={hideModal}>
             <Center>
-                <Card bgColor="gray.100" w="full">
-                    <VStack space={2}>
-                        {render ? (
-                            render
-                        ) : (
-                            <Text my={4} fontSize="xl" textAlign="center">
-                                {message}
-                            </Text>
-                        )}
-                        {button && (
-                            <ButtonComponent
-                                title="Hide modal"
-                                onPress={hideModal}
-                            >
-                                Close
-                            </ButtonComponent>
-                        )}
-                    </VStack>
-                </Card>
+                <VStack
+                    w="full"
+                    space={2}
+                    borderRadius='2xl'
+                    backgroundColor="transparent"
+                >
+                    {render ? (
+                        render
+                    ) : (
+                        <Text my={4} fontSize="xl" textAlign="center">
+                            {message}
+                        </Text>
+                    )}
+                    {button && (
+                        <ButtonComponent title="Hide modal" onPress={hideModal}>
+                            Close
+                        </ButtonComponent>
+                    )}
+                </VStack>
             </Center>
         </Modal>
     );

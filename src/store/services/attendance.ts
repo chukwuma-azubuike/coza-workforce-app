@@ -1,4 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { GeoCoordinates, GeoPosition } from 'react-native-geolocation-service';
 import { IAttendance, ICampus, IUser } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -11,6 +12,8 @@ interface IGetCampusByIdResponse {
     isSuccessful: boolean;
     data: ICampus;
 }
+
+export type ICampusCoordinates = Pick<GeoCoordinates, 'latitude' | 'longitude'>;
 
 export const attendanceServiceSlice = createApi({
     reducerPath: SERVICE_URL,
