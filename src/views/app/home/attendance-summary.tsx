@@ -18,7 +18,7 @@ const AttendanceSummary: React.FC = () => {
                         Members clocked in:
                     </Text>
                 </Flex>
-                <Flex alignItems='baseline' flexDirection="row">
+                <Flex alignItems="baseline" flexDirection="row">
                     <Text
                         fontWeight="semibold"
                         color="primary.600"
