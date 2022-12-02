@@ -38,7 +38,7 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
                 <VStack
                     w="full"
                     space={2}
-                    borderRadius='2xl'
+                    borderRadius="2xl"
                     backgroundColor="transparent"
                 >
                     {render ? (

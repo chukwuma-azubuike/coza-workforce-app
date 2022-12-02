@@ -31,8 +31,12 @@ const Clocker: React.FC = () => {
             position => {
                 setDeviceCoordinates(position.coords);
                 Alert.alert(
-                    isInRange ? 'You are within range' : 'You are not in range!',
-                    `Distance: ${Math.round(distance)} meters. Allowed: ${CLOCK_IN_MIN_DISTANCE}`
+                    isInRange
+                        ? 'You are within range'
+                        : 'You are not in range!',
+                    `Distance: ${Math.round(
+                        distance
+                    )} meters. Allowed: ${CLOCK_IN_MIN_DISTANCE}`
                 );
             },
             error => {
