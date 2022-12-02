@@ -29,7 +29,11 @@ const TopNav: React.FC<
             mx={4}
             pr={4}
         >
-            <AvatarComponent imageUrl="https://bit.ly/3AdGvvM" />
+            <AvatarComponent
+                badge
+                shadow={9}
+                imageUrl="https://bit.ly/3AdGvvM"
+            />
             <IconButton
                 icon={
                     <Icon

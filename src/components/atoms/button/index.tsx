@@ -46,15 +46,15 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
     return (
         <Button
             {...props}
-            flex={1}
             size={size ? size : 'lg'}
-            // padding={size ? 2 : 3}
+            padding={size ? 2 : 3}
             width={width ? width : 'full'}
             isLoadingText={isLoadingText ? isLoadingText : 'Loading...'}
             borderRadius={
                 borderRadius ? borderRadius : THEME_CONFIG.borderRadius
             }
             _text={{
+                fontSize: size ? undefined : 'xl',
                 color: secondary ? 'primary.900' : 'white',
             }}
             variant={secondary ? 'outline' : 'solid'}

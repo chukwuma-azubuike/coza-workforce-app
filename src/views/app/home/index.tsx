@@ -14,7 +14,6 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         <ViewWrapper>
             <>
                 <TopNav {...navigation} />
-                {/* <GeoLocation /> */}
                 <Clocker />
             </>
         </ViewWrapper>

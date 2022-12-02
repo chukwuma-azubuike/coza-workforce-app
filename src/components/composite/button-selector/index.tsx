@@ -39,6 +39,8 @@ const ButtonSelector = (props: IButtonSelectorProps) => {
                             setFocused(index);
                         }}
                         key={index}
+                        flex={1}
+                        size="md"
                     >
                         {item.title}
                     </ButtonComponent>
