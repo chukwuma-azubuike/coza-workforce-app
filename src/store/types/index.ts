@@ -91,6 +91,7 @@ export interface IPermission extends ILog {
     category: string;
     description: string;
     status: IStatus;
+    comment: string;
     requestor: IUser;
 }
 

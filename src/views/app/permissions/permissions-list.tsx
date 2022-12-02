@@ -1,11 +1,16 @@
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { HStack, Tag, Text, VStack } from 'native-base';
 import React from 'react';
+import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import FlatListComponent, {
     IFlatListColumn,
 } from '../../../components/composite/flat-list';
+import { THEME_CONFIG } from '../../../config/appConfig';
 import { IStatus } from '../../../store/types';
 import Utils from '../../../utils';
+import { NavigationContext } from '../../tab-bar';
 import PermissionStats from './permission-stats';
 
 interface IPermissionListRow {
@@ -19,67 +24,93 @@ interface IPermissionListRow {
     imageUrl: string;
     department?: string;
 }
-const PermissionListRow: React.FC<IPermissionListRow> = ({
-    name,
-    status,
-    endDate,
-    category,
-    startDate,
-    imageUrl,
-    department,
-    dateCreated,
-    description,
-}) => {
+
+interface IPermissionListProps {
+    navigation?: NativeStackNavigationProp<ParamListBase, string, undefined>;
+    data?: any[];
+}
+
+const PermissionListRow: React.FC<IPermissionListRow> = props => {
+    const {
+        name,
+        status,
+        endDate,
+        category,
+        startDate,
+        imageUrl,
+        department,
+        dateCreated,
+        description,
+    } = props;
+    const { navigationState } = React.useContext(NavigationContext);
+
+    const handlePress = () => {
+        navigationState.navigate('Permission Details');
+    };
+
     return (
-        <VStack w="full" flex={1}>
-            <Text borderBottomWidth={0.2} borderBottomColor="gray.300">
-                {dateCreated}
-            </Text>
-            <HStack w="full" flex={1} mt={3} alignItems="center" space={2}>
-                <AvatarComponent imageUrl={imageUrl} />
-                <VStack w="full" flex={1}>
-                    <Text bold>
-                        {Utils.capitalizeFirstChar(name ? name : category)}
-                        {department && ` (${department})`}
-                    </Text>
-                    <Text fontSize="sm" color="gray.400">
-                        {description}
-                    </Text>
-                </VStack>
-                <Tag
-                    size="sm"
-                    bgColor={
-                        status === 'APPROVED'
-                            ? 'success.100'
-                            : status === 'PENDING'
-                            ? 'gray.100'
-                            : 'error.100'
-                    }
-                    _text={{
-                        _light: {
-                            color:
-                                status === 'APPROVED'
-                                    ? 'success.600'
-                                    : status === 'PENDING'
-                                    ? 'gray.600'
-                                    : 'error.600',
-                            fontSize: 'xs',
-                        },
-                        _dark: {
-                            color:
-                                status === 'APPROVED'
-                                    ? 'success.600'
-                                    : status === 'PENDING'
-                                    ? 'gray.600'
-                                    : 'error.600',
-                            fontSize: 'xs',
-                        },
-                    }}
-                >
-                    {Utils.capitalizeFirstChar(status.toLowerCase())}
-                </Tag>
-            </HStack>
-        </VStack>
+        <TouchableNativeFeedback
+            disabled={false}
+            delayPressIn={0}
+            style={{ flex: 1 }}
+            onPress={handlePress}
+            accessibilityRole="button"
+            background={TouchableNativeFeedback.Ripple(
+                THEME_CONFIG.veryLightGray,
+                true,
+                220
+            )}
+        >
+            <VStack w="full" flex={1}>
+                <Text borderBottomWidth={0.2} borderBottomColor="gray.300">
+                    {dateCreated}
+                </Text>
+                <HStack w="full" flex={1} mt={3} alignItems="center" space={2}>
+                    <AvatarComponent imageUrl={imageUrl} />
+                    <VStack w="full" flex={1}>
+                        <Text bold>
+                            {Utils.capitalizeFirstChar(name ? name : category)}
+                            {department && ` (${department})`}
+                        </Text>
+                        <Text fontSize="sm" color="gray.400">
+                            {description}
+                        </Text>
+                    </VStack>
+                    <Tag
+                        size="sm"
+                        bgColor={
+                            status === 'APPROVED'
+                                ? 'success.100'
+                                : status === 'PENDING'
+                                ? 'gray.100'
+                                : 'error.100'
+                        }
+                        _text={{
+                            _light: {
+                                color:
+                                    status === 'APPROVED'
+                                        ? 'success.600'
+                                        : status === 'PENDING'
+                                        ? 'gray.600'
+                                        : 'error.600',
+                                fontSize: 'xs',
+                            },
+                            _dark: {
+                                color:
+                                    status === 'APPROVED'
+                                        ? 'success.600'
+                                        : status === 'PENDING'
+                                        ? 'gray.600'
+                                        : 'error.600',
+                                fontSize: 'xs',
+                            },
+                        }}
+                    >
+                        {Utils.capitalizeFirstChar(status.toLowerCase())}
+                    </Tag>
+                </HStack>
+            </VStack>
+        </TouchableNativeFeedback>
     );
 };
 
@@ -403,7 +434,7 @@ const CAMPUS_TEST_DATA = [
     },
 ];
 
-const CampusPermissions: React.FC = () => {
+const CampusPermissions: React.FC<IPermissionListProps> = props => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',

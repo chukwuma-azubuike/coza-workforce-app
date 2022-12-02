@@ -11,8 +11,8 @@ import { Alert } from 'react-native';
 import { CLOCK_IN_MIN_DISTANCE } from '@env';
 
 const campusCoordinates = {
-    latitude: 6.659309094070422,
-    longitude: 3.3274344580154764,
+    latitude: 37.422,
+    longitude: -122.0839,
 };
 
 const Clocker: React.FC = () => {
@@ -33,7 +33,9 @@ const Clocker: React.FC = () => {
                     isInRange
                         ? 'You are within range'
                         : 'You are not in range!',
-                    `Distance: ${Math.round(
+                    `Latitude: ${position.coords.latitude} Longitude: ${
+                        position.coords.longitude
+                    } Distance: ${Math.round(
                         distance
                     )} meters. Allowed: ${CLOCK_IN_MIN_DISTANCE}`
                 );
