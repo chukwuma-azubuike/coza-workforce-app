@@ -25,3 +25,18 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
 };
 
 export default AvatarComponent;
+
+export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({
+    imageUrl,
+}) => {
+    return (
+        <Avatar
+            bg="amber.500"
+            source={{
+                uri: imageUrl,
+            }}
+            shadow={9}
+            size="sm"
+        />
+    );
+};
