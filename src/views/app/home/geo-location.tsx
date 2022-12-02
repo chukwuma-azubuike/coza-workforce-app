@@ -39,9 +39,7 @@ export default function GeoLocation() {
                     PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
                 ]);
                 if (granted === PermissionsAndroid.RESULTS) {
-                    console.log('You can use the camera');
                 } else {
-                    console.log('Camera permission denied');
                 }
             } catch (err) {
                 Alert.alert('Error', 'Permissions request failed');
@@ -132,12 +130,10 @@ export default function GeoLocation() {
         Geolocation.getCurrentPosition(
             position => {
                 setLocation(position);
-                console.log(position);
             },
             error => {
                 Alert.alert(`Code ${error.code}`, error.message);
                 setLocation(null);
-                console.log(error);
             },
             {
                 accuracy: {
@@ -171,11 +167,9 @@ export default function GeoLocation() {
         watchId.current = Geolocation.watchPosition(
             position => {
                 setLocation(position);
-                console.log(position);
             },
             error => {
                 setLocation(null);
-                console.log(error);
             },
             {
                 accuracy: {

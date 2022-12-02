@@ -12,7 +12,7 @@ import { ParamListBase } from '@react-navigation/native';
 import Stepper, {
     IRegisterPagesProps,
 } from '../../../components/composite/stepper';
-import { IAuthParams, IRegister } from '../../../store/types';
+import { IAuthParams, IRegisterPayload } from '../../../store/types';
 import { Formik, FormikHelpers } from 'formik';
 
 const PAGES: IRegisterPagesProps[] = [
@@ -31,7 +31,7 @@ interface IRegisterFormProps {
     values: any;
 }
 
-const INITIAL_VALUES: IRegister = {
+const INITIAL_VALUES: IRegisterPayload = {
     firstName: 'James',
     lastName: 'Bosco',
     password: '',
@@ -73,12 +73,10 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     const handleSubmit = (
         values: IAuthParams,
         formikHelpers: FormikHelpers<IAuthParams>
-    ) => {
-        console.log(values);
-    };
+    ) => {};
 
     return (
-        <Formik<IRegister>
+        <Formik<IRegisterPayload>
             validateOnChange
             enableReinitialize
             onSubmit={handleSubmit}
