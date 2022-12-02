@@ -23,13 +23,19 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
     );
 
     return (
-        <Box height={height - 290}>
+        <Box flex={1}>
             <FlatList
                 data={data}
                 keyExtractor={item => item.id}
                 ListHeaderComponent={() =>
                     titles[0] ? (
-                        <Box bg="gray.50" py={3}>
+                        <Box
+                            bg="gray.50"
+                            py={3}
+                            flex={1}
+                            textAlign="left"
+                            w="full"
+                        >
                             <HStack justifyContent="space-evenly">
                                 {titles.map((title, idx) => (
                                     <Text semi-bold key={`title-${idx}`}>
@@ -49,6 +55,7 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
                         borderColor="gray.300"
                         pl={['0', '4']}
                         pr={['0', '5']}
+                        flex={1}
                         py={3}
                     >
                         <HStack
@@ -67,6 +74,9 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
                                             color: 'warmGray.200',
                                         }}
                                         key={idx}
+                                        flex={1}
+                                        textAlign="left"
+                                        w="full"
                                     >
                                         {item[column.dataIndex as never]}
                                     </Text>

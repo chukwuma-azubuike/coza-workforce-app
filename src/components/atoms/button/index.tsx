@@ -2,9 +2,13 @@ import React from 'react';
 import { Button, IButtonProps } from 'native-base';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { Icon } from '@rneui/themed';
-import { ResponsiveValue } from 'native-base/lib/typescript/components/types';
+import {
+    ResponsiveValue,
+    ThemeComponentSizeType,
+} from 'native-base/lib/typescript/components/types';
 
 interface IButtonComponent extends IButtonProps {
+    size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;
     borderRadius?: ResponsiveValue<
         | 'lg'
@@ -37,12 +41,14 @@ interface IButtonComponent extends IButtonProps {
 }
 
 const ButtonComponent: React.FC<IButtonComponent> = props => {
-    const { borderRadius, secondary, shadow, width, isLoadingText } = props;
+    const { borderRadius, secondary, shadow, size, width, isLoadingText } =
+        props;
     return (
         <Button
-            size="lg"
             {...props}
-            padding={3}
+            flex={1}
+            size={size ? size : 'lg'}
+            // padding={size ? 2 : 3}
             width={width ? width : 'full'}
             isLoadingText={isLoadingText ? isLoadingText : 'Loading...'}
             borderRadius={
@@ -50,7 +56,6 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
             }
             _text={{
                 color: secondary ? 'primary.900' : 'white',
-                fontSize: 'xl',
             }}
             variant={secondary ? 'outline' : 'solid'}
             shadow={shadow ? shadow : secondary ? 'none' : 2}
@@ -71,6 +76,9 @@ export const AddButtonComponent: React.FC<IButtonComponent> = props => {
             shadow={6}
             borderRadius="full"
             position="absolute"
+            justifyContent="center"
+            alignItems="center"
+            size="md"
         >
             <Icon name="plus" type="entypo" size={36} color="white" />
         </ButtonComponent>

@@ -1,17 +1,37 @@
 import React from 'react';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import FlatListComponent from '../../../components/composite/flat-list';
-import { Box } from 'native-base';
-import { columns, data } from './flatListConfig';
-import { MonthPicker } from '../../../components/composite/date-picker';
+import { data } from './flatListConfig';
+import Empty from '../../../components/atoms/empty';
+import ButtonSelector, {
+    useButtonSelector,
+} from '../../../components/composite/button-selector';
+import RenderContainer from '../../../components/composite/render-container';
+import { MyAttendance, TeamAttendance } from './lists';
 
 const Attendance: React.FC = () => {
+    const { focused, setFocused } = useButtonSelector();
+
     return (
         <ViewWrapper>
-            <Box>
-                <MonthPicker />
-                <FlatListComponent columns={columns} data={data} />
-            </Box>
+            {data.length ? (
+                <>
+                    <ButtonSelector
+                        focused={focused}
+                        setFocused={setFocused}
+                        items={[
+                            { title: 'My Attendance' },
+                            { title: 'Team Attendance' },
+                            { title: 'Campus Attendance' },
+                        ]}
+                    />
+                    <RenderContainer
+                        renderIndex={focused}
+                        components={[<MyAttendance />, <TeamAttendance />]}
+                    />
+                </>
+            ) : (
+                <Empty />
+            )}
         </ViewWrapper>
     );
 };

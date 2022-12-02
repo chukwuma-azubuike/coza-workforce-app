@@ -5,7 +5,6 @@ import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
 import AttendanceSummary from './attendance-summary';
-import ViewWrapper from '../../../components/layout/viewWrapper';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { Alert } from 'react-native';
@@ -48,22 +47,20 @@ const Clocker: React.FC = () => {
     }, [distance]);
 
     return (
-        <ViewWrapper scroll>
-            <Center px={4} _dark={{ bg: 'black' }}>
-                <VStack space={12} alignItems="center">
-                    <Text fontSize="xl" color="gray.500" fontWeight="light">
-                        COZA SUNDAY
-                    </Text>
-                    <Timer />
-                    <VStack alignItems="center" space={8}>
-                        <ClockButton isInRange={isInRange} />
-                        <CampusLocation />
-                    </VStack>
-                    <AttendanceSummary />
-                    <ClockStatistics />
+        <Center px={4} _dark={{ bg: 'black' }}>
+            <VStack justifyContent="space-evenly" h="full" alignItems="center">
+                <Text fontSize="xl" color="gray.500" fontWeight="light">
+                    COZA SUNDAY
+                </Text>
+                <Timer />
+                <VStack alignItems="center" space={8}>
+                    <ClockButton isInRange={isInRange} />
+                    <CampusLocation />
                 </VStack>
-            </Center>
-        </ViewWrapper>
+                <AttendanceSummary />
+                <ClockStatistics />
+            </VStack>
+        </Center>
     );
 };
 

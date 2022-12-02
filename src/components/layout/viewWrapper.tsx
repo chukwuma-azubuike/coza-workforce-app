@@ -22,7 +22,7 @@ const ViewWrapper = (props: IViewWrapper) => {
     return (
         <ActiveView
             pt={6}
-            pb={48}
+            flex={1}
             {...props}
             height="full"
             _dark={{ bg: 'blueGray.900' }}
