@@ -3,6 +3,15 @@ import React from 'react';
 import { AvatarComponentWithoutBadge } from '../../../components/atoms/avatar';
 import { Line } from '../../../components/atoms/line';
 
+type TICKET = {
+    offender: string;
+    image: string;
+    ticket_description: string;
+    offense: string;
+    ticket_type: string;
+    department: string;
+};
+
 type Props = {
     data: {
         date: string;
@@ -16,7 +25,7 @@ type Props = {
             date: string;
         }[];
     };
-    handlePress: (component: string, data: {}) => void;
+    handlePress: (component: string, data: TICKET) => void;
 };
 
 const TicketsByDate: React.FC<Props> = ({ data, handlePress }) => {
