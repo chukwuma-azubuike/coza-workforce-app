@@ -3,20 +3,23 @@ import { Avatar, IAvatarProps } from 'native-base';
 
 interface IAvatarComponentProps extends IAvatarProps {
     imageUrl: string;
+    badge?: boolean;
 }
 
-const AvatarComponent: React.FC<IAvatarComponentProps> = ({ imageUrl }) => {
+const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
+    const { imageUrl, badge } = props;
+
     return (
         <Avatar
             bg="amber.500"
             source={{
                 uri: imageUrl,
             }}
-            shadow={9}
+            {...props}
             size="sm"
         >
             NB
-            <Avatar.Badge bg="green.500" />
+            {badge && <Avatar.Badge bg="green.500" />}
         </Avatar>
     );
 };

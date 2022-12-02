@@ -12,7 +12,7 @@ export interface IDefaultResponse<D> {
     data: D;
 }
 
-export type IStatus = 'APPROVED' | 'UNAPPROVED' | 'PENDING';
+export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
 
 // Authentication
 export interface IAuthParams

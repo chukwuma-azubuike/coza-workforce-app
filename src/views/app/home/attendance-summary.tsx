@@ -6,7 +6,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 const AttendanceSummary: React.FC = () => {
     return (
         <Center>
-            <HStack alignItems="center">
+            <HStack alignItems="baseline">
                 <Flex alignItems="center" flexDirection="row">
                     <Icon
                         color={THEME_CONFIG.primary}
@@ -18,16 +18,16 @@ const AttendanceSummary: React.FC = () => {
                         Members clocked in:
                     </Text>
                 </Flex>
-                <Flex alignItems="center" flexDirection="row">
-                    <Text
-                        fontWeight="semibold"
-                        color="green.600"
-                        fontSize="3xl"
-                        ml={1}
-                    >{`${7}`}</Text>
+                <Flex alignItems="baseline" flexDirection="row">
                     <Text
                         fontWeight="semibold"
                         color="primary.600"
+                        fontSize="4xl"
+                        ml={1}
+                    >{`${9}`}</Text>
+                    <Text
+                        fontWeight="semibold"
+                        color="gray.600"
                         fontSize="md"
                     >{`/${15}`}</Text>
                 </Flex>

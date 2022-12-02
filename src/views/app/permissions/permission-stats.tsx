@@ -2,7 +2,16 @@ import { HStack, Text, Center } from 'native-base';
 import React from 'react';
 import { VictoryPie } from 'victory-native';
 
-const PermissionStats: React.FC = () => {
+interface IPermissionsStats {
+    total: number;
+    pending: number;
+    declined: number;
+    approved: number;
+}
+
+const PermissionStats: React.FC<IPermissionsStats> = props => {
+    const { total, pending, declined, approved } = props;
+
     const TEST_DATA = [1, 2, 1, 1, 1];
     const TOTAL_PERMITS_ALLOWED = 10;
 
@@ -40,18 +49,34 @@ const PermissionStats: React.FC = () => {
             >
                 <Center>
                     <Text color="primary.600" fontSize="sm">
-                        Total Requests
+                        Total
                     </Text>
-                    <Text bold color="primary.600" fontSize="2xl">
-                        10
+                    <Text bold color="primary.600" fontSize="3xl">
+                        {total}
                     </Text>
                 </Center>
                 <Center>
-                    <Text color="red.500" fontSize="sm">
-                        Total Approved
+                    <Text color="green.500" fontSize="sm">
+                        Approved
                     </Text>
-                    <Text bold color="red.500" fontSize="2xl">
-                        4
+                    <Text bold color="green.500" fontSize="3xl">
+                        {approved}
+                    </Text>
+                </Center>
+                <Center>
+                    <Text color="red.600" fontSize="sm">
+                        Declined
+                    </Text>
+                    <Text bold color="red.600" fontSize="3xl">
+                        {declined}
+                    </Text>
+                </Center>
+                <Center>
+                    <Text color="gray.500" fontSize="sm">
+                        Pending
+                    </Text>
+                    <Text bold color="gray.500" fontSize="3xl">
+                        {pending}
                     </Text>
                 </Center>
             </HStack>

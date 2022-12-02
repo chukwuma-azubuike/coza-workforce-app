@@ -49,7 +49,7 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
                 deviceCoordinates,
                 campusCoordinates
             );
-            if (distance <= CLOCK_IN_MIN_DISTANCE) {
+            if (distance <= +CLOCK_IN_MIN_DISTANCE) {
                 return true;
             }
             return false;
