@@ -66,6 +66,20 @@ const mockData: DATA = [
             },
         ],
     },
+    {
+        date: '13th November, 2022',
+        tickets: [
+            {
+                offender: 'Deborah Ekene',
+                image: 'https://bit.ly/3AdGvvM',
+                ticket_description: 'Suit was unbuttoned',
+                offense: 'Dress Code',
+                ticket_type: 'Individual',
+                department: 'Media',
+                date: '27th November, 2022',
+            },
+        ],
+    },
 ];
 
 const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({

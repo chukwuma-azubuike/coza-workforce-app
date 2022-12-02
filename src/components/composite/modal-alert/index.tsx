@@ -10,17 +10,25 @@ interface IModalAlertComponentProps {
     iconType: IIconTypes;
     iconName: string;
     color?: string;
+    backgroundColor?: string;
 }
 
 const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
-    const { status, description, iconName, iconType, color } = props;
+    const {
+        status,
+        description,
+        iconName,
+        iconType,
+        color,
+        backgroundColor = 'gray.800',
+    } = props;
 
     return (
         <Alert
             w="100%"
             height="xs"
             status={status}
-            backgroundColor="gray.800"
+            backgroundColor={backgroundColor}
             borderRadius={THEME_CONFIG.borderRadius}
         >
             <VStack justifyContent="center" h="full">

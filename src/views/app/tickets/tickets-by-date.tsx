@@ -57,8 +57,13 @@ const TicketsByDate: React.FC<Props> = ({ data, handlePress }) => {
                             borderRadius="7px"
                             borderColor={'#767575'}
                             borderWidth="0.5"
+                            minWidth={'65px'}
                         >
-                            <Text color={'#fff'} fontWeight="bold">
+                            <Text
+                                color={'#fff'}
+                                fontSize={'10px'}
+                                fontWeight="bold"
+                            >
                                 {ticket?.offense}
                             </Text>
                         </Center>
