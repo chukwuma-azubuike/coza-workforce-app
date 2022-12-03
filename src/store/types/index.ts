@@ -88,6 +88,7 @@ export interface IPermission extends ILog {
     _id: string;
     startDate: string;
     endDate: string;
+    dateCreated: string;
     category: string;
     description: string;
     status: IStatus;

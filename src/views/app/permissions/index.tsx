@@ -42,7 +42,7 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     components={[
                         <MyPermissionsList />,
                         <MyTeamPermissionsList />,
-                        <CampusPermissions navigation={navigation} />,
+                        <CampusPermissions />,
                     ]}
                 />
             </>

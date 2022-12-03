@@ -71,10 +71,11 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             <ViewWrapper>
                 <VStack
                     p={6}
-                    py={20}
+                    pb={5}
+                    pt={10}
                     space={6}
                     alignItems="center"
-                    justifyContent="space-between"
+                    justifyContent="space-around"
                 >
                     <Image
                         style={{

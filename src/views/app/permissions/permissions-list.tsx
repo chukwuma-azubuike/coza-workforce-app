@@ -1,52 +1,46 @@
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { HStack, Tag, Text, VStack } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
+import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
+import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, {
     IFlatListColumn,
 } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import { IStatus } from '../../../store/types';
+import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
-import { NavigationContext } from '../../tab-bar';
 import PermissionStats from './permission-stats';
 
-interface IPermissionListRow {
-    dateCreated: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-    category: string;
-    status: IStatus;
-    name?: string;
-    imageUrl: string;
-    department?: string;
+interface IPermissionListRowProps extends IPermission {
+    type: 'own' | 'team' | 'campus';
 }
 
-interface IPermissionListProps {
-    navigation?: NativeStackNavigationProp<ParamListBase, string, undefined>;
-    data?: any[];
-}
+const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
+    const navigation = useNavigation();
 
-const PermissionListRow: React.FC<IPermissionListRow> = props => {
+    const handlePress = () => {
+        navigation.navigate('Permission Details', props);
+    };
+
     const {
-        name,
+        type,
         status,
+        comment,
         endDate,
         category,
+        requestor,
         startDate,
-        imageUrl,
-        department,
         dateCreated,
         description,
     } = props;
-    const { navigationState } = React.useContext(NavigationContext);
 
-    const handlePress = () => {
-        navigationState.navigate('Permission Details');
-    };
+    const {
+        lastName,
+        firstName,
+        pictureUrl,
+        department: { name: departmentName },
+    } = requestor;
 
     return (
         <TouchableNativeFeedback
@@ -66,48 +60,22 @@ const PermissionListRow: React.FC<IPermissionListRow> = props => {
                     {dateCreated}
                 </Text>
                 <HStack w="full" flex={1} mt={3} alignItems="center" space={2}>
-                    <AvatarComponent imageUrl={imageUrl} />
+                    <AvatarComponent imageUrl={pictureUrl} />
                     <VStack w="full" flex={1}>
                         <Text bold>
-                            {Utils.capitalizeFirstChar(name ? name : category)}
-                            {department && ` (${department})`}
+                            {Utils.capitalizeFirstChar(
+                                type === 'own'
+                                    ? category
+                                    : type === 'team'
+                                    ? `${firstName} ${lastName}`
+                                    : `${firstName} ${lastName} (${departmentName})`
+                            )}
                         </Text>
                         <Text fontSize="sm" color="gray.400">
                             {description}
                         </Text>
                     </VStack>
-                    <Tag
-                        size="sm"
-                        bgColor={
-                            status === 'APPROVED'
-                                ? 'success.100'
-                                : status === 'PENDING'
-                                ? 'gray.100'
-                                : 'error.100'
-                        }
-                        _text={{
-                            _light: {
-                                color:
-                                    status === 'APPROVED'
-                                        ? 'success.600'
-                                        : status === 'PENDING'
-                                        ? 'gray.600'
-                                        : 'error.600',
-                                fontSize: 'xs',
-                            },
-                            _dark: {
-                                color:
-                                    status === 'APPROVED'
-                                        ? 'success.600'
-                                        : status === 'PENDING'
-                                        ? 'gray.600'
-                                        : 'error.600',
-                                fontSize: 'xs',
-                            },
-                        }}
-                    >
-                        {Utils.capitalizeFirstChar(status.toLowerCase())}
-                    </Tag>
+                    <StatusTag>{status}</StatusTag>
                 </HStack>
             </VStack>
         </TouchableNativeFeedback>
@@ -117,82 +85,128 @@ const PermissionListRow: React.FC<IPermissionListRow> = props => {
 const TEST_DATA = [
     {
         status: 'APPROVED',
+        comment: 'Feel free to take as long as you need ma. Congrats again',
         category: 'maternity',
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '12-10-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        requestor: {
+            lastName: 'Qudus',
+            firstName: 'Abayomi',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Sparkles' },
+        },
     },
     {
         status: 'PENDING',
         category: 'education',
+        requestor: {
+            lastName: 'Qudus',
+            firstName: 'Johnson',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Sound' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '02-09-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
     },
     {
         status: 'DECLINED',
         category: 'vacation',
+        requestor: {
+            lastName: 'Tife',
+            firstName: 'Okeke',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Security' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '15-07-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment:
+            'Stay connected via all out social media platforms. Blessings.',
     },
     {
         status: 'APPROVED',
         category: 'education',
+        requestor: {
+            lastName: 'Kolawole',
+            firstName: 'Yemi',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Media' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '17-06-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
     },
     {
         status: 'APPROVED',
         category: 'work',
+        requestor: {
+            lastName: 'Chinedu',
+            firstName: 'Ephraim',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Avalanche' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '24-04-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment: 'I do not think it should be for this long.',
     },
     {
         status: 'DECLINED',
         category: 'medical',
+        requestor: {
+            lastName: 'Smith',
+            firstName: 'Jafar',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Hosts and Hostesses' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '30-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment: 'You call in sick too often.',
     },
     {
         status: 'APPROVED',
         category: 'education',
+        requestor: {
+            lastName: 'Oyeleye',
+            firstName: 'Biola',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Child Care' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '09-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment: '',
     },
     {
         status: 'PENDING',
         category: 'education',
+        requestor: {
+            lastName: 'Okigwe',
+            firstName: 'Samuel',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Avalanche' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '19-02-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
     },
 ];
@@ -201,8 +215,8 @@ const MyPermissionsList: React.FC = () => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermissionListRow, key) => (
-                <PermissionListRow {..._} key={key} />
+            render: (_: IPermission, key) => (
+                <PermissionListRow type="own" {..._} key={key} />
             ),
         },
     ];
@@ -218,103 +232,12 @@ const MyPermissionsList: React.FC = () => {
     );
 };
 
-const TEAM_TEST_DATA = [
-    {
-        status: 'APPROVED',
-        category: 'maternity',
-        name: 'Qudus Abayomi',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '12-10-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Tope Johnson',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '02-09-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'vacation',
-        name: 'Tife Okeke',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '15-07-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Yemi Kolawole',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '17-06-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'work',
-        name: 'Ephraim Chinedu',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '24-04-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'medical',
-        name: 'Jafar Smith',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '30-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Biola Oyeleye',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Samuel Okigwe',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '19-02-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-];
-
 const MyTeamPermissionsList: React.FC = () => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermissionListRow, key) => (
-                <PermissionListRow {..._} key={key} />
+            render: (_: IPermission, key) => (
+                <PermissionListRow type="team" {..._} key={key} />
             ),
         },
     ];
@@ -329,117 +252,18 @@ const MyTeamPermissionsList: React.FC = () => {
             />
             <FlatListComponent
                 columns={teamPermissionsColumns}
-                data={TEAM_TEST_DATA}
+                data={TEST_DATA}
             />
         </>
     );
 };
 
-const CAMPUS_TEST_DATA = [
-    {
-        status: 'APPROVED',
-        category: 'maternity',
-        name: 'Qudus Abayomi',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '12-10-2022',
-        department: 'Ushery',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Tope Johnson',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '02-09-2022',
-        department: 'Avalanche',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'vacation',
-        name: 'Tife Okeke',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '15-07-2022',
-        department: 'Protocol',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Yemi Kolawole',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '17-06-2022',
-        department: 'Avalanche',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'work',
-        name: 'Ephraim Chinedu',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '24-04-2022',
-        department: 'Witty Inventions',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'medical',
-        name: 'Jafar Smith',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '30-03-2022',
-        department: 'Host and Hostesses',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Biola Oyeleye',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        department: 'Sparkles',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Samuel Okigwe',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '19-02-2022',
-        department: 'Sound',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-];
-
-const CampusPermissions: React.FC<IPermissionListProps> = props => {
+const CampusPermissions: React.FC = () => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermissionListRow, key) => (
-                <PermissionListRow {..._} key={key} />
+            render: (_: IPermission, key) => (
+                <PermissionListRow type="campus" {..._} key={key} />
             ),
         },
     ];
@@ -454,7 +278,7 @@ const CampusPermissions: React.FC<IPermissionListProps> = props => {
             />
             <FlatListComponent
                 columns={teamPermissionsColumns}
-                data={CAMPUS_TEST_DATA}
+                data={TEST_DATA}
             />
         </>
     );
