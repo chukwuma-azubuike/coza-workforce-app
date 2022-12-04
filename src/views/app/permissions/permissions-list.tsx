@@ -1,289 +1,342 @@
-import { HStack, Tag, Text, VStack } from 'native-base';
-import React from 'react';
+import { useNavigation } from '@react-navigation/native';
+import { HStack, Text, VStack } from 'native-base';
+import React, { memo, useEffect, useMemo } from 'react';
+import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
+import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, {
     IFlatListColumn,
 } from '../../../components/composite/flat-list';
-import { IStatus } from '../../../store/types';
+import { THEME_CONFIG } from '../../../config/appConfig';
+import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
 import PermissionStats from './permission-stats';
 
-interface IPermissionListRow {
-    dateCreated: string;
-    startDate: string;
-    endDate: string;
-    description: string;
-    category: string;
-    status: IStatus;
-    name?: string;
-    imageUrl: string;
-    department?: string;
+interface IPermissionListRowProps extends IPermission {
+    type: 'own' | 'team' | 'campus';
+    '0'?: string;
+    '1'?: IPermission[];
 }
-const PermissionListRow: React.FC<IPermissionListRow> = ({
-    name,
-    status,
-    endDate,
-    category,
-    startDate,
-    imageUrl,
-    department,
-    dateCreated,
-    description,
-}) => {
+
+const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
+    const navigation = useNavigation();
+
+    const { type } = props;
+
     return (
-        <VStack w="full" flex={1}>
-            <Text borderBottomWidth={0.2} borderBottomColor="gray.300">
-                {dateCreated}
-            </Text>
-            <HStack w="full" flex={1} mt={3} alignItems="center" space={2}>
-                <AvatarComponent imageUrl={imageUrl} />
-                <VStack w="full" flex={1}>
-                    <Text bold>
-                        {Utils.capitalizeFirstChar(name ? name : category)}
-                        {department && ` (${department})`}
-                    </Text>
-                    <Text fontSize="sm" color="gray.400">
-                        {description}
-                    </Text>
-                </VStack>
-                <Tag
-                    size="sm"
-                    bgColor={
-                        status === 'APPROVED'
-                            ? 'success.100'
-                            : status === 'PENDING'
-                            ? 'gray.100'
-                            : 'error.100'
-                    }
-                    _text={{
-                        _light: {
-                            color:
-                                status === 'APPROVED'
-                                    ? 'success.600'
-                                    : status === 'PENDING'
-                                    ? 'gray.600'
-                                    : 'error.600',
-                            fontSize: 'xs',
-                        },
-                        _dark: {
-                            color:
-                                status === 'APPROVED'
-                                    ? 'success.600'
-                                    : status === 'PENDING'
-                                    ? 'gray.600'
-                                    : 'error.600',
-                            fontSize: 'xs',
-                        },
-                    }}
-                >
-                    {Utils.capitalizeFirstChar(status.toLowerCase())}
-                </Tag>
-            </HStack>
-        </VStack>
+        <>
+            {props[1]?.map((elm, idx) => {
+                const handlePress = () => {
+                    navigation.navigate('Permission Details', elm);
+                };
+
+                const {
+                    requestor: {
+                        lastName,
+                        firstName,
+                        pictureUrl,
+                        department: { name: departmentName },
+                    },
+                    description,
+                    category,
+                    status,
+                } = elm;
+
+                return (
+                    <TouchableNativeFeedback
+                        disabled={false}
+                        delayPressIn={0}
+                        onPress={handlePress}
+                        accessibilityRole="button"
+                        background={TouchableNativeFeedback.Ripple(
+                            THEME_CONFIG.veryLightGray,
+                            false,
+                            220
+                        )}
+                    >
+                        <HStack
+                            py={2}
+                            flex={1}
+                            key={idx}
+                            w="full"
+                            alignItems="center"
+                            justifyContent="space-between"
+                        >
+                            <HStack space={3} alignItems="center">
+                                <AvatarComponent imageUrl={pictureUrl} />
+                                <VStack justifyContent="space-between">
+                                    <Text bold>
+                                        {Utils.capitalizeFirstChar(
+                                            type === 'own'
+                                                ? category
+                                                : type === 'team'
+                                                ? `${firstName} ${lastName}`
+                                                : `${firstName} ${lastName} (${departmentName})`
+                                        )}
+                                    </Text>
+                                    <Text fontSize="sm" color="gray.400">
+                                        {description}
+                                    </Text>
+                                </VStack>
+                            </HStack>
+                            <StatusTag>{status}</StatusTag>
+                        </HStack>
+                    </TouchableNativeFeedback>
+                );
+            })}
+        </>
     );
+    {
+        /* <VStack w="full" flex={1}>
+                <Text borderBottomWidth={0.2} borderBottomColor="gray.300">
+                    {dateCreated}
+                </Text>
+                <HStack w="full" flex={1} mt={3} alignItems="center" space={2}>
+                    <AvatarComponent imageUrl={pictureUrl} />
+                    <VStack w="full" flex={1}>
+                        <Text bold>
+                            {Utils.capitalizeFirstChar(
+                                type === 'own'
+                                    ? category
+                                    : type === 'team'
+                                    ? `${firstName} ${lastName}`
+                                    : `${firstName} ${lastName} (${departmentName})`
+                            )}
+                        </Text>
+                        <Text fontSize="sm" color="gray.400">
+                            {description}
+                        </Text>
+                    </VStack>
+                    <StatusTag>{status}</StatusTag>
+                </HStack>
+            </VStack> */
+    }
 };
 
 const TEST_DATA = [
     {
         status: 'APPROVED',
+        comment: 'Feel free to take as long as you need ma. Congrats again',
         category: 'maternity',
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '12-10-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        requestor: {
+            lastName: 'Qudus',
+            firstName: 'Abayomi',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Sparkles' },
+        },
     },
     {
         status: 'PENDING',
         category: 'education',
+        requestor: {
+            lastName: 'Qudus',
+            firstName: 'Johnson',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Sound' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '02-09-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
     },
     {
         status: 'DECLINED',
         category: 'vacation',
+        requestor: {
+            lastName: 'Tife',
+            firstName: 'Okeke',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Security' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '15-07-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment:
+            'Stay connected via all out social media platforms. Blessings.',
     },
     {
         status: 'APPROVED',
         category: 'education',
+        requestor: {
+            lastName: 'Kolawole',
+            firstName: 'Yemi',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Media' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '17-06-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
     },
     {
         status: 'APPROVED',
         category: 'work',
+        requestor: {
+            lastName: 'Chinedu',
+            firstName: 'Ephraim',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Avalanche' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '24-04-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment: 'I do not think it should be for this long.',
     },
     {
         status: 'DECLINED',
         category: 'medical',
+        requestor: {
+            lastName: 'Smith',
+            firstName: 'Jafar',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Hosts and Hostesses' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '30-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
+        comment: 'You call in sick too often.',
     },
     {
         status: 'APPROVED',
         category: 'education',
+        requestor: {
+            lastName: 'Oyeleye',
+            firstName: 'Biola',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Child Care' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '09-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
+        description: 'Going to the US for my PHD defence.',
+        comment: '',
+    },
+
+    {
+        status: 'APPROVED',
+        category: 'education',
+        requestor: {
+            lastName: 'Oyeleye',
+            firstName: 'Biola',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Child Care' },
+        },
+        endDate: '19-11-2022',
+        startDate: '04-11-2022',
+        dateUpdated: '16-10-2022',
+        dateCreated: '09-03-2022',
+        description: 'Going to the US for my PHD defence.',
+        comment: '',
+    },
+    {
+        status: 'APPROVED',
+        category: 'education',
+        requestor: {
+            lastName: 'Oyeleye',
+            firstName: 'Biola',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Child Care' },
+        },
+        endDate: '19-11-2022',
+        startDate: '04-11-2022',
+        dateUpdated: '16-10-2022',
+        dateCreated: '09-03-2022',
+        description: 'Going to the US for my PHD defence.',
+        comment: '',
+    },
+    {
+        status: 'PENDING',
+        category: 'education',
+        requestor: {
+            lastName: 'Okigwe',
+            firstName: 'Samuel',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Avalanche' },
+        },
+        endDate: '19-11-2022',
+        startDate: '04-11-2022',
+        dateUpdated: '16-10-2022',
+        dateCreated: '19-02-2022',
         description: 'Going to the US for my PHD defence.',
     },
     {
         status: 'PENDING',
         category: 'education',
+        requestor: {
+            lastName: 'Okigwe',
+            firstName: 'Samuel',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Avalanche' },
+        },
         endDate: '19-11-2022',
         startDate: '04-11-2022',
         dateUpdated: '16-10-2022',
         dateCreated: '19-02-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
         description: 'Going to the US for my PHD defence.',
     },
 ];
 
-const MyPermissionsList: React.FC = () => {
+const transformData = (array: any[], key: string) => {
+    const map: any = {};
+
+    for (let i = 0; i < array.length; i++) {
+        let keyInMap = array[i][key];
+
+        if (map[keyInMap]) {
+            map[keyInMap] = [...map[keyInMap], array[i]];
+        } else {
+            map[keyInMap] = [array[i]];
+        }
+    }
+    return map;
+};
+
+const MyPermissionsList: React.FC = memo(() => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermissionListRow, key) => (
-                <PermissionListRow {..._} key={key} />
+            render: (_: IPermission, key) => (
+                <PermissionListRow type="own" {..._} key={key} />
             ),
         },
     ];
+
+    const memoizedData = useMemo(
+        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        [TEST_DATA]
+    );
 
     return (
         <>
             <PermissionStats total={5} pending={1} declined={0} approved={4} />
             <FlatListComponent
                 columns={myPermissionsColumns}
-                data={TEST_DATA}
+                data={memoizedData}
             />
         </>
     );
-};
+});
 
-const TEAM_TEST_DATA = [
-    {
-        status: 'APPROVED',
-        category: 'maternity',
-        name: 'Qudus Abayomi',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '12-10-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Tope Johnson',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '02-09-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'vacation',
-        name: 'Tife Okeke',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '15-07-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Yemi Kolawole',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '17-06-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'work',
-        name: 'Ephraim Chinedu',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '24-04-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'medical',
-        name: 'Jafar Smith',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '30-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Biola Oyeleye',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Samuel Okigwe',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '19-02-2022',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-];
-
-const MyTeamPermissionsList: React.FC = () => {
+const MyTeamPermissionsList: React.FC = memo(() => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermissionListRow, key) => (
-                <PermissionListRow {..._} key={key} />
+            render: (_: IPermission, key) => (
+                <PermissionListRow type="team" {..._} key={key} />
             ),
         },
     ];
@@ -298,117 +351,18 @@ const MyTeamPermissionsList: React.FC = () => {
             />
             <FlatListComponent
                 columns={teamPermissionsColumns}
-                data={TEAM_TEST_DATA}
+                data={TEST_DATA}
             />
         </>
     );
-};
+});
 
-const CAMPUS_TEST_DATA = [
-    {
-        status: 'APPROVED',
-        category: 'maternity',
-        name: 'Qudus Abayomi',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '12-10-2022',
-        department: 'Ushery',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Tope Johnson',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '02-09-2022',
-        department: 'Avalanche',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'vacation',
-        name: 'Tife Okeke',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '15-07-2022',
-        department: 'Protocol',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Yemi Kolawole',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '17-06-2022',
-        department: 'Avalanche',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'work',
-        name: 'Ephraim Chinedu',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '24-04-2022',
-        department: 'Witty Inventions',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'medical',
-        name: 'Jafar Smith',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '30-03-2022',
-        department: 'Host and Hostesses',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        name: 'Biola Oyeleye',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        department: 'Sparkles',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        name: 'Samuel Okigwe',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '19-02-2022',
-        department: 'Sound',
-        imageUrl: 'https://bit.ly/3AdGvvM',
-        description: 'Going to the US for my PHD defence.',
-    },
-];
-
-const CampusPermissions: React.FC = () => {
+const CampusPermissions: React.FC = memo(() => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermissionListRow, key) => (
-                <PermissionListRow {..._} key={key} />
+            render: (_: IPermission, key) => (
+                <PermissionListRow type="campus" {..._} key={key} />
             ),
         },
     ];
@@ -423,10 +377,10 @@ const CampusPermissions: React.FC = () => {
             />
             <FlatListComponent
                 columns={teamPermissionsColumns}
-                data={CAMPUS_TEST_DATA}
+                data={TEST_DATA}
             />
         </>
     );
-};
+});
 
 export { MyPermissionsList, MyTeamPermissionsList, CampusPermissions };
