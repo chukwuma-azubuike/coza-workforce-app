@@ -40,7 +40,7 @@ const PermissionDetails: React.FC<
                         <Text alignSelf="flex-start" bold>
                             Requester
                         </Text>
-                        <Text>{`${firstName} ${lastName}`}</Text>
+                        <Text>{`${firstName} ${lastName} (${department.name})`}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -86,8 +86,6 @@ const PermissionDetails: React.FC<
                         pb={2}
                         w="full"
                         justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
                     >
                         <Text alignSelf="flex-start" bold>
                             Description

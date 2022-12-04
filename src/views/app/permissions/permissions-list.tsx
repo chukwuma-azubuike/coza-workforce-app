@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
-import React from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
@@ -14,48 +14,80 @@ import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
     type: 'own' | 'team' | 'campus';
+    '0'?: string;
+    '1'?: IPermission[];
 }
 
 const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const navigation = useNavigation();
 
-    const handlePress = () => {
-        navigation.navigate('Permission Details', props);
-    };
-
-    const {
-        type,
-        status,
-        comment,
-        endDate,
-        category,
-        requestor,
-        startDate,
-        dateCreated,
-        description,
-    } = props;
-
-    const {
-        lastName,
-        firstName,
-        pictureUrl,
-        department: { name: departmentName },
-    } = requestor;
+    const { type } = props;
 
     return (
-        <TouchableNativeFeedback
-            disabled={false}
-            delayPressIn={0}
-            style={{ flex: 1 }}
-            onPress={handlePress}
-            accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                THEME_CONFIG.veryLightGray,
-                true,
-                220
-            )}
-        >
-            <VStack w="full" flex={1}>
+        <>
+            {props[1]?.map((elm, idx) => {
+                const handlePress = () => {
+                    navigation.navigate('Permission Details', elm);
+                };
+
+                const {
+                    requestor: {
+                        lastName,
+                        firstName,
+                        pictureUrl,
+                        department: { name: departmentName },
+                    },
+                    description,
+                    category,
+                    status,
+                } = elm;
+
+                return (
+                    <TouchableNativeFeedback
+                        disabled={false}
+                        delayPressIn={0}
+                        onPress={handlePress}
+                        accessibilityRole="button"
+                        background={TouchableNativeFeedback.Ripple(
+                            THEME_CONFIG.veryLightGray,
+                            false,
+                            220
+                        )}
+                    >
+                        <HStack
+                            py={2}
+                            flex={1}
+                            key={idx}
+                            w="full"
+                            alignItems="center"
+                            justifyContent="space-between"
+                        >
+                            <HStack space={3} alignItems="center">
+                                <AvatarComponent imageUrl={pictureUrl} />
+                                <VStack justifyContent="space-between">
+                                    <Text bold>
+                                        {Utils.capitalizeFirstChar(
+                                            type === 'own'
+                                                ? category
+                                                : type === 'team'
+                                                ? `${firstName} ${lastName}`
+                                                : `${firstName} ${lastName} (${departmentName})`
+                                        )}
+                                    </Text>
+                                    <Text fontSize="sm" color="gray.400">
+                                        {description}
+                                    </Text>
+                                </VStack>
+                            </HStack>
+                            <StatusTag>{status}</StatusTag>
+                        </HStack>
+                    </TouchableNativeFeedback>
+                );
+            })}
+        </>
+    );
+    {
+        /* <VStack w="full" flex={1}>
                 <Text borderBottomWidth={0.2} borderBottomColor="gray.300">
                     {dateCreated}
                 </Text>
@@ -77,9 +109,8 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     </VStack>
                     <StatusTag>{status}</StatusTag>
                 </HStack>
-            </VStack>
-        </TouchableNativeFeedback>
-    );
+            </VStack> */
+    }
 };
 
 const TEST_DATA = [
@@ -194,6 +225,54 @@ const TEST_DATA = [
         description: 'Going to the US for my PHD defence.',
         comment: '',
     },
+
+    {
+        status: 'APPROVED',
+        category: 'education',
+        requestor: {
+            lastName: 'Oyeleye',
+            firstName: 'Biola',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Child Care' },
+        },
+        endDate: '19-11-2022',
+        startDate: '04-11-2022',
+        dateUpdated: '16-10-2022',
+        dateCreated: '09-03-2022',
+        description: 'Going to the US for my PHD defence.',
+        comment: '',
+    },
+    {
+        status: 'APPROVED',
+        category: 'education',
+        requestor: {
+            lastName: 'Oyeleye',
+            firstName: 'Biola',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Child Care' },
+        },
+        endDate: '19-11-2022',
+        startDate: '04-11-2022',
+        dateUpdated: '16-10-2022',
+        dateCreated: '09-03-2022',
+        description: 'Going to the US for my PHD defence.',
+        comment: '',
+    },
+    {
+        status: 'PENDING',
+        category: 'education',
+        requestor: {
+            lastName: 'Okigwe',
+            firstName: 'Samuel',
+            pictureUrl: 'https://bit.ly/3AdGvvM',
+            department: { name: 'Avalanche' },
+        },
+        endDate: '19-11-2022',
+        startDate: '04-11-2022',
+        dateUpdated: '16-10-2022',
+        dateCreated: '19-02-2022',
+        description: 'Going to the US for my PHD defence.',
+    },
     {
         status: 'PENDING',
         category: 'education',
@@ -211,7 +290,22 @@ const TEST_DATA = [
     },
 ];
 
-const MyPermissionsList: React.FC = () => {
+const transformData = (array: any[], key: string) => {
+    const map: any = {};
+
+    for (let i = 0; i < array.length; i++) {
+        let keyInMap = array[i][key];
+
+        if (map[keyInMap]) {
+            map[keyInMap] = [...map[keyInMap], array[i]];
+        } else {
+            map[keyInMap] = [array[i]];
+        }
+    }
+    return map;
+};
+
+const MyPermissionsList: React.FC = memo(() => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
@@ -221,18 +315,23 @@ const MyPermissionsList: React.FC = () => {
         },
     ];
 
+    const memoizedData = useMemo(
+        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        [TEST_DATA]
+    );
+
     return (
         <>
             <PermissionStats total={5} pending={1} declined={0} approved={4} />
             <FlatListComponent
                 columns={myPermissionsColumns}
-                data={TEST_DATA}
+                data={memoizedData}
             />
         </>
     );
-};
+});
 
-const MyTeamPermissionsList: React.FC = () => {
+const MyTeamPermissionsList: React.FC = memo(() => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
@@ -256,9 +355,9 @@ const MyTeamPermissionsList: React.FC = () => {
             />
         </>
     );
-};
+});
 
-const CampusPermissions: React.FC = () => {
+const CampusPermissions: React.FC = memo(() => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
@@ -282,6 +381,6 @@ const CampusPermissions: React.FC = () => {
             />
         </>
     );
-};
+});
 
 export { MyPermissionsList, MyTeamPermissionsList, CampusPermissions };

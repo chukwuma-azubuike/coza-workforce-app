@@ -19,7 +19,7 @@ const StatusTag: React.FC<IStatusTag> = props => {
                 status === 'APPROVED'
                     ? 'success.100'
                     : status === 'PENDING'
-                    ? 'gray.100'
+                    ? 'gray.200'
                     : 'error.100'
             }
             _text={{
