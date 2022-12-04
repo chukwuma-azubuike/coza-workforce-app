@@ -17,7 +17,7 @@ class Utils {
         let firstChar = splitChar.charAt(0).toUpperCase();
         let restChar = splitChar.slice(1, splitChar.length);
 
-        return `${firstChar}${restChar}`;
+        return `${firstChar}${restChar.toLowerCase()}`;
     }
 
     static hasPermissionIOS = async () => {

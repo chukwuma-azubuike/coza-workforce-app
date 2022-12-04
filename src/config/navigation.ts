@@ -20,6 +20,7 @@ import { IIconTypes } from '../utils/types';
 import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
+import PermissionDetails from '../views/app/permissions/permission-details';
 
 export interface IAppRoute {
     name: string;
@@ -61,6 +62,17 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Request permission',
                 component: RequestPermission,
                 options: { title: 'Request permission' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'hand-left-outline', type: 'ionicon' },
+            },
+            {
+                name: 'Permission Details',
+                component: PermissionDetails as any as React.FC<
+                    NativeStackScreenProps<ParamListBase, string, undefined>
+                >,
+                options: { title: 'Permission Details' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
