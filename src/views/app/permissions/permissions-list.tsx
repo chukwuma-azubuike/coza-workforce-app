@@ -66,13 +66,23 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                 <AvatarComponent imageUrl={pictureUrl} />
                                 <VStack justifyContent="space-between">
                                     <Text bold>
-                                        {Utils.capitalizeFirstChar(
-                                            type === 'own'
-                                                ? category
-                                                : type === 'team'
-                                                ? `${firstName} ${lastName}`
-                                                : `${firstName} ${lastName} (${departmentName})`
-                                        )}
+                                        {type === 'own'
+                                            ? Utils.capitalizeFirstChar(
+                                                  category
+                                              )
+                                            : type === 'team'
+                                            ? `${Utils.capitalizeFirstChar(
+                                                  firstName
+                                              )} ${Utils.capitalizeFirstChar(
+                                                  lastName
+                                              )}`
+                                            : `${Utils.capitalizeFirstChar(
+                                                  firstName
+                                              )} ${Utils.capitalizeFirstChar(
+                                                  lastName
+                                              )} (${Utils.capitalizeFirstChar(
+                                                  departmentName
+                                              )})`}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
                                         {description}
@@ -341,6 +351,11 @@ const MyTeamPermissionsList: React.FC = memo(() => {
         },
     ];
 
+    const memoizedData = useMemo(
+        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        [TEST_DATA]
+    );
+
     return (
         <>
             <PermissionStats
@@ -351,7 +366,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
             />
             <FlatListComponent
                 columns={teamPermissionsColumns}
-                data={TEST_DATA}
+                data={memoizedData}
             />
         </>
     );
@@ -367,6 +382,11 @@ const CampusPermissions: React.FC = memo(() => {
         },
     ];
 
+    const memoizedData = useMemo(
+        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        [TEST_DATA]
+    );
+
     return (
         <>
             <PermissionStats
@@ -377,7 +397,7 @@ const CampusPermissions: React.FC = memo(() => {
             />
             <FlatListComponent
                 columns={teamPermissionsColumns}
-                data={TEST_DATA}
+                data={memoizedData}
             />
         </>
     );
