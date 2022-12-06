@@ -16,7 +16,6 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                 uri: imageUrl,
             }}
             {...props}
-            size="sm"
         >
             NB
             {badge && <Avatar.Badge bg="green.500" />}
