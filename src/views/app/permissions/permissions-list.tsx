@@ -96,31 +96,6 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
             })}
         </>
     );
-    {
-        /* <VStack w="full" flex={1}>
-                <Text borderBottomWidth={0.2} borderBottomColor="gray.300">
-                    {dateCreated}
-                </Text>
-                <HStack w="full" flex={1} mt={3} alignItems="center" space={2}>
-                    <AvatarComponent imageUrl={pictureUrl} />
-                    <VStack w="full" flex={1}>
-                        <Text bold>
-                            {Utils.capitalizeFirstChar(
-                                type === 'own'
-                                    ? category
-                                    : type === 'team'
-                                    ? `${firstName} ${lastName}`
-                                    : `${firstName} ${lastName} (${departmentName})`
-                            )}
-                        </Text>
-                        <Text fontSize="sm" color="gray.400">
-                            {description}
-                        </Text>
-                    </VStack>
-                    <StatusTag>{status}</StatusTag>
-                </HStack>
-            </VStack> */
-    }
 };
 
 const TEST_DATA = [
@@ -352,7 +327,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
     ];
 
     const memoizedData = useMemo(
-        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        () => Object.entries(transformData(TEST_DATA, 'category')),
         [TEST_DATA]
     );
 

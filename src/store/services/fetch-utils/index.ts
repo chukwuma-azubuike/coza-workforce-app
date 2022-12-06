@@ -13,5 +13,7 @@ export class fetchUtils {
 
             return headers;
         },
+
+        timeout: 60000,
     });
 }

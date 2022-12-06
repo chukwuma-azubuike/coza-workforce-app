@@ -12,6 +12,17 @@ export interface IDefaultResponse<D> {
     data: D;
 }
 
+export interface IDefaultErrorResponse {
+    data: {
+        data: null;
+        isError: boolean;
+        isSuccessful: boolean;
+        message: string;
+        status: number;
+    };
+    status: number;
+}
+
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
 
 // Authentication
@@ -89,10 +100,17 @@ export interface IPermission extends ILog {
     startDate: string;
     endDate: string;
     dateCreated: string;
+    dateUpdated: string;
     category: string;
     description: string;
     status: IStatus;
     comment: string;
+    updatedBy: {
+        lastName: string;
+        firstName: string;
+        role: string;
+        department: { id: string; name: string };
+    };
     requestor: IUser;
 }
 

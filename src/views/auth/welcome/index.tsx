@@ -10,12 +10,13 @@ import ModalAlertComponent from '../../../components/composite/modal-alert';
 import OTPInput, { CELL_COUNT } from '../../../components/atoms/otp-input';
 import {
     useSendOTPQuery,
-    useValidateEmailOTPQuery,
+    useValidateEmailOTPMutation,
 } from '../../../store/services/auth';
 import { Formik } from 'formik';
 import { EmailSchema } from '../../../utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import If from '../../../components/composite/if-container';
 
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
@@ -28,27 +29,30 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     const [otpValue, setOtpValue] = useState('');
 
     const hideModal = () => {
-        isError && setModalVisible(false);
+        (isError || isErrorValidate) && setModalVisible(false);
     };
+
+    const { isLoading, error, isSuccess, isError, data } = useSendOTPQuery(
+        email,
+        {
+            skip: !email,
+        }
+    );
+
+    const [
+        validateEmail,
+        {
+            data: validateData,
+            error: validateError,
+            isError: isErrorValidate,
+            isSuccess: isSuccessValidate,
+            isLoading: isLoadingValidate,
+        },
+    ] = useValidateEmailOTPMutation();
 
     const handleSubmit = (values: { email: string }) => {
         setEmail(values.email);
     };
-
-    const { isLoading, error, isSuccess, isError } = useSendOTPQuery(email, {
-        skip: !email,
-    });
-
-    const {
-        data: validateData,
-        error: validateError,
-        isError: isErrorValidate,
-        isSuccess: isSuccessValidate,
-        isLoading: isLoadingValidate,
-    } = useValidateEmailOTPQuery(
-        { email, otp: +otpValue },
-        { skip: otpValue.length !== CELL_COUNT }
-    );
 
     React.useEffect(() => {
         if (isError) {
@@ -56,15 +60,33 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             setTimeout(() => {
                 setModalVisible(false);
             }, 5000);
+            setTimeout(() => {
+                setEmail('');
+            }, 6000);
         }
-        if (isSuccess) setModalVisible(true);
+        if (isSuccess) {
+            setModalVisible(true);
+        }
     }, [isError, isSuccess]);
 
     React.useEffect(() => {
+        console.log(
+            'data-->',
+            validateData,
+            'loading-->',
+            isLoadingValidate,
+            'error-->',
+            validateError
+        );
         if (isSuccessValidate) {
             navigation.navigate('Register');
         }
-    }, [isSuccessValidate]);
+    }, [isErrorValidate, isSuccessValidate]);
+
+    React.useEffect(() => {
+        if (otpValue.length === CELL_COUNT)
+            validateEmail({ email, otp: +otpValue });
+    }, [otpValue]);
 
     return (
         <>
@@ -145,8 +167,12 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 size="xl"
             >
                 <Modal.Content minW={200} backgroundColor="gray.200">
-                    <Modal.Body>
-                        {isSuccess ? (
+                    <Modal.Body p={0}>
+                        <If
+                            condition={
+                                isSuccess && !isError && !isErrorValidate
+                            }
+                        >
                             <OTPInput
                                 render={
                                     isSuccessValidate ? (
@@ -163,21 +189,23 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 done={isSuccessValidate}
                                 loading={isLoadingValidate}
                             />
-                        ) : isErrorValidate ? (
+                        </If>
+                        <If condition={isError && !isErrorValidate}>
                             <ModalAlertComponent
-                                description={`${validateError}`}
+                                description={`${error?.data.message}`}
                                 iconType="feather"
                                 iconName="info"
                                 status="info"
                             />
-                        ) : (
+                        </If>
+                        <If condition={isErrorValidate}>
                             <ModalAlertComponent
-                                description={`${validateError}`}
+                                description={`${validateError?.data}`}
                                 iconType="feather"
                                 iconName="info"
                                 status="info"
                             />
-                        )}
+                        </If>
                     </Modal.Body>
                 </Modal.Content>
             </Modal>

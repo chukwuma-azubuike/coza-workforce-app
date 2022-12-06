@@ -1,8 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
+    IDefaultErrorResponse,
+    IRegisterPayload,
     IDefaultResponse,
     ILoginPayload,
-    IRegisterPayload,
     IUser,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -35,14 +36,18 @@ export type IRegisterResponse = IDefaultResponse<IUser>;
 export const authServiceSlice = createApi({
     reducerPath: 'auth',
 
+    tagTypes: ['Auth'],
+
     baseQuery: fetchUtils.baseQuery,
+
+    keepUnusedDataFor: 1,
 
     endpoints: endpoint => ({
         sendOTP: endpoint.query<ISendOTPResponse, string>({
             query: email => `/${SERVICE_URL}/send-otp/${email}`,
         }),
 
-        validateEmailOTP: endpoint.query<
+        validateEmailOTP: endpoint.mutation<
             IVerifyEmailOTPResponse,
             IVerifyEmailOTPPayload
         >({
@@ -77,5 +82,5 @@ export const {
     useSendOTPQuery,
     useLoginMutation,
     useRegisterMutation,
-    useValidateEmailOTPQuery,
+    useValidateEmailOTPMutation,
 } = authServiceSlice;
