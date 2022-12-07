@@ -17,6 +17,8 @@ const TopNav: React.FC<
         navigation.navigate('Profile');
     };
 
+    const handlePress = () => navigation.navigate('Profile');
+
     return (
         <HStack
             justifyContent="space-between"
@@ -29,11 +31,15 @@ const TopNav: React.FC<
             mx={4}
             pr={4}
         >
-            <AvatarComponent
-                badge
-                shadow={9}
-                imageUrl="https://bit.ly/3AdGvvM"
-            />
+            <IconButton onPress={handlePress} background="none">
+                <AvatarComponent
+                    badge
+                    shadow={9}
+                    size="sm"
+                    imageUrl="https://bit.ly/3AdGvvM"
+                />
+            </IconButton>
+
             <IconButton
                 icon={
                     <Icon
