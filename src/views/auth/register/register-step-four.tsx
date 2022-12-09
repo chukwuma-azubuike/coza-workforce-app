@@ -7,17 +7,18 @@ import {
     HStack,
     Stack,
     VStack,
-    WarningOutlineIcon,
 } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { IRegistrationPageStep } from '.';
+import { IRegistrationPageStep } from './types';
+import { Icon } from '@rneui/themed';
+import { THEME_CONFIG } from '../../../config/appConfig';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
-    values,
-    navigation,
+    errors,
     onStepPress,
+    isLoading,
     handleSubmit,
     handleChange,
 }) => {
@@ -26,7 +27,9 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
     const handleIconPress = () => setShowPassword(prev => !prev);
     const handleBackPress = () => onStepPress(2);
 
-    const onSubmit = () => navigation?.navigate('App');
+    const onSubmit = () => {
+        if (!errors.password && !errors.confirmPassword) handleSubmit();
+    };
 
     return (
         <ViewWrapper>
@@ -34,8 +37,11 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Create a new password</Heading>
                     <Box alignItems="center" w="100%">
-                        <FormControl>
-                            <Stack w="100%" space={1}>
+                        <Stack w="100%" space={1}>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.password && true}
+                            >
                                 <FormControl.Label>Password</FormControl.Label>
                                 <InputComponent
                                     type={showPassword ? 'text' : 'password'}
@@ -54,10 +60,24 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                     onChangeText={handleChange('password')}
                                 />
                                 <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
                                 >
-                                    Password not strong enough
+                                    {errors?.password}
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.confirmPassword && true}
+                            >
                                 <FormControl.Label>
                                     Confirm password
                                 </FormControl.Label>
@@ -75,12 +95,26 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                         type: 'ionicon',
                                     }}
                                     onIconPress={handleIconPress}
+                                    onChangeText={handleChange(
+                                        'confirmPassword'
+                                    )}
                                 />
                                 <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
                                 >
-                                    Password doesn't match
+                                    {errors?.confirmPassword}
                                 </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl>
                                 <HStack
                                     space={4}
                                     justifyContent="space-between"
@@ -94,6 +128,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                         Go back
                                     </ButtonComponent>
                                     <ButtonComponent
+                                        isLoading={isLoading}
                                         onPress={onSubmit}
                                         width={160}
                                         mt={4}
@@ -101,8 +136,8 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                         Register
                                     </ButtonComponent>
                                 </HStack>
-                            </Stack>
-                        </FormControl>
+                            </FormControl>
+                        </Stack>
                     </Box>
                 </VStack>
             </Center>

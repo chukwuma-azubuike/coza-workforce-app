@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, FlatList, HStack, Text, VStack } from 'native-base';
 import If from '../if-container';
+import Utils from '../../../utils';
 
 export interface IFlatListColumn {
     title?: string;
@@ -40,7 +41,7 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
                                     borderColor="gray.300"
                                     borderBottomWidth={0.2}
                                 >
-                                    {item[0]}
+                                    {Utils.capitalizeFirstChar(item[0])}
                                 </Text>
                                 <VStack py={3}>
                                     {columns.map((column, idx) =>

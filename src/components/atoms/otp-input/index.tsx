@@ -53,7 +53,6 @@ const animateCell = ({
 };
 
 const OTPInput = ({
-    successCallBack,
     render,
     value,
     setValue,
@@ -65,7 +64,6 @@ const OTPInput = ({
     setValue: React.Dispatch<React.SetStateAction<string>>;
     loading: boolean;
     render?: Element | null;
-    successCallBack?: (props: any) => void;
 }) => {
     const ref = useBlurOnFulfill({ value, cellCount: CELL_COUNT });
     const [props, getCellOnLayoutHandler] = useClearByFocusCell({
@@ -134,7 +132,6 @@ const OTPInput = ({
         setValue(e);
         if (e.length === CELL_COUNT) {
             // Api call
-            // successCallBack(true);
         }
     };
 

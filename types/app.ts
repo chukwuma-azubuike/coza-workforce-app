@@ -8,7 +8,9 @@ export interface IModalProps {
 export interface IModalState {
     open?: boolean;
     button?: boolean;
+    defaultRender?: boolean;
     message?: string | null;
     render?: React.ReactElement | JSX.Element | null;
+    status?: 'success' | 'error' | 'info' | 'warning';
     duration?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 }

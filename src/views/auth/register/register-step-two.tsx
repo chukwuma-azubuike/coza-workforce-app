@@ -12,15 +12,34 @@ import {
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { IRegistrationPageStep } from '.';
+import { IRegistrationPageStep } from './types';
+import {
+    SelectComponent,
+    SelectItemComponent,
+} from '../../../components/atoms/select';
+import { Icon } from '@rneui/themed';
+import { THEME_CONFIG } from '../../../config/appConfig';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
+    errors,
     values,
+    setFieldError,
     onStepPress,
     handleChange,
+    handlePressFoward,
 }) => {
     const handleBackPress = () => onStepPress(0);
-    const handleContinuePress = () => onStepPress(2);
+    const handleContinuePress = () => {
+        const fields = [
+            'occupation',
+            'placeOfWork',
+            'nextOfKin',
+            'nextOfKinPhoneNo',
+            'gender',
+            'maritalStatus',
+        ];
+        handlePressFoward(fields, values, onStepPress, 2, setFieldError);
+    };
 
     return (
         <ViewWrapper scroll>
@@ -29,13 +48,15 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
                         <Stack w="100%" space={1}>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.occupation && true}
+                            >
                                 <FormControl.Label>
                                     Occupation
                                 </FormControl.Label>
                                 <InputComponent
                                     isRequired
-                                    value={values.occupation}
                                     leftIcon={{
                                         name: 'briefcase-outline',
                                         type: 'ionicon',
@@ -49,13 +70,15 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.placeOfWork && true}
+                            >
                                 <FormControl.Label>
                                     Place of work
                                 </FormControl.Label>
                                 <InputComponent
                                     isRequired
-                                    value={values.placeOfWork}
                                     leftIcon={{
                                         name: 'organization',
                                         type: 'octicon',
@@ -69,21 +92,21 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.nextOfKin && true}
+                            >
                                 <FormControl.Label>
                                     Next of Kin
                                 </FormControl.Label>
                                 <InputComponent
-                                    value={values.nextOfKin.name}
                                     leftIcon={{
                                         name: 'person-outline',
                                         type: 'ionicon',
                                     }}
                                     placeholder="Enter their name"
                                     isRequired
-                                    onChangeText={handleChange(
-                                        'nextOfKin.name'
-                                    )}
+                                    onChangeText={handleChange('nextOfKin')}
                                 />
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
@@ -91,7 +114,10 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.nextOfKinPhoneNo && true}
+                            >
                                 <FormControl.Label>
                                     Next of Kin Contact
                                 </FormControl.Label>
@@ -104,49 +130,80 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                                     keyboardType="phone-pad"
                                     placeholder="07066846465"
                                     onChangeText={handleChange(
-                                        'nextOfKin.phoneNumber'
+                                        'nextOfKinPhoneNo'
                                     )}
-                                    value={values.nextOfKin.phoneNumber}
                                 />
                                 <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
                                 >
-                                    Enter correct phone number format
+                                    {errors?.nextOfKinPhoneNo}
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.gender && true}
+                            >
                                 <FormControl.Label>Gender</FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'male-female-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    isRequired
-                                    value={values.gender}
+                                <SelectComponent
                                     placeholder="Enter your gender"
-                                    onChangeText={handleChange('gender')}
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                    onValueChange={handleChange('gender')}
                                 >
-                                    This field cannot be empty
+                                    <SelectItemComponent
+                                        label="Male"
+                                        value="M"
+                                    />
+                                    <SelectItemComponent
+                                        label="Female"
+                                        value="F"
+                                    />
+                                </SelectComponent>
+                                <FormControl.ErrorMessage
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
+                                >
+                                    {errors?.gender}
                                 </FormControl.ErrorMessage>
                             </FormControl>
 
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.maritalStatus && true}
+                            >
                                 <FormControl.Label>
-                                    Marital status
+                                    Marital Status
                                 </FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'ring',
-                                        type: 'material-community',
-                                    }}
-                                    isRequired
-                                    value={values.maritalStatus}
+                                <SelectComponent
                                     placeholder="Enter your marital status"
-                                    onChangeText={handleChange('maritalStatus')}
-                                />
+                                    onValueChange={handleChange(
+                                        'maritalStatus'
+                                    )}
+                                >
+                                    <SelectItemComponent
+                                        label="Single"
+                                        value="single"
+                                    />
+                                    <SelectItemComponent
+                                        label="Married"
+                                        value="married"
+                                    />
+                                </SelectComponent>
                                 <FormControl.ErrorMessage
                                     leftIcon={<WarningOutlineIcon size="xs" />}
                                 >

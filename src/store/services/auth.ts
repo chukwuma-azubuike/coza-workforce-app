@@ -1,9 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import Utils from '../../utils';
 import {
+    IRegisterPayload,
     IDefaultResponse,
     ILoginPayload,
-    IRegisterPayload,
     IUser,
+    IToken,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -26,23 +28,46 @@ export interface IOTPResponse {
     updatedAt: string;
 }
 
-export type IVerifyEmailOTPResponse = IDefaultResponse<IUser & IOTPResponse>;
+export type IVerifyEmailOTPResponse = IDefaultResponse<{
+    campusId: string;
+    createdAt: string;
+    department: {
+        __v: number;
+        _id: string;
+        campusId: string;
+        createdAt: string;
+        departmentName: string;
+        description: string;
+    };
+    email: string;
+    firstName: string;
+    gender: string;
+    lastName: string;
+    userId: string;
+}>;
 
-export type ILoginResponse = IDefaultResponse<IUser>;
+export type ILoginResponse = IDefaultResponse<{
+    token: IToken;
+    profile: IUser;
+}>;
 
 export type IRegisterResponse = IDefaultResponse<IUser>;
 
 export const authServiceSlice = createApi({
     reducerPath: 'auth',
 
+    tagTypes: ['Auth'],
+
     baseQuery: fetchUtils.baseQuery,
+
+    // keepUnusedDataFor: 1,
 
     endpoints: endpoint => ({
         sendOTP: endpoint.query<ISendOTPResponse, string>({
             query: email => `/${SERVICE_URL}/send-otp/${email}`,
         }),
 
-        validateEmailOTP: endpoint.query<
+        validateEmailOTP: endpoint.mutation<
             IVerifyEmailOTPResponse,
             IVerifyEmailOTPPayload
         >({
@@ -51,6 +76,27 @@ export const authServiceSlice = createApi({
                 method: 'PATCH',
                 body,
             }),
+
+            transformResponse: (response: IVerifyEmailOTPResponse) => {
+                const {
+                    email,
+                    gender,
+                    campusId,
+                    lastName,
+                    firstName,
+                    department: { _id, departmentName },
+                } = response.data;
+
+                return {
+                    email,
+                    gender,
+                    campusId,
+                    lastName,
+                    firstName,
+                    departmentName,
+                    departmentId: _id,
+                };
+            },
         }),
 
         login: endpoint.mutation<ILoginResponse, ILoginPayload>({
@@ -59,13 +105,22 @@ export const authServiceSlice = createApi({
                 method: 'POST',
                 body,
             }),
+            transformResponse: async (response: ILoginResponse) => {
+                Utils.storeUserSession(response.data);
+
+                return response.data.profile;
+            },
         }),
 
         register: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/register`,
                 method: 'POST',
-                body,
+                body: {
+                    ...body,
+                    pictureUrl: '',
+                    roleId: '638a5f1e8eb1e1ef2b0be2a7',
+                },
             }),
         }),
         // Add your endpoints here
@@ -77,5 +132,5 @@ export const {
     useSendOTPQuery,
     useLoginMutation,
     useRegisterMutation,
-    useValidateEmailOTPQuery,
+    useValidateEmailOTPMutation,
 } = authServiceSlice;
