@@ -7760,6 +7760,13 @@ react-native-swiper@^1.6.0:
   dependencies:
     prop-types "^15.5.10"
 
+react-native-tab-view@^3.3.3:
+  version "3.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.3.3.tgz#33a94db2ccbe7fe8fff0c0e3f1da09cbd07edba7"
+  integrity sha512-hrxGu/Bj/GRXt+6ErqUFMAw2E82tjeTJ97nH1dZ2FSnLYOVnY9FDqju8TkQtT3GpJGL6Ur/ZkRT4eQfYwTZbtg==
+  dependencies:
+    use-latest-callback "^0.1.5"
+
 react-native-vector-icons@^9.2.0:
   version "9.2.0"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-9.2.0.tgz#3c0c82e95defd274d56363cbe8fead8d53167ebd"

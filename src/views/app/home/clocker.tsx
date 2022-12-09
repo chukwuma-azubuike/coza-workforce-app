@@ -29,19 +29,8 @@ const Clocker: React.FC = () => {
         Geolocation.getCurrentPosition(
             position => {
                 setDeviceCoordinates(position.coords);
-                Alert.alert(
-                    isInRange
-                        ? 'You are within range'
-                        : 'You are not in range!',
-                    `Latitude: ${position.coords.latitude} Longitude: ${
-                        position.coords.longitude
-                    } Distance: ${Math.round(
-                        distance
-                    )} meters. Allowed: ${CLOCK_IN_MIN_DISTANCE}`
-                );
             },
             error => {
-                // See error code charts below.
                 Alert.alert(error.message);
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }

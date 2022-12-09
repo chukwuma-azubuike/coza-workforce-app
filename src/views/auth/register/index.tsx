@@ -29,7 +29,7 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
     route: { params },
 }) => {
-    const [register, { data, error, isError, isSuccess, isLoading }] =
+    const [register, { error, isError, isSuccess, isLoading }] =
         useRegisterMutation();
 
     const handleSubmit = (
