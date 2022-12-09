@@ -5,8 +5,8 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { IIconTypes } from '../../../utils/types';
 
 interface IModalAlertComponentProps {
-    status: 'info' | 'warning' | 'success' | 'error';
-    description: string | JSX.Element;
+    status?: 'info' | 'warning' | 'success' | 'error';
+    description: string | JSX.Element | null | undefined;
     iconType: IIconTypes;
     iconName: string;
     color?: string;

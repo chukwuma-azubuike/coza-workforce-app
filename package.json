@@ -38,7 +38,7 @@
         "react-native-confirmation-code-field": "6",
         "react-native-dotenv": "^3.3.1",
         "react-native-elements": "^3.4.2",
-        "react-native-encrypted-storage": "^4.0.2",
+        "react-native-encrypted-storage": "^4.0.3",
         "react-native-geolocation-service": "^5.3.1",
         "react-native-gesture-handler": "^2.8.0",
         "react-native-modal": "^13.0.1",
@@ -53,8 +53,10 @@
         "react-redux": "^8.0.4",
         "redux-devtools-extension": "^2.13.9",
         "redux-logger": "^3.0.6",
+        "redux-persist": "^6.0.0",
         "victory-native": "^36.6.8",
-        "yup": "^0.32.11"
+        "yup": "^0.32.11",
+        "yup-phone-lite": "^1.1.2"
     },
     "devDependencies": {
         "@babel/core": "^7.12.9",

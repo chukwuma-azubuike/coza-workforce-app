@@ -12,6 +12,17 @@ export interface IDefaultResponse<D> {
     data: D;
 }
 
+export interface IDefaultErrorResponse {
+    data: {
+        data: null;
+        isError: boolean;
+        isSuccessful: boolean;
+        message: string;
+        status: number;
+    };
+    status: number;
+}
+
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
 
 // Authentication
@@ -23,47 +34,53 @@ export interface IAuthParams
     password: string;
 }
 
+export interface IToken {
+    token: string;
+    refreshToken: string;
+    expiresIn: number;
+}
+
 export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
 
-export type IRegisterPayload = IAuthParams;
+export interface IRegisterPayload
+    extends Omit<
+        IUser,
+        'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'
+    > {
+    roleId: string;
+    campusId: string;
+    password: string;
+    departmentId: string;
+    nextOfKinPhoneNo: string;
+}
 
 // Users
 export interface IUser {
-    id: string;
-    email: string;
-    phoneNumber: string;
-    firstName: string;
-    lastName: string;
     address: string;
-    nextOfKin: {
-        name: string;
-        phoneNumber: string;
-    };
-    occupation: string;
-    placeOfWork: string;
+    birthDay: string;
+    createdAt: string;
+    email: string;
+    firstName: string;
     gender: 'M' | 'F';
+    isActivated: boolean;
+    isVerified: boolean;
+    lastName: string;
     maritalStatus: string;
+    nextOfKin: string;
+    nextOfKinPhoneNo: string;
+    occupation: string;
+    phoneNumber: string;
+    pictureUrl: string;
+    placeOfWork: string;
+    userId: string;
+    role: IRole;
+    department: IDepartment;
+    campus: ICampus;
     socialMedia: {
         facebook: string;
         instagram: string;
         twitter: string;
     };
-    department: {
-        id: string;
-        name: string;
-    };
-    campus: {
-        id: string;
-        name: string;
-    };
-    role: {
-        id: string;
-        name: string;
-    };
-    birthDay: string;
-    pictureUrl: string;
-    isVerified: boolean;
-    isActivated: boolean;
 }
 
 // Attendance
@@ -89,25 +106,52 @@ export interface IPermission extends ILog {
     startDate: string;
     endDate: string;
     dateCreated: string;
+    dateUpdated: string;
     category: string;
     description: string;
     status: IStatus;
     comment: string;
+    updatedBy: {
+        lastName: string;
+        firstName: string;
+        role: string;
+        department: { id: string; name: string };
+    };
     requestor: IUser;
 }
 
 // Campus
 export interface ICampus extends ILog {
     location: {
-        coordinates: number[];
+        long: number;
+        lat: number;
     };
-    _id: string;
+    id: string;
     campusName: string;
     description: string;
     address: string;
     LGA: string;
     state: string;
     country: string;
-    dateOfBirth: string;
+    dateOfBirth: null | string;
+    createdAt: string;
+}
+
+//Role
+export interface IRole {
+    _id: string;
+    name: string;
+    description: string;
+    createdAt: string;
+    __v: number;
+}
+
+// Department
+export interface IDepartment {
+    _id: string;
+    departmentName: string;
+    campusId: string;
+    description: string;
+    createdAt: string;
     __v: number;
 }

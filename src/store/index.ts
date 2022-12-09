@@ -4,7 +4,8 @@ import { createLogger } from 'redux-logger';
 import rootReducer from './root-reducer';
 import { ENV } from '@env';
 import middlewaresSlices from './services/middleware';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { persistReducer, persistStore } from 'redux-persist';
 const middlewares: Middleware[] = [];
 
 if (ENV === 'development') {
@@ -15,15 +16,25 @@ if (ENV === 'development') {
     middlewares.push(logger);
 }
 
+const persistConfig = {
+    key: 'root',
+    storage: AsyncStorage,
+};
+
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
 const store = configureStore({
-    reducer: rootReducer,
-    // middleware: middlewares,
+    devTools: __DEV__,
+    reducer: persistedReducer,
     middleware: getDefaultMiddleware =>
-        getDefaultMiddleware().concat([...middlewares, ...middlewaresSlices]),
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }).concat([...middlewares, ...middlewaresSlices]),
 });
 
 export type IStore = ReturnType<typeof store.getState>;
 
-export default store;
-
+export const persistor = persistStore(store);
 setupListeners(store.dispatch);
+
+export default store;

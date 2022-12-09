@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    Alert,
     Box,
     Center,
     FormControl,
@@ -11,14 +12,22 @@ import {
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { IRegistrationPageStep } from '.';
+import { IRegistrationPageStep } from './types';
+import { Icon } from '@rneui/themed';
+import { THEME_CONFIG } from '../../../config/appConfig';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
     values,
+    errors,
+    setFieldError,
     handleChange,
     onStepPress,
+    handlePressFoward,
 }) => {
-    const handlePress = () => onStepPress(1);
+    const handlePress = () => {
+        const fields = ['phoneNumber', 'address', 'firstName', 'lastName'];
+        handlePressFoward(fields, values, onStepPress, 1, setFieldError);
+    };
 
     return (
         <ViewWrapper scroll>
@@ -80,13 +89,11 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     keyboardType="email-address"
                                     placeholder="jondoe@gmail.com"
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    Enter correct email format
-                                </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.phoneNumber && true}
+                            >
                                 <FormControl.Label>
                                     Phone number
                                 </FormControl.Label>
@@ -96,18 +103,30 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                         name: 'call-outline',
                                         type: 'ionicon',
                                     }}
+                                    type="number"
                                     onChangeText={handleChange('phoneNumber')}
-                                    value={values.phoneNumber}
                                     keyboardType="phone-pad"
                                     placeholder="07066846465"
                                 />
                                 <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
                                 >
-                                    Enter correct phone number format
+                                    {errors?.phoneNumber}
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl isRequired>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.address && true}
+                            >
                                 <FormControl.Label>Address</FormControl.Label>
                                 <InputComponent
                                     isRequired
@@ -116,13 +135,21 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                         type: 'antdesign',
                                     }}
                                     onChangeText={handleChange('address')}
-                                    value={values.address}
                                     placeholder="Enter your home address"
                                 />
                                 <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
                                 >
-                                    This field cannot be empty
+                                    {errors?.address}
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <FormControl>
@@ -134,10 +161,9 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                         name: 'organization',
                                         type: 'octicon',
                                     }}
-                                    onChangeText={handleChange('department')}
                                     isDisabled
                                     isRequired
-                                    value={values.department.name}
+                                    value={values.departmentName}
                                     placeholder="Quality Control"
                                 />
                             </FormControl>

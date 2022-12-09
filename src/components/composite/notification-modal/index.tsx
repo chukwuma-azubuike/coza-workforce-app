@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import Modal from 'react-native-modal';
 import { IModalProps } from '../../../../types/app';
 import ButtonComponent from '../../atoms/button';
+import If from '../if-container';
+import ModalAlertComponent from '../modal-alert';
 
 interface INotificationModalProps extends IModalProps {}
 
@@ -10,7 +12,8 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
     modalState,
     setModalState,
 }) => {
-    const { open, render, button, message, duration } = modalState;
+    const { open, render, button, message, status, duration, defaultRender } =
+        modalState;
 
     const hideModal = () => {
         setModalState(prev => {
@@ -41,18 +44,45 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
                     borderRadius="2xl"
                     backgroundColor="transparent"
                 >
-                    {render ? (
+                    {defaultRender ? (
+                        <ModalAlertComponent
+                            description={message}
+                            iconName={
+                                status === 'success'
+                                    ? 'checkmark-circle-outline'
+                                    : status === 'info'
+                                    ? 'info'
+                                    : status === 'warning'
+                                    ? 'warning-outline'
+                                    : status === 'error'
+                                    ? 'error-outline'
+                                    : ''
+                            }
+                            iconType={
+                                status === 'success'
+                                    ? 'ionicon'
+                                    : status === 'info'
+                                    ? 'feather'
+                                    : status === 'warning'
+                                    ? 'ionicon'
+                                    : status === 'error'
+                                    ? 'material'
+                                    : 'ionicon'
+                            }
+                            status={status}
+                        />
+                    ) : render ? (
                         render
                     ) : (
                         <Text my={4} fontSize="xl" textAlign="center">
                             {message}
                         </Text>
                     )}
-                    {button && (
+                    <If condition={button}>
                         <ButtonComponent title="Hide modal" onPress={hideModal}>
                             Close
                         </ButtonComponent>
-                    )}
+                    </If>
                 </VStack>
             </Center>
         </Modal>

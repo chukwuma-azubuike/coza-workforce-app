@@ -1,13 +1,18 @@
 import {
     Alert,
     Linking,
+    NativeModules,
     PermissionsAndroid,
     Platform,
     ToastAndroid,
 } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { IToken, IUser } from '../store/types';
 
 class Utils {
+    /************ String logic ************/
+
     static splitString(char: string, separator: string = ' ') {
         return char.split(separator).join(' ');
     }
@@ -19,6 +24,52 @@ class Utils {
 
         return `${firstChar}${restChar.toLowerCase()}`;
     }
+
+    /************ Storage logic ************/
+    /*********** Encrypted Storage ********/
+
+    static storeUserSession = async (user: {
+        token: IToken;
+        profile: IUser;
+    }) => {
+        try {
+            await EncryptedStorage.setItem(
+                'user_session',
+                JSON.stringify(user)
+            );
+        } catch (error) {
+            // There was an error on the native side
+        }
+    };
+
+    static retrieveUserSession = async () => {
+        try {
+            const session = await EncryptedStorage.getItem('user_session');
+
+            return session;
+        } catch (error) {
+            return false;
+            // There was an error on the native side
+        }
+    };
+
+    static removeUserSession = async () => {
+        try {
+            await EncryptedStorage.removeItem('user_session');
+        } catch (error) {
+            // There was an error on the native side
+        }
+    };
+
+    static clearStorage = async () => {
+        try {
+            await EncryptedStorage.clear();
+        } catch (error) {
+            // There was an error on the native side
+        }
+    };
+
+    /************ Native Permisisons logic ************/
 
     static hasPermissionIOS = async () => {
         const openSetting = () => {
@@ -90,6 +141,12 @@ class Utils {
 
         return false;
     };
+
+    // Localisation
+    static locale =
+        Platform.OS === 'ios'
+            ? NativeModules.SettingsManager.settings.AppleLocale.substring(3, 5)
+            : NativeModules.I18nManager.localeIdentifier.substring(3, 5);
 }
 
 export default Utils;

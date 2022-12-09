@@ -11,8 +11,8 @@ import { Alert } from 'react-native';
 import { CLOCK_IN_MIN_DISTANCE } from '@env';
 
 const campusCoordinates = {
-    latitude: 37.422,
-    longitude: -122.0839,
+    latitude: 6.5812268318052105,
+    longitude: 3.3608375132246167,
 };
 
 const Clocker: React.FC = () => {

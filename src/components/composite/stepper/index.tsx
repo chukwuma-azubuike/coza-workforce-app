@@ -42,6 +42,7 @@ interface IStepperProps {
     otherProps?: any;
     pages: IRegisterPagesProps[];
     stepIndicator?: boolean;
+    disableSwipe?: boolean;
     navigation?: NativeStackNavigationProp<ParamListBase, string, undefined>;
 }
 
@@ -49,6 +50,7 @@ const Stepper: React.FC<IStepperProps> = ({
     pages,
     otherProps,
     navigation,
+    disableSwipe,
     stepIndicator,
 }) => {
     const LABELS = React.useMemo(() => pages.map(page => page.label), pages);
@@ -97,6 +99,7 @@ const Stepper: React.FC<IStepperProps> = ({
             )}
             <Swiper
                 style={{ flexGrow: 1 }}
+                scrollEnabled={!disableSwipe}
                 loadMinimal
                 loop={false}
                 dotStyle={{}}
