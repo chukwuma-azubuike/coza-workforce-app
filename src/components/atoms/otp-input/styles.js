@@ -43,9 +43,7 @@ const styles = StyleSheet.create({
 
     root: {
         padding: 20,
-        paddingTop: 20,
         borderRadius: 8,
-        paddingBottom: 20,
     },
     title: {
         color: '#000',

@@ -275,6 +275,7 @@ const TEST_DATA = [
     },
 ];
 
+// This functions groups a list (Array of objects) by a common key;
 const transformData = (array: any[], key: string) => {
     const map: any = {};
 

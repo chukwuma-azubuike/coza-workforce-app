@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FormControl, Heading, Modal, Text, VStack } from 'native-base';
+import React from 'react';
+import { FormControl, Heading, HStack, Modal, Text, VStack } from 'native-base';
 import { Image } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -7,86 +7,36 @@ import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { InputComponent } from '../../../components/atoms/input';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
-import OTPInput, { CELL_COUNT } from '../../../components/atoms/otp-input';
-import {
-    useSendOTPQuery,
-    useValidateEmailOTPMutation,
-} from '../../../store/services/auth';
+import OTPInput from '../../../components/atoms/otp-input';
 import { Formik } from 'formik';
 import { EmailSchema } from '../../../utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import If from '../../../components/composite/if-container';
+import { APP_NAME, APP_SLOGAN } from '@env';
+import { TouchableRipple } from 'react-native-paper';
+import useWelcome from './hooks';
 
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
 const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
-    const [modalVisible, setModalVisible] = React.useState<boolean>(false);
-
-    const [email, setEmail] = React.useState<string>('');
-    const [otpValue, setOtpValue] = useState('');
-
-    const hideModal = () => {
-        (isError || isErrorValidate) && setModalVisible(false);
-    };
-
-    const { isLoading, error, isSuccess, isError, data } = useSendOTPQuery(
-        email,
-        {
-            skip: !email,
-        }
-    );
-
-    const [
-        validateEmail,
-        {
-            data: validateData,
-            error: validateError,
-            isError: isErrorValidate,
-            isSuccess: isSuccessValidate,
-            isLoading: isLoadingValidate,
-        },
-    ] = useValidateEmailOTPMutation();
-
-    const handleSubmit = (values: { email: string }) => {
-        setEmail(values.email);
-    };
-
-    React.useEffect(() => {
-        if (isError) {
-            setModalVisible(true);
-            setTimeout(() => {
-                setModalVisible(false);
-            }, 5000);
-            setTimeout(() => {
-                setEmail('');
-            }, 6000);
-        }
-        if (isSuccess) {
-            setModalVisible(true);
-        }
-    }, [isError, isSuccess]);
-
-    React.useEffect(() => {
-        console.log(
-            'data-->',
-            validateData,
-            'loading-->',
-            isLoadingValidate,
-            'error-->',
-            validateError
-        );
-        if (isSuccessValidate) {
-            navigation.navigate('Register');
-        }
-    }, [isErrorValidate, isSuccessValidate]);
-
-    React.useEffect(() => {
-        if (otpValue.length === CELL_COUNT)
-            validateEmail({ email, otp: +otpValue });
-    }, [otpValue]);
+    const {
+        handleSubmit,
+        validateError,
+        isErrorValidate,
+        isSuccessValidate,
+        isLoadingValidate,
+        modalVisible,
+        otpValue,
+        setOtpValue,
+        isLoading,
+        error,
+        isSuccess,
+        isError,
+        hideModal,
+    } = useWelcome();
 
     return (
         <>
@@ -94,12 +44,14 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 <VStack
                     p={6}
                     pb={5}
+                    px={4}
                     pt={10}
                     space={6}
                     alignItems="center"
                     justifyContent="space-around"
                 >
                     <Image
+                        alt="logo"
                         style={{
                             width: 150,
                             height: 150,
@@ -107,10 +59,8 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         source={cozaIcon}
                         resizeMode="center"
                     />
-                    <Heading size="lg">COZA Workforce App</Heading>
-                    <Text color="gray.400">
-                        Workers to Gather | Together | To get there
-                    </Text>
+                    <Heading size="lg">{APP_NAME}</Heading>
+                    <Text color="gray.400">{APP_SLOGAN}</Text>
                     <Formik
                         onSubmit={handleSubmit}
                         initialValues={{ email: '' }}
@@ -158,6 +108,19 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             </FormControl>
                         )}
                     </Formik>
+                    <HStack alignItems="center">
+                        <Text fontSize="md" color="gray.400">
+                            Already registered?
+                        </Text>
+                        <TouchableRipple
+                            style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                            onPress={() => navigation.navigate('Login')}
+                        >
+                            <Text fontSize="md" color="primary.600">
+                                Login
+                            </Text>
+                        </TouchableRipple>
+                    </HStack>
                 </VStack>
             </ViewWrapper>
             <Modal
@@ -192,7 +155,9 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         </If>
                         <If condition={isError && !isErrorValidate}>
                             <ModalAlertComponent
-                                description={`${error?.data.message}`}
+                                description={`${
+                                    error?.data?.message || error?.TypeError
+                                }`}
                                 iconType="feather"
                                 iconName="info"
                                 status="info"
@@ -200,7 +165,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         </If>
                         <If condition={isErrorValidate}>
                             <ModalAlertComponent
-                                description={`${validateError?.data}`}
+                                description={`${validateError?.data?.message}`}
                                 iconType="feather"
                                 iconName="info"
                                 status="info"

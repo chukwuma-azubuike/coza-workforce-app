@@ -71,18 +71,30 @@ interface IDateTimePickerProps {
     label?: string;
     minimumDate?: Date;
     maximumDate?: Date;
+    fieldName: string;
+    onSelectDate?: (fieldName: string, value: any) => void;
 }
 
 const DateTimePickerComponent: React.ForwardRefExoticComponent<
     IDateTimePickerProps & React.RefAttributes<any>
 > = React.forwardRef(
-    ({ label, minimumDate, maximumDate }: IDateTimePickerProps, ref) => {
+    (
+        {
+            label,
+            minimumDate,
+            fieldName,
+            maximumDate,
+            onSelectDate,
+        }: IDateTimePickerProps,
+        ref
+    ) => {
         const [date, setDate] = React.useState<Date>(new Date());
         const [show, setShow] = React.useState<boolean>(false);
 
         const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
             selectedDate && setDate(selectedDate);
             setShow(false);
+            onSelectDate && onSelectDate(fieldName, selectedDate);
         };
 
         const handlePress = () => setShow(true);

@@ -4,16 +4,19 @@ import RegisterStepFour from './register-step-four';
 import RegisterStepOne from './register-step-one';
 import RegisterStepThree from './register-step-three';
 import RegisterStepTwo from './register-step-two';
-import {
-    NativeStackNavigationProp,
-    NativeStackScreenProps,
-} from '@react-navigation/native-stack';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import Stepper, {
     IRegisterPagesProps,
 } from '../../../components/composite/stepper';
-import { IAuthParams, IRegisterPayload } from '../../../store/types';
-import { Formik, FormikHelpers } from 'formik';
+import { IRegisterPayload } from '../../../store/types';
+import { Formik } from 'formik';
+import { RegisterSchema } from '../../../utils/schemas';
+import { IRegisterFormProps } from './types';
+import { handlePressFoward } from './helpers';
+import { useRegisterMutation } from '../../../store/services/auth';
+import useModal from '../../../hooks/modal/useModal';
+import ModalAlertComponent from '../../../components/composite/modal-alert';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -22,58 +25,60 @@ const PAGES: IRegisterPagesProps[] = [
     { label: 'Password', component: RegisterStepFour },
 ];
 
-interface IRegisterFormProps {
-    handleChange: any;
-    handleSubmit: (
-        values: IAuthParams,
-        formikHelpers: FormikHelpers<IAuthParams>
-    ) => void;
-    values: any;
-}
-
-const INITIAL_VALUES: IRegisterPayload = {
-    firstName: 'James',
-    lastName: 'Bosco',
-    password: '',
-    email: 'james_bosco@gmail.com',
-    phoneNumber: '+234705646565',
-    address: 'No 18 Felix Crescent',
-    department: {
-        name: 'Witty Inventions',
-        id: 'jbwef87829hasd99kk',
-    },
-    nextOfKin: {
-        name: 'John Bosco',
-        phoneNumber: '+2349098138388',
-    },
-    occupation: 'Principal Engineer',
-    placeOfWork: 'Canonical Ent.',
-    gender: 'M',
-    maritalStatus: 'married',
-    socialMedia: {
-        facebook: '@jon_bosco',
-        instagram: '@jon_bosco',
-        twitter: '@jon_bosco',
-    },
-    birthDay: '01-02-1990',
-    pictureUrl: 'hhdiinn@mial.com',
-};
-
-export interface IRegistrationPageStep {
-    values: any;
-    handleChange: any;
-    handleSubmit: any;
-    onStepPress: (step: number) => void;
-    navigation?: NativeStackNavigationProp<ParamListBase, string, undefined>;
-}
-
 const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
+    route: { params },
 }) => {
+    const [register, { data, error, isError, isSuccess, isLoading }] =
+        useRegisterMutation();
+
     const handleSubmit = (
-        values: IAuthParams,
-        formikHelpers: FormikHelpers<IAuthParams>
-    ) => {};
+        values: IRegisterPayload & {
+            confirmPassword?: string;
+            departmentName?: string;
+        }
+    ) => {
+        delete values.confirmPassword;
+        delete values.departmentName;
+
+        register(values);
+    };
+
+    const { setModalState } = useModal();
+
+    React.useEffect(() => {
+        if (isSuccess) {
+            setModalState({
+                duration: 4,
+                render: (
+                    <ModalAlertComponent
+                        description="Registration successful"
+                        iconName="checkmark-circle"
+                        iconType="ionicon"
+                        status="success"
+                    />
+                ),
+            });
+            setTimeout(() => {
+                navigation.navigate('Login');
+            }, 5000);
+        }
+        if (isError) {
+            setModalState({
+                duration: 4,
+                render: (
+                    <ModalAlertComponent
+                        description={`${error?.data?.message}`}
+                        iconType="feather"
+                        iconName="info"
+                        status="error"
+                    />
+                ),
+            });
+        }
+    }, [isSuccess]);
+
+    const INITIAL_VALUES = params as IRegisterPayload;
 
     return (
         <Formik<IRegisterPayload>
@@ -81,12 +86,14 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             enableReinitialize
             onSubmit={handleSubmit}
             initialValues={INITIAL_VALUES}
+            validationSchema={RegisterSchema}
         >
-            {({ handleChange, handleSubmit, values }: IRegisterFormProps) => (
+            {(props: IRegisterFormProps) => (
                 <Stepper
+                    disableSwipe
                     pages={PAGES}
                     navigation={navigation}
-                    otherProps={{ handleChange, handleSubmit, values }}
+                    otherProps={{ ...props, handlePressFoward, isLoading }}
                 />
             )}
         </Formik>

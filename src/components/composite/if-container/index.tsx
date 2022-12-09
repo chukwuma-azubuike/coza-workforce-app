@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface IIfProps {
-    condition: boolean;
+    condition?: boolean;
 }
 
 const If: React.FC<IIfProps> = props => {
