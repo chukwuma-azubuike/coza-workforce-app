@@ -13,7 +13,7 @@ const Empty: React.FC<{ message?: string }> = ({ message }) => {
                 loop
             />
             <Text fontSize="md" color="gray.400" semi-bold>
-                {message ? message : 'Nothing here yet.'}
+                {message ? message : 'No records to show yet'}
             </Text>
         </Center>
     );
