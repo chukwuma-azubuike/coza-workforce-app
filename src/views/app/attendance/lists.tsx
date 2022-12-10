@@ -8,16 +8,16 @@ import {
 } from './flatListConfig';
 import { MonthPicker } from '../../../components/composite/date-picker';
 
-export const MyAttendance: React.FC = () => {
+export const MyAttendance: React.FC = React.memo(() => {
     return (
         <>
             <MonthPicker />
             <FlatListComponent columns={columns} data={data} />
         </>
     );
-};
+});
 
-export const TeamAttendance: React.FC = () => {
+export const TeamAttendance: React.FC = React.memo(() => {
     return (
         <>
             <MonthPicker />
@@ -27,13 +27,13 @@ export const TeamAttendance: React.FC = () => {
             />
         </>
     );
-};
+});
 
-export const CampusAttendance: React.FC = () => {
+export const CampusAttendance: React.FC = React.memo(() => {
     return (
         <>
             <MonthPicker />
             <FlatListComponent columns={columns} data={data} />
         </>
     );
-};
+});
