@@ -9,10 +9,9 @@ import {
     MyPermissionsList,
     MyTeamPermissionsList,
 } from './permissions-list';
-import ButtonSelector, {
-    useButtonSelector,
-} from '../../../components/composite/button-selector';
-import RenderContainer from '../../../components/composite/render-container';
+import { SceneMap } from 'react-native-tab-view';
+import { data } from '../attendance/flatListConfig';
+import TabComponent from '../../../components/composite/tabs';
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
@@ -21,30 +20,33 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         navigation.navigate('Request permission');
     };
 
-    const { focused, setFocused } = useButtonSelector();
+    const renderScene = SceneMap({
+        myPermissions: MyPermissionsList,
+        teamPermissions: MyTeamPermissionsList,
+        campusPermissions: CampusPermissions,
+    });
+
+    const [index, setIndex] = React.useState(0);
+    const [routes] = React.useState([
+        { key: 'myPermissions', title: 'My Permissions' },
+        { key: 'teamPermissions', title: 'Team Permissions' },
+        { key: 'campusPermissions', title: 'Campus Permissions' },
+    ]);
 
     return (
         <ViewWrapper>
             <>
-                {/* <Empty message="You haven't requested any permissions." /> */}
                 <AddButtonComponent zIndex={10} onPress={handlePress} />
-                <ButtonSelector
-                    focused={focused}
-                    setFocused={setFocused}
-                    items={[
-                        { title: 'My Permissions' },
-                        { title: 'Team Permissions' },
-                        { title: 'Campus Permissions' },
-                    ]}
-                />
-                <RenderContainer
-                    renderIndex={focused}
-                    components={[
-                        <MyPermissionsList />,
-                        <MyTeamPermissionsList />,
-                        <CampusPermissions />,
-                    ]}
-                />
+                {data.length ? (
+                    <TabComponent
+                        tabBarScroll
+                        onIndexChange={setIndex}
+                        renderScene={renderScene}
+                        navigationState={{ index, routes }}
+                    />
+                ) : (
+                    <Empty message="You haven't requested any permissions." />
+                )}
             </>
         </ViewWrapper>
     );
