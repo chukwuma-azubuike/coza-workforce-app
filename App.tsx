@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native';
 import { IModalProps } from './types/app';
 import useRootModal from './src/hooks/modal/useRootModal';
 import ModalProvider from './src/providers/modal-provider';
+import useUserSession from './src/hooks/user-session';
 
 const theme = extendTheme(extendedTheme);
 
@@ -25,6 +26,8 @@ const App: React.FC<JSX.Element> = () => {
 
     const { setModalState } = useRootModal(modalInitialState.modalState);
 
+    const { isLoggedIn } = useUserSession();
+
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
@@ -37,7 +40,7 @@ const App: React.FC<JSX.Element> = () => {
                 >
                     <NativeBaseProvider theme={theme}>
                         <SafeAreaProvider>
-                            <Views isLoggedIn={true} />
+                            <Views isLoggedIn={isLoggedIn} />
                         </SafeAreaProvider>
                     </NativeBaseProvider>
                 </ModalProvider>

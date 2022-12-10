@@ -50,13 +50,14 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             });
         }
         if (isSuccess) {
-            data && Utils.storeUserSession(data.data);
-            setModalState({
-                status: 'success',
-                defaultRender: true,
-                message: 'Successful',
-            });
-            navigation.navigate('App');
+            if (data) {
+                setModalState({
+                    status: 'success',
+                    defaultRender: true,
+                    message: 'Successful',
+                });
+                navigation.navigate('App');
+            }
         }
     }, [isSuccess, isError]);
 

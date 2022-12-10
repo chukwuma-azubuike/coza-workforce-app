@@ -6,6 +6,7 @@ import {
 } from '../../../store/services/auth';
 import { CELL_COUNT } from '../../../components/atoms/otp-input';
 import Utils from '../../../utils';
+import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 
 const useWelcome = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -58,7 +59,7 @@ const useWelcome = () => {
     React.useEffect(() => {
         if (isSuccessValidate) {
             setTimeout(() => {
-                navigate('Register', validateData);
+                navigate('Register' as never, validateData as never);
             }, 2000);
         }
     }, [isErrorValidate, isSuccessValidate]);
@@ -71,7 +72,7 @@ const useWelcome = () => {
     React.useLayoutEffect(() => {
         Utils.retrieveUserSession().then(session => {
             if (session) {
-                navigate('App');
+                navigate('App' as never);
             }
         });
     }, []);
