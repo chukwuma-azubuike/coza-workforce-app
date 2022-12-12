@@ -51,7 +51,6 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     justifyContent="space-around"
                 >
                     <Image
-                        alt="logo"
                         style={{
                             width: 150,
                             height: 150,

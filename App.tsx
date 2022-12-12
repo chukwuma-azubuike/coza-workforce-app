@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { extendTheme, NativeBaseProvider } from 'native-base';
+import { extendTheme, NativeBaseProvider, Spinner } from 'native-base';
 import Views from './src/views';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { extendedTheme } from './src/config/appConfig';
@@ -11,8 +11,18 @@ import { IModalProps } from './types/app';
 import useRootModal from './src/hooks/modal/useRootModal';
 import ModalProvider from './src/providers/modal-provider';
 import useUserSession from './src/hooks/user-session';
+import Loading from './src/components/atoms/loading';
 
 const theme = extendTheme(extendedTheme);
+
+export interface IAppStateContext {
+    isLoggedIn: boolean;
+    setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const AppStateContext = React.createContext<Partial<IAppStateContext>>(
+    {}
+);
 
 const App: React.FC<JSX.Element> = () => {
     const modalInitialState: Pick<IModalProps, 'modalState'> = {
@@ -26,24 +36,32 @@ const App: React.FC<JSX.Element> = () => {
 
     const { setModalState } = useRootModal(modalInitialState.modalState);
 
-    const { isLoggedIn } = useUserSession();
+    const { isLoggedIn, setIsLoggedIn } = useUserSession();
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
-                <ModalProvider
-                    initialModalState={{
-                        // Initialised and also hydrated
-                        ...modalInitialState.modalState,
-                        ...setModalState,
-                    }}
+                <AppStateContext.Provider
+                    value={{ isLoggedIn, setIsLoggedIn } as IAppStateContext}
                 >
-                    <NativeBaseProvider theme={theme}>
-                        <SafeAreaProvider>
-                            <Views isLoggedIn={isLoggedIn} />
-                        </SafeAreaProvider>
-                    </NativeBaseProvider>
-                </ModalProvider>
+                    <ModalProvider
+                        initialModalState={{
+                            // Initialised and hydrated
+                            ...modalInitialState.modalState,
+                            ...setModalState,
+                        }}
+                    >
+                        <NativeBaseProvider theme={theme}>
+                            <SafeAreaProvider>
+                                {isLoggedIn !== undefined ? (
+                                    <Views isLoggedIn={isLoggedIn} />
+                                ) : (
+                                    <Loading bootUp />
+                                )}
+                            </SafeAreaProvider>
+                        </NativeBaseProvider>
+                    </ModalProvider>
+                </AppStateContext.Provider>
             </Provider>
         </SafeAreaView>
     );
