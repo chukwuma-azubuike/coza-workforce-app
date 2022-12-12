@@ -107,10 +107,9 @@ export const authServiceSlice = createApi({
             }),
             transformResponse: async (response: ILoginResponse) => {
                 Utils.storeUserSession(response.data)
-                    .then(() => {
-                        return response.data.profile;
-                    })
+                    .then(() => {})
                     .catch(err => {});
+                return response.data;
             },
         }),
 

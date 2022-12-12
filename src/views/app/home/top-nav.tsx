@@ -5,16 +5,14 @@ import { ParamListBase } from '@react-navigation/native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import { GestureResponderEvent } from 'react-native';
 
 const TopNav: React.FC<
     NativeStackNavigationProp<ParamListBase, string, undefined>
 > = navigation => {
     // API implementation
 
-    const handleNotificationPress = (e: GestureResponderEvent) => () => {
-        e.preventDefault();
-        navigation.navigate('Profile');
+    const handleNotificationPress = () => {
+        navigation.navigate('Notifications');
     };
 
     const handlePress = () => navigation.navigate('Profile');

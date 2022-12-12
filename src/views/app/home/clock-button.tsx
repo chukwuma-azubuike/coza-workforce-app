@@ -14,7 +14,6 @@ import { TouchableNativeFeedback } from 'react-native';
 import useModal from '../../../hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
-import { THEME_CONFIG } from '../../../config/appConfig';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -45,11 +44,6 @@ const ClockButton = ({ isInRange }: IClockButtonProps) => {
                             }
                             iconType={
                                 isInRange ? 'material-community' : 'ionicon'
-                            }
-                            color={
-                                isInRange
-                                    ? THEME_CONFIG.primaryLight
-                                    : undefined
                             }
                             iconName={
                                 isInRange ? 'timer-outline' : 'warning-outline'

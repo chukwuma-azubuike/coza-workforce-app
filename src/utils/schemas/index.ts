@@ -18,7 +18,7 @@ export const RegisterSchema = Yup.object().shape({
             `Please enter a valid ${Utils.locale} phone number`
         )
         .required('A phone number is required'),
-    email: Yup.string().required('Your enail is required.'),
+    email: Yup.string().required('Your email is required.'),
     departmentId: Yup.string(),
     campusId: Yup.string(),
     roleId: Yup.string(),
