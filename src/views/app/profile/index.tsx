@@ -1,17 +1,25 @@
 import { Icon } from '@rneui/themed';
-import { Box, Heading, HStack, List, Stack, Text, VStack } from 'native-base';
+import { Box, Heading, Stack, Text, VStack } from 'native-base';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
+import { AppStateContext } from '../../../../App';
 import AvatarComponent from '../../../components/atoms/avatar';
-import Empty from '../../../components/atoms/empty';
 import UserInfo from '../../../components/atoms/user-info';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import Utils from '../../../utils';
 
 const Profile: React.FC = () => {
+    const { setIsLoggedIn } = React.useContext(AppStateContext);
+
+    const handleLogout = () => {
+        Utils.removeUserSession().then(res => {
+            setIsLoggedIn && setIsLoggedIn(false);
+        });
+    };
+
     return (
-        <ViewWrapper>
-            {/* <Empty /> */}
+        <ViewWrapper scroll>
             <VStack>
                 <VStack
                     pt={1}
@@ -70,7 +78,7 @@ const Profile: React.FC = () => {
                 <TouchableOpacity
                     activeOpacity={0.4}
                     style={{ width: '100%' }}
-                    // onPress={handlePress(route)}
+                    onPress={handleLogout}
                 >
                     <Stack
                         my={3}
