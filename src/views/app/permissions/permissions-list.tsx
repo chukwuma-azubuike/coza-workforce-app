@@ -359,7 +359,7 @@ const CampusPermissions: React.FC = memo(() => {
     ];
 
     const memoizedData = useMemo(
-        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        () => Object.entries(transformData(TEST_DATA, 'status')),
         [TEST_DATA]
     );
 

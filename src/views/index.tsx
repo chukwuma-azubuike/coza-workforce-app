@@ -38,10 +38,11 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
             />
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
-                    {isLoggedIn && (
+                    {isLoggedIn ? (
+                        <RootStack.Screen name="App" component={AppRoute} />
+                    ) : (
                         <RootStack.Screen name="Auth" component={AuthRoute} />
                     )}
-                    <RootStack.Screen name="App" component={AppRoute} />
                 </RootStack.Navigator>
             </NavigationContainer>
         </>

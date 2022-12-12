@@ -22,7 +22,7 @@ import { ILoginPayload } from '../../../store/types';
 import { IRegisterFormProps } from '../register/types';
 import useModal from '../../../hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
-import Utils from '../../../utils';
+import { AppStateContext } from '../../../../App';
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
@@ -30,7 +30,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 }) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-    const [login, { data, error, isError, isSuccess, isLoading }] =
+    const [login, { data, error, isError, isSuccess, isLoading, status }] =
         useLoginMutation();
     const { setModalState } = useModal();
     const handleIconPress = () => setShowPassword(prev => !prev);
@@ -41,12 +41,14 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         login(values);
     };
 
+    const { setIsLoggedIn } = React.useContext(AppStateContext);
+
     React.useEffect(() => {
         if (isError) {
             setModalState({
                 defaultRender: true,
-                status: 'error',
-                message: error?.data?.data?.message,
+                status: error?.error ? 'error' : 'info',
+                message: error?.data?.data?.message || error?.error,
             });
         }
         if (isSuccess) {
@@ -56,7 +58,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     defaultRender: true,
                     message: 'Successful',
                 });
-                navigation.navigate('App');
+                setIsLoggedIn && setIsLoggedIn(true);
             }
         }
     }, [isSuccess, isError]);
@@ -74,7 +76,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         source={cozaIcon}
                         resizeMode="center"
                     />
-                    <Heading>Welcome back</Heading>
+                    <Heading mt={4}>Welcome back</Heading>
                 </Center>
                 <Box alignItems="center" w="100%">
                     <Formik<ILoginPayload>

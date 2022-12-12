@@ -4,6 +4,7 @@ import { AuthRoutes } from '../../config/navigation';
 const AuthStack = createNativeStackNavigator();
 
 const AuthRoute: React.FC = () => {
+    
     return (
         <AuthStack.Navigator screenOptions={{ headerShown: false }}>
             {/* Auth Routes */}
