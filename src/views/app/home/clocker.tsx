@@ -9,6 +9,8 @@ import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { Alert } from 'react-native';
 import { CLOCK_IN_MIN_DISTANCE } from '@env';
+import useRole from '../../../hooks/role';
+import If from '../../../components/composite/if-container';
 
 const campusCoordinates = {
     latitude: 6.5812268318052105,
@@ -37,6 +39,8 @@ const Clocker: React.FC = () => {
         );
     }, [distance]);
 
+    const { isAHOD, isHOD } = useRole();
+
     return (
         <Center px={4} _dark={{ bg: 'black' }}>
             <VStack justifyContent="space-evenly" h="full" alignItems="center">
@@ -48,7 +52,9 @@ const Clocker: React.FC = () => {
                     <ClockButton isInRange={isInRange} />
                     <CampusLocation />
                 </VStack>
-                <AttendanceSummary />
+                <If condition={isAHOD || isHOD}>
+                    <AttendanceSummary />
+                </If>
                 <ClockStatistics />
             </VStack>
         </Center>

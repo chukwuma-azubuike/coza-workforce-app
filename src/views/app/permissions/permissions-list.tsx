@@ -354,7 +354,7 @@ const CampusPermissions: React.FC = memo(() => {
             dataIndex: 'dateCreated',
             render: (_: IPermission, key) => (
                 <PermissionListRow type="campus" {..._} key={key} />
-            ),
+            )
         },
     ];
 
