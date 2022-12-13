@@ -10,6 +10,7 @@ import {
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'account';
+const DEFAULT_ROLE_ID = '638a5f1e8eb1e1ef2b0be2a7'; // Worker
 
 export type ISendOTPResponse = IDefaultResponse<{
     isOTPSent: boolean;
@@ -52,17 +53,18 @@ export type ILoginResponse = IDefaultResponse<{
 }>;
 
 export type IRegisterResponse = IDefaultResponse<IUser>;
+export type IGetUserByIdResponse = IDefaultResponse<IUser>;
 
-export const authServiceSlice = createApi({
-    reducerPath: 'auth',
+export const accountServiceSlice = createApi({
+    reducerPath: 'account',
 
-    tagTypes: ['Auth'],
+    tagTypes: ['account'],
 
     baseQuery: fetchUtils.baseQuery,
 
-    // keepUnusedDataFor: 1,
-
     endpoints: endpoint => ({
+        /*********** Authentication **********/
+
         sendOTP: endpoint.query<ISendOTPResponse, string>({
             query: email => `/${SERVICE_URL}/send-otp/${email}`,
         }),
@@ -120,11 +122,21 @@ export const authServiceSlice = createApi({
                 body: {
                     ...body,
                     pictureUrl: '',
-                    roleId: '638a5f1e8eb1e1ef2b0be2a7',
+                    roleId: DEFAULT_ROLE_ID,
                 },
             }),
         }),
-        // Add your endpoints here
+
+        /*********** User **********/
+
+        getUserById: endpoint.query<IGetUserByIdResponse, string>({
+            query: _id => ({
+                url: `/${SERVICE_URL}/user/${_id}`,
+                method: 'GET',
+            }),
+            transformResponse: async (response: IGetUserByIdResponse) =>
+                response.data,
+        }),
     }),
 });
 
@@ -133,5 +145,6 @@ export const {
     useSendOTPQuery,
     useLoginMutation,
     useRegisterMutation,
+    useGetUserByIdQuery,
     useValidateEmailOTPMutation,
-} = authServiceSlice;
+} = accountServiceSlice;

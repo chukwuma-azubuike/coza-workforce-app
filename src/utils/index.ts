@@ -9,6 +9,7 @@ import {
 import Geolocation from 'react-native-geolocation-service';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { IToken, IUser } from '../store/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Utils {
     /************ String logic ************/
@@ -23,6 +24,12 @@ class Utils {
         let restChar = splitChar.slice(1, splitChar.length);
 
         return `${firstChar}${restChar.toLowerCase()}`;
+    }
+
+    /*************** Filters ****************/
+    static filter(arr?: any[], citeria?: any) {
+        if (arr) return arr.filter(elm => elm !== citeria);
+        return [];
     }
 
     /************ Storage logic ************/
@@ -67,6 +74,32 @@ class Utils {
         } catch (error) {
             // There was an error on the native side
         }
+    };
+
+    /****************** Async Storage ****************/
+
+    static storeCurrentUserData = async (data: IUser) => {
+        try {
+            await AsyncStorage.setItem('current_user', JSON.stringify(data));
+        } catch (error) {}
+    };
+
+    static retrieveCurrentUserData: () => Promise<any> = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('current_user');
+
+            if (userData) return JSON.parse(userData);
+
+            return;
+        } catch (error) {
+            return;
+        }
+    };
+
+    static clearCurrentUserStorage = async () => {
+        try {
+            await AsyncStorage.clear();
+        } catch (error) {}
     };
 
     /************ Native Permisisons logic ************/

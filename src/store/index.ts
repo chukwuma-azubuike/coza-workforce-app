@@ -5,7 +5,9 @@ import rootReducer from './root-reducer';
 import { ENV } from '@env';
 import middlewaresSlices from './services/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { persistReducer, persistStore } from 'redux-persist';
+import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
+import hardSet from 'redux-persist/es/stateReconciler/hardSet';
+
 const middlewares: Middleware[] = [];
 
 if (ENV === 'development') {
@@ -16,9 +18,10 @@ if (ENV === 'development') {
     middlewares.push(logger);
 }
 
-const persistConfig = {
+const persistConfig: PersistConfig<any> = {
     key: 'root',
     storage: AsyncStorage,
+    stateReconciler: hardSet,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

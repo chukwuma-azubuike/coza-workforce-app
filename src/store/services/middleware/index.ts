@@ -1,10 +1,10 @@
-import { authServiceSlice } from '../auth';
+import { accountServiceSlice } from '../account';
 import { attendanceServiceSlice } from '../attendance';
 import { complianceServiceSlice } from '../compliance';
 import { permissionsServiceSlice } from './../permissions';
 
 const middlewaresSlices = [
-    authServiceSlice.middleware,
+    accountServiceSlice.middleware,
     attendanceServiceSlice.middleware,
     complianceServiceSlice.middleware,
     permissionsServiceSlice.middleware,
