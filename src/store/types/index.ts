@@ -86,8 +86,26 @@ export interface IUser {
 // Attendance
 export interface IAttendance extends ILog {
     _id: string;
-    xCoordinate: number;
-    yCoordinate: number;
+    userId: string;
+    clockIn: string | null;
+    clockOut: string | null;
+    service: {
+        _id: string;
+        name: string;
+        coordinates: {
+            latitude: string;
+            longitude: string;
+        };
+        clockInStartTime: string;
+        clockInEndTime: string;
+        campusId: string;
+    };
+    coordinates: {
+        latitude: string;
+        longitude: string;
+    };
+    createdAt: string;
+    updatedAt: string;
 }
 
 // Compliance
@@ -152,6 +170,22 @@ export interface IDepartment {
     departmentName: string;
     campusId: string;
     description: string;
+    createdAt: string;
+    __v: number;
+}
+
+// Services
+export interface IService {
+    _id: string;
+    name: string;
+    campusId: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    clockInStartTime: number;
+    clockInEndTime: number;
+    rangeToClockIn: number;
     createdAt: string;
     __v: number;
 }

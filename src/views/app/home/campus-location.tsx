@@ -1,9 +1,14 @@
 import { Icon } from '@rneui/base';
 import { Center, Flex, Text } from 'native-base';
 import React from 'react';
+import { HomeContext } from '.';
 import { THEME_CONFIG } from '../../../config/appConfig';
 
 const CampusLocation = () => {
+    const {
+        latestService: { data },
+    } = React.useContext(HomeContext);
+
     return (
         <Center>
             <Flex alignItems="center" flexDirection="row">
@@ -19,7 +24,7 @@ const CampusLocation = () => {
                     fontSize="md"
                     ml={1}
                 >
-                    Lagos Campus
+                    COZA Global
                 </Text>
             </Flex>
         </Center>

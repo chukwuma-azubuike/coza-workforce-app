@@ -8,48 +8,67 @@ import AttendanceSummary from './attendance-summary';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { Alert } from 'react-native';
-import { CLOCK_IN_MIN_DISTANCE } from '@env';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
-
-const campusCoordinates = {
-    latitude: 6.5812268318052105,
-    longitude: 3.3608375132246167,
-};
+import { HomeContext } from '.';
+import { ICampusCoordinates } from '../../../store/services/attendance';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(
         null as unknown as GeoCoordinates
     );
 
+    const {
+        latestService: { data },
+    } = React.useContext(HomeContext);
+
+    const campusCoordinates = {
+        // latitude: data?.coordinates.lat,
+        // longitude: data?.coordinates.long,
+        latitude: 6.6587,
+        longitude: 3.329,
+    };
+
     const { isInRange, distance } = useGeoLocation({
         deviceCoordinates,
-        campusCoordinates,
+        rangeToClockIn: data?.rangeToClockIn as number,
+        campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
     React.useEffect(() => {
         Geolocation.getCurrentPosition(
             position => {
                 setDeviceCoordinates(position.coords);
+                Alert.alert(
+                    `${position.coords.latitude} ${position.coords.longitude}`
+                );
             },
             error => {
                 Alert.alert(error.message);
             },
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
-    }, [distance]);
+    }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude]);
 
     const { isAHOD, isHOD } = useRole();
 
     return (
         <Center px={4} _dark={{ bg: 'black' }}>
             <VStack justifyContent="space-evenly" h="full" alignItems="center">
-                <Text fontSize="xl" color="gray.500" fontWeight="light">
-                    COZA SUNDAY
+                <Text
+                    fontSize="lg"
+                    margin={0}
+                    color="gray.500"
+                    fontWeight="light"
+                >
+                    {data?.name.toUpperCase()}
                 </Text>
                 <Timer />
                 <VStack alignItems="center" space={8}>
-                    <ClockButton isInRange={isInRange} />
+                    <ClockButton
+                        deviceCoordinates={deviceCoordinates}
+                        isInRange={isInRange || false}
+                    />
                     <CampusLocation />
                 </VStack>
                 <If condition={isAHOD || isHOD}>

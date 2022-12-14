@@ -1,4 +1,3 @@
-import { CLOCK_IN_MIN_DISTANCE } from '@env';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import { ICampusCoordinates } from '../../store/services/attendance';
 
@@ -34,27 +33,30 @@ const distanceBetweenTwoCoordinates = (
 };
 
 interface IUseGeoLocationArgs {
+    rangeToClockIn: number;
     deviceCoordinates: GeoCoordinates;
     campusCoordinates: ICampusCoordinates;
 }
 
 const useGeoLocation = (props: IUseGeoLocationArgs) => {
-    const { deviceCoordinates, campusCoordinates } = props;
+    const { deviceCoordinates, campusCoordinates, rangeToClockIn } = props;
 
     let distance = Infinity;
 
     const isInRange = () => {
-        try {
-            distance = distanceBetweenTwoCoordinates(
-                deviceCoordinates,
-                campusCoordinates
-            );
-            if (distance <= +CLOCK_IN_MIN_DISTANCE) {
-                return true;
+        if (deviceCoordinates && campusCoordinates) {
+            try {
+                distance = distanceBetweenTwoCoordinates(
+                    deviceCoordinates,
+                    campusCoordinates
+                );
+                if (distance <= +rangeToClockIn) {
+                    return true;
+                }
+                return false;
+            } catch (err) {
+                return false;
             }
-            return false;
-        } catch (err) {
-            return false;
         }
     };
 

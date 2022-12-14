@@ -10,7 +10,7 @@ const rootReducer = combineReducers({
     attendance: attendanceServiceSlice.reducer,
     compliance: complianceServiceSlice.reducer,
     permissions: permissionsServiceSlice.reducer,
-    services: servicesServiceSlice.reducer,
+    service: servicesServiceSlice.reducer,
     // reports: '',
     // users: '',
 });
