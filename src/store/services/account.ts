@@ -47,6 +47,16 @@ export type IVerifyEmailOTPResponse = IDefaultResponse<{
     userId: string;
 }>;
 
+interface IVerifyEmailResponseTransform {
+    email: string;
+    gender: string;
+    campusId: string;
+    lastName: string;
+    firstName: string;
+    departmentName: string;
+    departmentId: string;
+}
+
 export type ILoginResponse = IDefaultResponse<{
     token: IToken;
     profile: IUser;
@@ -70,7 +80,7 @@ export const accountServiceSlice = createApi({
         }),
 
         validateEmailOTP: endpoint.mutation<
-            IVerifyEmailOTPResponse,
+            IVerifyEmailResponseTransform,
             IVerifyEmailOTPPayload
         >({
             query: body => ({
@@ -101,7 +111,13 @@ export const accountServiceSlice = createApi({
             },
         }),
 
-        login: endpoint.mutation<ILoginResponse, ILoginPayload>({
+        login: endpoint.mutation<
+            {
+                token: IToken;
+                profile: IUser;
+            },
+            ILoginPayload
+        >({
             query: body => ({
                 url: `/${SERVICE_URL}/login`,
                 method: 'POST',
@@ -129,7 +145,7 @@ export const accountServiceSlice = createApi({
 
         /*********** User **********/
 
-        getUserById: endpoint.query<IGetUserByIdResponse, string>({
+        getUserById: endpoint.query<IUser, string>({
             query: _id => ({
                 url: `/${SERVICE_URL}/user/${_id}`,
                 method: 'GET',
