@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import {
     useSendOTPQuery,
     useValidateEmailOTPMutation,
-} from '../../../store/services/auth';
+} from '../../../store/services/account';
 import { CELL_COUNT } from '../../../components/atoms/otp-input';
 
 const useWelcome = () => {

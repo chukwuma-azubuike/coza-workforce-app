@@ -15,7 +15,10 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { useLoginMutation } from '../../../store/services/auth';
+import {
+    useGetUserByIdQuery,
+    useLoginMutation,
+} from '../../../store/services/account';
 import { Formik } from 'formik';
 import { LoginSchema } from '../../../utils/schemas';
 import { ILoginPayload } from '../../../store/types';
@@ -23,6 +26,7 @@ import { IRegisterFormProps } from '../register/types';
 import useModal from '../../../hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
+import Utils from '../../../utils';
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
@@ -43,6 +47,11 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 
     const { setIsLoggedIn } = React.useContext(AppStateContext);
 
+    const { isSuccess: isSuccessUserFetched, data: userDataFetched } =
+        useGetUserByIdQuery(data?.profile.userId as string, {
+            skip: !isSuccess,
+        });
+
     React.useEffect(() => {
         if (isError) {
             setModalState({
@@ -52,16 +61,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             });
         }
         if (isSuccess) {
-            if (data) {
-                setModalState({
-                    status: 'success',
-                    defaultRender: true,
-                    message: 'Successful',
-                });
+            if (data && isSuccessUserFetched) {
+                Utils.storeCurrentUserData(data.profile);
                 setIsLoggedIn && setIsLoggedIn(true);
             }
         }
-    }, [isSuccess, isError]);
+    }, [isSuccess, isError, isSuccessUserFetched]);
 
     return (
         <ViewWrapper>

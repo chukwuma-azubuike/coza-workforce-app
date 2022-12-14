@@ -14,7 +14,7 @@ import { Formik } from 'formik';
 import { RegisterSchema } from '../../../utils/schemas';
 import { IRegisterFormProps } from './types';
 import { handlePressFoward } from './helpers';
-import { useRegisterMutation } from '../../../store/services/auth';
+import { useRegisterMutation } from '../../../store/services/account';
 import useModal from '../../../hooks/modal/useModal';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
 

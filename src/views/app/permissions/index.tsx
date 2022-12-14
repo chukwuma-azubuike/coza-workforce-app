@@ -12,6 +12,14 @@ import {
 import { SceneMap } from 'react-native-tab-view';
 import { data } from '../attendance/flatListConfig';
 import TabComponent from '../../../components/composite/tabs';
+import useRole from '../../../hooks/role';
+import Utils from '../../../utils';
+
+const ROUTES = [
+    { key: 'myPermissions', title: 'My Permissions' },
+    { key: 'teamPermissions', title: 'Team Permissions' },
+    // { key: 'campusPermissions', title: 'Campus Permissions' },
+];
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
@@ -23,15 +31,26 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     const renderScene = SceneMap({
         myPermissions: MyPermissionsList,
         teamPermissions: MyTeamPermissionsList,
-        campusPermissions: CampusPermissions,
+        // campusPermissions: CampusPermissions,
     });
 
+    const { isQC, isAHOD, isHOD, isWorker } = useRole();
+
+    const allRoutes = React.useMemo(() => {
+        if (isQC) return ROUTES;
+
+        if (isHOD || isAHOD)
+            return ROUTES.filter(elm => elm.key !== 'campusPermissions');
+
+        if (isWorker) return ROUTES;
+    }, []);
+
+    const filteredRoutes = React.useMemo(
+        () => Utils.filter(allRoutes, undefined),
+        []
+    );
+
     const [index, setIndex] = React.useState(0);
-    const [routes] = React.useState([
-        { key: 'myPermissions', title: 'My Permissions' },
-        { key: 'teamPermissions', title: 'Team Permissions' },
-        { key: 'campusPermissions', title: 'Campus Permissions' },
-    ]);
 
     return (
         <ViewWrapper>
@@ -39,10 +58,10 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 <AddButtonComponent zIndex={10} onPress={handlePress} />
                 {data.length ? (
                     <TabComponent
-                        tabBarScroll
+                        // tabBarScroll
                         onIndexChange={setIndex}
                         renderScene={renderScene}
-                        navigationState={{ index, routes }}
+                        navigationState={{ index, routes: ROUTES }}
                     />
                 ) : (
                     <Empty message="You haven't requested any permissions." />

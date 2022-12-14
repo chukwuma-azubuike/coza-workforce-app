@@ -5,13 +5,14 @@ import Views from './src/views';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { extendedTheme } from './src/config/appConfig';
 import { Provider } from 'react-redux';
-import store from './src/store';
+import store, { persistor } from './src/store';
 import { SafeAreaView } from 'react-native';
 import { IModalProps } from './types/app';
 import useRootModal from './src/hooks/modal/useRootModal';
 import ModalProvider from './src/providers/modal-provider';
 import useUserSession from './src/hooks/user-session';
 import Loading from './src/components/atoms/loading';
+import { PersistGate } from 'redux-persist/integration/react';
 
 const theme = extendTheme(extendedTheme);
 
@@ -41,27 +42,36 @@ const App: React.FC<JSX.Element> = () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
-                <AppStateContext.Provider
-                    value={{ isLoggedIn, setIsLoggedIn } as IAppStateContext}
-                >
-                    <ModalProvider
-                        initialModalState={{
-                            // Initialised and hydrated
-                            ...modalInitialState.modalState,
-                            ...setModalState,
-                        }}
+                <NativeBaseProvider theme={theme}>
+                    <PersistGate
+                        loading={<Loading bootUp />}
+                        persistor={persistor}
                     >
-                        <NativeBaseProvider theme={theme}>
-                            <SafeAreaProvider>
-                                {isLoggedIn !== undefined ? (
-                                    <Views isLoggedIn={isLoggedIn} />
-                                ) : (
-                                    <Loading bootUp />
-                                )}
-                            </SafeAreaProvider>
-                        </NativeBaseProvider>
-                    </ModalProvider>
-                </AppStateContext.Provider>
+                        <AppStateContext.Provider
+                            value={
+                                {
+                                    isLoggedIn,
+                                    setIsLoggedIn,
+                                } as IAppStateContext
+                            }
+                        >
+                            <ModalProvider
+                                initialModalState={{
+                                    ...modalInitialState.modalState,
+                                    ...setModalState,
+                                }}
+                            >
+                                <SafeAreaProvider>
+                                    {isLoggedIn !== undefined ? (
+                                        <Views isLoggedIn={isLoggedIn} />
+                                    ) : (
+                                        <Loading bootUp />
+                                    )}
+                                </SafeAreaProvider>
+                            </ModalProvider>
+                        </AppStateContext.Provider>
+                    </PersistGate>
+                </NativeBaseProvider>
             </Provider>
         </SafeAreaView>
     );

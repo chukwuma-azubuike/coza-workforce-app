@@ -22,7 +22,7 @@ const renderTabBar: React.FC<TabBarProps<any>> = props => (
         tabStyle={Style.tab}
         indicatorStyle={Style.indicator}
         inactiveColor={THEME_CONFIG.primary}
-        indicatorContainerStyle={{ margin: 4 }}
+        // indicatorContainerStyle={{ margin: 4 }}
         pressColor={THEME_CONFIG.primaryVeryLight}
         labelStyle={{ color: THEME_CONFIG.primary }}
         renderLabel={({ route, focused, color }) => (
@@ -41,7 +41,7 @@ const renderTabBarScroll: React.FC<TabBarProps<any>> = props => (
         tabStyle={Style.tab}
         indicatorStyle={Style.indicatorScroll}
         inactiveColor={THEME_CONFIG.primary}
-        indicatorContainerStyle={{ margin: 4 }}
+        // indicatorContainerStyle={{ margin: 4 }}
         pressColor={THEME_CONFIG.primaryVeryLight}
         labelStyle={{ color: THEME_CONFIG.primary }}
         renderLabel={({ route, focused, color }) => (
@@ -71,15 +71,13 @@ const Style = StyleSheet.create({
         backgroundColor: 'white',
         shadowColor: 'white',
         borderWidth: 0,
-        marginRight: 6,
+        marginHorizontal: 6,
         marginBottom: 25,
     },
     indicator: {
         backgroundColor: THEME_CONFIG.primary,
-        marginBottom: -3.5,
         borderRadius: 6,
-        height: '118%',
-        width: 195,
+        height: '100%',
     },
     tab: {
         borderRadius: 6,
@@ -90,8 +88,7 @@ const Style = StyleSheet.create({
     },
     indicatorScroll: {
         backgroundColor: THEME_CONFIG.primary,
-        marginBottom: -3.5,
         borderRadius: 6,
-        height: '118%',
+        height: '100%',
     },
 });

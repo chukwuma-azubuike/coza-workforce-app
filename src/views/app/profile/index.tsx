@@ -1,4 +1,5 @@
 import { Icon } from '@rneui/themed';
+import moment from 'moment';
 import { Box, Heading, Stack, Text, VStack } from 'native-base';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
@@ -7,16 +8,21 @@ import AvatarComponent from '../../../components/atoms/avatar';
 import UserInfo from '../../../components/atoms/user-info';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
 
 const Profile: React.FC = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);
 
     const handleLogout = () => {
-        Utils.removeUserSession().then(res => {
-            setIsLoggedIn && setIsLoggedIn(false);
+        Utils.clearCurrentUserStorage().then(res => {
+            Utils.clearStorage().then(res => {
+                setIsLoggedIn && setIsLoggedIn(false);
+            });
         });
     };
+
+    const { user } = useRole();
 
     return (
         <ViewWrapper scroll>
@@ -34,10 +40,15 @@ const Profile: React.FC = () => {
                     />
                     <Stack mt="2">
                         <Heading textAlign="center" size="md">
-                            David Johnson
+                            {user &&
+                                `${Utils.capitalizeFirstChar(
+                                    user?.firstName
+                                )} ${Utils.capitalizeFirstChar(
+                                    user?.lastName
+                                )}`}
                         </Heading>
                         <Text textAlign="center" fontWeight="400">
-                            Media
+                            {user?.department.departmentName}
                         </Text>
                     </Stack>
                 </VStack>
@@ -63,17 +74,25 @@ const Profile: React.FC = () => {
                     </Box>
                 </Stack>
                 <Box mx={4}>
+                    <UserInfo heading="Address" detail={user?.address} />
+                    <UserInfo heading="Phone" detail={user?.phoneNumber} />
+                    <UserInfo heading="Next of kin" detail={user?.nextOfKin} />
+                    <UserInfo heading="Occupation" detail={user?.occupation} />
                     <UserInfo
-                        heading="Address"
-                        detail="56. Oduwole Str. Egebda, Lagos."
+                        heading="Place of work"
+                        detail={user?.placeOfWork}
                     />
-                    <UserInfo heading="Phone" detail="+2348165513593" />
-                    <UserInfo heading="Next of kin" detail="Micheal James" />
-                    <UserInfo heading="Occupation" detail="Engineer" />
-                    <UserInfo heading="Place of work" detail="COZA Global" />
-                    <UserInfo heading="Gender" detail="Male" />
-                    <UserInfo heading="Marital Status" detail="Single" />
-                    <UserInfo heading="Birthday" detail="5 Dec." />
+                    <UserInfo heading="Gender" detail={user?.gender} />
+                    <UserInfo
+                        heading="Marital Status"
+                        detail={Utils.capitalizeFirstChar(
+                            user?.maritalStatus || ''
+                        )}
+                    />
+                    <UserInfo
+                        heading="Birthday"
+                        detail={moment(user?.birthDay).format('DD MMM')}
+                    />
                 </Box>
                 <TouchableOpacity
                     activeOpacity={0.4}
