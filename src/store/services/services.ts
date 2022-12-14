@@ -1,7 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
+import { IDefaultResponse, IService } from '../types';
 import { fetchUtils } from './fetch-utils';
 
-const SERVICE_URL = 'services';
+const SERVICE_URL = 'service';
+
+type IGetLatestServiceResponse = IDefaultResponse<IService>;
 
 export const servicesServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -26,8 +29,11 @@ export const servicesServiceSlice = createApi({
             }),
         }),
 
-        getLatestService: endpoint.query<''[], ''>({
-            query: campusId => `/${SERVICE_URL}/${campusId}`,
+        getLatestService: endpoint.query<IService, string>({
+            query: campusId =>
+                `/${SERVICE_URL}/getLatestServiceByCampusId/${campusId}`,
+            transformResponse: (response: IGetLatestServiceResponse) =>
+                response.data,
         }),
 
         getServiceList: endpoint.query<''[], ''[]>({

@@ -1,19 +1,24 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { GeoCoordinates, GeoPosition } from 'react-native-geolocation-service';
-import { IAttendance, ICampus, IUser } from '../types';
+import { GeoCoordinates } from 'react-native-geolocation-service';
+import { IAttendance, IDefaultResponse } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'attendance';
 
-interface IGetCampusByIdResponse {
-    status: number;
-    message: string;
-    isError: boolean;
-    isSuccessful: boolean;
-    data: ICampus;
+export type ICampusCoordinates = Pick<GeoCoordinates, 'latitude' | 'longitude'>;
+
+export interface IClockInPayload {
+    userId: string;
+    clockIn: string | null;
+    clockOut: string | null;
+    serviceId: string;
+    coordinates: {
+        lat: string;
+        long: string;
+    };
 }
 
-export type ICampusCoordinates = Pick<GeoCoordinates, 'latitude' | 'longitude'>;
+export type IMutateAttendanceResponse = IDefaultResponse<IAttendance>;
 
 export const attendanceServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -21,20 +26,29 @@ export const attendanceServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        postAttendance: endpoint.mutation<void, IAttendance>({
+        clockIn: endpoint.mutation<IAttendance, IClockInPayload>({
             query: body => ({
-                url: SERVICE_URL,
+                url: `/${SERVICE_URL}/clockin`,
                 method: 'POST',
                 body,
             }),
+
+            transformResponse: (response: IMutateAttendanceResponse) =>
+                response.data,
         }),
 
-        getAttendance: endpoint.query<void, Pick<IUser, 'id'>>({
+        clockOut: endpoint.mutation<IAttendance, string>({
+            query: attendanceId => ({
+                url: `/attendance/clock-out/${attendanceId}`,
+                method: 'PUT',
+            }),
+
+            transformResponse: (response: IMutateAttendanceResponse) =>
+                response.data,
+        }),
+
+        getAttendance: endpoint.query<IAttendance, string>({
             query: id => `/${SERVICE_URL}/${id}`,
-        }),
-
-        getCampusById: endpoint.query<IGetCampusByIdResponse, string>({
-            query: campusId => `/campus/getCampus/${campusId}`,
         }),
 
         // Add your endpoints here
@@ -43,7 +57,7 @@ export const attendanceServiceSlice = createApi({
 
 // Use exported hook in relevant components
 export const {
+    useClockInMutation,
+    useClockOutMutation,
     useGetAttendanceQuery,
-    useGetCampusByIdQuery,
-    usePostAttendanceMutation,
 } = attendanceServiceSlice;
