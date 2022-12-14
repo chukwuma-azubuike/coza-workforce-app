@@ -85,7 +85,9 @@ const Profile: React.FC = () => {
                     <UserInfo heading="Gender" detail={user?.gender} />
                     <UserInfo
                         heading="Marital Status"
-                        detail={Utils.capitalizeFirstChar(user?.maritalStatus || '')}
+                        detail={Utils.capitalizeFirstChar(
+                            user?.maritalStatus || ''
+                        )}
                     />
                     <UserInfo
                         heading="Birthday"

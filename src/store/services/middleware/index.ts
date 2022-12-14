@@ -9,7 +9,7 @@ const middlewaresSlices = [
     attendanceServiceSlice.middleware,
     complianceServiceSlice.middleware,
     permissionsServiceSlice.middleware,
-    servicesServiceSlice.middleware
+    servicesServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;
