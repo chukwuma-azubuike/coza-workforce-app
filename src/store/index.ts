@@ -22,6 +22,7 @@ const persistConfig: PersistConfig<any> = {
     key: 'root',
     storage: AsyncStorage,
     stateReconciler: hardSet,
+    blacklist: ['service'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

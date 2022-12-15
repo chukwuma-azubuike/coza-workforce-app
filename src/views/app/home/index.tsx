@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import Clocker from './clocker';
@@ -29,7 +29,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 
     const { data, isError, isSuccess, isLoading } = useGetLatestServiceQuery(
         user?.campus.id as string,
-        { skip: !user }
+        { skip: !user, refetchOnMountOrArgChange: true }
     );
 
     const initialState = {

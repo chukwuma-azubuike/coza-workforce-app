@@ -25,8 +25,8 @@ const Clocker: React.FC = () => {
     const campusCoordinates = {
         // latitude: data?.coordinates.lat,
         // longitude: data?.coordinates.long,
-        latitude: 6.6587,
-        longitude: 3.329,
+        latitude: deviceCoordinates?.latitude,
+        longitude: deviceCoordinates?.longitude,
     };
 
     const { isInRange, distance } = useGeoLocation({
@@ -39,9 +39,9 @@ const Clocker: React.FC = () => {
         Geolocation.getCurrentPosition(
             position => {
                 setDeviceCoordinates(position.coords);
-                Alert.alert(
-                    `${position.coords.latitude} ${position.coords.longitude}`
-                );
+                // Alert.alert(
+                //     `${position.coords.latitude} ${position.coords.longitude}`
+                // );
             },
             error => {
                 Alert.alert(error.message);
@@ -61,7 +61,7 @@ const Clocker: React.FC = () => {
                     color="gray.500"
                     fontWeight="light"
                 >
-                    {data?.name.toUpperCase()}
+                    {data ? data?.name.toUpperCase() : 'NO SERVICE TODAY'}
                 </Text>
                 <Timer />
                 <VStack alignItems="center" space={8}>

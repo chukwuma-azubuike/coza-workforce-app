@@ -13,7 +13,7 @@ const CampusLocation = () => {
         <Center>
             <Flex alignItems="center" flexDirection="row">
                 <Icon
-                    color={THEME_CONFIG.gray}
+                    color={data ? THEME_CONFIG.gray : 'transparent'}
                     name="location-sharp"
                     type="ionicon"
                     size={15}
@@ -24,7 +24,7 @@ const CampusLocation = () => {
                     fontSize="md"
                     ml={1}
                 >
-                    COZA Global
+                    {data?.campus.campusName}
                 </Text>
             </Flex>
         </Center>

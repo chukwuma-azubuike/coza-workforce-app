@@ -85,7 +85,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                               )})`}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
-                                        {description}
+                                        {Utils.truncateString(description)}
                                     </Text>
                                 </VStack>
                             </HStack>
