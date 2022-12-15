@@ -198,7 +198,11 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                                         fontSize="md"
                                         color="white"
                                     >
-                                        {isSuccess ? clockedIn ? 'CLOCK OUT' : 'CLOCK IN' : ''}
+                                        {isSuccess
+                                            ? clockedIn
+                                                ? 'CLOCK OUT'
+                                                : 'CLOCK IN'
+                                            : ''}
                                     </Text>
                                 </VStack>
                             </If>
