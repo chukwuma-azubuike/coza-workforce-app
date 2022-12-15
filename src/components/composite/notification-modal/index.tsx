@@ -1,6 +1,5 @@
-import { Center, Text, VStack } from 'native-base';
+import { Center, Modal, Text, VStack } from 'native-base';
 import React, { useEffect } from 'react';
-import Modal from 'react-native-modal';
 import { IModalProps } from '../../../../types/app';
 import ButtonComponent from '../../atoms/button';
 import If from '../if-container';
@@ -36,55 +35,60 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
     }, [message, render]);
 
     return (
-        <Modal isVisible={open} onBackdropPress={hideModal}>
-            <Center>
-                <VStack
-                    w="full"
-                    space={2}
-                    borderRadius="2xl"
-                    backgroundColor="transparent"
-                >
-                    {defaultRender ? (
-                        <ModalAlertComponent
-                            description={message}
-                            iconName={
-                                status === 'success'
-                                    ? 'checkmark-circle-outline'
-                                    : status === 'info'
-                                    ? 'info'
-                                    : status === 'warning'
-                                    ? 'warning-outline'
-                                    : status === 'error'
-                                    ? 'error-outline'
-                                    : ''
-                            }
-                            iconType={
-                                status === 'success'
-                                    ? 'ionicon'
-                                    : status === 'info'
-                                    ? 'feather'
-                                    : status === 'warning'
-                                    ? 'ionicon'
-                                    : status === 'error'
-                                    ? 'material'
-                                    : 'ionicon'
-                            }
-                            status={status}
-                        />
-                    ) : render ? (
-                        render
-                    ) : (
-                        <Text my={4} fontSize="xl" textAlign="center">
-                            {message}
-                        </Text>
-                    )}
-                    <If condition={button}>
-                        <ButtonComponent title="Hide modal" onPress={hideModal}>
-                            Close
-                        </ButtonComponent>
-                    </If>
-                </VStack>
-            </Center>
+        <Modal w="full" isOpen={open} onClose={hideModal}>
+            <Modal.Content w="90%" h={300}>
+                <Center>
+                    <VStack
+                        w="full"
+                        space={2}
+                        borderRadius="2xl"
+                        backgroundColor="transparent"
+                    >
+                        {defaultRender ? (
+                            <ModalAlertComponent
+                                description={message}
+                                iconName={
+                                    status === 'success'
+                                        ? 'checkmark-circle-outline'
+                                        : status === 'info'
+                                        ? 'info'
+                                        : status === 'warning'
+                                        ? 'warning-outline'
+                                        : status === 'error'
+                                        ? 'error-outline'
+                                        : ''
+                                }
+                                iconType={
+                                    status === 'success'
+                                        ? 'ionicon'
+                                        : status === 'info'
+                                        ? 'feather'
+                                        : status === 'warning'
+                                        ? 'ionicon'
+                                        : status === 'error'
+                                        ? 'material'
+                                        : 'ionicon'
+                                }
+                                status={status}
+                            />
+                        ) : render ? (
+                            render
+                        ) : (
+                            <Text my={4} fontSize="xl" textAlign="center">
+                                {message}
+                            </Text>
+                        )}
+                        <If condition={button}>
+                            <ButtonComponent
+                                title="Hide modal"
+                                onPress={hideModal}
+                            >
+                                Close
+                            </ButtonComponent>
+                        </If>
+                    </VStack>
+                </Center>
+            </Modal.Content>
         </Modal>
     );
 };

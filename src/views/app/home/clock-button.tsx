@@ -21,6 +21,7 @@ import {
 } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
+import If from '../../../components/composite/if-container';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -70,12 +71,12 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 ),
             });
         }
-        if (!clockedIn && isInRange) {
+        if (!clockedIn && isInRange && !clockedIn) {
             clockIn({
                 userId: user?.userId as string,
                 clockIn: `${moment().unix()}`,
                 clockOut: null,
-                serviceId: latestServiceData?._id as string,
+                serviceId: latestServiceData?.id as string,
                 coordinates: {
                     lat: `${deviceCoordinates.latitude}`,
                     long: `${deviceCoordinates.longitude}`,
@@ -84,12 +85,13 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
         }
 
         if (clockedIn) {
-            clockOut(data?._id as string);
+            clockOut(data?.id as string);
         }
     };
 
     React.useEffect(() => {
-        if (isSuccess) {
+        let cleanUp = true;
+        if (isSuccess && cleanUp) {
             setClockedIn(true);
             setModalState({
                 duration: 6,
@@ -105,16 +107,42 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 ),
             });
         }
-        if (clockOutSuccess) {
+
+        return () => {
+            cleanUp = false;
+        };
+    }, [isSuccess]);
+
+    React.useEffect(() => {
+        let cleanUp = true;
+
+        if (clockOutSuccess && cleanUp) {
             setClockedIn(false);
+            setModalState({
+                duration: 6,
+                render: (
+                    <ModalAlertComponent
+                        description={`You clocked out at ${moment().format(
+                            'LT'
+                        )}`}
+                        status={isInRange ? 'success' : 'warning'}
+                        iconType={'material-community'}
+                        iconName={'timer-outline'}
+                    />
+                ),
+            });
         }
-    }, [isSuccess, clockOutSuccess]);
+
+        return () => {
+            cleanUp = false;
+        };
+    }, [clockOutSuccess]);
 
     const disabled = isLatestServiceError || isLatestServiceLoading;
 
     return (
         <Pressable>
-            {isInRange && !clockedIn && (
+            {isInRange && !clockedIn && isSuccess && (
                 <LottieView
                     source={require('../../../assets/json/clock-button-animation.json')}
                     resizeMode="cover"
@@ -154,7 +182,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                         )}
                     >
                         <Center>
-                            {!isLoading || !clockOutLoading ? (
+                            <If condition={isLoading || clockOutLoading}>
+                                <Spinner color="white" size="lg" />
+                            </If>
+                            <If condition={!isLoading && !clockOutLoading}>
                                 <VStack alignItems="center" space={4}>
                                     <Icon
                                         type="materialicons"
@@ -167,12 +198,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                                         fontSize="md"
                                         color="white"
                                     >
-                                        {clockedIn ? 'CLOCK OUT' : 'CLOCK IN'}
+                                        {isSuccess ? clockedIn ? 'CLOCK OUT' : 'CLOCK IN' : ''}
                                     </Text>
                                 </VStack>
-                            ) : (
-                                <Spinner color="white" size="lg" />
-                            )}
+                            </If>
                         </Center>
                     </TouchableNativeFeedback>
                 </Button>

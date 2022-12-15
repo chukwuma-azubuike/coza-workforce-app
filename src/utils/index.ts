@@ -26,6 +26,13 @@ class Utils {
         return `${firstChar}${restChar.toLowerCase()}`;
     }
 
+    static truncateString(str: string, num: number = 25) {
+        if (str.length > num) {
+            return str.slice(0, num) + '...';
+        }
+        return str;
+    }
+
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
         if (arr) return arr.filter(elm => elm !== citeria);
