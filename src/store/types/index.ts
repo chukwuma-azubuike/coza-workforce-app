@@ -85,22 +85,12 @@ export interface IUser {
 
 // Attendance
 export interface IAttendance extends ILog {
-    // _id: string;
+    _id: string;
     id: string;
     userId: string;
-    clockIn: string | null;
-    clockOut: string | null;
-    service: {
-        _id: string;
-        name: string;
-        coordinates: {
-            latitude: string;
-            longitude: string;
-        };
-        clockInStartTime: string;
-        clockInEndTime: string;
-        campusId: string;
-    };
+    clockIn: string;
+    clockOut: string;
+    serviceId: string;
     coordinates: {
         latitude: string;
         longitude: string;

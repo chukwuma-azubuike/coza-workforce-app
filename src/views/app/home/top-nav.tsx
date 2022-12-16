@@ -1,10 +1,12 @@
 import React from 'react';
-import { HStack, IconButton } from 'native-base';
+import { HStack, IconButton, Text } from 'native-base';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { HomeContext } from '.';
+import { TouchableNativeFeedback } from 'react-native';
 
 const TopNav: React.FC<
     NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -17,26 +19,41 @@ const TopNav: React.FC<
 
     const handlePress = () => navigation.navigate('Profile');
 
+    const {
+        latestService: { data, isError, isLoading },
+    } = React.useContext(HomeContext);
+
     return (
         <HStack
             justifyContent="space-between"
-            backgroundColor="white"
+            backgroundColor="transparent"
             alignItems="center"
-            position="absolute"
+            zIndex={20}
             flex={1}
             w="full"
-            top={6}
-            mx={4}
-            pr={4}
+            pl={4}
         >
-            <IconButton onPress={handlePress} background="none">
+            <TouchableNativeFeedback onPress={handlePress}>
                 <AvatarComponent
                     badge
-                    shadow={9}
                     size="sm"
+                    shadow={9}
                     imageUrl="https://bit.ly/3AdGvvM"
                 />
-            </IconButton>
+            </TouchableNativeFeedback>
+
+            <Text
+                marginLeft={6}
+                fontSize="lg"
+                color="gray.500"
+                fontWeight="light"
+            >
+                {isLoading
+                    ? 'Searching for service...'
+                    : !isError 
+                    ? data?.name
+                    : 'No service today'}
+            </Text>
 
             <IconButton
                 icon={

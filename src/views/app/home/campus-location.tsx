@@ -6,14 +6,14 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 
 const CampusLocation = () => {
     const {
-        latestService: { data },
+        latestService: { data, isError, isLoading },
     } = React.useContext(HomeContext);
 
     return (
         <Center>
             <Flex alignItems="center" flexDirection="row">
                 <Icon
-                    color={data ? THEME_CONFIG.gray : 'transparent'}
+                    color={!isError && !isLoading ? THEME_CONFIG.gray : 'transparent'}
                     name="location-sharp"
                     type="ionicon"
                     size={15}
@@ -24,7 +24,7 @@ const CampusLocation = () => {
                     fontSize="md"
                     ml={1}
                 >
-                    {data?.campus.campusName}
+                    {!isError ? data?.campus.campusName: ''}
                 </Text>
             </Flex>
         </Center>
