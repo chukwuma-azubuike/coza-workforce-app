@@ -10,6 +10,7 @@ import Geolocation from 'react-native-geolocation-service';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { IToken, IUser } from '../store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 
 class Utils {
     /************ String logic ************/
@@ -26,10 +27,30 @@ class Utils {
         return `${firstChar}${restChar.toLowerCase()}`;
     }
 
+    static truncateString(str: string, num: number = 25) {
+        if (str.length > num) {
+            return str.slice(0, num) + '...';
+        }
+        return str;
+    }
+
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
         if (arr) return arr.filter(elm => elm !== citeria);
         return [];
+    }
+
+    /********** Date and Time Logic ***********/
+
+    static timeDifference(date_1: string, date_2: string) {
+        var date1 = moment(date_1);
+        var date2 = moment(date_2);
+        var diff = date2.diff(date1);
+
+        let hours = moment(diff).hours();
+        let minutes = moment(diff).minutes();
+
+        return { hours, minutes };
     }
 
     /************ Storage logic ************/

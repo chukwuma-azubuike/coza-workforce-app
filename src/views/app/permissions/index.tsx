@@ -56,16 +56,16 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         <ViewWrapper>
             <>
                 <AddButtonComponent zIndex={10} onPress={handlePress} />
-                {data.length ? (
+                {/* {data.length ? (
                     <TabComponent
                         // tabBarScroll
                         onIndexChange={setIndex}
                         renderScene={renderScene}
                         navigationState={{ index, routes: ROUTES }}
                     />
-                ) : (
-                    <Empty message="You haven't requested any permissions." />
-                )}
+                ) : ( */}
+                <Empty message="You haven't requested any permissions." />
+                {/* )} */}
             </>
         </ViewWrapper>
     );
