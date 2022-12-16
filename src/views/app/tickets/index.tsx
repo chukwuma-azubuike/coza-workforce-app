@@ -3,6 +3,7 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import Empty from '../../../components/atoms/empty';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
+import useRole from '../../../hooks/role';
 // import { VStack } from 'native-base';
 // import TicketsByDate from './tickets-by-date';
 
@@ -90,9 +91,18 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     //         ...data,
     //     });
     // };
+
+    const { isCampusPastor, isGlobalPastor } = useRole();
+
     return (
         <ViewWrapper>
-            <Empty message="Nothing here. Let's keep it that way! 😇" />
+            <Empty
+                message={
+                    isCampusPastor || isGlobalPastor
+                        ? 'No tickets assigned yet sir.'
+                        : "Nothing here. Let's keep it that way! 😇"
+                }
+            />
             {/* <VStack px={4} space={4}>
                 {mockData.map((data, index) => (
                     <TicketsByDate

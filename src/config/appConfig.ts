@@ -6,6 +6,7 @@ const THEME_CONFIG = {
     primaryLight: '#A855F7',
     primaryVeryLight: '#FAE8FF',
     success: '#16A34A',
+    lightSuccess: '#73dc77',
     gray: '#71717A',
     lightGray: '#A1A1AA',
     veryLightGray: '#D4D4D8',

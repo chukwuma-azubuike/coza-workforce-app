@@ -37,8 +37,8 @@ const TopNav: React.FC<
                 <AvatarComponent
                     badge
                     size="sm"
-                    shadow={9}
-                    imageUrl="https://bit.ly/3AdGvvM"
+                    shadow={4}
+                    imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png"
                 />
             </TouchableNativeFeedback>
 

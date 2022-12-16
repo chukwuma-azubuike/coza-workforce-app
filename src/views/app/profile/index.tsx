@@ -36,7 +36,7 @@ const Profile: React.FC = () => {
                     <AvatarComponent
                         shadow={9}
                         size="xl"
-                        imageUrl="https://bit.ly/3AdGvvM"
+                        imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png"
                     />
                     <Stack mt="2">
                         <Heading textAlign="center" size="md">
