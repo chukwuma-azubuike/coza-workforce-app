@@ -12,7 +12,8 @@ import useRootModal from './src/hooks/modal/useRootModal';
 import ModalProvider from './src/providers/modal-provider';
 import useUserSession from './src/hooks/user-session';
 import Loading from './src/components/atoms/loading';
-import { PersistGate } from 'redux-persist/integration/react';
+import checkVersion from './src/components/utils/version';
+// import { PersistGate } from 'redux-persist/integration/react';
 
 const theme = extendTheme(extendedTheme);
 
@@ -38,6 +39,10 @@ const App: React.FC<JSX.Element> = () => {
     const { setModalState } = useRootModal(modalInitialState.modalState);
 
     const { isLoggedIn, setIsLoggedIn } = useUserSession();
+
+    React.useEffect(() => {
+        checkVersion();
+    }, []);
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>

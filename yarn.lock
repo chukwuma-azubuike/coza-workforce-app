@@ -2808,6 +2808,14 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.5.tgz#1001cc5e6a3704b83c236027e77f2f58ea010f40"
   integrity sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==
 
+"@types/node-fetch@*":
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.6.2.tgz#d1a9c5fd049d9415dce61571557104dec3ec81da"
+  integrity sha512-DHqhlq5jeESLy19TYhLakJ07kNumXWjcDdxXsLUMJZ6ue8VZJj4kLPQVE/2mdHh3xZziNF1xppu5lwmS53HR+A==
+  dependencies:
+    "@types/node" "*"
+    form-data "^3.0.0"
+
 "@types/node@*":
   version "18.11.12"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.11.12.tgz#89e7f8aa8c88abf432f9bd594888144d7dba10aa"
@@ -2840,6 +2848,13 @@
   dependencies:
     "@types/react" "*"
     "@types/react-native" "*"
+
+"@types/react-native-version-check@^3.4.5":
+  version "3.4.5"
+  resolved "https://registry.yarnpkg.com/@types/react-native-version-check/-/react-native-version-check-3.4.5.tgz#ef37c2c6d802923832178e51cf8caf1aa4ce956e"
+  integrity sha512-fWK/2LOo8kTCGkKefM6u2GETUazS13uyyU/UIpzspEb1J6oL47vqhhBJuq/wxYFFV251tXPu6ZE2co0PDNrKrQ==
+  dependencies:
+    "@types/node-fetch" "*"
 
 "@types/react-native@*":
   version "0.70.8"
@@ -6264,6 +6279,11 @@ lodash.isequal@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.isequal/-/lodash.isequal-4.5.0.tgz#415c4478f2bcc30120c22ce10ed3226f7d3e18e0"
   integrity sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==
 
+lodash.isfunction@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/lodash.isfunction/-/lodash.isfunction-3.0.9.tgz#06de25df4db327ac931981d1bdb067e5af68d051"
+  integrity sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==
+
 lodash.isnil@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/lodash.isnil/-/lodash.isnil-4.0.0.tgz#49e28cd559013458c814c5479d3c663a21bfaa6c"
@@ -7779,6 +7799,16 @@ react-native-vector-icons@^9.2.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-version-check@^3.4.3:
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/react-native-version-check/-/react-native-version-check-3.4.3.tgz#598a1a65d5edca6fe9acc6eba61b7b2e6ae77a25"
+  integrity sha512-E1FyaPR+sDwZAUzehV8q1tQQ8uZAS0pM49HEaXeYw+MHaf2mF8GFUPi3z2bwwN+kV2QHnCpRuPp4lcV6TVOuKw==
+  dependencies:
+    lodash.isfunction "^3.0.9"
+    lodash.isnil "^4.0.0"
+    lodash.pick "^4.4.0"
+    semver "^6.1.1"
 
 react-native@^0.70.5:
   version "0.70.6"
