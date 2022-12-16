@@ -4,6 +4,8 @@ import moment from 'moment';
 import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { IFlatListColumn } from '../../../components/composite/flat-list';
+import { IAttendance } from '../../../store/types';
+import Utils from '../../../utils';
 
 const data = [
     {
@@ -93,22 +95,22 @@ const teamAttendanceData = [
     },
 ];
 
-const columns: IFlatListColumn[] = [
+const myAttendanceColumns: IFlatListColumn[] = [
     {
         title: 'Date',
         dataIndex: 'date',
-        render: (elm: typeof data[0], key) => (
+        render: (elm: IAttendance, key) => (
             <Box key={key} size="48px" borderWidth={0.2} borderColor="gray.300">
                 <Center pt={0}>
                     <Text bold color="gray.600" fontSize={16}>
-                        {moment(elm.date)
+                        {moment(elm.createdAt)
                             .format('ll')
                             .substring(4, 6)
                             .split(',')
                             .join('')}
                     </Text>
                     <Text bold color="gray.600" fontSize={12}>
-                        {moment(elm.date)
+                        {moment(elm.createdAt)
                             .format('dddd')
                             .substring(0, 3)
                             .toUpperCase()}
@@ -120,7 +122,7 @@ const columns: IFlatListColumn[] = [
     {
         title: 'Clock In',
         dataIndex: 'clockIn',
-        render: (elm: typeof data[0], key) => (
+        render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
                 <Icon
                     color={THEME_CONFIG.primaryLight}
@@ -134,7 +136,7 @@ const columns: IFlatListColumn[] = [
                     }}
                     color={elm.clockIn ? 'green.500' : 'red.500'}
                 >
-                    {elm.clockIn ? elm.clockIn : '--:--'}
+                    {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
                 </Text>
             </HStack>
         ),
@@ -142,7 +144,7 @@ const columns: IFlatListColumn[] = [
     {
         title: 'Clock Out',
         dataIndex: 'clockOut',
-        render: (elm: typeof data[0], key) => (
+        render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
                 <Icon
                     color={THEME_CONFIG.primaryLight}
@@ -156,7 +158,7 @@ const columns: IFlatListColumn[] = [
                         color: 'warmGray.200',
                     }}
                 >
-                    {elm.clockOut ? elm.clockOut : '--:--'}
+                    {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
                 </Text>
             </HStack>
         ),
@@ -164,7 +166,7 @@ const columns: IFlatListColumn[] = [
     {
         title: 'Service hrs',
         dataIndex: 'hours',
-        render: (elm: typeof data[0], key) => (
+        render: (elm: IAttendance, key) => (
             <Text
                 key={key}
                 _dark={{
@@ -172,7 +174,9 @@ const columns: IFlatListColumn[] = [
                 }}
                 color="gray.500"
             >
-                {elm.hours}
+                {`${
+                    Utils.timeDifference(elm.clockIn, elm.clockOut).minutes
+                }mins`}
             </Text>
         ),
     },
@@ -264,4 +268,9 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
     },
 ];
 
-export { columns, data, teamAttendanceData, teamAttendanceDataColumns };
+export {
+    myAttendanceColumns,
+    data,
+    teamAttendanceData,
+    teamAttendanceDataColumns,
+};

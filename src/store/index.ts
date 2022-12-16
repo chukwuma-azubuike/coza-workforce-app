@@ -6,7 +6,7 @@ import { ENV } from '@env';
 import middlewaresSlices from './services/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
-import hardSet from 'redux-persist/es/stateReconciler/hardSet';
+// import hardSet from 'redux-persist/es/stateReconciler/hardSet';
 
 const middlewares: Middleware[] = [];
 
@@ -21,15 +21,15 @@ if (ENV === 'development') {
 const persistConfig: PersistConfig<any> = {
     key: 'root',
     storage: AsyncStorage,
-    stateReconciler: hardSet,
+    // stateReconciler: hardSet,
     blacklist: ['service'],
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
     devTools: __DEV__,
-    reducer: persistedReducer,
+    reducer: rootReducer,
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
             serializableCheck: false,

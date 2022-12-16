@@ -7,7 +7,7 @@ import ClockStatistics from './clock-statistics';
 import AttendanceSummary from './attendance-summary';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import { Alert } from 'react-native';
+import { Alert, Dimensions } from 'react-native';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 import { HomeContext } from '.';
@@ -19,14 +19,12 @@ const Clocker: React.FC = () => {
     );
 
     const {
-        latestService: { data },
+        latestService: { data, isError },
     } = React.useContext(HomeContext);
 
     const campusCoordinates = {
-        // latitude: data?.coordinates.lat,
-        // longitude: data?.coordinates.long,
-        latitude: deviceCoordinates?.latitude,
-        longitude: deviceCoordinates?.longitude,
+        latitude: data?.coordinates.lat,
+        longitude: data?.coordinates.long,
     };
 
     const { isInRange, distance } = useGeoLocation({
@@ -40,7 +38,7 @@ const Clocker: React.FC = () => {
             position => {
                 setDeviceCoordinates(position.coords);
                 // Alert.alert(
-                //     `${position.coords.latitude} ${position.coords.longitude}`
+                //     `${position.coords.latitude} ${position.coords.longitude} Dist: ${distance}`
                 // );
             },
             error => {
@@ -52,25 +50,21 @@ const Clocker: React.FC = () => {
 
     const { isAHOD, isHOD } = useRole();
 
+    const vh = Dimensions.get('window').height;
+
     return (
-        <Center px={4} _dark={{ bg: 'black' }}>
-            <VStack justifyContent="space-evenly" h="full" alignItems="center">
-                <Text
-                    fontSize="lg"
-                    margin={0}
-                    color="gray.500"
-                    fontWeight="light"
-                >
-                    {data ? data?.name.toUpperCase() : 'NO SERVICE TODAY'}
-                </Text>
+        <Center px={4} pt={8} _dark={{ bg: 'black' }} flex={1}>
+            <VStack
+                h={vh - 220}
+                alignItems="center"
+                justifyContent="space-between"
+            >
                 <Timer />
-                <VStack alignItems="center" space={8}>
-                    <ClockButton
-                        deviceCoordinates={deviceCoordinates}
-                        isInRange={isInRange || false}
-                    />
-                    <CampusLocation />
-                </VStack>
+                <ClockButton
+                    deviceCoordinates={deviceCoordinates}
+                    isInRange={isInRange || false}
+                />
+                <CampusLocation />
                 <If condition={isAHOD || isHOD}>
                     <AttendanceSummary />
                 </If>

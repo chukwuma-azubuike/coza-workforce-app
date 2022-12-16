@@ -36,63 +36,30 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             isSuccess: isLatestServiceSuccess,
             isLoading: isLatestServiceLoading,
         },
+        latestAttendance: { latestAttendanceData, latestAttendanceIsLoading },
     } = React.useContext(HomeContext);
 
     const { user } = useRole();
 
-    const [clockIn, { isError, isSuccess, isLoading, data }] =
+    const [clockIn, { isError, error, isSuccess, isLoading, data }] =
         useClockInMutation();
 
     const [
         clockOut,
         {
-            isError: clockOutErr,
+            isError: isClockOutErr,
             isSuccess: clockOutSuccess,
             isLoading: clockOutLoading,
             data: clockOutData,
+            error: clockOutError,
         },
     ] = useClockOutMutation();
 
     const { setModalState } = useModal();
 
-    const [clockedIn, setClockedIn] = React.useState<boolean>(false);
-
-    const handlePress = () => {
-        if (!isInRange) {
-            setModalState({
-                duration: 6,
-                render: (
-                    <ModalAlertComponent
-                        description={'Your are not within range of any campus!'}
-                        iconName={'warning-outline'}
-                        iconType={'ionicon'}
-                        status={'warning'}
-                    />
-                ),
-            });
-        }
-        if (!clockedIn && isInRange && !clockedIn) {
-            clockIn({
-                userId: user?.userId as string,
-                clockIn: `${moment().unix()}`,
-                clockOut: null,
-                serviceId: latestServiceData?.id as string,
-                coordinates: {
-                    lat: `${deviceCoordinates.latitude}`,
-                    long: `${deviceCoordinates.longitude}`,
-                },
-            });
-        }
-
-        if (clockedIn) {
-            clockOut(data?.id as string);
-        }
-    };
-
     React.useEffect(() => {
         let cleanUp = true;
         if (isSuccess && cleanUp) {
-            setClockedIn(true);
             setModalState({
                 duration: 6,
                 render: (
@@ -117,7 +84,6 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
         let cleanUp = true;
 
         if (clockOutSuccess && cleanUp) {
-            setClockedIn(false);
             setModalState({
                 duration: 6,
                 render: (
@@ -138,11 +104,71 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
         };
     }, [clockOutSuccess]);
 
+    React.useEffect(() => {
+        if (isError) {
+            setModalState({
+                defaultRender: true,
+                status: 'warning',
+                message: error?.data.message || 'Oops something went wrong',
+            });
+        }
+    }, [isError]);
+
+    React.useEffect(() => {
+        if (isClockOutErr) {
+            setModalState({
+                defaultRender: true,
+                status: 'warning',
+                message:
+                    clockOutError?.data.message || 'Oops something went wrong',
+            });
+        }
+    }, [isClockOutErr]);
+
+    const clockedIn = latestAttendanceData?.clockIn ? true : false;
+
     const disabled = isLatestServiceError || isLatestServiceLoading;
+
+    const canClockIn = isInRange && latestServiceData && !clockedIn;
+
+    const canClockOut = clockedIn;
+
+    // console.log('Checker -->', latestServiceData?.id);
+
+    const handlePress = () => {
+        if (!isInRange) {
+            setModalState({
+                duration: 6,
+                render: (
+                    <ModalAlertComponent
+                        description={'Your are not within range of any campus!'}
+                        iconName={'warning-outline'}
+                        iconType={'ionicon'}
+                        status={'warning'}
+                    />
+                ),
+            });
+        }
+        if (canClockIn) {
+            clockIn({
+                userId: user?.userId as string,
+                clockIn: `${moment().unix()}`,
+                clockOut: null,
+                serviceId: latestServiceData?.id as string,
+                coordinates: {
+                    lat: `${deviceCoordinates.latitude}`,
+                    long: `${deviceCoordinates.longitude}`,
+                },
+            });
+        }
+        if (canClockOut) {
+            clockOut(latestAttendanceData?._id as string);
+        }
+    };
 
     return (
         <Pressable>
-            {isInRange && !clockedIn && isSuccess && (
+            {canClockIn && (
                 <LottieView
                     source={require('../../../assets/json/clock-button-animation.json')}
                     resizeMode="cover"
@@ -164,11 +190,13 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     borderRadius="full"
                     _isDisabled={disabled}
                     backgroundColor={
-                        disabled
-                            ? 'gray.400'
-                            : clockedIn
+                        canClockIn
+                            ? 'primary.600'
+                            : canClockOut
                             ? 'rose.400'
-                            : 'primary.600'
+                            : disabled
+                            ? 'gray.400'
+                            : 'gray.400'
                     }
                 >
                     <TouchableNativeFeedback
@@ -198,10 +226,12 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                                         fontSize="md"
                                         color="white"
                                     >
-                                        {isSuccess
-                                            ? clockedIn
-                                                ? 'CLOCK OUT'
-                                                : 'CLOCK IN'
+                                        {disabled
+                                            ? ''
+                                            : canClockIn
+                                            ? 'CLOCK IN'
+                                            : canClockOut
+                                            ? 'CLOCK OUT'
                                             : ''}
                                     </Text>
                                 </VStack>

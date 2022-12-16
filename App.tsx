@@ -43,10 +43,10 @@ const App: React.FC<JSX.Element> = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
                 <NativeBaseProvider theme={theme}>
-                    <PersistGate
+                    {/* <PersistGate
                         loading={<Loading bootUp />}
                         persistor={persistor}
-                    >
+                    > */}
                         <AppStateContext.Provider
                             value={
                                 {
@@ -70,7 +70,7 @@ const App: React.FC<JSX.Element> = () => {
                                 </SafeAreaProvider>
                             </ModalProvider>
                         </AppStateContext.Provider>
-                    </PersistGate>
+                    {/* </PersistGate> */}
                 </NativeBaseProvider>
             </Provider>
         </SafeAreaView>
