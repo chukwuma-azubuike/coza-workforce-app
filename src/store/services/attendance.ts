@@ -20,7 +20,11 @@ export interface IClockInPayload {
 
 export type IMutateAttendanceResponse = IDefaultResponse<IAttendance>;
 
+export type IGetAttendanceListResponse = IDefaultResponse<IAttendance[]>;
+
 export const attendanceServiceSlice = createApi({
+    tagTypes: ['clockIn', 'clockOut', 'latestAttendance'],
+
     reducerPath: SERVICE_URL,
 
     baseQuery: fetchUtils.baseQuery,
@@ -33,22 +37,40 @@ export const attendanceServiceSlice = createApi({
                 body,
             }),
 
+            invalidatesTags: ['latestAttendance'],
+
             transformResponse: (response: IMutateAttendanceResponse) =>
                 response.data,
         }),
 
         clockOut: endpoint.mutation<IAttendance, string>({
             query: attendanceId => ({
-                url: `/attendance/clock-out/${attendanceId}`,
+                url: `/${SERVICE_URL}/clock-out/${attendanceId}`,
                 method: 'PUT',
             }),
+
+            invalidatesTags: ['latestAttendance'],
 
             transformResponse: (response: IMutateAttendanceResponse) =>
                 response.data,
         }),
 
-        getAttendance: endpoint.query<IAttendance, string>({
-            query: id => `/${SERVICE_URL}/${id}`,
+        getLatestAttendanceByUserId: endpoint.query<IAttendance, string>({
+            query: userId => ({
+                url: `/${SERVICE_URL}/getLatestAttendanceByUserId/${userId}`,
+                method: 'GET',
+            }),
+
+            providesTags: ['latestAttendance'],
+
+            transformResponse: (response: IMutateAttendanceResponse) =>
+                response.data,
+        }),
+
+        getAttendanceByUserId: endpoint.query<IAttendance[], string>({
+            query: userId => `/${SERVICE_URL}/getAttendanceByUserId/${userId}`,
+
+            transformResponse: (res: IGetAttendanceListResponse) => res.data,
         }),
 
         // Add your endpoints here
@@ -59,5 +81,6 @@ export const attendanceServiceSlice = createApi({
 export const {
     useClockInMutation,
     useClockOutMutation,
-    useGetAttendanceQuery,
+    useGetAttendanceByUserIdQuery,
+    useGetLatestAttendanceByUserIdQuery,
 } = attendanceServiceSlice;

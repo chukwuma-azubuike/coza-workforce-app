@@ -32,8 +32,11 @@ export const servicesServiceSlice = createApi({
         getLatestService: endpoint.query<IService, string>({
             query: campusId =>
                 `/${SERVICE_URL}/getLatestServiceByCampusId/${campusId}`,
+
             transformResponse: (response: IGetLatestServiceResponse) =>
                 response.data,
+
+            invalidatesTags: ['latestAttendance'],
         }),
 
         getServiceList: endpoint.query<''[], ''[]>({

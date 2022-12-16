@@ -1,11 +1,12 @@
 import React, { ReactChildren } from 'react';
-import { ScrollView, View } from 'native-base';
-import { ViewProps } from 'react-native';
+import { IScrollViewProps, ScrollView, View } from 'native-base';
+import { RefreshControl, ViewProps } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 
 interface IViewWrapper
-    extends ViewProps,
+    extends IScrollViewProps,
+        ViewProps,
         Partial<
             React.ForwardRefExoticComponent<
                 InterfaceViewProps & React.RefAttributes<unknown>
@@ -13,10 +14,12 @@ interface IViewWrapper
         > {
     children?: JSX.Element | ReactChildren;
     scroll?: boolean;
+    refreshing?: boolean;
+    onRefresh?: (args?: any) => void;
 }
 
 const ViewWrapper = (props: IViewWrapper) => {
-    const { scroll } = props;
+    const { scroll, onRefresh, refreshing } = props;
     const ActiveView = scroll ? ScrollView : View;
 
     return (
@@ -25,9 +28,14 @@ const ViewWrapper = (props: IViewWrapper) => {
             flex={1}
             {...props}
             height="full"
-            _dark={{ bg: 'blueGray.900' }}
             _light={{ bg: 'white' }}
-            contentContainerStyle={{ paddingBottom: 48 }}
+            _dark={{ bg: 'blueGray.900' }}
+            refreshControl={
+                <RefreshControl
+                    onRefresh={onRefresh}
+                    refreshing={refreshing as boolean}
+                />
+            }
         >
             {props.children ? props.children : <Empty />}
         </ActiveView>

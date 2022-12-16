@@ -5,12 +5,15 @@ import React from 'react';
 import { Text, TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
 import { AppRoutes } from '../config/navigation';
+import useRole from '../hooks/role';
 
 const inMenuBarNames = AppRoutes.map(route => {
     if (route.inMenuBar) return route.name;
 });
 
 const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
+    const { isWorker } = useRole();
+
     return (
         <HStack
             px={2}
@@ -86,6 +89,9 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                         default:
                             break;
                     }
+
+                    // Roles and permissions filter
+                    if (isWorker && route.name === 'More') return;
 
                     return (
                         <TouchableNativeFeedback
