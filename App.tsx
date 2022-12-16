@@ -47,29 +47,29 @@ const App: React.FC<JSX.Element> = () => {
                         loading={<Loading bootUp />}
                         persistor={persistor}
                     > */}
-                        <AppStateContext.Provider
-                            value={
-                                {
-                                    isLoggedIn,
-                                    setIsLoggedIn,
-                                } as IAppStateContext
-                            }
+                    <AppStateContext.Provider
+                        value={
+                            {
+                                isLoggedIn,
+                                setIsLoggedIn,
+                            } as IAppStateContext
+                        }
+                    >
+                        <ModalProvider
+                            initialModalState={{
+                                ...modalInitialState.modalState,
+                                ...setModalState,
+                            }}
                         >
-                            <ModalProvider
-                                initialModalState={{
-                                    ...modalInitialState.modalState,
-                                    ...setModalState,
-                                }}
-                            >
-                                <SafeAreaProvider>
-                                    {isLoggedIn !== undefined ? (
-                                        <Views isLoggedIn={isLoggedIn} />
-                                    ) : (
-                                        <Loading bootUp />
-                                    )}
-                                </SafeAreaProvider>
-                            </ModalProvider>
-                        </AppStateContext.Provider>
+                            <SafeAreaProvider>
+                                {isLoggedIn !== undefined ? (
+                                    <Views isLoggedIn={isLoggedIn} />
+                                ) : (
+                                    <Loading bootUp />
+                                )}
+                            </SafeAreaProvider>
+                        </ModalProvider>
+                    </AppStateContext.Provider>
                     {/* </PersistGate> */}
                 </NativeBaseProvider>
             </Provider>

@@ -64,7 +64,7 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         navigationState={{ index, routes: ROUTES }}
                     />
                 ) : ( */}
-                    <Empty message="You haven't requested any permissions." />
+                <Empty message="You haven't requested any permissions." />
                 {/* )} */}
             </>
         </ViewWrapper>
