@@ -4,7 +4,7 @@ import WorkForceSummary from './workforce-summary';
 
 const GSPView: React.FC = () => {
     return (
-        <VStack pb={10} >
+        <VStack pb={10}>
             <WorkForceSummary />
         </VStack>
     );
