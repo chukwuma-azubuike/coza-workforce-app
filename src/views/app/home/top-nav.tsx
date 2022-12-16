@@ -50,7 +50,7 @@ const TopNav: React.FC<
             >
                 {isLoading
                     ? 'Searching for service...'
-                    : !isError 
+                    : !isError
                     ? data?.name
                     : 'No service today'}
             </Text>
