@@ -9,6 +9,8 @@ import { useGetLatestServiceQuery } from '../../../store/services/services';
 import useRole from '../../../hooks/role';
 import { IAttendance, IService } from '../../../store/types';
 import { useGetLatestAttendanceByUserIdQuery } from '../../../store/services/attendance';
+import If from '../../../components/composite/if-container';
+import GSPView from './global-senior-pastors';
 
 interface IInitialHomeState {
     latestService: {
@@ -32,7 +34,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 }) => {
     usePreventGoBack();
 
-    const { user } = useRole();
+    const { user, isGlobalPastor } = useRole();
 
     const { data, isError, isSuccess, isLoading, refetch } =
         useGetLatestServiceQuery(user?.campus.id as string, {
@@ -75,7 +77,12 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             >
                 <>
                     <TopNav {...navigation} />
-                    <Clocker />
+                    <If condition={!isGlobalPastor}>
+                        <Clocker />
+                    </If>
+                    <If condition={isGlobalPastor}>
+                        <GSPView />
+                    </If>
                 </>
             </ViewWrapper>
         </HomeContext.Provider>
