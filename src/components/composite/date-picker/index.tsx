@@ -8,7 +8,6 @@ import { InputComponent } from '../../atoms/input';
 import DateTimePicker, {
     DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
-import { TextInput } from 'react-native';
 
 const MonthPicker = () => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
@@ -71,7 +70,7 @@ interface IDateTimePickerProps {
     label?: string;
     minimumDate?: Date;
     maximumDate?: Date;
-    fieldName: string;
+    fieldName?: string;
     onSelectDate?: (fieldName: string, value: any) => void;
 }
 
@@ -94,7 +93,7 @@ const DateTimePickerComponent: React.ForwardRefExoticComponent<
         const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
             selectedDate && setDate(selectedDate);
             setShow(false);
-            onSelectDate && onSelectDate(fieldName, selectedDate);
+            onSelectDate && fieldName && onSelectDate(fieldName, selectedDate);
         };
 
         const handlePress = () => setShow(true);
@@ -115,10 +114,6 @@ const DateTimePickerComponent: React.ForwardRefExoticComponent<
                     value={moment(date).format('DD MMM, yy')}
                     placeholder={moment().format('DD MMM, yy')}
                 />
-                {/* <TextInput
-                    ref={ref}
-                    value={moment(date).format('DD MMM, yy')}
-                /> */}
                 {show && (
                     <DateTimePicker
                         value={date}

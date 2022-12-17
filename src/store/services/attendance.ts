@@ -23,7 +23,7 @@ export type IMutateAttendanceResponse = IDefaultResponse<IAttendance>;
 export type IGetAttendanceListResponse = IDefaultResponse<IAttendance[]>;
 
 export const attendanceServiceSlice = createApi({
-    tagTypes: ['clockIn', 'clockOut', 'latestAttendance'],
+    tagTypes: ['Attendance'],
 
     reducerPath: SERVICE_URL,
 
@@ -37,7 +37,7 @@ export const attendanceServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: ['latestAttendance'],
+            invalidatesTags: ['Attendance'],
 
             transformResponse: (response: IMutateAttendanceResponse) =>
                 response.data,
@@ -49,7 +49,7 @@ export const attendanceServiceSlice = createApi({
                 method: 'PUT',
             }),
 
-            invalidatesTags: ['latestAttendance'],
+            invalidatesTags: ['Attendance'],
 
             transformResponse: (response: IMutateAttendanceResponse) =>
                 response.data,
@@ -61,7 +61,7 @@ export const attendanceServiceSlice = createApi({
                 method: 'GET',
             }),
 
-            providesTags: ['latestAttendance'],
+            providesTags: ['Attendance'],
 
             transformResponse: (response: IMutateAttendanceResponse) =>
                 response.data,
@@ -69,6 +69,17 @@ export const attendanceServiceSlice = createApi({
 
         getAttendanceByUserId: endpoint.query<IAttendance[], string>({
             query: userId => `/${SERVICE_URL}/getAttendanceByUserId/${userId}`,
+
+            transformResponse: (res: IGetAttendanceListResponse) => res.data,
+
+            providesTags: ['Attendance'],
+        }),
+
+        getAttendanceByCampusId: endpoint.query<IAttendance[], string>({
+            query: campusId => ({
+                url: `${SERVICE_URL}/getAttendanceByCampusId/${campusId}`,
+                method: 'GET',
+            }),
 
             transformResponse: (res: IGetAttendanceListResponse) => res.data,
         }),
@@ -82,5 +93,6 @@ export const {
     useClockInMutation,
     useClockOutMutation,
     useGetAttendanceByUserIdQuery,
+    useGetAttendanceByCampusIdQuery,
     useGetLatestAttendanceByUserIdQuery,
 } = attendanceServiceSlice;
