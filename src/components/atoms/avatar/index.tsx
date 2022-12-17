@@ -34,7 +34,6 @@ export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({
             source={{
                 uri: imageUrl,
             }}
-            shadow={9}
             size="sm"
         />
     );

@@ -133,8 +133,6 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const canClockOut = clockedIn;
 
-    // console.log('Checker -->', latestServiceData?.id);
-
     const handlePress = () => {
         if (!isInRange) {
             setModalState({
