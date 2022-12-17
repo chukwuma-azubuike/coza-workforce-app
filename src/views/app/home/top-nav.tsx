@@ -6,7 +6,7 @@ import AvatarComponent from '../../../components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { HomeContext } from '.';
-import { TouchableNativeFeedback } from 'react-native';
+import useRole from '../../../hooks/role';
 
 const TopNav: React.FC<
     NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -23,6 +23,8 @@ const TopNav: React.FC<
         latestService: { data, isError, isLoading },
     } = React.useContext(HomeContext);
 
+    const { user } = useRole();
+
     return (
         <HStack
             justifyContent="space-between"
@@ -31,19 +33,31 @@ const TopNav: React.FC<
             zIndex={20}
             flex={1}
             w="full"
-            pl={4}
+            pr={4}
+            pl={3}
         >
-            <TouchableNativeFeedback onPress={handlePress}>
-                <AvatarComponent
-                    badge
-                    size="sm"
-                    shadow={4}
-                    imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png"
-                />
-            </TouchableNativeFeedback>
-
+            <IconButton
+                onPress={handlePress}
+                icon={
+                    <AvatarComponent
+                        badge
+                        size="sm"
+                        shadow={4}
+                        firstName={user?.firstName}
+                        lastName={user?.lastName}
+                        imageUrl={
+                            user?.pictureUrl
+                                ? user.pictureUrl
+                                : 'https://i.ibb.co/P6k4dWF/Group-3.png'
+                        }
+                    />
+                }
+                p={0}
+                h={10}
+                w={10}
+                borderRadius="full"
+            />
             <Text
-                marginLeft={6}
                 fontSize="lg"
                 color="gray.500"
                 fontWeight="light"
@@ -54,7 +68,6 @@ const TopNav: React.FC<
                     ? data?.name
                     : 'No service today'}
             </Text>
-
             <IconButton
                 icon={
                     <Icon
@@ -68,6 +81,9 @@ const TopNav: React.FC<
                         raised
                     />
                 }
+                p={1}
+                h={10}
+                w={10}
                 onPress={handleNotificationPress}
                 borderRadius="full"
             />
