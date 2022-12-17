@@ -57,11 +57,7 @@ const TopNav: React.FC<
                 w={10}
                 borderRadius="full"
             />
-            <Text
-                fontSize="lg"
-                color="gray.500"
-                fontWeight="light"
-            >
+            <Text fontSize="lg" color="gray.500" fontWeight="light">
                 {isLoading
                     ? 'Searching for service...'
                     : !isError
