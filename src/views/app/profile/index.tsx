@@ -11,6 +11,51 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
 
+interface Usr {
+    address: '18 Felix';
+    birthDay: '1994-05-01T11:34:42.227Z';
+    campus: {
+        LGA: 'Ikeja LG';
+        address: 'No. 20 Mobolaji Bank Anthony, Iekja, Lagos';
+        campusName: 'Lagos Campus';
+        country: 'Nigeria';
+        createdAt: '2022-11-01T22:49:41.357Z';
+        dateOfBirth: null;
+        description: 'This is the CommonWealth of Zion Assembly (COZA) Lagos campus';
+        id: '6361a285832e7fbd65897cb7';
+        location: { lat: 435; long: 234 };
+        state: 'Lagos';
+    };
+    createdAt: '2022-12-08T11:40:26.734Z';
+    department: null;
+    email: 'ranechopro@gmail.com';
+    firstName: 'Chukwuma';
+    gender: 'M';
+    isActivated: true;
+    isVerified: false;
+    lastName: 'Azubuike';
+    maritalStatus: 'SINGLE';
+    nextOfKin: 'Chi';
+    nextOfKinPhoneNo: '07033045884';
+    occupation: 'Engineer';
+    phoneNumber: '07085590939';
+    pictureUrl: '';
+    placeOfWork: 'AjoCard';
+    role: {
+        __v: 0;
+        _id: '638a5f1e8eb1e1ef2b0be2a7';
+        createdAt: '2022-12-02T20:25:02.831Z';
+        description: 'Worker in the CommonWealth of Zion Assembly';
+        name: 'Worker';
+    };
+    socialMedia: {
+        facebook: '@chumiike';
+        instagram: '@chumiike';
+        twitter: '@chumiike';
+    };
+    userId: '6391cd2a073488539583a273';
+}
+
 const Profile: React.FC = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);
 
@@ -48,7 +93,7 @@ const Profile: React.FC = () => {
                                 )}`}
                         </Heading>
                         <Text textAlign="center" fontWeight="400">
-                            {user?.department.departmentName}
+                            {user?.department?.departmentName}
                         </Text>
                     </Stack>
                 </VStack>

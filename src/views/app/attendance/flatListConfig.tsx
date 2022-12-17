@@ -88,8 +88,13 @@ const myAttendanceColumns: IFlatListColumn[] = [
                 color="gray.500"
             >
                 {`${
-                    Utils.timeDifference(elm.clockIn, elm.clockOut).minutes
-                }mins`}
+                    !elm.clockOut
+                        ? '--:--'
+                        : `${
+                              Utils.timeDifference(elm.clockIn, elm.clockOut)
+                                  .minutes
+                          }mins`
+                }`}
             </Text>
         ),
     },
@@ -280,8 +285,13 @@ const campusColumns: IFlatListColumn[] = [
                 color="gray.500"
             >
                 {`${
-                    Utils.timeDifference(elm.clockIn, elm.clockOut).minutes
-                }mins`}
+                    !elm.clockOut
+                        ? '--:--'
+                        : `${
+                              Utils.timeDifference(elm.clockIn, elm.clockOut)
+                                  .minutes
+                          }mins`
+                }`}
             </Text>
         ),
     },
