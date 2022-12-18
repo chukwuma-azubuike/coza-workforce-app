@@ -11,8 +11,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthRoute from '../routes/auth';
 import NotificationModal from '../components/composite/notification-modal';
 import useModal from '../hooks/modal/useModal';
-import useRole from '../hooks/role';
-import Loading from '../components/atoms/loading';
 const RootStack = createNativeStackNavigator();
 
 const theme = {
@@ -30,8 +28,6 @@ interface IAppState {
 const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     const scheme = useColorScheme();
 
-    const { user } = useRole();
-
     const { modalState, setModalState } = useModal();
 
     return (
@@ -43,14 +39,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
                     {isLoggedIn ? (
-                        user ? (
-                            <RootStack.Screen name="App" component={AppRoute} />
-                        ) : (
-                            <RootStack.Screen
-                                name="Load user"
-                                component={Loading as any}
-                            />
-                        )
+                        <RootStack.Screen name="App" component={AppRoute} />
                     ) : (
                         <RootStack.Screen name="Auth" component={AuthRoute} />
                     )}
