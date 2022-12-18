@@ -1,4 +1,4 @@
-import { NativeModules, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { IToken, IUser } from '../store/types';
@@ -29,14 +29,18 @@ class Utils {
 
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
-        if (arr) return arr.filter(elm => elm !== citeria);
+        if (arr) {
+            return arr.filter(elm => elm !== citeria);
+        }
         return [];
     }
 
     /********** Date and Time Logic ***********/
 
     static timeDifference(date_1: string, date_2: string) {
-        if (!date_1 || !date_2) return { hours: '--:--', minutes: '--:--' };
+        if (!date_1 || !date_2) {
+            return { hours: '--:--', minutes: '--:--' };
+        }
 
         var date1 = moment(date_1);
         var date2 = moment(date_2);
@@ -104,7 +108,9 @@ class Utils {
         try {
             const userData = await AsyncStorage.getItem('current_user');
 
-            if (userData) return JSON.parse(userData);
+            if (userData) {
+                return JSON.parse(userData);
+            }
 
             return;
         } catch (error) {
@@ -175,12 +181,6 @@ class Utils {
             console.log(result);
         });
     };
-
-    // Localisation
-    static locale =
-        Platform.OS === 'ios'
-            ? NativeModules.SettingsManager.settings.AppleLocale.substring(3, 5)
-            : NativeModules.I18nManager.localeIdentifier.substring(3, 5);
 }
 
 export default Utils;
