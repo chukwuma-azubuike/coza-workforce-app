@@ -14,8 +14,8 @@ const UserInfo = ({ heading, detail }: IUserInfo) => {
             justifyItems="center"
             my={2}
         >
-            <Heading size="xs">{heading}:</Heading>
-            <Text fontSize="xs" color="gray.500" fontWeight="500" ml="2">
+            <Heading size="sm">{heading}:</Heading>
+            <Text ml="2" fontWeight="400" color="gray.400">
                 {detail}
             </Text>
         </Stack>

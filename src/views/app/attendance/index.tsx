@@ -6,6 +6,7 @@ import TabComponent from '../../../components/composite/tabs';
 import { SceneMap } from 'react-native-tab-view';
 import useRole from '../../../hooks/role';
 import { useGetAttendanceByUserIdQuery } from '../../../store/services/attendance';
+import Loading from '../../../components/atoms/loading';
 
 const TABS = [
     { key: 'myAttendance', title: 'My Attendance' },
@@ -14,14 +15,17 @@ const TABS = [
 ];
 
 const Attendance: React.FC = () => {
-    const { isWorker, isQC, isAHOD, isHOD, user, isCampusPastor } = useRole();
+    const {
+        isWorker,
+        isQC,
+        isAHOD,
+        isHOD,
+        user,
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
     const filteredScene = React.useMemo(() => {
-        if (isWorker) {
-            return {
-                myAttendance: MyAttendance,
-            };
-        }
         if (isQC) {
             return {
                 myAttendance: MyAttendance,
@@ -35,33 +39,49 @@ const Attendance: React.FC = () => {
                 teamAttendance: TeamAttendance,
             };
         }
-        if (isCampusPastor) {
+        if (isCampusPastor || isGlobalPastor) {
             return {
                 campusAttendance: CampusAttendance,
+            };
+        }
+        if (isWorker) {
+            return {
+                myAttendance: MyAttendance,
             };
         }
     }, [user]);
 
     const renderScene = SceneMap(filteredScene as unknown as any);
 
-    const [index, setIndex] = React.useState(0);
+    const [index, setIndex] = React.useState(2);
 
     const routes = React.useMemo(() => {
-        if (isWorker) return TABS.filter(elm => elm.key === 'myAttendance');
-        if (isHOD || isAHOD) {
-            return TABS.filter(elm => elm.key !== 'campusAttendance');
-        }
         if (isQC) return TABS;
+        if (isHOD || isAHOD) {
+            return [
+                { key: 'myAttendance', title: 'My Attendance' },
+                { key: 'teamAttendance', title: 'Team Attendance' },
+            ];
+        }
+        if (isGlobalPastor || isCampusPastor) {
+            return [{ key: 'campusAttendance', title: 'Campus Attendance' }];
+        }
+        if (isWorker) return [{ key: 'myAttendance', title: 'My Attendance' }];
     }, [user?.role]);
 
-    const { data } = useGetAttendanceByUserIdQuery(user?.userId as string, {
-        skip: !user,
-        refetchOnMountOrArgChange: true,
-    });
+    const { data, isLoading } = useGetAttendanceByUserIdQuery(
+        user?.userId as string,
+        {
+            skip: !user,
+            refetchOnMountOrArgChange: true,
+        }
+    );
 
     return (
         <ViewWrapper>
-            {data?.length && routes ? (
+            {isLoading ? (
+                <Loading />
+            ) : data?.length && routes ? (
                 <TabComponent
                     onIndexChange={setIndex}
                     renderScene={renderScene}
@@ -69,7 +89,13 @@ const Attendance: React.FC = () => {
                     navigationState={{ index, routes: routes as any[] }}
                 />
             ) : (
-                <Empty message="You have not marked any attendance yet" />
+                <Empty
+                    message={
+                        isCampusPastor || isGlobalPastor
+                            ? 'No attendance marked yet sir.'
+                            : 'You have not marked any attendance yet'
+                    }
+                />
             )}
         </ViewWrapper>
     );

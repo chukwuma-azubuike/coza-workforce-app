@@ -41,6 +41,8 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const { user } = useRole();
 
+    const [clockedOut, setClockedOut] = React.useState<boolean>(false);
+
     const [clockIn, { isError, error, isSuccess, isLoading, data }] =
         useClockInMutation();
 
@@ -127,13 +129,12 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const clockedIn = latestAttendanceData?.clockIn ? true : false;
 
-    const disabled = isLatestServiceError || isLatestServiceLoading;
+    const disabled =
+        isLatestServiceError || isLatestServiceLoading || clockedOut;
 
     const canClockIn = isInRange && latestServiceData && !clockedIn;
 
     const canClockOut = clockedIn;
-
-    // console.log('Checker -->', latestServiceData?.id);
 
     const handlePress = () => {
         if (!isInRange) {
@@ -162,7 +163,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             });
         }
         if (canClockOut) {
-            clockOut(latestAttendanceData?._id as string);
+            clockOut(latestAttendanceData?._id as string).then(res => {
+                if (res.data) setClockedOut(true);
+            });
         }
     };
 

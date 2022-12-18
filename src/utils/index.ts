@@ -1,12 +1,5 @@
-import {
-    Alert,
-    Linking,
-    NativeModules,
-    PermissionsAndroid,
-    Platform,
-    ToastAndroid,
-} from 'react-native';
-import Geolocation from 'react-native-geolocation-service';
+import { NativeModules, Platform } from 'react-native';
+import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import { IToken, IUser } from '../store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -43,6 +36,8 @@ class Utils {
     /********** Date and Time Logic ***********/
 
     static timeDifference(date_1: string, date_2: string) {
+        if (!date_1 || !date_2) return { hours: '--:--', minutes: '--:--' };
+
         var date1 = moment(date_1);
         var date2 = moment(date_2);
         var diff = date2.diff(date1);
@@ -125,75 +120,60 @@ class Utils {
 
     /************ Native Permisisons logic ************/
 
-    static hasPermissionIOS = async () => {
-        const openSetting = () => {
-            Linking.openSettings().catch(() => {
-                Alert.alert('Unable to open settings');
-            });
-        };
-        const status = await Geolocation.requestAuthorization('whenInUse');
+    static checkLocationPermission = async () => {
+        const isIOS = Platform.OS === 'ios';
 
-        if (status === 'granted') {
-            return true;
-        }
-
-        if (status === 'denied') {
-            Alert.alert('Location permission denied');
-        }
-
-        if (status === 'disabled') {
-            Alert.alert(
-                `Turn on Location Services to allow COZA Global App to determine your location.`,
-                '',
-                [
-                    { text: 'Go to Settings', onPress: openSetting },
-                    { text: "Don't Use Location", onPress: () => {} },
-                ]
-            );
-        }
-
-        return false;
+        check(
+            isIOS
+                ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+                : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+        )
+            .then(result => {
+                switch (result) {
+                    case RESULTS.UNAVAILABLE:
+                        console.log(
+                            'This feature is not available (on this device / in this context)'
+                        );
+                        break;
+                    case RESULTS.DENIED:
+                        console.log(
+                            'The permission has not been requested / is denied but requestable'
+                        );
+                        break;
+                    case RESULTS.LIMITED:
+                        console.log(
+                            'The permission is limited: some actions are possible'
+                        );
+                        break;
+                    case RESULTS.GRANTED:
+                        console.log('The permission is granted');
+                        break;
+                    case RESULTS.BLOCKED:
+                        console.log(
+                            'The permission is denied and not requestable anymore'
+                        );
+                        break;
+                }
+            })
+            .catch(error => {});
     };
 
-    static hasLocationPermission = async () => {
-        if (Platform.OS === 'ios') {
-            const hasPermission = await this.hasPermissionIOS();
-            return hasPermission;
-        }
+    static requestLocationPermission = async () => {
+        const isIOS = Platform.OS === 'ios';
 
-        if (Platform.OS === 'android' && Platform.Version < 23) {
-            return true;
-        }
-
-        const hasPermission = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-
-        if (hasPermission) {
-            return true;
-        }
-
-        const status = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-
-        if (status === PermissionsAndroid.RESULTS.GRANTED) {
-            return true;
-        }
-
-        if (status === PermissionsAndroid.RESULTS.DENIED) {
-            ToastAndroid.show(
-                'Location permission denied by user.',
-                ToastAndroid.LONG
-            );
-        } else if (status === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-            ToastAndroid.show(
-                'Location permission revoked by user.',
-                ToastAndroid.LONG
-            );
-        }
-
-        return false;
+        request(
+            isIOS
+                ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
+                : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+            {
+                title: 'Location Access',
+                message: 'This App needs access to your location',
+                buttonPositive: 'OK',
+                buttonNegative: 'DENY',
+            }
+        ).then(result => {
+            console.log(result);
+        });
     };
 
     // Localisation

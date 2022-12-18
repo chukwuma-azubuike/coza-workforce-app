@@ -17,8 +17,6 @@ const RequestPermission: React.FC = () => {
         name: 'briefcase-outline',
     });
 
-    const startDateInputValue: React.RefObject<any> = React.createRef();
-
     const selectCategoryIcons = (key: string) => {
         switch (key) {
             case 'work':
@@ -73,13 +71,10 @@ const RequestPermission: React.FC = () => {
                                     <DateTimePickerComponent
                                         label="Start date"
                                         minimumDate={new Date()}
-                                        ref={startDateInputValue}
                                     />
                                     <DateTimePickerComponent
                                         label="End date"
-                                        minimumDate={
-                                            startDateInputValue.current?.value
-                                        }
+                                        minimumDate={new Date()}
                                     />
                                 </HStack>
                                 <FormControl.Label>Category</FormControl.Label>

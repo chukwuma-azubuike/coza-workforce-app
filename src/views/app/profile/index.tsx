@@ -22,33 +22,35 @@ const Profile: React.FC = () => {
         });
     };
 
-    const { user } = useRole();
+    const { user, isGlobalPastor } = useRole();
 
     return (
         <ViewWrapper scroll>
             <VStack>
-                <VStack
-                    pt={1}
-                    pb={4}
-                    flexDirection="column"
-                    alignItems="center"
-                >
+                <VStack pb={4} flexDirection="column" alignItems="center">
                     <AvatarComponent
                         shadow={9}
                         size="xl"
-                        imageUrl="https://i.ibb.co/6Px4WnT/avatar.png"
+                        imageUrl={
+                            user?.pictureUrl
+                                ? user.pictureUrl
+                                : 'https://i.ibb.co/P6k4dWF/Group-3.png'
+                        }
+                        firstName={user?.firstName}
+                        lastName={user?.lastName}
                     />
-                    <Stack mt="2">
+                    <Stack mt="4" space={2}>
                         <Heading textAlign="center" size="md">
-                            {user &&
-                                `${Utils.capitalizeFirstChar(
-                                    user?.firstName
-                                )} ${Utils.capitalizeFirstChar(
-                                    user?.lastName
-                                )}`}
+                            {user && `${user?.firstName} ${user?.lastName}`}
                         </Heading>
-                        <Text textAlign="center" fontWeight="400">
-                            {user?.department.departmentName}
+                        <Text
+                            textAlign="center"
+                            fontWeight="400"
+                            color="gray.400"
+                        >
+                            {isGlobalPastor
+                                ? 'Global Senior Pastor'
+                                : user?.department?.departmentName}
                         </Text>
                     </Stack>
                 </VStack>

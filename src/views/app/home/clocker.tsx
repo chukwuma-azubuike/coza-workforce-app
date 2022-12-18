@@ -55,7 +55,7 @@ const Clocker: React.FC = () => {
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }} flex={1}>
             <VStack
-                h={vh - 220}
+                h={vh - 240}
                 alignItems="center"
                 justifyContent="space-between"
             >

@@ -4,10 +4,12 @@ import { Avatar, IAvatarProps } from 'native-base';
 interface IAvatarComponentProps extends IAvatarProps {
     imageUrl: string;
     badge?: boolean;
+    firstName?: string;
+    lastName?: string;
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, badge } = props;
+    const { imageUrl, badge, firstName, lastName } = props;
 
     return (
         <Avatar
@@ -17,7 +19,9 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
             }}
             {...props}
         >
-            NB
+            {`${firstName && firstName.substring(0, 1)}${
+                lastName && lastName.substring(0, 1)
+            }`}
             {badge && <Avatar.Badge bg="green.500" />}
         </Avatar>
     );
@@ -34,7 +38,6 @@ export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({
             source={{
                 uri: imageUrl,
             }}
-            shadow={9}
             size="sm"
         />
     );

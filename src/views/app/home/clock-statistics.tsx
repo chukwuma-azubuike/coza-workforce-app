@@ -1,30 +1,21 @@
 import { Icon } from '@rneui/themed';
+import moment from 'moment';
 import { HStack, VStack, Text } from 'native-base';
 import React from 'react';
+import { HomeContext } from '.';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import Utils from '../../../utils';
+import { IIconTypes } from '../../../utils/types';
 
-const CLOCK_STATS = [
-    {
-        time: '6:45AM',
-        label: 'Clock in',
-        icon: 'check-circle',
-        iconType: 'feather',
-    },
-    {
-        time: '1:45PM',
-        label: 'Clock out',
-        icon: 'logout',
-        iconType: 'antdesign',
-    },
-    {
-        time: '7:00',
-        label: 'Service hrs',
-        icon: 'hour-glass',
-        iconType: 'entypo',
-    },
-];
+interface IStatProps {
+    time?: string;
+    label: string;
+    icon: string;
+    difference?: number | string;
+    iconType: IIconTypes;
+}
 
-const Stat = ({ time, label, icon, iconType }: typeof CLOCK_STATS[0]) => {
+const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
     return (
         <VStack alignItems="center" space={0}>
             <Icon
@@ -39,9 +30,15 @@ const Stat = ({ time, label, icon, iconType }: typeof CLOCK_STATS[0]) => {
                         : THEME_CONFIG.primaryLight
                 }
             />
-            <Text fontWeight="bold" fontSize="md" color="gray.600">
-                {time}
-            </Text>
+            {difference ? (
+                <Text fontWeight="bold" fontSize="md" color="gray.600">
+                    {difference && '--:--'}
+                </Text>
+            ) : (
+                <Text fontWeight="bold" fontSize="md" color="gray.600">
+                    {time ? moment(time).format('LT') : '--:--'}
+                </Text>
+            )}
             <Text fontWeight="light" fontSize="xs" color="gray.400">
                 {label}
             </Text>
@@ -50,19 +47,35 @@ const Stat = ({ time, label, icon, iconType }: typeof CLOCK_STATS[0]) => {
 };
 
 const ClockStatistics = () => {
+    const {
+        latestAttendance: { latestAttendanceData },
+    } = React.useContext(HomeContext);
+
     return (
         <HStack space={10} width="full" justifyContent="space-evenly">
-            <>
-                {CLOCK_STATS.map((stat, idx) => (
-                    <Stat
-                        key={idx}
-                        time={stat.time}
-                        icon={stat.icon}
-                        label={stat.label}
-                        iconType={stat.iconType}
-                    />
-                ))}
-            </>
+            <Stat
+                time={latestAttendanceData?.clockIn}
+                icon="check-circle"
+                iconType="feather"
+                label="Clock in"
+            />
+            <Stat
+                time={latestAttendanceData?.clockOut}
+                label="Clock out"
+                icon="logout"
+                iconType="antdesign"
+            />
+            <Stat
+                difference={`${
+                    Utils.timeDifference(
+                        latestAttendanceData?.clockOut as string,
+                        latestAttendanceData?.clockIn as string
+                    ).minutes
+                }mins`}
+                label="Time spent"
+                icon="hour-glass"
+                iconType="entypo"
+            />
         </HStack>
     );
 };
