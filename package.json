@@ -13,7 +13,8 @@
         "log-android": "adb logcat '*:E'",
         "deep-clean": "npx react-native-clean-project",
         "build-release-file": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle",
-        "build-android": "cd android ./gradlew clean ./gradlew assembleRelease",
+        "build-android-apk": "./gradlew assembleRelease",
+        "build-android-aab": "./gradlew bundleRelease",
         "run-android-release": "npx react-native run-android --variant=release"
     },
     "dependencies": {
