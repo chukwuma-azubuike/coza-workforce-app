@@ -51,5 +51,27 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+
+	<key>NSCalendarsUsageDescription</key>
+	<string>We need calendar access</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access</string>
+	<key>NSContactsUsageDescription</key>
+	<string>We need access to your contacts</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>YOUR TEXT</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+	  <key>YOUR-PURPOSE-KEY</key>
+	  <string>YOUR TEXT</string>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>YOUR TEXT</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>YOUR TEXT</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>YOUR TEXT</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>YOUR TEXT</string>
 </dict>
 </plist>

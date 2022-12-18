@@ -11,6 +11,8 @@ export const servicesServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    tagTypes: ['latestService'],
+
     refetchOnReconnect: true,
     endpoints: endpoint => ({
         createService: endpoint.mutation<'', ''>({
@@ -36,7 +38,7 @@ export const servicesServiceSlice = createApi({
             transformResponse: (response: IGetLatestServiceResponse) =>
                 response.data,
 
-            invalidatesTags: ['latestAttendance'],
+            providesTags: ['latestService'],
         }),
 
         getServiceList: endpoint.query<''[], ''[]>({
