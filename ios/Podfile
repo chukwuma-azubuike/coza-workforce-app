@@ -32,6 +32,7 @@ target 'CozaGlobalWorkforceApp' do
 
   pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
 
+
   permissions_path = '../node_modules/react-native-permissions/ios'
 
   pod 'Permission-Calendars', :path => "#{permissions_path}/Calendars"
@@ -65,6 +66,3 @@ target 'CozaGlobalWorkforceApp' do
       end
   end
 end
-#   post_install do |installer|
-#     react_native_post_install(installer)
-#   end
