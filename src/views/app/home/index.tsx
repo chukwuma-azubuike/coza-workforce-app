@@ -11,6 +11,7 @@ import { IAttendance, IService } from '../../../store/types';
 import { useGetLatestAttendanceByUserIdQuery } from '../../../store/services/attendance';
 import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
+import Utils from '../../../utils';
 
 interface IInitialHomeState {
     latestService: {
@@ -67,6 +68,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         refetch();
         latestAttendanceRefetch();
     };
+
+    React.useEffect(() => {
+        Utils.checkLocationPermission();
+        Utils.requestLocationPermission();
+    }, []);
 
     return (
         <HomeContext.Provider value={initialState}>

@@ -67,48 +67,61 @@ interface IStatCardComponentProps {
     iconType?: IIconTypes;
 }
 
-export const StatCardComponent: React.FC<IStatCardComponentProps> = props => {
-    const { iconColor = THEME_CONFIG.success } = props;
+export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(
+    props => {
+        const { iconColor = THEME_CONFIG.success } = props;
 
-    return (
-        <CardComponent>
-            <HStack justifyContent="space-between" style={{ width: 140 }}>
-                <VStack pr={2}>
-                    <HStack
-                        justifyContent="space-between"
-                        style={{ width: 140 }}
-                    >
-                        <Text bold fontSize="4xl" color="primary.600">
-                            <CountUp
-                                isCounting
-                                duration={2}
-                                end={+props?.value}
-                            />
-                        </Text>
-                        <Text
-                            fontSize="md"
-                            fontWeight="light"
-                            color={!iconColor ? 'success.600' : 'success.600'}
-                            style={{ color: iconColor ? iconColor : undefined }}
+        return (
+            <CardComponent>
+                <HStack justifyContent="space-between" style={{ width: 140 }}>
+                    <VStack pr={2}>
+                        <HStack
+                            justifyContent="space-between"
+                            style={{ width: 140 }}
                         >
-                            {props.suffix}
-                        </Text>
-                    </HStack>
-                    <HStack alignItems="center" justifyContent="space-between">
-                        <Text fontWeight="light" color="gray.400" fontSize="lg">
-                            {props.label}
-                        </Text>
-                        {props.iconName && (
-                            <Icon
-                                name={props.iconName}
-                                type={props.iconType}
-                                color={iconColor}
-                                size={25}
-                            />
-                        )}
-                    </HStack>
-                </VStack>
-            </HStack>
-        </CardComponent>
-    );
-};
+                            <Text bold fontSize="4xl" color="primary.600">
+                                <CountUp
+                                    isCounting
+                                    duration={2}
+                                    end={+props?.value}
+                                />
+                            </Text>
+                            <Text
+                                fontSize="md"
+                                fontWeight="light"
+                                color={
+                                    !iconColor ? 'success.600' : 'success.600'
+                                }
+                                style={{
+                                    color: iconColor ? iconColor : undefined,
+                                }}
+                            >
+                                {props.suffix}
+                            </Text>
+                        </HStack>
+                        <HStack
+                            alignItems="center"
+                            justifyContent="space-between"
+                        >
+                            <Text
+                                fontWeight="light"
+                                color="gray.400"
+                                fontSize="lg"
+                            >
+                                {props.label}
+                            </Text>
+                            {props.iconName && (
+                                <Icon
+                                    name={props.iconName}
+                                    type={props.iconType}
+                                    color={iconColor}
+                                    size={25}
+                                />
+                            )}
+                        </HStack>
+                    </VStack>
+                </HStack>
+            </CardComponent>
+        );
+    }
+);

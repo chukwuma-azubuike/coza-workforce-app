@@ -10,7 +10,7 @@ enum ROLES {
     campusPastor = 'Campus Pastor',
     globalPastor = 'Global Pastor',
     admin = 'Admin',
-    superAdmin = 'Super  Admin',
+    superAdmin = 'Super  Admins',
 }
 
 const useRole = () => {
