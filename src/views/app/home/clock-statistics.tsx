@@ -52,7 +52,7 @@ const ClockStatistics = () => {
     } = React.useContext(HomeContext);
 
     return (
-        <HStack space={10} width="full" justifyContent="space-evenly">
+        <HStack space={20}>
             <Stat
                 time={latestAttendanceData?.clockIn}
                 icon="check-circle"
