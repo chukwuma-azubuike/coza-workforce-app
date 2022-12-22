@@ -41,12 +41,14 @@ const Clocker: React.FC = () => {
                 //     `${position.coords.latitude} ${position.coords.longitude} Dist: ${distance}`
                 // );
             },
-            error => {
-                Alert.alert(error.message);
-            },
+            error => {},
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
-    }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude]);
+    }, [
+        deviceCoordinates?.latitude,
+        deviceCoordinates?.longitude,
+        data?.coordinates.lat,
+    ]);
 
     const { isAHOD, isHOD } = useRole();
 

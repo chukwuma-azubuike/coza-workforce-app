@@ -1,23 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+import groovy.json.JsonSlurper
 
 buildscript {
     ext {
         buildToolsVersion = "29.0.3"
         minSdkVersion = 21
         compileSdkVersion = 31
-        // compileSdkVersion = 30
         targetSdkVersion = 31
         ndkVersion = "21.1.6352462"       
-        // ndkVersion = "20.1.5948944"
-        // compileSdkVersion   = 28
-        // buildToolsVersion   = "28.0.3"
-        // minSdkVersion       = 16
-        // targetSdkVersion    = 28
-
-        // Any of the following will work
         googlePlayServicesVersion      = "17.0.0"
-        // playServicesVersion         = "17.0.0"
-        // playServicesLocationVersion = "17.0.0"
     }
     repositories {
         google()
@@ -60,5 +51,26 @@ allprojects {
                }
            }
        }
+    }
+}
+
+
+def getNodePackageVersion() {
+    def packageFile = new File("$rootDir/../package.json")
+    def packageJson = new JsonSlurper().parseText(packageFile.text)
+    return packageJson["version"]
+}
+
+
+def getNodePackageVersionCode() {
+    def packageFile = new File("$rootDir/../package.json")
+    def packageJson = new JsonSlurper().parseText(packageFile.text)
+    return packageJson["versionCode"]
+}
+
+subprojects {
+    ext {
+        nodePackageVersion = getNodePackageVersion()
+        nodePackageVersionCode = getNodePackageVersionCode()
     }
 }
