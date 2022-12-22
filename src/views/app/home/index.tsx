@@ -12,6 +12,7 @@ import { useGetLatestAttendanceByUserIdQuery } from '../../../store/services/att
 import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
+import { HomeSkeleton } from '../../../components/layout/skeleton';
 
 interface IInitialHomeState {
     latestService: {
@@ -65,8 +66,10 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     };
 
     const handleRefresh = () => {
-        refetch();
-        latestAttendanceRefetch();
+        if (!isGlobalPastor) {
+            refetch();
+            latestAttendanceRefetch();
+        }
     };
 
     React.useEffect(() => {
@@ -81,7 +84,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
             >
-                <>
+                <If condition={user ? true : false}>
                     <TopNav {...navigation} />
                     <If condition={!isGlobalPastor}>
                         <Clocker />
@@ -89,7 +92,10 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     <If condition={isGlobalPastor}>
                         <GSPView />
                     </If>
-                </>
+                </If>
+                <If condition={!user ? true : false}>
+                    <HomeSkeleton />
+                </If>
             </ViewWrapper>
         </HomeContext.Provider>
     );

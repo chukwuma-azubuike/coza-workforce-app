@@ -4,6 +4,7 @@ import { accountServiceSlice } from '../services/account';
 import { complianceServiceSlice } from '../services/compliance';
 import { permissionsServiceSlice } from '../services/permissions';
 import { servicesServiceSlice } from '../services/services';
+import { reportsServiceSlice } from '../services/reports';
 
 const rootReducer = combineReducers({
     account: accountServiceSlice.reducer,
@@ -11,7 +12,7 @@ const rootReducer = combineReducers({
     compliance: complianceServiceSlice.reducer,
     permissions: permissionsServiceSlice.reducer,
     service: servicesServiceSlice.reducer,
-    // reports: '',
+    report: reportsServiceSlice.reducer,
     // users: '',
 });
 

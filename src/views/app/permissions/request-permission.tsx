@@ -10,12 +10,15 @@ import {
 import { DateTimePickerComponent } from '../../../components/composite/date-picker';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import useModal from '../../../hooks/modal/useModal';
 
 const RequestPermission: React.FC = () => {
     const [icon, setIcon] = React.useState<{ name: string; type: string }>({
         type: 'ionicon',
         name: 'briefcase-outline',
     });
+
+    const [loading, setLoading] = React.useState<boolean>(false); //Just for 3P testing
 
     const selectCategoryIcons = (key: string) => {
         switch (key) {
@@ -59,6 +62,25 @@ const RequestPermission: React.FC = () => {
                 break;
         }
     };
+
+    const { setModalState } = useModal();
+
+    const handleSubmit = () => {
+        setLoading(true);
+    };
+
+    React.useEffect(() => {
+        if (loading) {
+            setTimeout(() => {
+                setLoading(false);
+                setModalState({
+                    message: 'Your request has been sent',
+                    defaultRender: true,
+                    status: 'success',
+                });
+            }, 2000);
+        }
+    }, [loading]);
 
     return (
         <ViewWrapper>
@@ -153,7 +175,11 @@ const RequestPermission: React.FC = () => {
                                     placeholder="Brief description"
                                     isRequired
                                 />
-                                <ButtonComponent mt={4}>
+                                <ButtonComponent
+                                    mt={4}
+                                    isLoading={loading}
+                                    onPress={handleSubmit}
+                                >
                                     Submit for Approval
                                 </ButtonComponent>
                             </VStack>
