@@ -91,7 +91,6 @@
 				56381844AC0FB5E3E99F9BBA /* Pods-CozaGlobalWorkforceApp-CozaGlobalWorkforceAppTests.debug.xcconfig */,
 				2318343D13DD6CADD92BC3D1 /* Pods-CozaGlobalWorkforceApp-CozaGlobalWorkforceAppTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -185,6 +184,8 @@
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				803987F2854ACF8F3760023F /* [CP] Embed Pods Frameworks */,
 				BD54AE02CA806C5AA0BBDBFA /* [CP] Copy Pods Resources */,
+				DBB812B5295412B300EC9281 /* Set app version */,
+				DBB812B62954161900EC9281 /* Set app version code */,
 			);
 			buildRules = (
 			);
@@ -376,6 +377,42 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-CozaGlobalWorkforceApp/Pods-CozaGlobalWorkforceApp-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		DBB812B5295412B300EC9281 /* Set app version */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Set app version";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nNODE_PACKAGE_VERSION=\"$(grep -w 'version\":' \"${SRCROOT}\"/../package.json | cut -d '\"' -f4)\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString ${NODE_PACKAGE_VERSION}\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
+		};
+		DBB812B62954161900EC9281 /* Set app version code */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Set app version code";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nNODE_PACKAGE_VERSION_CODE=\"$(grep -w 'versionCode\":' \"${SRCROOT}\"/../package.json | cut -d '\"' -f4)\"\n/usr/libexec/PlistBuddy -c \"Set :CFBundleShortVersionString ${NODE_PACKAGE_VERSION_CODE}\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
 			isa = PBXShellScriptBuildPhase;
