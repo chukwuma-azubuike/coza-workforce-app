@@ -29,7 +29,7 @@ const ViewWrapper = (props: IViewWrapper) => {
             {...props}
             height="full"
             _light={{ bg: 'white' }}
-            _dark={{ bg: 'blueGray.900' }}
+            _dark={{ bg: 'black' }}
             refreshControl={
                 <RefreshControl
                     onRefresh={onRefresh}

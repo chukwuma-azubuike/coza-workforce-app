@@ -18,6 +18,8 @@ const THEME_CONFIG = {
 };
 
 const extendedTheme = extendTheme({
+    useSystemColorMode: true,
+    // initialColorMode: 'dark',
     colors: {
         // COZA brand colour
         primary: {
