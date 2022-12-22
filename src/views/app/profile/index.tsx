@@ -26,7 +26,7 @@ const Profile: React.FC = () => {
 
     return (
         <ViewWrapper scroll>
-            <VStack pb={8} >
+            <VStack pb={8}>
                 <VStack pb={4} flexDirection="column" alignItems="center">
                     <AvatarComponent
                         shadow={9}
