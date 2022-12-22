@@ -15,8 +15,6 @@ import Loading from './src/components/atoms/loading';
 import checkVersion from './src/components/utils/version';
 // import { PersistGate } from 'redux-persist/integration/react';
 
-const theme = extendTheme(extendedTheme);
-
 export interface IAppStateContext {
     isLoggedIn: boolean;
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
@@ -47,7 +45,7 @@ const App: React.FC<JSX.Element> = () => {
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
-                <NativeBaseProvider theme={theme}>
+                <NativeBaseProvider theme={extendedTheme}>
                     {/* <PersistGate
                         loading={<Loading bootUp />}
                         persistor={persistor}
