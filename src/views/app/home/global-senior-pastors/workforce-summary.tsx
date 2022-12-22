@@ -4,6 +4,13 @@ import { StatCardComponent } from '../../../../components/composite/card';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { Icon, ListItem } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../../config/appConfig';
+import {
+    useGetGlobalWorkforceSummaryQuery,
+    useGetGuestSummaryQuery,
+    useGetBusSummaryQuery,
+    useGetServiceAttendanceSummaryQuery,
+    useGetCarsSummaryQuery,
+} from '../../../../store/services/reports';
 
 const WorkForceSummary: React.FC = () => {
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
@@ -13,8 +20,52 @@ const WorkForceSummary: React.FC = () => {
     const [expandedBusCount, setExpandedBusCount] =
         React.useState<boolean>(false);
 
+    const {
+        data: globaWorkforceData,
+        refetch: globaWorkforceRefetch,
+        isLoading: globaWorkforceIsLoading,
+        error,
+    } = useGetGlobalWorkforceSummaryQuery();
+
+    const {
+        data: serviceAttendanceData,
+        refetch: serviceAttendanceRefetch,
+        isLoading: serviceAttendanceIsLoading,
+    } = useGetServiceAttendanceSummaryQuery();
+
+    const {
+        data: guestSummaryData,
+        refetch: guestSummaryRefetch,
+        isLoading: guestSummaryIsLoading,
+    } = useGetGuestSummaryQuery();
+
+    const {
+        data: busSummaryData,
+        refetch: busSummaryRefetch,
+        isLoading: busSummaryIsLoading,
+    } = useGetBusSummaryQuery();
+
+    const {
+        data: carsSummaryData,
+        refetch: carsSummaryRefetch,
+        isLoading: carsSummaryIsLoading,
+    } = useGetCarsSummaryQuery();
+
+    const refresh = () => {
+        globaWorkforceRefetch();
+        serviceAttendanceRefetch();
+        guestSummaryRefetch();
+        busSummaryRefetch();
+        carsSummaryRefetch();
+    };
+
     return (
-        <ViewWrapper scroll flex={1}>
+        <ViewWrapper
+            scroll
+            flex={1}
+            onRefresh={refresh}
+            refreshing={globaWorkforceIsLoading}
+        >
             <ListItem.Accordion
                 content={
                     <>
@@ -44,44 +95,54 @@ const WorkForceSummary: React.FC = () => {
                 <VStack space={4} p={2} flex={1}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={1010}
+                            percent
                             label="Total"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="groups"
                             iconType="material"
+                            isLoading={globaWorkforceIsLoading}
+                            value={globaWorkforceData?.totalWorkers}
                         />
                         <StatCardComponent
-                            value={968}
+                            percent
                             label="Active"
-                            suffix="+15%"
+                            suffix="+15"
                             iconName="check-square"
                             iconType="feather"
+                            isLoading={globaWorkforceIsLoading}
+                            value={globaWorkforceData?.activeWrokers}
                         />
                     </HStack>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={836}
+                            percent
                             label="Present"
-                            suffix="+25%"
+                            suffix="+25"
                             iconName="event-available"
                             iconType="material"
+                            isLoading={globaWorkforceIsLoading}
+                            value={globaWorkforceData?.presentWorkers}
                         />
                         <StatCardComponent
-                            value={30}
+                            percent
                             label="Late"
-                            suffix="-8%"
+                            suffix="-8"
                             iconType="entypo"
                             iconName="back-in-time"
+                            isLoading={globaWorkforceIsLoading}
+                            value={globaWorkforceData?.lateWorkers}
                             iconColor={THEME_CONFIG.rose}
                         />
                     </HStack>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={56}
+                            percent
                             label="Absent"
-                            suffix="-21%"
+                            suffix="-21"
                             iconName="groups"
                             iconType="material"
+                            isLoading={globaWorkforceIsLoading}
+                            value={globaWorkforceData?.absentWorkers}
                             iconColor={THEME_CONFIG.rose}
                         />
                     </HStack>
@@ -116,43 +177,48 @@ const WorkForceSummary: React.FC = () => {
                 <VStack space={4} p={2} flex={1}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={56410}
+                            percent
                             label="Total"
-                            suffix="+27%"
+                            suffix="+27"
                             iconName="account-group"
                             iconType="material-community"
+                            value={serviceAttendanceData?.total}
                         />
                         <StatCardComponent
-                            value={26311}
+                            percent
                             label="Men"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="man-outline"
                             iconType="ionicon"
+                            value={serviceAttendanceData?.men}
                         />
                     </HStack>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={28010}
+                            percent
                             label="Women"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="woman-outline"
                             iconType="ionicon"
+                            value={serviceAttendanceData?.women}
                         />
                         <StatCardComponent
-                            value={2710}
+                            percent
                             label="Teenagers"
-                            suffix="+17%"
+                            suffix="+17"
                             iconName="child"
                             iconType="font-awesome"
+                            value={serviceAttendanceData?.teenagers}
                         />
                     </HStack>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={710}
+                            percent
                             label="Children"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="child"
                             iconType="font-awesome"
+                            value={serviceAttendanceData?.children}
                         />
                     </HStack>
                 </VStack>
@@ -186,18 +252,20 @@ const WorkForceSummary: React.FC = () => {
                 <VStack space={4} p={2} flex={1}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={2010}
+                            percent
                             label="First timers"
-                            suffix="+22%"
+                            suffix="+22"
                             iconName="badge"
                             iconType="simple-line-icon"
+                            value={guestSummaryData?.firstTimers}
                         />
                         <StatCardComponent
-                            value={1210}
+                            percent
                             label="New Converts"
-                            suffix="+32%"
+                            suffix="+32"
                             iconName="person-add-outline"
                             iconType="ionicon"
+                            value={guestSummaryData?.newConvert}
                         />
                     </HStack>
                 </VStack>
@@ -231,43 +299,48 @@ const WorkForceSummary: React.FC = () => {
                 <VStack space={4} p={2} flex={1}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={59}
+                            percent
                             label="Locations"
-                            suffix="+9%"
+                            suffix="+9"
                             iconName="location-outline"
                             iconType="ionicon"
+                            value={busSummaryData?.locations}
                         />
                         <StatCardComponent
-                            value={584}
+                            percent
                             label="Total Guests"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="child"
                             iconType="font-awesome"
+                            value={busSummaryData?.locations}
                         />
                     </HStack>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={427}
+                            percent
                             label="Adults"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="account-group"
                             iconType="material-community"
+                            value={busSummaryData?.adult}
                         />
                         <StatCardComponent
-                            value={59}
+                            percent
                             label="Chldren"
-                            suffix="+12%"
+                            suffix="+12"
                             iconName="child"
                             iconType="font-awesome"
+                            value={busSummaryData?.children}
                         />
                     </HStack>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
-                            value={7040}
+                            percent
                             label="Cars"
-                            suffix="+37%"
+                            suffix="+37"
                             iconType="ionicon"
                             iconName="car-sport-outline"
+                            value={carsSummaryData?.totalCars}
                         />
                     </HStack>
                 </VStack>
