@@ -12,7 +12,7 @@ interface IViewWrapper
                 InterfaceViewProps & React.RefAttributes<unknown>
             >
         > {
-    children?: JSX.Element | ReactChildren;
+    children?: JSX.Element | ReactChildren | React.ReactNode;
     scroll?: boolean;
     refreshing?: boolean;
     onRefresh?: (args?: any) => void;

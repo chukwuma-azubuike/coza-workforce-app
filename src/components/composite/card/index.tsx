@@ -58,18 +58,20 @@ const style = StyleSheet.create({
 export default CardComponent;
 
 interface IStatCardComponentProps {
-    value: number | string;
+    value?: number | string;
     label?: string;
     prefix?: string;
     suffix?: string;
+    percent?: boolean;
     iconName?: string;
     iconColor?: string;
     iconType?: IIconTypes;
+    isLoading?: boolean;
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(
     props => {
-        const { iconColor = THEME_CONFIG.success } = props;
+        const { iconColor = THEME_CONFIG.success, percent } = props;
 
         return (
             <CardComponent>
@@ -83,7 +85,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(
                                 <CountUp
                                     isCounting
                                     duration={2}
-                                    end={+props?.value}
+                                    end={props?.value ? +props?.value : 0}
                                 />
                             </Text>
                             <Text
@@ -96,7 +98,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(
                                     color: iconColor ? iconColor : undefined,
                                 }}
                             >
-                                {props.suffix}
+                                {`${props.suffix}${percent ? '%' : ''}`}
                             </Text>
                         </HStack>
                         <HStack

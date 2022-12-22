@@ -7,7 +7,7 @@ export class fetchUtils {
         baseUrl: API_BASE_URL,
 
         prepareHeaders: async (headers, { getState }) => {
-            const token = (getState() as IStore).auth;
+            const token = (getState() as IStore).account;
 
             if (token) headers.set('authorization', `Bearer ${token}`);
 
