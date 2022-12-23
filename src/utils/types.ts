@@ -1,3 +1,5 @@
+import { FormikErrors, FormikHelpers } from 'formik';
+
 type IIconTypes =
     | 'material'
     | 'material-community'
@@ -12,4 +14,13 @@ type IIconTypes =
     | 'feather'
     | 'antdesign';
 
-export type { IIconTypes };
+interface IFormikDefaultHOCProps<P> {
+    values: P;
+    errors: FormikErrors<P>;
+    handleChange: (key: any) => void;
+    validateField: (value: any) => void;
+    setFieldError: (field: string, errorMsg: string) => void;
+    handleSubmit: (values: P, formikHelpers: FormikHelpers<P>) => void;
+}
+
+export type { IIconTypes, IFormikDefaultHOCProps };
