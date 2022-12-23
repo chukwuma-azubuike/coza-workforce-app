@@ -53,10 +53,12 @@ const Attendance: React.FC = () => {
 
     const renderScene = SceneMap(filteredScene as unknown as any);
 
-    const [index, setIndex] = React.useState(2);
+    const [index, setIndex] = React.useState(0);
 
     const routes = React.useMemo(() => {
-        if (isQC) return TABS;
+        if (isQC) {
+            return TABS;
+        }
         if (isHOD || isAHOD) {
             return [
                 { key: 'myAttendance', title: 'My Attendance' },
@@ -66,7 +68,9 @@ const Attendance: React.FC = () => {
         if (isGlobalPastor || isCampusPastor) {
             return [{ key: 'campusAttendance', title: 'Campus Attendance' }];
         }
-        if (isWorker) return [{ key: 'myAttendance', title: 'My Attendance' }];
+        if (isWorker) {
+            return [{ key: 'myAttendance', title: 'My Attendance' }];
+        }
     }, [user?.role]);
 
     const { data, isLoading } = useGetAttendanceByUserIdQuery(
