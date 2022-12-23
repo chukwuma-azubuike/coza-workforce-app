@@ -1,5 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { IChildCareReportPayload, IDefaultResponse } from '../types';
+import {
+    IChildCareReportPayload,
+    IIncidentReport,
+    IDefaultResponse,
+} from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'report';
@@ -45,12 +49,20 @@ export const reportsServiceSlice = createApi({
         createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>(
             {
                 query: body => ({
-                    url: SERVICE_URL,
-                    method: 'POST',
+                    url: `/${SERVICE_URL}`,
+                    method: 'PUT',
                     body,
                 }),
             }
         ),
+
+        createIncidentReport: endpoint.mutation<void, IIncidentReport>({
+            query: body => ({
+                url: `/${SERVICE_URL}`,
+                method: 'PUT',
+                body,
+            }),
+        }),
 
         getGlobalWorkforceSummary: endpoint.query<
             IGlobalWorkforceReportSummary,
@@ -119,6 +131,7 @@ export const {
     useGetBusSummaryQuery,
     useGetCarsSummaryQuery,
     useGetGuestSummaryQuery,
+    useCreateIncidentReportMutation,
     useCreateChildCareReportMutation,
     useGetGlobalWorkforceSummaryQuery,
     useGetServiceAttendanceSummaryQuery,

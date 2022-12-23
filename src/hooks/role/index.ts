@@ -13,6 +13,15 @@ enum ROLES {
     superAdmin = 'Super  Admins',
 }
 
+enum DEPARTMENTS {
+    childcare = 'Children Ministry',
+    security = 'Digital Surveillance Security',
+    pcu = 'PCU',
+    programs = 'Programme Coordinator',
+    ushery = 'Ushery Board',
+    CTS = 'COZA Transfer Service',
+}
+
 const useRole = () => {
     const currentData = async () => Utils.retrieveCurrentUserData();
 
@@ -27,11 +36,20 @@ const useRole = () => {
     const [isAdmin, setIsAdmin] = React.useState<boolean>(false);
     const [isSuperAdmin, setIsSuperAdmin] = React.useState<boolean>(false);
 
+    const [isCTS, setIsCTS] = React.useState<boolean>(false);
+    const [isUshery, setIsUshery] = React.useState<boolean>(false);
+    const [isPrograms, setIsPrograms] = React.useState<boolean>(false);
+    const [isPCU, setIsPCU] = React.useState<boolean>(false);
+    const [isSecurity, setIsSecurity] = React.useState<boolean>(false);
+    const [isChildcare, setIsChildcare] = React.useState<boolean>(false);
+
     const [userRole, setUserRole] = React.useState<string>();
+    const [department, setDepartment] = React.useState<string>();
 
     React.useEffect(() => {
-        currentData().then(res => {
+        currentData().then((res: IUser) => {
             setUserRole(res.role.name);
+            setDepartment(res.department.departmentName);
             setUser(res);
         });
     }, []);
@@ -55,17 +73,48 @@ const useRole = () => {
                 break;
             case ROLES.admin:
                 setIsAdmin(true);
+                break;
             case ROLES.globalPastor:
                 setIsGlobalPastor(true);
+                break;
             case ROLES.superAdmin:
                 setIsSuperAdmin(true);
+                break;
             default:
                 break;
         }
     }, [userRole]);
 
+    React.useEffect(() => {
+        switch (department) {
+            case DEPARTMENTS.CTS:
+                setIsCTS(true);
+                break;
+            case DEPARTMENTS.childcare:
+                setIsChildcare(true);
+                break;
+            case DEPARTMENTS.pcu:
+                setIsPCU(true);
+                break;
+            case DEPARTMENTS.programs:
+                setIsPrograms(true);
+                break;
+            case DEPARTMENTS.security:
+                setIsSecurity(true);
+                break;
+            case DEPARTMENTS.ushery:
+                setIsUshery(true);
+                break;
+            default:
+                break;
+        }
+    }, [department]);
+
     return {
+        // User Object
         user,
+
+        // Roles
         isQC,
         isHOD,
         isAHOD,
@@ -74,6 +123,14 @@ const useRole = () => {
         isSuperAdmin,
         isGlobalPastor,
         isCampusPastor,
+
+        // Departments
+        isCTS,
+        isPCU,
+        isUshery,
+        isPrograms,
+        isSecurity,
+        isChildcare,
     };
 };
 

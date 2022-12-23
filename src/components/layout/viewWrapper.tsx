@@ -31,10 +31,12 @@ const ViewWrapper = (props: IViewWrapper) => {
             _light={{ bg: 'white' }}
             _dark={{ bg: 'black' }}
             refreshControl={
-                <RefreshControl
-                    onRefresh={onRefresh}
-                    refreshing={refreshing as boolean}
-                />
+                onRefresh && (
+                    <RefreshControl
+                        onRefresh={onRefresh}
+                        refreshing={refreshing as boolean}
+                    />
+                )
             }
         >
             {props.children ? props.children : <Empty />}

@@ -21,6 +21,8 @@ import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
 import PermissionDetails from '../views/app/permissions/permission-details';
+import ChildcareReport from '../views/app/reports/forms/childcare-report';
+import IncidentReport from '../views/app/reports/forms/incident-report';
 
 export interface IAppRoute {
     name: string;
@@ -130,7 +132,26 @@ const AppRoutes: IAppRoute[] = [
         name: 'Reports',
         component: Reports,
         options: { title: 'Reports' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'Childcare Report',
+                component: ChildcareReport,
+                options: { title: 'Childcare Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Incident Report',
+                component: IncidentReport,
+                options: { title: 'Incident Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+        ],
         users: ['admin', 'HOD', 'AHOD', 'QC', 'campus-pastor', 'global-pastor'],
         inMenuBar: false,
         icon: { name: 'graph', type: 'octicon' },
