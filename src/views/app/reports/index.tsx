@@ -47,7 +47,7 @@ const Reports: React.FC = () => {
     return (
         <ViewWrapper>
             <Empty />
-            <If condition={isGlobalPastor}>
+            <If condition={!isGlobalPastor}>
                 <StaggerButtonComponent
                     buttons={[
                         {
