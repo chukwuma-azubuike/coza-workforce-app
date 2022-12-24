@@ -11,6 +11,7 @@ const Reports: React.FC = () => {
     const {
         isCTS,
         isPCU,
+        isWitty,
         isUshery,
         isSecurity,
         isPrograms,
