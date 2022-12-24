@@ -50,9 +50,9 @@ const useRole = () => {
 
     React.useEffect(() => {
         currentData().then((res: IUser) => {
-            setUserRole(res.role.name);
-            setDepartment(res.department.departmentName);
             setUser(res);
+            setUserRole(res.role.name);
+            setDepartment(res.department?.departmentName);
         });
     }, []);
 
