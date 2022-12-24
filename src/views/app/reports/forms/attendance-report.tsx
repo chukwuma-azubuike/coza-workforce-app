@@ -36,7 +36,7 @@ const AttendanceReport: React.FC = () => {
                 status: 'success',
                 message: 'Report submitted',
             });
-            navigation.goBack()
+            navigation.goBack();
         }
         if (isError) {
             setModalState({
