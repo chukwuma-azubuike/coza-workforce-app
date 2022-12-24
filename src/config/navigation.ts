@@ -23,6 +23,9 @@ import Register from '../views/auth/register';
 import PermissionDetails from '../views/app/permissions/permission-details';
 import ChildcareReport from '../views/app/reports/forms/childcare-report';
 import IncidentReport from '../views/app/reports/forms/incident-report';
+import AttendanceReport from '../views/app/reports/forms/attendance-report';
+import GuestReport from '../views/app/reports/forms/guest-report';
+import ServiceReport from '../views/app/reports/forms/service-report';
 
 export interface IAppRoute {
     name: string;
@@ -146,6 +149,33 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Incident Report',
                 component: IncidentReport,
                 options: { title: 'Incident Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Attendance Report',
+                component: AttendanceReport,
+                options: { title: 'Attendance Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Guest Report',
+                component: GuestReport,
+                options: { title: 'Guest Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Service Report',
+                component: ServiceReport,
+                options: { title: 'Service Report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

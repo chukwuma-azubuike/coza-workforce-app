@@ -20,6 +20,7 @@ enum DEPARTMENTS {
     programs = 'Programme Coordinator',
     ushery = 'Ushery Board',
     CTS = 'COZA Transfer Service',
+    witty = 'Witty Inventions',
 }
 
 const useRole = () => {
@@ -42,6 +43,7 @@ const useRole = () => {
     const [isPCU, setIsPCU] = React.useState<boolean>(false);
     const [isSecurity, setIsSecurity] = React.useState<boolean>(false);
     const [isChildcare, setIsChildcare] = React.useState<boolean>(false);
+    const [isWitty, setIsWitty] = React.useState<boolean>(false);
 
     const [userRole, setUserRole] = React.useState<string>();
     const [department, setDepartment] = React.useState<string>();
@@ -105,6 +107,9 @@ const useRole = () => {
             case DEPARTMENTS.ushery:
                 setIsUshery(true);
                 break;
+            case DEPARTMENTS.witty:
+                setIsWitty(true);
+                break;
             default:
                 break;
         }
@@ -118,6 +123,7 @@ const useRole = () => {
         isQC,
         isHOD,
         isAHOD,
+        isWitty,
         isAdmin,
         isWorker,
         isSuperAdmin,

@@ -1,8 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
-    IIncidentReport,
     IDefaultResponse,
+    IAttendanceReportPayload,
+    IGuestReportPayload,
+    ISecurityReportPayload,
+    ITransferReportPayload,
+    IIncidentReportPayload,
+    IServiceReportPayload,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -49,16 +54,59 @@ export const reportsServiceSlice = createApi({
         createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>(
             {
                 query: body => ({
-                    url: `/${SERVICE_URL}`,
+                    url: `/${SERVICE_URL}/childcareReport`,
                     method: 'PUT',
                     body,
                 }),
             }
         ),
 
-        createIncidentReport: endpoint.mutation<void, IIncidentReport>({
+        createIncidentReport: endpoint.mutation<void, IIncidentReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}`,
+                url: `/${SERVICE_URL}/incidentReport`,
+                method: 'PUT',
+                body,
+            }),
+        }),
+
+        createAttendanceReport: endpoint.mutation<
+            void,
+            IAttendanceReportPayload
+        >({
+            query: body => ({
+                url: `/${SERVICE_URL}/attendanceReport`,
+                method: 'PUT',
+                body,
+            }),
+        }),
+
+        createGuestReport: endpoint.mutation<void, IGuestReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/guestReport`,
+                method: 'PUT',
+                body,
+            }),
+        }),
+
+        createSecurityReport: endpoint.mutation<void, ISecurityReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/securityReport`,
+                method: 'PUT',
+                body,
+            }),
+        }),
+
+        createTransferReport: endpoint.mutation<void, ITransferReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/transferReport`,
+                method: 'PUT',
+                body,
+            }),
+        }),
+
+        createServiceReport: endpoint.mutation<void, IServiceReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/serviceReport`,
                 method: 'PUT',
                 body,
             }),
@@ -131,8 +179,13 @@ export const {
     useGetBusSummaryQuery,
     useGetCarsSummaryQuery,
     useGetGuestSummaryQuery,
+    useCreateGuestReportMutation,
+    useCreateServiceReportMutation,
+    useCreateTransferReportMutation,
+    useCreateSecurityReportMutation,
     useCreateIncidentReportMutation,
     useCreateChildCareReportMutation,
+    useCreateAttendanceReportMutation,
     useGetGlobalWorkforceSummaryQuery,
     useGetServiceAttendanceSummaryQuery,
 } = reportsServiceSlice;

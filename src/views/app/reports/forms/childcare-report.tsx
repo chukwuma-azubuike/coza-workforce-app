@@ -12,6 +12,7 @@ import { THEME_CONFIG } from '../../../../config/appConfig';
 import { Icon } from '@rneui/themed';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
+import { useNavigation } from '@react-navigation/native';
 
 const ChildcareReport: React.FC = () => {
     const [sendReport, { error, isError, isSuccess, isLoading }] =
@@ -22,6 +23,7 @@ const ChildcareReport: React.FC = () => {
     };
 
     const { setModalState } = useModal();
+    const navigation = useNavigation();
 
     React.useEffect(() => {
         if (isSuccess) {
@@ -30,6 +32,7 @@ const ChildcareReport: React.FC = () => {
                 status: 'success',
                 message: 'Report submitted',
             });
+            navigation.goBack();
         }
         if (isError) {
             setModalState({
@@ -40,7 +43,24 @@ const ChildcareReport: React.FC = () => {
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = {} as IChildCareReportPayload;
+    const INITIAL_VALUES = {
+        age1_2: {
+            male: 0,
+            female: 0,
+        },
+        age3_5: {
+            male: 0,
+            female: 0,
+        },
+        age6_11: {
+            male: 0,
+            female: 0,
+        },
+        age12_above: {
+            male: 0,
+            female: 0,
+        },
+    } as IChildCareReportPayload;
 
     return (
         <Formik<IChildCareReportPayload>
@@ -49,7 +69,7 @@ const ChildcareReport: React.FC = () => {
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >
-            {({ handleChange, errors, handleSubmit }) => (
+            {({ handleChange, errors, values, handleSubmit }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text
@@ -89,6 +109,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age1_2.male'
@@ -117,6 +138,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age3_5.male'
@@ -145,6 +167,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age6_11.male'
@@ -173,6 +196,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age12_above.male'
@@ -193,14 +217,15 @@ const ChildcareReport: React.FC = () => {
                                         {errors?.age12_above?.male}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.subTotal?.male ? true : false
-                                    }
-                                >
+                                <FormControl isDisabled>
                                     <InputComponent
                                         w="100%"
+                                        value={`${
+                                            +values.age1_2?.male +
+                                                +values.age3_5?.male +
+                                                +values.age6_11?.male +
+                                                +values.age12_above?.male ?? 0
+                                        }`}
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'subTotal.male'
@@ -232,6 +257,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age1_2.female'
@@ -260,6 +286,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age3_5.female'
@@ -288,6 +315,7 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age6_11.female'
@@ -318,20 +346,22 @@ const ChildcareReport: React.FC = () => {
                                 >
                                     <InputComponent
                                         w="100%"
+                                        placeholder="0"
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'age12_above.female'
                                         )}
                                     />
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.subTotal?.female ? true : false
-                                    }
-                                >
+                                <FormControl isDisabled>
                                     <InputComponent
                                         w="100%"
+                                        value={`${
+                                            +values.age1_2?.female +
+                                                +values.age3_5?.female +
+                                                +values.age6_11?.female +
+                                                +values.age12_above?.female ?? 0
+                                        }`}
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'subTotal.female'
@@ -351,6 +381,17 @@ const ChildcareReport: React.FC = () => {
                                     </FormControl.Label>
                                     <InputComponent
                                         w="66%"
+                                        isDisabled
+                                        value={`${
+                                            +values.age1_2?.female +
+                                                +values.age3_5?.female +
+                                                +values.age6_11?.female +
+                                                +values.age12_above?.female +
+                                                +values.age1_2?.male +
+                                                +values.age3_5?.male +
+                                                +values.age6_11?.male +
+                                                +values.age12_above?.male ?? 0
+                                        }`}
                                         keyboardType="numeric"
                                         onChangeText={handleChange(
                                             'grandTotal'

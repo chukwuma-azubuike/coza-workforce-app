@@ -2,21 +2,24 @@
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
-import { IIncidentReport } from '../../../../store/types';
+import { IIncidentReportPayload } from '../../../../store/types';
 import { useCreateIncidentReportMutation } from '../../../../store/services/reports';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { FormControl, VStack, Text } from 'native-base';
 import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
+import { useNavigation } from '@react-navigation/native';
 
 const IncidentReport: React.FC = () => {
     const [sendReport, { error, isError, isSuccess, isLoading }] =
         useCreateIncidentReportMutation();
 
-    const onSubmit = (values: IIncidentReport) => {
+    const onSubmit = (values: IIncidentReportPayload) => {
         sendReport(values);
     };
+
+    const navigation = useNavigation();
 
     const { setModalState } = useModal();
 
@@ -27,6 +30,7 @@ const IncidentReport: React.FC = () => {
                 status: 'success',
                 message: 'Report submitted',
             });
+            navigation.goBack();
         }
         if (isError) {
             setModalState({
@@ -37,10 +41,10 @@ const IncidentReport: React.FC = () => {
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = {} as IIncidentReport;
+    const INITIAL_VALUES = {} as IIncidentReportPayload;
 
     return (
-        <Formik<IIncidentReport>
+        <Formik<IIncidentReportPayload>
             validateOnChange
             enableReinitialize
             onSubmit={onSubmit}

@@ -245,13 +245,13 @@ export interface ISecurityReportPayload {
     imageUrl: string | null;
 }
 
-export interface ITransferReport {
+export interface ITransferReportPayload {
     locations: { name: string; adultCount: number; minorCount: number }[];
     otherInfo: string | null;
     imageUrl: string | null;
 }
 
-export interface IServiceReport {
+export interface IServiceReportPayload {
     serviceStartTime: string;
     serviceEndTime: string;
     serviceReportLink: string;
@@ -259,7 +259,7 @@ export interface IServiceReport {
     imageUrl: string | null;
 }
 
-export interface IIncidentReport {
+export interface IIncidentReportPayload {
     details: string;
     imageUrl: string;
 }
