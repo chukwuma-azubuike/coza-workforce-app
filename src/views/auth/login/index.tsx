@@ -36,6 +36,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 
     const [login, { data, error, isError, isSuccess, isLoading, status }] =
         useLoginMutation();
+
+    const { isSuccess: isSuccessUserFetched, data: userDataFetched } =
+        useGetUserByIdQuery(data?.profile.userId as string, {
+            skip: !isSuccess,
+        });
+
     const { setModalState } = useModal();
     const handleIconPress = () => setShowPassword(prev => !prev);
 
@@ -46,11 +52,6 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     };
 
     const { setIsLoggedIn } = React.useContext(AppStateContext);
-
-    const { isSuccess: isSuccessUserFetched, data: userDataFetched } =
-        useGetUserByIdQuery(data?.profile.userId as string, {
-            skip: !isSuccess,
-        });
 
     React.useEffect(() => {
         if (isError) {

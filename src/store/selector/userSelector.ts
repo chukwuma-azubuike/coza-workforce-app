@@ -1,13 +1,14 @@
 import React from 'react';
 import { createSelector } from '@reduxjs/toolkit';
 import store from '..';
-import { authServiceSlice } from '../services/account';
+import { accountServiceSlice } from '../services/account';
 
-export const selectUserSlice = authServiceSlice.endpoints.login.select();
+export const selectUserSlice =
+    accountServiceSlice.endpoints.getUserById.select();
 
 export const selectCurrentUser = createSelector(
     selectUserSlice,
-    userSession => userSession.data?.data.profile
+    userSession => userSession.data
 );
 
 export const selectCurrentUserRole = createSelector(

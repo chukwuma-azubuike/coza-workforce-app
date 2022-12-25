@@ -14,22 +14,23 @@ interface IViewWrapper
         > {
     children?: JSX.Element | ReactChildren | React.ReactNode;
     scroll?: boolean;
+    noPadding?: boolean;
     refreshing?: boolean;
     onRefresh?: (args?: any) => void;
 }
 
 const ViewWrapper = (props: IViewWrapper) => {
-    const { scroll, onRefresh, refreshing } = props;
+    const { scroll, onRefresh, refreshing, noPadding } = props;
     const ActiveView = scroll ? ScrollView : View;
 
     return (
         <ActiveView
-            pt={6}
+            pt={noPadding ? 0 : 6}
             flex={1}
             {...props}
             height="full"
-            _light={{ bg: 'white' }}
-            _dark={{ bg: 'black' }}
+            _light={{ bg: props.bg ? props.bg : 'white' }}
+            _dark={{ bg: props.bg ? props.bg : 'black' }}
             refreshControl={
                 onRefresh && (
                     <RefreshControl
