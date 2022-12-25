@@ -27,3 +27,42 @@ export const HomeSkeleton: React.FC = () => {
         </Center>
     );
 };
+
+export const FlatListSkeleton: React.FC = () => {
+    return (
+        <Center w="full" p={0}>
+            <VStack
+                w="90%"
+                maxW="400"
+                space={6}
+                overflow="hidden"
+                rounded="md"
+                _dark={{
+                    borderColor: 'coolGray.500',
+                }}
+                _light={{
+                    borderColor: 'coolGray.200',
+                }}
+                py={6}
+            >
+                <Skeleton h="8" rounded="md" />
+                <Skeleton h="0.5" rounded="md" />
+
+                <Skeleton h="8" rounded="md" />
+                <Skeleton h="0.5" rounded="md" />
+
+                <Skeleton h="8" rounded="md" />
+                <Skeleton h="0.5" rounded="md" />
+
+                <Skeleton h="8" rounded="md" />
+                <Skeleton h="0.5" rounded="md" />
+
+                <Skeleton h="8" rounded="md" />
+                <Skeleton h="0.5" rounded="md" />
+
+                <Skeleton h="8" rounded="md" />
+                <Skeleton h="0.5" rounded="md" />
+            </VStack>
+        </Center>
+    );
+};

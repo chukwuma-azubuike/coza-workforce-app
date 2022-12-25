@@ -26,7 +26,6 @@ const ServiceReport: React.FC = () => {
 
     const onSubmit = (values: IServiceReportPayload) => {
         sendReport(values);
-        console.log(values);
     };
 
     const navigation = useNavigation();

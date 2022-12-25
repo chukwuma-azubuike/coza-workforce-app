@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, FlatList, HStack, Text, VStack } from 'native-base';
 import If from '../if-container';
 import Utils from '../../../utils';
+import { RefreshControl } from 'react-native';
 
 export interface IFlatListColumn {
     title?: string;
@@ -10,11 +11,18 @@ export interface IFlatListColumn {
 }
 
 export interface IFlatListComponentProps {
-    columns: any[];
     data: any[];
+    columns: any[];
+    refreshing?: boolean;
+    onRefresh?: () => void;
 }
 
-const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
+const FlatListComponent = ({
+    data,
+    columns,
+    onRefresh,
+    refreshing,
+}: IFlatListComponentProps) => {
     const titles = React.useMemo(
         () => columns.map(column => column.title),
         [columns]
@@ -26,6 +34,14 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
             <If condition={data[0][0]}>
                 <Box flex={1}>
                     <FlatList
+                        refreshControl={
+                            onRefresh && (
+                                <RefreshControl
+                                    onRefresh={onRefresh}
+                                    refreshing={refreshing as boolean}
+                                />
+                            )
+                        }
                         data={data}
                         keyExtractor={item => item.id}
                         renderItem={({ item }) => (
@@ -57,6 +73,14 @@ const FlatListComponent = ({ columns, data }: IFlatListComponentProps) => {
                 <Box flex={1}>
                     <FlatList
                         data={data}
+                        refreshControl={
+                            onRefresh && (
+                                <RefreshControl
+                                    onRefresh={onRefresh}
+                                    refreshing={refreshing as boolean}
+                                />
+                            )
+                        }
                         keyExtractor={item => item.id}
                         ListHeaderComponent={() =>
                             titles[0] ? (
