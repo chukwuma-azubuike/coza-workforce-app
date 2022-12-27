@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heading, Stack, Text } from 'native-base';
+import Utils from '../../../utils';
 
 interface IUserInfo {
     heading?: string;
@@ -15,8 +16,8 @@ const UserInfo = ({ heading, detail }: IUserInfo) => {
             my={2}
         >
             <Heading size="sm">{heading}:</Heading>
-            <Text ml="2" fontWeight="400" color="gray.400">
-                {detail}
+            <Text ml="2" flexWrap="wrap" fontWeight="400" color="gray.400">
+                {detail && Utils.truncateString(detail, 40)}
             </Text>
         </Stack>
     );
