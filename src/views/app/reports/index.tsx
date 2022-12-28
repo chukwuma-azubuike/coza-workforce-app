@@ -6,6 +6,7 @@ import useRole from '../../../hooks/role';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
+import CampusReport from './campus-report';
 
 const Reports: React.FC = () => {
     const {
@@ -47,7 +48,8 @@ const Reports: React.FC = () => {
 
     return (
         <ViewWrapper>
-            <Empty />
+            <CampusReport />
+            {/* <Empty />
             <If condition={!isGlobalPastor}>
                 <StaggerButtonComponent
                     buttons={[
@@ -65,7 +67,7 @@ const Reports: React.FC = () => {
                         },
                     ]}
                 />
-            </If>
+            </If> */}
         </ViewWrapper>
     );
 };

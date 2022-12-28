@@ -15,6 +15,9 @@ const THEME_CONFIG = {
     error: '#DC2626',
     rose: '#F87171',
     lightRose: '#FECDD3',
+    purple: '#E4AEFF',
+    lightPurple: '#CEC1D4',
+    darkPurple: '#6B079C',
 };
 
 const extendedTheme = extendTheme({
