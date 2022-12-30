@@ -8,6 +8,9 @@ import {
     ITransferReportPayload,
     IIncidentReportPayload,
     IServiceReportPayload,
+    IDepartment,
+    IDepartmentReportResponse,
+    IService,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -54,7 +57,7 @@ export const reportsServiceSlice = createApi({
         createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>(
             {
                 query: body => ({
-                    url: `/${SERVICE_URL}/childcareReport`,
+                    url: `/${SERVICE_URL}/updateChildChareReport/${body._id}`,
                     method: 'PUT',
                     body,
                 }),
@@ -63,7 +66,7 @@ export const reportsServiceSlice = createApi({
 
         createIncidentReport: endpoint.mutation<void, IIncidentReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/incidentReport`,
+                url: `/${SERVICE_URL}/createIncidentReport`,
                 method: 'PUT',
                 body,
             }),
@@ -74,7 +77,7 @@ export const reportsServiceSlice = createApi({
             IAttendanceReportPayload
         >({
             query: body => ({
-                url: `/${SERVICE_URL}/attendanceReport`,
+                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}t`,
                 method: 'PUT',
                 body,
             }),
@@ -82,7 +85,7 @@ export const reportsServiceSlice = createApi({
 
         createGuestReport: endpoint.mutation<void, IGuestReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/guestReport`,
+                url: `/${SERVICE_URL}/updateGuestReport/${body._id}`,
                 method: 'PUT',
                 body,
             }),
@@ -90,7 +93,7 @@ export const reportsServiceSlice = createApi({
 
         createSecurityReport: endpoint.mutation<void, ISecurityReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/securityReport`,
+                url: `/${SERVICE_URL}/updateSecurityReport/${body._id}`,
                 method: 'PUT',
                 body,
             }),
@@ -98,7 +101,7 @@ export const reportsServiceSlice = createApi({
 
         createTransferReport: endpoint.mutation<void, ITransferReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/transferReport`,
+                url: `/${SERVICE_URL}/updateTransferReport/${body._id}`,
                 method: 'PUT',
                 body,
             }),
@@ -106,7 +109,7 @@ export const reportsServiceSlice = createApi({
 
         createServiceReport: endpoint.mutation<void, IServiceReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/serviceReport`,
+                url: `/${SERVICE_URL}/updateServiceReport/${body._id}`,
                 method: 'PUT',
                 body,
             }),
@@ -170,6 +173,20 @@ export const reportsServiceSlice = createApi({
                 res.data,
         }),
 
+        getDepartmentalReport: endpoint.query<
+            IDepartmentReportResponse,
+            { departmentId: IDepartment['_id']; serviceId: IService['id'] }
+        >({
+            query: ({ departmentId, serviceId }) => ({
+                url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}/${serviceId}`,
+                method: 'GET',
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<IDepartmentReportResponse>
+            ) => res.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -180,6 +197,7 @@ export const {
     useGetCarsSummaryQuery,
     useGetGuestSummaryQuery,
     useCreateGuestReportMutation,
+    useGetDepartmentalReportQuery,
     useCreateServiceReportMutation,
     useCreateTransferReportMutation,
     useCreateSecurityReportMutation,
