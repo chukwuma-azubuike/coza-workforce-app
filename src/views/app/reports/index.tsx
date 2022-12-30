@@ -6,9 +6,13 @@ import useRole from '../../../hooks/role';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
+import { useGetDepartmentalReportQuery } from '../../../store/services/reports';
+import { useGetLatestServiceQuery } from '../../../store/services/services';
+// import FlatListComponent from '../../../components/composite/flat-list';
 
 const Reports: React.FC = () => {
     const {
+        user,
         isCTS,
         isPCU,
         isWitty,
@@ -18,6 +22,21 @@ const Reports: React.FC = () => {
         isChildcare,
         isGlobalPastor,
     } = useRole();
+
+    const { data: latestServiceData, refetch } = useGetLatestServiceQuery(
+        user?.campus.id as string,
+        { skip: !user }
+    );
+
+    const { data, isLoading } = useGetDepartmentalReportQuery(
+        {
+            departmentId: user?.department._id as string,
+            serviceId: latestServiceData?.id as string,
+        },
+        {
+            skip: !user?.department._id,
+        }
+    );
 
     const { navigate } = useNavigation();
     const { setModalState } = useModal();
@@ -42,12 +61,32 @@ const Reports: React.FC = () => {
                 defaultRender: true,
                 message: 'No reports available for submission.',
             });
-        } else navigate(goToReportRoute() as unknown as never);
+        } else
+            navigate(
+                goToReportRoute() as unknown as never,
+                {
+                    _id: data?.departmentalReport.report._id,
+                    departmentId: user?.department._id,
+                    serviceId: latestServiceData?.id,
+                    campusId: user?.campus.id,
+                    userId: user?.userId,
+                } as never
+            );
     };
+
+    // const handleRefresh = () => {
+    //     refetch();
+    // };
 
     return (
         <ViewWrapper>
             <Empty />
+            {/* <FlatListComponent
+                refreshing={isLoading}
+                onRefresh={handleRefresh}
+                data={data as }
+                columns={}
+            /> */}
             <If condition={!isGlobalPastor}>
                 <StaggerButtonComponent
                     buttons={[

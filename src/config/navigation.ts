@@ -26,6 +26,8 @@ import IncidentReport from '../views/app/reports/forms/incident-report';
 import AttendanceReport from '../views/app/reports/forms/attendance-report';
 import GuestReport from '../views/app/reports/forms/guest-report';
 import ServiceReport from '../views/app/reports/forms/service-report';
+import SecurityReport from '../views/app/reports/forms/security-report';
+import TransferReport from '../views/app/reports/forms/transfer-report';
 
 export interface IAppRoute {
     name: string;
@@ -176,6 +178,24 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Service Report',
                 component: ServiceReport,
                 options: { title: 'Service Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Security Report',
+                component: SecurityReport,
+                options: { title: 'Security Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Transfer Report',
+                component: TransferReport,
+                options: { title: 'Transfer Report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

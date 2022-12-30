@@ -9,14 +9,20 @@ import { FormControl, VStack, Text } from 'native-base';
 import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { IReportFormProps } from './types';
 
-const IncidentReport: React.FC = () => {
+const IncidentReport: React.FC<
+    NativeStackScreenProps<ParamListBase>
+> = props => {
+    const params = props.route.params as IReportFormProps;
+
     const [sendReport, { error, isError, isSuccess, isLoading }] =
         useCreateIncidentReportMutation();
 
     const onSubmit = (values: IIncidentReportPayload) => {
-        sendReport(values);
+        sendReport({ ...values, ...params });
     };
 
     const navigation = useNavigation();

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Center, Text, VStack } from 'native-base';
+import { Center, VStack } from 'native-base';
 import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
@@ -19,7 +19,7 @@ const Clocker: React.FC = () => {
     );
 
     const {
-        latestService: { data, isError },
+        latestService: { data },
     } = React.useContext(HomeContext);
 
     const campusCoordinates = {
@@ -57,7 +57,7 @@ const Clocker: React.FC = () => {
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }} flex={1}>
             <VStack
-                h={vh - 240}
+                h={vh - 200}
                 alignItems="center"
                 justifyContent="space-between"
             >

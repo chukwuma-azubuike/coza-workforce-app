@@ -81,6 +81,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         <HomeContext.Provider value={initialState}>
             <ViewWrapper
                 scroll
+                flex={1}
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
             >
