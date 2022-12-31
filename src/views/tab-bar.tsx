@@ -91,7 +91,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                     }
 
                     // Roles and permissions filter
-                    // if (isWorker && route.name === 'More') return;
+                    if (isWorker && route.name === 'More') return;
 
                     return (
                         <TouchableNativeFeedback

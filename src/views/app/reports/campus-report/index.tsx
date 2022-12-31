@@ -1,14 +1,14 @@
 import {
-    Box,
     Flex,
     HStack,
-    KeyboardAvoidingView,
-    ScrollView,
     Text,
-    TextArea,
+    KeyboardAvoidingView,
+    VStack,
+    FormControl,
 } from 'native-base';
 import React from 'react';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import TextAreaComponent from '../../../../components/atoms/text-area';
+import ViewWrapper from '../../../../components/layout/viewWrapper';
 import HorizontalTable from './horizontal-table';
 import {
     BusCountType,
@@ -136,8 +136,7 @@ const CampusReport: React.FC = () => {
         headers: ['Observations'],
         rows: [
             {
-                observations:
-                    'Everything went well. hgbjk jhjkjj hjhjk jkhjkh jkkj jhj hgh kjh jhkj gh g',
+                observations: 'Everything went well.',
             },
         ],
     };
@@ -165,93 +164,86 @@ const CampusReport: React.FC = () => {
     };
 
     return (
-        <ScrollView
-            paddingLeft={'15px'}
-            paddingRight={'15px'}
-            paddingBottom={'30px'}
-        >
-            <VerticalTable
-                title="Workers Attendance"
-                tableData={workersAttendance}
-            />
-            <VerticalTable
-                title="Service Attendance"
-                tableData={serviceAttendance}
-            />
-            <HorizontalTable
-                title="Guests Attendance"
-                tableData={guestsAttendance}
-            />
-            <VerticalTable title="Childcare Report" tableData={childCare} />
-            <HorizontalTable title="Car Count" tableData={carCount} />
-            <VerticalTable title="Bus Count (Pick Up)" tableData={busCount} />
-            <VerticalTable
-                title="Service Programme Observation"
-                tableData={serviceObservation}
-                alignItemsCenter={false}
-            >
-                <HStack
-                    direction="row"
-                    justifyContent={'space-between'}
-                    w={'100%'}
-                    marginBottom={'7px'}
-                    paddingBottom={'6px'}
-                    borderBottomColor={THEME_CONFIG?.darkPurple}
-                    borderBottomWidth={'0.5px'}
+        <ViewWrapper noPadding scroll>
+            <VStack px={4} space={10}>
+                <VerticalTable
+                    title="Workers Attendance"
+                    tableData={workersAttendance}
+                />
+                <VerticalTable
+                    title="Service Attendance"
+                    tableData={serviceAttendance}
+                />
+                <HorizontalTable
+                    title="Guests Attendance"
+                    tableData={guestsAttendance}
+                />
+                <VerticalTable title="Childcare Report" tableData={childCare} />
+                <HorizontalTable title="Car Count" tableData={carCount} />
+                <VerticalTable
+                    title="Bus Count (Pick Up)"
+                    tableData={busCount}
+                />
+                <VerticalTable
+                    title="Service Programme Observation"
+                    tableData={serviceObservation}
+                    alignItemsCenter={false}
                 >
-                    <Flex direction="row">
-                        <Text fontSize="17px" fontWeight="400">
-                            Start Time -
-                        </Text>{' '}
-                        <Text
-                            fontSize="17px"
-                            fontWeight="400"
-                            color={THEME_CONFIG?.darkPurple}
-                        >
-                            09:00
-                        </Text>
-                    </Flex>
-                    <Flex direction="row">
-                        <Text fontSize="17px" fontWeight="400">
-                            End Time -
-                        </Text>{' '}
-                        <Text
-                            fontSize="17px"
-                            fontWeight="400"
-                            color={THEME_CONFIG?.darkPurple}
-                        >
-                            11:30
-                        </Text>
-                    </Flex>
-                </HStack>
-            </VerticalTable>
-            <VerticalTable title="Incidents" tableData={incidentsReport} />
-            <KeyboardAvoidingView
-                w="100%"
-                marginTop={'30px'}
-                paddingBottom={'50px'}
-            >
-                <Text
-                    fontSize={'18px'}
-                    fontWeight={'700'}
-                    marginBottom={'15px'}
+                    <HStack
+                        direction="row"
+                        justifyContent={'space-between'}
+                        w={'100%'}
+                        marginBottom={'7px'}
+                        paddingBottom={'6px'}
+                        borderBottomColor="primary.600"
+                        borderBottomWidth={'0.5px'}
+                    >
+                        <Flex direction="row">
+                            <Text fontSize="17px" fontWeight="400">
+                                Start Time -
+                            </Text>{' '}
+                            <Text
+                                fontSize="17px"
+                                fontWeight="400"
+                                color="primary.600"
+                            >
+                                09:00
+                            </Text>
+                        </Flex>
+                        <Flex direction="row">
+                            <Text fontSize="17px" fontWeight="400">
+                                End Time -
+                            </Text>{' '}
+                            <Text
+                                fontSize="17px"
+                                fontWeight="400"
+                                color="primary.600"
+                            >
+                                11:30
+                            </Text>
+                        </Flex>
+                    </HStack>
+                </VerticalTable>
+                <VerticalTable title="Incidents" tableData={incidentsReport} />
+                <KeyboardAvoidingView
+                    w="100%"
+                    marginTop={'30px'}
+                    paddingBottom={'50px'}
                 >
-                    Actions/Recommendations
-                </Text>
-                <Box alignItems="center" w="100%">
-                    <TextArea
-                        value={actions}
-                        onChangeText={text => setActions(text)}
-                        h={100}
-                        placeholder="Details"
-                        w="100%"
-                        fontSize={'15px'}
-                        fontWeight={'500'}
-                        bgColor={THEME_CONFIG?.lightPurple}
-                    />
-                </Box>
-            </KeyboardAvoidingView>
-        </ScrollView>
+                    <FormControl>
+                        <FormControl.Label mb={4}>
+                            Actions/Recommendations
+                        </FormControl.Label>
+                        <TextAreaComponent
+                            onChangeText={text => setActions(text)}
+                            placeholder="Details"
+                            value={actions}
+                            w="100%"
+                        />
+                    </FormControl>
+                </KeyboardAvoidingView>
+            </VStack>
+        </ViewWrapper>
     );
 };
 

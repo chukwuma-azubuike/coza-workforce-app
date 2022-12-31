@@ -15,7 +15,6 @@ const Reports: React.FC = () => {
         user,
         isCTS,
         isPCU,
-        isWitty,
         isUshery,
         isSecurity,
         isPrograms,
@@ -88,7 +87,9 @@ const Reports: React.FC = () => {
 
     return (
         <ViewWrapper>
-            <CampusReport />
+            <If condition={isGlobalPastor}>
+                <CampusReport />
+            </If>
             {/* <FlatListComponent
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
@@ -99,8 +100,8 @@ const Reports: React.FC = () => {
                 <StaggerButtonComponent
                     buttons={[
                         {
-                            iconName: 'warning',
                             color: 'rose.400',
+                            iconName: 'warning',
                             iconType: 'antdesign',
                             handleClick: goToIncidentReport,
                         },
