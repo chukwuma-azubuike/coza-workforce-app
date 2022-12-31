@@ -1,3 +1,5 @@
+import { IReportFormProps } from '../../views/app/reports/forms/types';
+
 // General types
 export interface ILog {
     dateCreated: string;
@@ -24,6 +26,8 @@ export interface IDefaultErrorResponse {
 }
 
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
+
+export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED';
 
 // Authentication
 export interface IAuthParams
@@ -99,6 +103,13 @@ export interface IAttendance extends ILog {
     updatedAt: string;
 }
 
+export interface ICampusAttendanceSummary {
+    leadersPresent: number;
+    allLeadersCount: number;
+    workersPresent: number;
+    allWorkersCount: number;
+}
+
 // Compliance
 export interface ITicket extends ILog {
     ticketId: string;
@@ -107,6 +118,10 @@ export interface ITicket extends ILog {
     code: string;
     contestComment: string;
     contestReplyComment: string;
+}
+
+export interface ICampusTicketsSummary {
+    ticketsIssued: number;
 }
 
 // Permissions
@@ -196,7 +211,7 @@ export interface IService {
 
 // Reports
 
-export interface IChildCareReportPayload {
+export interface IChildCareReportPayload extends IReportFormProps {
     age1_2: {
         male: number;
         female: number;
@@ -222,7 +237,7 @@ export interface IChildCareReportPayload {
     imageUrl: string | null;
 }
 
-export interface IAttendanceReportPayload {
+export interface IAttendanceReportPayload extends IReportFormProps {
     maleGuestCount: number;
     femaleGuestCount: number;
     infants: number;
@@ -231,27 +246,28 @@ export interface IAttendanceReportPayload {
     imageUrl: string | null;
 }
 
-export interface IGuestReportPayload {
+export interface IGuestReportPayload extends IReportFormProps {
     firstTimersCount: number;
     newConvertsCount: number;
     otherInfo: string | null;
     imageUrl: string | null;
 }
 
-export interface ISecurityReportPayload {
+export interface ISecurityReportPayload extends IReportFormProps {
     locations: { name: string; carCount: number }[];
     totalCarCount: number;
     otherInfo: string | null;
     imageUrl: string | null;
 }
 
-export interface ITransferReportPayload {
+export interface ITransferReportPayload extends IReportFormProps {
     locations: { name: string; adultCount: number; minorCount: number }[];
+    total: { adults: number; minors: number };
     otherInfo: string | null;
     imageUrl: string | null;
 }
 
-export interface IServiceReportPayload {
+export interface IServiceReportPayload extends IReportFormProps {
     serviceStartTime: string;
     serviceEndTime: string;
     serviceReportLink: string;
@@ -259,7 +275,18 @@ export interface IServiceReportPayload {
     imageUrl: string | null;
 }
 
-export interface IIncidentReportPayload {
+export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
     details: string;
     imageUrl: string;
+}
+
+export interface IDepartmentReportResponse {
+    departmentalReport: {
+        departmentId: IDepartment['_id'];
+        departmentName: string;
+        report: {
+            _id: string;
+        };
+    };
+    incidentReport: unknown[];
 }

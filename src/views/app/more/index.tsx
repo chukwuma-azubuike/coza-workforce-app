@@ -34,9 +34,8 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             mb={2}
                             py={4}
                             key={idx}
-                            bg="gray.50"
+                            bg="gray.100"
                             borderRadius={6}
-                            borderWidth={0.2}
                             borderColor="gray.400"
                         >
                             <TouchableOpacity

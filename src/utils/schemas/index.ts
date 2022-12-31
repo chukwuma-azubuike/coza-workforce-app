@@ -54,6 +54,8 @@ export const RegisterSchema = Yup.object().shape({
 });
 
 export const LoginSchema = Yup.object().shape({
-    email: Yup.string().required('Your enail is required.'),
+    email: Yup.string()
+        .required('Your enail is required.')
+        .email('Invalid email'),
     password: Yup.string().required('Password is required'),
 });

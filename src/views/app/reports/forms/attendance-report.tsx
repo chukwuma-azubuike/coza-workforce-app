@@ -16,14 +16,20 @@ import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
 import { InputComponent } from '../../../../components/atoms/input';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { IReportFormProps } from './types';
 
-const AttendanceReport: React.FC = () => {
+const AttendanceReport: React.FC<
+    NativeStackScreenProps<ParamListBase>
+> = props => {
+    const params = props.route.params as IReportFormProps;
+
     const [sendReport, { error, isError, isSuccess, isLoading }] =
         useCreateAttendanceReportMutation();
 
     const onSubmit = (values: IAttendanceReportPayload) => {
-        sendReport(values);
+        sendReport({ ...values, ...params });
     };
 
     const { setModalState } = useModal();
@@ -54,6 +60,12 @@ const AttendanceReport: React.FC = () => {
         total: 0,
     };
 
+    const addValues = (values: IAttendanceReportPayload) => {
+        return `${
+            +values.femaleGuestCount + +values.maleGuestCount + +values.infants
+        }`;
+    };
+
     return (
         <Formik<IAttendanceReportPayload>
             validateOnChange
@@ -63,7 +75,13 @@ const AttendanceReport: React.FC = () => {
                 INITIAL_VALUES as unknown as IAttendanceReportPayload
             }
         >
-            {({ handleChange, errors, handleSubmit, values }) => (
+            {({
+                handleChange,
+                errors,
+                handleSubmit,
+                values,
+                setFieldValue,
+            }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text
@@ -131,11 +149,7 @@ const AttendanceReport: React.FC = () => {
                                     isDisabled
                                     placeholder="0"
                                     keyboardType="numeric"
-                                    value={`${
-                                        +values.femaleGuestCount +
-                                        +values.maleGuestCount +
-                                        +values.infants
-                                    }`}
+                                    value={addValues(values)}
                                     onChangeText={handleChange('total')}
                                 />
                                 <FormControl.ErrorMessage
@@ -154,9 +168,13 @@ const AttendanceReport: React.FC = () => {
                             <FormControl>
                                 <ButtonComponent
                                     isLoading={isLoading}
-                                    onPress={
-                                        handleSubmit as (event: any) => void
-                                    }
+                                    onPress={() => {
+                                        setFieldValue(
+                                            'total',
+                                            addValues(values)
+                                        );
+                                        handleSubmit();
+                                    }}
                                 >
                                     Submit
                                 </ButtonComponent>

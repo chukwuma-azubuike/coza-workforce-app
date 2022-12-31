@@ -13,6 +13,7 @@ import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
 import { HomeSkeleton } from '../../../components/layout/skeleton';
+import { CampusReportSummary } from './report-summary';
 
 interface IInitialHomeState {
     latestService: {
@@ -36,7 +37,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 }) => {
     usePreventGoBack();
 
-    const { user, isGlobalPastor } = useRole();
+    const { user, isGlobalPastor, isCampusPastor } = useRole();
 
     const { data, isError, isSuccess, isLoading, refetch } =
         useGetLatestServiceQuery(user?.campus.id as string, {
@@ -79,24 +80,35 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 
     return (
         <HomeContext.Provider value={initialState}>
-            <ViewWrapper
-                scroll
-                refreshing={isLoading}
-                onRefresh={handleRefresh}
-            >
-                <If condition={user ? true : false}>
-                    <TopNav {...navigation} />
-                    <If condition={!isGlobalPastor}>
-                        <Clocker />
-                    </If>
-                    <If condition={isGlobalPastor}>
-                        <GSPView />
-                    </If>
-                </If>
-                <If condition={!user ? true : false}>
+            {!user ? (
+                <ViewWrapper>
                     <HomeSkeleton />
-                </If>
-            </ViewWrapper>
+                </ViewWrapper>
+            ) : (
+                <>
+                    <ViewWrapper
+                        scroll
+                        flex={1}
+                        refreshing={isLoading}
+                        onRefresh={handleRefresh}
+                    >
+                        <If condition={user ? true : false}>
+                            <TopNav {...navigation} />
+                            <If condition={!isGlobalPastor}>
+                                <Clocker />
+                            </If>
+                            <If condition={isGlobalPastor}>
+                                <GSPView />
+                            </If>
+                        </If>
+                    </ViewWrapper>
+                    <If condition={isCampusPastor}>
+                        <ViewWrapper noPadding maxH={320}>
+                            <CampusReportSummary serviceId={data?.id} />
+                        </ViewWrapper>
+                    </If>
+                </>
+            )}
         </HomeContext.Provider>
     );
 };
