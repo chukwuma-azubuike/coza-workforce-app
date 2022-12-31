@@ -51,7 +51,15 @@ const Reports: React.FC = () => {
     };
 
     const goToIncidentReport = () => {
-        navigate('Incident Report' as unknown as never);
+        navigate(
+            'Incident Report' as unknown as never,
+            {
+                departmentId: user?.department._id,
+                serviceId: latestServiceData?.id,
+                campusId: user?.campus.id,
+                userId: user?.userId,
+            } as never
+        );
     };
 
     const goToDepartmentReport = () => {

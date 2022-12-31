@@ -11,6 +11,7 @@ import {
     IDepartment,
     IDepartmentReportResponse,
     IService,
+    IReportStatus,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -48,6 +49,19 @@ export interface IBusReportSummary {
     children: number;
 }
 
+export interface ICampusReportSummary {
+    departmentalReport: {
+        status: IReportStatus;
+        departmentName: string;
+        report: {
+            _id: string;
+            departmentId: string;
+            serviceId: string;
+        };
+    }[];
+    incidentReport: unknown[];
+}
+
 export const reportsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
@@ -67,7 +81,7 @@ export const reportsServiceSlice = createApi({
         createIncidentReport: endpoint.mutation<void, IIncidentReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/createIncidentReport`,
-                method: 'PUT',
+                method: 'POST',
                 body,
             }),
         }),
@@ -187,6 +201,19 @@ export const reportsServiceSlice = createApi({
             ) => res.data,
         }),
 
+        getCampusReportSummary: endpoint.query<
+            ICampusReportSummary,
+            IService['id']
+        >({
+            query: serviceId => ({
+                url: `/${SERVICE_URL}/getServiceReports/${serviceId}`,
+                method: 'GET',
+            }),
+
+            transformResponse: (res: IDefaultResponse<ICampusReportSummary>) =>
+                res.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -198,6 +225,7 @@ export const {
     useGetGuestSummaryQuery,
     useCreateGuestReportMutation,
     useGetDepartmentalReportQuery,
+    useGetCampusReportSummaryQuery,
     useCreateServiceReportMutation,
     useCreateTransferReportMutation,
     useCreateSecurityReportMutation,
