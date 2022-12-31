@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Text } from 'native-base';
+import { Center, Text } from 'native-base';
 import moment, { Moment } from 'moment';
 
 const Timer: React.FC = () => {
@@ -15,7 +15,7 @@ const Timer: React.FC = () => {
     }, []);
 
     return (
-        <>
+        <Center mb={10}>
             <Text _dark={{ color: 'gray.50' }} color="gray.600" fontSize="4xl">
                 {time.format('LT')}
             </Text>
@@ -27,7 +27,7 @@ const Timer: React.FC = () => {
             >
                 {time.format('dddd ll')}
             </Text>
-        </>
+        </Center>
     );
 };
 

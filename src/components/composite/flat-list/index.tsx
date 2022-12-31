@@ -13,16 +13,20 @@ export interface IFlatListColumn {
 
 export interface IFlatListComponentProps {
     data: any[];
+    padding?: boolean;
     columns: any[];
     refreshing?: boolean;
     onRefresh?: () => void;
+    emptySize?: number | string;
 }
 
 const FlatListComponent = ({
     data,
+    padding,
     columns,
     onRefresh,
     refreshing,
+    emptySize,
 }: IFlatListComponentProps) => {
     const titles = React.useMemo(
         () => columns.map(column => column.title),
@@ -46,6 +50,7 @@ const FlatListComponent = ({
                                     )
                                 }
                                 data={data}
+                                nestedScrollEnabled
                                 keyExtractor={item => item.id}
                                 renderItem={({ item }) => (
                                     <Box
@@ -84,6 +89,7 @@ const FlatListComponent = ({
                                         />
                                     )
                                 }
+                                nestedScrollEnabled
                                 keyExtractor={item => item.id}
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
@@ -94,7 +100,10 @@ const FlatListComponent = ({
                                             textAlign="left"
                                             w="full"
                                         >
-                                            <HStack justifyContent="space-evenly">
+                                            <HStack
+                                                justifyContent="space-evenly"
+                                                px={padding ? 3 : 0}
+                                            >
                                                 {titles.map((title, idx) => (
                                                     <Text
                                                         semi-bold
@@ -121,9 +130,9 @@ const FlatListComponent = ({
                                     >
                                         <HStack
                                             justifyContent="space-between"
+                                            px={padding ? 3 : 0}
                                             alignItems="center"
                                             space={[2, 3]}
-                                            px={3}
                                         >
                                             {columns.map((column, idx) => {
                                                 if (column.render)
@@ -158,7 +167,7 @@ const FlatListComponent = ({
                     </If>
                 </>
             ) : (
-                <Empty />
+                <Empty width={emptySize} />
             )}
         </>
     );

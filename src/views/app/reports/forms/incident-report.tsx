@@ -42,12 +42,12 @@ const IncidentReport: React.FC<
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: 'Something went wrong!',
+                message: error?.data.message || 'Something went wrong',
             });
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = {} as IIncidentReportPayload;
+    const INITIAL_VALUES = { imageUrl: '' } as IIncidentReportPayload;
 
     return (
         <Formik<IIncidentReportPayload>

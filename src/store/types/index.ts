@@ -27,6 +27,8 @@ export interface IDefaultErrorResponse {
 
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
 
+export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED';
+
 // Authentication
 export interface IAuthParams
     extends Omit<
@@ -101,6 +103,13 @@ export interface IAttendance extends ILog {
     updatedAt: string;
 }
 
+export interface ICampusAttendanceSummary {
+    leadersPresent: number;
+    allLeadersCount: number;
+    workersPresent: number;
+    allWorkersCount: number;
+}
+
 // Compliance
 export interface ITicket extends ILog {
     ticketId: string;
@@ -109,6 +118,10 @@ export interface ITicket extends ILog {
     code: string;
     contestComment: string;
     contestReplyComment: string;
+}
+
+export interface ICampusTicketsSummary {
+    ticketsIssued: number;
 }
 
 // Permissions
@@ -262,7 +275,7 @@ export interface IServiceReportPayload extends IReportFormProps {
     imageUrl: string | null;
 }
 
-export interface IIncidentReportPayload {
+export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
     details: string;
     imageUrl: string;
 }
