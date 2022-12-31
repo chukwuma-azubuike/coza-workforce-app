@@ -1,6 +1,5 @@
 import { Box, HStack, Text, VStack } from 'native-base';
 import React from 'react';
-import { THEME_CONFIG } from '../../../../config/appConfig';
 
 type Props = {
     title: string;
@@ -12,38 +11,32 @@ type Props = {
     };
 };
 
-const Table: React.FC<Props> = ({
+const VerticalTable: React.FC<Props> = ({
     title,
     tableData,
     children,
     alignItemsCenter = true,
 }) => {
     return (
-        <Box w="100%" marginTop={'30px'}>
-            <Text fontSize={'18px'} fontWeight={'700'} marginBottom={'15px'}>
+        <Box>
+            <Text fontSize="md" mb={4} color="gray.600">
                 {title}
             </Text>
-
             {children}
-
             <Box w="100%">
                 <VStack space={'2px'}>
-                    <HStack space={'2px'} w={'100%'}>
+                    <HStack space={'2px'}>
                         {tableData?.headers?.map((item, index) => (
                             <Box
                                 key={`${item}-${index}`}
                                 alignItems={
                                     alignItemsCenter ? 'center' : 'flex-start'
                                 }
-                                backgroundColor={THEME_CONFIG?.purple}
-                                padding={'10px'}
                                 w={`${100 / tableData?.headers?.length}%`}
-                                _text={{
-                                    fontSize: '15px',
-                                    fontWeight: '600',
-                                }}
+                                bg="primary.600"
+                                p={3}
                             >
-                                {item}
+                                <Text color="white">{item}</Text>
                             </Box>
                         ))}
                     </HStack>
@@ -60,7 +53,7 @@ const Table: React.FC<Props> = ({
                                             ? 'center'
                                             : 'flex-start'
                                     }
-                                    backgroundColor={THEME_CONFIG?.lightPurple}
+                                    bg="gray.100"
                                     padding={'10px'}
                                     w={`${100 / tableData?.headers?.length}%`}
                                     _text={{
@@ -79,4 +72,4 @@ const Table: React.FC<Props> = ({
     );
 };
 
-export default Table;
+export default VerticalTable;

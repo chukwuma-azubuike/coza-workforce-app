@@ -1,6 +1,5 @@
 import { Box, HStack, Text, VStack } from 'native-base';
 import React from 'react';
-import { THEME_CONFIG } from '../../../../config/appConfig';
 
 type Props = {
     title: string;
@@ -12,45 +11,35 @@ type Props = {
 
 const HorizontalTable: React.FC<Props> = ({ title, tableData }) => {
     return (
-        <Box w="100%" marginTop={'30px'}>
-            <Text fontSize={'18px'} fontWeight={'700'} marginBottom={'15px'}>
+        <Box>
+            <Text fontSize="md" mb={4} color="gray.600">
                 {title}
             </Text>
 
             <Box w="100%">
                 <HStack space={'2px'}>
-                    <VStack space={'2px'} w={'75%'}>
+                    <VStack space={'2px'} w="40%">
                         {tableData?.headers?.map((item, index) => (
                             <Box
                                 key={`${item}-${index}`}
                                 alignItems="flex-start"
-                                backgroundColor={THEME_CONFIG?.purple}
-                                padding={'10px'}
-                                paddingLeft={'25px'}
-                                w={'100%'}
-                                _text={{
-                                    fontSize: '15px',
-                                    fontWeight: '600',
-                                }}
+                                bg="primary.600"
+                                p={3}
                             >
-                                {item}
+                                <Text color="white">{item}</Text>
                             </Box>
                         ))}
                     </VStack>
 
-                    <VStack space={'2px'} w={'25%'}>
+                    <VStack space={'2px'} w={'59%'}>
                         {Object.values(tableData?.column)?.map(
                             (item, index) => (
                                 <Box
                                     key={`${item}-${index}`}
                                     alignItems="center"
-                                    backgroundColor={THEME_CONFIG?.lightPurple}
-                                    padding={'10px'}
+                                    bg="gray.100"
                                     w={'100%'}
-                                    _text={{
-                                        fontSize: '15px',
-                                        fontWeight: '500',
-                                    }}
+                                    p={3}
                                 >
                                     {item}
                                 </Box>
