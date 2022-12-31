@@ -27,6 +27,10 @@ class Utils {
         return str;
     }
 
+    static formatEmail(email: string) {
+        return this.splitString(email).toLowerCase();
+    }
+
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
         if (arr) {
