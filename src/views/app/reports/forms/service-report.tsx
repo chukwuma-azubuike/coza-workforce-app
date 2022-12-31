@@ -18,14 +18,20 @@ import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
 import { InputComponent } from '../../../../components/atoms/input';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { IReportFormProps } from './types';
 
-const ServiceReport: React.FC = () => {
+const ServiceReport: React.FC<
+    NativeStackScreenProps<ParamListBase>
+> = props => {
+    const params = props.route.params as IReportFormProps;
+
     const [sendReport, { error, isError, isSuccess, isLoading }] =
         useCreateServiceReportMutation();
 
     const onSubmit = (values: IServiceReportPayload) => {
-        sendReport(values);
+        sendReport({ ...values, ...params });
     };
 
     const navigation = useNavigation();
@@ -103,6 +109,7 @@ const ServiceReport: React.FC = () => {
                                     Link to Service Report
                                 </FormControl.Label>
                                 <InputComponent
+                                    keyboardType="url"
                                     placeholder="https://www.link-to-report.com"
                                     onChangeText={handleChange(
                                         'serviceReportLink'

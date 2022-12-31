@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { Center, Text, VStack } from 'native-base';
+import { Box, Center, VStack } from 'native-base';
 import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
-import AttendanceSummary from './attendance-summary';
+import {
+    CampusAttendanceSummary,
+    TeamAttendanceSummary,
+} from './attendance-summary';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { Alert, Dimensions } from 'react-native';
@@ -12,6 +15,8 @@ import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 import { HomeContext } from '.';
 import { ICampusCoordinates } from '../../../store/services/attendance';
+import { CampusTicketSummary } from './ticket-summary';
+import Loading from '../../../components/atoms/loading';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(
@@ -19,7 +24,7 @@ const Clocker: React.FC = () => {
     );
 
     const {
-        latestService: { data, isError },
+        latestService: { data },
     } = React.useContext(HomeContext);
 
     const campusCoordinates = {
@@ -50,28 +55,38 @@ const Clocker: React.FC = () => {
         data?.coordinates.lat,
     ]);
 
-    const { isAHOD, isHOD } = useRole();
+    const { isAHOD, isHOD, isCampusPastor, user } = useRole();
 
     const vh = Dimensions.get('window').height;
 
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }} flex={1}>
-            <VStack
-                h={vh - 240}
-                alignItems="center"
-                justifyContent="space-between"
-            >
-                <Timer />
-                <ClockButton
-                    deviceCoordinates={deviceCoordinates}
-                    isInRange={isInRange || false}
-                />
-                <CampusLocation />
-                <If condition={isAHOD || isHOD}>
-                    <AttendanceSummary />
+            <Timer />
+            <If condition={isCampusPastor}>
+                <CampusAttendanceSummary />
+                <CampusTicketSummary />
+            </If>
+            {!user ? (
+                <Loading />
+            ) : (
+                <If condition={!isCampusPastor}>
+                    <VStack
+                        h={vh - 320}
+                        alignItems="center"
+                        justifyContent="space-between"
+                    >
+                        <ClockButton
+                            deviceCoordinates={deviceCoordinates}
+                            isInRange={isInRange || false}
+                        />
+                        <CampusLocation />
+                        <If condition={isAHOD || isHOD}>
+                            <TeamAttendanceSummary />
+                        </If>
+                        <ClockStatistics />
+                    </VStack>
                 </If>
-                <ClockStatistics />
-            </VStack>
+            )}
         </Center>
     );
 };

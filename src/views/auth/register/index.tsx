@@ -9,14 +9,18 @@ import { ParamListBase } from '@react-navigation/native';
 import Stepper, {
     IRegisterPagesProps,
 } from '../../../components/composite/stepper';
-import { IRegisterPayload } from '../../../store/types';
+import { ILoginPayload, IRegisterPayload } from '../../../store/types';
 import { Formik } from 'formik';
 import { RegisterSchema } from '../../../utils/schemas';
 import { IRegisterFormProps } from './types';
 import { handlePressFoward } from './helpers';
-import { useRegisterMutation } from '../../../store/services/account';
+import {
+    useRegisterMutation,
+    useLoginMutation,
+} from '../../../store/services/account';
 import useModal from '../../../hooks/modal/useModal';
-import ModalAlertComponent from '../../../components/composite/modal-alert';
+import { AppStateContext } from '../../../../App';
+import Utils from '../../../utils';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -29,8 +33,20 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
     route: { params },
 }) => {
+    const [loginValues, setLoginValues] = React.useState<ILoginPayload>();
     const [register, { error, isError, isSuccess, isLoading }] =
         useRegisterMutation();
+
+    const [
+        login,
+        {
+            data: loginData,
+            error: loginError,
+            isError: loginIsError,
+            isSuccess: loginIsSuccess,
+            isLoading: loginIsLoading,
+        },
+    ] = useLoginMutation();
 
     const handleSubmit = (
         values: IRegisterPayload & {
@@ -42,41 +58,52 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         delete values.departmentName;
 
         register(values);
+        setLoginValues({ password: values.password, email: values.email });
     };
+
+    const { setIsLoggedIn } = React.useContext(AppStateContext);
 
     const { setModalState } = useModal();
 
     React.useEffect(() => {
         if (isSuccess) {
             setModalState({
-                duration: 4,
-                render: (
-                    <ModalAlertComponent
-                        description="Registration successful"
-                        iconName="checkmark-circle"
-                        iconType="ionicon"
-                        status="success"
-                    />
-                ),
+                message: 'Registration successful',
+                defaultRender: true,
+                status: 'success',
             });
-            setTimeout(() => {
-                navigation.navigate('Login');
-            }, 5000);
+
+            loginValues &&
+                login({
+                    email: Utils.formatEmail(loginValues.email),
+                    password: loginValues.password,
+                });
         }
+
         if (isError) {
             setModalState({
-                duration: 4,
-                render: (
-                    <ModalAlertComponent
-                        description={`${error?.data?.message}`}
-                        iconType="feather"
-                        iconName="info"
-                        status="error"
-                    />
-                ),
+                message: `${error?.data?.message}`,
+                defaultRender: true,
+                status: 'error',
             });
         }
-    }, [isSuccess]);
+    }, [isSuccess, isError]);
+
+    React.useEffect(() => {
+        if (loginIsError) {
+            setModalState({
+                defaultRender: true,
+                status: error?.error ? 'error' : 'info',
+                message: error?.data?.data?.message || error?.error,
+            });
+        }
+        if (loginIsSuccess) {
+            if (loginData) {
+                Utils.storeCurrentUserData(loginData.profile);
+                setIsLoggedIn && setIsLoggedIn(true);
+            }
+        }
+    }, [loginIsError, loginIsSuccess]);
 
     const INITIAL_VALUES = params as IRegisterPayload;
 
@@ -93,7 +120,12 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     disableSwipe
                     pages={PAGES}
                     navigation={navigation}
-                    otherProps={{ ...props, handlePressFoward, isLoading }}
+                    otherProps={{
+                        ...props,
+                        isLoading,
+                        loginIsLoading,
+                        handlePressFoward,
+                    }}
                 />
             )}
         </Formik>

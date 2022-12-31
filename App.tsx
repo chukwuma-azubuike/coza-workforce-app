@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { extendTheme, NativeBaseProvider, Spinner } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 import Views from './src/views';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { extendedTheme } from './src/config/appConfig';
@@ -12,7 +12,7 @@ import useRootModal from './src/hooks/modal/useRootModal';
 import ModalProvider from './src/providers/modal-provider';
 import useUserSession from './src/hooks/user-session';
 import Loading from './src/components/atoms/loading';
-import checkVersion from './src/components/utils/version';
+import inAppUpdates from './src/utils/in-app-updates';
 // import { PersistGate } from 'redux-persist/integration/react';
 
 export interface IAppStateContext {
@@ -39,7 +39,7 @@ const App: React.FC<JSX.Element> = () => {
     const { isLoggedIn, setIsLoggedIn } = useUserSession();
 
     React.useEffect(() => {
-        checkVersion();
+        inAppUpdates();
     }, []);
 
     return (
