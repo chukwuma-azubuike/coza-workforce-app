@@ -8,6 +8,7 @@ import useModal from '../../../hooks/modal/useModal';
 import CampusReport from './campus-report';
 import { useGetDepartmentalReportQuery } from '../../../store/services/reports';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
+import Empty from '../../../components/atoms/empty';
 // import FlatListComponent from '../../../components/composite/flat-list';
 
 const Reports: React.FC = () => {
@@ -19,6 +20,7 @@ const Reports: React.FC = () => {
         isSecurity,
         isPrograms,
         isChildcare,
+        isCampusPastor,
         isGlobalPastor,
     } = useRole();
 
@@ -87,8 +89,11 @@ const Reports: React.FC = () => {
 
     return (
         <ViewWrapper>
-            <If condition={isGlobalPastor}>
+            <If condition={isCampusPastor}>
                 <CampusReport />
+            </If>
+            <If condition={!isCampusPastor}>
+                <Empty />
             </If>
             {/* <FlatListComponent
                 refreshing={isLoading}
