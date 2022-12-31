@@ -17,10 +17,11 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
     errors,
-    onStepPress,
     isLoading,
+    onStepPress,
     handleSubmit,
     handleChange,
+    loginIsLoading,
 }) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
@@ -128,7 +129,12 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                         Go back
                                     </ButtonComponent>
                                     <ButtonComponent
-                                        isLoading={isLoading}
+                                        isLoading={isLoading || loginIsLoading}
+                                        isLoadingText={
+                                            loginIsLoading
+                                                ? 'Logging in...'
+                                                : 'Signing up...'
+                                        }
                                         onPress={onSubmit}
                                         width={160}
                                         mt={4}

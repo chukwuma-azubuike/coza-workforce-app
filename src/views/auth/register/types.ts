@@ -24,6 +24,7 @@ interface IRegisterFormProps {
     };
     setFieldError: (field: string, errorMsg: string) => void;
     isLoading?: boolean;
+    loginIsLoading?: boolean;
 }
 
 interface IRegistrationPageStep extends IRegisterFormProps {

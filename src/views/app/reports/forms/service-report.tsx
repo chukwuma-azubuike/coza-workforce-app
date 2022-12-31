@@ -109,6 +109,7 @@ const ServiceReport: React.FC<
                                     Link to Service Report
                                 </FormControl.Label>
                                 <InputComponent
+                                    keyboardType="url"
                                     placeholder="https://www.link-to-report.com"
                                     onChangeText={handleChange(
                                         'serviceReportLink'

@@ -5,6 +5,7 @@ import {
     useValidateEmailOTPMutation,
 } from '../../../store/services/account';
 import { CELL_COUNT } from '../../../components/atoms/otp-input';
+import Utils from '../../../utils';
 
 const useWelcome = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -38,7 +39,7 @@ const useWelcome = () => {
 
     const handleSubmit = (values: { email: string }) => {
         setEmail('');
-        setEmail(values.email);
+        setEmail(Utils.formatEmail(values.email));
     };
 
     React.useEffect(() => {

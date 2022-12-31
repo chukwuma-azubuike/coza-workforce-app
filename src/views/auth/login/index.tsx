@@ -15,10 +15,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import {
-    useGetUserByIdQuery,
-    useLoginMutation,
-} from '../../../store/services/account';
+import { useLoginMutation } from '../../../store/services/account';
 import { Formik } from 'formik';
 import { LoginSchema } from '../../../utils/schemas';
 import { ILoginPayload } from '../../../store/types';
@@ -37,18 +34,13 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     const [login, { data, error, isError, isSuccess, isLoading, status }] =
         useLoginMutation();
 
-    const { isSuccess: isSuccessUserFetched, data: userDataFetched } =
-        useGetUserByIdQuery(data?.profile.userId as string, {
-            skip: !isSuccess,
-        });
-
     const { setModalState } = useModal();
     const handleIconPress = () => setShowPassword(prev => !prev);
 
     const INITIAL_VALUES = { email: '', password: '' };
 
     const onSubmit = (values: ILoginPayload) => {
-        login(values);
+        login({ ...values, email: Utils.formatEmail(values.email) });
     };
 
     const { setIsLoggedIn } = React.useContext(AppStateContext);
@@ -62,12 +54,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
             });
         }
         if (isSuccess) {
-            if (data && isSuccessUserFetched) {
+            if (data) {
                 Utils.storeCurrentUserData(data.profile);
                 setIsLoggedIn && setIsLoggedIn(true);
             }
         }
-    }, [isSuccess, isError, isSuccessUserFetched]);
+    }, [isSuccess, isError]);
 
     return (
         <ViewWrapper>
@@ -93,11 +85,9 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         validationSchema={LoginSchema}
                     >
                         {({
-                            values,
                             errors,
                             handleChange,
                             handleSubmit,
-                            setFieldError,
                         }: Pick<
                             IRegisterFormProps,
                             | 'values'
@@ -117,11 +107,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         </FormControl.Label>
                                         <InputComponent
                                             leftIcon={{
-                                                name: 'mail-outline',
                                                 type: 'ionicon',
+                                                name: 'mail-outline',
                                             }}
-                                            onChangeText={handleChange('email')}
+                                            keyboardType="email-address"
                                             placeholder="jondoe@gmail.com"
+                                            onChangeText={handleChange('email')}
                                         />
                                         <FormControl.ErrorMessage>
                                             {errors?.email}
