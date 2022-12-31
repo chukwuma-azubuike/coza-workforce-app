@@ -1,11 +1,11 @@
 import React from 'react';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import Empty from '../../../components/atoms/empty';
 import If from '../../../components/composite/if-container';
 import useRole from '../../../hooks/role';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
+import CampusReport from './campus-report';
 import { useGetDepartmentalReportQuery } from '../../../store/services/reports';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 // import FlatListComponent from '../../../components/composite/flat-list';
@@ -15,7 +15,6 @@ const Reports: React.FC = () => {
         user,
         isCTS,
         isPCU,
-        isWitty,
         isUshery,
         isSecurity,
         isPrograms,
@@ -88,7 +87,9 @@ const Reports: React.FC = () => {
 
     return (
         <ViewWrapper>
-            <Empty />
+            <If condition={isGlobalPastor}>
+                <CampusReport />
+            </If>
             {/* <FlatListComponent
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
@@ -99,8 +100,8 @@ const Reports: React.FC = () => {
                 <StaggerButtonComponent
                     buttons={[
                         {
-                            iconName: 'warning',
                             color: 'rose.400',
+                            iconName: 'warning',
                             iconType: 'antdesign',
                             handleClick: goToIncidentReport,
                         },
