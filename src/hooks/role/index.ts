@@ -1,7 +1,6 @@
 import { IUser } from './../../store/types/index';
 import React from 'react';
 import Utils from '../../utils';
-import { useGetUserByIdQuery } from '../../store/services/account';
 
 enum ROLES {
     worker = 'Worker',
