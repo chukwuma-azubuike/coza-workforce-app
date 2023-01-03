@@ -104,7 +104,10 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     </ViewWrapper>
                     <If condition={isCampusPastor}>
                         <ViewWrapper noPadding maxH={320}>
-                            <CampusReportSummary serviceId={data?.id} />
+                            <CampusReportSummary
+                                serviceId={data?.id}
+                                serviceIsLoading={isLoading}
+                            />
                         </ViewWrapper>
                     </If>
                 </>

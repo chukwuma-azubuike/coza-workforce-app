@@ -10,6 +10,7 @@ export type IReportFormProps = Pick<
     IDepartmentReportResponse['departmentalReport']['report'],
     '_id'
 > & {
+    departmentName: IDepartment['departmentName'];
     departmentId: IDepartment['_id'];
     serviceId: IService['id'];
     campusId: ICampus['id'];

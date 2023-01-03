@@ -23,7 +23,7 @@ const CampusTicketSummary: React.FC = () => {
                     color="rose.400"
                     fontSize="5xl"
                     ml={1}
-                >{`${9}`}</Text>
+                >{`${0}`}</Text>
             </Flex>
         </HStack>
     );

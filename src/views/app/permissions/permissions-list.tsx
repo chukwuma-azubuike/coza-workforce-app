@@ -27,7 +27,10 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
         <>
             {props[1]?.map((elm, idx) => {
                 const handlePress = () => {
-                    navigation.navigate('Permission Details', elm);
+                    navigation.navigate(
+                        'Permission Details' as never,
+                        elm as never
+                    );
                 };
 
                 const {
@@ -98,7 +101,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     );
 };
 
-const TEST_DATA = [
+export const TEST_DATA = [
     {
         status: 'APPROVED',
         comment: 'Feel free to take as long as you need ma. Congrats again',
