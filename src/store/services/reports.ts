@@ -49,7 +49,7 @@ export interface IBusReportSummary {
     children: number;
 }
 
-export interface ICampusReportSummary {
+export interface ICampusReportSummary<R = unknown> {
     departmentalReport: {
         status: IReportStatus;
         departmentName: string;
@@ -57,7 +57,7 @@ export interface ICampusReportSummary {
             _id: string;
             departmentId: string;
             serviceId: string;
-        };
+        } & R;
     }[];
     incidentReport: unknown[];
 }

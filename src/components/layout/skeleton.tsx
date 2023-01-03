@@ -28,7 +28,9 @@ export const HomeSkeleton: React.FC = () => {
     );
 };
 
-export const FlatListSkeleton: React.FC = () => {
+export const FlatListSkeleton: React.FC<{
+    count?: number;
+}> = ({ count = 6 }) => {
     return (
         <Center w="full" p={0}>
             <VStack
@@ -45,23 +47,12 @@ export const FlatListSkeleton: React.FC = () => {
                 }}
                 py={6}
             >
-                <Skeleton h="8" rounded="md" />
-                <Skeleton h="0.5" rounded="md" />
-
-                <Skeleton h="8" rounded="md" />
-                <Skeleton h="0.5" rounded="md" />
-
-                <Skeleton h="8" rounded="md" />
-                <Skeleton h="0.5" rounded="md" />
-
-                <Skeleton h="8" rounded="md" />
-                <Skeleton h="0.5" rounded="md" />
-
-                <Skeleton h="8" rounded="md" />
-                <Skeleton h="0.5" rounded="md" />
-
-                <Skeleton h="8" rounded="md" />
-                <Skeleton h="0.5" rounded="md" />
+                {Array.from(Array(count).keys()).map(elm => (
+                    <>
+                        <Skeleton h="8" rounded="md" />
+                        <Skeleton h="0.5" rounded="md" />
+                    </>
+                ))}
             </VStack>
         </Center>
     );

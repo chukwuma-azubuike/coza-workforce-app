@@ -11,6 +11,7 @@ import {
 } from '../../../store/services/reports';
 import TagComponent from '../../../components/atoms/tag';
 import Utils from '../../../utils';
+import { FlatListSkeleton } from '../../../components/layout/skeleton';
 
 const reportColumns: IFlatListColumn[] = [
     {
@@ -45,10 +46,12 @@ const reportColumns: IFlatListColumn[] = [
 
 interface ICampusReportSummaryProps {
     serviceId?: string;
+    serviceIsLoading?: boolean;
 }
 
 const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({
     serviceId,
+    serviceIsLoading,
 }) => {
     const { data, refetch, isLoading } = useGetCampusReportSummaryQuery(
         serviceId as string,
@@ -82,7 +85,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({
                             color="primary.600"
                             fontSize="4xl"
                             ml={1}
-                        >{`${3}`}</Text>
+                        >{`${0}`}</Text>
                         <Text
                             fontWeight="semibold"
                             color="gray.600"
@@ -92,16 +95,20 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({
                 </HStack>
                 <Divider />
             </VStack>
-            <FlatListComponent
-                padding
-                emptySize={160}
-                refreshing={isLoading}
-                columns={reportColumns}
-                onRefresh={handleRefresh}
-                data={
-                    data?.departmentalReport as unknown as ICampusReportSummary['departmentalReport']
-                }
-            />
+            {isLoading || serviceIsLoading ? (
+                <FlatListSkeleton count={3} />
+            ) : (
+                <FlatListComponent
+                    padding
+                    emptySize={160}
+                    refreshing={isLoading}
+                    columns={reportColumns}
+                    onRefresh={handleRefresh}
+                    data={
+                        data?.departmentalReport as unknown as ICampusReportSummary['departmentalReport']
+                    }
+                />
+            )}
         </>
     );
 };
