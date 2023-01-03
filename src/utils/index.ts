@@ -181,9 +181,7 @@ class Utils {
                 buttonPositive: 'OK',
                 buttonNegative: 'DENY',
             }
-        ).then(result => {
-            console.log(result);
-        });
+        ).then(result => {});
     };
 }
 

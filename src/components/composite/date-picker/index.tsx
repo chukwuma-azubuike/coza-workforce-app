@@ -8,6 +8,8 @@ import { InputComponent } from '../../atoms/input';
 import DateTimePicker, {
     DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+import { Platform } from 'react-native';
+import If from '../if-container';
 
 const MonthPicker = () => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
@@ -83,35 +85,45 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     maximumDate,
     onSelectDate,
 }: IDateTimePickerProps) => {
+    const isIOS = Platform.OS === 'ios';
+
     const [date, setDate] = React.useState<Date>(new Date());
-    const [show, setShow] = React.useState<boolean>(false);
+    const [show, setShow] = React.useState<boolean>(isIOS);
 
     const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         selectedDate && setDate(selectedDate);
-        setShow(false);
+        if (!isIOS) {
+            setShow(false);
+        }
         onSelectDate && fieldName && onSelectDate(fieldName, selectedDate);
     };
 
     const handlePress = () => setShow(true);
-    const handleTouchCancel = () => setShow(false);
+    const handleTouchCancel = () => {
+        if (!isIOS) {
+            setShow(false);
+        }
+    };
 
     return (
-        <VStack w={160}>
+        <VStack w={160} alignItems="flex-start">
             <FormControl.Label isRequired>{label}</FormControl.Label>
-            <InputComponent
-                leftIcon={{
-                    name: mode === 'time' ? 'clockcircleo' : 'calendar',
-                    type: 'antdesign',
-                }}
-                onPressIn={handlePress}
-                showSoftInputOnFocus={false}
-                value={moment(date).format(
-                    mode === 'time' ? 'LTS' : 'DD MMM, yy'
-                )}
-                placeholder={moment().format(
-                    mode === 'time' ? 'LTS' : 'DD MMM, yy'
-                )}
-            />
+            <If condition={!isIOS}>
+                <InputComponent
+                    leftIcon={{
+                        name: mode === 'time' ? 'clockcircleo' : 'calendar',
+                        type: 'antdesign',
+                    }}
+                    onPressIn={handlePress}
+                    showSoftInputOnFocus={false}
+                    value={moment(date).format(
+                        mode === 'time' ? 'LTS' : 'DD MMM, yy'
+                    )}
+                    placeholder={moment().format(
+                        mode === 'time' ? 'LTS' : 'DD MMM, yy'
+                    )}
+                />
+            </If>
             {show && (
                 <DateTimePicker
                     value={date}
@@ -119,6 +131,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     onChange={onChange}
                     minimumDate={minimumDate}
                     maximumDate={maximumDate}
+                    style={{ width: isIOS && 90 }}
                     onTouchCancel={handleTouchCancel}
                 />
             )}
