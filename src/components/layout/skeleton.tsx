@@ -1,5 +1,5 @@
 import React from 'react';
-import { Center, Skeleton, VStack } from 'native-base';
+import { Box, Center, Skeleton, VStack } from 'native-base';
 
 export const HomeSkeleton: React.FC = () => {
     return (
@@ -47,11 +47,11 @@ export const FlatListSkeleton: React.FC<{
                 }}
                 py={6}
             >
-                {Array.from(Array(count).keys()).map(elm => (
-                    <>
+                {Array.from(Array(count).keys()).map((elm, idx) => (
+                    <Box key={`elm-${idx}`}>
                         <Skeleton h="8" rounded="md" />
                         <Skeleton h="0.5" rounded="md" />
-                    </>
+                    </Box>
                 ))}
             </VStack>
         </Center>

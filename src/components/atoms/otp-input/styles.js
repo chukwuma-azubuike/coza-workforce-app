@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     title: {
-        color: '#000',
+        color: '#fff',
         fontSize: 25,
         fontWeight: '700',
         textAlign: 'center',

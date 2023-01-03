@@ -60,12 +60,21 @@ const useWelcome = () => {
             setTimeout(() => {
                 navigate('Register' as never, validateData as never);
             }, 2000);
+            setTimeout(() => {
+                setModalVisible(false);
+            }, 3000);
+        }
+        if (isErrorValidate) {
+            setTimeout(() => {
+                setModalVisible(false);
+            }, 3000);
         }
     }, [isErrorValidate, isSuccessValidate]);
 
     React.useEffect(() => {
-        if (otpValue.length === CELL_COUNT)
+        if (otpValue.length === CELL_COUNT) {
             validateEmail({ email, otp: +otpValue });
+        }
     }, [otpValue]);
 
     return {
