@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, Heading, HStack, Modal, Text, VStack } from 'native-base';
-import { Image } from 'react-native';
+import { Image, Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import ButtonComponent from '../../../components/atoms/button';
@@ -37,6 +37,8 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         isError,
         hideModal,
     } = useWelcome();
+
+    const isIOS = Platform.OS === 'ios';
 
     return (
         <>
@@ -129,7 +131,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 size="xl"
             >
                 <Modal.Content minW={200} backgroundColor="gray.200">
-                    <Modal.Body p={0}>
+                    <Modal.Body bg="gray.800" p={isIOS ? 4 : 0}>
                         <If
                             condition={
                                 isSuccess && !isError && !isErrorValidate

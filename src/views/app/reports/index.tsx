@@ -9,6 +9,7 @@ import CampusReport from './campus-report';
 import { useGetDepartmentalReportQuery } from '../../../store/services/reports';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { FlatListSkeleton } from '../../../components/layout/skeleton';
+import Empty from '../../../components/atoms/empty';
 
 const Reports: React.FC = () => {
     const {
@@ -42,12 +43,24 @@ const Reports: React.FC = () => {
     const { setModalState } = useModal();
 
     const goToReportRoute = () => {
-        if (isCTS) return 'Transfer Report';
-        if (isPCU) return 'Guest Report';
-        if (isUshery) return 'Attendance Report';
-        if (isSecurity) return 'Security Report';
-        if (isPrograms) return 'Service Report';
-        if (isChildcare) return 'Childcare Report';
+        if (isCTS) {
+            return 'Transfer Report';
+        }
+        if (isPCU) {
+            return 'Guest Report';
+        }
+        if (isUshery) {
+            return 'Attendance Report';
+        }
+        if (isSecurity) {
+            return 'Security Report';
+        }
+        if (isPrograms) {
+            return 'Service Report';
+        }
+        if (isChildcare) {
+            return 'Childcare Report';
+        }
     };
 
     const goToIncidentReport = () => {
@@ -69,7 +82,7 @@ const Reports: React.FC = () => {
                 defaultRender: true,
                 message: 'No reports available for submission.',
             });
-        } else
+        } else {
             navigate(
                 goToReportRoute() as unknown as never,
                 {
@@ -80,17 +93,19 @@ const Reports: React.FC = () => {
                     userId: user?.userId,
                 } as never
             );
+        }
     };
 
     return (
         <ViewWrapper>
             <If condition={!user}>
-                <FlatListSkeleton />
+                <FlatListSkeleton count={9} />
             </If>
             <If condition={isCampusPastor}>
                 <CampusReport serviceId={latestServiceData?.id} />
             </If>
             <If condition={!isGlobalPastor && !isCampusPastor}>
+                <Empty />
                 <StaggerButtonComponent
                     buttons={[
                         {
