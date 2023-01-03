@@ -13,8 +13,8 @@ export interface IFlatListColumn {
 
 export interface IFlatListComponentProps {
     data: any[];
-    padding?: boolean;
     columns: any[];
+    padding?: boolean;
     refreshing?: boolean;
     onRefresh?: () => void;
     emptySize?: number | string;

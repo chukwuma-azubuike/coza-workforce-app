@@ -8,8 +8,7 @@ import useModal from '../../../hooks/modal/useModal';
 import CampusReport from './campus-report';
 import { useGetDepartmentalReportQuery } from '../../../store/services/reports';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
-import Empty from '../../../components/atoms/empty';
-// import FlatListComponent from '../../../components/composite/flat-list';
+import { FlatListSkeleton } from '../../../components/layout/skeleton';
 
 const Reports: React.FC = () => {
     const {
@@ -83,25 +82,15 @@ const Reports: React.FC = () => {
             );
     };
 
-    // const handleRefresh = () => {
-    //     refetch();
-    // };
-
     return (
         <ViewWrapper>
+            <If condition={!user}>
+                <FlatListSkeleton />
+            </If>
             <If condition={isCampusPastor}>
-                <CampusReport />
+                <CampusReport serviceId={latestServiceData?.id} />
             </If>
-            <If condition={!isCampusPastor}>
-                <Empty />
-            </If>
-            {/* <FlatListComponent
-                refreshing={isLoading}
-                onRefresh={handleRefresh}
-                data={data as }
-                columns={}
-            /> */}
-            <If condition={!isGlobalPastor}>
+            <If condition={!isGlobalPastor && !isCampusPastor}>
                 <StaggerButtonComponent
                     buttons={[
                         {
