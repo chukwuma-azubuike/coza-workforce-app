@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import { Formik } from 'formik';
+import { FieldArray, Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
 import { ITransferReportPayload } from '../../../../store/types';
 import { useCreateTransferReportMutation } from '../../../../store/services/reports';
@@ -57,21 +57,11 @@ const TransferReport: React.FC<
         }
     }, [isSuccess, isError]);
 
-    const [locations, setLocations] = React.useState<
-        { name: string; adultCount: number; minorCount: number }[]
-    >([{ name: '', adultCount: 0, minorCount: 0 }]);
-
     const INITIAL_VALUES = {
-        locations,
-        otherInfo: '',
         imageUrl: '',
+        otherInfo: '',
+        locations: [{ name: '', adultCount: 0, minorCount: 0 }],
     } as ITransferReportPayload;
-
-    const handleRemove = () => {
-        setLocations(prev => {
-            return [...prev.splice(0, prev.length - 1)];
-        });
-    };
 
     const addValues = (
         values: ITransferReportPayload,
@@ -109,113 +99,123 @@ const TransferReport: React.FC<
                         >
                             {moment().format('Do MMMM, YYYY')}
                         </Text>
-                        {values.locations.length
-                            ? values.locations.map((elm, idx) => (
-                                  <HStack space={4} key={idx} mb={4}>
-                                      <FormControl isRequired w="40%">
-                                          <FormControl.Label>
-                                              Location
-                                          </FormControl.Label>
-                                          <InputComponent
-                                              placeholder="Location name"
-                                              onChangeText={handleChange(
-                                                  `locations[${idx}].name`
-                                              )}
-                                          />
-                                          <FormControl.ErrorMessage
-                                              leftIcon={
-                                                  <WarningOutlineIcon size="xs" />
-                                              }
-                                          >
-                                              This field cannot be empty
-                                          </FormControl.ErrorMessage>
-                                      </FormControl>
-                                      <FormControl isRequired w="22%">
-                                          <FormControl.Label>
-                                              Adults
-                                          </FormControl.Label>
-                                          <InputComponent
-                                              placeholder="0"
-                                              keyboardType="numeric"
-                                              onChangeText={handleChange(
-                                                  `locations[${idx}].adultCount`
-                                              )}
-                                          />
-                                          <FormControl.ErrorMessage
-                                              leftIcon={
-                                                  <WarningOutlineIcon size="xs" />
-                                              }
-                                          >
-                                              This field cannot be empty
-                                          </FormControl.ErrorMessage>
-                                      </FormControl>
-                                      <FormControl isRequired w="29%">
-                                          <FormControl.Label>
-                                              Children/Teens
-                                          </FormControl.Label>
-                                          <InputComponent
-                                              placeholder="0"
-                                              keyboardType="numeric"
-                                              onChangeText={handleChange(
-                                                  `locations[${idx}].minorCount`
-                                              )}
-                                          />
-                                          <FormControl.ErrorMessage
-                                              leftIcon={
-                                                  <WarningOutlineIcon size="xs" />
-                                              }
-                                          >
-                                              This field cannot be empty
-                                          </FormControl.ErrorMessage>
-                                      </FormControl>
-                                  </HStack>
-                              ))
-                            : null}
-                        <HStack space={4} mb={4}>
-                            <ButtonComponent
-                                isDisabled={isLoading}
-                                leftIcon={
-                                    <Icon
-                                        name="plus"
-                                        type="entypo"
-                                        color={THEME_CONFIG.primary}
-                                    />
-                                }
-                                onPress={() => {
-                                    setLocations(() => [
-                                        ...values.locations,
-                                        {
-                                            name: '',
-                                            adultCount: 0,
-                                            minorCount: 0,
-                                        },
-                                    ]);
-                                }}
-                                width="48%"
-                                secondary
-                                size={10}
-                            >
-                                Add Location
-                            </ButtonComponent>
-                            <ButtonComponent
-                                isDisabled={
-                                    values.locations.length < 1 || isLoading
-                                }
-                                leftIcon={
-                                    <Icon
-                                        name="minus"
-                                        type="entypo"
-                                        color={THEME_CONFIG.primary}
-                                    />
-                                }
-                                onPress={handleRemove}
-                                width="48%"
-                                secondary
-                                size={10}
-                            >
-                                Remove Location
-                            </ButtonComponent>
-                        </HStack>
+
+                        <FieldArray
+                            name="locations"
+                            render={arrayHelpers => (
+                                <VStack>
+                                    {values.locations.map((locations, idx) => (
+                                        <HStack
+                                            mb={4}
+                                            space={2}
+                                            key={idx}
+                                            alignItems="flex-end"
+                                        >
+                                            <FormControl isRequired w="30.5%">
+                                                <FormControl.Label>
+                                                    Location
+                                                </FormControl.Label>
+                                                <InputComponent
+                                                    placeholder="Name"
+                                                    onChangeText={handleChange(
+                                                        `locations[${idx}].name`
+                                                    )}
+                                                />
+                                                <FormControl.ErrorMessage
+                                                    leftIcon={
+                                                        <WarningOutlineIcon size="xs" />
+                                                    }
+                                                >
+                                                    This field cannot be empty
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl isRequired w="20%">
+                                                <FormControl.Label>
+                                                    Adults
+                                                </FormControl.Label>
+                                                <InputComponent
+                                                    placeholder="0"
+                                                    keyboardType="numeric"
+                                                    onChangeText={handleChange(
+                                                        `locations[${idx}].adultCount`
+                                                    )}
+                                                />
+                                                <FormControl.ErrorMessage
+                                                    leftIcon={
+                                                        <WarningOutlineIcon size="xs" />
+                                                    }
+                                                >
+                                                    This field cannot be empty
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl isRequired w="30%">
+                                                <FormControl.Label>
+                                                    Children/Teens
+                                                </FormControl.Label>
+                                                <InputComponent
+                                                    placeholder="0"
+                                                    keyboardType="numeric"
+                                                    onChangeText={handleChange(
+                                                        `locations[${idx}].minorCount`
+                                                    )}
+                                                />
+                                                <FormControl.ErrorMessage
+                                                    leftIcon={
+                                                        <WarningOutlineIcon size="xs" />
+                                                    }
+                                                >
+                                                    This field cannot be empty
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl w="14%">
+                                                <ButtonComponent
+                                                    h="54px"
+                                                    leftIcon={
+                                                        <Icon
+                                                            name="minus"
+                                                            type="entypo"
+                                                            color={
+                                                                THEME_CONFIG.primary
+                                                            }
+                                                        />
+                                                    }
+                                                    onPress={() =>
+                                                        arrayHelpers.remove(idx)
+                                                    }
+                                                    secondary
+                                                    size={12}
+                                                />
+                                            </FormControl>
+                                        </HStack>
+                                    ))}
+
+                                    <HStack mb={4}>
+                                        <ButtonComponent
+                                            isDisabled={isLoading}
+                                            leftIcon={
+                                                <Icon
+                                                    name="plus"
+                                                    type="entypo"
+                                                    color={THEME_CONFIG.primary}
+                                                />
+                                            }
+                                            onPress={() => {
+                                                arrayHelpers.push({
+                                                    name: '',
+                                                    adultCount: 0,
+                                                    minorCount: 0,
+                                                });
+                                            }}
+                                            width="100%"
+                                            secondary
+                                            size={10}
+                                        >
+                                            Add Location
+                                        </ButtonComponent>
+                                    </HStack>
+                                </VStack>
+                            )}
+                        />
 
                         <HStack space={4} mb={4}>
                             <FormControl w="48%">
