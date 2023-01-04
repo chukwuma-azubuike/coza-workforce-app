@@ -10,7 +10,7 @@ import {
 } from './attendance-summary';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import { Alert, Dimensions } from 'react-native';
+import { Alert, Dimensions, Platform } from 'react-native';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 import { HomeContext } from '.';
@@ -59,6 +59,8 @@ const Clocker: React.FC = () => {
 
     const vh = Dimensions.get('window').height;
 
+    const isIOS = Platform.OS === 'ios';
+
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }} flex={1}>
             <Timer />
@@ -71,7 +73,7 @@ const Clocker: React.FC = () => {
             ) : (
                 <If condition={!isCampusPastor}>
                     <VStack
-                        h={vh - 320}
+                        h={vh - (isIOS ? 380 : 320)}
                         alignItems="center"
                         justifyContent="space-between"
                     >

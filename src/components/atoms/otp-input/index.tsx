@@ -138,7 +138,7 @@ const OTPInput = ({
     return (
         <SafeAreaView style={styles.root}>
             {loading ? (
-                <Spinner size="lg" />
+                <Spinner size="lg" color="primary.500" />
             ) : done ? (
                 render
             ) : (
