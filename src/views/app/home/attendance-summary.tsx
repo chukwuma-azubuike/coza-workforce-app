@@ -24,12 +24,12 @@ const TeamAttendanceSummary: React.FC = () => {
                         color="primary.600"
                         fontSize="4xl"
                         ml={1}
-                    >{`${9}`}</Text>
+                    >{`${0}`}</Text>
                     <Text
                         fontWeight="semibold"
                         color="gray.600"
                         fontSize="md"
-                    >{`/${15}`}</Text>
+                    >{`/${0}`}</Text>
                 </Flex>
             </HStack>
         </Center>
@@ -47,12 +47,12 @@ const CampusAttendanceSummary: React.FC = () => {
                             color="primary.600"
                             fontSize="4xl"
                             ml={1}
-                        >{`${18}`}</Text>
+                        >{`${0}`}</Text>
                         <Text
                             fontWeight="semibold"
                             color="gray.600"
                             fontSize="md"
-                        >{`/${26}`}</Text>
+                        >{`/${0}`}</Text>
                     </Flex>
                     <Flex alignItems="center" flexDirection="row">
                         <Icon
@@ -73,12 +73,12 @@ const CampusAttendanceSummary: React.FC = () => {
                             color="primary.600"
                             fontSize="4xl"
                             ml={1}
-                        >{`${110}`}</Text>
+                        >{`${0}`}</Text>
                         <Text
                             fontWeight="semibold"
                             color="gray.600"
                             fontSize="md"
-                        >{`/${165}`}</Text>
+                        >{`/${0}`}</Text>
                     </Flex>
                     <Flex alignItems="center" flexDirection="row">
                         <Icon

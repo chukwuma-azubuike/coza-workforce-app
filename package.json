@@ -1,7 +1,7 @@
 {
     "name": "cozaglobalworkforceapp",
-    "version": "1.0.6",
-    "versionCode": 7,
+    "version": "1.0.7",
+    "versionCode": 8,
     "private": true,
     "scripts": {
         "android": "react-native run-android",

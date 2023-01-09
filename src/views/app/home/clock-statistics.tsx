@@ -32,7 +32,7 @@ const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
             />
             {difference ? (
                 <Text fontWeight="bold" fontSize="md" color="gray.600">
-                    {difference && '--:--'}
+                    {difference ? difference : '--:--'}
                 </Text>
             ) : (
                 <Text fontWeight="bold" fontSize="md" color="gray.600">
@@ -66,12 +66,12 @@ const ClockStatistics = () => {
                 iconType="antdesign"
             />
             <Stat
-                difference={`${
+                difference={
                     Utils.timeDifference(
                         latestAttendanceData?.clockOut as string,
                         latestAttendanceData?.clockIn as string
-                    ).minutes
-                }mins`}
+                    ).hrsMins
+                }
                 label="Time spent"
                 icon="hour-glass"
                 iconType="entypo"

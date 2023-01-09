@@ -24,11 +24,15 @@ import useModal from '../../../hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
+import { useDispatch } from 'react-redux';
+import { userActionTypes } from '../../../store/services/users';
 const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
+    const dispatch = useDispatch();
+
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
     const [login, { data, error, isError, isSuccess, isLoading, status }] =
@@ -55,6 +59,10 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         }
         if (isSuccess) {
             if (data) {
+                dispatch({
+                    type: userActionTypes.SET_USER_DATA,
+                    payload: data.profile,
+                });
                 Utils.storeCurrentUserData(data.profile);
                 setIsLoggedIn && setIsLoggedIn(true);
             }
