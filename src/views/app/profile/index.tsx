@@ -10,6 +10,7 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
+import DeviceInfo from 'react-native-device-info';
 
 const Profile: React.FC = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);
@@ -127,6 +128,9 @@ const Profile: React.FC = () => {
                         </Box>
                     </Stack>
                 </TouchableOpacity>
+                <Text pt={2} pb={4} color="gray.400" textAlign="center">
+                    Version {DeviceInfo.getVersion()}
+                </Text>
             </VStack>
         </ViewWrapper>
     );

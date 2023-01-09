@@ -4,9 +4,7 @@ import { createLogger } from 'redux-logger';
 import rootReducer from './root-reducer';
 import { ENV } from '@env';
 import middlewaresSlices from './services/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
-// import hardSet from 'redux-persist/es/stateReconciler/hardSet';
+import { persistStore } from 'redux-persist';
 
 const middlewares: Middleware[] = [];
 
@@ -17,15 +15,6 @@ if (ENV === 'development') {
     });
     middlewares.push(logger);
 }
-
-const persistConfig: PersistConfig<any> = {
-    key: 'root',
-    storage: AsyncStorage,
-    // stateReconciler: hardSet,
-    blacklist: ['service'],
-};
-
-// const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
     devTools: __DEV__,
