@@ -48,12 +48,15 @@ class Utils {
 
         var date1 = moment(date_1);
         var date2 = moment(date_2);
-        var diff = date2.diff(date1);
+
+        var diff = Math.abs(date2.diff(date1));
 
         let hours = moment(diff).hours();
         let minutes = moment(diff).minutes();
 
-        return { hours, minutes };
+        const hrsMins = `${moment(diff).format('HH:mm')} Hrs`;
+
+        return { hours, minutes, hrsMins };
     }
 
     /************ Storage logic ************/

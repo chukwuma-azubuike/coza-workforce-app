@@ -34,7 +34,8 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             mb={2}
                             py={4}
                             key={idx}
-                            bg="gray.100"
+                            _light={{ bg: 'gray.100' }}
+                            _dark={{ bg: 'gray.900' }}
                             borderRadius={6}
                             borderColor="gray.400"
                         >
@@ -62,7 +63,8 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                         <Text
                                             ml={4}
                                             fontSize="md"
-                                            color="gray.500"
+                                            _light={{ color: 'gray.600' }}
+                                            _dark={{ color: 'gray.400' }}
                                         >
                                             {route.name}
                                         </Text>

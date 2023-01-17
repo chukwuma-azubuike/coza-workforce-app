@@ -242,7 +242,7 @@ const CampusReport: React.FC<ICampusReport> = props => {
     }, [data]);
 
     const handleRefresh = () => {
-        refetch();
+        serviceId && refetch();
     };
 
     return (
