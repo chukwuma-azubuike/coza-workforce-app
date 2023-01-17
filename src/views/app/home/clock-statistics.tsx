@@ -31,15 +31,29 @@ const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
                 }
             />
             {difference ? (
-                <Text fontWeight="bold" fontSize="md" color="gray.600">
+                <Text
+                    fontSize="md"
+                    fontWeight="bold"
+                    _dark={{ color: 'gray.400' }}
+                    _light={{ color: 'gray.600' }}
+                >
                     {difference ? difference : '--:--'}
                 </Text>
             ) : (
-                <Text fontWeight="bold" fontSize="md" color="gray.600">
+                <Text
+                    fontSize="md"
+                    fontWeight="bold"
+                    _dark={{ color: 'gray.400' }}
+                    _light={{ color: 'gray.600' }}
+                >
                     {time ? moment(time).format('LT') : '--:--'}
                 </Text>
             )}
-            <Text fontWeight="light" fontSize="xs" color="gray.400">
+            <Text
+                fontSize="xs"
+                _dark={{ color: 'gray.400' }}
+                _light={{ color: 'gray.600' }}
+            >
                 {label}
             </Text>
         </VStack>

@@ -17,12 +17,44 @@ export const HomeSkeleton: React.FC = () => {
                     borderColor: 'coolGray.200',
                 }}
             >
-                <Skeleton h="40" rounded="md" />
-                <Skeleton.Text px="4" rounded="md" />
-                <Skeleton px="4" my="4" rounded="md" />
-                <Skeleton h="40" rounded="md" />
-                <Skeleton.Text px="4" rounded="md" />
-                <Skeleton px="4" my="4" rounded="md" />
+                <Skeleton
+                    h="40"
+                    rounded="md"
+                    _dark={{ bg: 'gray.700' }}
+                    _light={{ bg: 'gray.300' }}
+                />
+                <Skeleton.Text
+                    px="4"
+                    rounded="md"
+                    _dark={{ bg: 'gray.700' }}
+                    _light={{ bg: 'gray.300' }}
+                />
+                <Skeleton
+                    px="4"
+                    my="4"
+                    rounded="md"
+                    _dark={{ bg: 'gray.700' }}
+                    _light={{ bg: 'gray.300' }}
+                />
+                <Skeleton
+                    h="40"
+                    rounded="md"
+                    _dark={{ bg: 'gray.700' }}
+                    _light={{ bg: 'gray.300' }}
+                />
+                <Skeleton.Text
+                    px="4"
+                    rounded="md"
+                    _dark={{ bg: 'gray.700' }}
+                    _light={{ bg: 'gray.300' }}
+                />
+                <Skeleton
+                    px="4"
+                    my="4"
+                    rounded="md"
+                    _dark={{ bg: 'gray.700' }}
+                    _light={{ bg: 'gray.300' }}
+                />
             </VStack>
         </Center>
     );
@@ -40,17 +72,27 @@ export const FlatListSkeleton: React.FC<{
                 overflow="hidden"
                 rounded="md"
                 _dark={{
-                    borderColor: 'coolGray.500',
+                    borderColor: 'gray.500',
                 }}
                 _light={{
-                    borderColor: 'coolGray.200',
+                    borderColor: 'gray.200',
                 }}
                 py={6}
             >
                 {Array.from(Array(count).keys()).map((elm, idx) => (
                     <Box key={`elm-${idx}`}>
-                        <Skeleton h="8" rounded="md" />
-                        <Skeleton h="0.5" rounded="md" />
+                        <Skeleton
+                            h="8"
+                            rounded="md"
+                            _dark={{ bg: 'gray.700' }}
+                            _light={{ bg: 'gray.300' }}
+                        />
+                        <Skeleton
+                            h="0.5"
+                            rounded="md"
+                            _dark={{ bg: 'gray.700' }}
+                            _light={{ bg: 'gray.300' }}
+                        />
                     </Box>
                 ))}
             </VStack>

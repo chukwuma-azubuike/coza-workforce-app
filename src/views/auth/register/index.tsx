@@ -21,6 +21,8 @@ import {
 import useModal from '../../../hooks/modal/useModal';
 import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
+import { versionActiontypes } from '../../../store/services/version';
+import { useDispatch } from 'react-redux';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -33,6 +35,7 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
     route: { params },
 }) => {
+    const dispatch = useDispatch();
     const [loginValues, setLoginValues] = React.useState<ILoginPayload>();
     const [register, { error, isError, isSuccess, isLoading }] =
         useRegisterMutation();
@@ -99,6 +102,9 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         }
         if (loginIsSuccess) {
             if (loginData) {
+                dispatch({
+                    type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
+                });
                 Utils.storeCurrentUserData(loginData.profile);
                 setIsLoggedIn && setIsLoggedIn(true);
             }

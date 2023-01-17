@@ -7,6 +7,7 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
+import useAppColorMode from '../../../hooks/theme/colorMode';
 
 const TopNav: React.FC<
     NativeStackNavigationProp<ParamListBase, string, undefined>
@@ -25,6 +26,8 @@ const TopNav: React.FC<
 
     const { user } = useRole();
 
+    const { isLightMode } = useAppColorMode();
+
     return (
         <HStack
             justifyContent="space-between"
@@ -41,6 +44,8 @@ const TopNav: React.FC<
                 icon={
                     <AvatarComponent
                         badge
+                        _light={{ bg: 'gray.100' }}
+                        _dark={{ bg: 'gray.900' }}
                         size="sm"
                         shadow={4}
                         firstName={user?.firstName}
@@ -57,7 +62,12 @@ const TopNav: React.FC<
                 w={10}
                 borderRadius="full"
             />
-            <Text fontSize="lg" color="gray.500" fontWeight="light">
+            <Text
+                fontSize="lg"
+                fontWeight="light"
+                _dark={{ color: 'gray.400' }}
+                _light={{ color: 'gray.600' }}
+            >
                 {isLoading
                     ? 'Searching for service...'
                     : !isError
@@ -67,19 +77,25 @@ const TopNav: React.FC<
             <IconButton
                 icon={
                     <Icon
-                        color={THEME_CONFIG.lightGray}
+                        color={
+                            isLightMode
+                                ? THEME_CONFIG.gray
+                                : THEME_CONFIG.lightGray
+                        }
                         iconStyle={{ fontSize: 21 }}
                         name="notifications-outline"
                         underlayColor="white"
+                        raised={isLightMode}
                         borderRadius={10}
                         type="ionicon"
                         size={16}
-                        raised
                     />
                 }
                 p={1}
                 h={10}
                 w={10}
+                _light={{ bg: 'gray.100' }}
+                _dark={{ bg: 'gray.900' }}
                 onPress={handleNotificationPress}
                 borderRadius="full"
             />

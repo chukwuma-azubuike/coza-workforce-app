@@ -1,15 +1,19 @@
-import { Center, Image, Spinner, VStack } from 'native-base';
 import React from 'react';
-const logo = require('../../../assets/images/COZA-Logo-black.png');
+import { Center, Image, Spinner, VStack } from 'native-base';
+import useAppColorMode from '../../../hooks/theme/colorMode';
+const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
+const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
 
 const Loading = ({ bootUp }: { bootUp?: boolean }) => {
+    const { isLightMode } = useAppColorMode();
+
     return (
         <Center flex={1} justifyContent="center">
             <VStack justifyContent="center">
                 {bootUp ? (
                     <Image
                         alt="startuplogo"
-                        source={logo}
+                        source={isLightMode ? logoBlack : logoWhite}
                         style={{
                             width: 100,
                             height: 100,

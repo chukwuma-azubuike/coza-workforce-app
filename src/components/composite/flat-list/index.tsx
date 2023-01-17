@@ -4,6 +4,7 @@ import If from '../if-container';
 import Utils from '../../../utils';
 import { RefreshControl } from 'react-native';
 import Empty from '../../atoms/empty';
+import { FlatListSkeleton } from '../../layout/skeleton';
 
 export interface IFlatListColumn {
     title?: string;
@@ -17,6 +18,7 @@ export interface IFlatListComponentProps {
     padding?: boolean;
     refreshing?: boolean;
     onRefresh?: () => void;
+    isLoading?: boolean;
     emptySize?: number | string;
 }
 
@@ -27,6 +29,7 @@ const FlatListComponent = ({
     onRefresh,
     refreshing,
     emptySize,
+    isLoading,
 }: IFlatListComponentProps) => {
     const titles = React.useMemo(
         () => columns.map(column => column.title),
@@ -94,7 +97,7 @@ const FlatListComponent = ({
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
                                         <Box
-                                            bg="gray.50"
+                                            bg="transparent"
                                             py={3}
                                             flex={1}
                                             textAlign="left"
@@ -144,7 +147,7 @@ const FlatListComponent = ({
                                                     <Text
                                                         color="gray.500"
                                                         _dark={{
-                                                            color: 'warmGray.200',
+                                                            color: 'gray.200',
                                                         }}
                                                         key={idx}
                                                         flex={1}
@@ -166,6 +169,8 @@ const FlatListComponent = ({
                         </Box>
                     </If>
                 </>
+            ) : isLoading ? (
+                <FlatListSkeleton />
             ) : (
                 <Empty width={emptySize} />
             )}

@@ -13,7 +13,8 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
 
     return (
         <Avatar
-            bg="gray.100"
+            _dark={{ bg: 'gray.900' }}
+            _light={{ bg: 'gray.100' }}
             source={{
                 uri: imageUrl,
             }}

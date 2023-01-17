@@ -16,12 +16,15 @@ import If from '../../../components/composite/if-container';
 import { APP_NAME, APP_SLOGAN } from '@env';
 import { TouchableRipple } from 'react-native-paper';
 import useWelcome from './hooks';
-
-const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
+import useAppColorMode from '../../../hooks/theme/colorMode';
+const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
+const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
 
 const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
+    const { isLightMode } = useAppColorMode();
+
     const {
         handleSubmit,
         validateError,
@@ -57,8 +60,8 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             width: 150,
                             height: 150,
                         }}
-                        source={cozaIcon}
                         resizeMode="center"
+                        source={isLightMode ? logoBlack : logoWhite}
                     />
                     <Heading size="lg">{APP_NAME}</Heading>
                     <Text color="gray.400">{APP_SLOGAN}</Text>
@@ -117,7 +120,11 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             style={{ paddingHorizontal: 6, borderRadius: 10 }}
                             onPress={() => navigation.navigate('Login')}
                         >
-                            <Text fontSize="md" color="primary.600">
+                            <Text
+                                fontSize="md"
+                                _dark={{ color: 'primary.400' }}
+                                _light={{ color: 'primary.500' }}
+                            >
                                 Login
                             </Text>
                         </TouchableRipple>

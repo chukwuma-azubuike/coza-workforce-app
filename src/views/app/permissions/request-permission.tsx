@@ -11,12 +11,16 @@ import { DateTimePickerComponent } from '../../../components/composite/date-pick
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
+import useAppColorMode from '../../../hooks/theme/colorMode';
+import { useNavigation } from '@react-navigation/native';
 
 const RequestPermission: React.FC = () => {
     const [icon, setIcon] = React.useState<{ name: string; type: string }>({
         type: 'ionicon',
         name: 'briefcase-outline',
     });
+
+    const { goBack } = useNavigation();
 
     const [loading, setLoading] = React.useState<boolean>(false); //Just for 3P testing
 
@@ -78,9 +82,12 @@ const RequestPermission: React.FC = () => {
                     defaultRender: true,
                     status: 'success',
                 });
+                goBack();
             }, 2000);
         }
     }, [loading]);
+
+    const { isLightMode } = useAppColorMode();
 
     return (
         <ViewWrapper>
@@ -110,6 +117,11 @@ const RequestPermission: React.FC = () => {
                                             <Icon
                                                 type={icon?.type}
                                                 name={icon?.name}
+                                                color={
+                                                    isLightMode
+                                                        ? THEME_CONFIG.gray
+                                                        : THEME_CONFIG.veryLightGray
+                                                }
                                             />
                                             <Icon
                                                 type="entypo"

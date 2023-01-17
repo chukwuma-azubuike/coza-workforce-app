@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Box, Center, HStack, Text } from 'native-base';
+import { Box, Center, HStack, Text } from 'native-base';
 import moment from 'moment';
 import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '../../../config/appConfig';
@@ -7,30 +7,50 @@ import { IFlatListColumn } from '../../../components/composite/flat-list';
 import { IAttendance } from '../../../store/types';
 import Utils from '../../../utils';
 import { AvatarComponentWithoutBadge } from '../../../components/atoms/avatar';
+import { Appearance } from 'react-native';
+
+const colorScheme = Appearance.getColorScheme();
+
+const isLightMode = colorScheme === 'light';
 
 const myAttendanceColumns: IFlatListColumn[] = [
     {
         title: 'Date',
         dataIndex: 'date',
-        render: (elm: IAttendance, key) => (
-            <Box key={key} size="48px" borderWidth={0.2} borderColor="gray.300">
-                <Center pt={0}>
-                    <Text bold color="gray.600" fontSize={16}>
-                        {moment(elm.createdAt)
-                            .format('ll')
-                            .substring(4, 6)
-                            .split(',')
-                            .join('')}
-                    </Text>
-                    <Text bold color="gray.600" fontSize={12}>
-                        {moment(elm.createdAt)
-                            .format('dddd')
-                            .substring(0, 3)
-                            .toUpperCase()}
-                    </Text>
-                </Center>
-            </Box>
-        ),
+        render: (elm: IAttendance, key) => {
+            return (
+                <Box
+                    key={key}
+                    size="48px"
+                    borderWidth={0.2}
+                    borderColor={isLightMode ? 'gray.700' : 'gray.300'}
+                >
+                    <Center pt={0}>
+                        <Text
+                            bold
+                            fontSize={16}
+                            color={isLightMode ? 'gray.700' : 'gray.300'}
+                        >
+                            {moment(elm.createdAt)
+                                .format('ll')
+                                .substring(4, 6)
+                                .split(',')
+                                .join('')}
+                        </Text>
+                        <Text
+                            bold
+                            color={isLightMode ? 'gray.700' : 'gray.300'}
+                            fontSize={12}
+                        >
+                            {moment(elm.createdAt)
+                                .format('dddd')
+                                .substring(0, 3)
+                                .toUpperCase()}
+                        </Text>
+                    </Center>
+                </Box>
+            );
+        },
     },
     {
         title: 'Clock In',
@@ -105,7 +125,12 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Date',
         dataIndex: 'date',
         render: (elm: IAttendance, key) => (
-            <Box key={key} size="48px" borderWidth={0.2} borderColor="gray.300">
+            <Box
+                key={key}
+                size="48px"
+                borderWidth={0.2}
+                borderColor={isLightMode ? 'gray.700' : 'gray.300'}
+            >
                 <Center pt={0}>
                     <Text bold color="gray.600" fontSize={16}>
                         {moment(elm.createdAt)
@@ -210,16 +235,29 @@ const campusColumns: IFlatListColumn[] = [
         title: 'Date',
         dataIndex: 'date',
         render: (elm: IAttendance, key) => (
-            <Box key={key} size="48px" borderWidth={0.2} borderColor="gray.300">
+            <Box
+                key={key}
+                size="48px"
+                borderWidth={0.2}
+                borderColor={isLightMode ? 'gray.300' : 'gray.700'}
+            >
                 <Center pt={0}>
-                    <Text bold color="gray.600" fontSize={16}>
+                    <Text
+                        bold
+                        fontSize={16}
+                        color={isLightMode ? 'gray.700' : 'gray.300'}
+                    >
                         {moment(elm.createdAt)
                             .format('ll')
                             .substring(4, 6)
                             .split(',')
                             .join('')}
                     </Text>
-                    <Text bold color="gray.600" fontSize={12}>
+                    <Text
+                        bold
+                        color={isLightMode ? 'gray.600' : 'gray.400'}
+                        fontSize={12}
+                    >
                         {moment(elm.createdAt)
                             .format('dddd')
                             .substring(0, 3)
