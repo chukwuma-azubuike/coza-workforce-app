@@ -1,6 +1,7 @@
-import { IUser } from './../../store/types/index';
 import React from 'react';
-import Utils from '../../utils';
+import { useSelector } from 'react-redux';
+import { IStore } from '../../store';
+import { selectCurrentUser } from '../../store/services/users';
 
 enum ROLES {
     worker = 'Worker',
@@ -24,9 +25,9 @@ enum DEPARTMENTS {
 }
 
 const useRole = () => {
-    const currentData = async () => Utils.retrieveCurrentUserData();
-
-    const [user, setUser] = React.useState<IUser>();
+    const currentUser = useSelector((store: IStore) =>
+        selectCurrentUser(store)
+    );
 
     const [isQC, setIsQC] = React.useState<boolean>(false);
     const [isWorker, setIsWorker] = React.useState<boolean>(false);
@@ -45,19 +46,8 @@ const useRole = () => {
     const [isChildcare, setIsChildcare] = React.useState<boolean>(false);
     const [isWitty, setIsWitty] = React.useState<boolean>(false);
 
-    const [userRole, setUserRole] = React.useState<string>();
-    const [department, setDepartment] = React.useState<string>();
-
     React.useEffect(() => {
-        currentData().then((res: IUser) => {
-            setUser(res);
-            setUserRole(res.role.name);
-            setDepartment(res.department?.departmentName);
-        });
-    }, []);
-
-    React.useEffect(() => {
-        switch (userRole) {
+        switch (currentUser.role.name) {
             case ROLES.worker:
                 setIsWorker(true);
                 break;
@@ -85,10 +75,10 @@ const useRole = () => {
             default:
                 break;
         }
-    }, [userRole]);
+    }, [currentUser?.role?.name]);
 
     React.useEffect(() => {
-        switch (department) {
+        switch (currentUser.department.departmentName) {
             case DEPARTMENTS.CTS:
                 setIsCTS(true);
                 break;
@@ -113,11 +103,11 @@ const useRole = () => {
             default:
                 break;
         }
-    }, [department]);
+    }, [currentUser?.department?.departmentName]);
 
     return {
         // User Object
-        user,
+        user: currentUser,
 
         // Roles
         isQC,

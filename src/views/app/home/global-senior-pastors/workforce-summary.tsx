@@ -11,6 +11,7 @@ import {
     useGetServiceAttendanceSummaryQuery,
     useGetCarsSummaryQuery,
 } from '../../../../store/services/reports';
+import useAppColorMode from '../../../../hooks/theme/colorMode';
 
 const WorkForceSummary: React.FC = () => {
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
@@ -19,6 +20,8 @@ const WorkForceSummary: React.FC = () => {
     const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
     const [expandedBusCount, setExpandedBusCount] =
         React.useState<boolean>(false);
+
+    const { isDarkMode } = useAppColorMode();
 
     const {
         data: globaWorkforceData,
@@ -73,11 +76,19 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             name="globe"
                             type="font-awesome"
-                            color={THEME_CONFIG.gray}
+                            color={
+                                isDarkMode
+                                    ? THEME_CONFIG.lightGray
+                                    : THEME_CONFIG.darkGray
+                            }
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text color="gray.500" fontSize="md">
+                            <Text
+                                fontSize="md"
+                                _dark={{ color: 'gray.400' }}
+                                _light={{ color: 'gray.600' }}
+                            >
                                 Global Workforce
                             </Text>
                         </ListItem.Content>
@@ -85,7 +96,12 @@ const WorkForceSummary: React.FC = () => {
                 }
                 containerStyle={{
                     borderWidth: 0.2,
-                    borderColor: THEME_CONFIG.veryLightGray,
+                    borderColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : 'white',
                 }}
                 isExpanded={expandedWorkers}
                 onPress={() => {
@@ -155,19 +171,32 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             type="font-awesome"
                             name="calendar-check-o"
-                            color={THEME_CONFIG.gray}
+                            color={
+                                isDarkMode
+                                    ? THEME_CONFIG.lightGray
+                                    : THEME_CONFIG.darkGray
+                            }
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text color="gray.500" fontSize="md">
+                            <Text
+                                _dark={{ color: 'gray.400' }}
+                                _light={{ color: 'gray.600' }}
+                                fontSize="md"
+                            >
                                 Service Attendance
                             </Text>
                         </ListItem.Content>
                     </>
                 }
                 containerStyle={{
-                    borderBottomWidth: 0.2,
-                    borderColor: THEME_CONFIG.veryLightGray,
+                    borderWidth: 0.2,
+                    borderColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : 'white',
                 }}
                 isExpanded={expandedAttendance}
                 onPress={() => {
@@ -230,19 +259,32 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             type="ionicon"
                             name="person-add"
-                            color={THEME_CONFIG.gray}
+                            color={
+                                isDarkMode
+                                    ? THEME_CONFIG.lightGray
+                                    : THEME_CONFIG.darkGray
+                            }
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text color="gray.500" fontSize="md">
+                            <Text
+                                _dark={{ color: 'gray.400' }}
+                                _light={{ color: 'gray.600' }}
+                                fontSize="md"
+                            >
                                 Guests Attendance
                             </Text>
                         </ListItem.Content>
                     </>
                 }
                 containerStyle={{
-                    borderBottomWidth: 0.2,
-                    borderColor: THEME_CONFIG.veryLightGray,
+                    borderWidth: 0.2,
+                    borderColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : 'white',
                 }}
                 isExpanded={expandedGuests}
                 onPress={() => {
@@ -277,19 +319,32 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             type="ionicon"
                             name="bus-outline"
-                            color={THEME_CONFIG.gray}
+                            color={
+                                isDarkMode
+                                    ? THEME_CONFIG.lightGray
+                                    : THEME_CONFIG.darkGray
+                            }
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text color="gray.500" fontSize="md">
+                            <Text
+                                _dark={{ color: 'gray.400' }}
+                                _light={{ color: 'gray.600' }}
+                                fontSize="md"
+                            >
                                 Bus Count (Pick up)
                             </Text>
                         </ListItem.Content>
                     </>
                 }
                 containerStyle={{
-                    borderBottomWidth: 0.2,
-                    borderColor: THEME_CONFIG.veryLightGray,
+                    borderWidth: 0.2,
+                    borderColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode
+                        ? THEME_CONFIG.darkGray
+                        : 'white',
                 }}
                 isExpanded={expandedBusCount}
                 onPress={() => {

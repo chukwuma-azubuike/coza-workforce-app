@@ -81,7 +81,12 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(
                             justifyContent="space-between"
                             style={{ width: 140 }}
                         >
-                            <Text bold fontSize="4xl" color="primary.600">
+                            <Text
+                                bold
+                                fontSize="4xl"
+                                _dark={{ color: 'primary.500' }}
+                                _light={{ color: 'primary.600' }}
+                            >
                                 <CountUp
                                     isCounting
                                     duration={2}
@@ -91,12 +96,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(
                             <Text
                                 fontSize="md"
                                 fontWeight="light"
-                                color={
-                                    !iconColor ? 'success.600' : 'success.600'
-                                }
-                                style={{
-                                    color: iconColor ? iconColor : undefined,
-                                }}
+                                color={iconColor ? iconColor : 'success.400'}
                             >
                                 {`${props.suffix}${percent ? '%' : ''}`}
                             </Text>

@@ -3,6 +3,7 @@ import { ISelectItemProps, ISelectProps, Select } from 'native-base';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { Icon } from '@rneui/themed';
 import { IIconTypes } from '../../../utils/types';
+import useAppColorMode from '../../../hooks/theme/colorMode';
 
 interface ISelectComponent extends ISelectProps {}
 interface ISelectItemComponent extends ISelectItemProps {
@@ -16,10 +17,10 @@ const SelectComponent = (props: ISelectComponent) => {
             w="100%"
             size="lg"
             _light={{
-                bg: 'coolGray.100',
+                bg: 'gray.100',
             }}
             _dark={{
-                bg: 'coolGray.800',
+                bg: 'gray.900',
             }}
             {...props}
             borderRadius={THEME_CONFIG.borderRadius}
@@ -31,6 +32,7 @@ const SelectComponent = (props: ISelectComponent) => {
 
 const SelectItemComponent = (props: ISelectItemComponent) => {
     const { icon } = props;
+    const { isLightMode } = useAppColorMode();
 
     return (
         <Select.Item
@@ -41,8 +43,12 @@ const SelectItemComponent = (props: ISelectItemComponent) => {
                         size={22}
                         name={icon.name}
                         type={icon.type}
-                        color={THEME_CONFIG.gray}
                         style={{ marginLeft: 14 }}
+                        color={
+                            isLightMode
+                                ? THEME_CONFIG.gray
+                                : THEME_CONFIG.veryLightGray
+                        }
                     />
                 ) : undefined
             }

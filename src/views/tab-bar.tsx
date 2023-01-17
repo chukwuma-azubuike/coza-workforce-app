@@ -1,11 +1,12 @@
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
-import { Center, HStack } from 'native-base';
+import { Center, HStack, useColorMode } from 'native-base';
 import React from 'react';
 import { Text, TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
 import { AppRoutes } from '../config/navigation';
 import useRole from '../hooks/role';
+import useAppColorMode from '../hooks/theme/colorMode';
 
 const inMenuBarNames = AppRoutes.map(route => {
     if (route.inMenuBar) return route.name;
@@ -13,14 +14,15 @@ const inMenuBarNames = AppRoutes.map(route => {
 
 const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
     const { isWorker } = useRole();
+    const { isLightMode } = useAppColorMode();
 
     return (
         <HStack
             px={2}
-            bg="gray.100"
             borderTopWidth={0.5}
-            borderColor="gray.300"
             justifyContent="space-around"
+            _dark={{ bg: 'gray.900', borderColor: 'gray.700' }}
+            _light={{ bg: 'gray.100', borderColor: 'gray.300' }}
         >
             {state.routes.map(
                 (route: RouteProp<ParamListBase>, index: number) => {
@@ -108,7 +110,9 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             onLongPress={onLongPress}
                             style={{ height: 100 }}
                             background={TouchableNativeFeedback.Ripple(
-                                THEME_CONFIG.primaryVeryLight,
+                                isLightMode
+                                    ? THEME_CONFIG.primaryVeryLight
+                                    : THEME_CONFIG.primary,
                                 true,
                                 40
                             )}
@@ -120,14 +124,18 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                                     type={iconType}
                                     color={
                                         isFocused
-                                            ? THEME_CONFIG.primary
+                                            ? isLightMode
+                                                ? THEME_CONFIG.primary
+                                                : THEME_CONFIG.primaryLight
                                             : THEME_CONFIG.lightGray
                                     }
                                 />
                                 <Text
                                     style={{
                                         color: isFocused
-                                            ? THEME_CONFIG.primary
+                                            ? isLightMode
+                                                ? THEME_CONFIG.primary
+                                                : THEME_CONFIG.primaryLight
                                             : THEME_CONFIG.lightGray,
                                         fontSize: 12,
                                     }}

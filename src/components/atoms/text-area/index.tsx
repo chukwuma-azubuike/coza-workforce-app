@@ -12,10 +12,10 @@ const TextAreaComponent = (props: ITextAreaComponent) => {
             size="lg"
             {...props}
             _light={{
-                bg: 'coolGray.100',
+                bg: 'gray.100',
             }}
             _dark={{
-                bg: 'coolGray.800',
+                bg: 'gray.900',
             }}
             borderRadius={THEME_CONFIG.borderRadius}
         />

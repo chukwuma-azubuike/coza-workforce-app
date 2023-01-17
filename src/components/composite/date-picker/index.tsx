@@ -10,6 +10,7 @@ import DateTimePicker, {
 } from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import If from '../if-container';
+import useAppColorMode from '../../../hooks/theme/colorMode';
 
 const MonthPicker = () => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
@@ -22,13 +23,13 @@ const MonthPicker = () => {
         }
     };
 
+    const { isDarkMode } = useAppColorMode();
+
     return (
         <Swipeable
             onSwipeableOpen={handleSwipe}
             containerStyle={{
                 padding: 20,
-                borderTopWidth: 0.2,
-                borderBottomWidth: 0.2,
                 alignContent: 'center',
                 justifyContent: 'center',
                 borderColor: THEME_CONFIG.veryLightGray,
@@ -51,9 +52,18 @@ const MonthPicker = () => {
                         size={20}
                         name="calendar"
                         type="antdesign"
-                        color={THEME_CONFIG.primary}
+                        color={
+                            isDarkMode
+                                ? THEME_CONFIG.primaryLight
+                                : THEME_CONFIG.primary
+                        }
                     />
-                    <Text bold fontSize="md" color="primary.600">
+                    <Text
+                        bold
+                        fontSize="md"
+                        _dark={{ color: 'primary.400' }}
+                        _light={{ color: 'primary.600' }}
+                    >
                         {moment().format('MMMM y')}
                     </Text>
                 </HStack>

@@ -24,11 +24,20 @@ import useModal from '../../../hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
-const cozaIcon = require('../../../assets/images/COZA-Logo-black.png');
+import { useDispatch } from 'react-redux';
+import { userActionTypes } from '../../../store/services/users';
+import { versionActiontypes } from '../../../store/services/version';
+import useAppColorMode from '../../../hooks/theme/colorMode';
+const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
+const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
+    const { isLightMode } = useAppColorMode();
+
+    const dispatch = useDispatch();
+
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
     const [login, { data, error, isError, isSuccess, isLoading, status }] =
@@ -55,6 +64,13 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         }
         if (isSuccess) {
             if (data) {
+                dispatch({
+                    type: userActionTypes.SET_USER_DATA,
+                    payload: data.profile,
+                });
+                dispatch({
+                    type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
+                });
                 Utils.storeCurrentUserData(data.profile);
                 setIsLoggedIn && setIsLoggedIn(true);
             }
@@ -71,7 +87,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             width: 150,
                             height: 150,
                         }}
-                        source={cozaIcon}
+                        source={isLightMode ? logoBlack : logoWhite}
                         resizeMode="center"
                     />
                     <Heading mt={4}>Welcome back</Heading>
@@ -180,7 +196,11 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         style={{ paddingHorizontal: 6, borderRadius: 10 }}
                         onPress={() => navigation.navigate('Welcome')}
                     >
-                        <Text fontSize="md" color="primary.600">
+                        <Text
+                            fontSize="md"
+                            _dark={{ color: 'primary.400' }}
+                            _light={{ color: 'primary.500' }}
+                        >
                             Register
                         </Text>
                     </TouchableRipple>
