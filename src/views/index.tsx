@@ -56,7 +56,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
         selectVersionActionTaken(store)
     ).hasLoggedOut;
 
-    const { toggleColorMode, setColorMode, colorMode } = useColorMode();
+    const { setColorMode } = useColorMode();
 
     React.useEffect(() => {
         setColorMode(colorScheme);
