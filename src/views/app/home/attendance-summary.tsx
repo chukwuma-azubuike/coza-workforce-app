@@ -9,26 +9,32 @@ const TeamAttendanceSummary: React.FC = () => {
             <HStack alignItems="baseline">
                 <Flex alignItems="center" flexDirection="row">
                     <Icon
-                        color={THEME_CONFIG.primary}
+                        color={THEME_CONFIG.primaryLight}
                         name="people-outline"
                         type="ionicon"
                         size={18}
                     />
-                    <Text color="gray.400" fontSize="md" ml={2}>
+                    <Text
+                        ml={2}
+                        fontSize="md"
+                        _dark={{ color: 'gray.400' }}
+                        _light={{ color: 'gray.600' }}
+                    >
                         Members clocked in:
                     </Text>
                 </Flex>
                 <Flex alignItems="baseline" flexDirection="row">
                     <Text
                         fontWeight="semibold"
-                        color="primary.600"
+                        color="primary.500"
                         fontSize="4xl"
                         ml={1}
                     >{`${0}`}</Text>
                     <Text
-                        fontWeight="semibold"
-                        color="gray.600"
                         fontSize="md"
+                        fontWeight="semibold"
+                        _dark={{ color: 'gray.400' }}
+                        _light={{ color: 'gray.600' }}
                     >{`/${0}`}</Text>
                 </Flex>
             </HStack>

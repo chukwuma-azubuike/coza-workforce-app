@@ -41,13 +41,20 @@ const Profile: React.FC = () => {
                         lastName={user?.lastName}
                     />
                     <Stack mt="4" space={2}>
-                        <Heading textAlign="center" size="md">
+                        <Heading
+                            size="md"
+                            textAlign="center"
+                            _dark={{ color: 'gray.300' }}
+                            _light={{ color: 'gray.700' }}
+                        >
                             {user && `${user?.firstName} ${user?.lastName}`}
                         </Heading>
                         <Text
-                            textAlign="center"
                             fontWeight="400"
                             color="gray.400"
+                            textAlign="center"
+                            _dark={{ color: 'gray.400' }}
+                            _light={{ color: 'gray.600' }}
                         >
                             {isGlobalPastor
                                 ? 'Global Senior Pastor'
@@ -59,10 +66,11 @@ const Profile: React.FC = () => {
                     mb={2}
                     mx={4}
                     py={4}
-                    bg="gray.50"
                     borderRadius={6}
                     borderWidth={0.2}
                     borderColor="gray.400"
+                    _dark={{ bg: 'gray.900' }}
+                    _light={{ bg: 'gray.100' }}
                 >
                     <Box px={3} flexDirection="row" justifyContent="flex-start">
                         <Icon
@@ -71,7 +79,12 @@ const Profile: React.FC = () => {
                             type="Ionicons"
                             color={THEME_CONFIG.lightGray}
                         />
-                        <Text ml={4} fontSize="md" color="gray.500">
+                        <Text
+                            ml={4}
+                            fontSize="md"
+                            _dark={{ color: 'gray.300' }}
+                            _light={{ color: 'gray.700' }}
+                        >
                             User Info
                         </Text>
                     </Box>
@@ -106,10 +119,10 @@ const Profile: React.FC = () => {
                         my={3}
                         mx={4}
                         py={4}
-                        bg="gray.50"
                         borderRadius={6}
                         borderWidth={0.2}
-                        borderColor="gray.400"
+                        _dark={{ bg: 'gray.900' }}
+                        _light={{ bg: 'gray.100' }}
                     >
                         <Box
                             px={3}
@@ -122,7 +135,12 @@ const Profile: React.FC = () => {
                                 type="Ionicons"
                                 color={THEME_CONFIG.lightGray}
                             />
-                            <Text ml={4} fontSize="md" color="gray.500">
+                            <Text
+                                ml={4}
+                                fontSize="md"
+                                _dark={{ color: 'gray.300' }}
+                                _light={{ color: 'gray.700' }}
+                            >
                                 Logout
                             </Text>
                         </Box>

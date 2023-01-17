@@ -1,4 +1,5 @@
 import * as React from 'react';
+import SplashScreen from 'react-native-splash-screen';
 import {
     NavigationContainer,
     DefaultTheme,
@@ -11,7 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthRoute from '../routes/auth';
 import NotificationModal from '../components/composite/notification-modal';
 import useModal from '../hooks/modal/useModal';
-import inAppUpdates from '../utils/in-app-updates';
+import inAppUpdates, { needsLogoutList } from '../utils/in-app-updates';
 import Utils from '../utils';
 import { AppStateContext } from '../../App';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +22,10 @@ import {
 } from '../store/services/version';
 import { IStore } from '../store';
 import DeviceInfo from 'react-native-device-info';
+import { Appearance } from 'react-native';
+import { useColorMode } from 'native-base';
 
+const colorScheme = Appearance.getColorScheme();
 const RootStack = createNativeStackNavigator();
 
 const theme = {
@@ -38,6 +42,9 @@ interface IAppState {
 
 const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     const scheme = useColorScheme();
+    const appVersion = DeviceInfo.getVersion();
+
+    const needsLogOut = needsLogoutList.includes(appVersion);
 
     const { modalState, setModalState } = useModal();
 
@@ -49,7 +56,13 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
         selectVersionActionTaken(store)
     ).hasLoggedOut;
 
+    const { toggleColorMode, setColorMode, colorMode } = useColorMode();
+
     React.useEffect(() => {
+        setColorMode(colorScheme);
+
+        SplashScreen.hide();
+
         const versionLogic = async () => {
             const response = await inAppUpdates();
 
@@ -66,7 +79,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
             }
             dispatch({
                 type: versionActiontypes.SET_LAST_UPDATED_VERSION,
-                payload: DeviceInfo.getVersion(),
+                payload: appVersion,
             });
         };
 
@@ -81,7 +94,8 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
             />
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
-                    {isLoggedIn ? (
+                    {isLoggedIn &&
+                    (needsLogOut ? hasTakenLogoutAction : true) ? (
                         <RootStack.Screen name="App" component={AppRoute} />
                     ) : (
                         <RootStack.Screen name="Auth" component={AuthRoute} />

@@ -27,6 +27,7 @@ export const MyAttendance: React.FC = React.memo(() => {
             <MonthPicker />
             <FlatListComponent
                 padding
+                isLoading={isLoading}
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
                 data={data as IAttendance[]}
@@ -51,6 +52,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
             <MonthPicker />
             <FlatListComponent
                 padding
+                isLoading={isLoading}
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
                 data={data as IAttendance[]}
@@ -78,6 +80,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <MonthPicker />
             <FlatListComponent
                 padding
+                isLoading={isLoading}
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
                 data={data as IAttendance[]}
