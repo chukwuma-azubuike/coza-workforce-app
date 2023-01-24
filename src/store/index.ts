@@ -30,4 +30,6 @@ export type IStore = ReturnType<typeof store.getState>;
 export const persistor = persistStore(store);
 setupListeners(store.dispatch);
 
+export type IAppDispatch = typeof store.dispatch;
+
 export default store;
