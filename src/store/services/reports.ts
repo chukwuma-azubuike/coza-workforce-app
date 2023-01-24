@@ -12,6 +12,7 @@ import {
     IDepartmentReportResponse,
     IService,
     IReportStatus,
+    REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -72,7 +73,7 @@ export const reportsServiceSlice = createApi({
             {
                 query: body => ({
                     url: `/${SERVICE_URL}/updateChildChareReport/${body._id}`,
-                    method: 'PUT',
+                    method: REST_API_VERBS.PUT,
                     body,
                 }),
             }
@@ -81,7 +82,7 @@ export const reportsServiceSlice = createApi({
         createIncidentReport: endpoint.mutation<void, IIncidentReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/createIncidentReport`,
-                method: 'POST',
+                method: REST_API_VERBS.POST,
                 body,
             }),
         }),
@@ -92,7 +93,7 @@ export const reportsServiceSlice = createApi({
         >({
             query: body => ({
                 url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}t`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body,
             }),
         }),
@@ -100,7 +101,7 @@ export const reportsServiceSlice = createApi({
         createGuestReport: endpoint.mutation<void, IGuestReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateGuestReport/${body._id}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body,
             }),
         }),
@@ -108,7 +109,7 @@ export const reportsServiceSlice = createApi({
         createSecurityReport: endpoint.mutation<void, ISecurityReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateSecurityReport/${body._id}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body,
             }),
         }),
@@ -116,7 +117,7 @@ export const reportsServiceSlice = createApi({
         createTransferReport: endpoint.mutation<void, ITransferReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateTransferReport/${body._id}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body,
             }),
         }),
@@ -124,7 +125,7 @@ export const reportsServiceSlice = createApi({
         createServiceReport: endpoint.mutation<void, IServiceReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateServiceReport/${body._id}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body,
             }),
         }),
@@ -135,7 +136,7 @@ export const reportsServiceSlice = createApi({
         >({
             query: () => ({
                 url: `/${SERVICE_URL}/gspReport`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (
@@ -146,7 +147,7 @@ export const reportsServiceSlice = createApi({
         getCarsSummary: endpoint.query<ICarsReportSummary, void>({
             query: () => ({
                 url: `/${SERVICE_URL}/carsReport`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<ICarsReportSummary>) =>
@@ -159,7 +160,7 @@ export const reportsServiceSlice = createApi({
         >({
             query: () => ({
                 url: `/${SERVICE_URL}/serviceAttendanceReport`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (
@@ -170,7 +171,7 @@ export const reportsServiceSlice = createApi({
         getGuestSummary: endpoint.query<IGuestReportSummary, void>({
             query: () => ({
                 url: `/${SERVICE_URL}/guestReport`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<IGuestReportSummary>) =>
@@ -180,7 +181,7 @@ export const reportsServiceSlice = createApi({
         getBusSummary: endpoint.query<IBusReportSummary, void>({
             query: () => ({
                 url: `/${SERVICE_URL}/busReport`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<IBusReportSummary>) =>
@@ -193,7 +194,7 @@ export const reportsServiceSlice = createApi({
         >({
             query: ({ departmentId, serviceId }) => ({
                 url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}/${serviceId}`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (
@@ -207,7 +208,7 @@ export const reportsServiceSlice = createApi({
         >({
             query: serviceId => ({
                 url: `/${SERVICE_URL}/getServiceReports/${serviceId}`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) =>

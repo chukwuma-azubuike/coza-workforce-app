@@ -6,6 +6,7 @@ import {
     ILoginPayload,
     IUser,
     IToken,
+    REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -85,7 +86,7 @@ export const accountServiceSlice = createApi({
         >({
             query: body => ({
                 url: `/${SERVICE_URL}/validate-otp`,
-                method: 'PATCH',
+                method: REST_API_VERBS.PATCH,
                 body,
             }),
 
@@ -120,7 +121,7 @@ export const accountServiceSlice = createApi({
         >({
             query: body => ({
                 url: `/${SERVICE_URL}/login`,
-                method: 'POST',
+                method: REST_API_VERBS.POST,
                 body,
             }),
             transformResponse: async (response: ILoginResponse) => {
@@ -134,7 +135,7 @@ export const accountServiceSlice = createApi({
         register: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/register`,
-                method: 'POST',
+                method: REST_API_VERBS.POST,
                 body: {
                     ...body,
                     pictureUrl: '',
@@ -148,7 +149,7 @@ export const accountServiceSlice = createApi({
         getUserById: endpoint.query<IUser, string>({
             query: _id => ({
                 url: `/${SERVICE_URL}/user/${_id}`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
             transformResponse: async (response: IGetUserByIdResponse) =>
                 response.data,
