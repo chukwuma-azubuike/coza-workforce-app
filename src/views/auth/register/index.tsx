@@ -23,6 +23,7 @@ import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
 import { versionActiontypes } from '../../../store/services/version';
 import { useDispatch } from 'react-redux';
+import { userActionTypes } from '../../../store/services/users';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -64,9 +65,15 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         setLoginValues({ password: values.password, email: values.email });
     };
 
-    const { setIsLoggedIn } = React.useContext(AppStateContext);
+    const { setIsLoggedIn, isLoggedIn } = React.useContext(AppStateContext);
 
     const { setModalState } = useModal();
+
+    React.useEffect(() => {
+        dispatch({
+            type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
+        });
+    }, []);
 
     React.useEffect(() => {
         if (isSuccess) {
@@ -103,7 +110,8 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         if (loginIsSuccess) {
             if (loginData) {
                 dispatch({
-                    type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
+                    type: userActionTypes.SET_USER_DATA,
+                    payload: loginData.profile,
                 });
                 Utils.storeCurrentUserData(loginData.profile);
                 setIsLoggedIn && setIsLoggedIn(true);

@@ -47,7 +47,7 @@ const useRole = () => {
     const [isWitty, setIsWitty] = React.useState<boolean>(false);
 
     React.useEffect(() => {
-        switch (currentUser.role.name) {
+        switch (currentUser?.role?.name) {
             case ROLES.worker:
                 setIsWorker(true);
                 break;
@@ -78,7 +78,7 @@ const useRole = () => {
     }, [currentUser?.role?.name]);
 
     React.useEffect(() => {
-        switch (currentUser.department.departmentName) {
+        switch (currentUser?.department?.departmentName) {
             case DEPARTMENTS.CTS:
                 setIsCTS(true);
                 break;
