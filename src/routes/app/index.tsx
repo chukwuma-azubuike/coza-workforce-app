@@ -17,7 +17,7 @@ const flattenNestedRoutes = (routes: IAppRoute[]) => {
 
     routes.forEach(route => {
         allRoutes.push(route);
-        if (route.submenus.length > 0) {
+        if (route.submenus.length) {
             // Apply recursion for nested submenu routes.
             allRoutes.push(...flattenNestedRoutes(route.submenus));
         }
