@@ -1,33 +1,30 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { IStore } from '../../store';
+import { useAppSelector } from '../../store/hooks';
 import { selectCurrentUser } from '../../store/services/users';
 
 enum ROLES {
-    worker = 'Worker',
     QC = 'QC',
     HOD = 'HoD',
     AHOD = 'AHoD',
+    admin = 'Admin',
+    worker = 'Worker',
+    superAdmin = 'Super  Admins',
     campusPastor = 'Campus Pastor',
     globalPastor = 'Global Pastor',
-    admin = 'Admin',
-    superAdmin = 'Super  Admins',
 }
 
 enum DEPARTMENTS {
-    childcare = 'Children Ministry',
-    security = 'Digital Surveillance Security',
     PCU = 'PCU',
-    programs = 'Programme Coordinator',
     ushery = 'Ushery Board',
-    CTS = 'COZA Transfer Service',
     witty = 'Witty Inventions',
+    CTS = 'COZA Transfer Service',
+    childcare = 'Children Ministry',
+    programs = 'Programme Coordinator',
+    security = 'Digital Surveillance Security',
 }
 
 const useRole = () => {
-    const currentUser = useSelector((store: IStore) =>
-        selectCurrentUser(store)
-    );
+    const currentUser = useAppSelector(store => selectCurrentUser(store));
 
     const {
         role: { name: roleName },

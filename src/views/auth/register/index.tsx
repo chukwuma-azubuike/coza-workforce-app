@@ -22,8 +22,8 @@ import useModal from '../../../hooks/modal/useModal';
 import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
 import { versionActiontypes } from '../../../store/services/version';
-import { useDispatch } from 'react-redux';
 import { userActionTypes } from '../../../store/services/users';
+import { useAppDispatch } from '../../../store/hooks';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -36,7 +36,7 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
     route: { params },
 }) => {
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
     const [loginValues, setLoginValues] = React.useState<ILoginPayload>();
     const [register, { error, isError, isSuccess, isLoading }] =
         useRegisterMutation();
