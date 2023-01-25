@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { IDefaultResponse, IService } from '../types';
+import { IDefaultResponse, IService, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'service';
@@ -18,7 +18,7 @@ export const servicesServiceSlice = createApi({
         createService: endpoint.mutation<'', ''>({
             query: body => ({
                 url: SERVICE_URL,
-                method: 'POST',
+                method: REST_API_VERBS.POST,
                 body,
             }),
         }),
@@ -26,7 +26,7 @@ export const servicesServiceSlice = createApi({
         updateService: endpoint.mutation<'', ''>({
             query: args => ({
                 url: `${SERVICE_URL}/${args}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body: args,
             }),
         }),
