@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import { IAttendance, IDefaultResponse } from '../types';
+import { IAttendance, IDefaultResponse, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'attendance';
@@ -33,7 +33,7 @@ export const attendanceServiceSlice = createApi({
         clockIn: endpoint.mutation<IAttendance, IClockInPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/clockin`,
-                method: 'POST',
+                method: REST_API_VERBS.POST,
                 body,
             }),
 
@@ -46,7 +46,7 @@ export const attendanceServiceSlice = createApi({
         clockOut: endpoint.mutation<IAttendance, string>({
             query: attendanceId => ({
                 url: `/${SERVICE_URL}/clock-out/${attendanceId}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
             }),
 
             invalidatesTags: ['Attendance'],
@@ -58,7 +58,7 @@ export const attendanceServiceSlice = createApi({
         getLatestAttendanceByUserId: endpoint.query<IAttendance, string>({
             query: userId => ({
                 url: `/${SERVICE_URL}/getLatestAttendanceByUserId/${userId}`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             providesTags: ['Attendance'],
@@ -78,7 +78,7 @@ export const attendanceServiceSlice = createApi({
         getAttendanceByCampusId: endpoint.query<IAttendance[], string>({
             query: campusId => ({
                 url: `${SERVICE_URL}/getAttendanceByCampusId/${campusId}`,
-                method: 'GET',
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IGetAttendanceListResponse) => res.data,
