@@ -57,7 +57,7 @@
         "react-native-pager-view": "^6.1.2",
         "react-native-paper": "^4.12.5",
         "react-native-permissions": "^3.6.1",
-        "react-native-reanimated": "2.9.0",
+        "react-native-reanimated": "^2.14.4",
         "react-native-safe-area-context": "^4.4.1",
         "react-native-screens": "^3.18.2",
         "react-native-shadow-2": "^7.0.6",

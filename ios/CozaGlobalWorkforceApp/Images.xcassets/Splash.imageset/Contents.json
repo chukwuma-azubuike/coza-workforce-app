@@ -1,56 +1,56 @@
 {
-    "images": [
+  "images" : [
+    {
+      "filename" : "COZA-Logo-black.png",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "appearances" : [
         {
-            "filename": "size 80.svg",
-            "idiom": "universal",
-            "scale": "1x"
-        },
-        {
-            "appearances": [
-                {
-                    "appearance": "luminosity",
-                    "value": "dark"
-                }
-            ],
-            "filename": "dark80.svg",
-            "idiom": "universal",
-            "scale": "1x"
-        },
-        {
-            "filename": "size 160.svg",
-            "idiom": "universal",
-            "scale": "2x"
-        },
-        {
-            "appearances": [
-                {
-                    "appearance": "luminosity",
-                    "value": "dark"
-                }
-            ],
-            "filename": "dark160.svg",
-            "idiom": "universal",
-            "scale": "2x"
-        },
-        {
-            "filename": "size 240.svg",
-            "idiom": "universal",
-            "scale": "3x"
-        },
-        {
-            "appearances": [
-                {
-                    "appearance": "luminosity",
-                    "value": "dark"
-                }
-            ],
-            "filename": "dark240.svg",
-            "idiom": "universal",
-            "scale": "3x"
+          "appearance" : "luminosity",
+          "value" : "dark"
         }
-    ],
-    "info": {
-        "author": "xcode",
-        "version": 1
+      ],
+      "filename" : "dark80.svg",
+      "idiom" : "universal",
+      "scale" : "1x"
+    },
+    {
+      "filename" : "COZA-Logo-black 1.png",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "dark160.svg",
+      "idiom" : "universal",
+      "scale" : "2x"
+    },
+    {
+      "filename" : "COZA-Logo-black 2.png",
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "dark240.svg",
+      "idiom" : "universal",
+      "scale" : "3x"
     }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
 }
