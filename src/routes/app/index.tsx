@@ -57,12 +57,18 @@ const TabRoutes: React.FC = () => {
                         },
                         headerLeft: () => (
                             <IconButton
-                                ml={3}
+                                ml={2}
                                 fontSize="lg"
+                                _light={{
+                                    _pressed: { backgroundColor: 'gray.200' },
+                                }}
+                                _dark={{
+                                    _pressed: { backgroundColor: 'gray.800' },
+                                }}
                                 onPress={handleGoBack}
                                 icon={
                                     <Icon
-                                        size={28}
+                                        size={24}
                                         name="keyboard-backspace"
                                         type="material-community"
                                         color={

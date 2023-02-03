@@ -5,7 +5,6 @@ import {
     Heading,
     Stack,
     VStack,
-    Image,
     Text,
     Center,
     HStack,
@@ -26,16 +25,12 @@ import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
 import { userActionTypes } from '../../../store/services/users';
 import { versionActiontypes } from '../../../store/services/version';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useAppDispatch } from '../../../store/hooks';
-const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
-const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
+import Logo from '../../../components/atoms/logo';
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
-    const { isLightMode } = useAppColorMode();
-
     const dispatch = useAppDispatch();
 
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -81,15 +76,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
         <ViewWrapper>
             <VStack space="lg" w="100%" pt={10} px={4} justifyContent="center">
                 <Center>
-                    <Image
-                        alt="logo"
-                        style={{
-                            width: 150,
-                            height: 150,
-                        }}
-                        source={isLightMode ? logoBlack : logoWhite}
-                        resizeMode="center"
-                    />
+                    <Logo />
                     <Heading mt={4}>Welcome back</Heading>
                 </Center>
                 <Box alignItems="center" w="100%">

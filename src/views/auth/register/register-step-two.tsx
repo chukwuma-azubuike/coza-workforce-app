@@ -31,11 +31,11 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
     const handleBackPress = () => onStepPress(0);
     const handleContinuePress = () => {
         const fields = [
+            'gender',
             'occupation',
             'placeOfWork',
             'nextOfKin',
             'nextOfKinPhoneNo',
-            'gender',
             'maritalStatus',
         ];
         handlePressFoward(fields, values, onStepPress, 2, setFieldError);
@@ -50,107 +50,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                         <Stack w="100%" space={1}>
                             <FormControl
                                 isRequired
-                                isInvalid={errors?.occupation && true}
-                            >
-                                <FormControl.Label>
-                                    Occupation
-                                </FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    leftIcon={{
-                                        name: 'briefcase-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    placeholder="Enter your occupation"
-                                    onChangeText={handleChange('occupation')}
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.placeOfWork && true}
-                            >
-                                <FormControl.Label>
-                                    Place of work
-                                </FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    leftIcon={{
-                                        name: 'organization',
-                                        type: 'octicon',
-                                    }}
-                                    placeholder="Enter your place of work"
-                                    onChangeText={handleChange('placeOfWork')}
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.nextOfKin && true}
-                            >
-                                <FormControl.Label>
-                                    Next of Kin
-                                </FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'person-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    placeholder="Enter their name"
-                                    isRequired
-                                    onChangeText={handleChange('nextOfKin')}
-                                />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.nextOfKinPhoneNo && true}
-                            >
-                                <FormControl.Label>
-                                    Next of Kin Contact
-                                </FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    leftIcon={{
-                                        name: 'call-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    keyboardType="phone-pad"
-                                    placeholder="07066846465"
-                                    onChangeText={handleChange(
-                                        'nextOfKinPhoneNo'
-                                    )}
-                                />
-                                <FormControl.ErrorMessage
-                                    fontSize="2xl"
-                                    mt={3}
-                                    leftIcon={
-                                        <Icon
-                                            size={16}
-                                            name="warning"
-                                            type="antdesign"
-                                            color={THEME_CONFIG.error}
-                                        />
-                                    }
-                                >
-                                    {errors?.nextOfKinPhoneNo}
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.gender && true}
+                                isInvalid={errors?.gender ? true : false}
                             >
                                 <FormControl.Label>Gender</FormControl.Label>
                                 <SelectComponent
@@ -184,7 +84,110 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
 
                             <FormControl
                                 isRequired
-                                isInvalid={errors?.maritalStatus && true}
+                                isInvalid={errors?.occupation ? true : false}
+                            >
+                                <FormControl.Label>
+                                    Occupation
+                                </FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'briefcase-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    placeholder="Enter your occupation"
+                                    onChangeText={handleChange('occupation')}
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.placeOfWork ? true : false}
+                            >
+                                <FormControl.Label>
+                                    Place of work
+                                </FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'organization',
+                                        type: 'octicon',
+                                    }}
+                                    placeholder="Enter your place of work"
+                                    onChangeText={handleChange('placeOfWork')}
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.nextOfKin ? true : false}
+                            >
+                                <FormControl.Label>
+                                    Next of Kin
+                                </FormControl.Label>
+                                <InputComponent
+                                    leftIcon={{
+                                        name: 'person-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    placeholder="Enter their name"
+                                    isRequired
+                                    onChangeText={handleChange('nextOfKin')}
+                                />
+                                <FormControl.ErrorMessage
+                                    leftIcon={<WarningOutlineIcon size="xs" />}
+                                >
+                                    This field cannot be empty
+                                </FormControl.ErrorMessage>
+                            </FormControl>
+                            <FormControl
+                                isRequired
+                                isInvalid={
+                                    errors?.nextOfKinPhoneNo ? true : false
+                                }
+                            >
+                                <FormControl.Label>
+                                    Next of Kin Contact
+                                </FormControl.Label>
+                                <InputComponent
+                                    isRequired
+                                    leftIcon={{
+                                        name: 'call-outline',
+                                        type: 'ionicon',
+                                    }}
+                                    keyboardType="phone-pad"
+                                    placeholder="07066846465"
+                                    onChangeText={handleChange(
+                                        'nextOfKinPhoneNo'
+                                    )}
+                                />
+                                <FormControl.ErrorMessage
+                                    fontSize="2xl"
+                                    mt={3}
+                                    leftIcon={
+                                        <Icon
+                                            size={16}
+                                            name="warning"
+                                            type="antdesign"
+                                            color={THEME_CONFIG.error}
+                                        />
+                                    }
+                                >
+                                    {errors?.nextOfKinPhoneNo}
+                                </FormControl.ErrorMessage>
+                            </FormControl>
+
+                            <FormControl
+                                isRequired
+                                isInvalid={errors?.maritalStatus ? true : false}
                             >
                                 <FormControl.Label>
                                     Marital Status
