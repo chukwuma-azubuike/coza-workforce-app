@@ -6,6 +6,14 @@ export interface ILog {
     dateUpdated: string;
 }
 
+export enum REST_API_VERBS {
+    GET = 'GET',
+    PUT = 'PUT',
+    POST = 'POST',
+    PATCH = 'PATCH',
+    DELETE = 'DELETE',
+}
+
 export interface IDefaultResponse<D> {
     status: number;
     message: string;
@@ -122,6 +130,17 @@ export interface ITicket extends ILog {
 
 export interface ICampusTicketsSummary {
     ticketsIssued: number;
+}
+
+export interface ICreateTicketPayload {
+    departmentId: IDepartment['_id'];
+    campusId: ICampus['id'];
+    userId: IUser['userId'];
+    categoryId: string;
+    isDepartment: boolean;
+    isIndividual: boolean;
+    isRetracted: boolean;
+    ticketSummary: string;
 }
 
 // Permissions

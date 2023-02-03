@@ -54,7 +54,7 @@ class Utils {
         let hours = moment(diff).hours();
         let minutes = moment(diff).minutes();
 
-        const hrsMins = `${moment(diff).format('HH:mm')} Hrs`;
+        const hrsMins = `${moment.utc(diff).format('HH:mm')} Hr(s)`;
 
         return { hours, minutes, hrsMins };
     }

@@ -3,6 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AppRoutes, IAppRoute } from '../../config/navigation';
 import TabBar from '../../views/tab-bar';
+import { IconButton } from 'native-base';
+import { Icon } from '@rneui/themed';
+import useAppColorMode from '../../hooks/theme/colorMode';
+import { THEME_CONFIG } from '../../config/appConfig';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const AppStack = createNativeStackNavigator();
@@ -12,7 +17,7 @@ const flattenNestedRoutes = (routes: IAppRoute[]) => {
 
     routes.forEach(route => {
         allRoutes.push(route);
-        if (route.submenus.length > 0) {
+        if (route.submenus.length) {
             // Apply recursion for nested submenu routes.
             allRoutes.push(...flattenNestedRoutes(route.submenus));
         }
@@ -22,6 +27,13 @@ const flattenNestedRoutes = (routes: IAppRoute[]) => {
 };
 
 const TabRoutes: React.FC = () => {
+    const { isDarkMode } = useAppColorMode();
+    const { goBack } = useNavigation();
+
+    const handleGoBack = () => {
+        goBack();
+    };
+
     return (
         <Tab.Navigator
             tabBar={props => <TabBar {...props} />}
@@ -43,6 +55,25 @@ const TabRoutes: React.FC = () => {
                             justifyContent: 'center',
                             alignContent: 'center',
                         },
+                        headerLeft: () => (
+                            <IconButton
+                                ml={3}
+                                fontSize="lg"
+                                onPress={handleGoBack}
+                                icon={
+                                    <Icon
+                                        size={28}
+                                        name="keyboard-backspace"
+                                        type="material-community"
+                                        color={
+                                            isDarkMode
+                                                ? THEME_CONFIG.lightGray
+                                                : 'black'
+                                        }
+                                    />
+                                }
+                            />
+                        ),
                     }}
                 />
             ))}

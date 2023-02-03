@@ -9,15 +9,16 @@ import userReducer from '../services/users';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { PersistConfig, persistReducer } from 'redux-persist';
 import hardSet from 'redux-persist/es/stateReconciler/hardSet';
-import versionReducer from '../services/version';
+import versionReducer, { IVersionState } from '../services/version';
+import { IUser } from '../types';
 
-const userPersistConfig: PersistConfig<any> = {
+const userPersistConfig: PersistConfig<IUser> = {
     key: 'users',
     storage: AsyncStorage,
     stateReconciler: hardSet,
 };
 
-const versionPersistConfig: PersistConfig<any> = {
+const versionPersistConfig: PersistConfig<IVersionState> = {
     key: 'version',
     storage: AsyncStorage,
     stateReconciler: hardSet,

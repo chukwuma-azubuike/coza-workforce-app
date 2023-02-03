@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ITicket, IUser } from '../types';
+import { ITicket, IUser, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'compliance';
@@ -13,7 +13,7 @@ export const complianceServiceSlice = createApi({
         createTicket: endpoint.mutation<void, ITicket>({
             query: body => ({
                 url: SERVICE_URL,
-                method: 'POST',
+                method: REST_API_VERBS.POST,
                 body,
             }),
         }),
@@ -21,12 +21,12 @@ export const complianceServiceSlice = createApi({
         updateTicket: endpoint.mutation<void, ITicket>({
             query: args => ({
                 url: `${SERVICE_URL}/${args.ticketId}`,
-                method: 'PUT',
+                method: REST_API_VERBS.PUT,
                 body: args,
             }),
         }),
 
-        getTicketList: endpoint.query<void, Pick<IUser, 'id'>>({
+        getTicketList: endpoint.query<void, Pick<IUser, 'userId'>>({
             query: id => `/${SERVICE_URL}/${id}`,
         }),
 
