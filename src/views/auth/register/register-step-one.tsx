@@ -92,7 +92,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                             </FormControl>
                             <FormControl
                                 isRequired
-                                isInvalid={errors?.phoneNumber && true}
+                                isInvalid={errors?.phoneNumber ? true : false}
                             >
                                 <FormControl.Label>
                                     Phone number
@@ -106,7 +106,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     type="number"
                                     onChangeText={handleChange('phoneNumber')}
                                     keyboardType="phone-pad"
-                                    placeholder="07066846465"
+                                    placeholder="Enter your phone number"
                                 />
                                 <FormControl.ErrorMessage
                                     fontSize="2xl"
@@ -125,7 +125,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                             </FormControl>
                             <FormControl
                                 isRequired
-                                isInvalid={errors?.address && true}
+                                isInvalid={errors?.address ? true : false}
                             >
                                 <FormControl.Label>Address</FormControl.Label>
                                 <InputComponent
