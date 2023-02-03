@@ -14,11 +14,6 @@ const Loading = ({ bootUp }: { bootUp?: boolean }) => {
                     <Image
                         alt="startuplogo"
                         source={isLightMode ? logoBlack : logoWhite}
-                        style={{
-                            width: 100,
-                            height: 100,
-                        }}
-                        resizeMode="center"
                     />
                 ) : (
                     <Spinner

@@ -41,7 +41,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                         <Stack w="100%" space={1}>
                             <FormControl
                                 isRequired
-                                isInvalid={errors?.password && true}
+                                isInvalid={errors?.password ? true : false}
                             >
                                 <FormControl.Label>Password</FormControl.Label>
                                 <InputComponent
@@ -77,7 +77,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                             </FormControl>
                             <FormControl
                                 isRequired
-                                isInvalid={errors?.confirmPassword && true}
+                                isInvalid={errors?.confirmPassword ? true : false}
                             >
                                 <FormControl.Label>
                                     Confirm password

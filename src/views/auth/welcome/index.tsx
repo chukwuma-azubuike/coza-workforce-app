@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, Heading, HStack, Modal, Text, VStack } from 'native-base';
-import { Image, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import ButtonComponent from '../../../components/atoms/button';
@@ -16,15 +16,11 @@ import If from '../../../components/composite/if-container';
 import { APP_NAME, APP_SLOGAN } from '@env';
 import { TouchableRipple } from 'react-native-paper';
 import useWelcome from './hooks';
-import useAppColorMode from '../../../hooks/theme/colorMode';
-const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
-const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
+import Logo from '../../../components/atoms/logo';
 
 const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
-    const { isLightMode } = useAppColorMode();
-
     const {
         handleSubmit,
         validateError,
@@ -55,14 +51,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                     alignItems="center"
                     justifyContent="space-around"
                 >
-                    <Image
-                        style={{
-                            width: 150,
-                            height: 150,
-                        }}
-                        resizeMode="center"
-                        source={isLightMode ? logoBlack : logoWhite}
-                    />
+                    <Logo />
                     <Heading size="lg">{APP_NAME}</Heading>
                     <Text color="gray.400">{APP_SLOGAN}</Text>
                     <Formik
