@@ -197,10 +197,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                         canClockIn
                             ? 'primary.600'
                             : canClockOut
-                                ? 'rose.400'
-                                : disabled
-                                    ? 'gray.400'
-                                    : 'gray.400'
+                            ? 'rose.400'
+                            : disabled
+                            ? 'gray.400'
+                            : 'gray.400'
                     }
                 >
                     <TouchableNativeFeedback
@@ -233,10 +233,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                                         {disabled
                                             ? ''
                                             : canClockIn
-                                                ? 'CLOCK IN'
-                                                : canClockOut
-                                                    ? 'CLOCK OUT'
-                                                    : ''}
+                                            ? 'CLOCK IN'
+                                            : canClockOut
+                                            ? 'CLOCK OUT'
+                                            : ''}
                                     </Text>
                                 </VStack>
                             </If>
