@@ -22,6 +22,7 @@ import {
 import useRole from '../../../hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import If from '../../../components/composite/if-container';
+import Utils from '../../../utils';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -176,10 +177,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     source={require('../../../assets/json/clock-button-animation.json')}
                     resizeMode="cover"
                     style={{
+                        left: Utils.IOS16 ? -13 : -20,
+                        top: Utils.IOS16 ? -13 : -20,
                         position: 'absolute',
                         width: 320,
-                        left: -20,
-                        top: -20,
                     }}
                     autoPlay
                     loop
@@ -196,10 +197,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                         canClockIn
                             ? 'primary.600'
                             : canClockOut
-                            ? 'rose.400'
-                            : disabled
-                            ? 'gray.400'
-                            : 'gray.400'
+                                ? 'rose.400'
+                                : disabled
+                                    ? 'gray.400'
+                                    : 'gray.400'
                     }
                 >
                     <TouchableNativeFeedback
@@ -232,10 +233,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                                         {disabled
                                             ? ''
                                             : canClockIn
-                                            ? 'CLOCK IN'
-                                            : canClockOut
-                                            ? 'CLOCK OUT'
-                                            : ''}
+                                                ? 'CLOCK IN'
+                                                : canClockOut
+                                                    ? 'CLOCK OUT'
+                                                    : ''}
                                     </Text>
                                 </VStack>
                             </If>

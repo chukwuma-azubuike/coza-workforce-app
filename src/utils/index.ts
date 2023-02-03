@@ -6,6 +6,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
 class Utils {
+    /************ Version Specific ************/
+
+    static IOSVersion = Platform.Version;
+
+    static IOS16 = +this.IOSVersion >= 16.0;
+
     /************ String logic ************/
 
     static splitString(char: string, separator: string = ' ') {
@@ -144,27 +150,14 @@ class Utils {
             .then(result => {
                 switch (result) {
                     case RESULTS.UNAVAILABLE:
-                        console.log(
-                            'This feature is not available (on this device / in this context)'
-                        );
                         break;
                     case RESULTS.DENIED:
-                        console.log(
-                            'The permission has not been requested / is denied but requestable'
-                        );
                         break;
                     case RESULTS.LIMITED:
-                        console.log(
-                            'The permission is limited: some actions are possible'
-                        );
                         break;
                     case RESULTS.GRANTED:
-                        console.log('The permission is granted');
                         break;
                     case RESULTS.BLOCKED:
-                        console.log(
-                            'The permission is denied and not requestable anymore'
-                        );
                         break;
                 }
             })
