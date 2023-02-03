@@ -15,15 +15,14 @@ import useModal from '../hooks/modal/useModal';
 import inAppUpdates, { needsLogoutList } from '../utils/in-app-updates';
 import Utils from '../utils';
 import { AppStateContext } from '../../App';
-import { useDispatch, useSelector } from 'react-redux';
 import {
     selectVersionActionTaken,
     versionActiontypes,
 } from '../store/services/version';
-import { IStore } from '../store';
 import DeviceInfo from 'react-native-device-info';
 import { Appearance } from 'react-native';
 import { useColorMode } from 'native-base';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
 const colorScheme = Appearance.getColorScheme();
 const RootStack = createNativeStackNavigator();
@@ -50,13 +49,13 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     const { setIsLoggedIn } = React.useContext(AppStateContext);
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
-    const hasTakenLogoutAction = useSelector((store: IStore) =>
+    const hasTakenLogoutAction = useAppSelector(store =>
         selectVersionActionTaken(store)
     ).hasLoggedOut;
 
-    const { toggleColorMode, setColorMode, colorMode } = useColorMode();
+    const { setColorMode } = useColorMode();
 
     React.useEffect(() => {
         setColorMode(colorScheme);

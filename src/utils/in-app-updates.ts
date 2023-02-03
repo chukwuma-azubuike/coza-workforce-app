@@ -10,7 +10,7 @@ const appUpdates = new SpInAppUpdates(
 );
 // curVersion is optional if you don't provide it will automatically take from the app using react-native-device-info
 
-export const needsLogoutList = ['1.0.8'];
+export const needsLogoutList = ['1.0.9'];
 
 const inAppUpdates = async () => {
     let needsLogout = false;

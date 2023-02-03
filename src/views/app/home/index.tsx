@@ -14,13 +14,12 @@ import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
 import { HomeSkeleton } from '../../../components/layout/skeleton';
 import { CampusReportSummary } from './report-summary';
-import { useDispatch, useSelector } from 'react-redux';
 import {
     selectCurrentUser,
     userActionTypes,
 } from '../../../store/services/users';
-import { IStore } from '../../../store';
 import { useGetUserByIdQuery } from '../../../store/services/account';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 interface IInitialHomeState {
     latestService: {
@@ -42,8 +41,8 @@ export const HomeContext = React.createContext({} as IInitialHomeState);
 const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     navigation,
 }) => {
-    const dispatch = useDispatch();
-    const currentUserId = useSelector((store: IStore) =>
+    const dispatch = useAppDispatch();
+    const currentUserId = useAppSelector(store =>
         selectCurrentUser(store)
     ).userId;
 

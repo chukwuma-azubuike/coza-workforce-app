@@ -1,7 +1,7 @@
 import { Reducer } from '@reduxjs/toolkit';
 import { IStore } from '..';
 
-interface IVersionState {
+export interface IVersionState {
     lastUpdatedVersionCode: string;
     action: { hasLoggedOut: boolean };
     updatedAt: string;

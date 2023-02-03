@@ -24,10 +24,10 @@ import useModal from '../../../hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
-import { useDispatch } from 'react-redux';
 import { userActionTypes } from '../../../store/services/users';
 import { versionActiontypes } from '../../../store/services/version';
 import useAppColorMode from '../../../hooks/theme/colorMode';
+import { useAppDispatch } from '../../../store/hooks';
 const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
 const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
 
@@ -36,7 +36,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 }) => {
     const { isLightMode } = useAppColorMode();
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
