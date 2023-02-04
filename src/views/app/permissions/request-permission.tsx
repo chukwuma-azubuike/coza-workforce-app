@@ -8,11 +8,9 @@ import {
     SelectItemComponent,
 } from '../../../components/atoms/select';
 import { DateTimePickerComponent } from '../../../components/composite/date-picker';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useNavigation } from '@react-navigation/native';
+import { ItemValue } from '@react-native-picker/picker/typings/Picker';
 
 const RequestPermission: React.FC = () => {
     const [icon, setIcon] = React.useState<{ name: string; type: string }>({
@@ -23,8 +21,10 @@ const RequestPermission: React.FC = () => {
     const { goBack } = useNavigation();
 
     const [loading, setLoading] = React.useState<boolean>(false); //Just for 3P testing
+    const [selectedValue, setSelectedValue] = React.useState<ItemValue>('work');
 
     const selectCategoryIcons = (key: string) => {
+        setSelectedValue(key);
         switch (key) {
             case 'work':
                 setIcon({
@@ -87,8 +87,6 @@ const RequestPermission: React.FC = () => {
         }
     }, [loading]);
 
-    const { isLightMode } = useAppColorMode();
-
     return (
         <ViewWrapper>
             <>
@@ -108,27 +106,9 @@ const RequestPermission: React.FC = () => {
                                 </HStack>
                                 <FormControl.Label>Category</FormControl.Label>
                                 <SelectComponent
-                                    defaultValue="work"
+                                    selectedValue={selectedValue}
                                     onValueChange={value =>
-                                        selectCategoryIcons(value)
-                                    }
-                                    dropdownIcon={
-                                        <HStack mr={2} space={2}>
-                                            <Icon
-                                                type={icon?.type}
-                                                name={icon?.name}
-                                                color={
-                                                    isLightMode
-                                                        ? THEME_CONFIG.gray
-                                                        : THEME_CONFIG.veryLightGray
-                                                }
-                                            />
-                                            <Icon
-                                                type="entypo"
-                                                name="chevron-small-down"
-                                                color={THEME_CONFIG.lightGray}
-                                            />
-                                        </HStack>
+                                        setSelectedValue(value as string)
                                     }
                                 >
                                     <SelectItemComponent
