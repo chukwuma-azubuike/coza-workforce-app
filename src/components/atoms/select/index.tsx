@@ -1,47 +1,32 @@
 import React from 'react';
-import {
-    Picker,
-    PickerItemProps,
-    PickerProps,
-} from '@react-native-picker/picker';
+import { ISelectItemProps, ISelectProps, Select } from 'native-base';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { Icon } from '@rneui/themed';
 import { IIconTypes } from '../../../utils/types';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 
-interface ISelectComponent extends PickerProps {}
-interface ISelectItemComponent extends PickerItemProps {
+interface ISelectComponent extends ISelectProps {}
+interface ISelectItemComponent extends ISelectItemProps {
     icon?: { name: string; type: IIconTypes };
 }
 
 const SelectComponent = (props: ISelectComponent) => {
-    const { isLightMode } = useAppColorMode();
-
     return (
-        <Picker
-            style={{
-                backgroundColor: isLightMode
-                    ? THEME_CONFIG.veryLightGray
-                    : THEME_CONFIG.darkGray,
-                color: isLightMode
-                    ? THEME_CONFIG.darkGray
-                    : THEME_CONFIG.veryLightGray,
-                borderRadius: 100,
-                borderWidth: 2,
-                borderColor: isLightMode
-                    ? THEME_CONFIG.lightGray
-                    : THEME_CONFIG.darkGray,
+        <Select
+            p={3}
+            w="100%"
+            size="lg"
+            _light={{
+                bg: 'gray.100',
             }}
-            // {...props}
-            itemStyle={{
-                backgroundColor: 'red',
-                color: isLightMode
-                    ? THEME_CONFIG.darkGray
-                    : THEME_CONFIG.veryLightGray,
-                borderRadius: 100,
+            _dark={{
+                bg: 'gray.900',
             }}
+            {...props}
+            borderRadius={THEME_CONFIG.borderRadius}
         >
             {props.children}
-        </Picker>
+        </Select>
     );
 };
 
@@ -50,11 +35,22 @@ const SelectItemComponent = (props: ISelectItemComponent) => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <Picker.Item
-            label={props.label}
-            value={props.value}
-            color={
-                isLightMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray
+        <Select.Item
+            {...props}
+            leftIcon={
+                icon ? (
+                    <Icon
+                        size={22}
+                        name={icon.name}
+                        type={icon.type}
+                        style={{ marginLeft: 14 }}
+                        color={
+                            isLightMode
+                                ? THEME_CONFIG.gray
+                                : THEME_CONFIG.veryLightGray
+                        }
+                    />
+                ) : undefined
             }
         />
     );
