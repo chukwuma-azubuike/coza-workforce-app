@@ -33,7 +33,7 @@ const InputComponent = (props: IInputComponentProps) => {
             }}
             {...props}
             borderRadius={THEME_CONFIG.borderRadius}
-            leftIcon={
+            InputLeftElement={
                 leftIcon ? (
                     <Icon
                         size={22}
@@ -44,7 +44,7 @@ const InputComponent = (props: IInputComponentProps) => {
                     />
                 ) : undefined
             }
-            rightIcon={
+            InputRightElement={
                 rightIcon ? (
                     <Pressable onPress={onIconPress}>
                         <Icon
