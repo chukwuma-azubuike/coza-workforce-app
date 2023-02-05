@@ -11,7 +11,6 @@ import {
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'account';
-const DEFAULT_ROLE_ID = '638a5f1e8eb1e1ef2b0be2a7'; // Worker
 
 export type ISendOTPResponse = IDefaultResponse<{
     isOTPSent: boolean;
@@ -139,7 +138,6 @@ export const accountServiceSlice = createApi({
                 body: {
                     ...body,
                     pictureUrl: '',
-                    roleId: DEFAULT_ROLE_ID,
                 },
             }),
         }),
