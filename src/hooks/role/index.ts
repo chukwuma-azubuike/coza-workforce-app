@@ -4,8 +4,8 @@ import { selectCurrentUser } from '../../store/services/users';
 
 enum ROLES {
     QC = 'QC',
-    HOD = 'HoD',
-    AHOD = 'AHoD',
+    HOD = 'HOD',
+    AHOD = 'AHOD',
     admin = 'Admin',
     worker = 'Worker',
     superAdmin = 'Super  Admins',
