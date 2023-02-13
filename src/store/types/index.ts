@@ -2,8 +2,10 @@ import { IReportFormProps } from '../../views/app/reports/forms/types';
 
 // General types
 export interface ILog {
-    dateCreated: string;
-    dateUpdated: string;
+    dateCreated?: string;
+    createdAt?: string;
+    dateUpdated?: string;
+    updatedAt?: string;
 }
 
 export enum REST_API_VERBS {
@@ -14,7 +16,7 @@ export enum REST_API_VERBS {
     DELETE = 'DELETE',
 }
 
-export interface IDefaultResponse<D> {
+export interface IDefaultResponse<D = unknown> {
     status: number;
     message: string;
     isError: boolean;
@@ -22,15 +24,12 @@ export interface IDefaultResponse<D> {
     data: D;
 }
 
-export interface IDefaultErrorResponse {
-    data: {
-        data: null;
-        isError: boolean;
-        isSuccessful: boolean;
-        message: string;
-        status: number;
-    };
+export interface IDefaultErrorResponse<D = null> {
     status: number;
+    message: string;
+    isError: boolean;
+    isSuccessful: boolean;
+    data: D;
 }
 
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
@@ -38,11 +37,7 @@ export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
 export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED';
 
 // Authentication
-export interface IAuthParams
-    extends Omit<
-        IUser,
-        'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'
-    > {
+export interface IAuthParams extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     password: string;
 }
 
@@ -54,11 +49,7 @@ export interface IToken {
 
 export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
 
-export interface IRegisterPayload
-    extends Omit<
-        IUser,
-        'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'
-    > {
+export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     roleId: string;
     campusId: string;
     password: string;
@@ -85,6 +76,7 @@ export interface IUser {
     pictureUrl: string;
     placeOfWork: string;
     userId: string;
+    _id: string;
     role: IRole;
     department: IDepartment;
     campus: ICampus;
@@ -120,12 +112,36 @@ export interface ICampusAttendanceSummary {
 
 // Compliance
 export interface ITicket extends ILog {
-    ticketId: string;
-    category: string;
+    // _id: string;
+    // departmentId: string;
+    // campusId: ICampus['id'];
+    // userId: IUser['userId'];
+    // categoryId: string;
+    // isDepartment: boolean;
+    // isIndividual: boolean;
+    // ticketSummary: string;
+    // isRetracted: boolean;
+    // createdAt: string;
+
+    // Proposed
+    _id: string;
+    user: IUser;
     remarks: string;
-    code: string;
+    isRetracted: boolean;
+    ticketSummary: string;
+    status: ITicketStatus;
     contestComment: string;
+    department: IDepartment;
+    category: ITicketCategory;
     contestReplyComment: string;
+    ticketType: 'INDIVIDUAL' | 'DEPARTMENTAL';
+}
+
+export interface ITicketCategory {
+    _id: string;
+    categoryName: string;
+    description: string;
+    createdAt: string;
 }
 
 export interface ICampusTicketsSummary {
@@ -135,13 +151,17 @@ export interface ICampusTicketsSummary {
 export interface ICreateTicketPayload {
     departmentId: IDepartment['_id'];
     campusId: ICampus['id'];
-    userId: IUser['userId'];
+    userId?: IUser['userId'];
     categoryId: string;
     isDepartment: boolean;
     isIndividual: boolean;
     isRetracted: boolean;
     ticketSummary: string;
+    status: ITicketStatus;
+    ticketType: 'INDIVIDUAL' | 'DEPARTMENTAL';
 }
+
+export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
 
 // Permissions
 export interface IPermission extends ILog {
@@ -161,6 +181,25 @@ export interface IPermission extends ILog {
         department: { id: string; name: string };
     };
     requestor: IUser;
+}
+export interface IRequestPermissionPayload {
+    startDate: string;
+    endDate: string;
+    dateCreated: string;
+    category: string;
+    description: string;
+    status: IStatus;
+    requestor: IUser['userId'];
+}
+
+// Department
+
+export interface IRequestDepartmentPayload {
+    _id: string;
+    campusId: string;
+    createdAt: string;
+    description: string;
+    departmentName: string;
 }
 
 // Campus

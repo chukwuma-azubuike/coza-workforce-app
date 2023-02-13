@@ -13,6 +13,8 @@ class Utils {
     }
 
     static capitalizeFirstChar(char: string, separator: string = ' ') {
+        if (!char) return '';
+
         let splitChar = this.splitString(char, separator);
         let firstChar = splitChar.charAt(0).toUpperCase();
         let restChar = splitChar.slice(1, splitChar.length);
@@ -62,15 +64,9 @@ class Utils {
     /************ Storage logic ************/
     /*********** Encrypted Storage ********/
 
-    static storeUserSession = async (user: {
-        token: IToken;
-        profile: IUser;
-    }) => {
+    static storeUserSession = async (user: { token: IToken; profile: IUser }) => {
         try {
-            await EncryptedStorage.setItem(
-                'user_session',
-                JSON.stringify(user)
-            );
+            await EncryptedStorage.setItem('user_session', JSON.stringify(user));
         } catch (error) {
             // There was an error on the native side
         }
@@ -136,35 +132,23 @@ class Utils {
     static checkLocationPermission = async () => {
         const isIOS = Platform.OS === 'ios';
 
-        check(
-            isIOS
-                ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-                : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
-        )
+        check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
             .then(result => {
                 switch (result) {
                     case RESULTS.UNAVAILABLE:
-                        console.log(
-                            'This feature is not available (on this device / in this context)'
-                        );
+                        console.log('This feature is not available (on this device / in this context)');
                         break;
                     case RESULTS.DENIED:
-                        console.log(
-                            'The permission has not been requested / is denied but requestable'
-                        );
+                        console.log('The permission has not been requested / is denied but requestable');
                         break;
                     case RESULTS.LIMITED:
-                        console.log(
-                            'The permission is limited: some actions are possible'
-                        );
+                        console.log('The permission is limited: some actions are possible');
                         break;
                     case RESULTS.GRANTED:
                         console.log('The permission is granted');
                         break;
                     case RESULTS.BLOCKED:
-                        console.log(
-                            'The permission is denied and not requestable anymore'
-                        );
+                        console.log('The permission is denied and not requestable anymore');
                         break;
                 }
             })
@@ -174,17 +158,32 @@ class Utils {
     static requestLocationPermission = async () => {
         const isIOS = Platform.OS === 'ios';
 
-        request(
-            isIOS
-                ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE
-                : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
-            {
-                title: 'Location Access',
-                message: 'This App needs access to your location',
-                buttonPositive: 'OK',
-                buttonNegative: 'DENY',
+        request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
+            title: 'Location Access',
+            message: 'This App needs access to your location',
+            buttonPositive: 'OK',
+            buttonNegative: 'DENY',
+        }).then(result => {});
+    };
+
+    /************** Arrays ***************/
+
+    // This functions groups a list (Array of objects) by a common key;
+    static groupListByKey = (array: any[], key: string) => {
+        const map: any = {};
+
+        if (!array?.length) return [];
+
+        for (let i = 0; i < array.length; i++) {
+            let keyInMap = array[i][key];
+
+            if (map[keyInMap]) {
+                map[keyInMap] = [...map[keyInMap], array[i]];
+            } else {
+                map[keyInMap] = [array[i]];
             }
-        ).then(result => {});
+        }
+        return Object.entries(map);
     };
 }
 

@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
@@ -38,7 +38,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                         lastName,
                         firstName,
                         pictureUrl,
-                        department: { name: departmentName },
+                        department: { departmentName },
                     },
                     description,
                     category,
@@ -278,22 +278,6 @@ export const TEST_DATA = [
     },
 ];
 
-// This functions groups a list (Array of objects) by a common key;
-const transformData = (array: any[], key: string) => {
-    const map: any = {};
-
-    for (let i = 0; i < array.length; i++) {
-        let keyInMap = array[i][key];
-
-        if (map[keyInMap]) {
-            map[keyInMap] = [...map[keyInMap], array[i]];
-        } else {
-            map[keyInMap] = [array[i]];
-        }
-    }
-    return map;
-};
-
 const MyPermissionsList: React.FC = memo(() => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
@@ -305,7 +289,7 @@ const MyPermissionsList: React.FC = memo(() => {
     ];
 
     const memoizedData = useMemo(
-        () => Object.entries(transformData(TEST_DATA, 'dateCreated')),
+        () => Utils.groupListByKey(TEST_DATA, 'dateCreated'),
         [TEST_DATA]
     );
 
@@ -331,7 +315,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
     ];
 
     const memoizedData = useMemo(
-        () => Object.entries(transformData(TEST_DATA, 'category')),
+        () => Utils.groupListByKey(TEST_DATA, 'category'),
         [TEST_DATA]
     );
 
@@ -362,7 +346,7 @@ const CampusPermissions: React.FC = memo(() => {
     ];
 
     const memoizedData = useMemo(
-        () => Object.entries(transformData(TEST_DATA, 'status')),
+        () => Utils.groupListByKey(TEST_DATA, 'status'),
         [TEST_DATA]
     );
 

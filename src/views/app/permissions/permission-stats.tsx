@@ -1,7 +1,5 @@
 import { HStack, Text, Center } from 'native-base';
 import React from 'react';
-import { VictoryPie } from 'victory-native';
-
 interface IPermissionsStats {
     total: number;
     pending: number;
@@ -25,26 +23,13 @@ const PermissionStats: React.FC<IPermissionsStats> = props => {
 
     return (
         <>
-            {/* <VictoryPie
-                radius={80}
-                data={data}
-                innerRadius={70}
-                colorScale="qualitative"
-                labels={[
-                    'Medical',
-                    'Work',
-                    'Education',
-                    'Maternity',
-                    'Vacation',
-                    'Unused',
-                ]}
-            /> */}
             <HStack
                 py={2}
-                bg="gray.50"
                 borderTopWidth={0.2}
                 borderColor="gray.300"
                 borderBottomWidth={0.2}
+                _light={{ bg: 'gray.50' }}
+                _dark={{ bg: 'gray.950' }}
                 justifyContent="space-evenly"
             >
                 <Center>
