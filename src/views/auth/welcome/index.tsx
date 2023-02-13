@@ -18,9 +18,7 @@ import { TouchableRipple } from 'react-native-paper';
 import useWelcome from './hooks';
 import Logo from '../../../components/atoms/logo';
 
-const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-}) => {
+const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const {
         handleSubmit,
         validateError,
@@ -42,29 +40,15 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
     return (
         <>
             <ViewWrapper>
-                <VStack
-                    p={6}
-                    pb={5}
-                    px={4}
-                    pt={10}
-                    space={6}
-                    alignItems="center"
-                    justifyContent="space-around"
-                >
+                <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
                     <Logo />
                     <Heading size="lg">{APP_NAME}</Heading>
                     <Text color="gray.400">{APP_SLOGAN}</Text>
-                    <Formik
-                        onSubmit={handleSubmit}
-                        initialValues={{ email: '' }}
-                        validationSchema={EmailSchema}
-                    >
+                    <Formik onSubmit={handleSubmit} initialValues={{ email: '' }} validationSchema={EmailSchema}>
                         {({ handleChange, handleSubmit, errors }: any) => (
                             <FormControl isInvalid={errors.email && true}>
                                 <VStack space={1}>
-                                    <FormControl.Label isRequired>
-                                        Email
-                                    </FormControl.Label>
+                                    <FormControl.Label isRequired>Email</FormControl.Label>
                                     <InputComponent
                                         isRequired
                                         placeholder="jondoe@gmail.com"
@@ -109,30 +93,17 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             style={{ paddingHorizontal: 6, borderRadius: 10 }}
                             onPress={() => navigation.navigate('Login')}
                         >
-                            <Text
-                                fontSize="md"
-                                _dark={{ color: 'primary.400' }}
-                                _light={{ color: 'primary.500' }}
-                            >
+                            <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
                                 Login
                             </Text>
                         </TouchableRipple>
                     </HStack>
                 </VStack>
             </ViewWrapper>
-            <Modal
-                isOpen={modalVisible}
-                onClose={hideModal}
-                avoidKeyboard
-                size="xl"
-            >
+            <Modal isOpen={modalVisible} onClose={hideModal} avoidKeyboard size="xl">
                 <Modal.Content minW={200} backgroundColor="gray.200">
                     <Modal.Body bg="gray.800" p={isIOS ? 4 : 0}>
-                        <If
-                            condition={
-                                isSuccess && !isError && !isErrorValidate
-                            }
-                        >
+                        <If condition={isSuccess && !isError && !isErrorValidate}>
                             <OTPInput
                                 render={
                                     isSuccessValidate ? (
@@ -152,9 +123,7 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         </If>
                         <If condition={isError && !isErrorValidate}>
                             <ModalAlertComponent
-                                description={`${
-                                    error?.data?.message || error?.TypeError
-                                }`}
+                                description={`${error?.data?.message || error?.TypeError}`}
                                 iconType="feather"
                                 iconName="info"
                                 status="info"

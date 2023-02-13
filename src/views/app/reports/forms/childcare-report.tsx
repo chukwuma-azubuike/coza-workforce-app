@@ -16,13 +16,10 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
 
-const ChildcareReport: React.FC<
-    NativeStackScreenProps<ParamListBase>
-> = props => {
+const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] =
-        useCreateChildCareReportMutation();
+    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateChildCareReportMutation();
 
     const onSubmit = (values: IChildCareReportPayload) => {
         sendReport({ ...values, ...params });
@@ -81,10 +78,7 @@ const ChildcareReport: React.FC<
         }`;
     };
 
-    const addSubTotal = (
-        values: IChildCareReportPayload,
-        field: 'male' | 'female'
-    ) => {
+    const addSubTotal = (values: IChildCareReportPayload, field: 'male' | 'female') => {
         return `${
             +values.age1_2?.[field] +
                 +values.age3_5?.[field] +
@@ -100,22 +94,10 @@ const ChildcareReport: React.FC<
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >
-            {({
-                handleChange,
-                errors,
-                values,
-                handleSubmit,
-                setFieldValue,
-            }) => (
+            {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>
-                        <Text
-                            mb={4}
-                            w="full"
-                            fontSize="md"
-                            color="gray.400"
-                            textAlign="center"
-                        >
+                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment().format('Do MMMM, YYYY')}
                         </Text>
                         <HStack px={4} flex={1} justifyContent="space-between">
@@ -138,19 +120,12 @@ const ChildcareReport: React.FC<
                             </VStack>
                             <VStack alignItems="center" space={4} w="30%">
                                 <FormControl.Label>Male</FormControl.Label>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age1_2?.male ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age1_2?.male ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age1_2.male'
-                                        )}
+                                        onChangeText={handleChange('age1_2.male')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -167,19 +142,12 @@ const ChildcareReport: React.FC<
                                         {errors?.age1_2?.male}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age3_5?.male ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age3_5?.male ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age3_5.male'
-                                        )}
+                                        onChangeText={handleChange('age3_5.male')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -196,19 +164,12 @@ const ChildcareReport: React.FC<
                                         {errors?.age3_5?.male}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age6_11?.male ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age6_11?.male ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age6_11.male'
-                                        )}
+                                        onChangeText={handleChange('age6_11.male')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -225,19 +186,12 @@ const ChildcareReport: React.FC<
                                         {errors?.age6_11?.male}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age12_above?.male ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age12_above?.male ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age12_above.male'
-                                        )}
+                                        onChangeText={handleChange('age12_above.male')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -259,9 +213,7 @@ const ChildcareReport: React.FC<
                                         w="100%"
                                         value={addSubTotal(values, 'male')}
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'subTotal.male'
-                                        )}
+                                        onChangeText={handleChange('subTotal.male')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -281,19 +233,12 @@ const ChildcareReport: React.FC<
                             </VStack>
                             <VStack alignItems="center" space={4} w="30%">
                                 <FormControl.Label>Female</FormControl.Label>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age1_2?.female ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age1_2?.female ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age1_2.female'
-                                        )}
+                                        onChangeText={handleChange('age1_2.female')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -310,19 +255,12 @@ const ChildcareReport: React.FC<
                                         {errors?.age1_2?.female}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age3_5?.female ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age3_5?.female ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age3_5.female'
-                                        )}
+                                        onChangeText={handleChange('age3_5.female')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -339,19 +277,12 @@ const ChildcareReport: React.FC<
                                         {errors?.age3_5?.female}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age6_11?.female ? true : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age6_11?.female ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age6_11.female'
-                                        )}
+                                        onChangeText={handleChange('age6_11.female')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
@@ -368,21 +299,12 @@ const ChildcareReport: React.FC<
                                         {errors?.age6_11?.female}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl
-                                    isRequired
-                                    isInvalid={
-                                        errors?.age12_above?.female
-                                            ? true
-                                            : false
-                                    }
-                                >
+                                <FormControl isRequired isInvalid={errors?.age12_above?.female ? true : false}>
                                     <InputComponent
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'age12_above.female'
-                                        )}
+                                        onChangeText={handleChange('age12_above.female')}
                                     />
                                 </FormControl>
                                 <FormControl isDisabled>
@@ -390,30 +312,21 @@ const ChildcareReport: React.FC<
                                         w="100%"
                                         value={addSubTotal(values, 'female')}
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'subTotal.female'
-                                        )}
+                                        onChangeText={handleChange('subTotal.female')}
                                     />
                                 </FormControl>
                             </VStack>
                         </HStack>
                         <VStack space={4} mt={4} px={4}>
                             <FormControl>
-                                <HStack
-                                    justifyContent="space-between"
-                                    alignItems="center"
-                                >
-                                    <FormControl.Label>
-                                        Grand Total
-                                    </FormControl.Label>
+                                <HStack justifyContent="space-between" alignItems="center">
+                                    <FormControl.Label>Grand Total</FormControl.Label>
                                     <InputComponent
                                         w="66%"
                                         isDisabled
                                         value={addGrandTotal(values)}
                                         keyboardType="numeric"
-                                        onChangeText={handleChange(
-                                            'grandTotal'
-                                        )}
+                                        onChangeText={handleChange('grandTotal')}
                                     />
                                 </HStack>
                             </FormControl>
@@ -425,18 +338,9 @@ const ChildcareReport: React.FC<
                                 <ButtonComponent
                                     isLoading={isLoading}
                                     onPress={() => {
-                                        setFieldValue(
-                                            'subTotal.male',
-                                            addSubTotal(values, 'male')
-                                        );
-                                        setFieldValue(
-                                            'subTotal.female',
-                                            addSubTotal(values, 'female')
-                                        );
-                                        setFieldValue(
-                                            'grandTotal',
-                                            addGrandTotal(values)
-                                        );
+                                        setFieldValue('subTotal.male', addSubTotal(values, 'male'));
+                                        setFieldValue('subTotal.female', addSubTotal(values, 'female'));
+                                        setFieldValue('grandTotal', addGrandTotal(values));
                                         handleSubmit();
                                     }}
                                 >

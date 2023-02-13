@@ -17,7 +17,6 @@ export const complianceServiceSlice = createApi({
         //         body,
         //     }),
         // }),
-
         // updateTicket: endpoint.mutation<void, ITicket>({
         //     query: args => ({
         //         url: `${SERVICE_URL}/${args.ticketId}`,
@@ -25,11 +24,9 @@ export const complianceServiceSlice = createApi({
         //         body: args,
         //     }),
         // }),
-
         // getTicketList: endpoint.query<void, Pick<IUser, 'userId'>>({
         //     query: id => `/${SERVICE_URL}/${id}`,
         // }),
-
         // Add your endpoints here
     }),
 });

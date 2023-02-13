@@ -5,14 +5,7 @@ import useModal from '../../../../hooks/modal/useModal';
 import { ISecurityReportPayload } from '../../../../store/types';
 import { useCreateSecurityReportMutation } from '../../../../store/services/reports';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import {
-    FormControl,
-    VStack,
-    HStack,
-    Text,
-    Divider,
-    WarningOutlineIcon,
-} from 'native-base';
+import { FormControl, VStack, HStack, Text, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
@@ -23,13 +16,10 @@ import { THEME_CONFIG } from '../../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
 
-const SecurityReport: React.FC<
-    NativeStackScreenProps<ParamListBase>
-> = props => {
+const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] =
-        useCreateSecurityReportMutation();
+    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateSecurityReportMutation();
 
     const onSubmit = (values: ISecurityReportPayload) => {
         sendReport({ ...values, ...params });
@@ -65,9 +55,7 @@ const SecurityReport: React.FC<
 
     const addValues = (values: ISecurityReportPayload) => {
         return values.locations.length
-            ? (values.locations
-                  .map(a => a.carCount)
-                  .reduce((a, b) => +a + +b) as unknown as string)
+            ? (values.locations.map(a => a.carCount).reduce((a, b) => +a + +b) as unknown as string)
             : '0';
     };
 
@@ -78,22 +66,10 @@ const SecurityReport: React.FC<
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >
-            {({
-                handleChange,
-                errors,
-                handleSubmit,
-                values,
-                setFieldValue,
-            }) => (
+            {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>
-                        <Text
-                            mb={4}
-                            w="full"
-                            fontSize="md"
-                            color="gray.400"
-                            textAlign="center"
-                        >
+                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment().format('Do MMMM, YYYY')}
                         </Text>
                         <FieldArray
@@ -101,46 +77,25 @@ const SecurityReport: React.FC<
                             render={arrayHelpers => (
                                 <VStack>
                                     {values.locations.map((location, idx) => (
-                                        <HStack
-                                            mb={4}
-                                            key={idx}
-                                            space={2}
-                                            alignItems="flex-end"
-                                        >
+                                        <HStack mb={4} key={idx} space={2} alignItems="flex-end">
                                             <FormControl isRequired w="41%">
-                                                <FormControl.Label>
-                                                    Location
-                                                </FormControl.Label>
+                                                <FormControl.Label>Location</FormControl.Label>
                                                 <InputComponent
                                                     placeholder="Car park name"
-                                                    onChangeText={handleChange(
-                                                        `locations[${idx}].name`
-                                                    )}
+                                                    onChangeText={handleChange(`locations[${idx}].name`)}
                                                 />
-                                                <FormControl.ErrorMessage
-                                                    leftIcon={
-                                                        <WarningOutlineIcon size="xs" />
-                                                    }
-                                                >
+                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
                                             <FormControl isRequired w="41%">
-                                                <FormControl.Label>
-                                                    Car Counts
-                                                </FormControl.Label>
+                                                <FormControl.Label>Car Counts</FormControl.Label>
                                                 <InputComponent
                                                     placeholder="0"
                                                     keyboardType="numeric"
-                                                    onChangeText={handleChange(
-                                                        `locations[${idx}].carCount`
-                                                    )}
+                                                    onChangeText={handleChange(`locations[${idx}].carCount`)}
                                                 />
-                                                <FormControl.ErrorMessage
-                                                    leftIcon={
-                                                        <WarningOutlineIcon size="xs" />
-                                                    }
-                                                >
+                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
@@ -148,17 +103,9 @@ const SecurityReport: React.FC<
                                                 <ButtonComponent
                                                     h="54px"
                                                     leftIcon={
-                                                        <Icon
-                                                            name="minus"
-                                                            type="entypo"
-                                                            color={
-                                                                THEME_CONFIG.primary
-                                                            }
-                                                        />
+                                                        <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
                                                     }
-                                                    onPress={() =>
-                                                        arrayHelpers.remove(idx)
-                                                    }
+                                                    onPress={() => arrayHelpers.remove(idx)}
                                                     secondary
                                                     size={12}
                                                 />
@@ -169,13 +116,7 @@ const SecurityReport: React.FC<
                                     <HStack mb={4}>
                                         <ButtonComponent
                                             isDisabled={isLoading}
-                                            leftIcon={
-                                                <Icon
-                                                    name="plus"
-                                                    type="entypo"
-                                                    color={THEME_CONFIG.primary}
-                                                />
-                                            }
+                                            leftIcon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             onPress={() =>
                                                 arrayHelpers.push({
                                                     name: '',
@@ -195,14 +136,8 @@ const SecurityReport: React.FC<
 
                         <HStack space={4} mb={4}>
                             <FormControl>
-                                <FormControl.Label>
-                                    Total Car Count
-                                </FormControl.Label>
-                                <InputComponent
-                                    isDisabled
-                                    placeholder="0"
-                                    value={`${addValues(values)}`}
-                                />
+                                <FormControl.Label>Total Car Count</FormControl.Label>
+                                <InputComponent isDisabled placeholder="0" value={`${addValues(values)}`} />
                             </FormControl>
                         </HStack>
 
@@ -218,10 +153,7 @@ const SecurityReport: React.FC<
                             <ButtonComponent
                                 isLoading={isLoading}
                                 onPress={() => {
-                                    setFieldValue(
-                                        'totalCarCount',
-                                        addValues(values)
-                                    );
+                                    setFieldValue('totalCarCount', addValues(values));
                                     handleSubmit();
                                 }}
                             >

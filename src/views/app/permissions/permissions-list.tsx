@@ -4,9 +4,7 @@ import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
-import FlatListComponent, {
-    IFlatListColumn,
-} from '../../../components/composite/flat-list';
+import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
@@ -27,10 +25,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
         <>
             {props[1]?.map((elm, idx) => {
                 const handlePress = () => {
-                    navigation.navigate(
-                        'Permission Details' as never,
-                        elm as never
-                    );
+                    navigation.navigate('Permission Details' as never, elm as never);
                 };
 
                 const {
@@ -51,41 +46,22 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                         delayPressIn={0}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            THEME_CONFIG.veryLightGray,
-                            false,
-                            220
-                        )}
+                        background={TouchableNativeFeedback.Ripple(THEME_CONFIG.veryLightGray, false, 220)}
                     >
-                        <HStack
-                            py={2}
-                            flex={1}
-                            key={idx}
-                            w="full"
-                            alignItems="center"
-                            justifyContent="space-between"
-                        >
+                        <HStack py={2} flex={1} key={idx} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
                                 <AvatarComponent imageUrl={pictureUrl} />
                                 <VStack justifyContent="space-between">
                                     <Text bold>
                                         {type === 'own'
-                                            ? Utils.capitalizeFirstChar(
-                                                  category
-                                              )
+                                            ? Utils.capitalizeFirstChar(category)
                                             : type === 'team'
-                                            ? `${Utils.capitalizeFirstChar(
-                                                  firstName
-                                              )} ${Utils.capitalizeFirstChar(
+                                            ? `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
                                                   lastName
                                               )}`
-                                            : `${Utils.capitalizeFirstChar(
-                                                  firstName
-                                              )} ${Utils.capitalizeFirstChar(
+                                            : `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
                                                   lastName
-                                              )} (${Utils.capitalizeFirstChar(
-                                                  departmentName
-                                              )})`}
+                                              )} (${Utils.capitalizeFirstChar(departmentName)})`}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
                                         {Utils.truncateString(description)}
@@ -147,8 +123,7 @@ export const TEST_DATA = [
         dateUpdated: '16-10-2022',
         dateCreated: '15-07-2022',
         description: 'Going to the US for my PHD defence.',
-        comment:
-            'Stay connected via all out social media platforms. Blessings.',
+        comment: 'Stay connected via all out social media platforms. Blessings.',
     },
     {
         status: 'APPROVED',
@@ -282,24 +257,16 @@ const MyPermissionsList: React.FC = memo(() => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => (
-                <PermissionListRow type="own" {..._} key={key} />
-            ),
+            render: (_: IPermission, key) => <PermissionListRow type="own" {..._} key={key} />,
         },
     ];
 
-    const memoizedData = useMemo(
-        () => Utils.groupListByKey(TEST_DATA, 'dateCreated'),
-        [TEST_DATA]
-    );
+    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'dateCreated'), [TEST_DATA]);
 
     return (
         <>
             <PermissionStats total={5} pending={1} declined={0} approved={4} />
-            <FlatListComponent
-                columns={myPermissionsColumns}
-                data={memoizedData}
-            />
+            <FlatListComponent columns={myPermissionsColumns} data={memoizedData} />
         </>
     );
 });
@@ -308,29 +275,16 @@ const MyTeamPermissionsList: React.FC = memo(() => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => (
-                <PermissionListRow type="team" {..._} key={key} />
-            ),
+            render: (_: IPermission, key) => <PermissionListRow type="team" {..._} key={key} />,
         },
     ];
 
-    const memoizedData = useMemo(
-        () => Utils.groupListByKey(TEST_DATA, 'category'),
-        [TEST_DATA]
-    );
+    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'category'), [TEST_DATA]);
 
     return (
         <>
-            <PermissionStats
-                total={21}
-                pending={2}
-                declined={4}
-                approved={15}
-            />
-            <FlatListComponent
-                columns={teamPermissionsColumns}
-                data={memoizedData}
-            />
+            <PermissionStats total={21} pending={2} declined={4} approved={15} />
+            <FlatListComponent columns={teamPermissionsColumns} data={memoizedData} />
         </>
     );
 });
@@ -339,29 +293,16 @@ const CampusPermissions: React.FC = memo(() => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => (
-                <PermissionListRow type="campus" {..._} key={key} />
-            ),
+            render: (_: IPermission, key) => <PermissionListRow type="campus" {..._} key={key} />,
         },
     ];
 
-    const memoizedData = useMemo(
-        () => Utils.groupListByKey(TEST_DATA, 'status'),
-        [TEST_DATA]
-    );
+    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'status'), [TEST_DATA]);
 
     return (
         <>
-            <PermissionStats
-                total={67}
-                pending={17}
-                declined={15}
-                approved={35}
-            />
-            <FlatListComponent
-                columns={teamPermissionsColumns}
-                data={memoizedData}
-            />
+            <PermissionStats total={67} pending={17} declined={15} approved={35} />
+            <FlatListComponent columns={teamPermissionsColumns} data={memoizedData} />
         </>
     );
 });

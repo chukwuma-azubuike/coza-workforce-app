@@ -12,22 +12,10 @@ import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import Empty from '../../../components/atoms/empty';
 
 const Reports: React.FC = () => {
-    const {
-        user,
-        isCTS,
-        isPCU,
-        isUshery,
-        isSecurity,
-        isPrograms,
-        isChildcare,
-        isCampusPastor,
-        isGlobalPastor,
-    } = useRole();
+    const { user, isCTS, isPCU, isUshery, isSecurity, isPrograms, isChildcare, isCampusPastor, isGlobalPastor } =
+        useRole();
 
-    const { data: latestServiceData, refetch } = useGetLatestServiceQuery(
-        user?.campus.id as string,
-        { skip: !user }
-    );
+    const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus.id as string, { skip: !user });
 
     const { data, isLoading } = useGetDepartmentalReportQuery(
         {

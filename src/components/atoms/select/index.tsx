@@ -44,11 +44,7 @@ const SelectItemComponent = (props: ISelectItemComponent) => {
                         name={icon.name}
                         type={icon.type}
                         style={{ marginLeft: 14 }}
-                        color={
-                            isLightMode
-                                ? THEME_CONFIG.gray
-                                : THEME_CONFIG.veryLightGray
-                        }
+                        color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.veryLightGray}
                     />
                 ) : undefined
             }

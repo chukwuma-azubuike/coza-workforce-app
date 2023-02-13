@@ -12,8 +12,7 @@ const TABS = [
 ];
 
 const Attendance: React.FC = () => {
-    const { isWorker, isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } =
-        useRole();
+    const { isWorker, isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
 
     const filteredScene = React.useMemo(() => {
         if (isQC) {

@@ -5,11 +5,7 @@ import { IUser } from '../types';
 type IUserState = IUser;
 interface IUserAction {
     payload: any;
-    type:
-        | 'SET_USER_DATA'
-        | 'GET_USER_DATA'
-        | 'DELETE_USER_DATA'
-        | 'SET_USER_DATA_FAILED';
+    type: 'SET_USER_DATA' | 'GET_USER_DATA' | 'DELETE_USER_DATA' | 'SET_USER_DATA_FAILED';
 }
 
 export const userActionTypes = {
@@ -21,10 +17,7 @@ export const userActionTypes = {
 
 const initialState = {};
 
-const userReducer: Reducer<IUserState, IUserAction> = (
-    state = initialState as IUser,
-    action
-) => {
+const userReducer: Reducer<IUserState, IUserAction> = (state = initialState as IUser, action) => {
     switch (action.type) {
         case userActionTypes.SET_USER_DATA:
             return action.payload;
@@ -42,24 +35,20 @@ const userReducer: Reducer<IUserState, IUserAction> = (
 
 const selectUserSlice = (store: IStore) => store.users;
 
-export const setUserData =
-    (data: IUser) => (dispatch: Dispatch<IUserAction>) => {
-        try {
-            dispatch({
-                type: 'SET_USER_DATA',
-                payload: data,
-            });
-        } catch (err) {
-            dispatch({
-                type: 'SET_USER_DATA_FAILED',
-                payload: err,
-            });
-        }
-    };
+export const setUserData = (data: IUser) => (dispatch: Dispatch<IUserAction>) => {
+    try {
+        dispatch({
+            type: 'SET_USER_DATA',
+            payload: data,
+        });
+    } catch (err) {
+        dispatch({
+            type: 'SET_USER_DATA_FAILED',
+            payload: err,
+        });
+    }
+};
 
-export const selectCurrentUser = createSelector(
-    selectUserSlice,
-    userSession => userSession
-);
+export const selectCurrentUser = createSelector(selectUserSlice, userSession => userSession);
 
 export default userReducer;

@@ -1,11 +1,6 @@
 import React from 'react';
 import { Text } from 'native-base';
-import {
-    TabBar,
-    TabBarProps,
-    TabView,
-    TabViewProps,
-} from 'react-native-tab-view';
+import { TabBar, TabBarProps, TabView, TabViewProps } from 'react-native-tab-view';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import useAppColorMode from '../../../hooks/theme/colorMode';
@@ -25,14 +20,10 @@ const renderTabBar: React.FC<TabBarProps<any>> = props => {
             activeColor="white"
             tabStyle={Style.tab}
             indicatorStyle={Style.indicator}
-            inactiveColor={
-                isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight
-            }
+            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
             pressColor={THEME_CONFIG.primaryVeryLight}
             labelStyle={{ color: THEME_CONFIG.primary }}
-            renderLabel={({ route, focused, color }) => (
-                <Text style={{ color }}>{route.title}</Text>
-            )}
+            renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
         />
     );
 };
@@ -49,14 +40,10 @@ const renderTabBarScroll: React.FC<TabBarProps<any>> = props => {
             activeColor="white"
             tabStyle={Style.tab}
             indicatorStyle={Style.indicatorScroll}
-            inactiveColor={
-                isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight
-            }
+            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
             pressColor={THEME_CONFIG.primaryVeryLight}
             labelStyle={{ color: THEME_CONFIG.primary }}
-            renderLabel={({ route, focused, color }) => (
-                <Text style={{ color }}>{route.title}</Text>
-            )}
+            renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
         />
     );
 };
@@ -68,9 +55,7 @@ const TabComponent: React.FC<ITabComponentProps> = props => {
         <TabView
             {...props}
             initialLayout={{ width: layout.width }}
-            renderTabBar={
-                props.tabBarScroll ? renderTabBarScroll : renderTabBar
-            }
+            renderTabBar={props.tabBarScroll ? renderTabBarScroll : renderTabBar}
         />
     );
 };

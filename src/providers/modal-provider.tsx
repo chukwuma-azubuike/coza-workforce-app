@@ -9,10 +9,7 @@ interface IModalProviderProps {
     initialModalState: IModalState;
 }
 
-const ModalProvider = ({
-    initialModalState,
-    children,
-}: IModalProviderProps) => {
+const ModalProvider = ({ initialModalState, children }: IModalProviderProps) => {
     const { modalState, setModalState } = useRootModal(initialModalState);
 
     return (

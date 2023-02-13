@@ -1,15 +1,6 @@
-import {
-    ICampus,
-    IDepartment,
-    IDepartmentReportResponse,
-    IService,
-    IUser,
-} from '../../../../store/types';
+import { ICampus, IDepartment, IDepartmentReportResponse, IService, IUser } from '../../../../store/types';
 
-export type IReportFormProps = Pick<
-    IDepartmentReportResponse['departmentalReport']['report'],
-    '_id'
-> & {
+export type IReportFormProps = Pick<IDepartmentReportResponse['departmentalReport']['report'], '_id'> & {
     departmentName: IDepartment['departmentName'];
     departmentId: IDepartment['_id'];
     serviceId: IService['id'];

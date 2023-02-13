@@ -28,10 +28,7 @@ const versionPersistConfig: PersistConfig<IVersionState> = {
 
 const persistedUserReducer = persistReducer(userPersistConfig, userReducer);
 
-const persistedVersionReducer = persistReducer(
-    versionPersistConfig,
-    versionReducer
-);
+const persistedVersionReducer = persistReducer(versionPersistConfig, versionReducer);
 
 const rootReducer = combineReducers({
     account: accountServiceSlice.reducer,

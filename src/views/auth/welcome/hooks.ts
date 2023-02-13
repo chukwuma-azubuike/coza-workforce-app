@@ -1,9 +1,6 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import {
-    useSendOTPQuery,
-    useValidateEmailOTPMutation,
-} from '../../../store/services/account';
+import { useSendOTPQuery, useValidateEmailOTPMutation } from '../../../store/services/account';
 import { CELL_COUNT } from '../../../components/atoms/otp-input';
 import Utils from '../../../utils';
 
@@ -17,12 +14,9 @@ const useWelcome = () => {
         (isError || isErrorValidate) && setModalVisible(false);
     };
 
-    const { isLoading, error, isSuccess, isError, data } = useSendOTPQuery(
-        email,
-        {
-            skip: !email,
-        }
-    );
+    const { isLoading, error, isSuccess, isError, data } = useSendOTPQuery(email, {
+        skip: !email,
+    });
 
     const { navigate } = useNavigation();
 

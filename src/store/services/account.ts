@@ -80,10 +80,7 @@ export const accountServiceSlice = createApi({
             query: email => `/${SERVICE_URL}/send-otp/${email}`,
         }),
 
-        validateEmailOTP: endpoint.mutation<
-            IVerifyEmailResponseTransform,
-            IVerifyEmailOTPPayload
-        >({
+        validateEmailOTP: endpoint.mutation<IVerifyEmailResponseTransform, IVerifyEmailOTPPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/validate-otp`,
                 method: REST_API_VERBS.PATCH,
@@ -151,8 +148,7 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: async (response: IGetUserByIdResponse) =>
-                response.data,
+            transformResponse: async (response: IGetUserByIdResponse) => response.data,
         }),
 
         getUsersByDepartmentId: endpoint.query<IUser[], IDepartment['_id']>({
@@ -161,8 +157,7 @@ export const accountServiceSlice = createApi({
                 params: { departmentId: _id },
             }),
 
-            transformResponse: (response: IDefaultResponse<IUser[]>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
     }),
 });

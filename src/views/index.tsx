@@ -1,10 +1,6 @@
 import * as React from 'react';
 import SplashScreen from 'react-native-splash-screen';
-import {
-    NavigationContainer,
-    DefaultTheme,
-    DarkTheme,
-} from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import AppRoute from '../routes/app';
 import { useColorScheme } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
@@ -15,10 +11,7 @@ import useModal from '../hooks/modal/useModal';
 import inAppUpdates, { needsLogoutList } from '../utils/in-app-updates';
 import Utils from '../utils';
 import { AppStateContext } from '../../App';
-import {
-    selectVersionActionTaken,
-    versionActiontypes,
-} from '../store/services/version';
+import { selectVersionActionTaken, versionActiontypes } from '../store/services/version';
 import DeviceInfo from 'react-native-device-info';
 import { Appearance } from 'react-native';
 import { useColorMode } from 'native-base';
@@ -51,9 +44,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     const dispatch = useAppDispatch();
 
-    const hasTakenLogoutAction = useAppSelector(store =>
-        selectVersionActionTaken(store)
-    ).hasLoggedOut;
+    const hasTakenLogoutAction = useAppSelector(store => selectVersionActionTaken(store)).hasLoggedOut;
 
     const { setColorMode } = useColorMode();
 
@@ -87,14 +78,10 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     return (
         <>
-            <NotificationModal
-                modalState={modalState}
-                setModalState={setModalState}
-            />
+            <NotificationModal modalState={modalState} setModalState={setModalState} />
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
-                    {isLoggedIn &&
-                    (needsLogOut ? hasTakenLogoutAction : true) ? (
+                    {isLoggedIn && (needsLogOut ? hasTakenLogoutAction : true) ? (
                         <RootStack.Screen name="App" component={AppRoute} />
                     ) : (
                         <RootStack.Screen name="Auth" component={AuthRoute} />

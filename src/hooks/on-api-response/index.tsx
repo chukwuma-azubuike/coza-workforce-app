@@ -14,12 +14,8 @@ export interface IOnApiResponseProps {
     status: QueryStatus;
     failureCallback?: (args: any) => void;
     successCallback?: (args: any) => void;
-    failureActions?:
-        | PayloadAction<any | undefined, string>
-        | PayloadAction<any | undefined, string>[];
-    successActions?:
-        | PayloadAction<any | undefined, string>
-        | PayloadAction<any | undefined, string>[];
+    failureActions?: PayloadAction<any | undefined, string> | PayloadAction<any | undefined, string>[];
+    successActions?: PayloadAction<any | undefined, string> | PayloadAction<any | undefined, string>[];
 }
 
 const useOnApiResponse = (props: IOnApiResponseProps) => {

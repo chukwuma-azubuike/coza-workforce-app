@@ -7,12 +7,8 @@ import ModalAlertComponent from '../modal-alert';
 
 interface INotificationModalProps extends IModalProps {}
 
-const NotificationModal: React.FC<INotificationModalProps> = ({
-    modalState,
-    setModalState,
-}) => {
-    const { open, render, button, message, status, duration, defaultRender } =
-        modalState;
+const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setModalState }) => {
+    const { open, render, button, message, status, duration, defaultRender } = modalState;
 
     const hideModal = () => {
         setModalState(prev => {
@@ -38,12 +34,7 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
         <Modal w="full" isOpen={open} onClose={hideModal}>
             <Modal.Content w="90%" h={300}>
                 <Center>
-                    <VStack
-                        w="full"
-                        space={2}
-                        borderRadius="2xl"
-                        backgroundColor="transparent"
-                    >
+                    <VStack w="full" space={2} borderRadius="2xl" backgroundColor="transparent">
                         {defaultRender ? (
                             <ModalAlertComponent
                                 description={message}
@@ -79,10 +70,7 @@ const NotificationModal: React.FC<INotificationModalProps> = ({
                             </Text>
                         )}
                         <If condition={button}>
-                            <ButtonComponent
-                                title="Hide modal"
-                                onPress={hideModal}
-                            >
+                            <ButtonComponent title="Hide modal" onPress={hideModal}>
                                 Close
                             </ButtonComponent>
                         </If>

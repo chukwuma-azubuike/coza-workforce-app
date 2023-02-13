@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-    Box,
-    FormControl,
-    Heading,
-    HStack,
-    Stack,
-    Center,
-    VStack,
-    WarningOutlineIcon,
-} from 'native-base';
+import { Box, FormControl, Heading, HStack, Stack, Center, VStack, WarningOutlineIcon } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
@@ -33,29 +24,18 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({
     return (
         <ViewWrapper scroll>
             <Center flex={1}>
-                <VStack
-                    space="lg"
-                    alignItems="flex-start"
-                    w="100%"
-                    pt={32}
-                    px={4}
-                >
+                <VStack space="lg" alignItems="flex-start" w="100%" pt={32} px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
                         <Stack w="100%" space={1}>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.birthDay ? true : false}
-                            >
+                            <FormControl isRequired isInvalid={errors?.birthDay ? true : false}>
                                 <DateTimePickerComponent
                                     fieldName="birthDay"
                                     label="Date of birth"
                                     maximumDate={new Date()}
                                     onSelectDate={setFieldValue}
                                 />
-                                <FormControl.ErrorMessage>
-                                    {errors?.birthDay}
-                                </FormControl.ErrorMessage>
+                                <FormControl.ErrorMessage>{errors?.birthDay}</FormControl.ErrorMessage>
                             </FormControl>
                             <FormControl>
                                 <FormControl.Label>Facebook</FormControl.Label>
@@ -66,13 +46,9 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({
                                     }}
                                     isRequired
                                     placeholder="Enter your facebook handle"
-                                    onChangeText={handleChange(
-                                        'socialMedia.facebook'
-                                    )}
+                                    onChangeText={handleChange('socialMedia.facebook')}
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
+                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
@@ -85,13 +61,9 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({
                                         type: 'ionicon',
                                     }}
                                     placeholder="Enter your instagram handle"
-                                    onChangeText={handleChange(
-                                        'socialMedia.instagram'
-                                    )}
+                                    onChangeText={handleChange('socialMedia.instagram')}
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
+                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
@@ -104,30 +76,17 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({
                                         type: 'ionicon',
                                     }}
                                     placeholder="Enter your twitter handle"
-                                    onChangeText={handleChange(
-                                        'socialMedia.twitter'
-                                    )}
+                                    onChangeText={handleChange('socialMedia.twitter')}
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
+                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <HStack space={4} justifyContent="space-between">
-                                <ButtonComponent
-                                    onPress={handleBackPress}
-                                    width={160}
-                                    secondary
-                                    mt={4}
-                                >
+                                <ButtonComponent onPress={handleBackPress} width={160} secondary mt={4}>
                                     Go back
                                 </ButtonComponent>
-                                <ButtonComponent
-                                    onPress={handleContinuePress}
-                                    width={160}
-                                    mt={4}
-                                >
+                                <ButtonComponent onPress={handleContinuePress} width={160} mt={4}>
                                     Continue
                                 </ButtonComponent>
                             </HStack>
