@@ -11,6 +11,8 @@ import { PersistConfig, persistReducer } from 'redux-persist';
 import hardSet from 'redux-persist/es/stateReconciler/hardSet';
 import versionReducer, { IVersionState } from '../services/version';
 import { IUser } from '../types';
+import { departmentServiceSlice } from '../services/department';
+import { ticketServiceSlice } from '../services/tickets';
 
 const userPersistConfig: PersistConfig<IUser> = {
     key: 'users',
@@ -38,6 +40,8 @@ const rootReducer = combineReducers({
     permissions: permissionsServiceSlice.reducer,
     service: servicesServiceSlice.reducer,
     report: reportsServiceSlice.reducer,
+    department: departmentServiceSlice.reducer,
+    ticket: ticketServiceSlice.reducer,
     users: persistedUserReducer,
     version: persistedVersionReducer,
 });

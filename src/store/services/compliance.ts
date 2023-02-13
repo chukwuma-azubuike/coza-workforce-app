@@ -10,25 +10,25 @@ export const complianceServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        createTicket: endpoint.mutation<void, ITicket>({
-            query: body => ({
-                url: SERVICE_URL,
-                method: REST_API_VERBS.POST,
-                body,
-            }),
-        }),
+        // createTicket: endpoint.mutation<void, ITicket>({
+        //     query: body => ({
+        //         url: SERVICE_URL,
+        //         method: REST_API_VERBS.POST,
+        //         body,
+        //     }),
+        // }),
 
-        updateTicket: endpoint.mutation<void, ITicket>({
-            query: args => ({
-                url: `${SERVICE_URL}/${args.ticketId}`,
-                method: REST_API_VERBS.PUT,
-                body: args,
-            }),
-        }),
+        // updateTicket: endpoint.mutation<void, ITicket>({
+        //     query: args => ({
+        //         url: `${SERVICE_URL}/${args.ticketId}`,
+        //         method: REST_API_VERBS.PUT,
+        //         body: args,
+        //     }),
+        // }),
 
-        getTicketList: endpoint.query<void, Pick<IUser, 'userId'>>({
-            query: id => `/${SERVICE_URL}/${id}`,
-        }),
+        // getTicketList: endpoint.query<void, Pick<IUser, 'userId'>>({
+        //     query: id => `/${SERVICE_URL}/${id}`,
+        // }),
 
         // Add your endpoints here
     }),
@@ -36,7 +36,7 @@ export const complianceServiceSlice = createApi({
 
 // Use exported hook in relevant components
 export const {
-    useCreateTicketMutation,
-    useGetTicketListQuery,
-    useUpdateTicketMutation,
+    // useCreateTicketMutation,
+    // useGetTicketListQuery,
+    // useUpdateTicketMutation,
 } = complianceServiceSlice;

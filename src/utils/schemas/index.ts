@@ -55,7 +55,28 @@ export const RegisterSchema = Yup.object().shape({
 
 export const LoginSchema = Yup.object().shape({
     email: Yup.string()
-        .required('Your enail is required.')
+        .required('Your email is required.')
         .email('Invalid email'),
     password: Yup.string().required('Password is required'),
+});
+
+export const CreateIndividualTicketSchema = Yup.object().shape({
+    userId: Yup.string().required('You are required to select a user.'),
+    categoryId: Yup.string().required('You are required to select a category.'),
+    departmentId: Yup.string().required(
+        'You are required to select a department'
+    ),
+    ticketSummary: Yup.string().required(
+        'You are required to input a ticket description.'
+    ),
+});
+
+export const CreateDepartmentalTicketSchema = Yup.object().shape({
+    categoryId: Yup.string().required('You are required to select a category.'),
+    departmentId: Yup.string().required(
+        'You are required to select a department'
+    ),
+    ticketSummary: Yup.string().required(
+        'You are required to input a ticket description.'
+    ),
 });

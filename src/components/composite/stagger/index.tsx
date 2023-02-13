@@ -1,12 +1,5 @@
 import { Icon } from '@rneui/themed';
-import {
-    Box,
-    HStack,
-    IBoxProps,
-    IconButton,
-    Stagger,
-    useDisclose,
-} from 'native-base';
+import { Box, HStack, IBoxProps, IconButton, Stagger, useDisclose } from 'native-base';
 import { ColorType } from 'native-base/lib/typescript/components/types';
 import React from 'react';
 import { IIconTypes } from '../../../utils/types';
@@ -20,9 +13,9 @@ interface IStaggerButtonComponentProps extends IBoxProps {
     }[];
 }
 
-const StaggerButtonComponent: React.FC<
-    IStaggerButtonComponentProps
-> = props => {
+// You must include this component as the very last component in a view
+
+const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => {
     const { isOpen, onToggle } = useDisclose();
 
     return (
@@ -69,14 +62,7 @@ const StaggerButtonComponent: React.FC<
                             bg={elm.color}
                             borderRadius="full"
                             onPress={elm.handleClick}
-                            icon={
-                                <Icon
-                                    size={28}
-                                    color="white"
-                                    name={elm.iconName}
-                                    type={elm.iconType}
-                                />
-                            }
+                            icon={<Icon size={28} color="white" name={elm.iconName} type={elm.iconType} />}
                         />
                     ))}
                 </Stagger>
@@ -88,14 +74,7 @@ const StaggerButtonComponent: React.FC<
                     bg="primary.600"
                     borderRadius="full"
                     onPress={onToggle}
-                    icon={
-                        <Icon
-                            size={38}
-                            color="white"
-                            type="entypo"
-                            name={isOpen ? 'minus' : 'plus'}
-                        />
-                    }
+                    icon={<Icon size={38} color="white" type="entypo" name={isOpen ? 'minus' : 'plus'} />}
                 />
             </HStack>
         </Box>

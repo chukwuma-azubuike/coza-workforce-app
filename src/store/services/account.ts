@@ -7,6 +7,7 @@ import {
     IUser,
     IToken,
     REST_API_VERBS,
+    IDepartment,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -149,7 +150,18 @@ export const accountServiceSlice = createApi({
                 url: `/${SERVICE_URL}/user/${_id}`,
                 method: REST_API_VERBS.GET,
             }),
+
             transformResponse: async (response: IGetUserByIdResponse) =>
+                response.data,
+        }),
+
+        getUsersByDepartmentId: endpoint.query<IUser[], IDepartment['_id']>({
+            query: _id => ({
+                url: `/users/getUsers`,
+                params: { departmentId: _id },
+            }),
+
+            transformResponse: (response: IDefaultResponse<IUser[]>) =>
                 response.data,
         }),
     }),
@@ -162,4 +174,5 @@ export const {
     useRegisterMutation,
     useGetUserByIdQuery,
     useValidateEmailOTPMutation,
+    useGetUsersByDepartmentIdQuery,
 } = accountServiceSlice;
