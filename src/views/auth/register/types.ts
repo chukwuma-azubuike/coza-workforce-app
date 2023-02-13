@@ -6,10 +6,7 @@ import { ParamListBase } from '@react-navigation/native';
 interface IRegisterFormProps {
     handleChange: any;
     validateField: (value: any) => void;
-    handleSubmit: (
-        values: IRegisterPayload,
-        formikHelpers: FormikHelpers<IRegisterPayload>
-    ) => void;
+    handleSubmit: (values: IRegisterPayload, formikHelpers: FormikHelpers<IRegisterPayload>) => void;
     errors: FormikErrors<IRegisterPayload>;
     handlePressFoward: (
         fields: string[],

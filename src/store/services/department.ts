@@ -1,11 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import {
-    ICampus,
-    IDefaultResponse,
-    IDepartment,
-    IRequestDepartmentPayload,
-    REST_API_VERBS,
-} from '../types';
+import { ICampus, IDefaultResponse, IDepartment, IRequestDepartmentPayload, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'department';
@@ -16,18 +10,14 @@ export const departmentServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        createDepartment: endpoint.mutation<
-            IDepartment,
-            IRequestDepartmentPayload
-        >({
+        createDepartment: endpoint.mutation<IDepartment, IRequestDepartmentPayload>({
             query: body => ({
                 url: `${SERVICE_URL}/createDepartment`,
                 method: REST_API_VERBS.POST,
                 body,
             }),
 
-            transformResponse: (response: IDefaultResponse<IDepartment>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IDepartment>) => response.data,
         }),
 
         updateDepartment: endpoint.mutation<IDepartment, IDepartment>({
@@ -37,29 +27,25 @@ export const departmentServiceSlice = createApi({
                 body: args,
             }),
 
-            transformResponse: (response: IDefaultResponse<IDepartment>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IDepartment>) => response.data,
         }),
 
         getDepartmentsByCampusId: endpoint.query<IDepartment[], ICampus['id']>({
             query: id => `/${SERVICE_URL}/getDepartmentByCampus/${id}`,
 
-            transformResponse: (response: IDefaultResponse<IDepartment[]>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IDepartment[]>) => response.data,
         }),
 
         getDepartments: endpoint.query<IDepartment[], void>({
             query: id => `/${SERVICE_URL}/getDepartments/${id}`,
 
-            transformResponse: (response: IDefaultResponse<IDepartment[]>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IDepartment[]>) => response.data,
         }),
 
         getDepartmentById: endpoint.query<IDepartment, IDepartment['_id']>({
             query: id => `/${SERVICE_URL}/getDepartment/${id}`,
 
-            transformResponse: (response: IDefaultResponse<IDepartment>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IDepartment>) => response.data,
         }),
 
         // Add your endpoints here

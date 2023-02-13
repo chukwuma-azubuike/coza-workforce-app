@@ -6,18 +6,13 @@ import RegisterStepThree from './register-step-three';
 import RegisterStepTwo from './register-step-two';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import Stepper, {
-    IRegisterPagesProps,
-} from '../../../components/composite/stepper';
+import Stepper, { IRegisterPagesProps } from '../../../components/composite/stepper';
 import { ILoginPayload, IRegisterPayload } from '../../../store/types';
 import { Formik } from 'formik';
 import { RegisterSchema } from '../../../utils/schemas';
 import { IRegisterFormProps } from './types';
 import { handlePressFoward } from './helpers';
-import {
-    useRegisterMutation,
-    useLoginMutation,
-} from '../../../store/services/account';
+import { useRegisterMutation, useLoginMutation } from '../../../store/services/account';
 import useModal from '../../../hooks/modal/useModal';
 import { AppStateContext } from '../../../../App';
 import Utils from '../../../utils';
@@ -32,14 +27,10 @@ const PAGES: IRegisterPagesProps[] = [
     { label: 'Password', component: RegisterStepFour },
 ];
 
-const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-    route: { params },
-}) => {
+const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route: { params } }) => {
     const dispatch = useAppDispatch();
     const [loginValues, setLoginValues] = React.useState<ILoginPayload>();
-    const [register, { error, isError, isSuccess, isLoading }] =
-        useRegisterMutation();
+    const [register, { error, isError, isSuccess, isLoading }] = useRegisterMutation();
 
     const [
         login,

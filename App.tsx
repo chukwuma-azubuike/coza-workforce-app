@@ -19,9 +19,7 @@ export interface IAppStateContext {
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const AppStateContext = React.createContext<Partial<IAppStateContext>>(
-    {}
-);
+export const AppStateContext = React.createContext<Partial<IAppStateContext>>({});
 
 const App: React.FC<JSX.Element> = () => {
     const modalInitialState: Pick<IModalProps, 'modalState'> = {
@@ -41,10 +39,7 @@ const App: React.FC<JSX.Element> = () => {
         <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
             <Provider store={store}>
                 <NativeBaseProvider theme={extendedTheme}>
-                    <PersistGate
-                        loading={<Loading bootUp />}
-                        persistor={persistor}
-                    >
+                    <PersistGate loading={<Loading bootUp />} persistor={persistor}>
                         <AppStateContext.Provider
                             value={
                                 {
@@ -60,11 +55,7 @@ const App: React.FC<JSX.Element> = () => {
                                 }}
                             >
                                 <SafeAreaProvider>
-                                    {isLoggedIn !== undefined ? (
-                                        <Views isLoggedIn={isLoggedIn} />
-                                    ) : (
-                                        <Loading bootUp />
-                                    )}
+                                    {isLoggedIn !== undefined ? <Views isLoggedIn={isLoggedIn} /> : <Loading bootUp />}
                                 </SafeAreaProvider>
                             </ModalProvider>
                         </AppStateContext.Provider>

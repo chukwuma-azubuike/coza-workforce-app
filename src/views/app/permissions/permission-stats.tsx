@@ -14,10 +14,7 @@ const PermissionStats: React.FC<IPermissionsStats> = props => {
     const TOTAL_PERMITS_ALLOWED = 10;
 
     const data = React.useMemo(
-        () => [
-            ...TEST_DATA,
-            TOTAL_PERMITS_ALLOWED - TEST_DATA.reduce((a, b) => a + b),
-        ],
+        () => [...TEST_DATA, TOTAL_PERMITS_ALLOWED - TEST_DATA.reduce((a, b) => a + b)],
         [TEST_DATA]
     );
 

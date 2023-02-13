@@ -32,9 +32,7 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 
 export interface IAppRoute {
     name: string;
-    component: React.FC<
-        NativeStackScreenProps<ParamListBase, string, undefined>
-    >;
+    component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
     options: any;
     submenus: IAppRoute[] | [];
     users: string[] | [];

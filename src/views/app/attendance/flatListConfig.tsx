@@ -19,33 +19,13 @@ const myAttendanceColumns: IFlatListColumn[] = [
         dataIndex: 'date',
         render: (elm: IAttendance, key) => {
             return (
-                <Box
-                    key={key}
-                    size="48px"
-                    borderWidth={0.2}
-                    borderColor={isLightMode ? 'gray.700' : 'gray.300'}
-                >
+                <Box key={key} size="48px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.300'}>
                     <Center pt={0}>
-                        <Text
-                            bold
-                            fontSize={16}
-                            color={isLightMode ? 'gray.700' : 'gray.300'}
-                        >
-                            {moment(elm.createdAt)
-                                .format('ll')
-                                .substring(4, 6)
-                                .split(',')
-                                .join('')}
+                        <Text bold fontSize={16} color={isLightMode ? 'gray.700' : 'gray.300'}>
+                            {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
                         </Text>
-                        <Text
-                            bold
-                            color={isLightMode ? 'gray.700' : 'gray.300'}
-                            fontSize={12}
-                        >
-                            {moment(elm.createdAt)
-                                .format('dddd')
-                                .substring(0, 3)
-                                .toUpperCase()}
+                        <Text bold color={isLightMode ? 'gray.700' : 'gray.300'} fontSize={12}>
+                            {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
                         </Text>
                     </Center>
                 </Box>
@@ -57,12 +37,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
         dataIndex: 'clockIn',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
-                <Icon
-                    color={THEME_CONFIG.primaryLight}
-                    name="arrow-down-right"
-                    type="feather"
-                    size={18}
-                />
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
                         color: elm.clockIn ? 'green.300' : 'red.300',
@@ -79,12 +54,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
         dataIndex: 'clockOut',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
-                <Icon
-                    color={THEME_CONFIG.primaryLight}
-                    name="arrow-up-right"
-                    type="feather"
-                    size={18}
-                />
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text
                     color="gray.500"
                     _dark={{
@@ -107,14 +77,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
                 }}
                 color="gray.500"
             >
-                {`${
-                    !elm.clockOut
-                        ? '--:--'
-                        : `${
-                              Utils.timeDifference(elm.clockIn, elm.clockOut)
-                                  .minutes
-                          }mins`
-                }`}
+                {`${!elm.clockOut ? '--:--' : `${Utils.timeDifference(elm.clockIn, elm.clockOut).minutes}mins`}`}
             </Text>
         ),
     },
@@ -125,25 +88,13 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Date',
         dataIndex: 'date',
         render: (elm: IAttendance, key) => (
-            <Box
-                key={key}
-                size="48px"
-                borderWidth={0.2}
-                borderColor={isLightMode ? 'gray.700' : 'gray.300'}
-            >
+            <Box key={key} size="48px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.300'}>
                 <Center pt={0}>
                     <Text bold color="gray.600" fontSize={16}>
-                        {moment(elm.createdAt)
-                            .format('ll')
-                            .substring(4, 6)
-                            .split(',')
-                            .join('')}
+                        {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
                     </Text>
                     <Text bold color="gray.600" fontSize={12}>
-                        {moment(elm.createdAt)
-                            .format('dddd')
-                            .substring(0, 3)
-                            .toUpperCase()}
+                        {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
                     </Text>
                 </Center>
             </Box>
@@ -153,19 +104,8 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Name / UserId',
         dataIndex: 'name',
         render: (elm: IAttendance, key) => (
-            <HStack
-                key={key}
-                alignItems="center"
-                flex={1}
-                textAlign="left"
-                w="full"
-            >
-                <AvatarComponentWithoutBadge
-                    badge
-                    mr={4}
-                    size="xs"
-                    imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png"
-                />
+            <HStack key={key} alignItems="center" flex={1} textAlign="left" w="full">
+                <AvatarComponentWithoutBadge badge mr={4} size="xs" imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png" />
                 <Text color="gray.600" ml={2}>
                     {Utils.truncateString(elm.userId, 7)}
                 </Text>
@@ -176,19 +116,8 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Clock In',
         dataIndex: 'clockIn',
         render: (elm: IAttendance, key) => (
-            <HStack
-                key={key}
-                alignItems="center"
-                flex={1}
-                textAlign="left"
-                w="full"
-            >
-                <Icon
-                    color={THEME_CONFIG.primaryLight}
-                    name="arrow-down-right"
-                    type="feather"
-                    size={18}
-                />
+            <HStack key={key} alignItems="center" flex={1} textAlign="left" w="full">
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
                         color: elm.clockIn ? 'green.300' : 'red.300',
@@ -204,19 +133,8 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Clock Out',
         dataIndex: 'clockOut',
         render: (elm: IAttendance, key) => (
-            <HStack
-                key={key}
-                alignItems="center"
-                flex={1}
-                textAlign="left"
-                w="full"
-            >
-                <Icon
-                    color={THEME_CONFIG.primaryLight}
-                    name="arrow-up-right"
-                    type="feather"
-                    size={18}
-                />
+            <HStack key={key} alignItems="center" flex={1} textAlign="left" w="full">
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text
                     color="gray.500"
                     _dark={{
@@ -235,33 +153,13 @@ const campusColumns: IFlatListColumn[] = [
         title: 'Date',
         dataIndex: 'date',
         render: (elm: IAttendance, key) => (
-            <Box
-                key={key}
-                size="48px"
-                borderWidth={0.2}
-                borderColor={isLightMode ? 'gray.300' : 'gray.700'}
-            >
+            <Box key={key} size="48px" borderWidth={0.2} borderColor={isLightMode ? 'gray.300' : 'gray.700'}>
                 <Center pt={0}>
-                    <Text
-                        bold
-                        fontSize={16}
-                        color={isLightMode ? 'gray.700' : 'gray.300'}
-                    >
-                        {moment(elm.createdAt)
-                            .format('ll')
-                            .substring(4, 6)
-                            .split(',')
-                            .join('')}
+                    <Text bold fontSize={16} color={isLightMode ? 'gray.700' : 'gray.300'}>
+                        {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
                     </Text>
-                    <Text
-                        bold
-                        color={isLightMode ? 'gray.600' : 'gray.400'}
-                        fontSize={12}
-                    >
-                        {moment(elm.createdAt)
-                            .format('dddd')
-                            .substring(0, 3)
-                            .toUpperCase()}
+                    <Text bold color={isLightMode ? 'gray.600' : 'gray.400'} fontSize={12}>
+                        {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
                     </Text>
                 </Center>
             </Box>
@@ -272,12 +170,7 @@ const campusColumns: IFlatListColumn[] = [
         dataIndex: 'clockIn',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
-                <Icon
-                    color={THEME_CONFIG.primaryLight}
-                    name="arrow-down-right"
-                    type="feather"
-                    size={18}
-                />
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
                         color: elm.clockIn ? 'green.300' : 'red.300',
@@ -294,12 +187,7 @@ const campusColumns: IFlatListColumn[] = [
         dataIndex: 'clockOut',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
-                <Icon
-                    color={THEME_CONFIG.primaryLight}
-                    name="arrow-up-right"
-                    type="feather"
-                    size={18}
-                />
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text
                     color="gray.500"
                     _dark={{
@@ -322,14 +210,7 @@ const campusColumns: IFlatListColumn[] = [
                 }}
                 color="gray.500"
             >
-                {`${
-                    !elm.clockOut
-                        ? '--:--'
-                        : `${
-                              Utils.timeDifference(elm.clockIn, elm.clockOut)
-                                  .minutes
-                          }mins`
-                }`}
+                {`${!elm.clockOut ? '--:--' : `${Utils.timeDifference(elm.clockIn, elm.clockOut).minutes}mins`}`}
             </Text>
         ),
     },

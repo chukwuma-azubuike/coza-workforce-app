@@ -1,10 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import {
-    IDefaultResponse,
-    IPermission,
-    IRequestPermissionPayload,
-    REST_API_VERBS,
-} from '../types';
+import { IDefaultResponse, IPermission, IRequestPermissionPayload, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'permissions';
@@ -15,18 +10,14 @@ export const permissionsServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        requestPermission: endpoint.mutation<
-            IPermission,
-            IRequestPermissionPayload
-        >({
+        requestPermission: endpoint.mutation<IPermission, IRequestPermissionPayload>({
             query: body => ({
                 url: SERVICE_URL,
                 method: REST_API_VERBS.POST,
                 body,
             }),
 
-            transformResponse: (response: IDefaultResponse<IPermission>) =>
-                response.data,
+            transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
         updatePermission: endpoint.mutation<IPermission, IPermission>({

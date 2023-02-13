@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-    Box,
-    Center,
-    FormControl,
-    Heading,
-    HStack,
-    Stack,
-    VStack,
-} from 'native-base';
+import { Box, Center, FormControl, Heading, HStack, Stack, VStack } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
@@ -39,10 +31,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                     <Heading textAlign="left">Create a new password</Heading>
                     <Box alignItems="center" w="100%">
                         <Stack w="100%" space={1}>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.password ? true : false}
-                            >
+                            <FormControl isRequired isInvalid={errors?.password ? true : false}>
                                 <FormControl.Label>Password</FormControl.Label>
                                 <InputComponent
                                     type={showPassword ? 'text' : 'password'}
@@ -52,9 +41,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                         type: 'ionicon',
                                     }}
                                     rightIcon={{
-                                        name: showPassword
-                                            ? 'eye-off-outline'
-                                            : 'eye-outline',
+                                        name: showPassword ? 'eye-off-outline' : 'eye-outline',
                                         type: 'ionicon',
                                     }}
                                     onIconPress={handleIconPress}
@@ -64,26 +51,14 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                     fontSize="2xl"
                                     mt={3}
                                     leftIcon={
-                                        <Icon
-                                            size={16}
-                                            name="warning"
-                                            type="antdesign"
-                                            color={THEME_CONFIG.error}
-                                        />
+                                        <Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />
                                     }
                                 >
                                     {errors?.password}
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={
-                                    errors?.confirmPassword ? true : false
-                                }
-                            >
-                                <FormControl.Label>
-                                    Confirm password
-                                </FormControl.Label>
+                            <FormControl isRequired isInvalid={errors?.confirmPassword ? true : false}>
+                                <FormControl.Label>Confirm password</FormControl.Label>
                                 <InputComponent
                                     type={showPassword ? 'text' : 'password'}
                                     placeholder="Repeat password"
@@ -92,51 +67,30 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({
                                         type: 'ionicon',
                                     }}
                                     rightIcon={{
-                                        name: showPassword
-                                            ? 'eye-off-outline'
-                                            : 'eye-outline',
+                                        name: showPassword ? 'eye-off-outline' : 'eye-outline',
                                         type: 'ionicon',
                                     }}
                                     onIconPress={handleIconPress}
-                                    onChangeText={handleChange(
-                                        'confirmPassword'
-                                    )}
+                                    onChangeText={handleChange('confirmPassword')}
                                 />
                                 <FormControl.ErrorMessage
                                     fontSize="2xl"
                                     mt={3}
                                     leftIcon={
-                                        <Icon
-                                            size={16}
-                                            name="warning"
-                                            type="antdesign"
-                                            color={THEME_CONFIG.error}
-                                        />
+                                        <Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />
                                     }
                                 >
                                     {errors?.confirmPassword}
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <FormControl>
-                                <HStack
-                                    space={4}
-                                    justifyContent="space-between"
-                                >
-                                    <ButtonComponent
-                                        onPress={handleBackPress}
-                                        width={160}
-                                        secondary
-                                        mt={4}
-                                    >
+                                <HStack space={4} justifyContent="space-between">
+                                    <ButtonComponent onPress={handleBackPress} width={160} secondary mt={4}>
                                         Go back
                                     </ButtonComponent>
                                     <ButtonComponent
                                         isLoading={isLoading || loginIsLoading}
-                                        isLoadingText={
-                                            loginIsLoading
-                                                ? 'Logging in...'
-                                                : 'Signing up...'
-                                        }
+                                        isLoadingText={loginIsLoading ? 'Logging in...' : 'Signing up...'}
                                         onPress={onSubmit}
                                         width={160}
                                         mt={4}

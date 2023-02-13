@@ -15,13 +15,7 @@ type Props = {
     };
 };
 
-const VerticalTable: React.FC<Props> = ({
-    title,
-    children,
-    isLoading,
-    tableData,
-    alignItemsCenter = true,
-}) => {
+const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter = true }) => {
     return (
         <Box>
             <Text fontSize="md" color="gray.600" mb={2}>
@@ -39,14 +33,8 @@ const VerticalTable: React.FC<Props> = ({
                                 {tableData?.headers?.map((item, index) => (
                                     <Box
                                         key={`${item}-${index}`}
-                                        alignItems={
-                                            alignItemsCenter
-                                                ? 'center'
-                                                : 'flex-start'
-                                        }
-                                        w={`${
-                                            100 / tableData?.headers?.length
-                                        }%`}
+                                        alignItems={alignItemsCenter ? 'center' : 'flex-start'}
+                                        w={`${100 / tableData?.headers?.length}%`}
                                         bg="primary.600"
                                         p={3}
                                     >
@@ -55,23 +43,13 @@ const VerticalTable: React.FC<Props> = ({
                                 ))}
                             </HStack>
                             {tableData?.rows?.map((row, index) => (
-                                <HStack
-                                    key={`row-data-${index}`}
-                                    space={'2px'}
-                                    w={'100%'}
-                                >
+                                <HStack key={`row-data-${index}`} space={'2px'} w={'100%'}>
                                     {Object.values(row)?.map(item => (
                                         <Box
-                                            alignItems={
-                                                alignItemsCenter
-                                                    ? 'center'
-                                                    : 'flex-start'
-                                            }
+                                            alignItems={alignItemsCenter ? 'center' : 'flex-start'}
                                             bg="gray.100"
                                             padding={'10px'}
-                                            w={`${
-                                                100 / tableData?.headers?.length
-                                            }%`}
+                                            w={`${100 / tableData?.headers?.length}%`}
                                             _text={{
                                                 fontSize: '15px',
                                                 fontWeight: '500',

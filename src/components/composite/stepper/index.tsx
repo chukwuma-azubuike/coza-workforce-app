@@ -46,13 +46,7 @@ interface IStepperProps {
     navigation?: NativeStackNavigationProp<ParamListBase, string, undefined>;
 }
 
-const Stepper: React.FC<IStepperProps> = ({
-    pages,
-    otherProps,
-    navigation,
-    disableSwipe,
-    stepIndicator,
-}) => {
+const Stepper: React.FC<IStepperProps> = ({ pages, otherProps, navigation, disableSwipe, stepIndicator }) => {
     const LABELS = React.useMemo(() => pages.map(page => page.label), pages);
 
     const [currentPage, setCurrentPage] = React.useState<number>(0);
@@ -71,17 +65,7 @@ const Stepper: React.FC<IStepperProps> = ({
         label: string;
         currentPosition: number;
     }) => {
-        return (
-            <Text
-                style={
-                    position === currentPosition
-                        ? styles.stepLabelSelected
-                        : styles.stepLabel
-                }
-            >
-                {label}
-            </Text>
-        );
+        return <Text style={position === currentPosition ? styles.stepLabelSelected : styles.stepLabel}>{label}</Text>;
     };
 
     return (
@@ -111,12 +95,7 @@ const Stepper: React.FC<IStepperProps> = ({
                 activeDotColor={THEME_CONFIG.primaryLight}
             >
                 {pages.map((page, index) => (
-                    <page.component
-                        key={index}
-                        {...otherProps}
-                        navigation={navigation}
-                        onStepPress={onStepPress}
-                    />
+                    <page.component key={index} {...otherProps} navigation={navigation} onStepPress={onStepPress} />
                 ))}
             </Swiper>
         </View>

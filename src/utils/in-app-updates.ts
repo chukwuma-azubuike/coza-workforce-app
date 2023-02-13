@@ -1,7 +1,4 @@
-import SpInAppUpdates, {
-    IAUUpdateKind,
-    StartUpdateOptions,
-} from 'sp-react-native-in-app-updates';
+import SpInAppUpdates, { IAUUpdateKind, StartUpdateOptions } from 'sp-react-native-in-app-updates';
 import { Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 

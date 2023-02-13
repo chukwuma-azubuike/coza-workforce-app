@@ -9,10 +9,7 @@ export interface IVersionState {
 
 interface IVerisonAction {
     payload: any;
-    type:
-        | 'SET_LAST_UPDATED_VERSION'
-        | 'SET_HAS_LOGGED_OUT_TRUE'
-        | 'SET_HAS_LOGGED_OUT_FALSE';
+    type: 'SET_LAST_UPDATED_VERSION' | 'SET_HAS_LOGGED_OUT_TRUE' | 'SET_HAS_LOGGED_OUT_FALSE';
 }
 
 export const versionActiontypes = {
@@ -27,10 +24,7 @@ const initialState: IVersionState = {
     updatedAt: '',
 };
 
-const versionReducer: Reducer<IVersionState, IVerisonAction> = (
-    state = initialState as IVersionState,
-    action
-) => {
+const versionReducer: Reducer<IVersionState, IVerisonAction> = (state = initialState as IVersionState, action) => {
     switch (action.type) {
         case versionActiontypes.SET_LAST_UPDATED_VERSION:
             return {
@@ -59,8 +53,7 @@ const versionReducer: Reducer<IVersionState, IVerisonAction> = (
     }
 };
 
-export const selectVersionCode = (store: IStore) =>
-    store.version.lastUpdatedVersionCode;
+export const selectVersionCode = (store: IStore) => store.version.lastUpdatedVersionCode;
 
 export const selectVersionActionTaken = (store: IStore) => store.version.action;
 

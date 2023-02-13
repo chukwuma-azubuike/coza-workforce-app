@@ -39,8 +39,7 @@ export const attendanceServiceSlice = createApi({
 
             invalidatesTags: ['Attendance'],
 
-            transformResponse: (response: IMutateAttendanceResponse) =>
-                response.data,
+            transformResponse: (response: IMutateAttendanceResponse) => response.data,
         }),
 
         clockOut: endpoint.mutation<IAttendance, string>({
@@ -51,8 +50,7 @@ export const attendanceServiceSlice = createApi({
 
             invalidatesTags: ['Attendance'],
 
-            transformResponse: (response: IMutateAttendanceResponse) =>
-                response.data,
+            transformResponse: (response: IMutateAttendanceResponse) => response.data,
         }),
 
         getLatestAttendanceByUserId: endpoint.query<IAttendance, string>({
@@ -63,8 +61,7 @@ export const attendanceServiceSlice = createApi({
 
             providesTags: ['Attendance'],
 
-            transformResponse: (response: IMutateAttendanceResponse) =>
-                response.data,
+            transformResponse: (response: IMutateAttendanceResponse) => response.data,
         }),
 
         getAttendanceByUserId: endpoint.query<IAttendance[], string>({
