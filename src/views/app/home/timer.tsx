@@ -19,12 +19,7 @@ const Timer: React.FC = () => {
             <Text _dark={{ color: 'gray.50' }} color="gray.600" fontSize="4xl">
                 {time.format('LT')}
             </Text>
-            <Text
-                _dark={{ color: 'gray.50' }}
-                fontWeight="light"
-                color="gray.400"
-                fontSize="md"
-            >
+            <Text _dark={{ color: 'gray.50' }} fontWeight="light" color="gray.400" fontSize="md">
                 {time.format('dddd ll')}
             </Text>
         </Center>

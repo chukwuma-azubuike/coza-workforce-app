@@ -20,9 +20,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
             }}
             {...props}
         >
-            {`${firstName && firstName.substring(0, 1)}${
-                lastName && lastName.substring(0, 1)
-            }`}
+            {`${firstName && firstName.substring(0, 1)}${lastName && lastName.substring(0, 1)}`}
             {badge && <Avatar.Badge bg="green.500" />}
         </Avatar>
     );
@@ -30,9 +28,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
 
 export default AvatarComponent;
 
-export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({
-    imageUrl,
-}) => {
+export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({ imageUrl }) => {
     return (
         <Avatar
             bg="amber.500"

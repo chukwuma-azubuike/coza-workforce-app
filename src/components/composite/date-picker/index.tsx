@@ -5,9 +5,7 @@ import moment from 'moment';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { InputComponent } from '../../atoms/input';
-import DateTimePicker, {
-    DateTimePickerEvent,
-} from '@react-native-community/datetimepicker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import If from '../if-container';
 import useAppColorMode from '../../../hooks/theme/colorMode';
@@ -36,43 +34,19 @@ const MonthPicker = () => {
             }}
         >
             <HStack justifyContent="space-around" alignItems="center">
-                <Icon
-                    color={THEME_CONFIG.lightGray}
-                    name="chevron-small-left"
-                    type="entypo"
-                    size={26}
-                />
-                <HStack
-                    w="full"
-                    space={2}
-                    justifyContent="center"
-                    alignItems="center"
-                >
+                <Icon color={THEME_CONFIG.lightGray} name="chevron-small-left" type="entypo" size={26} />
+                <HStack w="full" space={2} justifyContent="center" alignItems="center">
                     <Icon
                         size={20}
                         name="calendar"
                         type="antdesign"
-                        color={
-                            isDarkMode
-                                ? THEME_CONFIG.primaryLight
-                                : THEME_CONFIG.primary
-                        }
+                        color={isDarkMode ? THEME_CONFIG.primaryLight : THEME_CONFIG.primary}
                     />
-                    <Text
-                        bold
-                        fontSize="md"
-                        _dark={{ color: 'primary.400' }}
-                        _light={{ color: 'primary.600' }}
-                    >
+                    <Text bold fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.600' }}>
                         {moment().format('MMMM y')}
                     </Text>
                 </HStack>
-                <Icon
-                    color={THEME_CONFIG.lightGray}
-                    name="chevron-small-right"
-                    type="entypo"
-                    size={26}
-                />
+                <Icon color={THEME_CONFIG.lightGray} name="chevron-small-right" type="entypo" size={26} />
             </HStack>
         </Swipeable>
     );
@@ -126,12 +100,8 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     }}
                     onPressIn={handlePress}
                     showSoftInputOnFocus={false}
-                    value={moment(date).format(
-                        mode === 'time' ? 'LTS' : 'DD MMM, yy'
-                    )}
-                    placeholder={moment().format(
-                        mode === 'time' ? 'LTS' : 'DD MMM, yy'
-                    )}
+                    value={moment(date).format(mode === 'time' ? 'LTS' : 'DD MMM, yy')}
+                    placeholder={moment().format(mode === 'time' ? 'LTS' : 'DD MMM, yy')}
                 />
             </If>
             {show && (

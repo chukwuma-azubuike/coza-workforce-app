@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-    Alert,
-    Box,
-    Center,
-    FormControl,
-    Heading,
-    Stack,
-    VStack,
-    WarningOutlineIcon,
-} from 'native-base';
+import { Alert, Box, Center, FormControl, Heading, Stack, VStack, WarningOutlineIcon } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
@@ -37,9 +28,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                     <Box alignItems="center" w="100%">
                         <Stack w="100%" space={1}>
                             <FormControl isRequired>
-                                <FormControl.Label>
-                                    First name
-                                </FormControl.Label>
+                                <FormControl.Label>First name</FormControl.Label>
                                 <InputComponent
                                     leftIcon={{
                                         name: 'person-outline',
@@ -50,9 +39,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     isRequired
                                     value={values.firstName}
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
+                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
@@ -68,9 +55,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     placeholder="Doe"
                                     isRequired
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
+                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
@@ -90,13 +75,8 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     placeholder="jondoe@gmail.com"
                                 />
                             </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.phoneNumber ? true : false}
-                            >
-                                <FormControl.Label>
-                                    Phone number
-                                </FormControl.Label>
+                            <FormControl isRequired isInvalid={errors?.phoneNumber ? true : false}>
+                                <FormControl.Label>Phone number</FormControl.Label>
                                 <InputComponent
                                     isRequired
                                     leftIcon={{
@@ -112,21 +92,13 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     fontSize="2xl"
                                     mt={3}
                                     leftIcon={
-                                        <Icon
-                                            size={16}
-                                            name="warning"
-                                            type="antdesign"
-                                            color={THEME_CONFIG.error}
-                                        />
+                                        <Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />
                                     }
                                 >
                                     {errors?.phoneNumber}
                                 </FormControl.ErrorMessage>
                             </FormControl>
-                            <FormControl
-                                isRequired
-                                isInvalid={errors?.address ? true : false}
-                            >
+                            <FormControl isRequired isInvalid={errors?.address ? true : false}>
                                 <FormControl.Label>Address</FormControl.Label>
                                 <InputComponent
                                     isRequired
@@ -141,21 +113,14 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                                     fontSize="2xl"
                                     mt={3}
                                     leftIcon={
-                                        <Icon
-                                            size={16}
-                                            name="warning"
-                                            type="antdesign"
-                                            color={THEME_CONFIG.error}
-                                        />
+                                        <Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />
                                     }
                                 >
                                     {errors?.address}
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <FormControl>
-                                <FormControl.Label>
-                                    Department
-                                </FormControl.Label>
+                                <FormControl.Label>Department</FormControl.Label>
                                 <InputComponent
                                     leftIcon={{
                                         name: 'organization',

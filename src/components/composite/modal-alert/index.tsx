@@ -14,14 +14,7 @@ interface IModalAlertComponentProps {
 }
 
 const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
-    const {
-        status,
-        description,
-        iconName,
-        iconType,
-        color,
-        backgroundColor = 'gray.800',
-    } = props;
+    const { status, description, iconName, iconType, color, backgroundColor = 'gray.800' } = props;
 
     return (
         <Alert
@@ -32,20 +25,9 @@ const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
             borderRadius={THEME_CONFIG.borderRadius}
         >
             <VStack justifyContent="center" h="full">
-                <Icon
-                    size={90}
-                    type={iconType}
-                    name={iconName}
-                    color={color ? color : THEME_CONFIG[status]}
-                />
+                <Icon size={90} type={iconType} name={iconName} color={color ? color : THEME_CONFIG[status]} />
                 {typeof description === 'string' ? (
-                    <Text
-                        py={6}
-                        semi-bold
-                        fontSize="xl"
-                        textAlign="center"
-                        color={color ? color : 'white'}
-                    >
+                    <Text py={6} semi-bold fontSize="xl" textAlign="center" color={color ? color : 'white'}>
                         {description}
                     </Text>
                 ) : (

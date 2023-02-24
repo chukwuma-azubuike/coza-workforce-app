@@ -6,12 +6,7 @@ Concept: https://dribbble.com/shots/5476562-Forgot-Password-Verification/attachm
 import { Animated, SafeAreaView, Text } from 'react-native';
 import React, { useState } from 'react';
 
-import {
-    Cursor,
-    CodeField,
-    useBlurOnFulfill,
-    useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
+import { Cursor, CodeField, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 
 import styles, {
     CELL_SIZE,
@@ -29,15 +24,7 @@ export const CELL_COUNT = 6;
 
 const animationsColor = [...new Array(CELL_COUNT)].map(() => new Value(0));
 const animationsScale = [...new Array(CELL_COUNT)].map(() => new Value(1));
-const animateCell = ({
-    hasValue,
-    index,
-    isFocused,
-}: {
-    hasValue: boolean;
-    index: number;
-    isFocused: boolean;
-}) => {
+const animateCell = ({ hasValue, index, isFocused }: { hasValue: boolean; index: number; isFocused: boolean }) => {
     Animated.parallel([
         Animated.timing(animationsColor[index], {
             useNativeDriver: false,
@@ -71,31 +58,17 @@ const OTPInput = ({
         setValue,
     });
 
-    const renderCell = ({
-        index,
-        symbol,
-        isFocused,
-    }: {
-        index: number;
-        symbol: boolean;
-        isFocused: boolean;
-    }) => {
+    const renderCell = ({ index, symbol, isFocused }: { index: number; symbol: boolean; isFocused: boolean }) => {
         const hasValue = Boolean(symbol);
         const animatedCellStyle = {
             backgroundColor: hasValue
                 ? animationsScale[index].interpolate({
                       inputRange: [0, 1],
-                      outputRange: [
-                          NOT_EMPTY_CELL_BG_COLOR,
-                          ACTIVE_CELL_BG_COLOR,
-                      ],
+                      outputRange: [NOT_EMPTY_CELL_BG_COLOR, ACTIVE_CELL_BG_COLOR],
                   })
                 : animationsColor[index].interpolate({
                       inputRange: [0, 1],
-                      outputRange: [
-                          DEFAULT_CELL_BG_COLOR,
-                          ACTIVE_CELL_BG_COLOR,
-                      ],
+                      outputRange: [DEFAULT_CELL_BG_COLOR, ACTIVE_CELL_BG_COLOR],
                   }),
             borderRadius: animationsScale[index].interpolate({
                 inputRange: [0, 1],
@@ -118,11 +91,7 @@ const OTPInput = ({
         }, 0);
 
         return (
-            <AnimatedText
-                key={index}
-                style={[styles.cell, animatedCellStyle]}
-                onLayout={getCellOnLayoutHandler(index)}
-            >
+            <AnimatedText key={index} style={[styles.cell, animatedCellStyle]} onLayout={getCellOnLayoutHandler(index)}>
                 {symbol || (isFocused ? <Cursor /> : null)}
             </AnimatedText>
         );
@@ -144,9 +113,7 @@ const OTPInput = ({
             ) : (
                 <>
                     <Text style={styles.title}>Verification</Text>
-                    <Text style={styles.subTitle}>
-                        Please enter the OTP code we sent to your email address
-                    </Text>
+                    <Text style={styles.subTitle}>Please enter the OTP code we sent to your email address</Text>
 
                     <CodeField
                         ref={ref}

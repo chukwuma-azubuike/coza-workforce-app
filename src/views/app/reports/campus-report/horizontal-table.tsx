@@ -28,31 +28,18 @@ const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
                         <HStack space={'2px'}>
                             <VStack space={'2px'} w="40%">
                                 {tableData?.headers?.map((item, index) => (
-                                    <Box
-                                        key={`${item}-${index}`}
-                                        alignItems="flex-start"
-                                        bg="primary.600"
-                                        p={3}
-                                    >
+                                    <Box key={`${item}-${index}`} alignItems="flex-start" bg="primary.600" p={3}>
                                         <Text color="white">{item}</Text>
                                     </Box>
                                 ))}
                             </VStack>
 
                             <VStack space={'2px'} w={'59%'}>
-                                {Object.values(tableData?.column)?.map(
-                                    (item, index) => (
-                                        <Box
-                                            key={`${item}-${index}`}
-                                            alignItems="center"
-                                            bg="gray.100"
-                                            w={'100%'}
-                                            p={3}
-                                        >
-                                            {item}
-                                        </Box>
-                                    )
-                                )}
+                                {Object.values(tableData?.column)?.map((item, index) => (
+                                    <Box key={`${item}-${index}`} alignItems="center" bg="gray.100" w={'100%'} p={3}>
+                                        {item}
+                                    </Box>
+                                ))}
                             </VStack>
                         </HStack>
                     </Box>

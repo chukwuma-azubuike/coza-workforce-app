@@ -32,11 +32,7 @@ const Profile: React.FC = () => {
                     <AvatarComponent
                         shadow={9}
                         size="xl"
-                        imageUrl={
-                            user?.pictureUrl
-                                ? user.pictureUrl
-                                : 'https://i.ibb.co/P6k4dWF/Group-3.png'
-                        }
+                        imageUrl={user?.pictureUrl ? user.pictureUrl : 'https://i.ibb.co/P6k4dWF/Group-3.png'}
                         firstName={user?.firstName}
                         lastName={user?.lastName}
                     />
@@ -56,9 +52,7 @@ const Profile: React.FC = () => {
                             _dark={{ color: 'gray.400' }}
                             _light={{ color: 'gray.600' }}
                         >
-                            {isGlobalPastor
-                                ? 'Global Senior Pastor'
-                                : user?.department?.departmentName}
+                            {isGlobalPastor ? 'Global Senior Pastor' : user?.department?.departmentName}
                         </Text>
                     </Stack>
                 </VStack>
@@ -73,18 +67,8 @@ const Profile: React.FC = () => {
                     _light={{ bg: 'gray.100' }}
                 >
                     <Box px={3} flexDirection="row" justifyContent="flex-start">
-                        <Icon
-                            size={22}
-                            name="person"
-                            type="Ionicons"
-                            color={THEME_CONFIG.lightGray}
-                        />
-                        <Text
-                            ml={4}
-                            fontSize="md"
-                            _dark={{ color: 'gray.300' }}
-                            _light={{ color: 'gray.700' }}
-                        >
+                        <Icon size={22} name="person" type="Ionicons" color={THEME_CONFIG.lightGray} />
+                        <Text ml={4} fontSize="md" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
                             User Info
                         </Text>
                     </Box>
@@ -94,27 +78,12 @@ const Profile: React.FC = () => {
                     <UserInfo heading="Phone" detail={user?.phoneNumber} />
                     <UserInfo heading="Next of kin" detail={user?.nextOfKin} />
                     <UserInfo heading="Occupation" detail={user?.occupation} />
-                    <UserInfo
-                        heading="Place of work"
-                        detail={user?.placeOfWork}
-                    />
+                    <UserInfo heading="Place of work" detail={user?.placeOfWork} />
                     <UserInfo heading="Gender" detail={user?.gender} />
-                    <UserInfo
-                        heading="Marital Status"
-                        detail={Utils.capitalizeFirstChar(
-                            user?.maritalStatus || ''
-                        )}
-                    />
-                    <UserInfo
-                        heading="Birthday"
-                        detail={moment(user?.birthDay).format('DD MMM')}
-                    />
+                    <UserInfo heading="Marital Status" detail={Utils.capitalizeFirstChar(user?.maritalStatus || '')} />
+                    <UserInfo heading="Birthday" detail={moment(user?.birthDay).format('DD MMM')} />
                 </Box>
-                <TouchableOpacity
-                    activeOpacity={0.4}
-                    style={{ width: '100%' }}
-                    onPress={handleLogout}
-                >
+                <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
                     <Stack
                         my={3}
                         mx={4}
@@ -124,23 +93,9 @@ const Profile: React.FC = () => {
                         _dark={{ bg: 'gray.900' }}
                         _light={{ bg: 'gray.100' }}
                     >
-                        <Box
-                            px={3}
-                            flexDirection="row"
-                            justifyContent="flex-start"
-                        >
-                            <Icon
-                                size={22}
-                                name="logout"
-                                type="Ionicons"
-                                color={THEME_CONFIG.lightGray}
-                            />
-                            <Text
-                                ml={4}
-                                fontSize="md"
-                                _dark={{ color: 'gray.300' }}
-                                _light={{ color: 'gray.700' }}
-                            >
+                        <Box px={3} flexDirection="row" justifyContent="flex-start">
+                            <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
+                            <Text ml={4} fontSize="md" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
                                 Logout
                             </Text>
                         </Box>

@@ -1,14 +1,5 @@
 import React from 'react';
-import {
-    Box,
-    FormControl,
-    Heading,
-    Stack,
-    VStack,
-    Text,
-    Center,
-    HStack,
-} from 'native-base';
+import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -28,15 +19,12 @@ import { versionActiontypes } from '../../../store/services/version';
 import { useAppDispatch } from '../../../store/hooks';
 import Logo from '../../../components/atoms/logo';
 
-const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-}) => {
+const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const dispatch = useAppDispatch();
 
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-    const [login, { data, error, isError, isSuccess, isLoading, status }] =
-        useLoginMutation();
+    const [login, { data, error, isError, isSuccess, isLoading, status }] = useLoginMutation();
 
     const { setModalState } = useModal();
     const handleIconPress = () => setShowPassword(prev => !prev);
@@ -93,21 +81,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                             handleSubmit,
                         }: Pick<
                             IRegisterFormProps,
-                            | 'values'
-                            | 'errors'
-                            | 'handleChange'
-                            | 'handleSubmit'
-                            | 'setFieldError'
+                            'values' | 'errors' | 'handleChange' | 'handleSubmit' | 'setFieldError'
                         >) => {
                             return (
                                 <Stack w="100%" space={1}>
-                                    <FormControl
-                                        isRequired
-                                        isInvalid={errors?.email ? true : false}
-                                    >
-                                        <FormControl.Label>
-                                            Email
-                                        </FormControl.Label>
+                                    <FormControl isRequired isInvalid={errors?.email ? true : false}>
+                                        <FormControl.Label>Email</FormControl.Label>
                                         <InputComponent
                                             leftIcon={{
                                                 type: 'ionicon',
@@ -117,25 +96,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                             placeholder="jondoe@gmail.com"
                                             onChangeText={handleChange('email')}
                                         />
-                                        <FormControl.ErrorMessage>
-                                            {errors?.email}
-                                        </FormControl.ErrorMessage>
+                                        <FormControl.ErrorMessage>{errors?.email}</FormControl.ErrorMessage>
                                     </FormControl>
-                                    <FormControl
-                                        isRequired
-                                        isInvalid={
-                                            errors?.password ? true : false
-                                        }
-                                    >
-                                        <FormControl.Label>
-                                            Password
-                                        </FormControl.Label>
+                                    <FormControl isRequired isInvalid={errors?.password ? true : false}>
+                                        <FormControl.Label>Password</FormControl.Label>
                                         <InputComponent
-                                            type={
-                                                showPassword
-                                                    ? 'text'
-                                                    : 'password'
-                                            }
+                                            type={showPassword ? 'text' : 'password'}
                                             placeholder="password"
                                             isRequired
                                             leftIcon={{
@@ -143,29 +109,19 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                                 type: 'ionicon',
                                             }}
                                             rightIcon={{
-                                                name: showPassword
-                                                    ? 'eye-off-outline'
-                                                    : 'eye-outline',
+                                                name: showPassword ? 'eye-off-outline' : 'eye-outline',
                                                 type: 'ionicon',
                                             }}
                                             onIconPress={handleIconPress}
-                                            onChangeText={handleChange(
-                                                'password'
-                                            )}
+                                            onChangeText={handleChange('password')}
                                         />
-                                        <FormControl.ErrorMessage>
-                                            {errors?.password}
-                                        </FormControl.ErrorMessage>
+                                        <FormControl.ErrorMessage>{errors?.password}</FormControl.ErrorMessage>
                                     </FormControl>
                                     <FormControl>
                                         <ButtonComponent
                                             mt={4}
                                             isLoading={isLoading}
-                                            onPress={
-                                                handleSubmit as (
-                                                    event: any
-                                                ) => void
-                                            }
+                                            onPress={handleSubmit as (event: any) => void}
                                         >
                                             Login
                                         </ButtonComponent>
@@ -183,11 +139,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         style={{ paddingHorizontal: 6, borderRadius: 10 }}
                         onPress={() => navigation.navigate('Welcome')}
                     >
-                        <Text
-                            fontSize="md"
-                            _dark={{ color: 'primary.400' }}
-                            _light={{ color: 'primary.500' }}
-                        >
+                        <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
                             Register
                         </Text>
                     </TouchableRipple>

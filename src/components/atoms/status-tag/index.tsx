@@ -1,10 +1,10 @@
 import { ITagProps, Tag } from 'native-base';
 import React from 'react';
-import { IStatus } from '../../../store/types';
+import { IStatus, ITicketStatus } from '../../../store/types';
 import Utils from '../../../utils';
 
 interface IStatusTag extends ITagProps {
-    children: IStatus;
+    children: IStatus | ITicketStatus;
 }
 
 const StatusTag: React.FC<IStatusTag> = props => {
@@ -20,7 +20,9 @@ const StatusTag: React.FC<IStatusTag> = props => {
                     ? 'success.100'
                     : status === 'PENDING'
                     ? 'gray.200'
-                    : 'error.100'
+                    : status === 'DECLINED'
+                    ? 'error.100'
+                    : 'gray.200'
             }
             _text={{
                 _light: {
@@ -29,7 +31,9 @@ const StatusTag: React.FC<IStatusTag> = props => {
                             ? 'success.600'
                             : status === 'PENDING'
                             ? 'gray.600'
-                            : 'error.600',
+                            : status === 'DECLINED'
+                            ? 'error.600'
+                            : 'gray.600',
                     fontSize: 'xs',
                 },
                 _dark: {
@@ -38,7 +42,9 @@ const StatusTag: React.FC<IStatusTag> = props => {
                             ? 'success.600'
                             : status === 'PENDING'
                             ? 'gray.600'
-                            : 'error.600',
+                            : status === 'DECLINED'
+                            ? 'error.600'
+                            : 'gray.600',
                     fontSize: 'xs',
                 },
             }}

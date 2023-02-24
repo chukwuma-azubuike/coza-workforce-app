@@ -16,6 +16,7 @@ import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
 import TicketDetails from '../views/app/tickets/ticket-details';
+import IssueTicket from '../views/app/tickets/issue-ticket';
 import { IIconTypes } from '../utils/types';
 import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
@@ -31,9 +32,7 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 
 export interface IAppRoute {
     name: string;
-    component: React.FC<
-        NativeStackScreenProps<ParamListBase, string, undefined>
-    >;
+    component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
     options: any;
     submenus: IAppRoute[] | [];
     users: string[] | [];
@@ -99,6 +98,18 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Ticket Details',
                 component: TicketDetails,
                 options: { title: 'Ticket Details' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: {
+                    name: 'ticket-confirmation-outline',
+                    type: 'material-community',
+                },
+            },
+            {
+                name: 'Issue Ticket',
+                component: IssueTicket,
+                options: { title: 'Issue Ticket' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

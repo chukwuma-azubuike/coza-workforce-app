@@ -31,29 +31,15 @@ const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
                 }
             />
             {difference ? (
-                <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    _dark={{ color: 'gray.400' }}
-                    _light={{ color: 'gray.600' }}
-                >
+                <Text fontSize="md" fontWeight="bold" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
                     {difference ? difference : '--:--'}
                 </Text>
             ) : (
-                <Text
-                    fontSize="md"
-                    fontWeight="bold"
-                    _dark={{ color: 'gray.400' }}
-                    _light={{ color: 'gray.600' }}
-                >
+                <Text fontSize="md" fontWeight="bold" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
                     {time ? moment(time).format('LT') : '--:--'}
                 </Text>
             )}
-            <Text
-                fontSize="xs"
-                _dark={{ color: 'gray.400' }}
-                _light={{ color: 'gray.600' }}
-            >
+            <Text fontSize="xs" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
                 {label}
             </Text>
         </VStack>
@@ -67,18 +53,8 @@ const ClockStatistics = () => {
 
     return (
         <HStack justifyContent="center">
-            <Stat
-                time={latestAttendanceData?.clockIn}
-                icon="check-circle"
-                iconType="feather"
-                label="Clock in"
-            />
-            <Stat
-                time={latestAttendanceData?.clockOut}
-                label="Clock out"
-                icon="logout"
-                iconType="antdesign"
-            />
+            <Stat time={latestAttendanceData?.clockIn} icon="check-circle" iconType="feather" label="Clock in" />
+            <Stat time={latestAttendanceData?.clockOut} label="Clock out" icon="logout" iconType="antdesign" />
             <Stat
                 difference={
                     Utils.timeDifference(

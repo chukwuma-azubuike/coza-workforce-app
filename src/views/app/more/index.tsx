@@ -8,20 +8,11 @@ import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 
-const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-}) => {
-    const handlePress = (route: IAppRoute) => () =>
-        navigation.navigate(route.name);
+const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+    const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
 
     const filteredRoutes = React.useMemo(
-        () =>
-            AppRoutes.filter(
-                route =>
-                    !route.inMenuBar &&
-                    route.name !== 'Profile' &&
-                    route.name !== 'Notifications'
-            ),
+        () => AppRoutes.filter(route => !route.inMenuBar && route.name !== 'Profile' && route.name !== 'Notifications'),
         [AppRoutes]
     );
 
@@ -44,16 +35,8 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                                 style={{ width: '100%' }}
                                 onPress={handlePress(route)}
                             >
-                                <HStack
-                                    px={3}
-                                    w="full"
-                                    alignItems="center"
-                                    justifyContent="space-between"
-                                >
-                                    <Box
-                                        flexDirection="row"
-                                        justifyContent="flex-start"
-                                    >
+                                <HStack px={3} w="full" alignItems="center" justifyContent="space-between">
+                                    <Box flexDirection="row" justifyContent="flex-start">
                                         <Icon
                                             size={22}
                                             name={route.icon.name}

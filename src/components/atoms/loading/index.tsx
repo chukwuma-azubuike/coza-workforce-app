@@ -11,17 +11,9 @@ const Loading = ({ bootUp }: { bootUp?: boolean }) => {
         <Center flex={1} justifyContent="center">
             <VStack justifyContent="center">
                 {bootUp ? (
-                    <Image
-                        alt="startuplogo"
-                        source={isLightMode ? logoBlack : logoWhite}
-                    />
+                    <Image alt="startuplogo" source={isLightMode ? logoBlack : logoWhite} />
                 ) : (
-                    <Spinner
-                        color="primary.600"
-                        fontSize="6xl"
-                        boxSize="xl"
-                        size="lg"
-                    />
+                    <Spinner color="primary.600" fontSize="6xl" boxSize="xl" size="lg" />
                 )}
             </VStack>
         </Center>

@@ -1,13 +1,7 @@
 import { useColorMode } from 'native-base';
 
 const useAppColorMode = () => {
-    const {
-        colorMode,
-        accessibleColors,
-        setAccessibleColors,
-        setColorMode,
-        toggleColorMode,
-    } = useColorMode();
+    const { colorMode, accessibleColors, setAccessibleColors, setColorMode, toggleColorMode } = useColorMode();
 
     const isLightMode = colorMode === 'light';
     const isDarkMode = colorMode === 'dark';

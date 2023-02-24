@@ -11,9 +11,7 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
 
-const PermissionDetails: React.FC<
-    NativeStackScreenProps<ParamListBase>
-> = props => {
+const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
         requestor: { firstName, lastName, pictureUrl, department },
         startDate,
@@ -27,7 +25,7 @@ const PermissionDetails: React.FC<
 
     return (
         <ViewWrapper scroll>
-            <CardComponent mt={1} p={4} mx={4}>
+            <CardComponent mt={1} px={2} py={8} mx={3} mb={10}>
                 <VStack space={4}>
                     <HStack
                         space={2}
@@ -81,12 +79,7 @@ const PermissionDetails: React.FC<
                         </Text>
                         <Text>{`${startDate}  to  ${endDate}`}</Text>
                     </HStack>
-                    <VStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        justifyContent="space-between"
-                    >
+                    <VStack space={2} pb={2} w="full" justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
                             Description
                         </Text>
@@ -105,19 +98,11 @@ const PermissionDetails: React.FC<
                         </Text>
                         <StatusTag>{status}</StatusTag>
                     </HStack>
-                    <VStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        justifyContent="space-between"
-                    >
+                    <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
                             HOD / AHOD Comment
                         </Text>
-                        <TextAreaComponent
-                            value={comment}
-                            isDisabled={status !== 'PENDING'}
-                        />
+                        <TextAreaComponent value={comment} isDisabled={status !== 'PENDING'} />
                     </VStack>
                     <If condition={status === 'PENDING'}>
                         <HStack space={4} justifyContent="space-between">
