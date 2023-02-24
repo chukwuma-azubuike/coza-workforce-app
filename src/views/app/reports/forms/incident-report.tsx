@@ -13,13 +13,10 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
 
-const IncidentReport: React.FC<
-    NativeStackScreenProps<ParamListBase>
-> = props => {
+const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] =
-        useCreateIncidentReportMutation();
+    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateIncidentReportMutation();
 
     const onSubmit = (values: IIncidentReportPayload) => {
         sendReport({ ...values, ...params });
@@ -59,32 +56,16 @@ const IncidentReport: React.FC<
             {({ handleChange, errors, handleSubmit }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>
-                        <Text
-                            mb={4}
-                            w="full"
-                            fontSize="md"
-                            color="gray.400"
-                            textAlign="center"
-                        >
+                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment().format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
                             <FormControl isRequired mb={2}>
-                                <FormControl.Label mb={4}>
-                                    Details of Incident
-                                </FormControl.Label>
-                                <TextAreaComponent
-                                    placeholder="Enter details"
-                                    onChangeText={handleChange('details')}
-                                />
+                                <FormControl.Label mb={4}>Details of Incident</FormControl.Label>
+                                <TextAreaComponent placeholder="Enter details" onChangeText={handleChange('details')} />
                             </FormControl>
                             <FormControl>
-                                <ButtonComponent
-                                    isLoading={isLoading}
-                                    onPress={
-                                        handleSubmit as (event: any) => void
-                                    }
-                                >
+                                <ButtonComponent isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
                                     Submit
                                 </ButtonComponent>
                             </FormControl>

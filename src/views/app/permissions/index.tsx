@@ -4,14 +4,10 @@ import Empty from '../../../components/atoms/empty';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-// import {
-//     CampusPermissions,
-//     MyPermissionsList,
-//     MyTeamPermissionsList,
-// } from './permissions-list';
-// import { SceneMap } from 'react-native-tab-view';
-// import { data } from '../attendance/flatListConfig';
-// import TabComponent from '../../../components/composite/tabs';
+import { CampusPermissions, MyPermissionsList, MyTeamPermissionsList } from './permissions-list';
+import { SceneMap } from 'react-native-tab-view';
+import { TEST_DATA as data } from './permissions-list';
+import TabComponent from '../../../components/composite/tabs';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 
@@ -21,27 +17,23 @@ const ROUTES = [
     // { key: 'campusPermissions', title: 'Campus Permissions' },
 ];
 
-const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-}) => {
+const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = () => {
         navigation.navigate('Request permission');
     };
 
-    // const renderScene = SceneMap({
-    //     myPermissions: MyPermissionsList,
-    //     teamPermissions: MyTeamPermissionsList,
-    //     campusPermissions: CampusPermissions,
-    // });
+    const renderScene = SceneMap({
+        myPermissions: MyPermissionsList,
+        teamPermissions: MyTeamPermissionsList,
+        campusPermissions: CampusPermissions,
+    });
 
-    const { isQC, isAHOD, isHOD, isWorker, isCampusPastor, isGlobalPastor } =
-        useRole();
+    const { isQC, isAHOD, isHOD, isWorker, isCampusPastor, isGlobalPastor } = useRole();
 
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
 
-        if (isHOD || isAHOD)
-            return ROUTES.filter(elm => elm.key !== 'campusPermissions');
+        if (isHOD || isAHOD) return ROUTES.filter(elm => elm.key !== 'campusPermissions');
 
         if (isWorker) return ROUTES;
     }, []);
@@ -54,22 +46,22 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 <If condition={!isCampusPastor && !isGlobalPastor}>
                     <AddButtonComponent zIndex={10} onPress={handlePress} />
                 </If>
-                {/* {data.length ? (
+                {data.length ? (
                     <TabComponent
-                        // tabBarScroll
                         onIndexChange={setIndex}
                         renderScene={renderScene}
+                        tabBarScroll={isQC && (isHOD || isAHOD)}
                         navigationState={{ index, routes: ROUTES }}
                     />
-                ) : ( */}
-                <Empty
-                    message={
-                        isCampusPastor || isGlobalPastor
-                            ? 'No permissions requested yet sir.'
-                            : 'You have not requested any permissions.'
-                    }
-                />
-                {/* )} */}
+                ) : (
+                    <Empty
+                        message={
+                            isCampusPastor || isGlobalPastor
+                                ? 'No permissions requested yet sir.'
+                                : 'You have not requested any permissions.'
+                        }
+                    />
+                )}
             </>
         </ViewWrapper>
     );

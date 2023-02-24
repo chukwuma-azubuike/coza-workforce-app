@@ -31,10 +31,7 @@ const FlatListComponent = ({
     emptySize,
     isLoading,
 }: IFlatListComponentProps) => {
-    const titles = React.useMemo(
-        () => columns.map(column => column.title),
-        [columns]
-    );
+    const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
     return (
         <>
@@ -46,10 +43,7 @@ const FlatListComponent = ({
                             <FlatList
                                 refreshControl={
                                     onRefresh && (
-                                        <RefreshControl
-                                            onRefresh={onRefresh}
-                                            refreshing={refreshing as boolean}
-                                        />
+                                        <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                                     )
                                 }
                                 data={data}
@@ -63,18 +57,10 @@ const FlatListComponent = ({
                                         flex={1}
                                         p={3}
                                     >
-                                        <Text
-                                            fontSize="md"
-                                            borderColor="gray.300"
-                                            borderBottomWidth={0.2}
-                                        >
+                                        <Text fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
                                             {Utils.capitalizeFirstChar(item[0])}
                                         </Text>
-                                        <VStack py={3}>
-                                            {columns.map((column, idx) =>
-                                                column.render(item, idx)
-                                            )}
-                                        </VStack>
+                                        <VStack py={3}>{columns.map((column, idx) => column.render(item, idx))}</VStack>
                                     </Box>
                                 )}
                             />
@@ -86,32 +72,17 @@ const FlatListComponent = ({
                                 data={data}
                                 refreshControl={
                                     onRefresh && (
-                                        <RefreshControl
-                                            onRefresh={onRefresh}
-                                            refreshing={refreshing as boolean}
-                                        />
+                                        <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                                     )
                                 }
                                 nestedScrollEnabled
                                 keyExtractor={item => item.id}
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
-                                        <Box
-                                            bg="transparent"
-                                            py={3}
-                                            flex={1}
-                                            textAlign="left"
-                                            w="full"
-                                        >
-                                            <HStack
-                                                justifyContent="space-evenly"
-                                                px={padding ? 3 : 0}
-                                            >
+                                        <Box bg="transparent" py={3} flex={1} textAlign="left" w="full">
+                                            <HStack justifyContent="space-evenly" px={padding ? 3 : 0}>
                                                 {titles.map((title, idx) => (
-                                                    <Text
-                                                        semi-bold
-                                                        key={`title-${idx}`}
-                                                    >
+                                                    <Text semi-bold key={`title-${idx}`}>
                                                         {title}
                                                     </Text>
                                                 ))}
@@ -138,11 +109,7 @@ const FlatListComponent = ({
                                             space={[2, 3]}
                                         >
                                             {columns.map((column, idx) => {
-                                                if (column.render)
-                                                    return column.render(
-                                                        item,
-                                                        idx
-                                                    );
+                                                if (column.render) return column.render(item, idx);
                                                 return (
                                                     <Text
                                                         color="gray.500"
@@ -154,11 +121,7 @@ const FlatListComponent = ({
                                                         textAlign="left"
                                                         w="full"
                                                     >
-                                                        {
-                                                            item[
-                                                                column.dataIndex as never
-                                                            ]
-                                                        }
+                                                        {item[column.dataIndex as never]}
                                                     </Text>
                                                 );
                                             })}

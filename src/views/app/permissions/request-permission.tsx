@@ -3,10 +3,7 @@ import { Box, FormControl, HStack, VStack } from 'native-base';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import ButtonComponent from '../../../components/atoms/button';
 import TextAreaComponent from '../../../components/atoms/text-area';
-import {
-    SelectComponent,
-    SelectItemComponent,
-} from '../../../components/atoms/select';
+import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
 import { DateTimePickerComponent } from '../../../components/composite/date-picker';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
@@ -97,31 +94,19 @@ const RequestPermission: React.FC = () => {
                         <FormControl>
                             <VStack w="100%" space={1}>
                                 <HStack justifyContent="space-between">
-                                    <DateTimePickerComponent
-                                        label="Start date"
-                                        minimumDate={new Date()}
-                                    />
-                                    <DateTimePickerComponent
-                                        label="End date"
-                                        minimumDate={new Date()}
-                                    />
+                                    <DateTimePickerComponent label="Start date" minimumDate={new Date()} />
+                                    <DateTimePickerComponent label="End date" minimumDate={new Date()} />
                                 </HStack>
                                 <FormControl.Label>Category</FormControl.Label>
                                 <SelectComponent
                                     defaultValue="work"
-                                    onValueChange={value =>
-                                        selectCategoryIcons(value)
-                                    }
+                                    onValueChange={value => selectCategoryIcons(value)}
                                     dropdownIcon={
                                         <HStack mr={2} space={2}>
                                             <Icon
                                                 type={icon?.type}
                                                 name={icon?.name}
-                                                color={
-                                                    isLightMode
-                                                        ? THEME_CONFIG.gray
-                                                        : THEME_CONFIG.veryLightGray
-                                                }
+                                                color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.veryLightGray}
                                             />
                                             <Icon
                                                 type="entypo"
@@ -180,18 +165,9 @@ const RequestPermission: React.FC = () => {
                                         }}
                                     />
                                 </SelectComponent>
-                                <FormControl.Label>
-                                    Description
-                                </FormControl.Label>
-                                <TextAreaComponent
-                                    placeholder="Brief description"
-                                    isRequired
-                                />
-                                <ButtonComponent
-                                    mt={4}
-                                    isLoading={loading}
-                                    onPress={handleSubmit}
-                                >
+                                <FormControl.Label>Description</FormControl.Label>
+                                <TextAreaComponent placeholder="Brief description" isRequired />
+                                <ButtonComponent mt={4} isLoading={loading} onPress={handleSubmit}>
                                     Submit for Approval
                                 </ButtonComponent>
                             </VStack>

@@ -69,15 +69,13 @@ export const reportsServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>(
-            {
-                query: body => ({
-                    url: `/${SERVICE_URL}/updateChildChareReport/${body._id}`,
-                    method: REST_API_VERBS.PUT,
-                    body,
-                }),
-            }
-        ),
+        createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/updateChildChareReport/${body._id}`,
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+        }),
 
         createIncidentReport: endpoint.mutation<void, IIncidentReportPayload>({
             query: body => ({
@@ -87,10 +85,7 @@ export const reportsServiceSlice = createApi({
             }),
         }),
 
-        createAttendanceReport: endpoint.mutation<
-            void,
-            IAttendanceReportPayload
-        >({
+        createAttendanceReport: endpoint.mutation<void, IAttendanceReportPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}t`,
                 method: REST_API_VERBS.PUT,
@@ -130,18 +125,13 @@ export const reportsServiceSlice = createApi({
             }),
         }),
 
-        getGlobalWorkforceSummary: endpoint.query<
-            IGlobalWorkforceReportSummary,
-            void
-        >({
+        getGlobalWorkforceSummary: endpoint.query<IGlobalWorkforceReportSummary, void>({
             query: () => ({
                 url: `/${SERVICE_URL}/gspReport`,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (
-                res: IDefaultResponse<IGlobalWorkforceReportSummary>
-            ) => res.data,
+            transformResponse: (res: IDefaultResponse<IGlobalWorkforceReportSummary>) => res.data,
         }),
 
         getCarsSummary: endpoint.query<ICarsReportSummary, void>({
@@ -150,22 +140,16 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<ICarsReportSummary>) =>
-                res.data,
+            transformResponse: (res: IDefaultResponse<ICarsReportSummary>) => res.data,
         }),
 
-        getServiceAttendanceSummary: endpoint.query<
-            IServiceAttendanceReportSummary,
-            void
-        >({
+        getServiceAttendanceSummary: endpoint.query<IServiceAttendanceReportSummary, void>({
             query: () => ({
                 url: `/${SERVICE_URL}/serviceAttendanceReport`,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (
-                res: IDefaultResponse<IServiceAttendanceReportSummary>
-            ) => res.data,
+            transformResponse: (res: IDefaultResponse<IServiceAttendanceReportSummary>) => res.data,
         }),
 
         getGuestSummary: endpoint.query<IGuestReportSummary, void>({
@@ -174,8 +158,7 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<IGuestReportSummary>) =>
-                res.data,
+            transformResponse: (res: IDefaultResponse<IGuestReportSummary>) => res.data,
         }),
 
         getBusSummary: endpoint.query<IBusReportSummary, void>({
@@ -184,8 +167,7 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<IBusReportSummary>) =>
-                res.data,
+            transformResponse: (res: IDefaultResponse<IBusReportSummary>) => res.data,
         }),
 
         getDepartmentalReport: endpoint.query<
@@ -197,22 +179,16 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (
-                res: IDefaultResponse<IDepartmentReportResponse>
-            ) => res.data,
+            transformResponse: (res: IDefaultResponse<IDepartmentReportResponse>) => res.data,
         }),
 
-        getCampusReportSummary: endpoint.query<
-            ICampusReportSummary,
-            IService['id']
-        >({
+        getCampusReportSummary: endpoint.query<ICampusReportSummary, IService['id']>({
             query: serviceId => ({
                 url: `/${SERVICE_URL}/getServiceReports/${serviceId}`,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<ICampusReportSummary>) =>
-                res.data,
+            transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
         }),
 
         // Add your endpoints here

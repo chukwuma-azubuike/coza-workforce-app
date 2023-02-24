@@ -13,21 +13,12 @@ const CampusLocation = () => {
         <Center>
             <Flex alignItems="center" flexDirection="row">
                 <Icon
-                    color={
-                        !isError && !isLoading
-                            ? THEME_CONFIG.gray
-                            : 'transparent'
-                    }
+                    color={!isError && !isLoading ? THEME_CONFIG.gray : 'transparent'}
                     name="location-sharp"
                     type="ionicon"
                     size={15}
                 />
-                <Text
-                    fontWeight="semibold"
-                    color="gray.600"
-                    fontSize="md"
-                    ml={1}
-                >
+                <Text fontWeight="semibold" color="gray.600" fontSize="md" ml={1}>
                     {!isError ? data?.campus.campusName : ''}
                 </Text>
             </Flex>

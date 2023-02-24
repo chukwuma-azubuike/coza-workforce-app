@@ -71,11 +71,7 @@ const TabRoutes: React.FC = () => {
                                         size={24}
                                         name="keyboard-backspace"
                                         type="material-community"
-                                        color={
-                                            isDarkMode
-                                                ? THEME_CONFIG.lightGray
-                                                : 'black'
-                                        }
+                                        color={isDarkMode ? THEME_CONFIG.lightGray : 'black'}
                                     />
                                 }
                             />

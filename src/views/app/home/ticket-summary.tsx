@@ -18,12 +18,7 @@ const CampusTicketSummary: React.FC = () => {
                 </Text>
             </Flex>
             <Flex alignItems="baseline" flexDirection="row">
-                <Text
-                    fontWeight="semibold"
-                    color="rose.400"
-                    fontSize="5xl"
-                    ml={1}
-                >{`${0}`}</Text>
+                <Text fontWeight="semibold" color="rose.400" fontSize="5xl" ml={1}>{`${0}`}</Text>
             </Flex>
         </HStack>
     );

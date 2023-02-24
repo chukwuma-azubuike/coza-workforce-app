@@ -14,10 +14,7 @@ import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
 import { HomeSkeleton } from '../../../components/layout/skeleton';
 import { CampusReportSummary } from './report-summary';
-import {
-    selectCurrentUser,
-    userActionTypes,
-} from '../../../store/services/users';
+import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
 import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
@@ -38,13 +35,9 @@ interface IInitialHomeState {
 
 export const HomeContext = React.createContext({} as IInitialHomeState);
 
-const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-}) => {
+const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const dispatch = useAppDispatch();
-    const currentUserId = useAppSelector(store =>
-        selectCurrentUser(store)
-    ).userId;
+    const currentUserId = useAppSelector(store => selectCurrentUser(store)).userId;
 
     usePreventGoBack();
 
@@ -52,11 +45,10 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
-    const { data, isError, isSuccess, isLoading, refetch } =
-        useGetLatestServiceQuery(user?.campus.id as string, {
-            skip: !user,
-            refetchOnMountOrArgChange: true,
-        });
+    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus.id as string, {
+        skip: !user,
+        refetchOnMountOrArgChange: true,
+    });
 
     const {
         data: latestAttendanceData,
@@ -108,12 +100,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                 </ViewWrapper>
             ) : (
                 <>
-                    <ViewWrapper
-                        scroll
-                        flex={1}
-                        refreshing={isLoading}
-                        onRefresh={handleRefresh}
-                    >
+                    <ViewWrapper scroll refreshing={isLoading} onRefresh={handleRefresh}>
                         <If condition={user ? true : false}>
                             <TopNav {...navigation} />
                             <If condition={!isGlobalPastor}>
@@ -125,11 +112,8 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({
                         </If>
                     </ViewWrapper>
                     <If condition={isCampusPastor}>
-                        <ViewWrapper noPadding maxH={320}>
-                            <CampusReportSummary
-                                serviceId={data?.id}
-                                serviceIsLoading={isLoading}
-                            />
+                        <ViewWrapper noPadding style={{ maxHeight: 320 }}>
+                            <CampusReportSummary serviceId={data?.id} serviceIsLoading={isLoading} />
                         </ViewWrapper>
                     </If>
                 </>

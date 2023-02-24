@@ -9,9 +9,7 @@ import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 
-const TopNav: React.FC<
-    NativeStackNavigationProp<ParamListBase, string, undefined>
-> = navigation => {
+const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     // API implementation
 
     const handleNotificationPress = () => {
@@ -50,11 +48,7 @@ const TopNav: React.FC<
                         shadow={4}
                         firstName={user?.firstName}
                         lastName={user?.lastName}
-                        imageUrl={
-                            user?.pictureUrl
-                                ? user.pictureUrl
-                                : 'https://i.ibb.co/P6k4dWF/Group-3.png'
-                        }
+                        imageUrl={user?.pictureUrl ? user.pictureUrl : 'https://i.ibb.co/P6k4dWF/Group-3.png'}
                     />
                 }
                 p={0}
@@ -62,26 +56,13 @@ const TopNav: React.FC<
                 w={10}
                 borderRadius="full"
             />
-            <Text
-                fontSize="lg"
-                fontWeight="light"
-                _dark={{ color: 'gray.400' }}
-                _light={{ color: 'gray.600' }}
-            >
-                {isLoading
-                    ? 'Searching for service...'
-                    : !isError
-                    ? data?.name
-                    : 'No service today'}
+            <Text fontSize="lg" fontWeight="light" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
+                {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
             <IconButton
                 icon={
                     <Icon
-                        color={
-                            isLightMode
-                                ? THEME_CONFIG.gray
-                                : THEME_CONFIG.lightGray
-                        }
+                        color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
                         iconStyle={{ fontSize: 21 }}
                         name="notifications-outline"
                         underlayColor="white"

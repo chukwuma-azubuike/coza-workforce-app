@@ -23,12 +23,7 @@ export const HomeSkeleton: React.FC = () => {
                     _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
                     _light={{ bg: 'gray.100', startColor: 'gray.200' }}
                 />
-                <Skeleton.Text
-                    px="4"
-                    rounded="md"
-                    _dark={{ bg: 'gray.800' }}
-                    _light={{ bg: 'gray.100' }}
-                />
+                <Skeleton.Text px="4" rounded="md" _dark={{ bg: 'gray.800' }} _light={{ bg: 'gray.100' }} />
                 <Skeleton
                     px="4"
                     my="4"
@@ -42,12 +37,7 @@ export const HomeSkeleton: React.FC = () => {
                     _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
                     _light={{ bg: 'gray.100', startColor: 'gray.200' }}
                 />
-                <Skeleton.Text
-                    px="4"
-                    rounded="md"
-                    _dark={{ bg: 'gray.800' }}
-                    _light={{ bg: 'gray.100' }}
-                />
+                <Skeleton.Text px="4" rounded="md" _dark={{ bg: 'gray.800' }} _light={{ bg: 'gray.100' }} />
                 <Skeleton
                     px="4"
                     my="4"

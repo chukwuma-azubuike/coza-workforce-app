@@ -15,11 +15,9 @@ import useAppColorMode from '../../../../hooks/theme/colorMode';
 
 const WorkForceSummary: React.FC = () => {
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
-    const [expandedAttendance, setExpandedAttendance] =
-        React.useState<boolean>(false);
+    const [expandedAttendance, setExpandedAttendance] = React.useState<boolean>(false);
     const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
-    const [expandedBusCount, setExpandedBusCount] =
-        React.useState<boolean>(false);
+    const [expandedBusCount, setExpandedBusCount] = React.useState<boolean>(false);
 
     const { isDarkMode } = useAppColorMode();
 
@@ -63,12 +61,7 @@ const WorkForceSummary: React.FC = () => {
     };
 
     return (
-        <ViewWrapper
-            scroll
-            flex={1}
-            onRefresh={refresh}
-            refreshing={globaWorkforceIsLoading}
-        >
+        <ViewWrapper scroll onRefresh={refresh} refreshing={globaWorkforceIsLoading}>
             <ListItem.Accordion
                 content={
                     <>
@@ -76,19 +69,11 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             name="globe"
                             type="font-awesome"
-                            color={
-                                isDarkMode
-                                    ? THEME_CONFIG.lightGray
-                                    : THEME_CONFIG.darkGray
-                            }
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text
-                                fontSize="md"
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                            >
+                            <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
                                 Global Workforce
                             </Text>
                         </ListItem.Content>
@@ -96,19 +81,15 @@ const WorkForceSummary: React.FC = () => {
                 }
                 containerStyle={{
                     borderWidth: 0.2,
-                    borderColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : 'white',
+                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
                 }}
                 isExpanded={expandedWorkers}
                 onPress={() => {
                     setExpandedWorkers(!expandedWorkers);
                 }}
             >
-                <VStack space={4} p={2} flex={1}>
+                <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
@@ -171,19 +152,11 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             type="font-awesome"
                             name="calendar-check-o"
-                            color={
-                                isDarkMode
-                                    ? THEME_CONFIG.lightGray
-                                    : THEME_CONFIG.darkGray
-                            }
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                                fontSize="md"
-                            >
+                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
                                 Service Attendance
                             </Text>
                         </ListItem.Content>
@@ -191,19 +164,15 @@ const WorkForceSummary: React.FC = () => {
                 }
                 containerStyle={{
                     borderWidth: 0.2,
-                    borderColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : 'white',
+                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
                 }}
                 isExpanded={expandedAttendance}
                 onPress={() => {
                     setExpandedAttendance(!expandedAttendance);
                 }}
             >
-                <VStack space={4} p={2} flex={1}>
+                <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
@@ -259,19 +228,11 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             type="ionicon"
                             name="person-add"
-                            color={
-                                isDarkMode
-                                    ? THEME_CONFIG.lightGray
-                                    : THEME_CONFIG.darkGray
-                            }
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                                fontSize="md"
-                            >
+                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
                                 Guests Attendance
                             </Text>
                         </ListItem.Content>
@@ -279,19 +240,15 @@ const WorkForceSummary: React.FC = () => {
                 }
                 containerStyle={{
                     borderWidth: 0.2,
-                    borderColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : 'white',
+                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
                 }}
                 isExpanded={expandedGuests}
                 onPress={() => {
                     setExpandedGuests(!expandedGuests);
                 }}
             >
-                <VStack space={4} p={2} flex={1}>
+                <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
@@ -319,19 +276,11 @@ const WorkForceSummary: React.FC = () => {
                             size={20}
                             type="ionicon"
                             name="bus-outline"
-                            color={
-                                isDarkMode
-                                    ? THEME_CONFIG.lightGray
-                                    : THEME_CONFIG.darkGray
-                            }
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
                         <ListItem.Content>
-                            <Text
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                                fontSize="md"
-                            >
+                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
                                 Bus Count (Pick up)
                             </Text>
                         </ListItem.Content>
@@ -339,19 +288,15 @@ const WorkForceSummary: React.FC = () => {
                 }
                 containerStyle={{
                     borderWidth: 0.2,
-                    borderColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode
-                        ? THEME_CONFIG.darkGray
-                        : 'white',
+                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
                 }}
                 isExpanded={expandedBusCount}
                 onPress={() => {
                     setExpandedBusCount(!expandedBusCount);
                 }}
             >
-                <VStack space={4} p={2} flex={1}>
+                <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent

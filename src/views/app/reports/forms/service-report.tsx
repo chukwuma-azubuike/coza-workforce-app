@@ -5,14 +5,7 @@ import useModal from '../../../../hooks/modal/useModal';
 import { IServiceReportPayload } from '../../../../store/types';
 import { useCreateServiceReportMutation } from '../../../../store/services/reports';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import {
-    FormControl,
-    VStack,
-    Text,
-    Divider,
-    WarningOutlineIcon,
-    HStack,
-} from 'native-base';
+import { FormControl, VStack, Text, Divider, WarningOutlineIcon, HStack } from 'native-base';
 import { DateTimePickerComponent } from '../../../../components/composite/date-picker';
 import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
@@ -22,13 +15,10 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
 
-const ServiceReport: React.FC<
-    NativeStackScreenProps<ParamListBase>
-> = props => {
+const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] =
-        useCreateServiceReportMutation();
+    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateServiceReportMutation();
 
     const onSubmit = (values: IServiceReportPayload) => {
         sendReport({ ...values, ...params });
@@ -71,22 +61,10 @@ const ServiceReport: React.FC<
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES as unknown as IServiceReportPayload}
         >
-            {({
-                handleChange,
-                errors,
-                handleSubmit,
-                values,
-                setFieldValue,
-            }) => (
+            {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>
-                        <Text
-                            mb={4}
-                            w="full"
-                            fontSize="md"
-                            color="gray.400"
-                            textAlign="center"
-                        >
+                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment().format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
@@ -105,19 +83,13 @@ const ServiceReport: React.FC<
                                 />
                             </HStack>
                             <FormControl isRequired>
-                                <FormControl.Label>
-                                    Link to Service Report
-                                </FormControl.Label>
+                                <FormControl.Label>Link to Service Report</FormControl.Label>
                                 <InputComponent
                                     keyboardType="url"
                                     placeholder="https://www.link-to-report.com"
-                                    onChangeText={handleChange(
-                                        'serviceReportLink'
-                                    )}
+                                    onChangeText={handleChange('serviceReportLink')}
                                 />
-                                <FormControl.ErrorMessage
-                                    leftIcon={<WarningOutlineIcon size="xs" />}
-                                >
+                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
                                 </FormControl.ErrorMessage>
                             </FormControl>
@@ -129,12 +101,7 @@ const ServiceReport: React.FC<
                                 />
                             </FormControl>
                             <FormControl>
-                                <ButtonComponent
-                                    isLoading={isLoading}
-                                    onPress={
-                                        handleSubmit as (event: any) => void
-                                    }
-                                >
+                                <ButtonComponent isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
                                     Submit
                                 </ButtonComponent>
                             </FormControl>

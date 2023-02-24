@@ -27,13 +27,7 @@ const Empty: React.FC<{
                 {message ? message : 'No records to show yet'}
             </Text>
             <If condition={refresh && true}>
-                <ButtonComponent
-                    secondary
-                    size="sm"
-                    width={100}
-                    isLoading={isLoading}
-                    onPress={handleRefresh}
-                >
+                <ButtonComponent secondary size="sm" width={100} isLoading={isLoading} onPress={handleRefresh}>
                     Reload
                 </ButtonComponent>
             </If>

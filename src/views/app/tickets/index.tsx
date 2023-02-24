@@ -4,114 +4,82 @@ import Empty from '../../../components/atoms/empty';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
-// import { VStack } from 'native-base';
-// import TicketsByDate from './tickets-by-date';
+import { CampusTickets, MyTicketsList, MyTeamTicketsList } from './ticket-list';
+import { SceneMap } from 'react-native-tab-view';
+import { TEST_DATA as data } from './ticket-list';
+import TabComponent from '../../../components/composite/tabs';
+import If from '../../../components/composite/if-container';
+import StaggerButtonComponent from '../../../components/composite/stagger';
 
-// type DATA = {
-//     date: string;
-//     tickets: {
-//         offender: string;
-//         image: string;
-//         ticket_description: string;
-//         offense: string;
-//         ticket_type: string;
-//         department: string;
-//         date: string;
-//     }[];
-// }[];
+const ROUTES = [
+    { key: 'myTickets', title: 'My Tickets' },
+    { key: 'teamTickets', title: 'Team Tickets' },
+    // { key: 'campusTickets', title: 'Campus Tickets' },
+];
 
-// type TICKET = {
-//     offender: string;
-//     image: string;
-//     ticket_description: string;
-//     offense: string;
-//     ticket_type: string;
-//     department: string;
-// };
+const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+    const gotoIndividual = () => {
+        navigation.navigate('Issue Ticket', { type: 'INDIVIDUAL' });
+    };
 
-// const mockData: DATA = [
-//     {
-//         date: '27th November, 2022',
-//         tickets: [
-//             {
-//                 offender: 'Deborah Ekene',
-//                 image: 'https://bit.ly/3AdGvvM',
-//                 ticket_description: 'Not wearing uniform',
-//                 offense: 'Dress Code',
-//                 ticket_type: 'Individual',
-//                 department: 'Media',
-//                 date: '27th November, 2022',
-//             },
-//             {
-//                 offender: 'Deborah Ekene',
-//                 image: 'https://bit.ly/3AdGvvM',
-//                 ticket_description: 'Skirt was above knee',
-//                 offense: 'Dress Code',
-//                 ticket_type: 'Individual',
-//                 department: 'Media',
-//                 date: '27th November, 2022',
-//             },
-//         ],
-//     },
-//     {
-//         date: '20th November, 2022',
-//         tickets: [
-//             {
-//                 offender: 'Deborah Ekene',
-//                 image: 'https://bit.ly/3AdGvvM',
-//                 ticket_description: 'Suit was unbuttoned',
-//                 offense: 'Dress Code',
-//                 ticket_type: 'Individual',
-//                 department: 'Media',
-//                 date: '27th November, 2022',
-//             },
-//         ],
-//     },
-//     {
-//         date: '13th November, 2022',
-//         tickets: [
-//             {
-//                 offender: 'Deborah Ekene',
-//                 image: 'https://bit.ly/3AdGvvM',
-//                 ticket_description: 'Suit was unbuttoned',
-//                 offense: 'Dress Code',
-//                 ticket_type: 'Individual',
-//                 department: 'Media',
-//                 date: '27th November, 2022',
-//             },
-//         ],
-//     },
-// ];
+    const goToDepartmental = () => {
+        navigation.navigate('Issue Ticket', { type: 'DEPARTMENTAL' });
+    };
 
-const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({
-    navigation,
-}) => {
-    // const handlePress = (component: string, data: TICKET) => {
-    //     navigation.navigate(component, {
-    //         ...data,
-    //     });
-    // };
+    const renderScene = SceneMap({
+        myTickets: MyTicketsList,
+        teamTickets: MyTeamTicketsList,
+        campusTickets: CampusTickets,
+    });
 
-    const { isCampusPastor, isGlobalPastor } = useRole();
+    const { isQC, isAHOD, isHOD, isWorker, isCampusPastor, isGlobalPastor } = useRole();
+
+    const allRoutes = React.useMemo(() => {
+        if (isQC) return ROUTES;
+
+        if (isHOD || isAHOD) return ROUTES.filter(elm => elm.key !== 'campusTickets');
+
+        if (isWorker) return ROUTES;
+    }, []);
+
+    const [index, setIndex] = React.useState(0);
 
     return (
         <ViewWrapper>
-            <Empty
-                message={
-                    isCampusPastor || isGlobalPastor
-                        ? 'No tickets assigned yet sir.'
-                        : "Nothing here. Let's keep it that way! 😇"
-                }
+            {data.length ? (
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    tabBarScroll={isQC && (isHOD || isAHOD)}
+                    navigationState={{ index, routes: ROUTES }}
+                />
+            ) : (
+                <Empty
+                    message={
+                        isCampusPastor || isGlobalPastor
+                            ? 'No tickets assigned yet sir.'
+                            : "Nothing here. Let's keep it that way! 😇"
+                    }
+                />
+            )}
+            {/* <If condition={isQC}> */}
+            <StaggerButtonComponent
+                buttons={[
+                    {
+                        color: 'red.400',
+                        iconType: 'ionicon',
+                        iconName: 'person-outline',
+                        handleClick: gotoIndividual,
+                    },
+                    {
+                        color: 'blue.600',
+                        iconType: 'ionicon',
+                        iconName: 'people-outline',
+                        handleClick: goToDepartmental,
+                    },
+                ]}
             />
-            {/* <VStack px={4} space={4}>
-                {mockData.map((data, index) => (
-                    <TicketsByDate
-                        key={`ticket-date-${index}`}
-                        data={data}
-                        handlePress={handlePress}
-                    />
-                ))}
-            </VStack> */}
+            {/* </If> */}
         </ViewWrapper>
     );
 };

@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-    Box,
-    Button,
-    Center,
-    Pressable,
-    Spinner,
-    Text,
-    VStack,
-} from 'native-base';
+import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-base';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableNativeFeedback } from 'react-native';
@@ -15,10 +7,7 @@ import useModal from '../../../hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
 import { HomeContext } from '.';
-import {
-    useClockInMutation,
-    useClockOutMutation,
-} from '../../../store/services/attendance';
+import { useClockInMutation, useClockOutMutation } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import If from '../../../components/composite/if-container';
@@ -44,8 +33,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const [clockedOut, setClockedOut] = React.useState<boolean>(false);
 
-    const [clockIn, { isError, error, isSuccess, isLoading, data }] =
-        useClockInMutation();
+    const [clockIn, { isError, error, isSuccess, isLoading, data }] = useClockInMutation();
 
     const [
         clockOut,
@@ -67,9 +55,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 duration: 6,
                 render: (
                     <ModalAlertComponent
-                        description={`You clocked in at ${moment().format(
-                            'LT'
-                        )}`}
+                        description={`You clocked in at ${moment().format('LT')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
@@ -91,9 +77,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 duration: 6,
                 render: (
                     <ModalAlertComponent
-                        description={`You clocked out at ${moment().format(
-                            'LT'
-                        )}`}
+                        description={`You clocked out at ${moment().format('LT')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
@@ -122,16 +106,14 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message:
-                    clockOutError?.data.message || 'Oops something went wrong',
+                message: clockOutError?.data.message || 'Oops something went wrong',
             });
         }
     }, [isClockOutErr]);
 
     const clockedIn = latestAttendanceData?.clockIn ? true : false;
 
-    const disabled =
-        isLatestServiceError || isLatestServiceLoading || clockedOut;
+    const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut;
 
     const canClockIn = isInRange && latestServiceData && !clockedIn;
 
@@ -194,24 +176,14 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     borderRadius="full"
                     _isDisabled={disabled}
                     backgroundColor={
-                        canClockIn
-                            ? 'primary.600'
-                            : canClockOut
-                            ? 'rose.400'
-                            : disabled
-                            ? 'gray.400'
-                            : 'gray.400'
+                        canClockIn ? 'primary.600' : canClockOut ? 'rose.400' : disabled ? 'gray.400' : 'gray.400'
                     }
                 >
                     <TouchableNativeFeedback
                         disabled={disabled}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            '#000000BF',
-                            true,
-                            120
-                        )}
+                        background={TouchableNativeFeedback.Ripple('#000000BF', true, 120)}
                     >
                         <Center>
                             <If condition={isLoading || clockOutLoading}>
@@ -219,24 +191,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                             </If>
                             <If condition={!isLoading && !clockOutLoading}>
                                 <VStack alignItems="center" space={4}>
-                                    <Icon
-                                        type="materialicons"
-                                        name="touch-app"
-                                        color="white"
-                                        size={110}
-                                    />
-                                    <Text
-                                        fontWeight="light"
-                                        fontSize="md"
-                                        color="white"
-                                    >
-                                        {disabled
-                                            ? ''
-                                            : canClockIn
-                                            ? 'CLOCK IN'
-                                            : canClockOut
-                                            ? 'CLOCK OUT'
-                                            : ''}
+                                    <Icon type="materialicons" name="touch-app" color="white" size={110} />
+                                    <Text fontWeight="light" fontSize="md" color="white">
+                                        {disabled ? '' : canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
                                     </Text>
                                 </VStack>
                             </If>

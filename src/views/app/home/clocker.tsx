@@ -4,10 +4,7 @@ import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
-import {
-    CampusAttendanceSummary,
-    TeamAttendanceSummary,
-} from './attendance-summary';
+import { CampusAttendanceSummary, TeamAttendanceSummary } from './attendance-summary';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { Alert, Dimensions, Platform } from 'react-native';
@@ -19,9 +16,7 @@ import { CampusTicketSummary } from './ticket-summary';
 import Loading from '../../../components/atoms/loading';
 
 const Clocker: React.FC = () => {
-    const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(
-        null as unknown as GeoCoordinates
-    );
+    const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(null as unknown as GeoCoordinates);
 
     const {
         latestService: { data },
@@ -49,11 +44,7 @@ const Clocker: React.FC = () => {
             error => {},
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
         );
-    }, [
-        deviceCoordinates?.latitude,
-        deviceCoordinates?.longitude,
-        data?.coordinates.lat,
-    ]);
+    }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude, data?.coordinates.lat]);
 
     const { isAHOD, isHOD, isCampusPastor, user } = useRole();
 
@@ -72,15 +63,8 @@ const Clocker: React.FC = () => {
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>
-                    <VStack
-                        h={vh - (isIOS ? 380 : 320)}
-                        alignItems="center"
-                        justifyContent="space-between"
-                    >
-                        <ClockButton
-                            deviceCoordinates={deviceCoordinates}
-                            isInRange={isInRange || false}
-                        />
+                    <VStack h={vh - (isIOS ? 380 : 320)} alignItems="center" justifyContent="space-between">
+                        <ClockButton deviceCoordinates={deviceCoordinates} isInRange={isInRange || false} />
                         <CampusLocation />
                         <If condition={isAHOD || isHOD}>
                             <TeamAttendanceSummary />
