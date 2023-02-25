@@ -26,10 +26,8 @@ enum DEPARTMENTS {
 const useRole = () => {
     const currentUser = useAppSelector(store => selectCurrentUser(store));
 
-    const {
-        role: { name: roleName },
-        department: { departmentName },
-    } = currentUser;
+    const roleName = currentUser?.role?.name;
+    const departmentName = currentUser?.department?.departmentName;
 
     return {
         // User Object
