@@ -42,7 +42,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
             setModalState({
                 defaultRender: true,
                 status: error?.error ? 'error' : 'info',
-                message: error?.data?.data?.message || error?.error,
+                message: error?.data?.data?.message || error?.data?.message,
             });
         }
         if (isSuccess) {
