@@ -32,7 +32,7 @@ const FlatListComponent = ({
     refreshing,
     emptySize,
     isLoading,
-    emptyMessage
+    emptyMessage,
 }: IFlatListComponentProps) => {
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
@@ -63,8 +63,7 @@ const FlatListComponent = ({
                                         <Text pb={3} fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
                                             {moment(item[0]).format() !== 'Invalid date'
                                                 ? moment(item[0]).format('Do MMMM, YYYY')
-                                                : Utils.capitalizeFirstChar(item[0])
-                                            }
+                                                : Utils.capitalizeFirstChar(item[0])}
                                         </Text>
                                         <VStack py={3}>{columns.map((column, idx) => column.render(item, idx))}</VStack>
                                     </Box>
