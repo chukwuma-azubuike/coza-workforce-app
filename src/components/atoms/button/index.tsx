@@ -25,9 +25,17 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
             width={width ? width : 'full'}
             isLoadingText={isLoadingText ? isLoadingText : 'Loading...'}
             borderRadius={borderRadius ? borderRadius : THEME_CONFIG.borderRadius}
-            _text={{
-                fontSize: size ? undefined : 'xl',
-                color: secondary ? 'primary.900' : 'white',
+            _dark={{
+                _text: {
+                    fontSize: size ? undefined : 'xl',
+                    color: secondary ? 'primary.500' : 'white',
+                }
+            }}
+            _light={{
+                _text: {
+                    fontSize: size ? undefined : 'xl',
+                    color: secondary ? 'primary.600' : 'white',
+                }
             }}
             variant={secondary ? 'outline' : 'solid'}
             shadow={shadow ? shadow : secondary ? 'none' : 2}

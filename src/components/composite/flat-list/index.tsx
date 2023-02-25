@@ -5,6 +5,7 @@ import Utils from '../../../utils';
 import { RefreshControl } from 'react-native';
 import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
+import moment from 'moment';
 
 export interface IFlatListColumn {
     title?: string;
@@ -19,6 +20,7 @@ export interface IFlatListComponentProps {
     refreshing?: boolean;
     onRefresh?: () => void;
     isLoading?: boolean;
+    emptyMessage?: string;
     emptySize?: number | string;
 }
 
@@ -30,6 +32,7 @@ const FlatListComponent = ({
     refreshing,
     emptySize,
     isLoading,
+    emptyMessage
 }: IFlatListComponentProps) => {
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
@@ -57,8 +60,11 @@ const FlatListComponent = ({
                                         flex={1}
                                         p={3}
                                     >
-                                        <Text fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
-                                            {Utils.capitalizeFirstChar(item[0])}
+                                        <Text pb={3} fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
+                                            {moment(item[0]).format() !== 'Invalid date'
+                                                ? moment(item[0]).format('Do MMMM, YYYY')
+                                                : Utils.capitalizeFirstChar(item[0])
+                                            }
                                         </Text>
                                         <VStack py={3}>{columns.map((column, idx) => column.render(item, idx))}</VStack>
                                     </Box>
@@ -135,7 +141,7 @@ const FlatListComponent = ({
             ) : isLoading ? (
                 <FlatListSkeleton />
             ) : (
-                <Empty width={emptySize} />
+                <Empty width={emptySize} message={emptyMessage} />
             )}
         </>
     );
