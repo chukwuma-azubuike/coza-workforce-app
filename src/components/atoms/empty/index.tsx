@@ -15,7 +15,11 @@ const Empty: React.FC<{
         refresh && refresh();
     };
 
-    const { user: { gender }, isCampusPastor, isGlobalPastor } = useRole();
+    const {
+        user: { gender },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
     const EMPTY_MESSAGE = 'No records to show yet';
 
@@ -29,10 +33,9 @@ const Empty: React.FC<{
                 loop
             />
             <Text fontSize="md" color="gray.400" semi-bold>
-                {(isCampusPastor || isGlobalPastor)
-                    ? `${message ? message : EMPTY_MESSAGE} ${gender === "M" ? 'sir' : 'ma'}`
-                    : EMPTY_MESSAGE
-                }
+                {isCampusPastor || isGlobalPastor
+                    ? `${message ? message : EMPTY_MESSAGE} ${gender === 'M' ? 'sir' : 'ma'}`
+                    : EMPTY_MESSAGE}
             </Text>
             <If condition={refresh && true}>
                 <ButtonComponent secondary size="sm" width={100} isLoading={isLoading} onPress={handleRefresh}>

@@ -56,12 +56,12 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                         {type === 'own'
                                             ? Utils.capitalizeFirstChar(category)
                                             : type === 'team'
-                                                ? `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                    lastName
-                                                )}`
-                                                : `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                    lastName
-                                                )} (${Utils.capitalizeFirstChar(departmentName)})`}
+                                            ? `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
+                                                  lastName
+                                              )}`
+                                            : `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
+                                                  lastName
+                                              )} (${Utils.capitalizeFirstChar(departmentName)})`}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
                                         {Utils.truncateString(description)}

@@ -29,13 +29,13 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
                 _text: {
                     fontSize: size ? undefined : 'xl',
                     color: secondary ? 'primary.500' : 'white',
-                }
+                },
             }}
             _light={{
                 _text: {
                     fontSize: size ? undefined : 'xl',
                     color: secondary ? 'primary.600' : 'white',
-                }
+                },
             }}
             variant={secondary ? 'outline' : 'solid'}
             shadow={shadow ? shadow : secondary ? 'none' : 2}

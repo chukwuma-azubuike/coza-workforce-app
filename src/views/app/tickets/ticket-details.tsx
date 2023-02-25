@@ -86,8 +86,8 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             Offender
                         </Text>
                         <Text>
-                            {ticketType === 'INDIVIDUAL' ?
-                                `${user?.firstName} ${user?.lastName}`
+                            {ticketType === 'INDIVIDUAL'
+                                ? `${user?.firstName} ${user?.lastName}`
                                 : `${department?.departmentName}`}
                         </Text>
                     </HStack>

@@ -10,7 +10,7 @@ import useRole from '../../../hooks/role';
 import {
     useGetDepartmentTicketsQuery,
     useGetUserTicketsQuery,
-    useGetCampusTicketsQuery
+    useGetCampusTicketsQuery,
 } from '../../../store/services/tickets';
 import { ITicket } from '../../../store/types';
 import Utils from '../../../utils';
@@ -41,7 +41,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     contestReplyComment,
                     category,
                     department,
-                    user
+                    user,
                 } = elm;
 
                 return (
@@ -60,12 +60,14 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                         {type === 'own'
                                             ? Utils.capitalizeFirstChar(category?.categoryName)
                                             : type === 'team'
-                                                ? `${Utils.capitalizeFirstChar(user?.firstName)} ${Utils.capitalizeFirstChar(
-                                                    user?.lastName
-                                                )}`
-                                                : `${Utils.capitalizeFirstChar(user?.firstName)} ${Utils.capitalizeFirstChar(
-                                                    user?.lastName
-                                                )} (${Utils.capitalizeFirstChar(department?.departmentName)})`}
+                                            ? `${Utils.capitalizeFirstChar(
+                                                  user?.firstName
+                                              )} ${Utils.capitalizeFirstChar(user?.lastName)}`
+                                            : `${Utils.capitalizeFirstChar(
+                                                  user?.firstName
+                                              )} ${Utils.capitalizeFirstChar(
+                                                  user?.lastName
+                                              )} (${Utils.capitalizeFirstChar(department?.departmentName)})`}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
                                         {Utils.truncateString(ticketSummary)}
@@ -89,7 +91,11 @@ const MyTicketsList: React.FC = memo(() => {
         },
     ];
 
-    const { user: { userId }, isCampusPastor, isGlobalPastor } = useRole();
+    const {
+        user: { userId },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
     const { data, isLoading, error, refetch } = useGetUserTicketsQuery(userId);
 
@@ -103,9 +109,10 @@ const MyTicketsList: React.FC = memo(() => {
             refreshing={isLoading}
             columns={myTicketsColumns}
             emptyMessage={
-                (isCampusPastor || isGlobalPastor)
-                    ? "There are no tickets issued"
-                    : "Nothing here, let's keep it that way 😇"}
+                isCampusPastor || isGlobalPastor
+                    ? 'There are no tickets issued'
+                    : "Nothing here, let's keep it that way 😇"
+            }
         />
     );
 });
@@ -118,8 +125,11 @@ const MyTeamTicketsList: React.FC = memo(() => {
         },
     ];
 
-    const { user: { department }, isCampusPastor, isGlobalPastor } = useRole();
-
+    const {
+        user: { department },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
     const { data, isLoading, error, refetch } = useGetDepartmentTicketsQuery(department._id);
 
@@ -133,9 +143,10 @@ const MyTeamTicketsList: React.FC = memo(() => {
             refreshing={isLoading}
             columns={teamTicketsColumns}
             emptyMessage={
-                (isCampusPastor || isGlobalPastor)
-                    ? "There are no tickets issued"
-                    : "Nothing here, let's keep it that way 😇"}
+                isCampusPastor || isGlobalPastor
+                    ? 'There are no tickets issued'
+                    : "Nothing here, let's keep it that way 😇"
+            }
         />
     );
 });
@@ -148,8 +159,11 @@ const CampusTickets: React.FC = memo(() => {
         },
     ];
 
-    const { user: { campus }, isCampusPastor, isGlobalPastor } = useRole();
-
+    const {
+        user: { campus },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
     const { data, isLoading, error, refetch } = useGetCampusTicketsQuery(campus.id);
 
@@ -161,9 +175,10 @@ const CampusTickets: React.FC = memo(() => {
             isLoading={isLoading}
             columns={teamTicketsColumns}
             emptyMessage={
-                (isCampusPastor || isGlobalPastor)
-                    ? "There are no tickets issued"
-                    : "Nothing here, let's keep it that way 😇"}
+                isCampusPastor || isGlobalPastor
+                    ? 'There are no tickets issued'
+                    : "Nothing here, let's keep it that way 😇"
+            }
         />
     );
 });

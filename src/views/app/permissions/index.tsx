@@ -31,7 +31,7 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
         if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
-        if (isCampusPastor || isGlobalPastor) return [ROUTES[2]]
+        if (isCampusPastor || isGlobalPastor) return [ROUTES[2]];
 
         return [ROUTES[0]];
     }, []);

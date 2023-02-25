@@ -17,11 +17,14 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     const routeFilters = ['Profile', 'Notifications'];
     const roleFilter = { role: isGlobalPastor, route: 'Reports' };
 
-    const filteredRoutes = React.useMemo(() =>
-        AppRoutes.filter(route =>
-            !route.inMenuBar
-            && !routeFilters.includes(route.name)
-            && !(roleFilter.role && roleFilter.route === route.name)),
+    const filteredRoutes = React.useMemo(
+        () =>
+            AppRoutes.filter(
+                route =>
+                    !route.inMenuBar &&
+                    !routeFilters.includes(route.name) &&
+                    !(roleFilter.role && roleFilter.route === route.name)
+            ),
         [AppRoutes]
     );
 
