@@ -6,8 +6,8 @@ import { IScrollViewProps, ScrollView, View } from 'native-base';
 
 interface IViewWrapper
     extends IScrollViewProps,
-    ViewProps,
-    Partial<React.ForwardRefExoticComponent<InterfaceViewProps & React.RefAttributes<unknown>>> {
+        ViewProps,
+        Partial<React.ForwardRefExoticComponent<InterfaceViewProps & React.RefAttributes<unknown>>> {
     children?: JSX.Element | ReactChildren | React.ReactNode;
     scroll?: boolean;
     noPadding?: boolean;
