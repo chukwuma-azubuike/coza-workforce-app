@@ -37,8 +37,8 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                     options.tabBarLabel !== undefined
                         ? options.tabBarLabel
                         : options.title !== undefined
-                        ? options.title
-                        : route.name;
+                            ? options.title
+                            : route.name;
 
                 const onPress = () => {
                     const event = navigation.emit({
@@ -105,7 +105,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                         onLongPress={onLongPress}
                         style={{ height: 100 }}
                         background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primary,
+                            isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent,
                             true,
                             40
                         )}
