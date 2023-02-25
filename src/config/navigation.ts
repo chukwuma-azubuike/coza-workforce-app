@@ -29,6 +29,8 @@ import GuestReport from '../views/app/reports/forms/guest-report';
 import ServiceReport from '../views/app/reports/forms/service-report';
 import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
+import VerifyEmail from '../views/auth/welcome';
+import Welcome from '../views/auth/welcome/welcome';
 
 export interface IAppRoute {
     name: string;
@@ -276,8 +278,16 @@ const AppRoutes: IAppRoute[] = [
 const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     {
         name: 'Welcome',
-        component: AuthHome,
+        component: Welcome,
         options: { title: 'Welcome' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+    },
+    {
+        name: 'Verify Email',
+        component: VerifyEmail,
+        options: { title: 'Verify Email' },
         submenus: [],
         users: [],
         inMenuBar: false,

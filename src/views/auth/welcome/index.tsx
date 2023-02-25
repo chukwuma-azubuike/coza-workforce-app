@@ -18,7 +18,7 @@ import { TouchableRipple } from 'react-native-paper';
 import useWelcome from './hooks';
 import Logo from '../../../components/atoms/logo';
 
-const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const {
         handleSubmit,
         validateError,
@@ -144,4 +144,4 @@ const AuthHome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation 
     );
 };
 
-export default AuthHome;
+export default VerifyEmail;
