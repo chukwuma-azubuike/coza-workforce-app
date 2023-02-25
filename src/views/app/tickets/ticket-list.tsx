@@ -7,7 +7,11 @@ import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useRole from '../../../hooks/role';
-import { useGetDepartmentTicketsQuery, useGetUserTicketsQuery } from '../../../store/services/tickets';
+import {
+    useGetDepartmentTicketsQuery,
+    useGetUserTicketsQuery,
+    useGetCampusTicketsQuery,
+} from '../../../store/services/tickets';
 import { ITicket } from '../../../store/types';
 import Utils from '../../../utils';
 
@@ -35,9 +39,9 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     ticketSummary,
                     contestComment,
                     contestReplyComment,
-                    category: { categoryName },
-                    department: { departmentName },
-                    user: { firstName, lastName, pictureUrl },
+                    category,
+                    department,
+                    user,
                 } = elm;
 
                 return (
@@ -50,18 +54,20 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     >
                         <HStack py={2} flex={1} key={idx} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={pictureUrl} />
+                                <AvatarComponent imageUrl={user?.pictureUrl} />
                                 <VStack justifyContent="space-between">
                                     <Text bold>
                                         {type === 'own'
-                                            ? Utils.capitalizeFirstChar(categoryName)
+                                            ? Utils.capitalizeFirstChar(category?.categoryName)
                                             : type === 'team'
-                                            ? `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                  lastName
-                                              )}`
-                                            : `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                  lastName
-                                              )} (${Utils.capitalizeFirstChar(departmentName)})`}
+                                            ? `${Utils.capitalizeFirstChar(
+                                                  user?.firstName
+                                              )} ${Utils.capitalizeFirstChar(user?.lastName)}`
+                                            : `${Utils.capitalizeFirstChar(
+                                                  user?.firstName
+                                              )} ${Utils.capitalizeFirstChar(
+                                                  user?.lastName
+                                              )} (${Utils.capitalizeFirstChar(department?.departmentName)})`}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
                                         {Utils.truncateString(ticketSummary)}
@@ -77,125 +83,70 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
     );
 };
 
-export const TEST_DATA = [
-    {
-        dateUpdated: '16-10-2022',
-        createdAt: '12-10-2022',
-        _id: 'jsdbisd899823910ua',
-        user: { firstName: 'Ajnlekoko', lastName: 'Gbeinomi' } as any,
-        remarks: '',
-        isRetracted: false,
-        ticketSummary: 'Oga.. you did something really bad.',
-        status: 'ISSUED',
-        contestComment: '',
-        department: { departmentName: 'Protocol' } as any, // department object
-        category: { categoryName: 'Loitering' } as any, // ticket category object
-        contestReplyComment: 'How far now!',
-        ticketType: 'INDIVIDUAL',
-    },
-    {
-        dateUpdated: '16-10-2022',
-        createdAt: '12-10-2022',
-        _id: 'jsdbisd899823910ua',
-        user: { firstName: 'Ajnlekoko', lastName: 'Gbeinomi' } as any,
-        remarks: '',
-        isRetracted: false,
-        ticketSummary: 'Oga.. you did something really bad.',
-        status: 'ISSUED',
-        contestComment: '',
-        department: { departmentName: 'Protocol' } as any, // department object
-        category: { categoryName: 'Loitering' } as any, // ticket category object
-        contestReplyComment: 'How far now!',
-        ticketType: 'INDIVIDUAL',
-    },
-    {
-        dateUpdated: '16-10-2022',
-        createdAt: '12-10-2022',
-        _id: 'jsdbisd899823910ua',
-        user: { firstName: 'Ajnlekoko', lastName: 'Gbeinomi' } as any,
-        remarks: '',
-        isRetracted: false,
-        ticketSummary: 'Oga.. you did something really bad.',
-        status: 'ISSUED',
-        contestComment: '',
-        department: { departmentName: 'Protocol' } as any, // department object
-        category: { categoryName: 'Loitering' } as any, // ticket category object
-        contestReplyComment: 'How far now!',
-        ticketType: 'INDIVIDUAL',
-    },
-    {
-        dateUpdated: '16-10-2022',
-        createdAt: '12-10-2022',
-        _id: 'jsdbisd899823910ua',
-        user: { firstName: 'Ajnlekoko', lastName: 'Gbeinomi' } as any,
-        remarks: '',
-        isRetracted: false,
-        ticketSummary: 'Oga.. you did something really bad.',
-        status: 'ISSUED',
-        contestComment: '',
-        department: { departmentName: 'Protocol' } as any, // department object
-        category: { categoryName: 'Loitering' } as any, // ticket category object
-        contestReplyComment: 'How far now!',
-        ticketType: 'INDIVIDUAL',
-    },
-    {
-        dateUpdated: '16-10-2022',
-        createdAt: '12-10-2022',
-        _id: 'jsdbisd899823910ua',
-        user: { firstName: 'Ajnlekoko', lastName: 'Gbeinomi' } as any,
-        remarks: '',
-        isRetracted: false,
-        ticketSummary: 'Oga.. you did something really bad.',
-        status: 'ISSUED',
-        contestComment: '',
-        department: { departmentName: 'Protocol' } as any, // department object
-        category: { categoryName: 'Loitering' } as any, // ticket category object
-        contestReplyComment: 'How far now!',
-        ticketType: 'INDIVIDUAL',
-    },
-];
-
 const MyTicketsList: React.FC = memo(() => {
     const myTicketsColumns: IFlatListColumn[] = [
         {
-            dataIndex: 'dateCreated',
+            dataIndex: 'createdAt',
             render: (_: ITicket, key) => <TicketListRow type="own" {..._} key={key} />,
         },
     ];
 
-    const { user } = useRole();
+    const {
+        user: { userId },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
-    const { data, isLoading, error, refetch } = useGetUserTicketsQuery(user.userId);
+    const { data, isLoading, error, refetch } = useGetUserTicketsQuery(userId);
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'dateCreated'), [TEST_DATA]);
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
-        <FlatListComponent refreshing={isLoading} onRefresh={refetch} columns={myTicketsColumns} data={memoizedData} />
+        <FlatListComponent
+            data={memoizedData}
+            onRefresh={refetch}
+            isLoading={isLoading}
+            refreshing={isLoading}
+            columns={myTicketsColumns}
+            emptyMessage={
+                isCampusPastor || isGlobalPastor
+                    ? 'There are no tickets issued'
+                    : "Nothing here, let's keep it that way 😇"
+            }
+        />
     );
 });
 
 const MyTeamTicketsList: React.FC = memo(() => {
     const teamTicketsColumns: IFlatListColumn[] = [
         {
-            dataIndex: 'dateCreated',
+            dataIndex: 'createdAt',
             render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
         },
     ];
 
     const {
         user: { department },
+        isCampusPastor,
+        isGlobalPastor,
     } = useRole();
 
     const { data, isLoading, error, refetch } = useGetDepartmentTicketsQuery(department._id);
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'category'), [TEST_DATA]);
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [isLoading]);
 
     return (
         <FlatListComponent
             data={memoizedData}
             onRefresh={refetch}
+            isLoading={isLoading}
             refreshing={isLoading}
             columns={teamTicketsColumns}
+            emptyMessage={
+                isCampusPastor || isGlobalPastor
+                    ? 'There are no tickets issued'
+                    : "Nothing here, let's keep it that way 😇"
+            }
         />
     );
 });
@@ -203,14 +154,33 @@ const MyTeamTicketsList: React.FC = memo(() => {
 const CampusTickets: React.FC = memo(() => {
     const teamTicketsColumns: IFlatListColumn[] = [
         {
-            dataIndex: 'dateCreated',
+            dataIndex: 'createdAt',
             render: (_: ITicket, key) => <TicketListRow type="campus" {..._} key={key} />,
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'status'), [TEST_DATA]);
+    const {
+        user: { campus },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
-    return <FlatListComponent columns={teamTicketsColumns} data={memoizedData} />;
+    const { data, isLoading, error, refetch } = useGetCampusTicketsQuery(campus.id);
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [isLoading]);
+
+    return (
+        <FlatListComponent
+            data={memoizedData}
+            isLoading={isLoading}
+            columns={teamTicketsColumns}
+            emptyMessage={
+                isCampusPastor || isGlobalPastor
+                    ? 'There are no tickets issued'
+                    : "Nothing here, let's keep it that way 😇"
+            }
+        />
+    );
 });
 
 export { MyTicketsList, MyTeamTicketsList, CampusTickets };
