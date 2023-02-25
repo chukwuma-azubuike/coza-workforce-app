@@ -137,7 +137,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                     </Text>
                     <TouchableRipple
                         style={{ paddingHorizontal: 6, borderRadius: 10 }}
-                        onPress={() => navigation.navigate('Welcome')}
+                        onPress={() => navigation.navigate('Verify Email')}
                     >
                         <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
                             Register

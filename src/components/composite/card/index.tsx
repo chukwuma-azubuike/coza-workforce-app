@@ -3,7 +3,6 @@ import { VStack, Box, Divider, Text, HStack, IBoxProps } from 'native-base';
 import { IIconTypes } from '../../../utils/types';
 import { Icon } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
-import { Shadow } from 'react-native-shadow-2';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
 
@@ -16,15 +15,16 @@ interface ICardComponentProps extends IBoxProps {
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
     return (
-        // <Shadow distance={4} style={{ borderRadius: 10 }}>
         <Box
             pt={4}
             pb={4}
             {...props}
             borderWidth={0.2}
-            borderRadius="md"
+            borderRadius={3}
             borderColor="gray.400"
             style={style.shadowProp}
+            _light={{ backgroundColor: 'white' }}
+            _dark={{ backgroundColor: 'gray.900' }}
         >
             <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
                 {props.header && (
@@ -40,7 +40,6 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
                 )}
             </VStack>
         </Box>
-        // </Shadow>
     );
 };
 
@@ -72,7 +71,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
 
     return (
         <CardComponent>
-            <HStack justifyContent="space-between" style={{ width: 140 }}>
+            <HStack justifyContent="space-between" style={{ width: 140 }} borderWidth={0}>
                 <VStack pr={2}>
                     <HStack justifyContent="space-between" style={{ width: 140 }}>
                         <Text bold fontSize="4xl" _dark={{ color: 'primary.500' }} _light={{ color: 'primary.600' }}>

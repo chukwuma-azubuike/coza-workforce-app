@@ -7,12 +7,24 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import useRole from '../../../hooks/role';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
 
+    const { isGlobalPastor } = useRole();
+
+    const routeFilters = ['Profile', 'Notifications'];
+    const roleFilter = { role: isGlobalPastor, route: 'Reports' };
+
     const filteredRoutes = React.useMemo(
-        () => AppRoutes.filter(route => !route.inMenuBar && route.name !== 'Profile' && route.name !== 'Notifications'),
+        () =>
+            AppRoutes.filter(
+                route =>
+                    !route.inMenuBar &&
+                    !routeFilters.includes(route.name) &&
+                    !(roleFilter.role && roleFilter.route === route.name)
+            ),
         [AppRoutes]
     );
 

@@ -8,7 +8,7 @@ import FlatListComponent, { IFlatListColumn } from '../../../components/composit
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
-import PermissionStats from './permission-stats';
+// import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
     type: 'own' | 'team' | 'campus';
@@ -77,182 +77,6 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     );
 };
 
-export const TEST_DATA = [
-    {
-        status: 'APPROVED',
-        comment: 'Feel free to take as long as you need ma. Congrats again',
-        category: 'maternity',
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '12-10-2022',
-        description: 'Going to the US for my PHD defence.',
-        requestor: {
-            lastName: 'Qudus',
-            firstName: 'Abayomi',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Sparkles' },
-        },
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        requestor: {
-            lastName: 'Qudus',
-            firstName: 'Johnson',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Sound' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '02-09-2022',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'vacation',
-        requestor: {
-            lastName: 'Tife',
-            firstName: 'Okeke',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Security' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '15-07-2022',
-        description: 'Going to the US for my PHD defence.',
-        comment: 'Stay connected via all out social media platforms. Blessings.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        requestor: {
-            lastName: 'Kolawole',
-            firstName: 'Yemi',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Media' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '17-06-2022',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'work',
-        requestor: {
-            lastName: 'Chinedu',
-            firstName: 'Ephraim',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Avalanche' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '24-04-2022',
-        description: 'Going to the US for my PHD defence.',
-        comment: 'I do not think it should be for this long.',
-    },
-    {
-        status: 'DECLINED',
-        category: 'medical',
-        requestor: {
-            lastName: 'Smith',
-            firstName: 'Jafar',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Hosts and Hostesses' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '30-03-2022',
-        description: 'Going to the US for my PHD defence.',
-        comment: 'You call in sick too often.',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        requestor: {
-            lastName: 'Oyeleye',
-            firstName: 'Biola',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Child Care' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        description: 'Going to the US for my PHD defence.',
-        comment: '',
-    },
-
-    {
-        status: 'APPROVED',
-        category: 'education',
-        requestor: {
-            lastName: 'Oyeleye',
-            firstName: 'Biola',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Child Care' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        description: 'Going to the US for my PHD defence.',
-        comment: '',
-    },
-    {
-        status: 'APPROVED',
-        category: 'education',
-        requestor: {
-            lastName: 'Oyeleye',
-            firstName: 'Biola',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Child Care' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '09-03-2022',
-        description: 'Going to the US for my PHD defence.',
-        comment: '',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        requestor: {
-            lastName: 'Okigwe',
-            firstName: 'Samuel',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Avalanche' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '19-02-2022',
-        description: 'Going to the US for my PHD defence.',
-    },
-    {
-        status: 'PENDING',
-        category: 'education',
-        requestor: {
-            lastName: 'Okigwe',
-            firstName: 'Samuel',
-            pictureUrl: 'https://bit.ly/3AdGvvM',
-            department: { name: 'Avalanche' },
-        },
-        endDate: '19-11-2022',
-        startDate: '04-11-2022',
-        dateUpdated: '16-10-2022',
-        dateCreated: '19-02-2022',
-        description: 'Going to the US for my PHD defence.',
-    },
-];
-
 const MyPermissionsList: React.FC = memo(() => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
@@ -261,11 +85,11 @@ const MyPermissionsList: React.FC = memo(() => {
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'dateCreated'), [TEST_DATA]);
+    const memoizedData = useMemo(() => Utils.groupListByKey([], 'dateCreated'), []);
 
     return (
         <>
-            <PermissionStats total={5} pending={1} declined={0} approved={4} />
+            {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
             <FlatListComponent columns={myPermissionsColumns} data={memoizedData} />
         </>
     );
@@ -279,11 +103,11 @@ const MyTeamPermissionsList: React.FC = memo(() => {
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'category'), [TEST_DATA]);
+    const memoizedData = useMemo(() => Utils.groupListByKey([], 'category'), []);
 
     return (
         <>
-            <PermissionStats total={21} pending={2} declined={4} approved={15} />
+            {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
             <FlatListComponent columns={teamPermissionsColumns} data={memoizedData} />
         </>
     );
@@ -297,11 +121,11 @@ const CampusPermissions: React.FC = memo(() => {
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(TEST_DATA, 'status'), [TEST_DATA]);
+    const memoizedData = useMemo(() => Utils.groupListByKey([], 'status'), []);
 
     return (
         <>
-            <PermissionStats total={67} pending={17} declined={15} approved={35} />
+            {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
             <FlatListComponent columns={teamPermissionsColumns} data={memoizedData} />
         </>
     );

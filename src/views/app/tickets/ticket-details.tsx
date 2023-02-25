@@ -1,5 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import ButtonComponent from '../../../components/atoms/button';
@@ -15,7 +16,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     const {
         remarks,
         category,
-        dateCreated,
         contestComment,
         contestReplyComment,
         _id,
@@ -25,7 +25,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         ticketType,
         createdAt,
         department,
-        user: { firstName, lastName },
+        user,
     } = props.route.params as ITicket;
 
     const { isQC } = useRole();
@@ -45,7 +45,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Date
                         </Text>
-                        <Text>{dateCreated}</Text>
+                        <Text>{moment(createdAt).format('Do MMMM YYYY')}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -58,7 +58,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{department.departmentName}</Text>
+                        <Text>{department?.departmentName}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -86,7 +86,9 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             Offender
                         </Text>
                         <Text>
-                            {ticketType === 'INDIVIDUAL' ? `${firstName} ${lastName}` : `${department.departmentName}`}
+                            {ticketType === 'INDIVIDUAL'
+                                ? `${user?.firstName} ${user?.lastName}`
+                                : `${department?.departmentName}`}
                         </Text>
                     </HStack>
 

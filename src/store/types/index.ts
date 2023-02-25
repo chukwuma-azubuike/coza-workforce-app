@@ -121,7 +121,7 @@ export interface ITicket extends ILog {
     // isIndividual: boolean;
     // ticketSummary: string;
     // isRetracted: boolean;
-    // createdAt: string;
+    createdAt: string;
 
     // Proposed
     _id: string;
