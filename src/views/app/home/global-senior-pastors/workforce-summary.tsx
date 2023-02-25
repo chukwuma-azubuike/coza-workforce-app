@@ -88,6 +88,24 @@ const WorkForceSummary: React.FC = () => {
                 onPress={() => {
                     setExpandedWorkers(!expandedWorkers);
                 }}
+                expandIcon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
+                icon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
             >
                 <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
@@ -171,6 +189,24 @@ const WorkForceSummary: React.FC = () => {
                 onPress={() => {
                     setExpandedAttendance(!expandedAttendance);
                 }}
+                expandIcon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
+                icon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
             >
                 <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
@@ -247,6 +283,24 @@ const WorkForceSummary: React.FC = () => {
                 onPress={() => {
                     setExpandedGuests(!expandedGuests);
                 }}
+                expandIcon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
+                icon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
             >
                 <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>
@@ -295,6 +349,24 @@ const WorkForceSummary: React.FC = () => {
                 onPress={() => {
                     setExpandedBusCount(!expandedBusCount);
                 }}
+                expandIcon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
+                icon={
+                    <Icon
+                        size={20}
+                        type="ionicon"
+                        name="chevron-down"
+                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        style={{ marginRight: 12 }}
+                    />
+                }
             >
                 <VStack space={4} py={2}>
                     <HStack justifyContent="space-between" px={2} space={3}>

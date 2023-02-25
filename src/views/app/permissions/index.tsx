@@ -1,12 +1,10 @@
 import React from 'react';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import Empty from '../../../components/atoms/empty';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CampusPermissions, MyPermissionsList, MyTeamPermissionsList } from './permissions-list';
 import { SceneMap } from 'react-native-tab-view';
-import { TEST_DATA as data } from './permissions-list';
 import TabComponent from '../../../components/composite/tabs';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
@@ -14,7 +12,7 @@ import If from '../../../components/composite/if-container';
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
     { key: 'teamPermissions', title: 'Team Permissions' },
-    // { key: 'campusPermissions', title: 'Campus Permissions' },
+    { key: 'campusPermissions', title: 'Campus Permissions' },
 ];
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
@@ -28,14 +26,14 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
         campusPermissions: CampusPermissions,
     });
 
-    const { isQC, isAHOD, isHOD, isWorker, isCampusPastor, isGlobalPastor } = useRole();
+    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
 
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
+        if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
+        if (isCampusPastor || isGlobalPastor) return [ROUTES[2]]
 
-        if (isHOD || isAHOD) return ROUTES.filter(elm => elm.key !== 'campusPermissions');
-
-        if (isWorker) return ROUTES;
+        return [ROUTES[0]];
     }, []);
 
     const [index, setIndex] = React.useState(0);
@@ -46,22 +44,12 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
                 <If condition={!isCampusPastor && !isGlobalPastor}>
                     <AddButtonComponent zIndex={10} onPress={handlePress} />
                 </If>
-                {data.length ? (
-                    <TabComponent
-                        onIndexChange={setIndex}
-                        renderScene={renderScene}
-                        tabBarScroll={isQC && (isHOD || isAHOD)}
-                        navigationState={{ index, routes: ROUTES }}
-                    />
-                ) : (
-                    <Empty
-                        message={
-                            isCampusPastor || isGlobalPastor
-                                ? 'No permissions requested yet sir.'
-                                : 'You have not requested any permissions.'
-                        }
-                    />
-                )}
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    tabBarScroll={allRoutes.length > 2}
+                    navigationState={{ index, routes: allRoutes }}
+                />
             </>
         </ViewWrapper>
     );
