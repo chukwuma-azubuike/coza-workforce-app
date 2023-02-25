@@ -21,10 +21,9 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
             {...props}
             borderWidth={0.2}
             borderRadius={3}
-            borderColor="gray.400"
             style={style.shadowProp}
-            _light={{ backgroundColor: 'white' }}
             _dark={{ backgroundColor: 'gray.900' }}
+            _light={{ backgroundColor: 'white', borderColor: "gray.400" }}
         >
             <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
                 {props.header && (
