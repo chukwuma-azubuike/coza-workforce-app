@@ -1,10 +1,11 @@
 import React, { ReactChildren } from 'react';
-import { RefreshControl, View, ScrollView, ViewProps, ScrollViewProps } from 'react-native';
+import { RefreshControl, ViewProps } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
+import { IScrollViewProps, ScrollView, View } from 'native-base';
 
 interface IViewWrapper
-    extends ScrollViewProps,
+    extends IScrollViewProps,
         ViewProps,
         Partial<React.ForwardRefExoticComponent<InterfaceViewProps & React.RefAttributes<unknown>>> {
     children?: JSX.Element | ReactChildren | React.ReactNode;
@@ -21,6 +22,8 @@ const ViewWrapper = (props: IViewWrapper) => {
     return (
         <ActiveView
             {...props}
+            _light={{ background: 'white' }}
+            _dark={{ background: 'black' }}
             style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16 }}
             refreshControl={onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />}
         >
