@@ -87,7 +87,7 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation,
                 defaultRender: true,
                 status: 'error',
             });
-            navigation.navigate('Login')
+            navigation.navigate('Login');
         }
     }, [isSuccess, isError]);
 
