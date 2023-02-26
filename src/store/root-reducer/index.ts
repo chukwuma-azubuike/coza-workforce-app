@@ -13,6 +13,7 @@ import versionReducer, { IVersionState } from '../services/version';
 import { IUser } from '../types';
 import { departmentServiceSlice } from '../services/department';
 import { ticketServiceSlice } from '../services/tickets';
+import { campusServiceSlice } from './../services/campus';
 
 const userPersistConfig: PersistConfig<IUser> = {
     key: 'users',
@@ -38,6 +39,7 @@ const rootReducer = combineReducers({
     service: servicesServiceSlice.reducer,
     report: reportsServiceSlice.reducer,
     department: departmentServiceSlice.reducer,
+    campus: campusServiceSlice.reducer,
     ticket: ticketServiceSlice.reducer,
     users: persistedUserReducer,
     version: persistedVersionReducer,
