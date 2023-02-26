@@ -12,8 +12,19 @@ const reportColumns: IFlatListColumn[] = [
     {
         dataIndex: 'departmentName',
         render: (elm: ICampusReportSummary['departmentalReport'][0], key) => (
-            <HStack p={2} w="full" bg="primary.50" borderRadius={10} alignItems="center" justifyContent="space-between">
-                <Text color="gray.500">{`${elm.departmentName} Report`}</Text>
+            <HStack
+                p={2}
+                px={4}
+                w="full"
+                borderRadius={10}
+                alignItems="center"
+                _dark={{ bg: 'gray.900' }}
+                _light={{ bg: 'gray.50' }}
+                justifyContent="space-between"
+            >
+                <Text _dark={{ color: "gray.400" }} _light={{ color: "gray.500" }}>
+                    {`${elm.departmentName} Report`}
+                </Text>
                 <TagComponent
                     status={
                         elm.status === 'SUBMITTED' ? 'success' : elm.status === 'REVIEW_REQUESTED' ? 'error' : 'gray'

@@ -20,14 +20,14 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 interface IInitialHomeState {
     latestService: {
-        data: IService | undefined;
+        data?: IService;
         isError: boolean;
         isSuccess: boolean;
         isLoading: boolean;
     };
     latestAttendance: {
-        latestAttendanceData: IAttendance | undefined;
         latestAttendanceIsError: boolean;
+        latestAttendanceData?: IAttendance;
         latestAttendanceIsSuccess: boolean;
         latestAttendanceIsLoading: boolean;
     };
