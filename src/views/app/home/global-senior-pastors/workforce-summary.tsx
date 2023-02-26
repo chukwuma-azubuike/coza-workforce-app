@@ -126,7 +126,6 @@ const WorkForceSummary: React.FC = () => {
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
     const setService = (value: ICampus['_id']) => {
         setServiceId(value);
-        console.log(value);
     };
 
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
