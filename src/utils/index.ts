@@ -39,6 +39,11 @@ class Utils {
         return this.splitString(email).toLowerCase();
     }
 
+    /**************** Sorting ****************/
+
+    static sortStringAscending = (arrObject: any[], key: string) =>
+        [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
         if (arr) {
