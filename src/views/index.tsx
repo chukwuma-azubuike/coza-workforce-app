@@ -2,7 +2,7 @@ import * as React from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import AppRoute from '../routes/app';
-import { Platform, useColorScheme } from 'react-native';
+import { useColorScheme } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AuthRoute from '../routes/auth';
@@ -41,7 +41,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     React.useEffect(() => {
         setColorMode(colorScheme);
 
-        if (Platform.OS !== 'ios') SplashScreen.hide();
+        SplashScreen.hide();
 
         const versionLogic = async () => {
             inAppUpdates();

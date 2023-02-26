@@ -57,6 +57,9 @@ const FlatListComponent = ({
                                         _dark={{
                                             borderColor: 'muted.50',
                                         }}
+                                        _light={{
+                                            borderColor: 'gray.300',
+                                        }}
                                         flex={1}
                                         p={3}
                                     >
@@ -99,9 +102,11 @@ const FlatListComponent = ({
                                     <Box
                                         borderBottomWidth={0.2}
                                         _dark={{
-                                            borderColor: 'muted.50',
+                                            borderColor: 'gray.500',
                                         }}
-                                        borderColor="gray.300"
+                                        _light={{
+                                            borderColor: 'gray.300',
+                                        }}
                                         pl={['0', '4']}
                                         pr={['0', '5']}
                                         flex={1}
