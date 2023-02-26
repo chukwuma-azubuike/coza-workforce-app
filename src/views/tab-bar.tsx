@@ -105,7 +105,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                         onLongPress={onLongPress}
                         style={{ height: 100 }}
                         background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primary,
+                            isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent,
                             true,
                             40
                         )}

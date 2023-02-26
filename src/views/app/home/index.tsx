@@ -20,14 +20,14 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 
 interface IInitialHomeState {
     latestService: {
-        data: IService | undefined;
+        data?: IService;
         isError: boolean;
         isSuccess: boolean;
         isLoading: boolean;
     };
     latestAttendance: {
-        latestAttendanceData: IAttendance | undefined;
         latestAttendanceIsError: boolean;
+        latestAttendanceData?: IAttendance;
         latestAttendanceIsSuccess: boolean;
         latestAttendanceIsLoading: boolean;
     };
@@ -45,7 +45,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
-    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?._id as string, {
+    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?.id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });

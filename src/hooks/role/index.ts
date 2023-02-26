@@ -3,7 +3,6 @@ import { useAppSelector } from '../../store/hooks';
 import { selectCurrentUser } from '../../store/services/users';
 
 enum ROLES {
-    QC = 'QC',
     HOD = 'HOD',
     AHOD = 'AHOD',
     admin = 'Admin',
@@ -15,6 +14,7 @@ enum ROLES {
 
 enum DEPARTMENTS {
     PCU = 'PCU',
+    QC = 'Quality Control',
     ushery = 'Ushery Board',
     witty = 'Witty Inventions',
     CTS = 'COZA Transfer Service',
@@ -34,7 +34,6 @@ const useRole = () => {
         user: currentUser,
 
         // Roles
-        isQC: roleName === ROLES.QC,
         isHOD: roleName === ROLES.AHOD,
         isAHOD: roleName === ROLES.HOD,
         isAdmin: roleName === ROLES.admin,
@@ -44,6 +43,7 @@ const useRole = () => {
         isCampusPastor: roleName === ROLES.campusPastor,
 
         // Departments
+        isQC: departmentName === DEPARTMENTS.QC,
         isCTS: departmentName === DEPARTMENTS.CTS,
         isPCU: departmentName === DEPARTMENTS.PCU,
         isUshery: departmentName === DEPARTMENTS.ushery,
