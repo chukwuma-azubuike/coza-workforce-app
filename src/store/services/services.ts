@@ -39,8 +39,10 @@ export const servicesServiceSlice = createApi({
             providesTags: ['latestService'],
         }),
 
-        getServiceList: endpoint.query<''[], ''[]>({
-            query: id => `/${SERVICE_URL}/${id}`,
+        getServices: endpoint.query<IService[], void>({
+            query: () => `/${SERVICE_URL}/getServices`,
+
+            transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
         }),
 
         getServiceById: endpoint.query<'', ''>({
@@ -57,5 +59,5 @@ export const {
     useUpdateServiceMutation,
     useGetLatestServiceQuery,
     useGetServiceByIdQuery,
-    useGetServiceListQuery,
+    useGetServicesQuery,
 } = servicesServiceSlice;

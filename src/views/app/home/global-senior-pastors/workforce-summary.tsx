@@ -1,4 +1,4 @@
-import { HStack, Text, VStack } from 'native-base';
+import { FormControl, HStack, Stack, Text } from 'native-base';
 import React from 'react';
 import { StatCardComponent } from '../../../../components/composite/card';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
@@ -12,6 +12,12 @@ import {
     useGetCarsSummaryQuery,
 } from '../../../../store/services/reports';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
+import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
+import { useGetCampusesQuery } from '../../../../store/services/campus';
+import { useGetServicesQuery } from '../../../../store/services/services';
+import moment from 'moment';
+import { ICampus, IService } from '../../../../store/types';
+import Utils from '../../../../utils';
 
 const WorkForceSummary: React.FC = () => {
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
@@ -25,7 +31,6 @@ const WorkForceSummary: React.FC = () => {
         data: globaWorkforceData,
         refetch: globaWorkforceRefetch,
         isLoading: globaWorkforceIsLoading,
-        error,
     } = useGetGlobalWorkforceSummaryQuery();
 
     const {
@@ -60,55 +65,155 @@ const WorkForceSummary: React.FC = () => {
         carsSummaryRefetch();
     };
 
+    const [icon, setIcon] = React.useState<{ name: string; type: string }>({
+        type: 'ionicon',
+        name: 'briefcase-outline',
+    });
+
+    const selectCategoryIcons = (key: string) => {
+        switch (key) {
+            case 'work':
+                setIcon({
+                    type: 'ionicon',
+                    name: 'briefcase-outline',
+                });
+                break;
+            case 'education':
+                setIcon({
+                    type: 'ionicon',
+                    name: 'school-outline',
+                });
+                break;
+            case 'medical':
+                setIcon({
+                    type: 'ionicon',
+                    name: 'medical-outline',
+                });
+                break;
+            case 'vacation':
+                setIcon({
+                    type: 'material-community',
+                    name: 'beach',
+                });
+                break;
+            case 'maternity':
+                setIcon({
+                    type: 'material-community',
+                    name: 'mother-nurse',
+                });
+                break;
+            case 'other':
+                setIcon({
+                    type: 'font-awesome',
+                    name: 'sticky-note-o',
+                });
+                break;
+            default:
+                break;
+        }
+    };
+
+    const { isLightMode } = useAppColorMode();
+
+    const { data: campuses, error, isLoading: campusesLoading, isSuccess: campusIsSuccess } = useGetCampusesQuery();
+    const { data: services, isSuccess: servicesIsSuccess } = useGetServicesQuery();
+
+    const [campusId, setCampusId] = React.useState<ICampus['_id']>('Global');
+    const setCampus = (value: ICampus['_id']) => {
+        setCampusId(value);
+    };
+
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+    const setService = (value: ICampus['_id']) => {
+        setServiceId(value);
+        console.log(value);
+    };
+
+    const sortedCampuses = React.useMemo<ICampus[] | undefined>(
+        () =>
+            campuses && [{ _id: 'Global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
+        [campusIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => services && Utils.sortStringAscending(services, 'createdAt'),
+        [servicesIsSuccess]
+    );
+
+    const campusName = React.useMemo<ICampus['campusName'] | undefined>(
+        () => sortedCampuses?.find(a => a._id === campusId)?.campusName,
+        [serviceId]
+    );
+
     return (
-        <ViewWrapper scroll onRefresh={refresh} refreshing={globaWorkforceIsLoading}>
-            <ListItem.Accordion
-                content={
-                    <>
+        <>
+            <HStack justifyContent="space-around" w="100%" mb={4} space={10} px={4} position="static" top={3}>
+                <FormControl isRequired w="50%">
+                    <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
+                        {sortedCampuses?.map((campus, index) => (
+                            <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
+                        ))}
+                    </SelectComponent>
+                </FormControl>
+                <FormControl isRequired w="50%">
+                    <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                        {sortedServices?.map((service, index) => (
+                            <SelectItemComponent
+                                value={service._id}
+                                key={`service-${index}`}
+                                label={`${service.name} - ${moment(service.createdAt).format('Do MMM YYYY')}`}
+                            />
+                        ))}
+                    </SelectComponent>
+                </FormControl>
+            </HStack>
+            <ViewWrapper scroll onRefresh={refresh} refreshing={globaWorkforceIsLoading}>
+                <ListItem.Accordion
+                    content={
+                        <>
+                            <Icon
+                                size={20}
+                                name="globe"
+                                type="font-awesome"
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                                style={{ marginRight: 12 }}
+                            />
+                            <ListItem.Content>
+                                <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
+                                    {`${campusName || campusId} Workforce`}
+                                </Text>
+                            </ListItem.Content>
+                        </>
+                    }
+                    containerStyle={{
+                        borderWidth: 0.2,
+                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
+                    }}
+                    isExpanded={expandedWorkers}
+                    onPress={() => {
+                        setExpandedWorkers(!expandedWorkers);
+                    }}
+                    expandIcon={
                         <Icon
                             size={20}
-                            name="globe"
-                            type="font-awesome"
+                            type="ionicon"
+                            name="chevron-down"
                             color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
-                        <ListItem.Content>
-                            <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                                Global Workforce
-                            </Text>
-                        </ListItem.Content>
-                    </>
-                }
-                containerStyle={{
-                    borderWidth: 0.2,
-                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
-                }}
-                isExpanded={expandedWorkers}
-                onPress={() => {
-                    setExpandedWorkers(!expandedWorkers);
-                }}
-                expandIcon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-                icon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-            >
-                <VStack space={4} py={2}>
-                    <HStack justifyContent="space-between" px={2} space={3}>
+                    }
+                    icon={
+                        <Icon
+                            size={20}
+                            type="ionicon"
+                            name="chevron-down"
+                            style={{ marginRight: 12 }}
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                        />
+                    }
+                >
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="Total"
@@ -127,8 +232,6 @@ const WorkForceSummary: React.FC = () => {
                             isLoading={globaWorkforceIsLoading}
                             value={globaWorkforceData?.activeWrokers}
                         />
-                    </HStack>
-                    <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
                             label="Present"
@@ -148,8 +251,6 @@ const WorkForceSummary: React.FC = () => {
                             value={globaWorkforceData?.lateWorkers}
                             iconColor={THEME_CONFIG.rose}
                         />
-                    </HStack>
-                    <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
                             label="Absent"
@@ -160,56 +261,54 @@ const WorkForceSummary: React.FC = () => {
                             value={globaWorkforceData?.absentWorkers}
                             iconColor={THEME_CONFIG.rose}
                         />
-                    </HStack>
-                </VStack>
-            </ListItem.Accordion>
-            <ListItem.Accordion
-                content={
-                    <>
+                    </Stack>
+                </ListItem.Accordion>
+                <ListItem.Accordion
+                    content={
+                        <>
+                            <Icon
+                                size={20}
+                                type="font-awesome"
+                                name="calendar-check-o"
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                                style={{ marginRight: 12 }}
+                            />
+                            <ListItem.Content>
+                                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
+                                    Service Attendance
+                                </Text>
+                            </ListItem.Content>
+                        </>
+                    }
+                    containerStyle={{
+                        borderWidth: 0.2,
+                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
+                    }}
+                    isExpanded={expandedAttendance}
+                    onPress={() => {
+                        setExpandedAttendance(!expandedAttendance);
+                    }}
+                    expandIcon={
                         <Icon
                             size={20}
-                            type="font-awesome"
-                            name="calendar-check-o"
+                            type="ionicon"
+                            name="chevron-down"
                             color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
-                        <ListItem.Content>
-                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                Service Attendance
-                            </Text>
-                        </ListItem.Content>
-                    </>
-                }
-                containerStyle={{
-                    borderWidth: 0.2,
-                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
-                }}
-                isExpanded={expandedAttendance}
-                onPress={() => {
-                    setExpandedAttendance(!expandedAttendance);
-                }}
-                expandIcon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-                icon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-            >
-                <VStack space={4} py={2}>
-                    <HStack justifyContent="space-between" px={2} space={3}>
+                    }
+                    icon={
+                        <Icon
+                            size={20}
+                            type="ionicon"
+                            name="chevron-down"
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                            style={{ marginRight: 12 }}
+                        />
+                    }
+                >
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="Total"
@@ -226,8 +325,6 @@ const WorkForceSummary: React.FC = () => {
                             iconType="ionicon"
                             value={serviceAttendanceData?.men}
                         />
-                    </HStack>
-                    <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
                             label="Women"
@@ -244,8 +341,6 @@ const WorkForceSummary: React.FC = () => {
                             iconType="font-awesome"
                             value={serviceAttendanceData?.teenagers}
                         />
-                    </HStack>
-                    <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
                             label="Children"
@@ -254,56 +349,54 @@ const WorkForceSummary: React.FC = () => {
                             iconType="font-awesome"
                             value={serviceAttendanceData?.children}
                         />
-                    </HStack>
-                </VStack>
-            </ListItem.Accordion>
-            <ListItem.Accordion
-                content={
-                    <>
+                    </Stack>
+                </ListItem.Accordion>
+                <ListItem.Accordion
+                    content={
+                        <>
+                            <Icon
+                                size={20}
+                                type="ionicon"
+                                name="person-add"
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                                style={{ marginRight: 12 }}
+                            />
+                            <ListItem.Content>
+                                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
+                                    Guests Attendance
+                                </Text>
+                            </ListItem.Content>
+                        </>
+                    }
+                    containerStyle={{
+                        borderWidth: 0.2,
+                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
+                    }}
+                    isExpanded={expandedGuests}
+                    onPress={() => {
+                        setExpandedGuests(!expandedGuests);
+                    }}
+                    expandIcon={
                         <Icon
                             size={20}
                             type="ionicon"
-                            name="person-add"
+                            name="chevron-down"
                             color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
-                        <ListItem.Content>
-                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                Guests Attendance
-                            </Text>
-                        </ListItem.Content>
-                    </>
-                }
-                containerStyle={{
-                    borderWidth: 0.2,
-                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
-                }}
-                isExpanded={expandedGuests}
-                onPress={() => {
-                    setExpandedGuests(!expandedGuests);
-                }}
-                expandIcon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-                icon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-            >
-                <VStack space={4} py={2}>
-                    <HStack justifyContent="space-between" px={2} space={3}>
+                    }
+                    icon={
+                        <Icon
+                            size={20}
+                            type="ionicon"
+                            name="chevron-down"
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                            style={{ marginRight: 12 }}
+                        />
+                    }
+                >
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="First timers"
@@ -320,56 +413,54 @@ const WorkForceSummary: React.FC = () => {
                             iconType="ionicon"
                             value={guestSummaryData?.newConvert}
                         />
-                    </HStack>
-                </VStack>
-            </ListItem.Accordion>
-            <ListItem.Accordion
-                content={
-                    <>
+                    </Stack>
+                </ListItem.Accordion>
+                <ListItem.Accordion
+                    content={
+                        <>
+                            <Icon
+                                size={20}
+                                type="ionicon"
+                                name="bus-outline"
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                                style={{ marginRight: 12 }}
+                            />
+                            <ListItem.Content>
+                                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
+                                    Bus Count (Pick up)
+                                </Text>
+                            </ListItem.Content>
+                        </>
+                    }
+                    containerStyle={{
+                        borderWidth: 0.2,
+                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
+                    }}
+                    isExpanded={expandedBusCount}
+                    onPress={() => {
+                        setExpandedBusCount(!expandedBusCount);
+                    }}
+                    expandIcon={
                         <Icon
                             size={20}
                             type="ionicon"
-                            name="bus-outline"
+                            name="chevron-down"
                             color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             style={{ marginRight: 12 }}
                         />
-                        <ListItem.Content>
-                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                Bus Count (Pick up)
-                            </Text>
-                        </ListItem.Content>
-                    </>
-                }
-                containerStyle={{
-                    borderWidth: 0.2,
-                    borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                    backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
-                }}
-                isExpanded={expandedBusCount}
-                onPress={() => {
-                    setExpandedBusCount(!expandedBusCount);
-                }}
-                expandIcon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-                icon={
-                    <Icon
-                        size={20}
-                        type="ionicon"
-                        name="chevron-down"
-                        color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        style={{ marginRight: 12 }}
-                    />
-                }
-            >
-                <VStack space={4} py={2}>
-                    <HStack justifyContent="space-between" px={2} space={3}>
+                    }
+                    icon={
+                        <Icon
+                            size={20}
+                            type="ionicon"
+                            name="chevron-down"
+                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
+                            style={{ marginRight: 12 }}
+                        />
+                    }
+                >
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="Locations"
@@ -386,8 +477,6 @@ const WorkForceSummary: React.FC = () => {
                             iconType="font-awesome"
                             value={busSummaryData?.locations}
                         />
-                    </HStack>
-                    <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
                             label="Adults"
@@ -404,8 +493,6 @@ const WorkForceSummary: React.FC = () => {
                             iconType="font-awesome"
                             value={busSummaryData?.children}
                         />
-                    </HStack>
-                    <HStack justifyContent="space-between" px={2} space={3}>
                         <StatCardComponent
                             percent
                             label="Cars"
@@ -414,10 +501,10 @@ const WorkForceSummary: React.FC = () => {
                             iconName="car-sport-outline"
                             value={carsSummaryData?.totalCars}
                         />
-                    </HStack>
-                </VStack>
-            </ListItem.Accordion>
-        </ViewWrapper>
+                    </Stack>
+                </ListItem.Accordion>
+            </ViewWrapper>
+        </>
     );
 };
 

@@ -12,6 +12,7 @@ const THEME_CONFIG = {
     darkGray: '#18181B',
     lightGray: '#A1A1AA',
     veryLightGray: '#D4D4D8',
+    veryVeryLightGray: '#f4f4f5',
     info: '#0284C7',
     warning: '#EA580C',
     error: '#DC2626',

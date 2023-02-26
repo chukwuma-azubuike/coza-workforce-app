@@ -45,7 +45,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
-    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus.id as string, {
+    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
@@ -113,7 +113,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                     </ViewWrapper>
                     <If condition={isCampusPastor}>
                         <ViewWrapper noPadding style={{ maxHeight: 320 }}>
-                            <CampusReportSummary serviceId={data?.id} serviceIsLoading={isLoading} />
+                            <CampusReportSummary serviceId={data?._id} serviceIsLoading={isLoading} />
                         </ViewWrapper>
                     </If>
                 </>

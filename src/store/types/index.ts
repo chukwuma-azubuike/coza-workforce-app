@@ -150,7 +150,7 @@ export interface ICampusTicketsSummary {
 
 export interface ICreateTicketPayload {
     departmentId: IDepartment['_id'];
-    campusId: ICampus['id'];
+    campusId: ICampus['_id'];
     userId?: IUser['userId'];
     categoryId: string;
     isDepartment: boolean;
@@ -208,7 +208,7 @@ export interface ICampus extends ILog {
         long: number;
         lat: number;
     };
-    id: string;
+    _id: string;
     campusName: string;
     description: string;
     address: string;
@@ -240,7 +240,7 @@ export interface IDepartment {
 
 // Services
 export interface IService {
-    id: string;
+    _id: string;
     name: string;
     campusId: string;
     coordinates: {
