@@ -126,38 +126,44 @@ const WorkForceSummary: React.FC = () => {
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
     const setService = (value: ICampus['_id']) => {
         setServiceId(value);
-        console.log(value)
+        console.log(value);
     };
 
-    const sortedCampuses = React.useMemo<ICampus[] | undefined>(() => campuses &&
-        [{ _id: 'Global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
-        [campusIsSuccess]);
+    const sortedCampuses = React.useMemo<ICampus[] | undefined>(
+        () =>
+            campuses && [{ _id: 'Global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
+        [campusIsSuccess]
+    );
 
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => services && Utils.sortStringAscending(services, 'createdAt'),
+        [servicesIsSuccess]
+    );
 
-    const sortedServices = React.useMemo<IService[] | undefined>(() =>
-        services && Utils.sortStringAscending(services, 'createdAt'), [servicesIsSuccess]);
-
-    const campusName = React.useMemo<ICampus['campusName'] | undefined>(() =>
-        sortedCampuses?.find((a) => a._id === campusId)?.campusName, [serviceId])
+    const campusName = React.useMemo<ICampus['campusName'] | undefined>(
+        () => sortedCampuses?.find(a => a._id === campusId)?.campusName,
+        [serviceId]
+    );
 
     return (
         <>
-            <HStack justifyContent='space-around' w='100%' mb={4} space={10} px={4} position='static' top={3}>
-                <FormControl isRequired w='50%'>
+            <HStack justifyContent="space-around" w="100%" mb={4} space={10} px={4} position="static" top={3}>
+                <FormControl isRequired w="50%">
                     <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
-                        {sortedCampuses?.map((campus, index) =>
-                            <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />)}
+                        {sortedCampuses?.map((campus, index) => (
+                            <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
+                        ))}
                     </SelectComponent>
                 </FormControl>
-                <FormControl isRequired w='50%'>
+                <FormControl isRequired w="50%">
                     <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
-                        {sortedServices?.map((service, index) =>
+                        {sortedServices?.map((service, index) => (
                             <SelectItemComponent
                                 value={service._id}
                                 key={`service-${index}`}
                                 label={`${service.name} - ${moment(service.createdAt).format('Do MMM YYYY')}`}
                             />
-                        )}
+                        ))}
                     </SelectComponent>
                 </FormControl>
             </HStack>
@@ -182,14 +188,14 @@ const WorkForceSummary: React.FC = () => {
                     containerStyle={{
                         borderWidth: 0.2,
                         borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
                     }}
                     isExpanded={expandedWorkers}
                     onPress={() => {
                         setExpandedWorkers(!expandedWorkers);
                     }}
                     expandIcon={
-                        < Icon
+                        <Icon
                             size={20}
                             type="ionicon"
                             name="chevron-down"
@@ -198,7 +204,7 @@ const WorkForceSummary: React.FC = () => {
                         />
                     }
                     icon={
-                        < Icon
+                        <Icon
                             size={20}
                             type="ionicon"
                             name="chevron-down"
@@ -207,7 +213,7 @@ const WorkForceSummary: React.FC = () => {
                         />
                     }
                 >
-                    <Stack py={3} flexDirection='row' flexWrap='wrap'>
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="Total"
@@ -256,7 +262,7 @@ const WorkForceSummary: React.FC = () => {
                             iconColor={THEME_CONFIG.rose}
                         />
                     </Stack>
-                </ListItem.Accordion >
+                </ListItem.Accordion>
                 <ListItem.Accordion
                     content={
                         <>
@@ -277,7 +283,7 @@ const WorkForceSummary: React.FC = () => {
                     containerStyle={{
                         borderWidth: 0.2,
                         borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
                     }}
                     isExpanded={expandedAttendance}
                     onPress={() => {
@@ -302,7 +308,7 @@ const WorkForceSummary: React.FC = () => {
                         />
                     }
                 >
-                    <Stack py={3} flexDirection='row' flexWrap='wrap'>
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="Total"
@@ -365,7 +371,7 @@ const WorkForceSummary: React.FC = () => {
                     containerStyle={{
                         borderWidth: 0.2,
                         borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
                     }}
                     isExpanded={expandedGuests}
                     onPress={() => {
@@ -390,7 +396,7 @@ const WorkForceSummary: React.FC = () => {
                         />
                     }
                 >
-                    <Stack py={3} flexDirection='row' flexWrap='wrap'>
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="First timers"
@@ -429,7 +435,7 @@ const WorkForceSummary: React.FC = () => {
                     containerStyle={{
                         borderWidth: 0.2,
                         borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : 'white',
+                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
                     }}
                     isExpanded={expandedBusCount}
                     onPress={() => {
@@ -454,7 +460,7 @@ const WorkForceSummary: React.FC = () => {
                         />
                     }
                 >
-                    <Stack py={3} flexDirection='row' flexWrap='wrap'>
+                    <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
                             percent
                             label="Locations"
@@ -497,7 +503,7 @@ const WorkForceSummary: React.FC = () => {
                         />
                     </Stack>
                 </ListItem.Accordion>
-            </ViewWrapper >
+            </ViewWrapper>
         </>
     );
 };

@@ -47,9 +47,9 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
 const style = StyleSheet.create({
     shadowProp: {
         shadowColor: '#171717',
-        shadowOffset: { width: -2, height: 4 },
+        shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.2,
-        shadowRadius: 3,
+        shadowRadius: 2,
     },
 });
 
@@ -71,10 +71,10 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
     const { iconColor = THEME_CONFIG.success, percent } = props;
 
     return (
-        <CardComponent w={["168px", '20%']}>
-            <HStack justifyContent="space-between" borderWidth={0} w='100%'>
-                <VStack w='100%' justifyContent='space-between' h={110} >
-                    <HStack justifyContent="space-between" w='100%' alignItems='center' >
+        <CardComponent w={['168px', '20%']}>
+            <HStack justifyContent="space-between" borderWidth={0} w="100%">
+                <VStack w="100%" justifyContent="space-between" h={110}>
+                    <HStack justifyContent="space-between" w="100%" alignItems="center">
                         <Text bold fontSize="4xl" _dark={{ color: 'primary.500' }} _light={{ color: 'primary.600' }}>
                             <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
                         </Text>
@@ -82,7 +82,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
                             {`${props.suffix}${percent ? '%' : ''}`}
                         </Text>
                     </HStack>
-                    <HStack alignItems="center" justifyContent="space-between" w='full' >
+                    <HStack alignItems="center" justifyContent="space-between" w="full">
                         <Text fontWeight="light" color="gray.400" fontSize="lg">
                             {props.label}
                         </Text>
