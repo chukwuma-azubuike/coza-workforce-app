@@ -16,9 +16,11 @@ interface ICardComponentProps extends IBoxProps {
 const CardComponent: React.FC<ICardComponentProps> = props => {
     return (
         <Box
-            pt={4}
-            pb={4}
+            py={2}
             {...props}
+            h={135}
+            m={2}
+            flex={[0, 1]}
             borderWidth={0.2}
             borderRadius={3}
             style={style.shadowProp}
@@ -69,10 +71,10 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
     const { iconColor = THEME_CONFIG.success, percent } = props;
 
     return (
-        <CardComponent>
-            <HStack justifyContent="space-between" style={{ width: 140 }} borderWidth={0}>
-                <VStack pr={2}>
-                    <HStack justifyContent="space-between" style={{ width: 140 }}>
+        <CardComponent w={["168px", '20%']}>
+            <HStack justifyContent="space-between" borderWidth={0} w='100%'>
+                <VStack w='100%' justifyContent='space-between' h={110} >
+                    <HStack justifyContent="space-between" w='100%' alignItems='center' >
                         <Text bold fontSize="4xl" _dark={{ color: 'primary.500' }} _light={{ color: 'primary.600' }}>
                             <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
                         </Text>
@@ -80,7 +82,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
                             {`${props.suffix}${percent ? '%' : ''}`}
                         </Text>
                     </HStack>
-                    <HStack alignItems="center" justifyContent="space-between">
+                    <HStack alignItems="center" justifyContent="space-between" w='full' >
                         <Text fontWeight="light" color="gray.400" fontSize="lg">
                             {props.label}
                         </Text>
