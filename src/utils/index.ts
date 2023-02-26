@@ -8,9 +8,7 @@ import moment from 'moment';
 class Utils {
     /************ Version Specific ************/
 
-    static IOSVersion = Platform.Version;
-
-    static IOS16 = +this.IOSVersion >= 16.0;
+    static IOS16 = Platform.OS === 'ios' && +Platform.Version >= 16.0;
 
     /************ String logic ************/
 
