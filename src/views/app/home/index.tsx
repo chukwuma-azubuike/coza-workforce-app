@@ -45,7 +45,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
-    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?._id as string, {
+    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?.id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
