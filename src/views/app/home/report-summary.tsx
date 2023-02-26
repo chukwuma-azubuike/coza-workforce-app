@@ -22,7 +22,7 @@ const reportColumns: IFlatListColumn[] = [
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
             >
-                <Text _dark={{ color: "gray.400" }} _light={{ color: "gray.500" }}>
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
                     {`${elm.departmentName} Report`}
                 </Text>
                 <TagComponent
