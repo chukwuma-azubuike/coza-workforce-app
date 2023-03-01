@@ -57,7 +57,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
-    const { data, isLoading, refetch, isSuccess } = useGetAttendanceByCampusIdQuery(user?.campus.id as string, {
+    const { data, isLoading, refetch, isSuccess } = useGetAttendanceByCampusIdQuery(user?.campus._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });

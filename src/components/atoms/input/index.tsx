@@ -57,6 +57,7 @@ const InputComponent = (props: IInputComponentProps) => {
                     </Pressable>
                 ) : undefined
             }
+            _ios={{ returnKeyType: 'done' }}
         />
     );
 };
@@ -88,7 +89,8 @@ const NumberInputComponent = (props: INumberInputComponentProps) => {
                     />
                 ) : undefined
             }
-            _ios={{ returnKeyType: 'done', enablesReturnKeyAutomatically: true }}
+            _ios={{ returnKeyType: 'done' }}
+            enablesReturnKeyAutomatically
             InputRightElement={
                 rightIcon ? (
                     <Pressable onPress={onIconPress}>

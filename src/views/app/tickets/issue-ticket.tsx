@@ -42,7 +42,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetch: refetchDepartments,
         isSuccess: campusDepartmentsSuccess,
         isLoading: campusDepartmentsLoading,
-    } = useGetDepartmentsByCampusIdQuery(campus.id);
+    } = useGetDepartmentsByCampusIdQuery(campus._id);
 
     const {
         data: workers,
@@ -75,7 +75,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const INITIAL_VALUES: ICreateTicketPayload = {
         departmentId: departmentId,
-        campusId: campus.id,
+        campusId: campus._id,
         userId: '',
         categoryId: '',
         isDepartment: isDepartmental,

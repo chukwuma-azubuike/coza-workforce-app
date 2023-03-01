@@ -141,7 +141,7 @@ const WorkForceSummary: React.FC = () => {
 
     const campusName = React.useMemo<ICampus['campusName'] | undefined>(
         () => sortedCampuses?.find(a => a._id === campusId)?.campusName,
-        [serviceId]
+        [campusId]
     );
 
     return (
@@ -274,7 +274,7 @@ const WorkForceSummary: React.FC = () => {
                             />
                             <ListItem.Content>
                                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                    Service Attendance
+                                    {campusName || campusId} Service Attendance
                                 </Text>
                             </ListItem.Content>
                         </>
@@ -362,7 +362,7 @@ const WorkForceSummary: React.FC = () => {
                             />
                             <ListItem.Content>
                                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                    Guests Attendance
+                                    {campusName || campusId} Guests Attendance
                                 </Text>
                             </ListItem.Content>
                         </>
@@ -426,7 +426,7 @@ const WorkForceSummary: React.FC = () => {
                             />
                             <ListItem.Content>
                                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                    Bus Count (Pick up)
+                                    {campusName || campusId} Bus Count (Pick up)
                                 </Text>
                             </ListItem.Content>
                         </>
