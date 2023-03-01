@@ -1,6 +1,6 @@
 import React from 'react';
 import { Center, Text } from 'native-base';
-const LottieView = require("lottie-react-native");
+const LottieView = require('lottie-react-native');
 import If from '../../composite/if-container';
 import ButtonComponent from '../button';
 import useRole from '../../../hooks/role';
@@ -24,19 +24,15 @@ const Empty: React.FC<{
 
     const EMPTY_MESSAGE = 'No records to show yet';
 
-    const { isDarkMode } = useAppColorMode()
+    const { isDarkMode } = useAppColorMode();
 
-    const lottieFile = isDarkMode ? require('../../../assets/json/empty-dark.json') : require('../../../assets/json/empty.json');
+    const lottieFile = isDarkMode
+        ? require('../../../assets/json/empty-dark.json')
+        : require('../../../assets/json/empty.json');
 
     return (
         <Center>
-            <LottieView
-                loop
-                autoPlay
-                style={{ width }}
-                resizeMode="cover"
-                source={lottieFile}
-            />
+            <LottieView loop autoPlay style={{ width }} resizeMode="cover" source={lottieFile} />
             <Text fontSize="md" color="gray.400" semi-bold>
                 {isCampusPastor || isGlobalPastor
                     ? `${message ? message : EMPTY_MESSAGE} ${gender === 'M' ? 'sir' : 'ma'}`
