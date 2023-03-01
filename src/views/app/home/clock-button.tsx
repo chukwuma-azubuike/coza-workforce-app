@@ -138,7 +138,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 userId: user?.userId as string,
                 clockIn: `${moment().unix()}`,
                 clockOut: null,
-                serviceId: latestServiceData?.id as string,
+                serviceId: latestServiceData?._id as string,
                 coordinates: {
                     lat: `${deviceCoordinates.latitude}`,
                     long: `${deviceCoordinates.longitude}`,
