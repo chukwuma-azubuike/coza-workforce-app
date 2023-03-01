@@ -46,6 +46,7 @@ export type IVerifyEmailOTPResponse = IDefaultResponse<{
     gender: string;
     lastName: string;
     userId: string;
+    roleId: string;
 }>;
 
 interface IVerifyEmailResponseTransform {
@@ -90,6 +91,7 @@ export const accountServiceSlice = createApi({
             transformResponse: (response: IVerifyEmailOTPResponse) => {
                 const {
                     email,
+                    roleId,
                     gender,
                     campusId,
                     lastName,
@@ -100,6 +102,7 @@ export const accountServiceSlice = createApi({
                 return {
                     email,
                     gender,
+                    roleId,
                     campusId,
                     lastName,
                     firstName,

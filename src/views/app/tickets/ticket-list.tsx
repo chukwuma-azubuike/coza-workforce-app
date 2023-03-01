@@ -165,7 +165,7 @@ const CampusTickets: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch } = useGetCampusTicketsQuery(campus.id);
+    const { data, isLoading, error, refetch } = useGetCampusTicketsQuery(campus._id);
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [isLoading]);
 

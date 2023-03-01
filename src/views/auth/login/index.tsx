@@ -61,7 +61,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     }, [isSuccess, isError]);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper maxWidth={500} >
             <VStack space="lg" w="100%" pt={10} px={4} justifyContent="center">
                 <Center>
                     <Logo />

@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import RegisterStepFour from './register-step-four';
 import RegisterStepOne from './register-step-one';

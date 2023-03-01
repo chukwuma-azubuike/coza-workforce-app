@@ -15,12 +15,12 @@ const Reports: React.FC = () => {
     const { user, isCTS, isPCU, isUshery, isSecurity, isPrograms, isChildcare, isCampusPastor, isGlobalPastor } =
         useRole();
 
-    const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus.id as string, { skip: !user });
+    const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus._id as string, { skip: !user });
 
     const { data, isLoading } = useGetDepartmentalReportQuery(
         {
             departmentId: user?.department._id as string,
-            serviceId: latestServiceData?.id as string,
+            serviceId: latestServiceData?._id as string,
         },
         {
             skip: !user?.department._id,
@@ -56,8 +56,8 @@ const Reports: React.FC = () => {
             'Incident Report' as unknown as never,
             {
                 departmentId: user?.department._id,
-                serviceId: latestServiceData?.id,
-                campusId: user?.campus.id,
+                serviceId: latestServiceData?._id,
+                campusId: user?.campus._id,
                 userId: user?.userId,
             } as never
         );
@@ -76,8 +76,8 @@ const Reports: React.FC = () => {
                 {
                     _id: data?.departmentalReport.report._id,
                     departmentId: user?.department._id,
-                    serviceId: latestServiceData?.id,
-                    campusId: user?.campus.id,
+                    serviceId: latestServiceData?._id,
+                    campusId: user?.campus._id,
                     userId: user?.userId,
                 } as never
             );
@@ -90,7 +90,7 @@ const Reports: React.FC = () => {
                 <FlatListSkeleton count={9} />
             </If>
             <If condition={isCampusPastor}>
-                <CampusReport serviceId={latestServiceData?.id} />
+                <CampusReport serviceId={latestServiceData?._id} />
             </If>
             <If condition={!isGlobalPastor && !isCampusPastor}>
                 <Empty />
