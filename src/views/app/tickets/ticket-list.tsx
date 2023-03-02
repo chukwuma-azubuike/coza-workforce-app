@@ -6,7 +6,9 @@ import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
+import useAppColorMode from '../../../hooks/theme/colorMode';
 import {
     useGetDepartmentTicketsQuery,
     useGetUserTicketsQuery,
@@ -23,7 +25,7 @@ interface TicketListRowProps extends ITicket {
 
 const TicketListRow: React.FC<TicketListRowProps> = props => {
     const navigation = useNavigation();
-
+    const { isLightMode } = useAppColorMode();
     const { type } = props;
 
     return (
@@ -37,8 +39,6 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     status,
                     remarks,
                     ticketSummary,
-                    contestComment,
-                    contestReplyComment,
                     category,
                     department,
                     user,
@@ -50,7 +50,12 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                         delayPressIn={0}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(THEME_CONFIG.veryLightGray, false, 220)}
+                        background={TouchableNativeFeedback.Ripple(
+                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                            false,
+                            220
+                        )}
+                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack py={2} flex={1} key={idx} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
@@ -101,6 +106,8 @@ const MyTicketsList: React.FC = memo(() => {
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
+    useScreenFocus({ onFocus: refetch });
+
     return (
         <FlatListComponent
             data={memoizedData}
@@ -135,6 +142,8 @@ const MyTeamTicketsList: React.FC = memo(() => {
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [isLoading]);
 
+    useScreenFocus({ onFocus: refetch });
+
     return (
         <FlatListComponent
             data={memoizedData}
@@ -168,6 +177,8 @@ const CampusTickets: React.FC = memo(() => {
     const { data, isLoading, error, refetch, isFetching } = useGetCampusTicketsQuery(campus._id);
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [isLoading]);
+
+    useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent

@@ -9,6 +9,7 @@ import TextAreaComponent from '../../../components/atoms/text-area';
 import CardComponent from '../../../components/composite/card';
 import If from '../../../components/composite/if-container';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
 import {
@@ -60,8 +61,10 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         },
     ] = useRetractTicketMutation();
 
-    const [comment, setComment] = React.useState<string>('');
-    const [contestReplyComment, setContestReplyComment] = React.useState<string>(ticket?.contestReplyComment as string);
+    const [comment, setComment] = React.useState<string>();
+    const [contestReplyComment, setContestReplyComment] = React.useState<string | undefined>(
+        ticket?.contestReplyComment as string
+    );
 
     const handleChange = (value: string) => {
         setComment(value);
@@ -74,7 +77,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         contestTicket({
             _id,
             userId,
-            comment,
+            comment: comment as string,
         });
     };
 
@@ -82,7 +85,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         replyContest({
             _id,
             userId,
-            comment: contestReplyComment,
+            comment: contestReplyComment as string,
         });
     };
 
@@ -101,7 +104,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 message: 'Contest submitted',
                 status: 'success',
             });
-            refetch();
             contestReset();
             navigate.goBack();
         }
@@ -120,7 +122,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 message: 'Reply submitted',
                 status: 'success',
             });
-            refetch();
             resetReply();
             navigate.goBack();
         }
@@ -139,7 +140,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 message: 'Successfully retracted',
                 status: 'success',
             });
-            refetch();
             retractReset();
             navigate.goBack();
         }
@@ -152,8 +152,15 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         }
     }, [retractSuccess, retractIsError]);
 
+    useScreenFocus({
+        onFocus: () => {
+            refetch();
+            setContestReplyComment(ticket?.contestReplyComment);
+        },
+    });
+
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll refreshing={isLoading} onRefresh={refetch}>
             <CardComponent isLoading={isLoading} mt={1} px={2} py={8} mx={3} mb={10}>
                 <VStack space={4}>
                     <HStack
@@ -316,7 +323,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 width={150}
                                 isLoading={replyLoading}
                                 onPress={handleReplySubmit}
-                                isDisabled={status === 'CONTESTED' || !contestReplyComment}
+                                isDisabled={status !== 'CONTESTED' || !contestReplyComment}
                             >
                                 Reply
                             </ButtonComponent>
