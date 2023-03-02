@@ -30,7 +30,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
 
     return (
         <>
-            {props[1]?.map((elm, idx) => {
+            {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
@@ -48,9 +48,10 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                             false,
                             220
                         )}
+                        key={index}
                         style={{ paddingHorizontal: 20 }}
                     >
-                        <HStack py={2} flex={1} key={idx} w="full" alignItems="center" justifyContent="space-between">
+                        <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
                                 <AvatarComponent imageUrl={user?.pictureUrl} />
                                 <VStack justifyContent="space-between">
@@ -133,7 +134,7 @@ const MyTeamTicketsList: React.FC = memo(() => {
 
     const { data, isLoading, error, refetch, isFetching } = useGetDepartmentTicketsQuery(department._id);
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [isLoading]);
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     useScreenFocus({ onFocus: refetch });
 
@@ -169,13 +170,14 @@ const CampusTickets: React.FC = memo(() => {
 
     const { data, isLoading, error, refetch, isFetching } = useGetCampusTicketsQuery(campus._id);
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [isLoading]);
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [data]);
 
     useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
             data={memoizedData}
+            onRefresh={refetch}
             columns={teamTicketsColumns}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}

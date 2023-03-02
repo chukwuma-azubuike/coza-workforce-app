@@ -26,7 +26,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const {
         isQC,
-        user: { userId },
+        user: { userId, department },
     } = useRole();
 
     const { data: ticket, isLoading, refetch } = useGetTicketByIdQuery(_id);
@@ -282,10 +282,10 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <TextAreaComponent
                             value={contestReplyComment}
                             onChangeText={handleReplyChange}
-                            isDisabled={!isQC || userId === ticket?.user._id || !!ticket?.contestReplyComment}
+                            isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                         />
                     </VStack>
-                    <If condition={userId === ticket?.user._id}>
+                    <If condition={userId === ticket?.user?._id || ticket?.department?._id === department?._id}>
                         <HStack space={4} justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
@@ -307,7 +307,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                         </HStack>
                     </If>
-                    <If condition={isQC && userId !== ticket?.user._id}>
+                    <If condition={isQC && userId !== ticket?.user?._id}>
                         <HStack space={4} justifyContent="space-between">
                             <ButtonComponent
                                 size="md"

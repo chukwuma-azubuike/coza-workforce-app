@@ -11,6 +11,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
 import DeviceInfo from 'react-native-device-info';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
 
 const Profile: React.FC = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);
@@ -32,7 +33,7 @@ const Profile: React.FC = () => {
                     <AvatarComponent
                         shadow={9}
                         size="xl"
-                        imageUrl={user?.pictureUrl ? user.pictureUrl : 'https://i.ibb.co/P6k4dWF/Group-3.png'}
+                        imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         firstName={user?.firstName}
                         lastName={user?.lastName}
                     />

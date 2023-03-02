@@ -56,7 +56,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                 <StaggerButtonComponent
                     buttons={[
                         {
-                            color: 'red.400',
+                            color: 'blue.400',
                             iconType: 'ionicon',
                             iconName: 'person-outline',
                             handleClick: gotoIndividual,
