@@ -7,6 +7,7 @@ import {
     IDepartment,
     ITicket,
     ITicketCategory,
+    ITicketUpdatePayload,
     IUser,
     REST_API_VERBS,
 } from '../types';
@@ -38,7 +39,7 @@ export const ticketServiceSlice = createApi({
             transformErrorResponse: (response: IDefaultErrorResponse) => response.message,
         }),
 
-        updateTicket: endpoint.mutation<ITicket, ITicket>({
+        updateTicket: endpoint.mutation<ITicket, ITicketUpdatePayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateTicket/${body._id}`,
                 method: REST_API_VERBS.PATCH,
@@ -46,6 +47,26 @@ export const ticketServiceSlice = createApi({
             }),
 
             transformResponse: (response: ITicketResponse) => response.data,
+        }),
+
+        contestTicket: endpoint.mutation<ITicket, ITicketUpdatePayload>({
+            query: payload => ({
+                url: `/${SERVICE_URL}/replyTicketByUser/${payload._id}`,
+                method: REST_API_VERBS.PATCH,
+                body: { userId: payload.userId, comment: payload.comment },
+            }),
+
+            transformResponse: (response: IDefaultResponse<ITicket>) => response.data,
+        }),
+
+        replyContestTicket: endpoint.mutation<ITicket, ITicketUpdatePayload>({
+            query: payload => ({
+                url: `/${SERVICE_URL}/replyTicketByQCTeam/${payload._id}`,
+                method: REST_API_VERBS.PATCH,
+                body: { userId: payload.userId, comment: payload.comment },
+            }),
+
+            transformResponse: (response: IDefaultResponse<ITicket>) => response.data,
         }),
 
         deleteTicket: endpoint.mutation<ITicket, ITicket['_id']>({
@@ -75,6 +96,15 @@ export const ticketServiceSlice = createApi({
             transformResponse: (response: ITicketListResponse) => response.data,
         }),
 
+        getTicketById: endpoint.query<ITicket, ITicket['_id']>({
+            query: ticketId => ({
+                url: `/${SERVICE_URL}/getTicket/${ticketId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (response: IDefaultResponse<ITicket>) => response.data,
+        }),
+
         getDepartmentTickets: endpoint.query<ITicket[], IDepartment['_id']>({
             query: departmentId => ({
                 url: `/${SERVICE_URL}/getDepartmentTickets/${departmentId}`,
@@ -84,7 +114,7 @@ export const ticketServiceSlice = createApi({
             transformResponse: (response: ITicketListResponse) => response.data,
         }),
 
-        getCampusTickets: endpoint.query<ITicket[], ICampus['id']>({
+        getCampusTickets: endpoint.query<ITicket[], ICampus['_id']>({
             query: campusId => ({
                 url: `/${SERVICE_URL}/getCampusTickets/${campusId}`,
                 method: REST_API_VERBS.GET,
@@ -105,14 +135,17 @@ export const ticketServiceSlice = createApi({
 });
 
 export const {
+    useGetTicketByIdQuery,
     useGetUserTicketsQuery,
     useCreateTicketMutation,
     useDeleteTicketMutation,
     useUpdateTicketMutation,
     useRetractTicketMutation,
     useGetCampusTicketsQuery,
+    useContestTicketMutation,
     useLazyGetUserTicketsQuery,
     useGetTicketCategoriesQuery,
     useGetDepartmentTicketsQuery,
+    useReplyContestTicketMutation,
     useLazyGetDepartmentTicketsQuery,
 } = ticketServiceSlice;

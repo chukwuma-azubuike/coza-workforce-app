@@ -9,7 +9,7 @@ import { ParamListBase, useFocusEffect, useIsFocused, useNavigation } from '@rea
 import useRole from '../../../hooks/role';
 import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
-import { ICreateTicketPayload, IDepartment, ITicket } from '../../../store/types';
+import { ICreateTicketPayload, IDepartment } from '../../../store/types';
 import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '../../../store/services/tickets';
 import { Formik, FormikConfig } from 'formik';
 import { CreateDepartmentalTicketSchema, CreateIndividualTicketSchema } from '../../../utils/schemas';
@@ -18,9 +18,10 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Utils from '../../../utils';
 import If from '../../../components/composite/if-container';
+import { ITicketType } from '.';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { type } = props.route.params as { type: ITicket['ticketType'] };
+    const { type } = props.route.params as { type: ITicketType };
 
     const { goBack, setOptions } = useNavigation();
 
@@ -82,8 +83,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isIndividual: isIndividual,
         isRetracted: false,
         ticketSummary: '',
-        // status: 'ISSUED', // Proposed
-        // ticketType: 'INDIVIDUAL', // Proposed
     } as ICreateTicketPayload;
 
     React.useEffect(() => {

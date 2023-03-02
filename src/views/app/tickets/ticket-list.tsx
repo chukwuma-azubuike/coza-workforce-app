@@ -97,7 +97,7 @@ const MyTicketsList: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch } = useGetUserTicketsQuery(userId);
+    const { data, isLoading, error, isFetching, refetch } = useGetUserTicketsQuery(userId);
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
@@ -105,9 +105,9 @@ const MyTicketsList: React.FC = memo(() => {
         <FlatListComponent
             data={memoizedData}
             onRefresh={refetch}
-            isLoading={isLoading}
-            refreshing={isLoading}
             columns={myTicketsColumns}
+            isLoading={isLoading || isFetching}
+            refreshing={isLoading || isFetching}
             emptyMessage={
                 isCampusPastor || isGlobalPastor
                     ? 'There are no tickets issued'
@@ -131,7 +131,7 @@ const MyTeamTicketsList: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch } = useGetDepartmentTicketsQuery(department._id);
+    const { data, isLoading, error, refetch, isFetching } = useGetDepartmentTicketsQuery(department._id);
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [isLoading]);
 
@@ -139,9 +139,9 @@ const MyTeamTicketsList: React.FC = memo(() => {
         <FlatListComponent
             data={memoizedData}
             onRefresh={refetch}
-            isLoading={isLoading}
-            refreshing={isLoading}
             columns={teamTicketsColumns}
+            isLoading={isLoading || isFetching}
+            refreshing={isLoading || isFetching}
             emptyMessage={
                 isCampusPastor || isGlobalPastor
                     ? 'There are no tickets issued'
@@ -165,15 +165,16 @@ const CampusTickets: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch } = useGetCampusTicketsQuery(campus._id);
+    const { data, isLoading, error, refetch, isFetching } = useGetCampusTicketsQuery(campus._id);
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [isLoading]);
 
     return (
         <FlatListComponent
             data={memoizedData}
-            isLoading={isLoading}
             columns={teamTicketsColumns}
+            isLoading={isLoading || isFetching}
+            refreshing={isLoading || isFetching}
             emptyMessage={
                 isCampusPastor || isGlobalPastor
                     ? 'There are no tickets issued'
