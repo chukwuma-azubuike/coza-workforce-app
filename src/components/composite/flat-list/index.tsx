@@ -61,14 +61,14 @@ const FlatListComponent = ({
                                             borderColor: 'gray.300',
                                         }}
                                         flex={1}
-                                        p={3}
+                                        p={2}
                                     >
                                         <Text pb={3} fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
                                             {moment(item[0]).format() !== 'Invalid date'
                                                 ? moment(item[0]).format('Do MMMM, YYYY')
                                                 : Utils.capitalizeFirstChar(item[0])}
                                         </Text>
-                                        <VStack py={3}>{columns.map((column, idx) => column.render(item, idx))}</VStack>
+                                        <VStack py={1}>{columns.map((column, idx) => column.render(item, idx))}</VStack>
                                     </Box>
                                 )}
                             />
@@ -110,7 +110,7 @@ const FlatListComponent = ({
                                         pl={['0', '4']}
                                         pr={['0', '5']}
                                         flex={1}
-                                        py={3}
+                                        py={2}
                                     >
                                         <HStack
                                             justifyContent="space-between"

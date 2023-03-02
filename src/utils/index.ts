@@ -181,6 +181,10 @@ class Utils {
         for (let i = 0; i < array.length; i++) {
             let keyInMap = array[i][key];
 
+            if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
+                keyInMap = moment(array[i][key]).format('Do MMMM, YYYY');
+            }
+
             if (map[keyInMap]) {
                 map[keyInMap] = [...map[keyInMap], array[i]];
             } else {

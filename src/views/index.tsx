@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import SplashScreen from 'react-native-splash-screen';
 import AppRoute from '../routes/app';
 import { useColorScheme } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
@@ -39,6 +40,8 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     React.useEffect(() => {
         setColorMode(colorScheme);
+
+        SplashScreen.hide();
 
         const versionLogic = async () => {
             inAppUpdates();
