@@ -8,10 +8,12 @@ import {
     IToken,
     REST_API_VERBS,
     IDepartment,
+    IDefaultQueryParams,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'account';
+const USER_SERVICE_URL = 'users';
 
 export type ISendOTPResponse = IDefaultResponse<{
     isOTPSent: boolean;
@@ -143,6 +145,17 @@ export const accountServiceSlice = createApi({
             }),
         }),
 
+        createUser: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/createUser`,
+                method: REST_API_VERBS.POST,
+                body: {
+                    ...body,
+                    pictureUrl: '',
+                },
+            }),
+        }),
+
         /*********** User **********/
 
         getUserById: endpoint.query<IUser, string>({
@@ -156,8 +169,18 @@ export const accountServiceSlice = createApi({
 
         getUsersByDepartmentId: endpoint.query<IUser[], IDepartment['_id']>({
             query: _id => ({
-                url: `/users/getUsers`,
+                url: `/${USER_SERVICE_URL}/getUsers`,
                 params: { departmentId: _id },
+            }),
+
+            transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
+        }),
+
+        getUsers: endpoint.query<IUser[], IDefaultQueryParams>({
+            query: params => ({
+                url: `/${USER_SERVICE_URL}/getUsers`,
+                method: REST_API_VERBS.GET,
+                params,
             }),
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
@@ -168,9 +191,11 @@ export const accountServiceSlice = createApi({
 // Use exported hook in relevant components
 export const {
     useSendOTPQuery,
+    useGetUsersQuery,
     useLoginMutation,
     useRegisterMutation,
     useGetUserByIdQuery,
+    useCreateUserMutation,
     useValidateEmailOTPMutation,
     useGetUsersByDepartmentIdQuery,
 } = accountServiceSlice;

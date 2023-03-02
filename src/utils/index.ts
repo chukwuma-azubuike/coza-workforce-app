@@ -196,3 +196,8 @@ class Utils {
 }
 
 export default Utils;
+
+type GroupListByKey<A> = {
+    key: keyof A;
+    array: A[];
+};

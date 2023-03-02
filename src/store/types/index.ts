@@ -90,12 +90,15 @@ export interface IUser {
     role: IRole;
     department: IDepartment;
     campus: ICampus;
+    status: IUserStatus;
     socialMedia: {
         facebook: string;
         instagram: string;
         twitter: string;
     };
 }
+
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
 
 // Attendance
 export interface IAttendance extends ILog {

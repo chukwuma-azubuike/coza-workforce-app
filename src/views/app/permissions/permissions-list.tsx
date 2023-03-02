@@ -23,7 +23,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
 
     return (
         <>
-            {props[1]?.map((elm, idx) => {
+            {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     navigation.navigate('Permission Details' as never, elm as never);
                 };
@@ -42,13 +42,14 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
 
                 return (
                     <TouchableNativeFeedback
+                        key={index}
                         disabled={false}
                         delayPressIn={0}
                         onPress={handlePress}
                         accessibilityRole="button"
                         background={TouchableNativeFeedback.Ripple(THEME_CONFIG.veryLightGray, false, 220)}
                     >
-                        <HStack py={2} flex={1} key={idx} w="full" alignItems="center" justifyContent="space-between">
+                        <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
                                 <AvatarComponent imageUrl={pictureUrl} />
                                 <VStack justifyContent="space-between">

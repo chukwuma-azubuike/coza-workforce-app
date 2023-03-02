@@ -31,6 +31,7 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
+import UserDetails from '../views/app/Workforce-management/user-details';
 
 export interface IAppRoute {
     name: string;
@@ -232,7 +233,17 @@ const AppRoutes: IAppRoute[] = [
         name: 'Workforce permissions',
         component: WorkforcePermissions,
         options: { title: 'Workforce permissions' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'User Profile',
+                component: UserDetails,
+                options: { title: 'User Profile' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+        ],
         users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
         inMenuBar: false,
         icon: { name: 'hand-left-outline', type: 'ionicon' },
