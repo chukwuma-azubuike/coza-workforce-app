@@ -45,7 +45,13 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
-    const { data: latestService, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?._id as string, {
+    const {
+        data: latestService,
+        isError,
+        isSuccess,
+        isLoading,
+        refetch,
+    } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
@@ -56,10 +62,13 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isSuccess: latestAttendanceIsSuccess,
         isLoading: latestAttendanceIsLoading,
         refetch: latestAttendanceRefetch,
-    } = useGetAttendanceQuery({ userId: user?.userId as string, serviceId: latestService?._id }, {
-        skip: (!user && !latestService),
-        refetchOnMountOrArgChange: true,
-    });
+    } = useGetAttendanceQuery(
+        { userId: user?.userId as string, serviceId: latestService?._id },
+        {
+            skip: !user && !latestService,
+            refetchOnMountOrArgChange: true,
+        }
+    );
 
     const initialState = {
         latestService: { data: latestService, isError, isSuccess, isLoading },
