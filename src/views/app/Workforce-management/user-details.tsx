@@ -161,7 +161,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
                     >
-                        <Text flexWrap='wrap' alignSelf="flex-start" bold>
+                        <Text flexWrap="wrap" alignSelf="flex-start" bold>
                             Occupation
                         </Text>
                         <Text>{occupation}</Text>
@@ -187,7 +187,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
                     >
-                        <Text flexWrap='wrap' alignSelf="flex-start" bold>
+                        <Text flexWrap="wrap" alignSelf="flex-start" bold>
                             Address
                         </Text>
                         <Text>{address}</Text>
