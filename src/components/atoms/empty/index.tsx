@@ -39,7 +39,7 @@ const Empty: React.FC<{
                     : EMPTY_MESSAGE}
             </Text>
             <If condition={refresh && true}>
-                <ButtonComponent secondary size="sm" width={100} isLoading={isLoading} onPress={handleRefresh}>
+                <ButtonComponent mt={8} secondary size="sm" width={100} isLoading={isLoading} onPress={handleRefresh}>
                     Reload
                 </ButtonComponent>
             </If>

@@ -5,21 +5,23 @@ import { Icon } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
+import { FlatListSkeleton } from '../../layout/skeleton';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;
     header?: React.ReactNode;
     footer?: React.ReactNode;
+    isLoading?: boolean;
     divider?: boolean;
 }
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
+    const { isLoading } = props;
     return (
         <Box
             py={2}
-            {...props}
-            h={135}
             m={2}
+            {...props}
             flex={[0, 1]}
             borderWidth={0.2}
             borderRadius={3}
@@ -27,19 +29,23 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
             _dark={{ backgroundColor: 'gray.900' }}
             _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
         >
-            <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
-                {props.header && (
-                    <Box px="4" pt="4">
-                        {props.header}
-                    </Box>
-                )}
-                <Box px="4">{props.children}</Box>
-                {props.footer && (
-                    <Box px="4" pb="4">
-                        {props.footer}
-                    </Box>
-                )}
-            </VStack>
+            {isLoading ? (
+                <FlatListSkeleton />
+            ) : (
+                <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
+                    {props.header && (
+                        <Box px="4" pt="4">
+                            {props.header}
+                        </Box>
+                    )}
+                    <Box px="4">{props.children}</Box>
+                    {props.footer && (
+                        <Box px="4" pb="4">
+                            {props.footer}
+                        </Box>
+                    )}
+                </VStack>
+            )}
         </Box>
     );
 };
@@ -71,7 +77,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
     const { iconColor = THEME_CONFIG.success, percent } = props;
 
     return (
-        <CardComponent w={['168px', '20%']}>
+        <CardComponent w={['168px', '20%']} h={135}>
             <HStack justifyContent="space-between" borderWidth={0} w="100%">
                 <VStack w="100%" justifyContent="space-between" h={110}>
                     <HStack justifyContent="space-between" w="100%" alignItems="center">
