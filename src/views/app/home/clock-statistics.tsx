@@ -53,13 +53,23 @@ const ClockStatistics = () => {
 
     return (
         <HStack justifyContent="center">
-            <Stat time={latestAttendanceData?.clockIn} icon="check-circle" iconType="feather" label="Clock in" />
-            <Stat time={latestAttendanceData?.clockOut} label="Clock out" icon="logout" iconType="antdesign" />
+            <Stat
+                time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockIn : ''}
+                icon="check-circle"
+                iconType="feather"
+                label="Clock in"
+            />
+            <Stat
+                time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockOut : ''}
+                label="Clock out"
+                icon="logout"
+                iconType="antdesign"
+            />
             <Stat
                 difference={
                     Utils.timeDifference(
-                        latestAttendanceData?.clockOut as string,
-                        latestAttendanceData?.clockIn as string
+                        latestAttendanceData?.length ? latestAttendanceData[0]?.clockOut : ('' as string),
+                        latestAttendanceData?.length ? latestAttendanceData[0]?.clockIn : ('' as string)
                     ).hrsMins
                 }
                 label="Time spent"

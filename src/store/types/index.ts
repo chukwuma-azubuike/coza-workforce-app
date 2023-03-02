@@ -15,7 +15,17 @@ export enum REST_API_VERBS {
     PATCH = 'PATCH',
     DELETE = 'DELETE',
 }
-
+export interface IDefaultQueryParams {
+    departmentId?: IDepartment['_id'];
+    serviceId?: IService['_id'];
+    startDate?: number | string;
+    endDate?: number | string;
+    campusId?: ICampus['_id'];
+    userId?: IUser['_id'];
+    roleId?: IRole['_id'];
+    limit?: number;
+    page?: number;
+}
 export interface IDefaultResponse<D = unknown> {
     status: number;
     message: string;
@@ -101,6 +111,8 @@ export interface IAttendance extends ILog {
     };
     createdAt: string;
     updatedAt: string;
+    user: IUser;
+    service: IService;
 }
 
 export interface ICampusAttendanceSummary {
@@ -112,29 +124,25 @@ export interface ICampusAttendanceSummary {
 
 // Compliance
 export interface ITicket extends ILog {
-    // _id: string;
-    // departmentId: string;
-    // campusId: ICampus['id'];
-    // userId: IUser['userId'];
-    // categoryId: string;
-    // isDepartment: boolean;
-    // isIndividual: boolean;
-    // ticketSummary: string;
-    // isRetracted: boolean;
-    createdAt: string;
-
-    // Proposed
     _id: string;
     user: IUser;
     remarks: string;
+    createdAt: string;
     isRetracted: boolean;
     ticketSummary: string;
     status: ITicketStatus;
+    isDepartment: boolean;
+    isIndividual: boolean;
     contestComment: string;
     department: IDepartment;
     category: ITicketCategory;
     contestReplyComment: string;
-    ticketType: 'INDIVIDUAL' | 'DEPARTMENTAL';
+}
+
+export interface ITicketUpdatePayload {
+    userId: IUser['userId'];
+    _id: ITicket['_id'];
+    comment: string;
 }
 
 export interface ITicketCategory {
@@ -157,8 +165,8 @@ export interface ICreateTicketPayload {
     isIndividual: boolean;
     isRetracted: boolean;
     ticketSummary: string;
-    status: ITicketStatus;
-    ticketType: 'INDIVIDUAL' | 'DEPARTMENTAL';
+    status?: ITicketStatus;
+    issuedBy: IUser['userId'];
 }
 
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';

@@ -111,7 +111,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
         }
     }, [isClockOutErr]);
 
-    const clockedIn = latestAttendanceData?.clockIn ? true : false;
+    const clockedIn = latestAttendanceData?.length && latestAttendanceData[0].clockIn ? true : false;
 
     const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut;
 
@@ -145,9 +145,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 },
             });
         }
-        if (canClockOut) {
-            clockOut(latestAttendanceData?._id as string).then(res => {
-                if (res.data) setClockedOut(true);
+        if (canClockOut && latestAttendanceData) {
+            clockOut(latestAttendanceData[0]._id as string).then(res => {
+                if (res) setClockedOut(true);
             });
         }
     };

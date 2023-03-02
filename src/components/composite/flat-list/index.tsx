@@ -145,7 +145,7 @@ const FlatListComponent = ({
             ) : isLoading ? (
                 <FlatListSkeleton />
             ) : (
-                <Empty width={emptySize} message={emptyMessage} />
+                <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
             )}
         </>
     );
