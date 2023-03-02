@@ -8,7 +8,7 @@ import { usePreventGoBack } from '../../../hooks/navigation';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import useRole from '../../../hooks/role';
 import { IAttendance, IService } from '../../../store/types';
-import { useGetLatestAttendanceByUserIdQuery } from '../../../store/services/attendance';
+import { useGetAttendanceQuery } from '../../../store/services/attendance';
 import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
@@ -27,7 +27,7 @@ interface IInitialHomeState {
     };
     latestAttendance: {
         latestAttendanceIsError: boolean;
-        latestAttendanceData?: IAttendance;
+        latestAttendanceData?: IAttendance[];
         latestAttendanceIsSuccess: boolean;
         latestAttendanceIsLoading: boolean;
     };
@@ -45,7 +45,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
-    const { data, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?._id as string, {
+    const { data: latestService, isError, isSuccess, isLoading, refetch } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
@@ -56,13 +56,13 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isSuccess: latestAttendanceIsSuccess,
         isLoading: latestAttendanceIsLoading,
         refetch: latestAttendanceRefetch,
-    } = useGetLatestAttendanceByUserIdQuery(user?.userId as string, {
-        skip: !user,
+    } = useGetAttendanceQuery({ userId: user?.userId as string, serviceId: latestService?._id }, {
+        skip: (!user && !latestService),
         refetchOnMountOrArgChange: true,
     });
 
     const initialState = {
-        latestService: { data, isError, isSuccess, isLoading },
+        latestService: { data: latestService, isError, isSuccess, isLoading },
         latestAttendance: {
             latestAttendanceData,
             latestAttendanceIsError,
@@ -113,7 +113,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                     </ViewWrapper>
                     <If condition={isCampusPastor}>
                         <ViewWrapper noPadding style={{ maxHeight: 320 }}>
-                            <CampusReportSummary serviceId={data?._id} serviceIsLoading={isLoading} />
+                            <CampusReportSummary serviceId={latestService?._id} serviceIsLoading={isLoading} />
                         </ViewWrapper>
                     </If>
                 </>

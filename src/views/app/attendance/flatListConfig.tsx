@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Center, HStack, Text } from 'native-base';
+import { Box, Center, HStack, Text, VStack } from 'native-base';
 import moment from 'moment';
 import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '../../../config/appConfig';
@@ -19,7 +19,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
         dataIndex: 'date',
         render: (elm: IAttendance, key) => {
             return (
-                <Box key={key} size="48px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.300'}>
+                <Box key={key} size="42px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.300'}>
                     <Center pt={0}>
                         <Text bold fontSize={16} color={isLightMode ? 'gray.700' : 'gray.300'}>
                             {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
@@ -88,12 +88,12 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Date',
         dataIndex: 'date',
         render: (elm: IAttendance, key) => (
-            <Box key={key} size="48px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.300'}>
+            <Box key={key} size="42px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.300'}>
                 <Center pt={0}>
-                    <Text bold color="gray.600" fontSize={16}>
+                    <Text bold fontSize={16} color={isLightMode ? 'gray.800' : 'gray.100'}>
                         {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
                     </Text>
-                    <Text bold color="gray.600" fontSize={12}>
+                    <Text bold color={isLightMode ? 'gray.800' : 'gray.100'} fontSize={12}>
                         {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
                     </Text>
                 </Center>
@@ -101,14 +101,19 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         ),
     },
     {
-        title: 'Name / UserId',
+        title: 'Name',
         dataIndex: 'name',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center" flex={1} textAlign="left" w="full">
-                <AvatarComponentWithoutBadge badge mr={4} size="xs" imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png" />
-                <Text color="gray.600" ml={2}>
-                    {Utils.truncateString(elm.userId, 7)}
-                </Text>
+                {/* <AvatarComponentWithoutBadge badge mr={4} size="xs" imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png" /> */}
+                <VStack>
+                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                        {Utils.truncateString(elm.user.firstName, 15)}
+                    </Text>
+                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                        {Utils.truncateString(elm.user.lastName, 15)}
+                    </Text>
+                </VStack>
             </HStack>
         ),
     },
@@ -166,8 +171,8 @@ const campusColumns: IFlatListColumn[] = [
         ),
     },
     {
-        title: 'Clock In',
-        dataIndex: 'clockIn',
+        title: 'Present',
+        dataIndex: 'present',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
@@ -183,8 +188,8 @@ const campusColumns: IFlatListColumn[] = [
         ),
     },
     {
-        title: 'Clock Out',
-        dataIndex: 'clockOut',
+        title: 'Late',
+        dataIndex: 'late',
         render: (elm: IAttendance, key) => (
             <HStack key={key} alignItems="center">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
@@ -200,8 +205,8 @@ const campusColumns: IFlatListColumn[] = [
         ),
     },
     {
-        title: 'Service hrs',
-        dataIndex: 'hours',
+        title: 'Absent',
+        dataIndex: 'absent',
         render: (elm: IAttendance, key) => (
             <Text
                 key={key}

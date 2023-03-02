@@ -90,7 +90,12 @@ const MyPermissionsList: React.FC = memo(() => {
     return (
         <>
             {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
-            <FlatListComponent columns={myPermissionsColumns} data={memoizedData} />
+            <FlatListComponent
+                data={memoizedData}
+                columns={myPermissionsColumns}
+                // isLoading={isLoading || isFetching}
+                // refreshing={isLoading || isFetching}
+            />
         </>
     );
 });

@@ -8,7 +8,7 @@ import ModalAlertComponent from '../modal-alert';
 interface INotificationModalProps extends IModalProps {}
 
 const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setModalState }) => {
-    const { open, render, button, message, status, duration, defaultRender } = modalState;
+    const { open, render, button, message, status, duration, defaultRender = true } = modalState;
 
     const hideModal = () => {
         setModalState(prev => {

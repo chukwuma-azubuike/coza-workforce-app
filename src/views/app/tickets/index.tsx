@@ -15,6 +15,8 @@ const ROUTES = [
     { key: 'campusTickets', title: 'Campus Tickets' },
 ];
 
+export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL';
+
 const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const gotoIndividual = () => {
         navigation.navigate('Issue Ticket', { type: 'INDIVIDUAL' });
