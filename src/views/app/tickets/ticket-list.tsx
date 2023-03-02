@@ -35,14 +35,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const {
-                    status,
-                    remarks,
-                    ticketSummary,
-                    category,
-                    department,
-                    user,
-                } = elm;
+                const { status, remarks, ticketSummary, category, department, user } = elm;
 
                 return (
                     <TouchableNativeFeedback
