@@ -31,9 +31,11 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-import UserDetails from '../views/app/workforce-management/user-details';
 import WorkforceClockin from '../views/app/workforce-clockin';
 import EditProfile from '../views/app/profile/edit-profile';
+import UserDetails from '../views/app/Workforce-management/user-details';
+import ForgotPassword from '../views/auth/forgot-password';
+import ResetPassword from '../views/auth/reset-password';
 
 export interface IAppRoute {
     name: string;
@@ -336,6 +338,22 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         name: 'Register',
         component: Register,
         options: { title: 'Register' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+    },
+    {
+        name: 'Forgot Password',
+        component: ForgotPassword,
+        options: { title: 'Forgot Password' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+    },
+    {
+        name: 'Reset Password',
+        component: ResetPassword,
+        options: { title: 'Reset Password' },
         submenus: [],
         users: [],
         inMenuBar: false,
