@@ -8,12 +8,15 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
+import { Linking } from 'react-native';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     // API implementation
 
     const handleNotificationPress = () => {
-        navigation.navigate('Notifications');
+        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+
+        // navigation.navigate('Notifications');
     };
 
     const handlePress = () => navigation.navigate('Profile');
@@ -59,7 +62,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
             <Text fontSize="lg" fontWeight="light" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
-            <IconButton
+            {/* <IconButton
                 icon={
                     <Icon
                         color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
@@ -69,6 +72,27 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
                         raised={isLightMode}
                         borderRadius={10}
                         type="ionicon"
+                        size={16}
+                    />
+                }
+                p={1}
+                h={10}
+                w={10}
+                _light={{ bg: 'gray.100' }}
+                _dark={{ bg: 'gray.900' }}
+                onPress={handleNotificationPress}
+                borderRadius="full"
+            /> */}
+            <IconButton
+                icon={
+                    <Icon
+                        color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
+                        iconStyle={{ fontSize: 26 }}
+                        name="help"
+                        underlayColor="white"
+                        raised={isLightMode}
+                        borderRadius={10}
+                        type="Entypo"
                         size={16}
                     />
                 }

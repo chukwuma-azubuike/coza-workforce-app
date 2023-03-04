@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack } from 'native-base';
+import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack, Button } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -18,6 +18,7 @@ import { userActionTypes } from '../../../store/services/users';
 import { versionActiontypes } from '../../../store/services/version';
 import { useAppDispatch } from '../../../store/hooks';
 import Logo from '../../../components/atoms/logo';
+import SupportLink from '../support-link';
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const dispatch = useAppDispatch();
@@ -62,89 +63,94 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
 
     return (
         <ViewWrapper>
-            <VStack space="lg" w="100%" pt={10} px={4} justifyContent="center">
-                <Center>
-                    <Logo />
-                    <Heading mt={4}>Welcome back</Heading>
-                </Center>
-                <Box alignItems="center" w="100%">
-                    <Formik<ILoginPayload>
-                        validateOnChange
-                        enableReinitialize
-                        onSubmit={onSubmit}
-                        initialValues={INITIAL_VALUES}
-                        validationSchema={LoginSchema}
-                    >
-                        {({
-                            errors,
-                            handleChange,
-                            handleSubmit,
-                        }: Pick<
-                            IRegisterFormProps,
-                            'values' | 'errors' | 'handleChange' | 'handleSubmit' | 'setFieldError'
-                        >) => {
-                            return (
-                                <Stack w="100%" space={1}>
-                                    <FormControl isRequired isInvalid={errors?.email ? true : false}>
-                                        <FormControl.Label>Email</FormControl.Label>
-                                        <InputComponent
-                                            leftIcon={{
-                                                type: 'ionicon',
-                                                name: 'mail-outline',
-                                            }}
-                                            keyboardType="email-address"
-                                            placeholder="jondoe@gmail.com"
-                                            onChangeText={handleChange('email')}
-                                        />
-                                        <FormControl.ErrorMessage>{errors?.email}</FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={errors?.password ? true : false}>
-                                        <FormControl.Label>Password</FormControl.Label>
-                                        <InputComponent
-                                            type={showPassword ? 'text' : 'password'}
-                                            placeholder="password"
-                                            isRequired
-                                            leftIcon={{
-                                                name: 'lock-closed-outline',
-                                                type: 'ionicon',
-                                            }}
-                                            rightIcon={{
-                                                name: showPassword ? 'eye-off-outline' : 'eye-outline',
-                                                type: 'ionicon',
-                                            }}
-                                            onIconPress={handleIconPress}
-                                            onChangeText={handleChange('password')}
-                                        />
-                                        <FormControl.ErrorMessage>{errors?.password}</FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl>
-                                        <ButtonComponent
-                                            mt={4}
-                                            isLoading={isLoading}
-                                            onPress={handleSubmit as (event: any) => void}
-                                        >
-                                            Login
-                                        </ButtonComponent>
-                                    </FormControl>
-                                </Stack>
-                            );
-                        }}
-                    </Formik>
-                </Box>
-                <HStack alignItems="center" justifyContent="center">
-                    <Text fontSize="md" color="gray.400">
-                        Not yet registered?
-                    </Text>
-                    <TouchableRipple
-                        style={{ paddingHorizontal: 6, borderRadius: 10 }}
-                        onPress={() => navigation.navigate('Verify Email')}
-                    >
-                        <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
-                            Register
+            <Box w="100%" h="full" justifyContent="space-between" pb={4}>
+                <VStack space="lg" pt={10} px={4}>
+                    <Center>
+                        <Logo />
+                        <Heading mt={4}>Welcome back</Heading>
+                    </Center>
+                    <Box alignItems="center" w="100%">
+                        <Formik<ILoginPayload>
+                            validateOnChange
+                            enableReinitialize
+                            onSubmit={onSubmit}
+                            initialValues={INITIAL_VALUES}
+                            validationSchema={LoginSchema}
+                        >
+                            {({
+                                errors,
+                                handleChange,
+                                handleSubmit,
+                            }: Pick<
+                                IRegisterFormProps,
+                                'values' | 'errors' | 'handleChange' | 'handleSubmit' | 'setFieldError'
+                            >) => {
+                                return (
+                                    <Stack w="100%" space={1}>
+                                        <FormControl isRequired isInvalid={errors?.email ? true : false}>
+                                            <FormControl.Label>Email</FormControl.Label>
+                                            <InputComponent
+                                                leftIcon={{
+                                                    type: 'ionicon',
+                                                    name: 'mail-outline',
+                                                }}
+                                                keyboardType="email-address"
+                                                placeholder="jondoe@gmail.com"
+                                                onChangeText={handleChange('email')}
+                                            />
+                                            <FormControl.ErrorMessage>{errors?.email}</FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl isRequired isInvalid={errors?.password ? true : false}>
+                                            <FormControl.Label>Password</FormControl.Label>
+                                            <InputComponent
+                                                type={showPassword ? 'text' : 'password'}
+                                                placeholder="password"
+                                                isRequired
+                                                leftIcon={{
+                                                    name: 'lock-closed-outline',
+                                                    type: 'ionicon',
+                                                }}
+                                                rightIcon={{
+                                                    name: showPassword ? 'eye-off-outline' : 'eye-outline',
+                                                    type: 'ionicon',
+                                                }}
+                                                onIconPress={handleIconPress}
+                                                onChangeText={handleChange('password')}
+                                            />
+                                            <FormControl.ErrorMessage>{errors?.password}</FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl>
+                                            <ButtonComponent
+                                                mt={4}
+                                                isLoading={isLoading}
+                                                onPress={handleSubmit as (event: any) => void}
+                                            >
+                                                Login
+                                            </ButtonComponent>
+                                        </FormControl>
+                                    </Stack>
+                                );
+                            }}
+                        </Formik>
+                    </Box>
+                    <HStack alignItems="center" justifyContent="center">
+                        <Text fontSize="md" color="gray.400">
+                            Not yet registered?
                         </Text>
-                    </TouchableRipple>
-                </HStack>
-            </VStack>
+                        <TouchableRipple
+                            style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                            onPress={() => navigation.navigate('Verify Email')}
+                        >
+                            <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
+                                Register
+                            </Text>
+                        </TouchableRipple>
+                    </HStack>
+                </VStack>
+                <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
+                    <SupportLink />
+                </Box>
+            </Box>
         </ViewWrapper>
     );
 };
