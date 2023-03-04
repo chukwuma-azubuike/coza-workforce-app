@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack, Button } from 'native-base';
+import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
