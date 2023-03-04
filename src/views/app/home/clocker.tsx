@@ -7,7 +7,7 @@ import ClockStatistics from './clock-statistics';
 import { CampusAttendanceSummary, TeamAttendanceSummary } from './attendance-summary';
 import useGeoLocation from '../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import { Alert, Dimensions, Platform } from 'react-native';
+import { Dimensions, Platform } from 'react-native';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 import { HomeContext } from '.';
@@ -37,9 +37,6 @@ const Clocker: React.FC = () => {
         Geolocation.getCurrentPosition(
             position => {
                 setDeviceCoordinates(position.coords);
-                // Alert.alert(
-                //     `${position.coords.latitude} ${position.coords.longitude} Dist: ${distance}`
-                // );
             },
             error => {},
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }

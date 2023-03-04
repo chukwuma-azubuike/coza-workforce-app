@@ -66,8 +66,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         setDepartmentId('');
     };
 
-    console.log(departmentId);
-
     const handleDepartment = (value: IDepartment['_id']) => {
         setDepartmentId(value);
     };

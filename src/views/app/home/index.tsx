@@ -17,6 +17,8 @@ import { CampusReportSummary } from './report-summary';
 import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
 import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
+import useScreenFocus from '../../../hooks/focus';
 
 interface IInitialHomeState {
     latestService: {
@@ -31,6 +33,7 @@ interface IInitialHomeState {
         latestAttendanceIsSuccess: boolean;
         latestAttendanceIsLoading: boolean;
     };
+    currentCoordinate: GeoCoordinates;
 }
 
 export const HomeContext = React.createContext({} as IInitialHomeState);
@@ -63,12 +66,17 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isLoading: latestAttendanceIsLoading,
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
-        { userId: user?.userId as string, serviceId: latestService?._id },
+        {
+            userId: user?.userId as string,
+            serviceId: latestService?._id,
+        },
         {
             skip: !user && !latestService,
             refetchOnMountOrArgChange: true,
         }
     );
+
+    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
 
     const initialState = {
         latestService: { data: latestService, isError, isSuccess, isLoading },
@@ -78,18 +86,25 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             latestAttendanceIsSuccess,
             latestAttendanceIsLoading,
         },
+        currentCoordinates: deviceCoordinates,
     };
 
     const handleRefresh = () => {
         if (!isGlobalPastor) {
             refetch();
             latestAttendanceRefetch();
+            Geolocation.watchPosition(props => {
+                setDeviceCoordinates(props.coords);
+            });
         }
     };
 
     React.useEffect(() => {
         Utils.checkLocationPermission();
         Utils.requestLocationPermission();
+        Geolocation.watchPosition(({ coords }) => {
+            setDeviceCoordinates(coords);
+        });
     }, []);
 
     React.useEffect(() => {
@@ -101,8 +116,14 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         }
     }, [currentUserData]);
 
+    useScreenFocus({
+        onFocusExit: () => {
+            Geolocation.stopObserving();
+        },
+    });
+
     return (
-        <HomeContext.Provider value={initialState}>
+        <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             {!user ? (
                 <ViewWrapper>
                     <HomeSkeleton />

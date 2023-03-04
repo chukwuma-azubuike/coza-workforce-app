@@ -160,6 +160,7 @@ export interface ICampusTicketsSummary {
 }
 
 export interface ICreateTicketPayload {
+    _id?: string;
     departmentId: IDepartment['_id'];
     campusId: ICampus['_id'];
     userId?: IUser['userId'];
@@ -192,6 +193,12 @@ export interface IPermission extends ILog {
         department: { id: string; name: string };
     };
     requestor: IUser;
+}
+
+export interface IUpdatePermissionPayload {
+    _id: IPermission['_id'];
+    comment: string;
+    status: IStatus;
 }
 export interface IRequestPermissionPayload {
     startDate: string;
