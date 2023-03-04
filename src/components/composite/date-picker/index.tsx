@@ -53,12 +53,13 @@ const MonthPicker = () => {
 };
 
 interface IDateTimePickerProps {
-    mode?: 'date' | 'time' | 'dateTime' | 'countdown';
+    mode?: 'date' | 'time' | 'dateTime' | 'countdown' | 'dayMonth';
     label?: string;
     minimumDate?: Date;
     maximumDate?: Date;
     fieldName?: string;
     onSelectDate?: (fieldName: string, value: any) => void;
+    dateFormat: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
 }
 
 const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
@@ -68,6 +69,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     minimumDate,
     maximumDate,
     onSelectDate,
+    dateFormat = 'day month year',
 }: IDateTimePickerProps) => {
     const isIOS = Platform.OS === 'ios';
 
@@ -100,8 +102,10 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     }}
                     onPressIn={handlePress}
                     showSoftInputOnFocus={false}
-                    value={moment(date).format(mode === 'time' ? 'LTS' : 'DD MMM, yy')}
-                    placeholder={moment().format(mode === 'time' ? 'LTS' : 'DD MMM, yy')}
+                    value={moment(date).format(mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy')}
+                    placeholder={moment().format(
+                        mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
+                    )}
                 />
             </If>
             {show && (
@@ -113,6 +117,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     maximumDate={maximumDate}
                     style={{ width: isIOS && 90 }}
                     onTouchCancel={handleTouchCancel}
+                    dateFormat={dateFormat}
                 />
             )}
         </VStack>

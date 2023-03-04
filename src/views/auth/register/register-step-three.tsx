@@ -31,8 +31,10 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({
                             <FormControl isRequired isInvalid={errors?.birthDay ? true : false}>
                                 <DateTimePickerComponent
                                     fieldName="birthDay"
-                                    label="Date of birth"
+                                    label="Next birthday"
                                     maximumDate={new Date()}
+                                    dateFormat="dayofweek day month"
+                                    mode="dayMonth"
                                     onSelectDate={setFieldValue}
                                 />
                                 <FormControl.ErrorMessage>{errors?.birthDay}</FormControl.ErrorMessage>
