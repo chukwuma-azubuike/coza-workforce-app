@@ -42,7 +42,7 @@ export interface IDefaultErrorResponse<D = null> {
     data: D;
 }
 
-export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
+export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED';
 
 export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED';
 

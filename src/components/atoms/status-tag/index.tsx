@@ -12,13 +12,19 @@ const StatusTag: React.FC<IStatusTag> = props => {
 
     const green = status === 'ACKNOWLEGDED' || status === 'ACTIVE' || status === 'APPROVED';
     const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
-    const red = status === 'DECLINED' || status === 'INACTIVE' || status === 'RETRACTED' || 'REJECTED';
+    const red =
+        status === 'DECLINED' ||
+        status === 'INACTIVE' ||
+        status === 'RETRACTED' ||
+        'REJECTED' ||
+        status === 'REVIEW_REQUESTED';
 
     return (
         <Tag
             {...props}
             size="sm"
             px={2}
+            borderRadius="lg"
             _dark={{
                 bgColor: green ? 'success.200' : gray ? 'gray.300' : red ? 'error.200' : 'gray.300',
             }}

@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { Box, Center, VStack } from 'native-base';
+import { Center, VStack } from 'native-base';
 import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
-import { CampusAttendanceSummary, TeamAttendanceSummary } from './attendance-summary';
-import useGeoLocation from '../../../hooks/geo-location';
+import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
+import useGeoLocation from '../../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { Dimensions, Platform } from 'react-native';
-import useRole from '../../../hooks/role';
-import If from '../../../components/composite/if-container';
-import { HomeContext } from '.';
-import { ICampusCoordinates } from '../../../store/services/attendance';
-import { CampusTicketSummary } from './ticket-summary';
-import Loading from '../../../components/atoms/loading';
+import useRole from '../../../../hooks/role';
+import If from '../../../../components/composite/if-container';
+import { HomeContext } from '..';
+import { ICampusCoordinates } from '../../../../store/services/attendance';
+import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
+import Loading from '../../../../components/atoms/loading';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(null as unknown as GeoCoordinates);
@@ -50,7 +50,7 @@ const Clocker: React.FC = () => {
     const isIOS = Platform.OS === 'ios';
 
     return (
-        <Center px={4} pt={8} _dark={{ bg: 'black' }} flex={1}>
+        <Center px={4} pt={8} _dark={{ bg: 'black' }}>
             <Timer />
             <If condition={isCampusPastor}>
                 <CampusAttendanceSummary />

@@ -29,7 +29,6 @@ const RequestPermission: React.FC = () => {
     const [requestPermission, { isSuccess, isError, reset, isLoading }] = useRequestPermissionMutation();
 
     const handleSubmit: FormikConfig<IRequestPermissionPayload>['onSubmit'] = (values, { resetForm }) => {
-        console.log(values);
         requestPermission(values);
         resetForm(INITIAL_VALUES);
     };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import Clocker from './clocker';
+import Clocker from './workers/clocker';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import TopNav from './top-nav';
 import { usePreventGoBack } from '../../../hooks/navigation';
@@ -13,12 +13,13 @@ import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
 import { HomeSkeleton } from '../../../components/layout/skeleton';
-import { CampusReportSummary } from './report-summary';
+import { CampusReportSummary } from './campus-pastors/report-summary';
 import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
 import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
+import { Box } from 'native-base';
 
 interface IInitialHomeState {
     latestService: {
@@ -130,7 +131,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                 </ViewWrapper>
             ) : (
                 <>
-                    <ViewWrapper scroll refreshing={isLoading} onRefresh={handleRefresh}>
+                    <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
                         <If condition={user ? true : false}>
                             <TopNav {...navigation} />
                             <If condition={!isGlobalPastor}>
@@ -140,12 +141,10 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                                 <GSPView />
                             </If>
                         </If>
-                    </ViewWrapper>
-                    <If condition={isCampusPastor}>
-                        <ViewWrapper noPadding style={{ maxHeight: 320 }}>
+                        <If condition={isCampusPastor}>
                             <CampusReportSummary serviceId={latestService?._id} serviceIsLoading={isLoading} />
-                        </ViewWrapper>
-                    </If>
+                        </If>
+                    </ViewWrapper>
                 </>
             )}
         </HomeContext.Provider>
