@@ -58,6 +58,7 @@ export interface ICampusReportSummary<R = unknown> {
             _id: string;
             departmentId: string;
             serviceId: string;
+            status: IReportStatus;
         } & R;
     }[];
     incidentReport: unknown[];

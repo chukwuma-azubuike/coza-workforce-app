@@ -65,54 +65,6 @@ const WorkForceSummary: React.FC = () => {
         carsSummaryRefetch();
     };
 
-    const [icon, setIcon] = React.useState<{ name: string; type: string }>({
-        type: 'ionicon',
-        name: 'briefcase-outline',
-    });
-
-    const selectCategoryIcons = (key: string) => {
-        switch (key) {
-            case 'work':
-                setIcon({
-                    type: 'ionicon',
-                    name: 'briefcase-outline',
-                });
-                break;
-            case 'education':
-                setIcon({
-                    type: 'ionicon',
-                    name: 'school-outline',
-                });
-                break;
-            case 'medical':
-                setIcon({
-                    type: 'ionicon',
-                    name: 'medical-outline',
-                });
-                break;
-            case 'vacation':
-                setIcon({
-                    type: 'material-community',
-                    name: 'beach',
-                });
-                break;
-            case 'maternity':
-                setIcon({
-                    type: 'material-community',
-                    name: 'mother-nurse',
-                });
-                break;
-            case 'other':
-                setIcon({
-                    type: 'font-awesome',
-                    name: 'sticky-note-o',
-                });
-                break;
-            default:
-                break;
-        }
-    };
-
     const { isLightMode } = useAppColorMode();
 
     const { data: campuses, error, isLoading: campusesLoading, isSuccess: campusIsSuccess } = useGetCampusesQuery();

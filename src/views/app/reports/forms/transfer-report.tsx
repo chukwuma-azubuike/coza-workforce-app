@@ -22,7 +22,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateTransferReportMutation();
 
     const onSubmit = (values: ITransferReportPayload) => {
-        sendReport({ ...values, ...params });
+        sendReport({ ...values, ...params, status: 'SUBMITTED' });
     };
 
     const navigation = useNavigation();

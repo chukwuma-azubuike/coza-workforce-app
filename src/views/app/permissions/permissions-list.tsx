@@ -120,7 +120,7 @@ const MyPermissionsList: React.FC = memo(() => {
         user: { userId },
     } = useRole();
 
-    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ userId });
+    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ requestor: userId });
 
     useScreenFocus({
         onFocus: refetch,

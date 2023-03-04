@@ -22,7 +22,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateChildCareReportMutation();
 
     const onSubmit = (values: IChildCareReportPayload) => {
-        sendReport({ ...values, ...params });
+        sendReport({ ...values, ...params, status: 'SUBMITTED' });
     };
 
     const { setModalState } = useModal();

@@ -126,7 +126,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
         if (contestIsError) {
             setModalState({
-                message: contestError.data,
+                message: contestError?.data?.message,
                 status: 'error',
             });
         }
@@ -144,7 +144,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
         if (replyIsError) {
             setModalState({
-                message: replyError.data,
+                message: replyError?.data?.message,
                 status: 'error',
             });
         }
@@ -162,7 +162,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
         if (retractIsError) {
             setModalState({
-                message: retractError.data,
+                message: retractError?.data?.message,
                 status: 'error',
             });
         }
@@ -180,7 +180,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
         if (acknowledgeIsError) {
             setModalState({
-                message: acknowledgeError.data,
+                message: acknowledgeError?.data,
                 status: 'error',
             });
         }
