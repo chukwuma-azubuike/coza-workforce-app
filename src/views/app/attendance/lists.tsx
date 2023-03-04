@@ -1,6 +1,6 @@
 import React from 'react';
 import FlatListComponent from '../../../components/composite/flat-list';
-import { myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
+import { campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
 import { MonthPicker } from '../../../components/composite/date-picker';
 import {
     useGetAttendanceByCampusIdQuery,
@@ -65,12 +65,12 @@ export const CampusAttendance: React.FC = React.memo(() => {
 
     return (
         <>
-            <MonthPicker />
+            <MonthPicker today />
             <FlatListComponent
                 padding
                 onRefresh={refetch}
+                columns={campusColumns_1}
                 data={data as IAttendance[]}
-                columns={myAttendanceColumns}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
