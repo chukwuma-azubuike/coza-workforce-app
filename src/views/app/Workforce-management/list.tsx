@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
@@ -118,7 +118,12 @@ const MyTeam: React.FC = memo(() => {
         user: { department },
     } = useRole();
 
-    const { data, isLoading, error, refetch, isFetching } = useGetUsersQuery({ departmentId: department._id });
+    const isScreenFocused = useIsFocused();
+
+    const { data, isLoading, error, refetch, isFetching } = useGetUsersQuery(
+        { departmentId: department._id },
+        { skip: !isScreenFocused }
+    );
 
     useScreenFocus({ onFocus: refetch });
 
@@ -145,11 +150,16 @@ const Campus: React.FC = memo(() => {
         user: { campus },
     } = useRole();
 
-    const { data, isLoading, error, refetch, isFetching } = useGetUsersQuery({ campusId: campus._id, limit: 200 });
+    const isScreenFocused = useIsFocused();
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'departmentId'), [isLoading]);
+    const { data, isLoading, error, refetch, isFetching } = useGetUsersQuery(
+        { campusId: campus._id, limit: 200 },
+        { skip: !isScreenFocused }
+    );
 
     useScreenFocus({ onFocus: refetch });
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'departmentName'), [isLoading]);
 
     return (
         <FlatListComponent

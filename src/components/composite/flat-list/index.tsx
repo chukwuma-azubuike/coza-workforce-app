@@ -88,9 +88,9 @@ const FlatListComponent = ({
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
                                         <Box bg="transparent" py={3} flex={1} textAlign="left" w="full">
-                                            <HStack justifyContent="space-evenly" px={padding ? 3 : 0}>
+                                            <HStack justifyContent="space-between" px={padding ? 3 : 0}>
                                                 {titles.map((title, idx) => (
-                                                    <Text semi-bold key={`title-${idx}`}>
+                                                    <Text semi-bold key={`title-${idx}`} _dark={{ color: 'gray.200' }}>
                                                         {title}
                                                     </Text>
                                                 ))}
@@ -126,9 +126,9 @@ const FlatListComponent = ({
                                                         _dark={{
                                                             color: 'gray.200',
                                                         }}
+                                                        textAlign="left"
                                                         key={idx}
                                                         flex={1}
-                                                        textAlign="left"
                                                         w="full"
                                                     >
                                                         {item[column.dataIndex as never]}

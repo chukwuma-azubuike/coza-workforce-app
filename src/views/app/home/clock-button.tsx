@@ -74,7 +74,6 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
         if (clockOutSuccess && cleanUp) {
             setModalState({
-                duration: 6,
                 render: (
                     <ModalAlertComponent
                         description={`You clocked out at ${moment().format('LT')}`}

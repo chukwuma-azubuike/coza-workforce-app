@@ -1,5 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { IDefaultResponse, IPermission, IRequestPermissionPayload, REST_API_VERBS } from '../types';
+import {
+    IDefaultQueryParams,
+    IDefaultResponse,
+    IPermission,
+    IRequestPermissionPayload,
+    IUpdatePermissionPayload,
+    REST_API_VERBS,
+} from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'permissions';
@@ -20,20 +27,24 @@ export const permissionsServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
-        updatePermission: endpoint.mutation<IPermission, IPermission>({
-            query: args => ({
-                url: `${SERVICE_URL}/${args._id}`,
+        updatePermission: endpoint.mutation<IPermission, IUpdatePermissionPayload>({
+            query: body => ({
+                url: `${SERVICE_URL}/updatePermission/${body._id}`,
                 method: REST_API_VERBS.PUT,
-                body: args,
+                body,
             }),
         }),
 
-        getPermissions: endpoint.query<IPermission[], IPermission[]>({
-            query: id => `/${SERVICE_URL}/${id}`,
+        getPermissions: endpoint.query<IPermission[], IDefaultQueryParams>({
+            query: params => ({ url: `/${SERVICE_URL}`, method: REST_API_VERBS.GET, params }),
+
+            transformResponse: (response: IDefaultResponse<IPermission[]>) => response.data,
         }),
 
-        getPermissionById: endpoint.query<IPermission, IPermission>({
-            query: id => `/${SERVICE_URL}/${id}`,
+        getPermissionById: endpoint.query<IPermission, IPermission['_id']>({
+            query: id => ({ url: `/permission/${id}`, method: REST_API_VERBS.GET }),
+
+            transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
         // Add your endpoints here

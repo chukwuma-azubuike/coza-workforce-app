@@ -20,8 +20,8 @@ const renderTabBar: React.FC<TabBarProps<any>> = props => {
             activeColor="white"
             tabStyle={Style.tab}
             indicatorStyle={Style.indicator}
-            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
-            pressColor={THEME_CONFIG.primaryVeryLight}
+            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
+            pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
             labelStyle={{ color: THEME_CONFIG.primary }}
             renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
         />
@@ -40,9 +40,9 @@ const renderTabBarScroll: React.FC<TabBarProps<any>> = props => {
             activeColor="white"
             tabStyle={Style.tab}
             indicatorStyle={Style.indicatorScroll}
-            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
-            pressColor={THEME_CONFIG.primaryVeryLight}
             labelStyle={{ color: THEME_CONFIG.primary }}
+            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
+            pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
             renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
         />
     );

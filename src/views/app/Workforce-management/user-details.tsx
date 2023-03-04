@@ -1,10 +1,12 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { HStack, Text, VStack } from 'native-base';
+import moment from 'moment';
+import { Center, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import AvatarComponent from '../../../components/atoms/avatar';
 import CardComponent from '../../../components/composite/card';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
 import { IUser } from '../../../store/types';
 
 const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
@@ -30,7 +32,9 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         <ViewWrapper scroll>
             <CardComponent mt={1} px={2} py={8} mx={3} mb={10}>
                 <VStack space={4}>
-                    <AvatarComponent imageUrl={pictureUrl}></AvatarComponent>
+                    <Center>
+                        <AvatarComponent size="2xl" imageUrl={pictureUrl || AVATAR_FALLBACK_URL} />
+                    </Center>
                     <HStack
                         space={2}
                         pb={2}
@@ -76,6 +80,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         space={2}
                         pb={2}
                         w="full"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
@@ -138,12 +143,13 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <Text alignSelf="flex-start" bold>
                             Birthday
                         </Text>
-                        <Text>{birthDay}</Text>
+                        <Text>{moment(birthDay).format('Do MMMM')}</Text>
                     </HStack>
                     <HStack
                         space={2}
                         pb={2}
                         w="full"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
@@ -157,6 +163,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         space={2}
                         pb={2}
                         w="full"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
@@ -170,6 +177,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         space={2}
                         pb={2}
                         w="full"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
@@ -183,11 +191,13 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         space={2}
                         pb={2}
                         w="full"
+                        h="full"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
                     >
-                        <Text flexWrap="wrap" alignSelf="flex-start" bold>
+                        <Text alignSelf="flex-start" bold>
                             Address
                         </Text>
                         <Text>{address}</Text>
