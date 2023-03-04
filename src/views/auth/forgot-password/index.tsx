@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Heading, Modal, VStack } from 'native-base';
+import { Box, FormControl, Heading, Modal, VStack } from 'native-base';
 import { Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -18,6 +18,7 @@ import { TouchableRipple } from 'react-native-paper';
 // import useWelcome from './hooks';
 import Logo from '../../../components/atoms/logo';
 import useForgotPassword from './hooks';
+import SupportLink from '../support-link';
 
 const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const {
@@ -41,65 +42,70 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
     return (
         <>
             <ViewWrapper>
-                <TouchableRipple
-                    style={{ paddingHorizontal: 6, borderRadius: 10 }}
-                    rippleColor="rgba(255, 255, 255, 0)"
-                    onPress={() => navigation.navigate('Login')}
-                >
-                    <Icon
-                        size={28}
-                        name="arrow-back-outline"
-                        type="ionicon"
-                        color={THEME_CONFIG.darkGray}
-                        style={{ alignSelf: 'flex-start' }}
-                    />
-                </TouchableRipple>
-                <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
-                    <Logo />
-                    <Heading mt={4}>Forgot Password</Heading>
-                    <Formik onSubmit={handleSubmit} initialValues={{ email: '' }} validationSchema={EmailSchema}>
-                        {({ handleChange, handleSubmit, errors }: any) => (
-                            <FormControl isInvalid={errors.email && true}>
-                                <VStack space={1}>
-                                    <FormControl.Label isRequired>Email</FormControl.Label>
-                                    <InputComponent
-                                        isRequired
-                                        placeholder="jondoe@gmail.com"
-                                        leftIcon={{
-                                            name: 'mail-outline',
-                                            type: 'ionicon',
-                                        }}
-                                        keyboardType="email-address"
-                                        onChangeText={handleChange('email')}
-                                    />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors.email}
-                                    </FormControl.ErrorMessage>
-                                    <ButtonComponent
-                                        mt={4}
-                                        isLoading={isLoading}
-                                        onPress={handleSubmit}
-                                        // onPress={() => navigation.navigate('Reset Password')}
-                                        isLoadingText="Checking for your email..."
-                                    >
-                                        Continue
-                                    </ButtonComponent>
-                                </VStack>
-                            </FormControl>
-                        )}
-                    </Formik>
-                </VStack>
+                <Box w="100%" h="full" justifyContent="space-between" pb={4}>
+                    <TouchableRipple
+                        style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                        rippleColor="rgba(255, 255, 255, 0)"
+                        onPress={() => navigation.navigate('Login')}
+                    >
+                        <Icon
+                            size={28}
+                            name="arrow-back-outline"
+                            type="ionicon"
+                            color={THEME_CONFIG.darkGray}
+                            style={{ alignSelf: 'flex-start' }}
+                        />
+                    </TouchableRipple>
+                    <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
+                        <Logo />
+                        <Heading mt={4}>Forgot Password</Heading>
+                        <Formik onSubmit={handleSubmit} initialValues={{ email: '' }} validationSchema={EmailSchema}>
+                            {({ handleChange, handleSubmit, errors }: any) => (
+                                <FormControl isInvalid={errors.email && true}>
+                                    <VStack space={1}>
+                                        <FormControl.Label isRequired>Email</FormControl.Label>
+                                        <InputComponent
+                                            isRequired
+                                            placeholder="jondoe@gmail.com"
+                                            leftIcon={{
+                                                name: 'mail-outline',
+                                                type: 'ionicon',
+                                            }}
+                                            keyboardType="email-address"
+                                            onChangeText={handleChange('email')}
+                                        />
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors.email}
+                                        </FormControl.ErrorMessage>
+                                        <ButtonComponent
+                                            mt={4}
+                                            isLoading={isLoading}
+                                            onPress={handleSubmit}
+                                            // onPress={() => navigation.navigate('Reset Password')}
+                                            isLoadingText="Checking for your email..."
+                                        >
+                                            Continue
+                                        </ButtonComponent>
+                                    </VStack>
+                                </FormControl>
+                            )}
+                        </Formik>
+                    </VStack>
+                    <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
+                        <SupportLink />
+                    </Box>
+                </Box>
             </ViewWrapper>
             <Modal isOpen={modalVisible} onClose={hideModal} avoidKeyboard size="xl">
                 <Modal.Content minW={200} backgroundColor="gray.200">
