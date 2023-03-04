@@ -1,5 +1,6 @@
 import * as Yup from 'yup';
 import 'yup-phone-lite';
+import { countryCodeIso } from '../countryCodeIso';
 
 // Form validation
 
@@ -12,7 +13,7 @@ export const RegisterSchema = Yup.object().shape({
     lastName: Yup.string().required('Your last name is required.'),
     address: Yup.string().required('Your home address is required.'),
     phoneNumber: Yup.string()
-        .phone('NG', 'Please enter a valid NG phone number')
+        .phone(countryCodeIso as any, 'Please enter a valid phone number')
         .required('A phone number is required'),
     email: Yup.string().required('Your email is required.'),
     departmentId: Yup.string(),
@@ -20,7 +21,7 @@ export const RegisterSchema = Yup.object().shape({
     roleId: Yup.string(),
     nextOfKin: Yup.string().required('Your next of kin is required.'),
     nextOfKinPhoneNo: Yup.string()
-        .phone('NG', 'Please enter a valid NG phone number')
+        .phone(countryCodeIso as any, 'Please enter a valid phone number')
         .required('A phone number is required'),
     occupation: Yup.string().required('Your occupation is required.'),
     placeOfWork: Yup.string().required('Your place of work is required.'),
