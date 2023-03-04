@@ -114,22 +114,25 @@ const CampusReport: React.FC<ICampusReport> = props => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Digital Surveillance Security')
             ?.report as unknown as ISecurityReportPayload;
 
-        if (!rawData) return { headers: [], column: [] };
+        if (!rawData) return { headers: [], rows: [] };
 
-        if (data?.departmentalReport) {
-            return {
-                headers: ['Main Car Park', 'Extension', 'Total'],
-                column: {
-                    mainCarPark: rawData?.locations?.length ? rawData?.locations[0].carCount : 0,
-                    extension: rawData?.locations?.length,
-                    total: rawData?.locations?.length
-                        ? rawData?.locations?.map(elm => elm.carCount).reduce((a, b) => a + b)
-                        : 0,
-                },
-            };
-        }
+        const rows = Object.entries(rawData).map(elm => {
+            if (elm[0] === 'locations') {
+                return elm[1];
+            }
+        });
 
-        return { headers: [], column: [] };
+        return {
+            headers: ['Car Park', 'Car Count'],
+            rows: Utils.filter(
+                rows.flatMap(elm => {
+                    return elm;
+                }),
+                undefined
+            ).map(elm => {
+                return { ...elm, total: +elm.minorCount + +elm.adultCount };
+            }),
+        };
     }, [data]);
 
     const busCount = React.useMemo(() => {
@@ -242,7 +245,7 @@ const CampusReport: React.FC<ICampusReport> = props => {
                 <Divider />
                 <VerticalTable isLoading={isLoading} title="Childcare Report" tableData={childCareReportData} />
                 <Divider />
-                <HorizontalTable isLoading={isLoading} title="Car Count" tableData={carCount} />
+                <VerticalTable isLoading={isLoading} title="Car Count" tableData={carCount} />
                 <Divider />
                 <VerticalTable isLoading={isLoading} title="Bus Count (Pick Up)" tableData={busCount} />
                 <Divider />

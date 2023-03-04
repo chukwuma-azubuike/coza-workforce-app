@@ -4,30 +4,31 @@ import { Divider, Flex, HStack, Text, VStack } from 'native-base';
 import { THEME_CONFIG } from '../../../../config/appConfig';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
-import Utils from '../../../../utils';
 import useModal from '../../../../hooks/modal/useModal';
 import StatusTag from '../../../../components/atoms/status-tag';
 
 export const reportColumns: IFlatListColumn[] = [
     {
         dataIndex: 'departmentName',
-        render: (elm: ICampusReportSummary['departmentalReport'][0], key) => (
-            <HStack
-                p={2}
-                px={4}
-                w="full"
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-            >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {`${elm.departmentName} Report`}
-                </Text>
-                <StatusTag>{(elm?.status as any) || 'PENDING'}</StatusTag>
-            </HStack>
-        ),
+        render: (elm: ICampusReportSummary['departmentalReport'][0], key) => {
+            return (
+                <HStack
+                    p={2}
+                    px={4}
+                    w="full"
+                    borderRadius={10}
+                    alignItems="center"
+                    _dark={{ bg: 'gray.900' }}
+                    _light={{ bg: 'gray.50' }}
+                    justifyContent="space-between"
+                >
+                    <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
+                        {`${elm.departmentName} Report`}
+                    </Text>
+                    <StatusTag>{elm?.report.status as any}</StatusTag>
+                </HStack>
+            );
+        },
     },
 ];
 
@@ -71,6 +72,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, s
                 <Divider />
             </VStack>
             <FlatListComponent
+                padding
                 emptySize={160}
                 columns={reportColumns}
                 onRefresh={handleRefresh}

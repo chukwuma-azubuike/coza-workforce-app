@@ -21,6 +21,7 @@ export interface IDefaultQueryParams {
     startDate?: number | string;
     endDate?: number | string;
     campusId?: ICampus['_id'];
+    requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
     limit?: number;

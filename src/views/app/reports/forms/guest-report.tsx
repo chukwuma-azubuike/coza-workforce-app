@@ -20,7 +20,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateGuestReportMutation();
 
     const onSubmit = (values: IGuestReportPayload) => {
-        sendReport({ ...values, ...params });
+        sendReport({ ...values, ...params, status: 'SUBMITTED' });
     };
 
     const navigation = useNavigation();

@@ -134,6 +134,15 @@ export const ticketServiceSlice = createApi({
             transformResponse: (response: ITicketListResponse) => response.data,
         }),
 
+        getCampusTicketReport: endpoint.query<number, { serviceId: string; campusId: string }>({
+            query: ({ campusId, serviceId }) => ({
+                url: `/${SERVICE_URL}/getCampusTickets/${serviceId}/${campusId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (response: IDefaultResponse<number>) => response.data,
+        }),
+
         getTicketCategories: endpoint.query<ITicketCategory[], void>({
             query: () => ({
                 url: `/${SERVICE_URL}/category/getCategories`,
@@ -159,5 +168,6 @@ export const {
     useGetTicketCategoriesQuery,
     useGetDepartmentTicketsQuery,
     useReplyContestTicketMutation,
+    useGetCampusTicketReportQuery,
     useLazyGetDepartmentTicketsQuery,
 } = ticketServiceSlice;

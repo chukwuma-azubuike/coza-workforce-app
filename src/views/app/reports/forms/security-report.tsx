@@ -22,7 +22,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateSecurityReportMutation();
 
     const onSubmit = (values: ISecurityReportPayload) => {
-        sendReport({ ...values, ...params });
+        sendReport({ ...values, ...params, status: 'SUBMITTED' });
     };
 
     const navigation = useNavigation();

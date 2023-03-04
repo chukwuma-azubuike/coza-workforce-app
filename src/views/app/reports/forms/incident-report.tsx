@@ -19,7 +19,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateIncidentReportMutation();
 
     const onSubmit = (values: IIncidentReportPayload) => {
-        sendReport({ ...values, ...params });
+        sendReport({ ...values, ...params, status: 'SUBMITTED' });
     };
 
     const navigation = useNavigation();
