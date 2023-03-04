@@ -3,15 +3,15 @@ import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-ba
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableNativeFeedback } from 'react-native';
-import useModal from '../../../hooks/modal/useModal';
+import useModal from '../../../../hooks/modal/useModal';
 import moment from 'moment';
-import ModalAlertComponent from '../../../components/composite/modal-alert';
-import { HomeContext } from '.';
-import { useClockInMutation, useClockOutMutation } from '../../../store/services/attendance';
-import useRole from '../../../hooks/role';
+import ModalAlertComponent from '../../../../components/composite/modal-alert';
+import { HomeContext } from '..';
+import { useClockInMutation, useClockOutMutation } from '../../../../store/services/attendance';
+import useRole from '../../../../hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import If from '../../../components/composite/if-container';
-import Utils from '../../../utils';
+import If from '../../../../components/composite/if-container';
+import Utils from '../../../../utils';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -74,7 +74,6 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
         if (clockOutSuccess && cleanUp) {
             setModalState({
-                duration: 6,
                 render: (
                     <ModalAlertComponent
                         description={`You clocked out at ${moment().format('LT')}`}
@@ -156,7 +155,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
         <Pressable>
             {canClockIn && (
                 <LottieView
-                    source={require('../../../assets/json/clock-button-animation.json')}
+                    source={require('../../../../assets/json/clock-button-animation.json')}
                     resizeMode="cover"
                     style={{
                         left: Utils.IOS16 ? -13 : -20,

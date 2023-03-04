@@ -18,7 +18,7 @@ type Props = {
 const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter = true }) => {
     return (
         <Box>
-            <Text fontSize="md" color="gray.600" mb={2}>
+            <Text fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
                 {title}
             </Text>
             {children}
@@ -32,9 +32,9 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                             <HStack space={'2px'}>
                                 {tableData?.headers?.map((item, index) => (
                                     <Box
-                                        key={`${item}-${index}`}
                                         alignItems={alignItemsCenter ? 'center' : 'flex-start'}
                                         w={`${100 / tableData?.headers?.length}%`}
+                                        key={`${item}-${index}`}
                                         bg="primary.600"
                                         p={3}
                                     >
@@ -47,13 +47,14 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                     {Object.values(row)?.map(item => (
                                         <Box
                                             alignItems={alignItemsCenter ? 'center' : 'flex-start'}
-                                            bg="gray.100"
                                             padding={'10px'}
                                             w={`${100 / tableData?.headers?.length}%`}
                                             _text={{
                                                 fontSize: '15px',
                                                 fontWeight: '500',
                                             }}
+                                            _light={{ color: 'gray.700', bgColor: 'gray.200' }}
+                                            _dark={{ color: 'gray.300', bgColor: 'gray.900' }}
                                         >
                                             {item}
                                         </Box>

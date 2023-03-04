@@ -17,19 +17,19 @@ import {
     useGetTicketByIdQuery,
     useReplyContestTicketMutation,
     useRetractTicketMutation,
+    useUpdateTicketMutation,
 } from '../../../store/services/tickets';
-import { ITicket } from '../../../store/types';
+import { ICreateTicketPayload, ITicket } from '../../../store/types';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { contestComment, _id, status, ticketSummary, isDepartment, isIndividual, createdAt } = props.route
-        .params as ITicket;
+    const { contestComment, _id, status, isDepartment, isIndividual, createdAt } = props.route.params as ITicket;
 
     const {
         isQC,
         user: { userId, department },
     } = useRole();
 
-    const { data: ticket, isLoading, refetch } = useGetTicketByIdQuery(_id);
+    const { data: ticket, isFetching, isLoading, refetch, isSuccess, isError } = useGetTicketByIdQuery(_id);
     const [
         contestTicket,
         {
@@ -60,6 +60,17 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             reset: retractReset,
         },
     ] = useRetractTicketMutation();
+
+    const [
+        acknowledgeTicket,
+        {
+            isSuccess: acknowledgeIsSuccess,
+            isLoading: acknowledgeLoading,
+            isError: acknowledgeIsError,
+            reset: acknowledgeReset,
+            error: acknowledgeError,
+        },
+    ] = useUpdateTicketMutation();
 
     const [comment, setComment] = React.useState<string>();
     const [contestReplyComment, setContestReplyComment] = React.useState<string | undefined>(
@@ -93,7 +104,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         retractTicket(_id);
     };
 
-    const handleAcknowledge = () => {};
+    const handleAcknowledge = () => {
+        acknowledgeTicket({
+            ...ticket,
+            status: 'ACKNOWLEGDED',
+        } as ICreateTicketPayload);
+    };
 
     const { setModalState } = useModal();
     const navigate = useNavigation();
@@ -152,6 +168,24 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         }
     }, [retractSuccess, retractIsError]);
 
+    React.useEffect(() => {
+        if (acknowledgeIsSuccess) {
+            setModalState({
+                message: 'Ticket acknowledged',
+                status: 'success',
+            });
+            acknowledgeReset();
+            navigate.goBack();
+        }
+
+        if (acknowledgeIsError) {
+            setModalState({
+                message: acknowledgeError.data,
+                status: 'error',
+            });
+        }
+    }, [acknowledgeIsSuccess, acknowledgeIsError]);
+
     useScreenFocus({
         onFocus: () => {
             refetch();
@@ -160,8 +194,8 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     });
 
     return (
-        <ViewWrapper scroll refreshing={isLoading} onRefresh={refetch}>
-            <CardComponent isLoading={isLoading} mt={1} px={2} py={8} mx={3} mb={10}>
+        <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
+            <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
                 <VStack space={4}>
                     <HStack
                         space={2}
@@ -217,21 +251,19 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <StatusTag>{status}</StatusTag>
                     </HStack>
 
-                    {isIndividual && (
-                        <HStack
-                            space={2}
-                            pb={2}
-                            w="full"
-                            justifyContent="space-between"
-                            borderBottomWidth={0.2}
-                            borderColor="gray.300"
-                        >
-                            <Text alignSelf="flex-start" bold>
-                                Category
-                            </Text>
-                            <Text>{ticket?.category.categoryName}</Text>
-                        </HStack>
-                    )}
+                    <HStack
+                        space={2}
+                        pb={2}
+                        w="full"
+                        justifyContent="space-between"
+                        borderBottomWidth={0.2}
+                        borderColor="gray.300"
+                    >
+                        <Text alignSelf="flex-start" bold>
+                            Category
+                        </Text>
+                        <Text>{ticket?.category.categoryName}</Text>
+                    </HStack>
 
                     <HStack
                         space={2}
@@ -255,33 +287,43 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         space={2}
                         pb={2}
                         w="full"
+                        flexWrap="wrap"
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
                     >
-                        <Text alignSelf="flex-start" bold>
+                        <Text alignSelf="flex-start" bold mb={1}>
                             Details
                         </Text>
-                        <Text>{ticketSummary}</Text>
+                        <Text>{ticket?.ticketSummary}</Text>
                     </HStack>
 
                     <VStack space={2} pb={2} w="full" justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
                             Contest Comment
                         </Text>
-                        <TextAreaComponent
-                            value={contestComment}
-                            onChangeText={handleChange}
-                            isDisabled={status !== 'ISSUED'}
-                        />
+                        <If condition={isIndividual}>
+                            <TextAreaComponent
+                                onChangeText={handleChange}
+                                value={ticket?.contestComment}
+                                isDisabled={status !== 'ISSUED'} // || ticket?.user?._id !== userId
+                            />
+                        </If>
+                        <If condition={isDepartment}>
+                            <TextAreaComponent
+                                onChangeText={handleChange}
+                                value={ticket?.contestComment}
+                                isDisabled={status !== 'ISSUED' || ticket?.department?._id !== department?._id}
+                            />
+                        </If>
                     </VStack>
                     <VStack space={2} pb={2} w="full" justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
                             Quality Control Reply
                         </Text>
                         <TextAreaComponent
-                            value={contestReplyComment}
                             onChangeText={handleReplyChange}
+                            value={ticket?.contestReplyComment}
                             isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                         />
                     </VStack>
@@ -293,7 +335,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 width={150}
                                 onPress={handleSubmit}
                                 isLoading={contestLoading}
-                                isDisabled={!comment || status === 'ACKNOWLEGDED' || status === 'CONTESTED'}
+                                isDisabled={!comment && status === 'ISSUED'}
                             >
                                 Contest ticket
                             </ButtonComponent>
@@ -301,7 +343,11 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 size="md"
                                 width={150}
                                 onPress={handleAcknowledge}
-                                isDisabled={status === 'ACKNOWLEGDED'}
+                                isLoading={acknowledgeLoading}
+                                isDisabled={
+                                    status !== 'ISSUED' &&
+                                    (userId !== ticket?.user?._id || ticket?.department._id !== department._id)
+                                }
                             >
                                 Acknowledge
                             </ButtonComponent>
@@ -323,7 +369,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 width={150}
                                 isLoading={replyLoading}
                                 onPress={handleReplySubmit}
-                                isDisabled={status !== 'CONTESTED' || !contestReplyComment}
+                                isDisabled={!contestReplyComment}
                             >
                                 Reply
                             </ButtonComponent>

@@ -42,7 +42,7 @@ export interface IDefaultErrorResponse<D = null> {
     data: D;
 }
 
-export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
+export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED';
 
 export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED';
 
@@ -160,6 +160,7 @@ export interface ICampusTicketsSummary {
 }
 
 export interface ICreateTicketPayload {
+    _id?: string;
     departmentId: IDepartment['_id'];
     campusId: ICampus['_id'];
     userId?: IUser['userId'];
@@ -193,6 +194,12 @@ export interface IPermission extends ILog {
     };
     requestor: IUser;
 }
+
+export interface IUpdatePermissionPayload {
+    _id: IPermission['_id'];
+    comment: string;
+    status: IStatus;
+}
 export interface IRequestPermissionPayload {
     startDate: string;
     endDate: string;
@@ -201,6 +208,10 @@ export interface IRequestPermissionPayload {
     description: string;
     status: IStatus;
     requestor: IUser['userId'];
+    categoryId: string;
+    departmentId: string;
+    campusId: ICampus['_id'];
+    approvedBy: IUser['_id'];
 }
 
 // Department

@@ -122,6 +122,9 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({
                                 >
                                     <SelectItemComponent label="Single" value="single" />
                                     <SelectItemComponent label="Married" value="married" />
+                                    <SelectItemComponent label="Widowed" value="widowed" />
+                                    <SelectItemComponent label="Separated" value="separated" />
+                                    <SelectItemComponent label="Divorced" value="divorced" />
                                 </SelectComponent>
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty

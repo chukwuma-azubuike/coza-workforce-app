@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@rneui/base';
 import { Flex, HStack, Text } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '../../../../config/appConfig';
 
 const CampusTicketSummary: React.FC = () => {
     return (

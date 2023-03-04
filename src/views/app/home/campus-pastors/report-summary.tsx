@@ -1,14 +1,14 @@
 import React from 'react';
 import { Icon } from '@rneui/base';
 import { Divider, Flex, HStack, Text, VStack } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../store/services/reports';
-import TagComponent from '../../../components/atoms/tag';
-import Utils from '../../../utils';
-import { FlatListSkeleton } from '../../../components/layout/skeleton';
+import { THEME_CONFIG } from '../../../../config/appConfig';
+import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
+import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
+import Utils from '../../../../utils';
+import useModal from '../../../../hooks/modal/useModal';
+import StatusTag from '../../../../components/atoms/status-tag';
 
-const reportColumns: IFlatListColumn[] = [
+export const reportColumns: IFlatListColumn[] = [
     {
         dataIndex: 'departmentName',
         render: (elm: ICampusReportSummary['departmentalReport'][0], key) => (
@@ -25,13 +25,7 @@ const reportColumns: IFlatListColumn[] = [
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
                     {`${elm.departmentName} Report`}
                 </Text>
-                <TagComponent
-                    status={
-                        elm.status === 'SUBMITTED' ? 'success' : elm.status === 'REVIEW_REQUESTED' ? 'error' : 'gray'
-                    }
-                >
-                    {elm.status ? Utils.capitalizeFirstChar(elm.status, '_') : 'Pending'}
-                </TagComponent>
+                <StatusTag>{(elm?.status as any) || 'PENDING'}</StatusTag>
             </HStack>
         ),
     },
@@ -43,17 +37,25 @@ interface ICampusReportSummaryProps {
 }
 
 const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, serviceIsLoading }) => {
-    const { data, refetch, isLoading } = useGetCampusReportSummaryQuery(serviceId as string, {
+    const { data, refetch, isLoading, isFetching } = useGetCampusReportSummaryQuery(serviceId as string, {
         skip: !serviceId,
     });
 
+    const { setModalState } = useModal();
+
     const handleRefresh = () => {
-        refetch();
+        if (!serviceId) {
+            setModalState({
+                duration: 4,
+                status: 'info',
+                message: 'There is no service today so reports are not available sir.',
+            });
+        } else refetch();
     };
 
     return (
         <>
-            <VStack mt={6} px={4} overflow="scroll" maxH={260}>
+            <VStack mt={4} px={4} overflow="scroll">
                 <HStack alignItems="baseline" justifyContent="space-between">
                     <Flex alignItems="center" flexDirection="row">
                         <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
@@ -68,18 +70,14 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, s
                 </HStack>
                 <Divider />
             </VStack>
-            {isLoading || serviceIsLoading ? (
-                <FlatListSkeleton count={3} />
-            ) : (
-                <FlatListComponent
-                    padding
-                    emptySize={160}
-                    refreshing={isLoading}
-                    columns={reportColumns}
-                    onRefresh={handleRefresh}
-                    data={data?.departmentalReport as unknown as ICampusReportSummary['departmentalReport']}
-                />
-            )}
+            <FlatListComponent
+                emptySize={160}
+                columns={reportColumns}
+                onRefresh={handleRefresh}
+                isLoading={isLoading || isFetching || serviceIsLoading}
+                refreshing={isLoading || isFetching || serviceIsLoading}
+                data={data?.departmentalReport as unknown as ICampusReportSummary['departmentalReport']}
+            />
         </>
     );
 };

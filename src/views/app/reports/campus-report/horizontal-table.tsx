@@ -16,7 +16,7 @@ type Props = {
 const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
     return (
         <Box>
-            <Text fontSize="md" color="gray.600" mb={2}>
+            <Text fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
                 {title}
             </Text>
             <If condition={isLoading}>
@@ -36,7 +36,14 @@ const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
 
                             <VStack space={'2px'} w={'59%'}>
                                 {Object.values(tableData?.column)?.map((item, index) => (
-                                    <Box key={`${item}-${index}`} alignItems="center" bg="gray.100" w={'100%'} p={3}>
+                                    <Box
+                                        _light={{ color: 'gray.700', bgColor: 'gray.200' }}
+                                        _dark={{ color: 'gray.300', bgColor: 'gray.900' }}
+                                        key={`${item}-${index}`}
+                                        alignItems="center"
+                                        w={'100%'}
+                                        p={3}
+                                    >
                                         {item}
                                     </Box>
                                 ))}

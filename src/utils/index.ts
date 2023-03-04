@@ -27,7 +27,7 @@ class Utils {
     }
 
     static truncateString(str: string, num: number = 25) {
-        if (str.length > num) {
+        if (str?.length > num) {
             return str.slice(0, num) + '...';
         }
         return str;
@@ -41,6 +41,10 @@ class Utils {
 
     static sortStringAscending = (arrObject: any[], key: string) =>
         [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+
+    static sortByDate = (arrObject: any[], key: string) => {
+        return [...arrObject].sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
+    };
 
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
