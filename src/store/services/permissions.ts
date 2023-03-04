@@ -5,11 +5,17 @@ import {
     IPermission,
     IRequestPermissionPayload,
     IUpdatePermissionPayload,
+    IUser,
     REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'permissions';
+
+interface IRejectPermission {
+    permissionId: IPermission['_id'];
+    approverId: IUser['userId'];
+}
 
 export const permissionsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -19,7 +25,7 @@ export const permissionsServiceSlice = createApi({
     endpoints: endpoint => ({
         requestPermission: endpoint.mutation<IPermission, IRequestPermissionPayload>({
             query: body => ({
-                url: SERVICE_URL,
+                url: `${SERVICE_URL}/createPermission`,
                 method: REST_API_VERBS.POST,
                 body,
             }),
@@ -35,7 +41,15 @@ export const permissionsServiceSlice = createApi({
             }),
         }),
 
-        getPermissions: endpoint.query<IPermission[], IDefaultQueryParams>({
+        approvePermission: endpoint.mutation<IPermission, IRejectPermission>({
+            query: body => ({
+                url: `permission/approve/${body.permissionId}/${body.approverId}`,
+                method: REST_API_VERBS.PATCH,
+                body,
+            }),
+        }),
+
+        getPermissions: endpoint.query<IPermission[], Omit<IDefaultQueryParams, 'userId'>>({
             query: params => ({ url: `/${SERVICE_URL}`, method: REST_API_VERBS.GET, params }),
 
             transformResponse: (response: IDefaultResponse<IPermission[]>) => response.data,

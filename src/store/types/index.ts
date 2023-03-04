@@ -208,6 +208,10 @@ export interface IRequestPermissionPayload {
     description: string;
     status: IStatus;
     requestor: IUser['userId'];
+    categoryId: string;
+    departmentId: string;
+    campusId: ICampus['_id'];
+    approvedBy: IUser['_id'];
 }
 
 // Department

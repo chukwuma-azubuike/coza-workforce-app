@@ -29,11 +29,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         user: { campus },
     } = useRole();
 
-    const [icon, setIcon] = React.useState<{ name: string; type: string }>({
-        type: 'ionicon',
-        name: 'briefcase-outline',
-    });
-
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
 
     const { setModalState } = useModal();

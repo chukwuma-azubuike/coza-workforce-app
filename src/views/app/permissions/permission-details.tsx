@@ -18,7 +18,7 @@ import Utils from '../../../utils';
 
 const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
-        requestor: { firstName, lastName, pictureUrl, department, _id },
+        requestor: { firstName, lastName, pictureUrl, department, _id: requestorId },
         startDate,
         endDate,
         description,
@@ -27,11 +27,33 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         createdAt,
         comment,
         category,
+        _id,
     } = props.route.params as IPermission;
 
     const navigate = props.navigation;
 
     const { user, isHOD, isAHOD, isCampusPastor } = useRole();
+
+    const canApprove = (userId: string, requestor: string, isHod: boolean, isAHod: boolean, isPastor: boolean) => {
+        // Member permission
+        if (!isHod && !isAHod && !isPastor) {
+            return false;
+        }
+        // HOD permission
+        if ((isHod || isAHod) && userId === requestor) {
+            return false;
+        }
+        // Peer permission
+        if ((isHod || isAHod) && user.department._id === department?._id) {
+            return false;
+        }
+        return true;
+    };
+
+    const disable = React.useMemo(
+        () => canApprove(user.userId, requestorId, isHOD, isAHOD, isCampusPastor),
+        [user.userId, requestorId, isHOD, isAHOD, isCampusPastor]
+    );
 
     const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(comment);
 
@@ -109,7 +131,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{permission?.departmentId?.departmentName}</Text>
+                        <Text>{permission?.department?.departmentName}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -187,15 +209,15 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                     </HStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
-                            {`${isHOD ? 'HOD' : isAHOD ? 'AHOD' : isCampusPastor ? 'Pastor' : ''}'s Comment`}
+                            {`${isHOD || isAHOD ? 'Pastor' : 'HOD/AHOD'}'s Comment`}
                         </Text>
                         <TextAreaComponent
                             value={permissionComment}
                             onChangeText={handleChange}
-                            isDisabled={status !== 'PENDING'}
+                            isDisabled={status !== 'PENDING' && disable}
                         />
                     </VStack>
-                    <If condition={status === 'PENDING'}>
+                    <If condition={status === 'PENDING' && user.userId !== requestorId}>
                         <HStack space={4} justifyContent="space-between">
                             <ButtonComponent
                                 isDisabled={status === 'DECLINED' || !permissionComment}
