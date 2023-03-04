@@ -131,6 +131,22 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                         }}
                     </Formik>
                 </Box>
+
+                <TouchableRipple
+                    style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                    rippleColor="rgba(255, 255, 255, 0)"
+                    onPress={() => navigation.navigate('Forgot Password')}
+                >
+                    <Text
+                        fontSize="md"
+                        _dark={{ color: 'primary.400' }}
+                        _light={{ color: 'primary.500' }}
+                        textAlign="center"
+                    >
+                        Forgot Password?
+                    </Text>
+                </TouchableRipple>
+
                 <HStack alignItems="center" justifyContent="center">
                     <Text fontSize="md" color="gray.400">
                         Not yet registered?
