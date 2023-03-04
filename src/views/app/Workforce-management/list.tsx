@@ -44,7 +44,7 @@ const UserListRow: React.FC<IUser> = user => {
                             {Utils.capitalizeFirstChar(user?.firstName)} {Utils.capitalizeFirstChar(user?.lastName)}
                         </Text>
                         <Text fontSize="sm" color="gray.400">
-                            {Utils.capitalizeFirstChar(user?.department?.departmentName)}
+                            {user?.email}
                         </Text>
                     </VStack>
                 </HStack>
@@ -93,7 +93,7 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                                         {Utils.capitalizeFirstChar(user?.lastName)}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
-                                        {Utils.capitalizeFirstChar(user?.department?.departmentName)}
+                                        {user?.email}
                                     </Text>
                                 </VStack>
                             </HStack>
