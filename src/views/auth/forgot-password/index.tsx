@@ -96,8 +96,8 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                                             <ButtonComponent
                                                 mt={4}
                                                 isLoading={isLoading}
-                                                // onPress={handleSubmit}
-                                                onPress={() => navigation.navigate('Reset Password')}
+                                                onPress={handleSubmit}
+                                                // onPress={() => navigation.navigate('Reset Password')}
                                                 isLoadingText="Checking for your email..."
                                             >
                                                 Continue
