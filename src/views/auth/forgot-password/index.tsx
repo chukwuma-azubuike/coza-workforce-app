@@ -57,50 +57,56 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                         />
                     </TouchableRipple>
                     <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
-                        <Logo />
-                        <Heading mt={4}>Forgot Password</Heading>
-                        <Formik onSubmit={handleSubmit} initialValues={{ email: '' }} validationSchema={EmailSchema}>
-                            {({ handleChange, handleSubmit, errors }: any) => (
-                                <FormControl isInvalid={errors.email && true}>
-                                    <VStack space={1}>
-                                        <FormControl.Label isRequired>Email</FormControl.Label>
-                                        <InputComponent
-                                            isRequired
-                                            placeholder="jondoe@gmail.com"
-                                            leftIcon={{
-                                                name: 'mail-outline',
-                                                type: 'ionicon',
-                                            }}
-                                            keyboardType="email-address"
-                                            onChangeText={handleChange('email')}
-                                        />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors.email}
-                                        </FormControl.ErrorMessage>
-                                        <ButtonComponent
-                                            mt={4}
-                                            isLoading={isLoading}
-                                            onPress={handleSubmit}
-                                            // onPress={() => navigation.navigate('Reset Password')}
-                                            isLoadingText="Checking for your email..."
-                                        >
-                                            Continue
-                                        </ButtonComponent>
-                                    </VStack>
-                                </FormControl>
-                            )}
-                        </Formik>
+                        {/* <Logo /> */}
+                        <Heading>Forgot Password</Heading>
+                        <Box alignItems="center" w="100%">
+                            <Formik
+                                onSubmit={handleSubmit}
+                                initialValues={{ email: '' }}
+                                validationSchema={EmailSchema}
+                            >
+                                {({ handleChange, handleSubmit, errors }: any) => (
+                                    <FormControl isInvalid={errors.email && true}>
+                                        <VStack space={1}>
+                                            <FormControl.Label isRequired>Email</FormControl.Label>
+                                            <InputComponent
+                                                isRequired
+                                                placeholder="jondoe@gmail.com"
+                                                leftIcon={{
+                                                    name: 'mail-outline',
+                                                    type: 'ionicon',
+                                                }}
+                                                keyboardType="email-address"
+                                                onChangeText={handleChange('email')}
+                                            />
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors.email}
+                                            </FormControl.ErrorMessage>
+                                            <ButtonComponent
+                                                mt={4}
+                                                isLoading={isLoading}
+                                                // onPress={handleSubmit}
+                                                onPress={() => navigation.navigate('Reset Password')}
+                                                isLoadingText="Checking for your email..."
+                                            >
+                                                Continue
+                                            </ButtonComponent>
+                                        </VStack>
+                                    </FormControl>
+                                )}
+                            </Formik>
+                        </Box>
                     </VStack>
                     <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
                         <SupportLink />
