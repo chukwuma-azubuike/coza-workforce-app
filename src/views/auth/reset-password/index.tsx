@@ -41,8 +41,8 @@ const ResetPassword: React.FC<IRegistrationPageStep<NativeStackScreenProps<Param
         <ViewWrapper>
             <Box w="100%" h="full" justifyContent="space-between" pb={4}>
                 <VStack space={6} pb={5} px={4} pt={10} alignItems="center" justifyContent="space-around">
-                    <Logo />
-                    <Heading textAlign="left">Reset password</Heading>
+                    {/* <Logo /> */}
+                    <Heading>Reset password</Heading>
                     <Box alignItems="center" w="100%">
                         <Formik
                             validateOnChange
