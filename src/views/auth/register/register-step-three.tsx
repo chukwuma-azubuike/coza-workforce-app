@@ -32,7 +32,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({
                                 <DateTimePickerComponent
                                     fieldName="birthDay"
                                     label="Next birthday"
-                                    maximumDate={new Date()}
+                                    // maximumDate={new Date()}
                                     dateFormat="dayofweek day month"
                                     mode="dayMonth"
                                     onSelectDate={setFieldValue}
