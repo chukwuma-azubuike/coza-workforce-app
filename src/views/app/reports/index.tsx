@@ -6,18 +6,43 @@ import StaggerButtonComponent from '../../../components/composite/stagger';
 import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
 import CampusReport from './campus-report';
-import { useGetDepartmentalReportQuery } from '../../../store/services/reports';
+import {
+    ICampusReportSummary,
+    useGetDepartmentalReportQuery,
+    useGetDepartmentReportsListQuery,
+} from '../../../store/services/reports';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { FlatListSkeleton } from '../../../components/layout/skeleton';
-import Empty from '../../../components/atoms/empty';
+import useScreenFocus from '../../../hooks/focus';
+import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
+import Utils from '../../../utils';
+import { HStack } from 'native-base';
+
+const reportColumns: IFlatListColumn[] = [
+    {
+        dataIndex: 'createdAt',
+        render: (_: ICampusReportSummary, key) => <HStack key={key}></HStack>,
+    },
+];
 
 const Reports: React.FC = () => {
-    const { user, isCTS, isPCU, isUshery, isSecurity, isPrograms, isChildcare, isCampusPastor, isGlobalPastor } =
-        useRole();
+    const {
+        user,
+        isCTS,
+        isPCU,
+        isUshery,
+        isSecurity,
+        isPrograms,
+        isChildcare,
+        isCampusPastor,
+        isHOD,
+        isAHOD,
+        isGlobalPastor,
+    } = useRole();
 
     const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus._id as string, { skip: !user });
 
-    const { data, isLoading } = useGetDepartmentalReportQuery(
+    const { data } = useGetDepartmentalReportQuery(
         {
             departmentId: user?.department._id as string,
             serviceId: latestServiceData?._id as string,
@@ -27,10 +52,28 @@ const Reports: React.FC = () => {
         }
     );
 
+    const {
+        user: {
+            department: { _id },
+        },
+    } = useRole();
+
+    const {
+        data: reports,
+        refetch: reportsRefetch,
+        isLoading: reportsIsLoading,
+        isFetching: reportsIsFetching,
+    } = useGetDepartmentReportsListQuery(_id);
+
+    useScreenFocus({
+        onFocus: reportsRefetch,
+    });
+
     const { navigate } = useNavigation();
     const { setModalState } = useModal();
 
     const goToReportRoute = () => {
+        return 'Attendance Report';
         if (isCTS) {
             return 'Transfer Report';
         }
@@ -84,6 +127,8 @@ const Reports: React.FC = () => {
         }
     };
 
+    const memoizedData = React.useMemo(() => Utils.groupListByKey(reports, 'createdAt'), [reports]);
+
     return (
         <ViewWrapper>
             <If condition={!user}>
@@ -93,7 +138,6 @@ const Reports: React.FC = () => {
                 <CampusReport serviceId={latestServiceData?._id} />
             </If>
             <If condition={!isGlobalPastor && !isCampusPastor}>
-                <Empty />
                 <StaggerButtonComponent
                     buttons={[
                         {
@@ -109,6 +153,15 @@ const Reports: React.FC = () => {
                             handleClick: goToDepartmentReport,
                         },
                     ]}
+                />
+            </If>
+            <If condition={isHOD || isAHOD}>
+                <FlatListComponent
+                    data={memoizedData}
+                    columns={reportColumns}
+                    onRefresh={reportsRefetch}
+                    isLoading={reportsIsLoading || reportsIsFetching}
+                    refreshing={reportsIsLoading || reportsIsFetching}
                 />
             </If>
         </ViewWrapper>

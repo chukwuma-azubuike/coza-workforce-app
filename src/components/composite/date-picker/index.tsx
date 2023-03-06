@@ -10,7 +10,7 @@ import { Platform } from 'react-native';
 import If from '../if-container';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 
-const MonthPicker = () => {
+const MonthPicker = ({ today }: { today?: boolean }) => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
         switch (direction) {
             case 'left':
@@ -34,7 +34,7 @@ const MonthPicker = () => {
             }}
         >
             <HStack justifyContent="space-around" alignItems="center">
-                <Icon color={THEME_CONFIG.lightGray} name="chevron-small-left" type="entypo" size={26} />
+                {/* <Icon color={THEME_CONFIG.lightGray} name="chevron-small-left" type="entypo" size={26} /> */}
                 <HStack w="full" space={2} justifyContent="center" alignItems="center">
                     <Icon
                         size={20}
@@ -43,10 +43,10 @@ const MonthPicker = () => {
                         color={isDarkMode ? THEME_CONFIG.primaryLight : THEME_CONFIG.primary}
                     />
                     <Text bold fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.600' }}>
-                        {moment().format('MMMM y')}
+                        {today ? moment().format('Do MMMM, y') : moment().format('MMMM y')}
                     </Text>
                 </HStack>
-                <Icon color={THEME_CONFIG.lightGray} name="chevron-small-right" type="entypo" size={26} />
+                {/* <Icon color={THEME_CONFIG.lightGray} name="chevron-small-right" type="entypo" size={26} /> */}
             </HStack>
         </Swipeable>
     );
@@ -113,9 +113,10 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     value={date}
                     mode={mode as any}
                     onChange={onChange}
+                    accentColor={THEME_CONFIG.primary}
                     minimumDate={minimumDate}
                     maximumDate={maximumDate}
-                    style={{ width: isIOS && 90 }}
+                    style={{ width: isIOS && 90, backgroundColor: 'red' }}
                     onTouchCancel={handleTouchCancel}
                     dateFormat={dateFormat}
                 />

@@ -21,7 +21,7 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
         <Button
             {...props}
             size={size ? size : 'lg'}
-            padding={size ? 2 : 3}
+            padding={props.padding ? props.padding : size ? 2 : 3}
             width={width ? width : 'full'}
             isLoadingText={isLoadingText ? isLoadingText : 'Loading...'}
             borderRadius={borderRadius ? borderRadius : THEME_CONFIG.borderRadius}
@@ -37,8 +37,8 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
                     color: secondary ? 'primary.600' : 'white',
                 },
             }}
-            variant={secondary ? 'outline' : 'solid'}
             shadow={shadow ? shadow : secondary ? 'none' : 2}
+            variant={props.variant ? props.variant : secondary ? 'outline' : 'solid'}
         >
             {props.children}
         </Button>

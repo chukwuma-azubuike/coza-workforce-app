@@ -30,16 +30,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     const { isLightMode } = useAppColorMode();
 
     return (
-        <HStack
-            justifyContent="space-between"
-            backgroundColor="transparent"
-            alignItems="center"
-            zIndex={20}
-            flex={1}
-            w="full"
-            pr={4}
-            pl={3}
-        >
+        <HStack justifyContent="space-between" alignItems="center" zIndex={20} w="full" pr={4} pl={3}>
             <IconButton
                 onPress={handlePress}
                 icon={

@@ -6,6 +6,11 @@ import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
+import useScreenFocus from '../../../hooks/focus';
+import useRole from '../../../hooks/role';
+import useAppColorMode from '../../../hooks/theme/colorMode';
+import { useGetPermissionsQuery } from '../../../store/services/permissions';
 import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
 // import PermissionStats from './permission-stats';
@@ -21,6 +26,8 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
 
     const { type } = props;
 
+    const { isLightMode } = useAppColorMode();
+
     return (
         <>
             {props[1]?.map((elm, index) => {
@@ -29,12 +36,9 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                 };
 
                 const {
-                    requestor: {
-                        lastName,
-                        firstName,
-                        pictureUrl,
-                        department: { departmentName },
-                    },
+                    requestor: { lastName, firstName, pictureUrl, department },
+                    departmentName,
+                    categoryName,
                     description,
                     category,
                     status,
@@ -42,31 +46,59 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
 
                 return (
                     <TouchableNativeFeedback
-                        key={index}
                         disabled={false}
                         delayPressIn={0}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(THEME_CONFIG.veryLightGray, false, 220)}
+                        background={TouchableNativeFeedback.Ripple(
+                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                            false,
+                            220
+                        )}
+                        key={index}
+                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={pictureUrl} />
+                                <AvatarComponent imageUrl={pictureUrl || AVATAR_FALLBACK_URL} />
                                 <VStack justifyContent="space-between">
-                                    <Text bold>
-                                        {type === 'own'
-                                            ? Utils.capitalizeFirstChar(category)
-                                            : type === 'team'
-                                            ? `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                  lastName
-                                              )}`
-                                            : `${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                  lastName
-                                              )} (${Utils.capitalizeFirstChar(departmentName)})`}
-                                    </Text>
-                                    <Text fontSize="sm" color="gray.400">
-                                        {Utils.truncateString(description)}
-                                    </Text>
+                                    {type === 'own' && (
+                                        <>
+                                            <Text fontSize="sm" color="gray.400">
+                                                {categoryName}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.400">
+                                                {Utils.truncateString(description)}
+                                            </Text>
+                                        </>
+                                    )}
+                                    {type === 'team' && (
+                                        <>
+                                            <Text bold>
+                                                {`${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
+                                                    lastName
+                                                )}`}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.400">
+                                                {categoryName}
+                                            </Text>
+                                        </>
+                                    )}
+                                    {type === 'campus' && (
+                                        <>
+                                            <Text bold>
+                                                {`${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
+                                                    lastName
+                                                )}`}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.600">
+                                                {departmentName}
+                                            </Text>
+                                            <Text fontSize="sm" color="gray.400">
+                                                {categoryName}
+                                            </Text>
+                                        </>
+                                    )}
                                 </VStack>
                             </HStack>
                             <StatusTag>{status}</StatusTag>
@@ -86,16 +118,27 @@ const MyPermissionsList: React.FC = memo(() => {
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey([], 'dateCreated'), []);
+    const {
+        user: { userId },
+    } = useRole();
+
+    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ requestor: userId });
+
+    useScreenFocus({
+        onFocus: refetch,
+    });
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'dateCreated'), [data]);
 
     return (
         <>
             {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
             <FlatListComponent
+                onRefresh={refetch}
                 data={memoizedData}
                 columns={myPermissionsColumns}
-                // isLoading={isLoading || isFetching}
-                // refreshing={isLoading || isFetching}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
             />
         </>
     );
@@ -109,12 +152,26 @@ const MyTeamPermissionsList: React.FC = memo(() => {
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey([], 'category'), []);
+    const {
+        user: {
+            department: { _id },
+        },
+    } = useRole();
+
+    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ departmentId: _id });
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
         <>
             {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
-            <FlatListComponent columns={teamPermissionsColumns} data={memoizedData} />
+            <FlatListComponent
+                onRefresh={refetch}
+                data={memoizedData}
+                columns={teamPermissionsColumns}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+            />
         </>
     );
 });
@@ -127,12 +184,26 @@ const CampusPermissions: React.FC = memo(() => {
         },
     ];
 
-    const memoizedData = useMemo(() => Utils.groupListByKey([], 'status'), []);
+    const {
+        user: {
+            campus: { _id },
+        },
+    } = useRole();
+
+    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ campusId: _id, limit: 20 });
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
         <>
             {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
-            <FlatListComponent columns={teamPermissionsColumns} data={memoizedData} />
+            <FlatListComponent
+                onRefresh={refetch}
+                data={memoizedData}
+                columns={teamPermissionsColumns}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+            />
         </>
     );
 });

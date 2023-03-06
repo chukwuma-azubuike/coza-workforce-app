@@ -21,6 +21,7 @@ export interface IDefaultQueryParams {
     startDate?: number | string;
     endDate?: number | string;
     campusId?: ICampus['_id'];
+    requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
     limit?: number;
@@ -42,9 +43,9 @@ export interface IDefaultErrorResponse<D = null> {
     data: D;
 }
 
-export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING';
+export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED';
 
-export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED';
+export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED' | 'APPROVED';
 
 // Authentication
 export interface IAuthParams extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
@@ -103,7 +104,6 @@ export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
 // Attendance
 export interface IAttendance extends ILog {
     _id: string;
-    id: string;
     userId: string;
     clockIn: string;
     clockOut: string;
@@ -112,6 +112,8 @@ export interface IAttendance extends ILog {
         latitude: string;
         longitude: string;
     };
+    campusName: string;
+    departmentName: string;
     createdAt: string;
     updatedAt: string;
     user: IUser;
@@ -139,6 +141,7 @@ export interface ITicket extends ILog {
     contestComment: string;
     department: IDepartment;
     category: ITicketCategory;
+    departmentName: string;
     contestReplyComment: string;
 }
 
@@ -160,6 +163,7 @@ export interface ICampusTicketsSummary {
 }
 
 export interface ICreateTicketPayload {
+    _id?: string;
     departmentId: IDepartment['_id'];
     campusId: ICampus['_id'];
     userId?: IUser['userId'];
@@ -181,7 +185,9 @@ export interface IPermission extends ILog {
     endDate: string;
     dateCreated: string;
     dateUpdated: string;
-    category: string;
+    category: IPermissionCategory;
+    departmentName: string;
+    categoryName: string;
     description: string;
     status: IStatus;
     comment: string;
@@ -192,6 +198,25 @@ export interface IPermission extends ILog {
         department: { id: string; name: string };
     };
     requestor: IUser;
+    approvedBy: string;
+    campusId: ICampus['_id'];
+    dateApproved: string;
+    department: IDepartment;
+    rejectedBy: string;
+    rejectedOn: number;
+}
+
+interface IPermissionCategory {
+    _id: string;
+    name: string;
+    createdAt: string;
+    description: string;
+}
+
+export interface IUpdatePermissionPayload {
+    _id: IPermission['_id'];
+    comment: string;
+    status: IStatus;
 }
 export interface IRequestPermissionPayload {
     startDate: string;
@@ -201,6 +226,10 @@ export interface IRequestPermissionPayload {
     description: string;
     status: IStatus;
     requestor: IUser['userId'];
+    categoryId: string;
+    departmentId: string;
+    campusId: ICampus['_id'];
+    approvedBy: IUser['_id'];
 }
 
 // Department

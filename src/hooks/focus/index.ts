@@ -27,6 +27,10 @@ const useScreenFocus = (props: IUseScreenFocusProps) => {
             return () => {};
         }, [isScreenNotFocused])
     );
+
+    return {
+        isScreenFocused,
+    };
 };
 
 export default useScreenFocus;

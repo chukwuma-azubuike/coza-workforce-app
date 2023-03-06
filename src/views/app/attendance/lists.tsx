@@ -1,6 +1,6 @@
 import React from 'react';
 import FlatListComponent from '../../../components/composite/flat-list';
-import { myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
+import { campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
 import { MonthPicker } from '../../../components/composite/date-picker';
 import {
     useGetAttendanceByCampusIdQuery,
@@ -9,6 +9,7 @@ import {
 } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { IAttendance } from '../../../store/types';
+import { useGetLatestServiceQuery } from '../../../store/services/services';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -55,22 +56,24 @@ export const TeamAttendance: React.FC = React.memo(() => {
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
-    const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceByCampusIdQuery(
-        user?.campus._id as string,
+    const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
+
+    const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
+        { campusId: user?.campus._id, serviceId: latestService?._id },
         {
-            skip: !user,
+            skip: !latestService,
             refetchOnMountOrArgChange: true,
         }
     );
 
     return (
         <>
-            <MonthPicker />
+            <MonthPicker today />
             <FlatListComponent
                 padding
                 onRefresh={refetch}
+                columns={campusColumns_1}
                 data={data as IAttendance[]}
-                columns={myAttendanceColumns}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
