@@ -136,7 +136,7 @@ export const ticketServiceSlice = createApi({
 
         getCampusTicketReport: endpoint.query<number, { serviceId: string; campusId: string }>({
             query: ({ campusId, serviceId }) => ({
-                url: `/${SERVICE_URL}/getCampusTickets/${serviceId}/${campusId}`,
+                url: `/${SERVICE_URL}/getCampusTicketReport/${serviceId}/${campusId}`,
                 method: REST_API_VERBS.GET,
             }),
 

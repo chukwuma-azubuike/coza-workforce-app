@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import { IAttendance, IDefaultQueryParams, IDefaultResponse, REST_API_VERBS } from '../types';
+import { IAttendance, ICampus, IDefaultQueryParams, IDefaultResponse, IUser, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'attendance';
@@ -16,6 +16,9 @@ export interface IClockInPayload {
         lat: string;
         long: string;
     };
+    roleId: IUser['role']['_id'];
+    campusId: ICampus['_id'];
+    departmentId: string;
 }
 
 export type IMutateAttendanceResponse = IDefaultResponse<IAttendance>;

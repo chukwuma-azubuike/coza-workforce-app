@@ -66,7 +66,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     } = useGetPermissionByIdQuery(_id);
 
     const [
-        updateTicket,
+        updatePermission,
         { isSuccess: updateIsSuccess, isError: updateIsError, isLoading: updateLoading, reset: updateReset },
     ] = useUpdatePermissionMutation();
 
@@ -75,7 +75,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     });
 
     const handleUpdate = (status: IUpdatePermissionPayload['status']) => {
-        updateTicket({ comment: permissionComment, _id, status } as IUpdatePermissionPayload);
+        updatePermission({ comment: permissionComment, _id, status } as IUpdatePermissionPayload);
     };
 
     const handleChange = (comment: string) => {
@@ -131,20 +131,20 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{permission?.department?.departmentName}</Text>
+                        <Text>{permission?.departmentName}</Text>
                     </HStack>
                     <HStack
-                        space={2}
                         pb={2}
                         w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
+                        space={2}
                         borderColor="gray.300"
+                        borderBottomWidth={0.2}
+                        justifyContent="space-between"
                     >
                         <Text alignSelf="flex-start" bold>
                             Category
                         </Text>
-                        <Text>{Utils.capitalizeFirstChar(permission?.categoryId?.name)}</Text>
+                        <Text>{permission?.categoryName}</Text>
                     </HStack>
                     <HStack
                         space={2}

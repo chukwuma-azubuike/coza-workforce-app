@@ -52,7 +52,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
         let cleanUp = true;
         if (isSuccess && cleanUp) {
             setModalState({
-                duration: 6,
+                duration: 3,
                 render: (
                     <ModalAlertComponent
                         description={`You clocked in at ${moment().format('LT')}`}
@@ -116,7 +116,8 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const canClockIn = isInRange && latestServiceData && !clockedIn;
 
-    const canClockOut = clockedIn;
+    const canClockOut =
+        latestAttendanceData?.length && latestAttendanceData[0].clockIn && !latestAttendanceData[0].clockOut;
 
     const handlePress = () => {
         if (!isInRange) {
@@ -142,6 +143,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     lat: `${deviceCoordinates.latitude}`,
                     long: `${deviceCoordinates.longitude}`,
                 },
+                campusId: user?.campus._id,
+                departmentId: user?.department._id,
+                roleId: user?.role._id,
             });
         }
         if (canClockOut && latestAttendanceData) {

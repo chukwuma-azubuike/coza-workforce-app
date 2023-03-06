@@ -37,6 +37,8 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
 
                 const {
                     requestor: { lastName, firstName, pictureUrl, department },
+                    departmentName,
+                    categoryName,
                     description,
                     category,
                     status,
@@ -63,7 +65,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                     {type === 'own' && (
                                         <>
                                             <Text fontSize="sm" color="gray.400">
-                                                {Utils.capitalizeFirstChar(category)}
+                                                {categoryName}
                                             </Text>
                                             <Text fontSize="sm" color="gray.400">
                                                 {Utils.truncateString(description)}
@@ -78,7 +80,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                                 )}`}
                                             </Text>
                                             <Text fontSize="sm" color="gray.400">
-                                                {Utils.capitalizeFirstChar(category)}
+                                                {categoryName}
                                             </Text>
                                         </>
                                     )}
@@ -90,10 +92,10 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                                 )}`}
                                             </Text>
                                             <Text fontSize="sm" color="gray.600">
-                                                {Utils.capitalizeFirstChar(department?.departmentName)}
+                                                {departmentName}
                                             </Text>
                                             <Text fontSize="sm" color="gray.400">
-                                                {Utils.capitalizeFirstChar(category)}
+                                                {categoryName}
                                             </Text>
                                         </>
                                     )}
@@ -190,7 +192,7 @@ const CampusPermissions: React.FC = memo(() => {
 
     const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ campusId: _id, limit: 20 });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [data]);
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
         <>

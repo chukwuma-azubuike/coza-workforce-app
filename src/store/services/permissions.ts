@@ -50,7 +50,7 @@ export const permissionsServiceSlice = createApi({
         }),
 
         getPermissions: endpoint.query<IPermission[], Omit<IDefaultQueryParams, 'userId'>>({
-            query: params => ({ url: `/${SERVICE_URL}`, method: REST_API_VERBS.GET, params }),
+            query: params => ({ url: `/${SERVICE_URL}/filter`, method: REST_API_VERBS.GET, params }),
 
             transformResponse: (response: IDefaultResponse<IPermission[]>) => response.data,
         }),

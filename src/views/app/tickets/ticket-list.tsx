@@ -39,7 +39,8 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const { status, remarks, ticketSummary, category, isIndividual, isDepartment, user } = elm;
+                const { status, remarks, ticketSummary, category, isIndividual, isDepartment, user, departmentName } =
+                    elm;
 
                 return (
                     <TouchableNativeFeedback
@@ -61,10 +62,18 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                 <VStack justifyContent="space-between">
                                     {type === 'own' && (
                                         <>
-                                            <Text fontSize="sm" color="gray.400">
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
                                             </Text>
-                                            <Text fontSize="sm" color="gray.400">
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
                                                 {Utils.truncateString(ticketSummary)}
                                             </Text>
                                         </>
@@ -76,7 +85,11 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                                     isDepartment ? departmentName : user?.firstName
                                                 )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
                                             </Text>
-                                            <Text fontSize="sm" color="gray.400">
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
                                             </Text>
                                         </>
@@ -90,10 +103,21 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                                     )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
                                                 </Text>
                                             )}
-                                            <Text fontSize="sm" color="gray.600">
-                                                {Utils.capitalizeFirstChar(user?.department?.departmentName)}
+                                            <Text
+                                                fontSize="sm"
+                                                bold={isDepartment}
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
+                                                {`${Utils.capitalizeFirstChar(departmentName || '')} ${
+                                                    isDepartment && ' - Departmental'
+                                                }`}
                                             </Text>
-                                            <Text fontSize="sm" color="gray.400">
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
                                             </Text>
                                         </>
