@@ -45,7 +45,7 @@ const useWelcome = () => {
                 setEmail('');
                 setOtpValue('');
                 reset();
-            }, 6000);
+            }, 3000);
         }
         if (isSuccess) {
             setModalVisible(true);

@@ -7,7 +7,7 @@ import { IFlatListColumn } from '../../../components/composite/flat-list';
 import { IAttendance } from '../../../store/types';
 import Utils from '../../../utils';
 import { Appearance } from 'react-native';
-import { AvatarComponentWithoutBadge } from '../../../components/atoms/avatar';
+import AvatarComponent from '../../../components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
 
 const colorScheme = Appearance.getColorScheme();
@@ -43,7 +43,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
         title: 'Clock In',
         dataIndex: 'clockIn',
         render: (elm: IAttendance, key) => (
-            <HStack key={`clockin-${key}`} alignItems="center">
+            <HStack key={`clockin-${key}`} alignItems="center" minWidth={88}>
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
@@ -60,7 +60,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
         title: 'Clock Out',
         dataIndex: 'clockOut',
         render: (elm: IAttendance, key) => (
-            <HStack key={`clockout-${key}`} alignItems="center">
+            <HStack key={`clockout-${key}`} alignItems="center" minWidth={88}>
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text
                     color="gray.500"
@@ -111,9 +111,9 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Name',
         dataIndex: 'name',
         render: (elm: IAttendance, key) => (
-            <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full">
+            <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
                 {/* <AvatarComponentWithoutBadge badge mr={4} size="xs" imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png" /> */}
-                <VStack>
+                <VStack justifyContent="center">
                     <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.truncateString(elm.user.firstName, 15)}
                     </Text>
@@ -128,7 +128,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Clock In',
         dataIndex: 'clockIn',
         render: (elm: IAttendance, key) => (
-            <HStack key={`clockin-${key}`} alignItems="center" flex={1} textAlign="left" w="full">
+            <HStack key={`clockin-${key}`} minWidth={45} alignItems="center" flex={1} textAlign="left" w="full">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
@@ -233,24 +233,28 @@ const campusColumns_1: IFlatListColumn[] = [
         title: 'User',
         dataIndex: 'user',
         render: (elm: IAttendance, key) => (
-            <HStack key={`user-${key}`} alignItems="center" space={4} flex={1} textAlign="left" w="full">
-                <AvatarComponentWithoutBadge
-                    badge
-                    mr={4}
-                    size="xs"
-                    imageUrl={elm.user?.pictureUrl || AVATAR_FALLBACK_URL}
-                />
+            <HStack
+                key={`user-${key}`}
+                alignItems="center"
+                textAlign="left"
+                flexWrap="wrap"
+                minWidth={100}
+                space={0}
+                flex={1}
+                w="full"
+            >
+                <AvatarComponent badge mr={4} size="xs" imageUrl={elm.user?.pictureUrl || AVATAR_FALLBACK_URL} />
                 <VStack>
-                    <HStack>
+                    <HStack flexWrap="wrap" maxWidth={160}>
                         <Text bold color={isLightMode ? 'gray.800' : 'gray.200'} ml={2}>
                             {Utils.truncateString(elm.user?.firstName)}
                         </Text>
                         <Text bold color={isLightMode ? 'gray.800' : 'gray.200'} ml={2}>
-                            {Utils.truncateString(elm.user?.lastName)}
+                            {Utils.truncateString(elm?.user?.lastName)}
                         </Text>
                     </HStack>
                     <Text color={isLightMode ? 'gray.800' : 'gray.200'} ml={2}>
-                        {Utils.truncateString(elm.user?.department.departmentName)}
+                        {Utils.truncateString(elm?.departmentName, 20)}
                     </Text>
                 </VStack>
             </HStack>
@@ -260,7 +264,7 @@ const campusColumns_1: IFlatListColumn[] = [
         title: '',
         dataIndex: 'clockin',
         render: (elm: IAttendance, key) => (
-            <HStack key={`clockin-${key}`} alignItems="center">
+            <HStack key={`clockin-${key}`} alignItems="center" minWidth={78}>
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
@@ -274,10 +278,10 @@ const campusColumns_1: IFlatListColumn[] = [
         ),
     },
     {
-        title: 'Clock In         Clock Out',
+        title: 'Clock In             Clock Out',
         dataIndex: 'clockout',
         render: (elm: IAttendance, key) => (
-            <HStack key={`clockout-${key}`} alignItems="center">
+            <HStack key={`clockout-${key}`} alignItems="center" minWidth={78} justifyContent="center">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text
                     color="gray.500"

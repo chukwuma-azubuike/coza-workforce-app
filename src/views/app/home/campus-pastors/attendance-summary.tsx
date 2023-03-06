@@ -2,36 +2,17 @@ import React from 'react';
 import { Icon } from '@rneui/base';
 import { Center, Flex, HStack, Text, VStack } from 'native-base';
 import { THEME_CONFIG } from '../../../../config/appConfig';
-import {
-    useGetDepartmentAttendanceReportQuery,
-    useGetLeadersAttendanceReportQuery,
-    useGetWorkersAttendanceReportQuery,
-} from '../../../../store/services/attendance';
-import useRole from '../../../../hooks/role';
-import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import { CountUp } from 'use-count-up';
-import useScreenFocus from '../../../../hooks/focus';
 import Loading from '../../../../components/atoms/loading';
 
-const TeamAttendanceSummary: React.FC = () => {
-    const {
-        user: { department, campus },
-    } = useRole();
+interface ITeamAttendanceSummary {
+    departmentUsers?: number;
+    attendance?: number;
+    isLoading?: boolean;
+}
 
-    const { data: latestService } = useGetLatestServiceQuery(campus?._id as string);
-
-    const {
-        data: attendanceReport,
-        isLoading,
-        refetch,
-    } = useGetDepartmentAttendanceReportQuery({
-        serviceId: latestService?._id as string,
-        departmentId: department._id,
-    });
-
-    useScreenFocus({
-        onFocus: refetch,
-    });
+const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
+    const { departmentUsers, attendance, isLoading } = props;
 
     return (
         <Center>
@@ -48,7 +29,7 @@ const TeamAttendanceSummary: React.FC = () => {
 
                     <Flex alignItems="baseline" flexDirection="row">
                         <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
-                            <CountUp isCounting duration={2} end={attendanceReport?.attendance ?? 0} />
+                            <CountUp isCounting duration={2} end={attendance || 0} />
                         </Text>
                         <Text
                             fontSize="md"
@@ -56,7 +37,7 @@ const TeamAttendanceSummary: React.FC = () => {
                             _dark={{ color: 'gray.400' }}
                             _light={{ color: 'gray.600' }}
                         >
-                            /<CountUp isCounting duration={2} end={attendanceReport?.departmentUsers ?? 0} />
+                            /<CountUp isCounting duration={2} end={departmentUsers || 0} />
                         </Text>
                     </Flex>
                 </HStack>
@@ -65,37 +46,16 @@ const TeamAttendanceSummary: React.FC = () => {
     );
 };
 
-const CampusAttendanceSummary: React.FC = () => {
-    const {
-        user: { campus },
-    } = useRole();
+interface ITeamAttendanceSummary {
+    leadersAttendance?: number;
+    workersAttendance?: number;
+    workerUsers?: number;
+    leaderUsers?: number;
+    isLoading?: boolean;
+}
 
-    const { data: latestService } = useGetLatestServiceQuery(campus?._id as string);
-
-    const {
-        data: leadersAttendance,
-        refetch: refetchLeaders,
-        isLoading: leadersLoading,
-    } = useGetLeadersAttendanceReportQuery({
-        serviceId: latestService?._id as string,
-        campusId: campus._id,
-    });
-
-    const {
-        data: workersAttendance,
-        refetch: refetchWorkers,
-        isLoading: workersLoading,
-    } = useGetWorkersAttendanceReportQuery({
-        serviceId: latestService?._id as string,
-        campusId: campus._id,
-    });
-
-    useScreenFocus({
-        onFocus: () => {
-            refetchLeaders();
-            refetchWorkers();
-        },
-    });
+const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
+    const { leaderUsers, leadersAttendance, workerUsers, workersAttendance } = props;
 
     return (
         <Center>
@@ -103,14 +63,14 @@ const CampusAttendanceSummary: React.FC = () => {
                 <VStack alignItems="center">
                     <Flex alignItems="baseline" flexDirection="row">
                         <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
-                            <CountUp isCounting duration={2} end={leadersAttendance?.attendance || 0} />
+                            <CountUp isCounting duration={2} end={leadersAttendance || 0} />
                         </Text>
                         <Text
                             fontWeight="semibold"
                             _light={{ color: 'gray.600' }}
                             _dark={{ color: 'gray.400' }}
                             fontSize="md"
-                        >{`/${leadersAttendance?.leaderUsers || 0}`}</Text>
+                        >{`/${leaderUsers || 0}`}</Text>
                     </Flex>
                     <Flex alignItems="center" flexDirection="row">
                         <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
@@ -122,14 +82,14 @@ const CampusAttendanceSummary: React.FC = () => {
                 <VStack alignItems="center">
                     <Flex alignItems="baseline" flexDirection="row">
                         <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
-                            <CountUp isCounting duration={2} end={workersAttendance?.attendance || 0} />
+                            <CountUp isCounting duration={2} end={workersAttendance || 0} />
                         </Text>
                         <Text
                             fontWeight="semibold"
                             _light={{ color: 'gray.600' }}
                             _dark={{ color: 'gray.400' }}
                             fontSize="md"
-                        >{`/${workersAttendance?.workerUsers || 0}`}</Text>
+                        >{`/${workerUsers || 0}`}</Text>
                     </Flex>
                     <Flex alignItems="center" flexDirection="row">
                         <Icon color={THEME_CONFIG.primary} type="material-community" name="crowd" size={18} />

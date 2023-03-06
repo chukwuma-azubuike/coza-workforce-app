@@ -32,7 +32,6 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import UserDetails from '../views/app/workforce-management/user-details';
-
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;

@@ -11,12 +11,68 @@ import { Dimensions, Platform } from 'react-native';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
 import { HomeContext } from '..';
-import { ICampusCoordinates } from '../../../../store/services/attendance';
+import {
+    ICampusCoordinates,
+    useGetDepartmentAttendanceReportQuery,
+    useGetLeadersAttendanceReportQuery,
+    useGetWorkersAttendanceReportQuery,
+} from '../../../../store/services/attendance';
 import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
 import Loading from '../../../../components/atoms/loading';
+import { useGetLatestServiceQuery } from '../../../../store/services/services';
+import useScreenFocus from '../../../../hooks/focus';
+import { useGetCampusTicketReportQuery } from '../../../../store/services/tickets';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(null as unknown as GeoCoordinates);
+
+    const {
+        user: { department, campus },
+    } = useRole();
+
+    const { data: latestService, refetch: refetchService } = useGetLatestServiceQuery(campus?._id as string);
+
+    const {
+        data: attendanceReport,
+        isLoading: attendanceReportLoading,
+        refetch: attendanceReportRefetch,
+    } = useGetDepartmentAttendanceReportQuery({
+        serviceId: latestService?._id as string,
+        departmentId: department._id,
+    });
+
+    const {
+        data: leadersAttendance,
+        refetch: refetchLeaders,
+        isLoading: leadersLoading,
+    } = useGetLeadersAttendanceReportQuery({
+        serviceId: latestService?._id as string,
+        campusId: campus._id,
+    });
+
+    const {
+        data: workersAttendance,
+        refetch: refetchWorkers,
+        isLoading: workersLoading,
+    } = useGetWorkersAttendanceReportQuery({
+        serviceId: latestService?._id as string,
+        campusId: campus._id,
+    });
+
+    const { data: tickets, refetch: refetchTickets } = useGetCampusTicketReportQuery({
+        serviceId: latestService?._id as string,
+        campusId: campus._id,
+    });
+
+    useScreenFocus({
+        onFocus: () => {
+            refetchService();
+            refetchLeaders();
+            refetchWorkers();
+            refetchTickets();
+            attendanceReportRefetch();
+        },
+    });
 
     const {
         latestService: { data },
@@ -53,8 +109,13 @@ const Clocker: React.FC = () => {
         <Center px={4} pt={8} _dark={{ bg: 'black' }}>
             <Timer />
             <If condition={isCampusPastor}>
-                <CampusAttendanceSummary />
-                <CampusTicketSummary />
+                <CampusAttendanceSummary
+                    leadersAttendance={leadersAttendance?.attendance}
+                    workersAttendance={workersAttendance?.attendance}
+                    leaderUsers={leadersAttendance?.leaderUsers}
+                    workerUsers={workersAttendance?.workerUsers}
+                />
+                <CampusTicketSummary tickets={tickets} />
             </If>
             {!user ? (
                 <Loading />
@@ -64,7 +125,11 @@ const Clocker: React.FC = () => {
                         <ClockButton deviceCoordinates={deviceCoordinates} isInRange={isInRange || false} />
                         <CampusLocation />
                         <If condition={isAHOD || isHOD}>
-                            <TeamAttendanceSummary />
+                            <TeamAttendanceSummary
+                                isLoading={attendanceReportLoading}
+                                attendance={attendanceReport?.attendance}
+                                departmentUsers={attendanceReport?.departmentUsers}
+                            />
                         </If>
                         <ClockStatistics />
                     </VStack>

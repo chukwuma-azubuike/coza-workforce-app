@@ -35,7 +35,9 @@ const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setM
             <Modal.Content w="90%" h={300}>
                 <Center>
                     <VStack w="full" space={2} borderRadius="2xl" backgroundColor="transparent">
-                        {defaultRender ? (
+                        {render ? (
+                            render
+                        ) : defaultRender ? (
                             <ModalAlertComponent
                                 description={message}
                                 iconName={
@@ -62,8 +64,6 @@ const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setM
                                 }
                                 status={status}
                             />
-                        ) : render ? (
-                            render
                         ) : (
                             <Text my={4} fontSize="xl" textAlign="center">
                                 {message}

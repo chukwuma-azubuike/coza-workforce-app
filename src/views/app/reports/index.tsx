@@ -6,13 +6,24 @@ import StaggerButtonComponent from '../../../components/composite/stagger';
 import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
 import CampusReport from './campus-report';
-import { useGetDepartmentalReportQuery, useGetDepartmentReportsListQuery } from '../../../store/services/reports';
+import {
+    ICampusReportSummary,
+    useGetDepartmentalReportQuery,
+    useGetDepartmentReportsListQuery,
+} from '../../../store/services/reports';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import useScreenFocus from '../../../hooks/focus';
-import FlatListComponent from '../../../components/composite/flat-list';
+import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import Utils from '../../../utils';
-import { reportColumns } from '../home/campus-pastors/report-summary';
+import { HStack } from 'native-base';
+
+const reportColumns: IFlatListColumn[] = [
+    {
+        dataIndex: 'createdAt',
+        render: (_: ICampusReportSummary, key) => <HStack key={key}></HStack>,
+    },
+];
 
 const Reports: React.FC = () => {
     const {
@@ -62,6 +73,7 @@ const Reports: React.FC = () => {
     const { setModalState } = useModal();
 
     const goToReportRoute = () => {
+        return 'Attendance Report';
         if (isCTS) {
             return 'Transfer Report';
         }
