@@ -14,6 +14,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Appearance } from 'react-native';
 import { useColorMode } from 'native-base';
 import { useAppDispatch } from '../store/hooks';
+import ConnectionStatusBar from '../components/atoms/status-bar';
 
 const colorScheme = Appearance.getColorScheme();
 const RootStack = createNativeStackNavigator();
@@ -25,7 +26,6 @@ const theme = {
         primary: THEME_CONFIG.primary,
     },
 };
-
 interface IAppState {
     isLoggedIn: boolean;
 }
@@ -57,6 +57,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     return (
         <>
+            <ConnectionStatusBar />
             <NotificationModal modalState={modalState} setModalState={setModalState} />
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
