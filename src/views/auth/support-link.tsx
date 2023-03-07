@@ -1,14 +1,20 @@
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import React from 'react';
 import { Icon } from '@rneui/themed';
 import { HStack, Text } from 'native-base';
 import useAppColorMode from '../../hooks/theme/colorMode';
 import { THEME_CONFIG } from '../../config/appConfig';
+import { openComposer } from 'react-native-email-link';
 
 const SupportLink = () => {
     const handleNotificationPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        const email = process.env.SUPPORT_EMAIL as string;
+
+        openComposer({
+            to: email,
+        });
     };
+
     const { isLightMode } = useAppColorMode();
     return (
         <HStack px={2} py={1} pb={1.5} borderRadius="lg" alignItems="center" _dark={{ bg: 'gray.800', space: 2 }}>

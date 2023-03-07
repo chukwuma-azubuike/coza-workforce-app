@@ -8,15 +8,17 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
-import { Linking } from 'react-native';
+import { openComposer } from 'react-native-email-link';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     // API implementation
 
     const handleNotificationPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        const email = process.env.SUPPORT_EMAIL as string;
 
-        // navigation.navigate('Notifications');
+        openComposer({
+            to: email,
+        });
     };
 
     const handlePress = () => navigation.navigate('Profile');
