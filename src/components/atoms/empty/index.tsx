@@ -36,6 +36,8 @@ const Empty: React.FC<{
             <Text fontSize="md" color="gray.400" semi-bold>
                 {isCampusPastor || isGlobalPastor
                     ? `${message ? message : EMPTY_MESSAGE} ${gender === 'M' ? 'sir' : 'ma'}`
+                    : message
+                    ? message
                     : EMPTY_MESSAGE}
             </Text>
             <If condition={refresh && true}>

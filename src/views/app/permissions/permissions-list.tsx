@@ -64,7 +64,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                 <VStack justifyContent="space-between">
                                     {type === 'own' && (
                                         <>
-                                            <Text fontSize="sm" color="gray.400">
+                                            <Text bold fontSize="sm" color="gray.400">
                                                 {categoryName}
                                             </Text>
                                             <Text fontSize="sm" color="gray.400">
@@ -160,6 +160,10 @@ const MyTeamPermissionsList: React.FC = memo(() => {
 
     const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ departmentId: _id });
 
+    useScreenFocus({
+        onFocus: refetch,
+    });
+
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
@@ -193,6 +197,10 @@ const CampusPermissions: React.FC = memo(() => {
     const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ campusId: _id, limit: 20 });
 
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
+
+    useScreenFocus({
+        onFocus: refetch,
+    });
 
     return (
         <>

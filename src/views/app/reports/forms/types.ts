@@ -14,4 +14,5 @@ export type IReportFormProps = Pick<IDepartmentReportResponse['departmentalRepor
     campusId: ICampus['_id'];
     userId: IUser['userId'];
     status: IReportStatus;
+    pastorComment: string;
 };
