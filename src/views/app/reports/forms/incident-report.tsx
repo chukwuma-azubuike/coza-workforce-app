@@ -16,10 +16,18 @@ import { IReportFormProps } from './types';
 const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateIncidentReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateIncidentReportMutation();
 
     const onSubmit = (values: IIncidentReportPayload) => {
-        sendReport({ ...values, ...params });
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
+    const onRequestReview = (values: IIncidentReportPayload) => {
+        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+    };
+
+    const onApprove = (values: IIncidentReportPayload) => {
+        updateReport({ ...values, ...params, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -31,7 +39,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             setModalState({
                 defaultRender: true,
                 status: 'success',
-                message: 'Report submitted',
+                message: 'Report updated',
             });
             navigation.goBack();
         }

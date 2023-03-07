@@ -20,6 +20,7 @@ enum DEPARTMENTS {
     CTS = 'COZA Transfer Service',
     childcare = 'Children Ministry',
     programs = 'Programme Coordinator',
+    PRU = 'Public Relations Unit (PRU)',
     security = 'Digital Surveillance Security',
 }
 
@@ -46,6 +47,7 @@ const useRole = () => {
         isQC: departmentName === DEPARTMENTS.QC,
         isCTS: departmentName === DEPARTMENTS.CTS,
         isPCU: departmentName === DEPARTMENTS.PCU,
+        isPRU: departmentName === DEPARTMENTS.PRU,
         isUshery: departmentName === DEPARTMENTS.ushery,
         isPrograms: departmentName === DEPARTMENTS.programs,
         isSecurity: departmentName === DEPARTMENTS.security,

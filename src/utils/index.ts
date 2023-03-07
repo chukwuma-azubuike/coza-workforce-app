@@ -27,7 +27,7 @@ class Utils {
     }
 
     static truncateString(str: string, num: number = 25) {
-        if (str.length > num) {
+        if (str?.length > num) {
             return str.slice(0, num) + '...';
         }
         return str;
@@ -41,6 +41,10 @@ class Utils {
 
     static sortStringAscending = (arrObject: any[], key: string) =>
         [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+
+    static sortByDate = (arrObject: any[], key: string) => {
+        return [...arrObject].sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
+    };
 
     /*************** Filters ****************/
     static filter(arr?: any[], citeria?: any) {
@@ -181,6 +185,10 @@ class Utils {
         for (let i = 0; i < array.length; i++) {
             let keyInMap = array[i][key];
 
+            if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
+                keyInMap = moment(array[i][key]).format('Do MMMM, YYYY');
+            }
+
             if (map[keyInMap]) {
                 map[keyInMap] = [...map[keyInMap], array[i]];
             } else {
@@ -192,3 +200,8 @@ class Utils {
 }
 
 export default Utils;
+
+type GroupListByKey<A> = {
+    key: keyof A;
+    array: A[];
+};

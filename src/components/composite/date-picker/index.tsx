@@ -10,7 +10,7 @@ import { Platform } from 'react-native';
 import If from '../if-container';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 
-const MonthPicker = () => {
+const MonthPicker = ({ today }: { today?: boolean }) => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
         switch (direction) {
             case 'left':
@@ -34,7 +34,7 @@ const MonthPicker = () => {
             }}
         >
             <HStack justifyContent="space-around" alignItems="center">
-                <Icon color={THEME_CONFIG.lightGray} name="chevron-small-left" type="entypo" size={26} />
+                {/* <Icon color={THEME_CONFIG.lightGray} name="chevron-small-left" type="entypo" size={26} /> */}
                 <HStack w="full" space={2} justifyContent="center" alignItems="center">
                     <Icon
                         size={20}
@@ -43,22 +43,23 @@ const MonthPicker = () => {
                         color={isDarkMode ? THEME_CONFIG.primaryLight : THEME_CONFIG.primary}
                     />
                     <Text bold fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.600' }}>
-                        {moment().format('MMMM y')}
+                        {today ? moment().format('Do MMMM, y') : moment().format('MMMM y')}
                     </Text>
                 </HStack>
-                <Icon color={THEME_CONFIG.lightGray} name="chevron-small-right" type="entypo" size={26} />
+                {/* <Icon color={THEME_CONFIG.lightGray} name="chevron-small-right" type="entypo" size={26} /> */}
             </HStack>
         </Swipeable>
     );
 };
 
 interface IDateTimePickerProps {
-    mode?: 'date' | 'time' | 'dateTime' | 'countdown';
+    mode?: 'date' | 'time' | 'dateTime' | 'countdown' | 'dayMonth';
     label?: string;
     minimumDate?: Date;
     maximumDate?: Date;
     fieldName?: string;
     onSelectDate?: (fieldName: string, value: any) => void;
+    dateFormat?: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
 }
 
 const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
@@ -68,6 +69,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     minimumDate,
     maximumDate,
     onSelectDate,
+    dateFormat = 'day month year',
 }: IDateTimePickerProps) => {
     const isIOS = Platform.OS === 'ios';
 
@@ -100,8 +102,10 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     }}
                     onPressIn={handlePress}
                     showSoftInputOnFocus={false}
-                    value={moment(date).format(mode === 'time' ? 'LTS' : 'DD MMM, yy')}
-                    placeholder={moment().format(mode === 'time' ? 'LTS' : 'DD MMM, yy')}
+                    value={moment(date).format(mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy')}
+                    placeholder={moment().format(
+                        mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
+                    )}
                 />
             </If>
             {show && (
@@ -109,10 +113,12 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     value={date}
                     mode={mode as any}
                     onChange={onChange}
+                    accentColor={THEME_CONFIG.primary}
                     minimumDate={minimumDate}
                     maximumDate={maximumDate}
-                    style={{ width: isIOS && 90 }}
+                    style={{ width: isIOS ? 90 : 'initial', backgroundColor: 'red' }}
                     onTouchCancel={handleTouchCancel}
+                    dateFormat={dateFormat}
                 />
             )}
         </VStack>

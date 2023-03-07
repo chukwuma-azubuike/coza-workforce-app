@@ -1,7 +1,7 @@
 import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import Clocker from './clocker';
+import Clocker from './workers/clocker';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import TopNav from './top-nav';
 import { usePreventGoBack } from '../../../hooks/navigation';
@@ -13,10 +13,13 @@ import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
 import { HomeSkeleton } from '../../../components/layout/skeleton';
-import { CampusReportSummary } from './report-summary';
+import { CampusReportSummary } from './campus-pastors/report-summary';
 import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
 import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
+import useScreenFocus from '../../../hooks/focus';
+import { Box } from 'native-base';
 
 interface IInitialHomeState {
     latestService: {
@@ -31,6 +34,7 @@ interface IInitialHomeState {
         latestAttendanceIsSuccess: boolean;
         latestAttendanceIsLoading: boolean;
     };
+    currentCoordinate: GeoCoordinates;
 }
 
 export const HomeContext = React.createContext({} as IInitialHomeState);
@@ -63,12 +67,17 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isLoading: latestAttendanceIsLoading,
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
-        { userId: user?.userId as string, serviceId: latestService?._id },
+        {
+            userId: user?.userId as string,
+            serviceId: latestService?._id,
+        },
         {
             skip: !user && !latestService,
             refetchOnMountOrArgChange: true,
         }
     );
+
+    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
 
     const initialState = {
         latestService: { data: latestService, isError, isSuccess, isLoading },
@@ -78,18 +87,25 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             latestAttendanceIsSuccess,
             latestAttendanceIsLoading,
         },
+        currentCoordinates: deviceCoordinates,
     };
 
     const handleRefresh = () => {
         if (!isGlobalPastor) {
             refetch();
             latestAttendanceRefetch();
+            Geolocation.watchPosition(props => {
+                setDeviceCoordinates(props.coords);
+            });
         }
     };
 
     React.useEffect(() => {
         Utils.checkLocationPermission();
         Utils.requestLocationPermission();
+        Geolocation.watchPosition(({ coords }) => {
+            setDeviceCoordinates(coords);
+        });
     }, []);
 
     React.useEffect(() => {
@@ -101,15 +117,21 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         }
     }, [currentUserData]);
 
+    useScreenFocus({
+        onFocusExit: () => {
+            Geolocation.stopObserving();
+        },
+    });
+
     return (
-        <HomeContext.Provider value={initialState}>
+        <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             {!user ? (
                 <ViewWrapper>
                     <HomeSkeleton />
                 </ViewWrapper>
             ) : (
                 <>
-                    <ViewWrapper scroll refreshing={isLoading} onRefresh={handleRefresh}>
+                    <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
                         <If condition={user ? true : false}>
                             <TopNav {...navigation} />
                             <If condition={!isGlobalPastor}>
@@ -119,12 +141,14 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                                 <GSPView />
                             </If>
                         </If>
+                        <If condition={isCampusPastor}>
+                            <CampusReportSummary
+                                refetchService={handleRefresh}
+                                serviceId={latestService?._id}
+                                serviceIsLoading={isLoading}
+                            />
+                        </If>
                     </ViewWrapper>
-                    <If condition={isCampusPastor}>
-                        <ViewWrapper noPadding style={{ maxHeight: 320 }}>
-                            <CampusReportSummary serviceId={latestService?._id} serviceIsLoading={isLoading} />
-                        </ViewWrapper>
-                    </If>
                 </>
             )}
         </HomeContext.Provider>

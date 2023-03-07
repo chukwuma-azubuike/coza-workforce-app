@@ -28,6 +28,7 @@ const useWelcome = () => {
             isError: isErrorValidate,
             isSuccess: isSuccessValidate,
             isLoading: isLoadingValidate,
+            reset,
         },
     ] = useValidateEmailOTPMutation();
 
@@ -42,10 +43,14 @@ const useWelcome = () => {
             setTimeout(() => {
                 setModalVisible(false);
                 setEmail('');
-            }, 6000);
+                setOtpValue('');
+                reset();
+            }, 3000);
         }
         if (isSuccess) {
             setModalVisible(true);
+            reset();
+            setOtpValue('');
         }
     }, [isError, isSuccess]);
 

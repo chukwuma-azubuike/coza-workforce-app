@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
@@ -6,12 +7,11 @@ import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
+import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
-import {
-    useGetDepartmentTicketsQuery,
-    useGetUserTicketsQuery,
-    useGetCampusTicketsQuery,
-} from '../../../store/services/tickets';
+import useAppColorMode from '../../../hooks/theme/colorMode';
+import { useGetTicketsQuery } from '../../../store/services/tickets';
 import { ITicket } from '../../../store/types';
 import Utils from '../../../utils';
 
@@ -23,26 +23,24 @@ interface TicketListRowProps extends ITicket {
 
 const TicketListRow: React.FC<TicketListRowProps> = props => {
     const navigation = useNavigation();
-
+    const { isLightMode } = useAppColorMode();
     const { type } = props;
+
+    const {
+        user: {
+            department: { departmentName },
+        },
+    } = useRole();
 
     return (
         <>
-            {props[1]?.map((elm, idx) => {
+            {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const {
-                    status,
-                    remarks,
-                    ticketSummary,
-                    contestComment,
-                    contestReplyComment,
-                    category,
-                    department,
-                    user,
-                } = elm;
+                const { status, remarks, ticketSummary, category, isIndividual, isDepartment, user, departmentName } =
+                    elm;
 
                 return (
                     <TouchableNativeFeedback
@@ -50,28 +48,80 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                         delayPressIn={0}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(THEME_CONFIG.veryLightGray, false, 220)}
+                        background={TouchableNativeFeedback.Ripple(
+                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                            false,
+                            220
+                        )}
+                        key={index}
+                        style={{ paddingHorizontal: 20 }}
                     >
-                        <HStack py={2} flex={1} key={idx} w="full" alignItems="center" justifyContent="space-between">
+                        <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={user?.pictureUrl} />
+                                <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 <VStack justifyContent="space-between">
-                                    <Text bold>
-                                        {type === 'own'
-                                            ? Utils.capitalizeFirstChar(category?.categoryName)
-                                            : type === 'team'
-                                            ? `${Utils.capitalizeFirstChar(
-                                                  user?.firstName
-                                              )} ${Utils.capitalizeFirstChar(user?.lastName)}`
-                                            : `${Utils.capitalizeFirstChar(
-                                                  user?.firstName
-                                              )} ${Utils.capitalizeFirstChar(
-                                                  user?.lastName
-                                              )} (${Utils.capitalizeFirstChar(department?.departmentName)})`}
-                                    </Text>
-                                    <Text fontSize="sm" color="gray.400">
-                                        {Utils.truncateString(ticketSummary)}
-                                    </Text>
+                                    {type === 'own' && (
+                                        <>
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
+                                                {Utils.capitalizeFirstChar(category?.categoryName)}
+                                            </Text>
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
+                                                {Utils.truncateString(departmentName)}
+                                            </Text>
+                                        </>
+                                    )}
+                                    {type === 'team' && (
+                                        <>
+                                            <Text bold>
+                                                {`${Utils.capitalizeFirstChar(
+                                                    isDepartment ? departmentName : user?.firstName
+                                                )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
+                                            </Text>
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
+                                                {Utils.capitalizeFirstChar(category?.categoryName)}
+                                            </Text>
+                                        </>
+                                    )}
+                                    {type === 'campus' && (
+                                        <>
+                                            {isIndividual && (
+                                                <Text bold>
+                                                    {`${Utils.capitalizeFirstChar(
+                                                        user?.firstName
+                                                    )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
+                                                </Text>
+                                            )}
+                                            <Text
+                                                fontSize="sm"
+                                                bold={isDepartment}
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
+                                                {`${Utils.capitalizeFirstChar(departmentName || '')} ${
+                                                    isDepartment && ' - Departmental'
+                                                }`}
+                                            </Text>
+                                            <Text
+                                                fontSize="sm"
+                                                _dark={{ color: 'gray.300' }}
+                                                _light={{ color: 'gray.600' }}
+                                            >
+                                                {Utils.capitalizeFirstChar(category?.categoryName)}
+                                            </Text>
+                                        </>
+                                    )}
                                 </VStack>
                             </HStack>
                             <StatusTag>{status}</StatusTag>
@@ -97,20 +147,24 @@ const MyTicketsList: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, isFetching, refetch } = useGetUserTicketsQuery(userId);
+    const { data, isLoading, error, isFetching, refetch } = useGetTicketsQuery({ userId });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
+    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data : [], 'createdAt'), [data]);
+
+    const groupedData = useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+
+    useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            data={memoizedData}
+            data={groupedData}
             onRefresh={refetch}
             columns={myTicketsColumns}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}
             emptyMessage={
                 isCampusPastor || isGlobalPastor
-                    ? 'There are no tickets issued'
+                    ? 'There are no tickets issued sir'
                     : "Nothing here, let's keep it that way 😇"
             }
         />
@@ -131,13 +185,21 @@ const MyTeamTicketsList: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch, isFetching } = useGetDepartmentTicketsQuery(department._id);
+    const { data, isLoading, error, refetch, isFetching } = useGetTicketsQuery({
+        departmentId: department._id,
+        limit: 20,
+        page: 1,
+    });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [isLoading]);
+    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data : [], 'createdAt'), [data]);
+
+    const groupedData = useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+
+    useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            data={memoizedData}
+            data={groupedData}
             onRefresh={refetch}
             columns={teamTicketsColumns}
             isLoading={isLoading || isFetching}
@@ -165,13 +227,22 @@ const CampusTickets: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch, isFetching } = useGetCampusTicketsQuery(campus._id);
+    const { data, isLoading, error, refetch, isFetching } = useGetTicketsQuery({
+        campusId: campus._id,
+        limit: 20,
+        page: 1,
+    });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'status'), [isLoading]);
+    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data : [], 'createdAt'), [data]);
+
+    const groupedData = useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+
+    useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            data={memoizedData}
+            data={groupedData}
+            onRefresh={refetch}
             columns={teamTicketsColumns}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}

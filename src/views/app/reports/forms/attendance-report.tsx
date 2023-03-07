@@ -1,11 +1,11 @@
-/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
 import { IAttendanceReportPayload } from '../../../../store/types';
 import { useCreateAttendanceReportMutation } from '../../../../store/services/reports';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { FormControl, VStack, Text, Divider, WarningOutlineIcon } from 'native-base';
+import { FormControl, VStack, Text, Divider, WarningOutlineIcon, HStack } from 'native-base';
 import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
@@ -13,14 +13,26 @@ import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
+import useRole from '../../../../hooks/role';
+import If from '../../../../components/composite/if-container';
 
 const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateAttendanceReportMutation();
+    const { isCampusPastor } = useRole();
+
+    const [updateReport, { reset, error, isError, isSuccess, isLoading }] = useCreateAttendanceReportMutation();
 
     const onSubmit = (values: IAttendanceReportPayload) => {
-        sendReport({ ...values, ...params });
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
+    const onRequestReview = (values: IAttendanceReportPayload) => {
+        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+    };
+
+    const onApprove = (values: IAttendanceReportPayload) => {
+        updateReport({ ...values, ...params, status: 'APPROVED' });
     };
 
     const { setModalState } = useModal();
@@ -31,8 +43,9 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
             setModalState({
                 defaultRender: true,
                 status: 'success',
-                message: 'Report submitted',
+                message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -41,14 +54,18 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = {
-        maleGuestCount: 0,
+    const INITIAL_VALUES: IAttendanceReportPayload = {
         femaleGuestCount: 0,
+        maleGuestCount: 0,
+        otherInfo: '',
+        imageUrl: '',
         infants: 0,
         total: 0,
+        ...params,
     };
 
     const addValues = (values: IAttendanceReportPayload) => {
@@ -116,23 +133,53 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <Divider />
-                            <FormControl mb={2}>
+                            <FormControl>
                                 <TextAreaComponent
+                                    isDisabled={isCampusPastor}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                 />
                             </FormControl>
-                            <FormControl>
-                                <ButtonComponent
-                                    isLoading={isLoading}
-                                    onPress={() => {
-                                        setFieldValue('total', addValues(values));
-                                        handleSubmit();
-                                    }}
-                                >
-                                    Submit
-                                </ButtonComponent>
-                            </FormControl>
+                            <If condition={!isCampusPastor}>
+                                <FormControl mt={2}>
+                                    <ButtonComponent
+                                        isLoading={isLoading}
+                                        onPress={() => {
+                                            setFieldValue('total', addValues(values));
+                                            handleSubmit();
+                                        }}
+                                    >
+                                        Submit
+                                    </ButtonComponent>
+                                </FormControl>
+                            </If>
+                            <If condition={isCampusPastor}>
+                                <FormControl mb={6}>
+                                    <TextAreaComponent
+                                        placeholder="Pastor's comment"
+                                        onChangeText={handleChange('pastorComment')}
+                                    />
+                                </FormControl>
+                                <HStack space={4} justifyContent="space-between" w="95%">
+                                    <ButtonComponent
+                                        onPress={() => onRequestReview(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        secondary
+                                        size="md"
+                                    >
+                                        Request Review
+                                    </ButtonComponent>
+                                    <ButtonComponent
+                                        onPress={() => onApprove(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        size="md"
+                                    >
+                                        Approve
+                                    </ButtonComponent>
+                                </HStack>
+                            </If>
                         </VStack>
                     </VStack>
                 </ViewWrapper>

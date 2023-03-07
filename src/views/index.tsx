@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import SplashScreen from 'react-native-splash-screen';
 import AppRoute from '../routes/app';
 import { useColorScheme } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
@@ -13,6 +14,7 @@ import DeviceInfo from 'react-native-device-info';
 import { Appearance } from 'react-native';
 import { useColorMode } from 'native-base';
 import { useAppDispatch } from '../store/hooks';
+import ConnectionStatusBar from '../components/atoms/status-bar';
 
 const colorScheme = Appearance.getColorScheme();
 const RootStack = createNativeStackNavigator();
@@ -24,7 +26,6 @@ const theme = {
         primary: THEME_CONFIG.primary,
     },
 };
-
 interface IAppState {
     isLoggedIn: boolean;
 }
@@ -40,6 +41,8 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     React.useEffect(() => {
         setColorMode(colorScheme);
 
+        SplashScreen.hide();
+
         const versionLogic = async () => {
             inAppUpdates();
 
@@ -54,6 +57,7 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     return (
         <>
+            <ConnectionStatusBar />
             <NotificationModal modalState={modalState} setModalState={setModalState} />
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>

@@ -2,32 +2,31 @@ import React from 'react';
 import { Box, FormControl, VStack } from 'native-base';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import ButtonComponent from '../../../components/atoms/button';
-import TextAreaComponent from '../../../components/atoms/text-area';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
 import useModal from '../../../hooks/modal/useModal';
-import { ParamListBase, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { ParamListBase, useIsFocused, useNavigation } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
-import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
-import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
-import { ICreateTicketPayload, IDepartment } from '../../../store/types';
-import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '../../../store/services/tickets';
+import { useGetDepartmentsByCampusIdQuery, useGetDepartmentsQuery } from '../../../store/services/department';
+import { useCreateUserMutation, useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
+import { IDepartment, IRegisterPayload } from '../../../store/types';
 import { Formik, FormikConfig } from 'formik';
-import { CreateDepartmentalTicketSchema, CreateIndividualTicketSchema } from '../../../utils/schemas';
+import { RegisterSchema } from '../../../utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Utils from '../../../utils';
-import If from '../../../components/composite/if-container';
-import { ITicketType } from '.';
+import { InputComponent } from '../../../components/atoms/input';
 
-const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { type } = props.route.params as { type: ITicketType };
-
+const createUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { goBack, setOptions } = useNavigation();
 
     const {
         user: { campus },
     } = useRole();
+
+    const [icon, setIcon] = React.useState<{ name: string; type: string }>({
+        type: 'ionicon',
+        name: 'briefcase-outline',
+    });
 
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
 
@@ -48,15 +47,12 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         skip: !departmentId,
     });
 
-    const { data: ticketCategories, isError: categoriesError } = useGetTicketCategoriesQuery();
+    const { data: departments, isError: departmentsError } = useGetDepartmentsQuery();
 
-    const [issueTicket, { isError, isLoading, isSuccess, error }] = useCreateTicketMutation();
+    const [createUser, { isError, isLoading, isSuccess, error }] = useCreateUserMutation();
 
-    const handleSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
-        if (isDepartmental) {
-            delete values.userId;
-        }
-        issueTicket(values);
+    const handleSubmit: FormikConfig<IRegisterPayload>['onSubmit'] = (values, { resetForm }) => {
+        createUser(values);
         resetForm(INITIAL_VALUES);
         setDepartmentId('');
     };
@@ -69,24 +65,12 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetchDepartments();
     };
 
-    const isDepartmental = type === 'DEPARTMENTAL';
-    const isIndividual = type === 'INDIVIDUAL';
-
-    const INITIAL_VALUES: ICreateTicketPayload = {
-        departmentId: departmentId,
-        campusId: campus._id,
-        userId: '',
-        categoryId: '',
-        isDepartment: isDepartmental,
-        isIndividual: isIndividual,
-        isRetracted: false,
-        ticketSummary: '',
-    } as ICreateTicketPayload;
+    const INITIAL_VALUES = {} as IRegisterPayload;
 
     React.useEffect(() => {
         if (isSuccess) {
             setModalState({
-                message: 'Ticket successfully issued',
+                message: 'User successfully issued',
                 defaultRender: true,
                 status: 'success',
                 duration: 3,
@@ -96,7 +80,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
         if (isError) {
             setModalState({
-                message: 'Oops, something went wrong!',
+                message: `${error.message}`,
                 defaultRender: true,
                 status: 'error',
                 duration: 3,
@@ -106,26 +90,16 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const isScreenFocused = useIsFocused();
 
-    useFocusEffect(
-        React.useCallback(() => {
-            setOptions({ title: `${Utils.capitalizeFirstChar(type)} Ticket` });
-            setDepartmentId('');
-            return () => {};
-        }, [isScreenFocused])
-    );
-
     return (
         <ViewWrapper>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                 <Box alignItems="center" w="100%">
-                    <Formik<ICreateTicketPayload>
+                    <Formik<IRegisterPayload>
                         validateOnChange
                         enableReinitialize
                         onSubmit={handleSubmit}
                         initialValues={INITIAL_VALUES}
-                        validationSchema={
-                            isDepartmental ? CreateDepartmentalTicketSchema : CreateIndividualTicketSchema
-                        }
+                        validationSchema={RegisterSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit }) => (
                             <VStack w="100%" space={1}>
@@ -160,57 +134,9 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         {errors?.departmentId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <If condition={isIndividual}>
-                                    <FormControl isRequired isInvalid={!!errors?.userId}>
-                                        <FormControl.Label>Worker</FormControl.Label>
-                                        <SelectComponent
-                                            isDisabled={!departmentId}
-                                            placeholder="Choose Worker"
-                                            onValueChange={handleChange('userId')}
-                                            selectedValue={values.userId}
-                                        >
-                                            {workers?.map((worker, index) => (
-                                                <SelectItemComponent
-                                                    value={worker._id}
-                                                    key={`worker-${index}`}
-                                                    isLoading={workersLoading}
-                                                    label={`${worker.firstName} ${worker.lastName}`}
-                                                />
-                                            ))}
-                                        </SelectComponent>
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.userId}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                </If>
-                                <FormControl isRequired isInvalid={!!errors?.categoryId}>
-                                    <FormControl.Label>Category</FormControl.Label>
-                                    <SelectComponent
-                                        placeholder="Choose Category"
-                                        isDisabled={!ticketCategories}
-                                        onValueChange={handleChange('categoryId')}
-                                        selectedValue={values.categoryId}
-                                    >
-                                        {ticketCategories?.map((categories, index) => (
-                                            <SelectItemComponent
-                                                value={categories._id}
-                                                key={`category-${index}`}
-                                                isLoading={workersLoading}
-                                                label={categories.categoryName}
-                                            />
-                                        ))}
-                                    </SelectComponent>
+                                <FormControl isRequired isInvalid={!!errors?.firstName}>
+                                    <FormControl.Label>First Name</FormControl.Label>
+                                    <InputComponent />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
                                         mt={3}
@@ -223,17 +149,12 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             />
                                         }
                                     >
-                                        {errors?.categoryId}
+                                        {errors?.firstName}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={!!errors?.ticketSummary}>
-                                    <FormControl.Label>Description</FormControl.Label>
-                                    <TextAreaComponent
-                                        onChangeText={handleChange('ticketSummary')}
-                                        value={values.ticketSummary}
-                                        placeholder="Details"
-                                        isRequired
-                                    />
+                                <FormControl isRequired isInvalid={!!errors?.firstName}>
+                                    <FormControl.Label>Last Name</FormControl.Label>
+                                    <InputComponent />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
                                         mt={3}
@@ -246,7 +167,25 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             />
                                         }
                                     >
-                                        {errors?.ticketSummary}
+                                        {errors?.lastName}
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+                                <FormControl isRequired isInvalid={!!errors?.email}>
+                                    <FormControl.Label>Email</FormControl.Label>
+                                    <InputComponent />
+                                    <FormControl.ErrorMessage
+                                        fontSize="2xl"
+                                        mt={3}
+                                        leftIcon={
+                                            <Icon
+                                                size={16}
+                                                name="warning"
+                                                type="antdesign"
+                                                color={THEME_CONFIG.error}
+                                            />
+                                        }
+                                    >
+                                        {errors?.email}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl>
@@ -267,4 +206,4 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default IssueTicket;
+export default createUser;

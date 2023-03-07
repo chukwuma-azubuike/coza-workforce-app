@@ -46,15 +46,17 @@ const CampusReport: React.FC<ICampusReport> = props => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Ushery Board')
             ?.report as unknown as IAttendanceReportPayload;
 
+        if (!rawData) return { headers: [], rows: [] };
+
         if (data?.departmentalReport) {
             return {
                 headers: ['Male', 'Female', 'Infants', 'Total'],
                 rows: [
                     {
-                        male: rawData.maleGuestCount,
-                        female: rawData.femaleGuestCount,
-                        infants: rawData.infants,
-                        total: rawData.total,
+                        male: rawData?.maleGuestCount,
+                        female: rawData?.femaleGuestCount,
+                        infants: rawData?.infants,
+                        total: rawData?.total,
                     },
                 ],
             };
@@ -67,12 +69,14 @@ const CampusReport: React.FC<ICampusReport> = props => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'PCU')
             ?.report as unknown as IGuestReportPayload;
 
+        if (!rawData) return { headers: [], column: [] };
+
         if (data?.departmentalReport) {
             return {
                 headers: ['First Timers', 'New Converts'],
                 column: {
-                    firstTimers: rawData.firstTimersCount,
-                    newConverts: rawData.newConvertsCount,
+                    firstTimers: rawData?.firstTimersCount,
+                    newConverts: rawData?.newConvertsCount,
                 },
             };
         }
@@ -84,6 +88,8 @@ const CampusReport: React.FC<ICampusReport> = props => {
         if (data?.departmentalReport) {
             const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Children Ministry')
                 ?.report as IChildCareReportPayload;
+
+            if (!rawData) return { headers: [], rows: [] };
 
             const rows = Object.entries(rawData).map(elm => {
                 if (elm[0] === 'age12_above' || elm[0] === 'age6_11' || elm[0] === 'age3_5' || elm[0] === 'age1_2') {
@@ -108,26 +114,33 @@ const CampusReport: React.FC<ICampusReport> = props => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Digital Surveillance Security')
             ?.report as unknown as ISecurityReportPayload;
 
-        if (data?.departmentalReport) {
-            return {
-                headers: ['Main Car Park', 'Extension', 'Total'],
-                column: {
-                    mainCarPark: rawData.locations?.length ? rawData.locations[0].carCount : 0,
-                    extension: rawData.locations?.length,
-                    total: rawData.locations?.length
-                        ? rawData.locations?.map(elm => elm.carCount).reduce((a, b) => a + b)
-                        : 0,
-                },
-            };
-        }
+        if (!rawData) return { headers: [], rows: [] };
 
-        return { headers: [], column: [] };
+        const rows = Object.entries(rawData).map(elm => {
+            if (elm[0] === 'locations') {
+                return elm[1];
+            }
+        });
+
+        return {
+            headers: ['Car Park', 'Car Count'],
+            rows: Utils.filter(
+                rows.flatMap(elm => {
+                    return elm;
+                }),
+                undefined
+            ).map(elm => {
+                return { ...elm, total: +elm.minorCount + +elm.adultCount };
+            }),
+        };
     }, [data]);
 
     const busCount = React.useMemo(() => {
         if (data?.departmentalReport) {
             const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'COZA Transfer Service')
                 ?.report as ITransferReportPayload;
+
+            if (!rawData) return { headers: [], rows: [] };
 
             const rows = Object.entries(rawData).map(elm => {
                 if (elm[0] === 'locations') {
@@ -169,6 +182,8 @@ const CampusReport: React.FC<ICampusReport> = props => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Programme Coordinator')
             ?.report as unknown as IServiceReportPayload;
 
+        if (!rawData) return { headers: [], rows: [] };
+
         if (data?.departmentalReport) {
             setServiceTime({
                 start: rawData?.serviceStartTime,
@@ -194,7 +209,9 @@ const CampusReport: React.FC<ICampusReport> = props => {
                 incidentReport: IIncidentReportPayload;
             }[];
 
-            const rows = rawData.map(elm => {
+            if (!rawData) return { headers: [], rows: [] };
+
+            const rows = rawData?.map(elm => {
                 return {
                     department: elm.incidentReport.departmentName || elm.incidentReport.departmentId,
                     incident: elm.incidentReport.details,
@@ -228,7 +245,7 @@ const CampusReport: React.FC<ICampusReport> = props => {
                 <Divider />
                 <VerticalTable isLoading={isLoading} title="Childcare Report" tableData={childCareReportData} />
                 <Divider />
-                <HorizontalTable isLoading={isLoading} title="Car Count" tableData={carCount} />
+                <VerticalTable isLoading={isLoading} title="Car Count" tableData={carCount} />
                 <Divider />
                 <VerticalTable isLoading={isLoading} title="Bus Count (Pick Up)" tableData={busCount} />
                 <Divider />
