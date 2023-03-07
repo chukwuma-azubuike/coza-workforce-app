@@ -67,6 +67,7 @@ const useWelcome = () => {
             setTimeout(() => {
                 setModalVisible(false);
             }, 3000);
+            reset();
         }
     }, [isErrorValidate, isSuccessValidate]);
 

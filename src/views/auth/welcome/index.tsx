@@ -47,8 +47,8 @@ const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
                         <Heading size="lg">{APP_NAME}</Heading>
                         <Text color="gray.400">{APP_SLOGAN}</Text>
                         <Formik onSubmit={handleSubmit} initialValues={{ email: '' }} validationSchema={EmailSchema}>
-                            {({ handleChange, handleSubmit, errors }: any) => (
-                                <FormControl isInvalid={errors.email && true}>
+                            {({ handleChange, handleSubmit, errors, touched }) => (
+                                <FormControl isInvalid={!!errors.email && touched.email}>
                                     <VStack space={1}>
                                         <FormControl.Label isRequired>Email</FormControl.Label>
                                         <InputComponent
@@ -78,7 +78,7 @@ const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
                                         <ButtonComponent
                                             mt={4}
                                             isLoading={isLoading}
-                                            onPress={handleSubmit}
+                                            onPress={handleSubmit as any}
                                             isLoadingText="Checking for your email..."
                                         >
                                             Continue
