@@ -145,7 +145,6 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                             <CampusReportSummary
                                 refetchService={handleRefresh}
                                 serviceId={latestService?._id}
-                                serviceIsLoading={isLoading}
                             />
                         </If>
                     </ViewWrapper>

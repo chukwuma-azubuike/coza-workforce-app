@@ -21,11 +21,11 @@ const ViewWrapper = (props: IViewWrapper) => {
 
     return (
         <ActiveView
-            {...props}
             _light={{ background: 'white' }}
             _dark={{ background: 'black' }}
             style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16 }}
             refreshControl={onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />}
+            {...props}
         >
             {props.children ? props.children : <Empty />}
         </ActiveView>
