@@ -142,10 +142,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                             </If>
                         </If>
                         <If condition={isCampusPastor}>
-                            <CampusReportSummary
-                                refetchService={handleRefresh}
-                                serviceId={latestService?._id}
-                            />
+                            <CampusReportSummary refetchService={handleRefresh} serviceId={latestService?._id} />
                         </If>
                     </ViewWrapper>
                 </>
