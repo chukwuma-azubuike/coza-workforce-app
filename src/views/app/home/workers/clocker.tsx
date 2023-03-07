@@ -7,7 +7,7 @@ import ClockStatistics from './clock-statistics';
 import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
 import useGeoLocation from '../../../../hooks/geo-location';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import { Dimensions, Platform } from 'react-native';
+import { Dimensions } from 'react-native';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
 import { HomeContext } from '..';
@@ -103,7 +103,7 @@ const Clocker: React.FC = () => {
 
     const vh = Dimensions.get('window').height;
 
-    const isIOS = Platform.OS === 'ios';
+    const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 300 : vh - 300;
 
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }}>
@@ -121,8 +121,8 @@ const Clocker: React.FC = () => {
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>
-                    <VStack h={vh - (isIOS ? 380 : 320)} alignItems="center" justifyContent="space-between">
-                        <ClockButton deviceCoordinates={deviceCoordinates} isInRange={isInRange || false} />
+                    <VStack h={heightOffset} alignItems="center" justifyContent="space-between">
+                        <ClockButton deviceCoordinates={deviceCoordinates} isInRange={!!isInRange} />
                         <CampusLocation />
                         <If condition={isAHOD || isHOD}>
                             <TeamAttendanceSummary
