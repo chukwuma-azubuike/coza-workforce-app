@@ -14,12 +14,11 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     // API implementation
 
     const handleNotificationPress = () => {
-        // Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
         const email = process.env.SUPPORT_EMAIL as string;
         const url = `mailto:${email}`;
 
         Linking.canOpenURL(url).then(supported => {
-            if (supported) {
+            if (!supported) {
                 Linking.openURL(url);
             } else {
                 // Fallback for iOS versions that don't support mailto:
