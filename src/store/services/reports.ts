@@ -58,6 +58,7 @@ export interface ICampusReportSummary<R = unknown> {
             _id: string;
             departmentId: string;
             serviceId: string;
+            status: IReportStatus;
         } & R;
     }[];
     incidentReport: unknown[];
@@ -87,7 +88,7 @@ export const reportsServiceSlice = createApi({
 
         createAttendanceReport: endpoint.mutation<void, IAttendanceReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}t`,
+                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -172,7 +173,7 @@ export const reportsServiceSlice = createApi({
 
         getDepartmentalReport: endpoint.query<
             IDepartmentReportResponse,
-            { departmentId: IDepartment['_id']; serviceId: IService['id'] }
+            { departmentId: IDepartment['_id']; serviceId: IService['_id'] }
         >({
             query: ({ departmentId, serviceId }) => ({
                 url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}/${serviceId}`,
@@ -182,13 +183,22 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IDepartmentReportResponse>) => res.data,
         }),
 
-        getCampusReportSummary: endpoint.query<ICampusReportSummary, IService['id']>({
+        getCampusReportSummary: endpoint.query<ICampusReportSummary, IService['_id']>({
             query: serviceId => ({
                 url: `/${SERVICE_URL}/getServiceReports/${serviceId}`,
                 method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
+        }),
+
+        getDepartmentReportsList: endpoint.query<IDepartmentReportResponse[], IDepartment['_id']>({
+            query: departmentId => ({
+                url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (res: IDefaultResponse<IDepartmentReportResponse[]>) => res.data,
         }),
 
         // Add your endpoints here
@@ -208,6 +218,7 @@ export const {
     useCreateSecurityReportMutation,
     useCreateIncidentReportMutation,
     useCreateChildCareReportMutation,
+    useGetDepartmentReportsListQuery,
     useCreateAttendanceReportMutation,
     useGetGlobalWorkforceSummaryQuery,
     useGetServiceAttendanceSummaryQuery,

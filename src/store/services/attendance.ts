@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import { IAttendance, IDefaultQueryParams, IDefaultResponse, REST_API_VERBS } from '../types';
+import { IAttendance, ICampus, IDefaultQueryParams, IDefaultResponse, IUser, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'attendance';
@@ -16,6 +16,9 @@ export interface IClockInPayload {
         lat: string;
         long: string;
     };
+    roleId: IUser['role']['_id'];
+    campusId: ICampus['_id'];
+    departmentId: string;
 }
 
 export type IMutateAttendanceResponse = IDefaultResponse<IAttendance>;
@@ -82,6 +85,66 @@ export const attendanceServiceSlice = createApi({
             transformResponse: (res: IGetAttendanceListResponse) => res.data,
         }),
 
+        getDepartmentAttendanceReport: endpoint.query<
+            {
+                attendance: number;
+                departmentUsers: number;
+            },
+            { serviceId: string; departmentId: string }
+        >({
+            query: ({ serviceId, departmentId }) => ({
+                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId} `,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<{
+                    attendance: number;
+                    departmentUsers: number;
+                }>
+            ) => res.data,
+        }),
+
+        getLeadersAttendanceReport: endpoint.query<
+            {
+                attendance: number;
+                leaderUsers: number;
+            },
+            { serviceId: string; campusId: string }
+        >({
+            query: ({ serviceId, campusId }) => ({
+                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId} `,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<{
+                    attendance: number;
+                    leaderUsers: number;
+                }>
+            ) => res.data,
+        }),
+
+        getWorkersAttendanceReport: endpoint.query<
+            {
+                attendance: number;
+                workerUsers: number;
+            },
+            { serviceId: string; campusId: string }
+        >({
+            query: ({ serviceId, campusId }) => ({
+                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId} `,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<{
+                    attendance: number;
+                    workerUsers: number;
+                }>
+            ) => res.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -93,4 +156,7 @@ export const {
     useGetAttendanceQuery,
     useGetAttendanceByUserIdQuery,
     useGetAttendanceByCampusIdQuery,
+    useGetWorkersAttendanceReportQuery,
+    useGetLeadersAttendanceReportQuery,
+    useGetDepartmentAttendanceReportQuery,
 } = attendanceServiceSlice;

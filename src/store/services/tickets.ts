@@ -3,6 +3,7 @@ import {
     ICampus,
     ICreateTicketPayload,
     IDefaultErrorResponse,
+    IDefaultQueryParams,
     IDefaultResponse,
     IDepartment,
     ITicket,
@@ -39,7 +40,7 @@ export const ticketServiceSlice = createApi({
             transformErrorResponse: (response: IDefaultErrorResponse) => response.message,
         }),
 
-        updateTicket: endpoint.mutation<ITicket, ITicketUpdatePayload>({
+        updateTicket: endpoint.mutation<ITicket, ICreateTicketPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/updateTicket/${body._id}`,
                 method: REST_API_VERBS.PATCH,
@@ -87,6 +88,16 @@ export const ticketServiceSlice = createApi({
             transformResponse: (response: ITicketResponse) => response.data,
         }),
 
+        getTickets: endpoint.query<ITicket[], IDefaultQueryParams>({
+            query: params => ({
+                url: `/${SERVICE_URL}/filter/`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (response: ITicketListResponse) => response.data,
+        }),
+
         getUserTickets: endpoint.query<ITicket[], IUser['userId']>({
             query: userId => ({
                 url: `/${SERVICE_URL}/getUserTickets/${userId}`,
@@ -123,6 +134,15 @@ export const ticketServiceSlice = createApi({
             transformResponse: (response: ITicketListResponse) => response.data,
         }),
 
+        getCampusTicketReport: endpoint.query<number, { serviceId: string; campusId: string }>({
+            query: ({ campusId, serviceId }) => ({
+                url: `/${SERVICE_URL}/getCampusTicketReport/${serviceId}/${campusId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (response: IDefaultResponse<number>) => response.data,
+        }),
+
         getTicketCategories: endpoint.query<ITicketCategory[], void>({
             query: () => ({
                 url: `/${SERVICE_URL}/category/getCategories`,
@@ -135,6 +155,7 @@ export const ticketServiceSlice = createApi({
 });
 
 export const {
+    useGetTicketsQuery,
     useGetTicketByIdQuery,
     useGetUserTicketsQuery,
     useCreateTicketMutation,
@@ -147,5 +168,6 @@ export const {
     useGetTicketCategoriesQuery,
     useGetDepartmentTicketsQuery,
     useReplyContestTicketMutation,
+    useGetCampusTicketReportQuery,
     useLazyGetDepartmentTicketsQuery,
 } = ticketServiceSlice;

@@ -14,14 +14,26 @@ import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
+import useRole from '../../../../hooks/role';
+import If from '../../../../components/composite/if-container';
 
 const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateServiceReportMutation();
+    const { isCampusPastor } = useRole();
+
+    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateServiceReportMutation();
 
     const onSubmit = (values: IServiceReportPayload) => {
-        sendReport({ ...values, ...params });
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
+    const onRequestReview = (values: IServiceReportPayload) => {
+        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+    };
+
+    const onApprove = (values: IServiceReportPayload) => {
+        updateReport({ ...values, ...params, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -33,7 +45,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             setModalState({
                 defaultRender: true,
                 status: 'success',
-                message: 'Report submitted',
+                message: 'Report updated',
             });
             navigation.goBack();
         }
@@ -52,6 +64,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         serviceReportLink: '',
         observations: '',
         imageUrl: '',
+        ...params,
     };
 
     return (
@@ -100,11 +113,43 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     onChangeText={handleChange('observations')}
                                 />
                             </FormControl>
-                            <FormControl>
-                                <ButtonComponent isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
-                                    Submit
-                                </ButtonComponent>
-                            </FormControl>
+                            <If condition={!isCampusPastor}>
+                                <FormControl>
+                                    <ButtonComponent
+                                        isLoading={isLoading}
+                                        onPress={handleSubmit as (event: any) => void}
+                                    >
+                                        Submit
+                                    </ButtonComponent>
+                                </FormControl>
+                            </If>
+                            <If condition={isCampusPastor}>
+                                <FormControl mb={6}>
+                                    <TextAreaComponent
+                                        placeholder="Pastor's comment"
+                                        onChangeText={handleChange('pastorComment')}
+                                    />
+                                </FormControl>
+                                <HStack space={4} justifyContent="space-between" w="95%">
+                                    <ButtonComponent
+                                        onPress={() => onRequestReview(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        secondary
+                                        size="md"
+                                    >
+                                        Request Review
+                                    </ButtonComponent>
+                                    <ButtonComponent
+                                        onPress={() => onApprove(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        size="md"
+                                    >
+                                        Approve
+                                    </ButtonComponent>
+                                </HStack>
+                            </If>
                         </VStack>
                     </VStack>
                 </ViewWrapper>

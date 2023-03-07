@@ -5,7 +5,7 @@ import useModal from '../../../../hooks/modal/useModal';
 import { IGuestReportPayload } from '../../../../store/types';
 import { useCreateGuestReportMutation } from '../../../../store/services/reports';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { FormControl, VStack, Text, Divider, WarningOutlineIcon } from 'native-base';
+import { FormControl, VStack, Text, Divider, WarningOutlineIcon, HStack } from 'native-base';
 import ButtonComponent from '../../../../components/atoms/button';
 import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
@@ -13,14 +13,26 @@ import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
+import If from '../../../../components/composite/if-container';
+import useRole from '../../../../hooks/role';
 
 const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateGuestReportMutation();
+    const { isCampusPastor } = useRole();
+
+    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateGuestReportMutation();
 
     const onSubmit = (values: IGuestReportPayload) => {
-        sendReport({ ...values, ...params });
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
+    const onRequestReview = (values: IGuestReportPayload) => {
+        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+    };
+
+    const onApprove = (values: IGuestReportPayload) => {
+        updateReport({ ...values, ...params, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -32,7 +44,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             setModalState({
                 defaultRender: true,
                 status: 'success',
-                message: 'Report submitted',
+                message: 'Report updated',
             });
             navigation.goBack();
         }
@@ -48,6 +60,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const INITIAL_VALUES = {
         firstTimersCount: 0,
         newConvertsCount: 0,
+        ...params,
     };
 
     return (
@@ -93,11 +106,43 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     onChangeText={handleChange('otherInfo')}
                                 />
                             </FormControl>
-                            <FormControl>
-                                <ButtonComponent isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
-                                    Submit
-                                </ButtonComponent>
-                            </FormControl>
+                            <If condition={!isCampusPastor}>
+                                <FormControl>
+                                    <ButtonComponent
+                                        isLoading={isLoading}
+                                        onPress={handleSubmit as (event: any) => void}
+                                    >
+                                        Submit
+                                    </ButtonComponent>
+                                </FormControl>
+                            </If>
+                            <If condition={isCampusPastor}>
+                                <FormControl mb={6}>
+                                    <TextAreaComponent
+                                        placeholder="Pastor's comment"
+                                        onChangeText={handleChange('pastorComment')}
+                                    />
+                                </FormControl>
+                                <HStack space={4} justifyContent="space-between" w="95%">
+                                    <ButtonComponent
+                                        onPress={() => onRequestReview(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        secondary
+                                        size="md"
+                                    >
+                                        Request Review
+                                    </ButtonComponent>
+                                    <ButtonComponent
+                                        onPress={() => onApprove(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        size="md"
+                                    >
+                                        Approve
+                                    </ButtonComponent>
+                                </HStack>
+                            </If>
                         </VStack>
                     </VStack>
                 </ViewWrapper>

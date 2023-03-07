@@ -15,14 +15,26 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
+import If from '../../../../components/composite/if-container';
+import useRole from '../../../../hooks/role';
 
 const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateSecurityReportMutation();
+    const { isCampusPastor } = useRole();
+
+    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateSecurityReportMutation();
 
     const onSubmit = (values: ISecurityReportPayload) => {
-        sendReport({ ...values, ...params });
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
+    const onRequestReview = (values: ISecurityReportPayload) => {
+        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+    };
+
+    const onApprove = (values: ISecurityReportPayload) => {
+        updateReport({ ...values, ...params, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -34,7 +46,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             setModalState({
                 defaultRender: true,
                 status: 'success',
-                message: 'Report submitted',
+                message: 'Report updated',
             });
             navigation.goBack();
         }
@@ -51,6 +63,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         locations: [{ name: '', carCount: 0 }],
         otherInfo: '',
         imageUrl: '',
+        ...params,
     } as ISecurityReportPayload;
 
     const addValues = (values: ISecurityReportPayload) => {
@@ -149,17 +162,46 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 onChangeText={handleChange('otherInfo')}
                             />
                         </FormControl>
-                        <FormControl>
-                            <ButtonComponent
-                                isLoading={isLoading}
-                                onPress={() => {
-                                    setFieldValue('totalCarCount', addValues(values));
-                                    handleSubmit();
-                                }}
-                            >
-                                Submit
-                            </ButtonComponent>
-                        </FormControl>
+                        <If condition={!isCampusPastor}>
+                            <FormControl>
+                                <ButtonComponent
+                                    isLoading={isLoading}
+                                    onPress={() => {
+                                        setFieldValue('totalCarCount', addValues(values));
+                                        handleSubmit();
+                                    }}
+                                >
+                                    Submit
+                                </ButtonComponent>
+                            </FormControl>
+                        </If>
+                        <If condition={isCampusPastor}>
+                            <FormControl mb={6}>
+                                <TextAreaComponent
+                                    placeholder="Pastor's comment"
+                                    onChangeText={handleChange('pastorComment')}
+                                />
+                            </FormControl>
+                            <HStack space={4} justifyContent="space-between" w="95%">
+                                <ButtonComponent
+                                    onPress={() => onRequestReview(values)}
+                                    isLoading={isLoading}
+                                    width="1/2"
+                                    secondary
+                                    size="md"
+                                >
+                                    Request Review
+                                </ButtonComponent>
+                                <ButtonComponent
+                                    onPress={() => onApprove(values)}
+                                    isLoading={isLoading}
+                                    width="1/2"
+                                    size="md"
+                                >
+                                    Approve
+                                </ButtonComponent>
+                            </HStack>
+                        </If>
                     </VStack>
                 </ViewWrapper>
             )}

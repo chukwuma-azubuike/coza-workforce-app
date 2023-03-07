@@ -1,6 +1,6 @@
 import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
-import { Center, HStack, useColorMode } from 'native-base';
+import { Center, HStack } from 'native-base';
 import React from 'react';
 import { Text, TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../config/appConfig';
@@ -20,7 +20,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
         <HStack
             px={2}
             borderTopWidth={0.5}
-            justifyContent="space-around"
+            justifyContent="space-between"
             _dark={{ bg: 'gray.900', borderColor: 'gray.700' }}
             _light={{ bg: 'gray.100', borderColor: 'gray.300' }}
         >
@@ -110,7 +110,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             40
                         )}
                     >
-                        <Center py={2}>
+                        <Center py={2} minWidth={60}>
                             <Icon
                                 size={22}
                                 name={iconName}

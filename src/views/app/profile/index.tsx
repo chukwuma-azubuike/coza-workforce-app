@@ -11,14 +11,21 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
 import DeviceInfo from 'react-native-device-info';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
+import { useAppDispatch } from '../../../store/hooks';
+import { userActionTypes } from '../../../store/services/users';
 
 const Profile: React.FC = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);
 
+    const dispatch = useAppDispatch();
+
     const handleLogout = () => {
         Utils.clearCurrentUserStorage().then(res => {
             Utils.clearStorage().then(res => {
+                dispatch({ type: userActionTypes.DELETE_USER_DATA });
                 setIsLoggedIn && setIsLoggedIn(false);
+                Utils.removeUserSession();
             });
         });
     };
@@ -32,7 +39,7 @@ const Profile: React.FC = () => {
                     <AvatarComponent
                         shadow={9}
                         size="xl"
-                        imageUrl={user?.pictureUrl ? user.pictureUrl : 'https://i.ibb.co/P6k4dWF/Group-3.png'}
+                        imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         firstName={user?.firstName}
                         lastName={user?.lastName}
                     />
@@ -45,6 +52,15 @@ const Profile: React.FC = () => {
                         >
                             {user && `${user?.firstName} ${user?.lastName}`}
                         </Heading>
+                        <Text
+                            fontWeight="400"
+                            color="gray.400"
+                            textAlign="center"
+                            _dark={{ color: 'gray.400' }}
+                            _light={{ color: 'gray.600' }}
+                        >
+                            {user?.email}
+                        </Text>
                         <Text
                             fontWeight="400"
                             color="gray.400"

@@ -1,24 +1,24 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import AuthHome from '../views/auth/welcome';
+// import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
 import Home from '../views/app/home';
 import Attendance from '../views/app/attendance';
-import Compliance from '../views/app/compliance';
+// import Compliance from '../views/app/compliance';
 import Permissions from '../views/app/permissions';
 import Notifications from '../views/app/notifications';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
-import Settings from '../views/app/settings';
-import WorkforceManagement from '../views/app/Workforce-management';
-import WorkforcePermissions from '../views/app/workforce-permission';
+// import Settings from '../views/app/settings';
+import WorkforceManagement from '../views/app/workforce-management';
+// import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
 import TicketDetails from '../views/app/tickets/ticket-details';
 import IssueTicket from '../views/app/tickets/issue-ticket';
 import { IIconTypes } from '../utils/types';
-import ServiceManagement from '../views/app/service-management';
+// import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
 import PermissionDetails from '../views/app/permissions/permission-details';
@@ -31,7 +31,7 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-
+import UserDetails from '../views/app/workforce-management/user-details';
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
@@ -219,51 +219,61 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         icon: { name: 'graph', type: 'octicon' },
     },
-    {
-        name: 'Compliance',
-        component: Compliance,
-        options: { title: 'Compliance' },
-        submenus: [],
-        users: ['QC'],
-        inMenuBar: false,
-        icon: { name: 'check-square', type: 'feather' },
-    },
-    {
-        name: 'Workforce permissions',
-        component: WorkforcePermissions,
-        options: { title: 'Workforce permissions' },
-        submenus: [],
-        users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
-        inMenuBar: false,
-        icon: { name: 'hand-left-outline', type: 'ionicon' },
-    },
-    {
-        name: 'Service management',
-        component: ServiceManagement,
-        options: { title: 'Service management' },
-        submenus: [],
-        users: ['QC', 'programs'],
-        inMenuBar: false,
-        icon: { name: 'church', type: 'material-community' },
-    },
+    // {
+    //     name: 'Compliance',
+    //     component: Compliance,
+    //     options: { title: 'Compliance' },
+    //     submenus: [],
+    //     users: ['QC'],
+    //     inMenuBar: false,
+    //     icon: { name: 'check-square', type: 'feather' },
+    // },
+    // {
+    //     name: 'Workforce permissions',
+    //     component: WorkforcePermissions,
+    //     options: { title: 'Workforce permissions' },
+    //     submenus: [],
+    //     users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
+    //     inMenuBar: false,
+    //     icon: { name: 'hand-left-outline', type: 'ionicon' },
+    // },
+    // {
+    //     name: 'Service management',
+    //     component: ServiceManagement,
+    //     options: { title: 'Service management' },
+    //     submenus: [],
+    //     users: ['QC', 'programs'],
+    //     inMenuBar: false,
+    //     icon: { name: 'church', type: 'material-community' },
+    // },
     {
         name: 'Workforce management',
         component: WorkforceManagement,
         options: { title: 'Workforce management' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'User Profile',
+                component: UserDetails,
+                options: { title: 'User Profile' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+        ],
         users: ['admin', 'HOD', 'AHOD', 'QC'],
         inMenuBar: false,
         icon: { name: 'database-cog-outline', type: 'material-community' },
     },
-    {
-        name: 'Settings',
-        component: Settings,
-        options: { title: 'Settings' },
-        submenus: [],
-        users: [],
-        inMenuBar: false,
-        icon: { name: 'settings-outline', type: 'ionicon' },
-    },
+    // {
+    //     name: 'Settings',
+    //     component: Settings,
+    //     options: { title: 'Settings' },
+    //     submenus: [],
+    //     users: [],
+    //     inMenuBar: false,
+    //     icon: { name: 'settings-outline', type: 'ionicon' },
+    // },
     {
         name: 'More',
         component: More,
