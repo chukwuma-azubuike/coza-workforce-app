@@ -121,7 +121,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                 status: 'success',
                 message: 'Permission updated',
             });
-            setPermissionComment('')
+            setPermissionComment('');
             updateReset();
             navigate.goBack();
         }
@@ -140,7 +140,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                 status: 'success',
                 message: 'Permission approved',
             });
-            setPermissionComment('')
+            setPermissionComment('');
             approveReset();
             navigate.goBack();
         }
@@ -159,7 +159,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                 status: 'success',
                 message: 'Permission declined',
             });
-            setPermissionComment('')
+            setPermissionComment('');
             declineReset();
             navigate.goBack();
         }
