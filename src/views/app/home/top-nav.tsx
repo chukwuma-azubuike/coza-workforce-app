@@ -14,7 +14,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     // API implementation
 
     const handleNotificationPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        // Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
         const email = process.env.SUPPORT_EMAIL as string;
         const url = `mailto:${email}`;
 

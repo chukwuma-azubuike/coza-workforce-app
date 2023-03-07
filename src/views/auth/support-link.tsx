@@ -7,7 +7,7 @@ import { THEME_CONFIG } from '../../config/appConfig';
 
 const SupportLink = () => {
     const handleNotificationPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        // Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
         const email = process.env.SUPPORT_EMAIL as string;
         const url = `mailto:${email}`;
 

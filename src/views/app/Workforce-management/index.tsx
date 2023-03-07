@@ -35,9 +35,13 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     });
 
     const allRoutes = React.useMemo(() => {
-        if (isGlobalPastor || isCampusPastor) return [ROUTES[1]];
+        if (isGlobalPastor || isCampusPastor) {
+            return [ROUTES[1]];
+        }
 
-        if (isQC || isSuperAdmin) return ROUTES;
+        if (isQC || isSuperAdmin) {
+            return ROUTES;
+        }
 
         return [ROUTES[0]];
     }, []);
@@ -64,9 +68,13 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     ];
 
     const filteredButtons = React.useMemo(() => {
-        if (isSuperAdmin || isGlobalPastor) return allButtons;
+        if (isSuperAdmin || isGlobalPastor) {
+            return allButtons;
+        }
 
-        if (isCampusPastor || isQC) return [allButtons[0], allButtons[1]];
+        if (isCampusPastor || isQC) {
+            return [allButtons[0], allButtons[1]];
+        }
 
         return [allButtons[0]];
     }, []);
