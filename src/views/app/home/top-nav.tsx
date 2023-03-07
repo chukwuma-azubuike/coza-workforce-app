@@ -8,15 +8,27 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     // API implementation
 
     const handleNotificationPress = () => {
         Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        const email = process.env.SUPPORT_EMAIL as string;
+        const url = `mailto:${email}`;
 
-        // navigation.navigate('Notifications');
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                // Fallback for iOS versions that don't support mailto:
+                if (Platform.OS === 'ios') {
+                    const fallbackUrl = `message://compose?to=${email}`;
+                    Linking.openURL(fallbackUrl);
+                }
+            }
+        });
     };
 
     const handlePress = () => navigation.navigate('Profile');

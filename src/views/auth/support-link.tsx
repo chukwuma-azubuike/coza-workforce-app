@@ -1,4 +1,4 @@
-import { Linking } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import React from 'react';
 import { Icon } from '@rneui/themed';
 import { HStack, Text } from 'native-base';
@@ -8,6 +8,20 @@ import { THEME_CONFIG } from '../../config/appConfig';
 const SupportLink = () => {
     const handleNotificationPress = () => {
         Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        const email = process.env.SUPPORT_EMAIL as string;
+        const url = `mailto:${email}`;
+
+        Linking.canOpenURL(url).then(supported => {
+            if (supported) {
+                Linking.openURL(url);
+            } else {
+                // Fallback for iOS versions that don't support mailto:
+                if (Platform.OS === 'ios') {
+                    const fallbackUrl = `message://compose?to=${email}`;
+                    Linking.openURL(fallbackUrl);
+                }
+            }
+        });
     };
     const { isLightMode } = useAppColorMode();
     return (
