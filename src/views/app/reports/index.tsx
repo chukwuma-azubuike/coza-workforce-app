@@ -32,7 +32,7 @@ const Reports: React.FC = () => {
         isPCU,
         isUshery,
         isSecurity,
-        isPrograms,
+        isPRU,
         isChildcare,
         isCampusPastor,
         isHOD,
@@ -73,7 +73,6 @@ const Reports: React.FC = () => {
     const { setModalState } = useModal();
 
     const goToReportRoute = () => {
-        return 'Attendance Report';
         if (isCTS) {
             return 'Transfer Report';
         }
@@ -86,7 +85,7 @@ const Reports: React.FC = () => {
         if (isSecurity) {
             return 'Security Report';
         }
-        if (isPrograms) {
+        if (isPRU) {
             return 'Service Report';
         }
         if (isChildcare) {

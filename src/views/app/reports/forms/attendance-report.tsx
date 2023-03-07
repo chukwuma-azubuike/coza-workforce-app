@@ -23,16 +23,16 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
 
     const [updateReport, { reset, error, isError, isSuccess, isLoading }] = useCreateAttendanceReportMutation();
 
+    const onSubmit = (values: IAttendanceReportPayload) => {
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
     const onRequestReview = (values: IAttendanceReportPayload) => {
         updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IAttendanceReportPayload) => {
         updateReport({ ...values, ...params, status: 'APPROVED' });
-    };
-
-    const onSubmit = (values: IAttendanceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
     };
 
     const { setModalState } = useModal();
@@ -54,6 +54,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
@@ -132,14 +133,15 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                 </FormControl.ErrorMessage>
                             </FormControl>
                             <Divider />
-                            <FormControl mb={2}>
+                            <FormControl>
                                 <TextAreaComponent
+                                    isDisabled={isCampusPastor}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                 />
                             </FormControl>
                             <If condition={!isCampusPastor}>
-                                <FormControl>
+                                <FormControl mt={2}>
                                     <ButtonComponent
                                         isLoading={isLoading}
                                         onPress={() => {
@@ -152,6 +154,12 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                 </FormControl>
                             </If>
                             <If condition={isCampusPastor}>
+                                <FormControl mb={6}>
+                                    <TextAreaComponent
+                                        placeholder="Pastor's comment"
+                                        onChangeText={handleChange('pastorComment')}
+                                    />
+                                </FormControl>
                                 <HStack space={4} justifyContent="space-between" w="95%">
                                     <ButtonComponent
                                         onPress={() => onRequestReview(values)}

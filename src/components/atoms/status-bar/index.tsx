@@ -9,7 +9,6 @@ const ConnectionStatusBar: React.FC = () => {
     const opacity = useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
-        // if last connnection is false
         if (netInfo.isInternetReachable) {
             Animated.timing(opacity, {
                 toValue: 1,
@@ -19,7 +18,7 @@ const ConnectionStatusBar: React.FC = () => {
             setTimeout(() => {
                 Animated.timing(opacity, {
                     toValue: 0,
-                    duration: 2000,
+                    duration: 5000,
                     useNativeDriver: true,
                 }).start();
             }, 2000);
@@ -42,7 +41,7 @@ const ConnectionStatusBar: React.FC = () => {
                 opacity,
             }}
         >
-            <Box bg={netInfo.isInternetReachable ? 'success.500' : 'rose.500'} w="full">
+            <Box bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'} w="full">
                 <Text textAlign="center" w="full" color="white">{`${
                     netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
                 }`}</Text>

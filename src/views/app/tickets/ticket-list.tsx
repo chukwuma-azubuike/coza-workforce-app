@@ -74,7 +74,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                                 _dark={{ color: 'gray.300' }}
                                                 _light={{ color: 'gray.600' }}
                                             >
-                                                {Utils.truncateString(ticketSummary)}
+                                                {Utils.truncateString(departmentName)}
                                             </Text>
                                         </>
                                     )}

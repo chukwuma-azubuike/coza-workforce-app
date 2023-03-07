@@ -59,7 +59,7 @@ interface IDateTimePickerProps {
     maximumDate?: Date;
     fieldName?: string;
     onSelectDate?: (fieldName: string, value: any) => void;
-    dateFormat: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
+    dateFormat?: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
 }
 
 const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
@@ -116,7 +116,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                     accentColor={THEME_CONFIG.primary}
                     minimumDate={minimumDate}
                     maximumDate={maximumDate}
-                    style={{ width: isIOS && 90, backgroundColor: 'red' }}
+                    style={{ width: isIOS ? 90 : 'initial', backgroundColor: 'red' }}
                     onTouchCancel={handleTouchCancel}
                     dateFormat={dateFormat}
                 />

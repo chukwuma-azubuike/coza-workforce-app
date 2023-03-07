@@ -43,7 +43,7 @@ export interface IDefaultErrorResponse<D = null> {
     data: D;
 }
 
-export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED';
+export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED' | 'REJECTED';
 
 export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED' | 'APPROVED';
 
@@ -206,7 +206,7 @@ export interface IPermission extends ILog {
     rejectedOn: number;
 }
 
-interface IPermissionCategory {
+export interface IPermissionCategory {
     _id: string;
     name: string;
     createdAt: string;
@@ -219,8 +219,8 @@ export interface IUpdatePermissionPayload {
     status: IStatus;
 }
 export interface IRequestPermissionPayload {
-    startDate: string;
-    endDate: string;
+    startDate: string | number;
+    endDate: string | number;
     dateCreated: string;
     category: string;
     description: string;

@@ -12,7 +12,12 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
-import { useGetPermissionByIdQuery, useUpdatePermissionMutation } from '../../../store/services/permissions';
+import {
+    useApprovePermissionMutation,
+    useDeclinePermissionMutation,
+    useGetPermissionByIdQuery,
+    useUpdatePermissionMutation,
+} from '../../../store/services/permissions';
 import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
 import Utils from '../../../utils';
 
@@ -70,6 +75,28 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         { isSuccess: updateIsSuccess, isError: updateIsError, isLoading: updateLoading, reset: updateReset },
     ] = useUpdatePermissionMutation();
 
+    const [
+        approve,
+        {
+            isSuccess: approveIsSuccess,
+            reset: approveReset,
+            isError: approveIsError,
+            isLoading: approveIsLoading,
+            error: approveError,
+        },
+    ] = useApprovePermissionMutation();
+
+    const [
+        decline,
+        {
+            isSuccess: declineIsSuccess,
+            reset: declineReset,
+            isError: declineIsError,
+            isLoading: declineIsLoading,
+            error: declineError,
+        },
+    ] = useDeclinePermissionMutation();
+
     useScreenFocus({
         onFocus: refetch,
     });
@@ -77,6 +104,10 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     const handleUpdate = (status: IUpdatePermissionPayload['status']) => {
         updatePermission({ comment: permissionComment, _id, status } as IUpdatePermissionPayload);
     };
+
+    const handleApprove = () => approve({ approverId: user.userId, permissionId: permission?._id as string });
+
+    const handleDecline = () => decline({ declinerId: user.userId, permissionId: permission?._id as string });
 
     const handleChange = (comment: string) => {
         setPermissionComment(comment);
@@ -90,6 +121,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                 status: 'success',
                 message: 'Permission updated',
             });
+            setPermissionComment('')
             updateReset();
             navigate.goBack();
         }
@@ -98,8 +130,47 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                 status: 'error',
                 message: 'Oops something went wrong.',
             });
+            updateReset();
         }
     }, [updateIsSuccess, updateIsError]);
+
+    React.useEffect(() => {
+        if (approveIsSuccess) {
+            setModalState({
+                status: 'success',
+                message: 'Permission approved',
+            });
+            setPermissionComment('')
+            approveReset();
+            navigate.goBack();
+        }
+        if (approveIsError) {
+            setModalState({
+                status: 'error',
+                message: 'Oops something went wrong',
+            });
+            approveReset();
+        }
+    }, [approveIsSuccess, approveIsError]);
+
+    React.useEffect(() => {
+        if (declineIsSuccess) {
+            setModalState({
+                status: 'success',
+                message: 'Permission declined',
+            });
+            setPermissionComment('')
+            declineReset();
+            navigate.goBack();
+        }
+        if (declineIsError) {
+            setModalState({
+                status: 'error',
+                message: 'Oops something went wrong',
+            });
+            declineReset();
+        }
+    }, [declineIsSuccess, declineIsError]);
 
     return (
         <ViewWrapper scroll>
@@ -131,7 +202,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{permission?.departmentName}</Text>
+                        <Text>{permission?.department?.departmentName}</Text>
                     </HStack>
                     <HStack
                         pb={2}
@@ -144,7 +215,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Category
                         </Text>
-                        <Text>{permission?.categoryName}</Text>
+                        <Text>{permission?.category.name}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -209,7 +280,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                     </HStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
-                            {`${isHOD || isAHOD ? 'Pastor' : 'HOD/AHOD'}'s Comment`}
+                            {`${isCampusPastor ? 'Pastor' : 'HOD/AHOD'}'s Comment`}
                         </Text>
                         <TextAreaComponent
                             value={permissionComment}
@@ -221,8 +292,8 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <HStack space={4} justifyContent="space-between">
                             <ButtonComponent
                                 isDisabled={status === 'DECLINED' || !permissionComment}
-                                onPress={() => handleUpdate('DECLINED')}
-                                isLoading={updateLoading}
+                                isLoading={declineIsLoading}
+                                onPress={handleDecline}
                                 width={150}
                                 secondary
                                 size="md"
@@ -230,9 +301,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 Decline
                             </ButtonComponent>
                             <ButtonComponent
-                                onPress={() => handleUpdate('APPROVED')}
                                 isDisabled={status === 'APPROVED'}
-                                isLoading={updateLoading}
+                                isLoading={approveIsLoading}
+                                onPress={handleApprove}
                                 width={150}
                                 size="md"
                             >

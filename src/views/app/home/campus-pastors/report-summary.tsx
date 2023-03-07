@@ -11,6 +11,7 @@ import { TouchableNativeFeedback } from 'react-native';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import Utils from '../../../../utils';
 import useScreenFocus from '../../../../hooks/focus';
+import useRole from '../../../../hooks/role';
 
 interface ReportSummaryListRowProps {
     '0'?: string;
@@ -43,11 +44,19 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
     const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
 
+    const { user } = useRole();
+
     return (
         <>
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
-                    navigation.navigate(ReportRouteIndex[elm?.departmentName] as never, elm as never);
+                    navigation.navigate(
+                        ReportRouteIndex[elm?.departmentName] as never,
+                        {
+                            _id: elm?.report._id,
+                            userId: user?.userId,
+                        } as never
+                    );
                 };
 
                 return (
@@ -67,6 +76,7 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                         <HStack
                             p={2}
                             px={4}
+                            my={1.5}
                             w="full"
                             borderRadius={10}
                             alignItems="center"

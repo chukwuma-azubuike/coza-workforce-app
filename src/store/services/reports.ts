@@ -88,7 +88,7 @@ export const reportsServiceSlice = createApi({
 
         createAttendanceReport: endpoint.mutation<void, IAttendanceReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}t`,
+                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),

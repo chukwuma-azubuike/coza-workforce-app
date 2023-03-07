@@ -3,6 +3,7 @@ import {
     IDefaultQueryParams,
     IDefaultResponse,
     IPermission,
+    IPermissionCategory,
     IRequestPermissionPayload,
     IUpdatePermissionPayload,
     IUser,
@@ -12,7 +13,11 @@ import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'permissions';
 
-interface IRejectPermission {
+interface IDeclinePermission {
+    permissionId: IPermission['_id'];
+    declinerId: IUser['userId'];
+}
+interface IApprovePermission {
     permissionId: IPermission['_id'];
     approverId: IUser['userId'];
 }
@@ -25,7 +30,7 @@ export const permissionsServiceSlice = createApi({
     endpoints: endpoint => ({
         requestPermission: endpoint.mutation<IPermission, IRequestPermissionPayload>({
             query: body => ({
-                url: `${SERVICE_URL}/createPermission`,
+                url: `/${SERVICE_URL}/createPermission`,
                 method: REST_API_VERBS.POST,
                 body,
             }),
@@ -35,17 +40,23 @@ export const permissionsServiceSlice = createApi({
 
         updatePermission: endpoint.mutation<IPermission, IUpdatePermissionPayload>({
             query: body => ({
-                url: `${SERVICE_URL}/updatePermission/${body._id}`,
+                url: `/${SERVICE_URL}/updatePermission/${body._id}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
         }),
 
-        approvePermission: endpoint.mutation<IPermission, IRejectPermission>({
+        approvePermission: endpoint.mutation<IPermission, IApprovePermission>({
             query: body => ({
-                url: `permission/approve/${body.permissionId}/${body.approverId}`,
+                url: `/${SERVICE_URL}/approve/${body.permissionId}/${body.approverId}`,
                 method: REST_API_VERBS.PATCH,
-                body,
+            }),
+        }),
+
+        declinePermission: endpoint.mutation<IPermission, IDeclinePermission>({
+            query: body => ({
+                url: `/${SERVICE_URL}/reject/${body.permissionId}/${body.declinerId}`,
+                method: REST_API_VERBS.PATCH,
             }),
         }),
 
@@ -56,9 +67,15 @@ export const permissionsServiceSlice = createApi({
         }),
 
         getPermissionById: endpoint.query<IPermission, IPermission['_id']>({
-            query: id => ({ url: `/permission/${id}`, method: REST_API_VERBS.GET }),
+            query: id => ({ url: `/${SERVICE_URL}/${id}`, method: REST_API_VERBS.GET }),
 
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
+        }),
+
+        getPermissionCategories: endpoint.query<IPermissionCategory[], void>({
+            query: () => ({ url: `/permission-categories`, method: REST_API_VERBS.GET }),
+
+            transformResponse: (response: IDefaultResponse<IPermissionCategory[]>) => response.data,
         }),
 
         // Add your endpoints here
@@ -71,4 +88,7 @@ export const {
     useGetPermissionByIdQuery,
     useUpdatePermissionMutation,
     useRequestPermissionMutation,
+    useApprovePermissionMutation,
+    useDeclinePermissionMutation,
+    useGetPermissionCategoriesQuery,
 } = permissionsServiceSlice;

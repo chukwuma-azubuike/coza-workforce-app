@@ -15,14 +15,26 @@ import TextAreaComponent from '../../../../components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { IReportFormProps } from './types';
+import If from '../../../../components/composite/if-container';
+import useRole from '../../../../hooks/role';
 
 const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IReportFormProps;
 
-    const [sendReport, { error, isError, isSuccess, isLoading }] = useCreateChildCareReportMutation();
+    const { isCampusPastor } = useRole();
+
+    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateChildCareReportMutation();
 
     const onSubmit = (values: IChildCareReportPayload) => {
-        sendReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+    };
+
+    const onRequestReview = (values: IChildCareReportPayload) => {
+        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+    };
+
+    const onApprove = (values: IChildCareReportPayload) => {
+        updateReport({ ...values, ...params, status: 'APPROVED' });
     };
 
     const { setModalState } = useModal();
@@ -33,7 +45,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
             setModalState({
                 defaultRender: true,
                 status: 'success',
-                message: 'Report submitted',
+                message: 'Report updated',
             });
             navigation.goBack();
         }
@@ -63,6 +75,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
             male: 0,
             female: 0,
         },
+        ...params,
     } as IChildCareReportPayload;
 
     const addGrandTotal = (values: IChildCareReportPayload) => {
@@ -334,19 +347,48 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                             <FormControl>
                                 <TextAreaComponent placeholder="Any other information" />
                             </FormControl>
-                            <FormControl>
-                                <ButtonComponent
-                                    isLoading={isLoading}
-                                    onPress={() => {
-                                        setFieldValue('subTotal.male', addSubTotal(values, 'male'));
-                                        setFieldValue('subTotal.female', addSubTotal(values, 'female'));
-                                        setFieldValue('grandTotal', addGrandTotal(values));
-                                        handleSubmit();
-                                    }}
-                                >
-                                    Submit
-                                </ButtonComponent>
-                            </FormControl>
+                            <If condition={!isCampusPastor}>
+                                <FormControl>
+                                    <ButtonComponent
+                                        isLoading={isLoading}
+                                        onPress={() => {
+                                            setFieldValue('subTotal.male', addSubTotal(values, 'male'));
+                                            setFieldValue('subTotal.female', addSubTotal(values, 'female'));
+                                            setFieldValue('grandTotal', addGrandTotal(values));
+                                            handleSubmit();
+                                        }}
+                                    >
+                                        Submit
+                                    </ButtonComponent>
+                                </FormControl>
+                            </If>
+                            <If condition={isCampusPastor}>
+                                <FormControl mb={6}>
+                                    <TextAreaComponent
+                                        placeholder="Pastor's comment"
+                                        onChangeText={handleChange('pastorComment')}
+                                    />
+                                </FormControl>
+                                <HStack space={4} justifyContent="space-between" w="95%">
+                                    <ButtonComponent
+                                        onPress={() => onRequestReview(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        secondary
+                                        size="md"
+                                    >
+                                        Request Review
+                                    </ButtonComponent>
+                                    <ButtonComponent
+                                        onPress={() => onApprove(values)}
+                                        isLoading={isLoading}
+                                        width="1/2"
+                                        size="md"
+                                    >
+                                        Approve
+                                    </ButtonComponent>
+                                </HStack>
+                            </If>
                         </VStack>
                     </VStack>
                 </ViewWrapper>
