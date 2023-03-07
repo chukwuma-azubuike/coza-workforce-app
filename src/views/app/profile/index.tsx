@@ -12,18 +12,13 @@ import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
 import DeviceInfo from 'react-native-device-info';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
-import { useAppDispatch } from '../../../store/hooks';
-import { userActionTypes } from '../../../store/services/users';
 
 const Profile: React.FC = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);
 
-    const dispatch = useAppDispatch();
-
     const handleLogout = () => {
         Utils.clearCurrentUserStorage().then(res => {
             Utils.clearStorage().then(res => {
-                dispatch({ type: userActionTypes.DELETE_USER_DATA });
                 setIsLoggedIn && setIsLoggedIn(false);
                 Utils.removeUserSession();
             });
