@@ -1,20 +1,27 @@
 import React from 'react';
 import FlatListComponent from '../../../components/composite/flat-list';
-import { campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
+import {
+    campusColumns_1,
+    myAttendanceColumns,
+    teamAttendanceDataColumns,
+} from './flatListConfig';
 import { MonthPicker } from '../../../components/composite/date-picker';
 import {
-    useGetAttendanceByCampusIdQuery,
     useGetAttendanceByUserIdQuery,
     useGetAttendanceQuery,
 } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { IAttendance } from '../../../store/types';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
+import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
+import moment from 'moment';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
-    const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceByUserIdQuery(user?.userId as string);
+    const { data, isLoading, refetch, isFetching } = useGetAttendanceByUserIdQuery(
+        user?._id || (user?.userId as string)
+    );
 
     return (
         <>
@@ -34,20 +41,57 @@ export const MyAttendance: React.FC = React.memo(() => {
 export const TeamAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
-    const { data, isLoading, refetch, isFetching, isSuccess } = useGetAttendanceQuery({
+    const {
+        data: membersClockedIn,
+        isLoading,
+        refetch,
+        isFetching,
+    } = useGetAttendanceQuery({
         departmentId: user?.department._id,
     });
 
+    const { data: members } = useGetUsersByDepartmentIdQuery(user?.department._id);
+
+    const allMembers = members || [];
+    const membersClockedInValid = membersClockedIn || [];
+    const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
+
+    const mergedAttendanceWithMemberList = React.useMemo(
+        () => [
+            ...mergedUsers.map((member: any) => {
+                return {
+                    createdAt: moment(),
+                    clockIn: member?.clockIn || 0,
+                    clockOut: member?.clockOut || 0,
+                    userId: member?.user?._id || member._id,
+                    lastName: member?.lastName || member?.user?.lastName,
+                    firstName: member?.firstName || member?.user?.firstName,
+                };
+            }),
+        ],
+        [membersClockedIn]
+    );
+
+    // Filter out clocked in members from user list
+    const uniqueAttendanceList = React.useMemo<any[]>(
+        () =>
+            mergedAttendanceWithMemberList.filter(
+                (attendance, index) =>
+                    mergedAttendanceWithMemberList.findIndex(item => item.userId === attendance.userId) === index
+            ),
+        [mergedAttendanceWithMemberList]
+    );
+
     return (
         <>
-            <MonthPicker />
+            <MonthPicker today />
             <FlatListComponent
                 padding
                 onRefresh={refetch}
-                data={data as IAttendance[]}
+                data={uniqueAttendanceList}
                 isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
+                refreshing={isLoading || isFetching}
             />
         </>
     );
