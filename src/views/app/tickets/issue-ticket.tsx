@@ -55,14 +55,11 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const { data: ticketCategories, isError: categoriesError } = useGetTicketCategoriesQuery();
 
-    const [issueTicket, { isError, isLoading, isSuccess, error }] = useCreateTicketMutation();
+    const [issueTicket, { isError, isLoading, isSuccess, error, reset }] = useCreateTicketMutation();
 
-    const handleSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
-        if (isDepartmental) {
-            delete values.userId;
-        }
+    const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
         if (latestService) {
-            issueTicket({ ...values, serviceId: latestService._id });
+            issueTicket({ ...values, serviceId: latestService._id, userId });
         } else {
             setModalState({
                 status: 'info',
@@ -106,15 +103,18 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 duration: 3,
             });
             goBack();
+            reset();
         }
 
         if (isError) {
+            console.log(error);
             setModalState({
                 message: 'Oops, something went wrong!',
                 defaultRender: true,
                 status: 'error',
                 duration: 3,
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
@@ -135,15 +135,15 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     <Formik<ICreateTicketPayload>
                         validateOnChange
                         enableReinitialize
-                        onSubmit={handleSubmit}
+                        onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={
                             isDepartmental ? CreateDepartmentalTicketSchema : CreateIndividualTicketSchema
                         }
                     >
-                        {({ errors, values, handleChange, handleSubmit }) => (
+                        {({ errors, values, handleChange, handleSubmit, touched }) => (
                             <VStack w="100%" space={1}>
-                                <FormControl isRequired isInvalid={!!errors?.departmentId}>
+                                <FormControl isRequired isInvalid={!!errors?.departmentId && touched.departmentId}>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
                                         selectedValue={departmentId}
@@ -175,7 +175,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <If condition={isIndividual}>
-                                    <FormControl isRequired isInvalid={!!errors?.userId}>
+                                    <FormControl isRequired isInvalid={!!errors?.userId && touched.userId}>
                                         <FormControl.Label>Worker</FormControl.Label>
                                         <SelectComponent
                                             isDisabled={!departmentId}
@@ -208,7 +208,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-                                <FormControl isRequired isInvalid={!!errors?.categoryId}>
+                                <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
                                     <FormControl.Label>Category</FormControl.Label>
                                     <SelectComponent
                                         placeholder="Choose Category"
@@ -240,7 +240,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         {errors?.categoryId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={!!errors?.ticketSummary}>
+                                <FormControl isRequired isInvalid={!!errors?.ticketSummary && touched.ticketSummary}>
                                     <FormControl.Label>Description</FormControl.Label>
                                     <TextAreaComponent
                                         onChangeText={handleChange('ticketSummary')}
