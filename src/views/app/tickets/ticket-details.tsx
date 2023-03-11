@@ -344,11 +344,11 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         />
                     </VStack>
                     <If condition={offenderAction}>
-                        <HStack space={4} justifyContent="space-between">
+                        <HStack space={4} w="95%" justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
                                 secondary
-                                width={150}
+                                width="1/2"
                                 onPress={handleSubmit}
                                 isLoading={contestLoading}
                                 isDisabled={!comment && status === 'ISSUED'}
@@ -357,7 +357,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                             <ButtonComponent
                                 size="md"
-                                width={150}
+                                width="1/2"
                                 onPress={handleAcknowledge}
                                 isLoading={acknowledgeLoading}
                                 isDisabled={
@@ -370,11 +370,11 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         </HStack>
                     </If>
                     <If condition={qcAction}>
-                        <HStack space={4} justifyContent="space-between">
+                        <HStack space={4} w="95%" justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
                                 secondary
-                                width={150}
+                                width="1/2"
                                 isLoading={retractLoading}
                                 onPress={handleRetractTicket}
                             >
@@ -382,7 +382,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                             <ButtonComponent
                                 size="md"
-                                width={150}
+                                width="1/2"
                                 isLoading={replyLoading}
                                 onPress={handleReplySubmit}
                                 isDisabled={!contestReplyComment}

@@ -222,10 +222,10 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
                                             <FormControl>
-                                                <HStack space={4} justifyContent="space-between">
+                                                <HStack space={4} w="95%" justifyContent="space-between">
                                                     <ButtonComponent
                                                         onPress={handleBackPress}
-                                                        width={160}
+                                                        width="1/2"
                                                         secondary
                                                         mt={4}
                                                     >
@@ -237,7 +237,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                             loginIsLoading ? 'Logging in...' : 'Signing up...'
                                                         }
                                                         onPress={handleContinuePress}
-                                                        width={160}
+                                                        width="1/2"
                                                         mt={4}
                                                     >
                                                         Register

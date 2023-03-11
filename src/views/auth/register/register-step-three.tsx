@@ -112,11 +112,11 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress, setFi
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <HStack space={4} justifyContent="space-between">
-                                                <ButtonComponent onPress={handleBackPress} width={160} secondary mt={4}>
+                                            <HStack space={4} w="95%" justifyContent="space-between">
+                                                <ButtonComponent onPress={handleBackPress} width="1/2" secondary mt={4}>
                                                     Go back
                                                 </ButtonComponent>
-                                                <ButtonComponent onPress={handleContinuePress} width={160} mt={4}>
+                                                <ButtonComponent onPress={handleContinuePress} width="1/2" mt={4}>
                                                     Continue
                                                 </ButtonComponent>
                                             </HStack>

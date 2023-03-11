@@ -284,12 +284,12 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         />
                     </VStack>
                     <If condition={takePermissionAction}>
-                        <HStack space={4} justifyContent="space-between">
+                        <HStack space={4} w="95%" justifyContent="space-between">
                             <ButtonComponent
                                 isDisabled={!permissionComment || approveIsLoading}
                                 isLoading={declineIsLoading}
                                 onPress={handleDecline}
-                                width={150}
+                                width="1/2"
                                 secondary
                                 size="md"
                             >
@@ -299,7 +299,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 isDisabled={declineIsLoading}
                                 isLoading={approveIsLoading}
                                 onPress={handleApprove}
-                                width={150}
+                                width="1/2"
                                 size="md"
                             >
                                 Approve
