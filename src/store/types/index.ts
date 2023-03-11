@@ -72,6 +72,8 @@ export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' |
 
 // Users
 export interface IUser {
+    _id: string;
+    userId: string;
     address: string;
     birthDay: string;
     createdAt: string;
@@ -88,7 +90,6 @@ export interface IUser {
     phoneNumber: string;
     pictureUrl: string;
     placeOfWork: string;
-    userId: string;
     role: IRole;
     department: IDepartment;
     campus: ICampus;
@@ -147,7 +148,7 @@ export interface ITicket extends ILog {
 }
 
 export interface ITicketUpdatePayload {
-    userId: IUser['userId'];
+    userId: IUser['_id'];
     _id: ITicket['_id'];
     comment: string;
 }
@@ -168,14 +169,14 @@ export interface ICreateTicketPayload {
     serviceId: IService['_id'];
     departmentId: IDepartment['_id'];
     campusId: ICampus['_id'];
-    userId?: IUser['userId'];
+    userId?: IUser['_id'];
     categoryId: string;
     isDepartment: boolean;
     isIndividual: boolean;
     isRetracted: boolean;
     ticketSummary: string;
     status?: ITicketStatus;
-    issuedBy: IUser['userId'];
+    issuedBy: IUser['_id'];
 }
 
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
@@ -227,7 +228,7 @@ export interface IRequestPermissionPayload {
     category: string;
     description: string;
     status: IStatus;
-    requestor: IUser['userId'];
+    requestor: IUser['_id'];
     categoryId: string;
     departmentId: string;
     campusId: ICampus['_id'];
