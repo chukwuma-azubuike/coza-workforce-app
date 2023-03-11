@@ -15,6 +15,8 @@ import { Appearance } from 'react-native';
 import { useColorMode } from 'native-base';
 import { useAppDispatch } from '../store/hooks';
 import ConnectionStatusBar from '../components/atoms/status-bar';
+import { useAuth } from '../hooks/auth';
+import useRole from '../hooks/role';
 
 const colorScheme = Appearance.getColorScheme();
 const RootStack = createNativeStackNavigator();
@@ -37,11 +39,17 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
     const dispatch = useAppDispatch();
     const { setColorMode } = useColorMode();
+    const { logOut } = useAuth();
+    const { user } = useRole();
 
     React.useEffect(() => {
         setColorMode(colorScheme);
 
         SplashScreen.hide();
+
+        if (!user.userId) {
+            logOut();
+        }
 
         const versionLogic = async () => {
             inAppUpdates();

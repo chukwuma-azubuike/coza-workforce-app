@@ -45,7 +45,7 @@ const useWelcome = () => {
                 setEmail('');
                 setOtpValue('');
                 reset();
-            }, 3000);
+            }, 6000);
         }
         if (isSuccess) {
             setModalVisible(true);
@@ -67,13 +67,12 @@ const useWelcome = () => {
             setTimeout(() => {
                 setModalVisible(false);
             }, 3000);
-            reset();
         }
     }, [isErrorValidate, isSuccessValidate]);
 
     React.useEffect(() => {
         if (otpValue.length === CELL_COUNT) {
-            validateEmail({ email, otp: +otpValue });
+            validateEmail({ email: Utils.formatEmail(email), otp: +otpValue });
         }
     }, [otpValue]);
 

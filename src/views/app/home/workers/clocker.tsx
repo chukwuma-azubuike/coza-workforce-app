@@ -38,7 +38,7 @@ const Clocker: React.FC = () => {
         refetch: attendanceReportRefetch,
     } = useGetDepartmentAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        departmentId: department._id,
+        departmentId: department?._id,
     });
 
     const {
@@ -47,7 +47,7 @@ const Clocker: React.FC = () => {
         isLoading: leadersLoading,
     } = useGetLeadersAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        campusId: campus._id,
+        campusId: campus?._id,
     });
 
     const {
@@ -56,12 +56,12 @@ const Clocker: React.FC = () => {
         isLoading: workersLoading,
     } = useGetWorkersAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        campusId: campus._id,
+        campusId: campus?._id,
     });
 
     const { data: tickets, refetch: refetchTickets } = useGetCampusTicketReportQuery({
         serviceId: latestService?._id as string,
-        campusId: campus._id,
+        campusId: campus?._id,
     });
 
     useScreenFocus({
@@ -104,6 +104,8 @@ const Clocker: React.FC = () => {
     const vh = Dimensions.get('window').height;
 
     const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 300 : vh - 300;
+
+    // const heightOffset = vh - (45 / 100) * vh;
 
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }}>

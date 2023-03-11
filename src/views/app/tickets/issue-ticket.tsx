@@ -19,6 +19,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Utils from '../../../utils';
 import If from '../../../components/composite/if-container';
 import { ITicketType } from '.';
+import { useGetLatestServiceQuery } from '../../../store/services/services';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };
@@ -26,7 +27,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { goBack, setOptions } = useNavigation();
 
     const {
-        user: { campus },
+        user: { campus, userId },
     } = useRole();
 
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
@@ -48,6 +49,10 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         skip: !departmentId,
     });
 
+    const { data: latestService, refetch } = useGetLatestServiceQuery(campus?._id as string, {
+        refetchOnMountOrArgChange: true,
+    });
+
     const { data: ticketCategories, isError: categoriesError } = useGetTicketCategoriesQuery();
 
     const [issueTicket, { isError, isLoading, isSuccess, error }] = useCreateTicketMutation();
@@ -56,7 +61,14 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         if (isDepartmental) {
             delete values.userId;
         }
-        issueTicket(values);
+        if (latestService) {
+            issueTicket({ ...values, serviceId: latestService._id });
+        } else {
+            setModalState({
+                status: 'info',
+                message: 'You cannot issue a ticket without an ongoing service.',
+            });
+        }
         resetForm(INITIAL_VALUES);
         setDepartmentId('');
     };
@@ -80,7 +92,9 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isDepartment: isDepartmental,
         isIndividual: isIndividual,
         isRetracted: false,
+        serviceId: '',
         ticketSummary: '',
+        issuedBy: '',
     } as ICreateTicketPayload;
 
     React.useEffect(() => {
