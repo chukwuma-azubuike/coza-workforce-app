@@ -18,10 +18,10 @@ const ConnectionStatusBar: React.FC = () => {
             setTimeout(() => {
                 Animated.timing(opacity, {
                     toValue: 0,
-                    duration: 5000,
+                    duration: 2000,
                     useNativeDriver: true,
                 }).start();
-            }, 2000);
+            }, 1000);
         }
         if (!netInfo.isInternetReachable) {
             Animated.timing(opacity, {

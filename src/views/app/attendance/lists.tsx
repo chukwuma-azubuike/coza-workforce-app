@@ -59,9 +59,12 @@ export const CampusAttendance: React.FC = React.memo(() => {
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
 
     const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
-        { campusId: user?.campus._id, serviceId: latestService?._id },
         {
-            skip: !latestService,
+            campusId: user?.campus._id,
+            //  serviceId: latestService?._id
+        },
+        {
+            // skip: !latestService,
             refetchOnMountOrArgChange: true,
         }
     );
@@ -71,9 +74,9 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <MonthPicker today />
             <FlatListComponent
                 padding
-                onRefresh={refetch}
                 columns={campusColumns_1}
                 data={data as IAttendance[]}
+                onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />

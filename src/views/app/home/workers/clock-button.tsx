@@ -95,7 +95,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: error?.data.message || 'Oops something went wrong',
+                message: error?.data?.message || 'Oops something went wrong',
             });
         }
     }, [isError]);
@@ -105,7 +105,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: clockOutError?.data.message || 'Oops something went wrong',
+                message: clockOutError?.data?.message || 'Oops something went wrong',
             });
         }
     }, [isClockOutErr]);

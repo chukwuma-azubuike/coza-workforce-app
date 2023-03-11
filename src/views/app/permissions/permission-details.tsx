@@ -280,7 +280,11 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                     </HStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
-                            {`${isCampusPastor ? 'Pastor' : 'HOD/AHOD'}'s Comment`}
+                            {!isHOD && !isAHOD && !isCampusPastor
+                                ? "Leader's comment"
+                                : (isAHOD || isHOD) && requestorId === user.userId
+                                ? "Pastor's comment"
+                                : "Leader's Comment"}
                         </Text>
                         <TextAreaComponent
                             value={permissionComment}

@@ -64,7 +64,9 @@ export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' |
     roleId: string;
     campusId: string;
     password: string;
+    confirmPassword?: string;
     departmentId: string;
+    departmentName?: string;
     nextOfKinPhoneNo: string;
 }
 
@@ -87,7 +89,6 @@ export interface IUser {
     pictureUrl: string;
     placeOfWork: string;
     userId: string;
-    _id: string;
     role: IRole;
     department: IDepartment;
     campus: ICampus;
@@ -164,6 +165,7 @@ export interface ICampusTicketsSummary {
 
 export interface ICreateTicketPayload {
     _id?: string;
+    serviceId: IService['_id'];
     departmentId: IDepartment['_id'];
     campusId: ICampus['_id'];
     userId?: IUser['userId'];

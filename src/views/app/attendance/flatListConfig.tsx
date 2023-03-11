@@ -83,8 +83,9 @@ const myAttendanceColumns: IFlatListColumn[] = [
                     color: 'warmGray.50',
                 }}
                 color="gray.500"
+                textAlign="center"
             >
-                {`${!elm.clockOut ? '--:--' : `${Utils.timeDifference(elm.clockIn, elm.clockOut).minutes}mins`}`}
+                {Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins}
             </Text>
         ),
     },
@@ -221,6 +222,7 @@ const campusColumns: IFlatListColumn[] = [
                     color: 'warmGray.50',
                 }}
                 color="gray.500"
+                textAlign="center"
             >
                 {`${!elm.clockOut ? '--:--' : `${Utils.timeDifference(elm.clockIn, elm.clockOut).minutes}mins`}`}
             </Text>
@@ -233,28 +235,19 @@ const campusColumns_1: IFlatListColumn[] = [
         title: 'User',
         dataIndex: 'user',
         render: (elm: IAttendance, key) => (
-            <HStack
-                key={`user-${key}`}
-                alignItems="center"
-                textAlign="left"
-                flexWrap="wrap"
-                minWidth={100}
-                space={0}
-                flex={1}
-                w="full"
-            >
-                <AvatarComponent badge mr={4} size="xs" imageUrl={elm.user?.pictureUrl || AVATAR_FALLBACK_URL} />
+            <HStack key={`user-${key}`} alignItems="center" textAlign="left" minWidth={100} space={0} flex={1} w="full">
+                <AvatarComponent badge mr={1} size="xs" imageUrl={elm.user?.pictureUrl || AVATAR_FALLBACK_URL} />
                 <VStack>
                     <HStack flexWrap="wrap" maxWidth={160}>
                         <Text bold color={isLightMode ? 'gray.800' : 'gray.200'} ml={2}>
-                            {Utils.truncateString(elm.user?.firstName)}
+                            {Utils.truncateString(elm.user?.firstName, 23)}
                         </Text>
                         <Text bold color={isLightMode ? 'gray.800' : 'gray.200'} ml={2}>
                             {Utils.truncateString(elm?.user?.lastName)}
                         </Text>
                     </HStack>
                     <Text color={isLightMode ? 'gray.800' : 'gray.200'} ml={2}>
-                        {Utils.truncateString(elm?.departmentName, 20)}
+                        {Utils.truncateString(elm?.departmentName, 21)}
                     </Text>
                 </VStack>
             </HStack>
