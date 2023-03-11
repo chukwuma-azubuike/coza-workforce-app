@@ -322,7 +322,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             <TextAreaComponent
                                 onChangeText={handleChange}
                                 value={ticket?.contestComment}
-                                isDisabled={status !== 'ISSUED'} // || ticket?.user?._id !== userId
+                                isDisabled={status !== 'ISSUED' && ticket?.user?._id !== userId}
                             />
                         </If>
                         <If condition={isDepartment}>
