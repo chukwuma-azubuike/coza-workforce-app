@@ -1,15 +1,8 @@
 import React from 'react';
 import FlatListComponent from '../../../components/composite/flat-list';
-import {
-    campusColumns_1,
-    myAttendanceColumns,
-    teamAttendanceDataColumns,
-} from './flatListConfig';
+import { campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
 import { MonthPicker } from '../../../components/composite/date-picker';
-import {
-    useGetAttendanceByUserIdQuery,
-    useGetAttendanceQuery,
-} from '../../../store/services/attendance';
+import { useGetAttendanceByUserIdQuery, useGetAttendanceQuery } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { IAttendance } from '../../../store/types';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
