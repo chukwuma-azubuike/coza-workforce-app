@@ -26,6 +26,8 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const {
         isQC,
+        isHOD,
+        isAHOD,
         user: { userId, department },
     } = useRole();
 
@@ -193,6 +195,20 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         },
     });
 
+    const qcAction = React.useMemo(() => {
+        if (isQC && userId === ticket?.user?._id) return false;
+        if (!isQC) return false;
+
+        return true;
+    }, [isQC, userId, ticket?.user?._id]);
+
+    const offenderAction = React.useMemo(() => {
+        if (userId === ticket?.user?._id) return true;
+        if (ticket?.department?._id === department?._id && ticket?.isDepartment) return true;
+
+        return false;
+    }, []);
+
     return (
         <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
             <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
@@ -327,7 +343,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                         />
                     </VStack>
-                    <If condition={userId === ticket?.user?._id || ticket?.department?._id === department?._id}>
+                    <If condition={offenderAction}>
                         <HStack space={4} justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
@@ -353,7 +369,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                         </HStack>
                     </If>
-                    <If condition={isQC && userId !== ticket?.user?._id}>
+                    <If condition={qcAction}>
                         <HStack space={4} justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
