@@ -30,18 +30,6 @@ const CampusReport: React.FC<ICampusReport> = props => {
         skip: !serviceId,
     });
 
-    // const workersAttendance: WorkersAttendanceType = {
-    //     headers: ['Active', 'Present', 'Late', 'Absent'],
-    //     rows: [
-    //         {
-    //             late: 50,
-    //             absent: 20,
-    //             active: 200,
-    //             present: 180,
-    //         },
-    //     ],
-    // };
-
     const serviceAttendance = React.useMemo(() => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Ushery Board')
             ?.report as unknown as IAttendanceReportPayload;
@@ -164,15 +152,6 @@ const CampusReport: React.FC<ICampusReport> = props => {
         return { headers: [], rows: [] };
     }, [data]);
 
-    // const serviceObservation: ServiceObservationsType = {
-    //     headers: ['Observations'],
-    //     rows: [
-    //         {
-    //             observations: 'Everything went well.',
-    //         },
-    //     ],
-    // };
-
     const [serviceTime, setServiceTime] = React.useState<{
         start: IServiceReportPayload['serviceStartTime'];
         end: IServiceReportPayload['serviceEndTime'];
@@ -234,10 +213,6 @@ const CampusReport: React.FC<ICampusReport> = props => {
     return (
         <ViewWrapper scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
             <VStack px={4} space={10}>
-                {/* <VerticalTable
-                    title="Workers Attendance"
-                    tableData={workersAttendance}
-                /> */}
                 <Divider />
                 <VerticalTable isLoading={isLoading} title="Service Attendance" tableData={serviceAttendance} />
                 <Divider />

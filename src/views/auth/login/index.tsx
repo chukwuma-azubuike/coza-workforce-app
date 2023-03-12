@@ -77,17 +77,10 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                             initialValues={INITIAL_VALUES}
                             validationSchema={LoginSchema}
                         >
-                            {({
-                                errors,
-                                handleChange,
-                                handleSubmit,
-                            }: Pick<
-                                IRegisterFormProps,
-                                'values' | 'errors' | 'handleChange' | 'handleSubmit' | 'setFieldError'
-                            >) => {
+                            {({ errors, touched, handleChange, handleSubmit }) => {
                                 return (
                                     <Stack w="100%" space={1}>
-                                        <FormControl isRequired isInvalid={errors?.email ? true : false}>
+                                        <FormControl isRequired isInvalid={!!errors?.email && touched.email}>
                                             <FormControl.Label>Email</FormControl.Label>
                                             <InputComponent
                                                 leftIcon={{
@@ -100,7 +93,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                                             />
                                             <FormControl.ErrorMessage>{errors?.email}</FormControl.ErrorMessage>
                                         </FormControl>
-                                        <FormControl isRequired isInvalid={errors?.password ? true : false}>
+                                        <FormControl isRequired isInvalid={!!errors?.password && touched.password}>
                                             <FormControl.Label>Password</FormControl.Label>
                                             <InputComponent
                                                 type={showPassword ? 'text' : 'password'}

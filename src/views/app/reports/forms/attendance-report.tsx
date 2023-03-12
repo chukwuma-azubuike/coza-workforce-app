@@ -1,4 +1,3 @@
-/* eslint-disable */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -12,27 +11,26 @@ import TextAreaComponent from '../../../../components/atoms/text-area';
 import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
 
 const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as IAttendanceReportPayload;
 
     const { isCampusPastor } = useRole();
 
     const [updateReport, { reset, error, isError, isSuccess, isLoading }] = useCreateAttendanceReportMutation();
 
     const onSubmit = (values: IAttendanceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IAttendanceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IAttendanceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const { setModalState } = useModal();
@@ -58,14 +56,14 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES: IAttendanceReportPayload = {
-        femaleGuestCount: 0,
-        maleGuestCount: 0,
-        otherInfo: '',
-        imageUrl: '',
-        infants: 0,
-        total: 0,
+    const INITIAL_VALUES = {
         ...params,
+        femaleGuestCount: params.femaleGuestCount || '',
+        maleGuestCount: params.maleGuestCount || '',
+        otherInfo: params.otherInfo || '',
+        imageUrl: params.imageUrl || '',
+        infants: params.infants || '',
+        total: params.total || '',
     };
 
     const addValues = (values: IAttendanceReportPayload) => {
@@ -91,6 +89,8 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.maleGuestCount}`}
                                     onChangeText={handleChange('maleGuestCount')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -102,6 +102,8 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.femaleGuestCount}`}
                                     onChangeText={handleChange('femaleGuestCount')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -113,6 +115,8 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.infants}`}
                                     onChangeText={handleChange('infants')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -136,6 +140,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                             <FormControl>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
+                                    value={`${values.otherInfo}`}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                 />
@@ -156,6 +161,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                             <If condition={isCampusPastor}>
                                 <FormControl mb={6}>
                                     <TextAreaComponent
+                                        value={values.pastorComment}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
                                     />

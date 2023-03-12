@@ -33,7 +33,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const [clockedOut, setClockedOut] = React.useState<boolean>(false);
 
-    const [clockIn, { isError, error, isSuccess, isLoading, data }] = useClockInMutation();
+    const [clockIn, { isError, error, isSuccess, isLoading, reset: clockInReset }] = useClockInMutation();
 
     const [
         clockOut,
@@ -42,6 +42,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             isSuccess: clockOutSuccess,
             isLoading: clockOutLoading,
             data: clockOutData,
+            reset: clockOutReset,
             error: clockOutError,
         },
     ] = useClockOutMutation();
@@ -62,6 +63,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     />
                 ),
             });
+            clockInReset();
         }
 
         return () => {
@@ -83,6 +85,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     />
                 ),
             });
+            clockOutReset();
         }
 
         return () => {
@@ -95,8 +98,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: error?.data.message || 'Oops something went wrong',
+                message: error?.data?.message || 'Oops something went wrong',
             });
+            clockInReset();
         }
     }, [isError]);
 
@@ -105,8 +109,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: clockOutError?.data.message || 'Oops something went wrong',
+                message: clockOutError?.data?.message || 'Oops something went wrong',
             });
+            clockOutReset();
         }
     }, [isClockOutErr]);
 
@@ -117,7 +122,10 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
     const canClockIn = isInRange && latestServiceData && !clockedIn;
 
     const canClockOut =
-        latestAttendanceData?.length && latestAttendanceData[0].clockIn && !latestAttendanceData[0].clockOut;
+        latestAttendanceData?.length &&
+        latestAttendanceData[0].clockIn &&
+        !latestAttendanceData[0].clockOut &&
+        isInRange;
 
     const handlePress = () => {
         if (!isInRange) {
@@ -132,6 +140,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     />
                 ),
             });
+            return;
         }
         if (canClockIn) {
             clockIn({
@@ -147,11 +156,13 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 departmentId: user?.department._id,
                 roleId: user?.role._id,
             });
+            return;
         }
         if (canClockOut && latestAttendanceData) {
             clockOut(latestAttendanceData[0]._id as string).then(res => {
                 if (res) setClockedOut(true);
             });
+            return;
         }
     };
 
