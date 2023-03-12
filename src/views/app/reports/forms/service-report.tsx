@@ -20,7 +20,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateServiceReportMutation();
+    const [updateReport, { error, isError, isSuccess, reset, isLoading }] = useCreateServiceReportMutation();
 
     const onSubmit = (values: IServiceReportPayload) => {
         updateReport({ ...values, status: 'SUBMITTED' });
@@ -46,6 +46,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 message: 'Report updated',
             });
             navigation.goBack();
+            reset();
         }
         if (isError) {
             setModalState({
@@ -53,6 +54,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 

@@ -21,7 +21,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateChildCareReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateChildCareReportMutation();
 
     const onSubmit = (values: IChildCareReportPayload) => {
         updateReport({ ...values, status: 'SUBMITTED' });
@@ -45,6 +45,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -53,6 +54,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 

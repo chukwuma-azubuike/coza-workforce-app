@@ -14,7 +14,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IIncidentReportPayload;
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateIncidentReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateIncidentReportMutation();
 
     const onSubmit = (values: IIncidentReportPayload) => {
         updateReport({ ...values, status: 'SUBMITTED' });
@@ -39,6 +39,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -47,6 +48,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'error',
                 message: error?.data.message || 'Something went wrong',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 

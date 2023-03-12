@@ -22,7 +22,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateTransferReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateTransferReportMutation();
 
     const onSubmit = (values: ITransferReportPayload) => {
         updateReport({ ...values, status: 'SUBMITTED' });
@@ -47,6 +47,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -55,6 +56,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
@@ -190,7 +192,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <Divider />
                         <FormControl my={4}>
                             <TextAreaComponent
-                                isDisabled={isCampusPastor}
+                                isDisabled
                                 value={`${values.otherInfo}`}
                                 placeholder="Any other information"
                                 onChangeText={handleChange('otherInfo')}
