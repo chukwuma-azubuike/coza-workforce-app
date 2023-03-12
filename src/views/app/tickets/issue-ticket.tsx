@@ -19,6 +19,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Utils from '../../../utils';
 import If from '../../../components/composite/if-container';
 import { ITicketType } from '.';
+import { useGetLatestServiceQuery } from '../../../store/services/services';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };
@@ -26,7 +27,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { goBack, setOptions } = useNavigation();
 
     const {
-        user: { campus },
+        user: { campus, userId },
     } = useRole();
 
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
@@ -48,15 +49,23 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         skip: !departmentId,
     });
 
+    const { data: latestService, refetch } = useGetLatestServiceQuery(campus?._id as string, {
+        refetchOnMountOrArgChange: true,
+    });
+
     const { data: ticketCategories, isError: categoriesError } = useGetTicketCategoriesQuery();
 
-    const [issueTicket, { isError, isLoading, isSuccess, error }] = useCreateTicketMutation();
+    const [issueTicket, { isError, isLoading, isSuccess, error, reset }] = useCreateTicketMutation();
 
-    const handleSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
-        if (isDepartmental) {
-            delete values.userId;
+    const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
+        if (latestService) {
+            issueTicket({ ...values, serviceId: latestService._id, userId });
+        } else {
+            setModalState({
+                status: 'info',
+                message: 'You cannot issue a ticket without an ongoing service.',
+            });
         }
-        issueTicket(values);
         resetForm(INITIAL_VALUES);
         setDepartmentId('');
     };
@@ -80,7 +89,9 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isDepartment: isDepartmental,
         isIndividual: isIndividual,
         isRetracted: false,
+        serviceId: '',
         ticketSummary: '',
+        issuedBy: '',
     } as ICreateTicketPayload;
 
     React.useEffect(() => {
@@ -92,6 +103,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 duration: 3,
             });
             goBack();
+            reset();
         }
 
         if (isError) {
@@ -101,6 +113,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'error',
                 duration: 3,
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
@@ -121,15 +134,15 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     <Formik<ICreateTicketPayload>
                         validateOnChange
                         enableReinitialize
-                        onSubmit={handleSubmit}
+                        onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={
                             isDepartmental ? CreateDepartmentalTicketSchema : CreateIndividualTicketSchema
                         }
                     >
-                        {({ errors, values, handleChange, handleSubmit }) => (
+                        {({ errors, values, handleChange, handleSubmit, touched }) => (
                             <VStack w="100%" space={1}>
-                                <FormControl isRequired isInvalid={!!errors?.departmentId}>
+                                <FormControl isRequired isInvalid={!!errors?.departmentId && touched.departmentId}>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
                                         selectedValue={departmentId}
@@ -161,7 +174,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <If condition={isIndividual}>
-                                    <FormControl isRequired isInvalid={!!errors?.userId}>
+                                    <FormControl isRequired isInvalid={!!errors?.userId && touched.userId}>
                                         <FormControl.Label>Worker</FormControl.Label>
                                         <SelectComponent
                                             isDisabled={!departmentId}
@@ -194,7 +207,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-                                <FormControl isRequired isInvalid={!!errors?.categoryId}>
+                                <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
                                     <FormControl.Label>Category</FormControl.Label>
                                     <SelectComponent
                                         placeholder="Choose Category"
@@ -226,7 +239,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         {errors?.categoryId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <FormControl isRequired isInvalid={!!errors?.ticketSummary}>
+                                <FormControl isRequired isInvalid={!!errors?.ticketSummary && touched.ticketSummary}>
                                     <FormControl.Label>Description</FormControl.Label>
                                     <TextAreaComponent
                                         onChangeText={handleChange('ticketSummary')}

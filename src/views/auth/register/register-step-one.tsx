@@ -1,24 +1,20 @@
 import React from 'react';
-import { Alert, Box, Center, FormControl, Heading, Stack, VStack, WarningOutlineIcon } from 'native-base';
+import { Box, Center, FormControl, Heading, Stack, VStack, WarningOutlineIcon } from 'native-base';
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { IRegistrationPageStep } from './types';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
+import { RegisterFormContext } from '.';
+import { Formik } from 'formik';
+import { IRegisterPayload } from '../../../store/types';
+import { RegisterSchema_1 } from '../../../utils/schemas';
 
-const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
-    values,
-    errors,
-    setFieldError,
-    handleChange,
-    onStepPress,
-    handlePressFoward,
-}) => {
-    const handlePress = () => {
-        const fields = ['phoneNumber', 'address', 'firstName', 'lastName'];
-        handlePressFoward(fields, values, onStepPress, 1, setFieldError);
-    };
+const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
+    const onSubmit = () => {};
+
+    const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
     return (
         <ViewWrapper scroll>
@@ -27,114 +23,162 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
                         <Stack w="100%" space={1}>
-                            <FormControl isRequired>
-                                <FormControl.Label>First name</FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'person-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    onChangeText={handleChange('firstName')}
-                                    placeholder="John"
-                                    isRequired
-                                    value={values.firstName}
-                                />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormControl.Label>Last name</FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'person-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    onChangeText={handleChange('lastName')}
-                                    value={values.lastName}
-                                    placeholder="Doe"
-                                    isRequired
-                                />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormControl.Label>Email</FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'mail-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    onChangeText={handleChange('email')}
-                                    type="email"
-                                    isDisabled
-                                    isRequired
-                                    value={values.email}
-                                    keyboardType="email-address"
-                                    placeholder="jondoe@gmail.com"
-                                />
-                            </FormControl>
-                            <FormControl isRequired isInvalid={errors?.phoneNumber ? true : false}>
-                                <FormControl.Label>Phone number</FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    leftIcon={{
-                                        name: 'call-outline',
-                                        type: 'ionicon',
-                                    }}
-                                    type="number"
-                                    onChangeText={handleChange('phoneNumber')}
-                                    keyboardType="phone-pad"
-                                    placeholder="Enter your phone number"
-                                />
-                                <FormControl.ErrorMessage
-                                    fontSize="2xl"
-                                    mt={3}
-                                    leftIcon={
-                                        <Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />
-                                    }
-                                >
-                                    {errors?.phoneNumber}
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isRequired isInvalid={errors?.address ? true : false}>
-                                <FormControl.Label>Address</FormControl.Label>
-                                <InputComponent
-                                    isRequired
-                                    leftIcon={{
-                                        name: 'home',
-                                        type: 'antdesign',
-                                    }}
-                                    onChangeText={handleChange('address')}
-                                    placeholder="Enter your home address"
-                                />
-                                <FormControl.ErrorMessage
-                                    fontSize="2xl"
-                                    mt={3}
-                                    leftIcon={
-                                        <Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />
-                                    }
-                                >
-                                    {errors?.address}
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl>
-                                <FormControl.Label>Department</FormControl.Label>
-                                <InputComponent
-                                    leftIcon={{
-                                        name: 'organization',
-                                        type: 'octicon',
-                                    }}
-                                    isDisabled
-                                    isRequired
-                                    value={values.departmentName}
-                                    placeholder="Quality Control"
-                                />
-                            </FormControl>
-                            <ButtonComponent onPress={handlePress} mt={4}>
-                                Continue
-                            </ButtonComponent>
+                            <Formik<IRegisterPayload>
+                                onSubmit={onSubmit}
+                                validateOnMount={false}
+                                validationSchema={RegisterSchema_1}
+                                initialValues={formValues as IRegisterPayload}
+                            >
+                                {({
+                                    errors,
+                                    values,
+                                    touched,
+                                    validateForm,
+                                    handleChange,
+                                    setFieldError,
+                                    setFieldTouched,
+                                }) => {
+                                    const handleContinuePress = () => {
+                                        validateForm().then(e => {
+                                            if (Object.keys(e).length === 0) {
+                                                setFormValues(prev => {
+                                                    return { ...prev, ...values };
+                                                });
+                                                onStepPress(1);
+                                            }
+                                            const errorKey = Object.keys(e)[0];
+                                            setFieldTouched(errorKey);
+                                            setFieldError(errorKey, 'This is a required field');
+                                        });
+                                    };
+
+                                    return (
+                                        <>
+                                            <FormControl isRequired isInvalid={!!errors.firstName && touched.firstName}>
+                                                <FormControl.Label>First name</FormControl.Label>
+                                                <InputComponent
+                                                    leftIcon={{
+                                                        name: 'person-outline',
+                                                        type: 'ionicon',
+                                                    }}
+                                                    onChangeText={handleChange('firstName')}
+                                                    placeholder="John"
+                                                    isRequired
+                                                    value={values?.firstName}
+                                                />
+                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                    This field cannot be empty
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl isRequired isInvalid={!!errors.lastName && touched.lastName}>
+                                                <FormControl.Label>Last name</FormControl.Label>
+                                                <InputComponent
+                                                    leftIcon={{
+                                                        name: 'person-outline',
+                                                        type: 'ionicon',
+                                                    }}
+                                                    onChangeText={handleChange('lastName')}
+                                                    value={values?.lastName}
+                                                    placeholder="Doe"
+                                                    isRequired
+                                                />
+                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                    This field cannot be empty
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl isRequired isInvalid={!!errors.email && touched.email}>
+                                                <FormControl.Label>Email</FormControl.Label>
+                                                <InputComponent
+                                                    leftIcon={{
+                                                        name: 'mail-outline',
+                                                        type: 'ionicon',
+                                                    }}
+                                                    onChangeText={handleChange('email')}
+                                                    type="email"
+                                                    isDisabled
+                                                    isRequired
+                                                    value={values?.email}
+                                                    keyboardType="email-address"
+                                                    placeholder="jondoe@gmail.com"
+                                                />
+                                            </FormControl>
+                                            <FormControl
+                                                isRequired
+                                                isInvalid={!!errors?.phoneNumber && touched.phoneNumber}
+                                            >
+                                                <FormControl.Label>Phone number</FormControl.Label>
+                                                <InputComponent
+                                                    isRequired
+                                                    leftIcon={{
+                                                        name: 'call-outline',
+                                                        type: 'ionicon',
+                                                    }}
+                                                    type="number"
+                                                    onChangeText={handleChange('phoneNumber')}
+                                                    keyboardType="phone-pad"
+                                                    placeholder="Eg: +2347012345678"
+                                                />
+                                                <FormControl.ErrorMessage
+                                                    fontSize="2xl"
+                                                    mt={3}
+                                                    leftIcon={
+                                                        <Icon
+                                                            size={16}
+                                                            name="warning"
+                                                            type="antdesign"
+                                                            color={THEME_CONFIG.error}
+                                                        />
+                                                    }
+                                                >
+                                                    {errors?.phoneNumber}
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl isRequired isInvalid={!!errors?.address && touched.address}>
+                                                <FormControl.Label>Address</FormControl.Label>
+                                                <InputComponent
+                                                    isRequired
+                                                    leftIcon={{
+                                                        name: 'home',
+                                                        type: 'antdesign',
+                                                    }}
+                                                    onChangeText={handleChange('address')}
+                                                    placeholder="Enter your home address"
+                                                />
+                                                <FormControl.ErrorMessage
+                                                    fontSize="2xl"
+                                                    mt={3}
+                                                    leftIcon={
+                                                        <Icon
+                                                            size={16}
+                                                            name="warning"
+                                                            type="antdesign"
+                                                            color={THEME_CONFIG.error}
+                                                        />
+                                                    }
+                                                >
+                                                    {errors?.address}
+                                                </FormControl.ErrorMessage>
+                                            </FormControl>
+                                            <FormControl>
+                                                <FormControl.Label>Department</FormControl.Label>
+                                                <InputComponent
+                                                    leftIcon={{
+                                                        name: 'organization',
+                                                        type: 'octicon',
+                                                    }}
+                                                    isDisabled
+                                                    isRequired
+                                                    value={values?.departmentName}
+                                                    placeholder="Quality Control"
+                                                />
+                                            </FormControl>
+                                            <ButtonComponent onPress={handleContinuePress} mt={4}>
+                                                Continue
+                                            </ButtonComponent>
+                                        </>
+                                    );
+                                }}
+                            </Formik>
                         </Stack>
                     </Box>
                 </VStack>

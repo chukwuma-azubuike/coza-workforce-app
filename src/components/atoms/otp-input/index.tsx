@@ -1,10 +1,5 @@
-/*
-
-Concept: https://dribbble.com/shots/5476562-Forgot-Password-Verification/attachments
-
-*/
 import { Animated, SafeAreaView, Text } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Cursor, CodeField, useBlurOnFulfill, useClearByFocusCell } from 'react-native-confirmation-code-field';
 

@@ -3,7 +3,6 @@ import moment from 'moment';
 import { Box, Heading, Stack, Text, VStack } from 'native-base';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { AppStateContext } from '../../../../App';
 import AvatarComponent from '../../../components/atoms/avatar';
 import UserInfo from '../../../components/atoms/user-info';
 import ViewWrapper from '../../../components/layout/viewWrapper';
@@ -12,17 +11,13 @@ import useRole from '../../../hooks/role';
 import Utils from '../../../utils';
 import DeviceInfo from 'react-native-device-info';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
+import { useAuth } from '../../../hooks/auth';
 
 const Profile: React.FC = () => {
-    const { setIsLoggedIn } = React.useContext(AppStateContext);
+    const { logOut } = useAuth();
 
     const handleLogout = () => {
-        Utils.clearCurrentUserStorage().then(res => {
-            Utils.clearStorage().then(res => {
-                setIsLoggedIn && setIsLoggedIn(false);
-                Utils.removeUserSession();
-            });
-        });
+        logOut();
     };
 
     const { user, isGlobalPastor } = useRole();

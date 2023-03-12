@@ -19,7 +19,6 @@ import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
-import { Box } from 'native-base';
 
 interface IInitialHomeState {
     latestService: {
@@ -142,11 +141,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                             </If>
                         </If>
                         <If condition={isCampusPastor}>
-                            <CampusReportSummary
-                                refetchService={handleRefresh}
-                                serviceId={latestService?._id}
-                                serviceIsLoading={isLoading}
-                            />
+                            <CampusReportSummary refetchService={handleRefresh} serviceId={latestService?._id} />
                         </If>
                     </ViewWrapper>
                 </>

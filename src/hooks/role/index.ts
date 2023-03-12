@@ -32,7 +32,11 @@ const useRole = () => {
 
     return {
         // User Object
-        user: currentUser,
+        user: {
+            ...currentUser,
+            _id: currentUser.userId || currentUser._id,
+            userId: currentUser.userId || currentUser._id,
+        },
 
         // Roles
         isHOD: roleName === ROLES.AHOD,

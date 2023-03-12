@@ -46,7 +46,10 @@ const FlatListComponent = ({
     const { isLightMode } = useAppColorMode();
     const { navigate } = useNavigation();
 
-    const navigateTo = () => navigate(navLink as never);
+    const navigateTo = () => {
+        if (navLink) navigate(navLink as never);
+        return;
+    };
 
     return (
         <>
@@ -120,7 +123,7 @@ const FlatListComponent = ({
                                         delayPressIn={0}
                                         accessibilityRole="button"
                                         style={{ paddingHorizontal: 20 }}
-                                        onPress={item.onPress || navigateTo}
+                                        onPress={item?.onPress || navigateTo}
                                         background={TouchableNativeFeedback.Ripple(
                                             isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
                                             false,

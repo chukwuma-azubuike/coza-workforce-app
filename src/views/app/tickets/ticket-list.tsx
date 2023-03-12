@@ -110,7 +110,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                                 _light={{ color: 'gray.600' }}
                                             >
                                                 {`${Utils.capitalizeFirstChar(departmentName || '')} ${
-                                                    isDepartment && ' - Departmental'
+                                                    isDepartment ? ' - Departmental' : ''
                                                 }`}
                                             </Text>
                                             <Text

@@ -64,12 +64,16 @@ export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' |
     roleId: string;
     campusId: string;
     password: string;
+    confirmPassword?: string;
     departmentId: string;
+    departmentName?: string;
     nextOfKinPhoneNo: string;
 }
 
 // Users
 export interface IUser {
+    _id: string;
+    userId: string;
     address: string;
     birthDay: string;
     createdAt: string;
@@ -86,8 +90,6 @@ export interface IUser {
     phoneNumber: string;
     pictureUrl: string;
     placeOfWork: string;
-    userId: string;
-    _id: string;
     role: IRole;
     department: IDepartment;
     campus: ICampus;
@@ -146,7 +148,7 @@ export interface ITicket extends ILog {
 }
 
 export interface ITicketUpdatePayload {
-    userId: IUser['userId'];
+    userId: IUser['_id'];
     _id: ITicket['_id'];
     comment: string;
 }
@@ -164,16 +166,17 @@ export interface ICampusTicketsSummary {
 
 export interface ICreateTicketPayload {
     _id?: string;
+    serviceId: IService['_id'];
     departmentId: IDepartment['_id'];
     campusId: ICampus['_id'];
-    userId?: IUser['userId'];
+    userId?: IUser['_id'];
     categoryId: string;
     isDepartment: boolean;
     isIndividual: boolean;
     isRetracted: boolean;
     ticketSummary: string;
     status?: ITicketStatus;
-    issuedBy: IUser['userId'];
+    issuedBy: IUser['_id'];
 }
 
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
@@ -225,7 +228,7 @@ export interface IRequestPermissionPayload {
     category: string;
     description: string;
     status: IStatus;
-    requestor: IUser['userId'];
+    requestor: IUser['_id'];
     categoryId: string;
     departmentId: string;
     campusId: ICampus['_id'];
@@ -244,7 +247,7 @@ export interface IRequestDepartmentPayload {
 
 // Campus
 export interface ICampus extends ILog {
-    location: {
+    coordinates: {
         long: number;
         lat: number;
     };
@@ -291,6 +294,7 @@ export interface IService {
     clockInEndTime: number;
     rangeToClockIn: number;
     createdAt: string;
+    isGlobalService: boolean;
     __v: number;
     campus: {
         LGA: string;
