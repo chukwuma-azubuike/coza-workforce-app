@@ -17,6 +17,7 @@ import useScreenFocus from '../../../hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import Utils from '../../../utils';
 import { HStack } from 'native-base';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 
 const reportColumns: IFlatListColumn[] = [
     {
@@ -129,41 +130,43 @@ const Reports: React.FC = () => {
     const memoizedData = React.useMemo(() => Utils.groupListByKey(reports, 'createdAt'), [reports]);
 
     return (
-        <ViewWrapper>
-            <If condition={!user}>
-                <FlatListSkeleton count={9} />
-            </If>
-            <If condition={isCampusPastor}>
-                <CampusReport serviceId={latestServiceData?._id} />
-            </If>
-            <If condition={!isGlobalPastor && !isCampusPastor}>
-                <StaggerButtonComponent
-                    buttons={[
-                        {
-                            color: 'rose.400',
-                            iconName: 'warning',
-                            iconType: 'antdesign',
-                            handleClick: goToIncidentReport,
-                        },
-                        {
-                            iconName: 'graph',
-                            color: 'green.400',
-                            iconType: 'octicon',
-                            handleClick: goToDepartmentReport,
-                        },
-                    ]}
-                />
-            </If>
-            <If condition={isHOD || isAHOD}>
-                <FlatListComponent
-                    data={memoizedData}
-                    columns={reportColumns}
-                    onRefresh={reportsRefetch}
-                    isLoading={reportsIsLoading || reportsIsFetching}
-                    refreshing={reportsIsLoading || reportsIsFetching}
-                />
-            </If>
-        </ViewWrapper>
+        <ErrorBoundary>
+            <ViewWrapper>
+                <If condition={!user}>
+                    <FlatListSkeleton count={9} />
+                </If>
+                <If condition={isCampusPastor}>
+                    <CampusReport serviceId={latestServiceData?._id} />
+                </If>
+                <If condition={!isGlobalPastor && !isCampusPastor}>
+                    <StaggerButtonComponent
+                        buttons={[
+                            {
+                                color: 'rose.400',
+                                iconName: 'warning',
+                                iconType: 'antdesign',
+                                handleClick: goToIncidentReport,
+                            },
+                            {
+                                iconName: 'graph',
+                                color: 'green.400',
+                                iconType: 'octicon',
+                                handleClick: goToDepartmentReport,
+                            },
+                        ]}
+                    />
+                </If>
+                <If condition={isHOD || isAHOD}>
+                    <FlatListComponent
+                        data={memoizedData}
+                        columns={reportColumns}
+                        onRefresh={reportsRefetch}
+                        isLoading={reportsIsLoading || reportsIsFetching}
+                        refreshing={reportsIsLoading || reportsIsFetching}
+                    />
+                </If>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 

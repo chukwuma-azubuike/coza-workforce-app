@@ -23,6 +23,7 @@ import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import useScreenFocus from '../../../../hooks/focus';
 import { useGetCampusTicketReportQuery } from '../../../../store/services/tickets';
 import { useGetCampusByIdQuery } from '../../../../store/services/campus';
+import ErrorBoundary from '../../../../components/composite/error-boundary';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(null as unknown as GeoCoordinates);
@@ -132,7 +133,9 @@ const Clocker: React.FC = () => {
             ) : (
                 <If condition={!isCampusPastor}>
                     <VStack h={heightOffset} alignItems="center" justifyContent="space-between">
-                        <ClockButton deviceCoordinates={deviceCoordinates} isInRange={!!isInRange} />
+                        <ErrorBoundary>
+                            <ClockButton deviceCoordinates={deviceCoordinates} isInRange={!!isInRange} />
+                        </ErrorBoundary>
                         <CampusLocation />
                         <If condition={isAHOD || isHOD}>
                             <TeamAttendanceSummary

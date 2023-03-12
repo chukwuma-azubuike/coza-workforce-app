@@ -8,6 +8,7 @@ import { IAttendance } from '../../../store/types';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
 import moment from 'moment';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -17,7 +18,7 @@ export const MyAttendance: React.FC = React.memo(() => {
     );
 
     return (
-        <>
+        <ErrorBoundary>
             <MonthPicker />
             <FlatListComponent
                 padding
@@ -27,7 +28,7 @@ export const MyAttendance: React.FC = React.memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
@@ -76,7 +77,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
     );
 
     return (
-        <>
+        <ErrorBoundary>
             <MonthPicker today />
             <FlatListComponent
                 padding
@@ -86,7 +87,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                 columns={teamAttendanceDataColumns}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
@@ -107,7 +108,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
     );
 
     return (
-        <>
+        <ErrorBoundary>
             <MonthPicker today />
             <FlatListComponent
                 padding
@@ -117,6 +118,6 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });

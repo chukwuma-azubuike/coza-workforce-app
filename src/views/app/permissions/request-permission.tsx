@@ -16,6 +16,7 @@ import useRole from '../../../hooks/role';
 import { RequestPermissionSchema } from '../../../utils/schemas';
 import useScreenFocus from '../../../hooks/focus';
 import moment from 'moment';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 
 const RequestPermission: React.FC = () => {
     const { user } = useRole();
@@ -96,8 +97,8 @@ const RequestPermission: React.FC = () => {
     });
 
     return (
-        <ViewWrapper>
-            <>
+        <ErrorBoundary>
+            <ViewWrapper>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Box alignItems="center" w="100%">
                         <Formik<IRequestPermissionPayload>
@@ -230,8 +231,8 @@ const RequestPermission: React.FC = () => {
                         </Formik>
                     </Box>
                 </VStack>
-            </>
-        </ViewWrapper>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 
