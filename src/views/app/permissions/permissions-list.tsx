@@ -4,6 +4,7 @@ import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
@@ -29,7 +30,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <>
+        <ErrorBoundary>
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     navigation.navigate('Permission Details' as never, elm as never);
@@ -106,7 +107,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     </TouchableNativeFeedback>
                 );
             })}
-        </>
+        </ErrorBoundary>
     );
 };
 
@@ -131,7 +132,7 @@ const MyPermissionsList: React.FC = memo(() => {
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'dateCreated'), [data]);
 
     return (
-        <>
+        <ErrorBoundary>
             {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
             <FlatListComponent
                 onRefresh={refetch}
@@ -140,7 +141,7 @@ const MyPermissionsList: React.FC = memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
@@ -167,7 +168,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
-        <>
+        <ErrorBoundary>
             {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
             <FlatListComponent
                 onRefresh={refetch}
@@ -176,7 +177,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
@@ -203,7 +204,7 @@ const CampusPermissions: React.FC = memo(() => {
     });
 
     return (
-        <>
+        <ErrorBoundary>
             {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
             <FlatListComponent
                 onRefresh={refetch}
@@ -212,7 +213,7 @@ const CampusPermissions: React.FC = memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
