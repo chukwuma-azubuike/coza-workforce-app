@@ -62,7 +62,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         ...params,
         imageUrl: params?.imageUrl || '',
         otherInfo: params?.otherInfo || '',
-        locations: params?.locations?.length ? params?.locations : [{ name: '', carCount: 0 }],
+        locations: params?.locations?.length ? params?.locations : [{ name: '', carCount: '' }],
     } as ISecurityReportPayload;
 
     const addValues = (values: ISecurityReportPayload) => {
@@ -138,7 +138,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             onPress={() =>
                                                 arrayHelpers.push({
                                                     name: '',
-                                                    carCount: 0,
+                                                    carCount: '',
                                                 })
                                             }
                                             isDisabled={isCampusPastor || isLoading}
@@ -164,6 +164,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
 
                         <FormControl my={4}>
                             <TextAreaComponent
+                                value={`${values.otherInfo}`}
                                 placeholder="Any other information"
                                 onChangeText={handleChange('otherInfo')}
                             />
@@ -184,6 +185,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <If condition={isCampusPastor}>
                             <FormControl mb={6}>
                                 <TextAreaComponent
+                                    value={values.pastorComment}
                                     placeholder="Pastor's comment"
                                     onChangeText={handleChange('pastorComment')}
                                 />

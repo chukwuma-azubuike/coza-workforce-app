@@ -62,7 +62,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         ...params,
         imageUrl: params.imageUrl || '',
         otherInfo: params.otherInfo || '',
-        locations: params?.locations?.length ? params?.locations : [{ name: '', adultCount: 0, minorCount: 0 }],
+        locations: params?.locations?.length ? params?.locations : [{ name: '', adultCount: '', minorCount: '' }],
     } as ITransferReportPayload;
 
     const addValues = (values: ITransferReportPayload, field: 'adultCount' | 'minorCount') => {
@@ -152,8 +152,8 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             onPress={() => {
                                                 arrayHelpers.push({
                                                     name: '',
-                                                    adultCount: 0,
-                                                    minorCount: 0,
+                                                    adultCount: '',
+                                                    minorCount: '',
                                                 });
                                             }}
                                             isDisabled={isCampusPastor || isLoading}
