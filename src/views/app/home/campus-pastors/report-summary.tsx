@@ -31,7 +31,7 @@ interface ReportSummaryMapIndex {
     [key: string]: ReportSummaryMap;
 }
 
-const ReportRouteIndex: ReportSummaryMapIndex = {
+export const ReportRouteIndex: ReportSummaryMapIndex = {
     PCU: ReportSummaryMap.PCU,
     'Ushery Board': ReportSummaryMap.Ushery,
     'COZA Transfer Service': ReportSummaryMap.CTS,

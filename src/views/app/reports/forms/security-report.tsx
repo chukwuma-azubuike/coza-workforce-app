@@ -22,7 +22,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateSecurityReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateSecurityReportMutation();
 
     const onSubmit = (values: ISecurityReportPayload) => {
         updateReport({ ...values, status: 'SUBMITTED' });
@@ -47,6 +47,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -55,6 +56,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 

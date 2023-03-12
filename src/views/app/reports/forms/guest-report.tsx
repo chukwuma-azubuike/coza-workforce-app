@@ -19,7 +19,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateGuestReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateGuestReportMutation();
 
     const onSubmit = (values: IGuestReportPayload) => {
         updateReport({ ...values, status: 'SUBMITTED' });
@@ -44,6 +44,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -52,6 +53,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
