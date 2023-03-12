@@ -275,7 +275,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ? "Leader's comment"
                                 : (isAHOD || isHOD) && requestorId === user.userId
                                 ? "Pastor's comment"
-                                : "Comment"}
+                                : 'Comment'}
                         </Text>
                         <TextAreaComponent
                             onChangeText={handleChange}
