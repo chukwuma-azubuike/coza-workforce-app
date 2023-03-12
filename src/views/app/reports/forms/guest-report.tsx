@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -12,27 +11,26 @@ import TextAreaComponent from '../../../../components/atoms/text-area';
 import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import If from '../../../../components/composite/if-container';
 import useRole from '../../../../hooks/role';
 
 const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as IGuestReportPayload;
 
     const { isCampusPastor } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateGuestReportMutation();
 
     const onSubmit = (values: IGuestReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IGuestReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IGuestReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -58,9 +56,9 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
-        firstTimersCount: 0,
-        newConvertsCount: 0,
         ...params,
+        firstTimersCount: params.firstTimersCount || 0,
+        newConvertsCount: params.newConvertsCount || 0,
     };
 
     return (
@@ -82,6 +80,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.firstTimersCount}`}
                                     onChangeText={handleChange('firstTimersCount')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -93,6 +93,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.newConvertsCount}`}
                                     onChangeText={handleChange('newConvertsCount')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -102,6 +104,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <Divider />
                             <FormControl mb={2}>
                                 <TextAreaComponent
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.otherInfo}`}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                 />
@@ -119,7 +123,9 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <If condition={isCampusPastor}>
                                 <FormControl mb={6}>
                                     <TextAreaComponent
+                                        isDisabled={isCampusPastor}
                                         placeholder="Pastor's comment"
+                                        value={`${values.pastorComment}`}
                                         onChangeText={handleChange('pastorComment')}
                                     />
                                 </FormControl>

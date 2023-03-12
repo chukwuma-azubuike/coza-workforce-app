@@ -22,12 +22,16 @@ import Loading from '../../../../components/atoms/loading';
 import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import useScreenFocus from '../../../../hooks/focus';
 import { useGetCampusTicketReportQuery } from '../../../../store/services/tickets';
+import { useGetCampusByIdQuery } from '../../../../store/services/campus';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(null as unknown as GeoCoordinates);
 
     const {
-        user: { department, campus },
+        isAHOD,
+        isHOD,
+        isCampusPastor,
+        user: { department, campus, userId },
     } = useRole();
 
     const { data: latestService, refetch: refetchService } = useGetLatestServiceQuery(campus?._id as string);
@@ -78,9 +82,17 @@ const Clocker: React.FC = () => {
         latestService: { data },
     } = React.useContext(HomeContext);
 
+    const { data: campusData } = useGetCampusByIdQuery(campus._id);
+
+    const selectCoordinateRef = React.useMemo(() => {
+        if (data?.isGlobalService) return data.coordinates;
+
+        return campusData?.coordinates;
+    }, [data, campusData]);
+
     const campusCoordinates = {
-        latitude: data?.coordinates.lat,
-        longitude: data?.coordinates.long,
+        latitude: selectCoordinateRef?.lat,
+        longitude: selectCoordinateRef?.long,
     };
 
     const { isInRange, distance } = useGeoLocation({
@@ -99,13 +111,9 @@ const Clocker: React.FC = () => {
         );
     }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude, data?.coordinates.lat]);
 
-    const { isAHOD, isHOD, isCampusPastor, user } = useRole();
-
     const vh = Dimensions.get('window').height;
 
-    const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 300 : vh - 300;
-
-    // const heightOffset = vh - (45 / 100) * vh;
+    const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 360 : vh - 300;
 
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }}>
@@ -119,7 +127,7 @@ const Clocker: React.FC = () => {
                 />
                 <CampusTicketSummary tickets={tickets} />
             </If>
-            {!user ? (
+            {!userId ? (
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>

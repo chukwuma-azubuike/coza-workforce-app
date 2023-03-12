@@ -50,13 +50,7 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
         <>
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
-                    navigation.navigate(
-                        ReportRouteIndex[elm?.departmentName] as never,
-                        {
-                            _id: elm?.report._id,
-                            userId: user?.userId,
-                        } as never
-                    );
+                    navigation.navigate(ReportRouteIndex[elm?.departmentName] as never, elm.report as never);
                 };
 
                 return (
