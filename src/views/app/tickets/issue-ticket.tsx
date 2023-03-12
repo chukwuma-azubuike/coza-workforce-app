@@ -107,7 +107,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
 
         if (isError) {
-            console.log(error);
             setModalState({
                 message: 'Oops, something went wrong!',
                 defaultRender: true,

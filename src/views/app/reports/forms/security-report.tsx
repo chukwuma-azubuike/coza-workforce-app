@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -14,27 +13,27 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import If from '../../../../components/composite/if-container';
 import useRole from '../../../../hooks/role';
+import { Platform } from 'react-native';
 
 const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as ISecurityReportPayload;
 
     const { isCampusPastor } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateSecurityReportMutation();
 
     const onSubmit = (values: ISecurityReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: ISecurityReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: ISecurityReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -60,10 +59,10 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
-        locations: [{ name: '', carCount: 0 }],
-        otherInfo: '',
-        imageUrl: '',
         ...params,
+        imageUrl: params?.imageUrl || '',
+        otherInfo: params?.otherInfo || '',
+        locations: params?.locations?.length ? params?.locations : [{ name: '', carCount: 0 }],
     } as ISecurityReportPayload;
 
     const addValues = (values: ISecurityReportPayload) => {
@@ -71,6 +70,8 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             ? (values.locations.map(a => a.carCount).reduce((a, b) => +a + +b) as unknown as string)
             : '0';
     };
+
+    const isIOS = Platform.OS === 'ios';
 
     return (
         <Formik<ISecurityReportPayload>
@@ -94,7 +95,9 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             <FormControl isRequired w="41%">
                                                 <FormControl.Label>Location</FormControl.Label>
                                                 <InputComponent
+                                                    value={location.name}
                                                     placeholder="Car park name"
+                                                    isDisabled={isCampusPastor}
                                                     onChangeText={handleChange(`locations[${idx}].name`)}
                                                 />
                                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -106,6 +109,8 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                 <InputComponent
                                                     placeholder="0"
                                                     keyboardType="numeric"
+                                                    isDisabled={isCampusPastor}
+                                                    value={`${location.carCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].carCount`)}
                                                 />
                                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -114,11 +119,12 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             </FormControl>
                                             <FormControl w="14%">
                                                 <ButtonComponent
-                                                    h="54px"
+                                                    h={isIOS ? '46px' : '54px'}
                                                     leftIcon={
                                                         <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
                                                     }
                                                     onPress={() => arrayHelpers.remove(idx)}
+                                                    isDisabled={isCampusPastor}
                                                     secondary
                                                     size={12}
                                                 />
@@ -128,7 +134,6 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
 
                                     <HStack mb={4}>
                                         <ButtonComponent
-                                            isDisabled={isLoading}
                                             leftIcon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             onPress={() =>
                                                 arrayHelpers.push({
@@ -136,6 +141,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     carCount: 0,
                                                 })
                                             }
+                                            isDisabled={isCampusPastor || isLoading}
                                             width="100%"
                                             secondary
                                             size={10}

@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -14,27 +13,26 @@ import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import If from '../../../../components/composite/if-container';
 import useRole from '../../../../hooks/role';
 
 const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as IChildCareReportPayload;
 
     const { isCampusPastor } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateChildCareReportMutation();
 
     const onSubmit = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const { setModalState } = useModal();
@@ -59,24 +57,9 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
-        age1_2: {
-            male: 0,
-            female: 0,
-        },
-        age3_5: {
-            male: 0,
-            female: 0,
-        },
-        age6_11: {
-            male: 0,
-            female: 0,
-        },
-        age12_above: {
-            male: 0,
-            female: 0,
-        },
         ...params,
-    } as IChildCareReportPayload;
+        otherInfo: params.otherInfo,
+    };
 
     const addGrandTotal = (values: IChildCareReportPayload) => {
         return `${
@@ -138,6 +121,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age1_2.male}`}
                                         onChangeText={handleChange('age1_2.male')}
                                     />
                                     <FormControl.ErrorMessage
@@ -160,6 +145,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age3_5.male}`}
                                         onChangeText={handleChange('age3_5.male')}
                                     />
                                     <FormControl.ErrorMessage
@@ -182,6 +169,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age6_11.male}`}
                                         onChangeText={handleChange('age6_11.male')}
                                     />
                                     <FormControl.ErrorMessage
@@ -204,6 +193,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age12_above.male}`}
                                         onChangeText={handleChange('age12_above.male')}
                                     />
                                     <FormControl.ErrorMessage
@@ -224,8 +215,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                 <FormControl isDisabled>
                                     <InputComponent
                                         w="100%"
-                                        value={addSubTotal(values, 'male')}
                                         keyboardType="numeric"
+                                        value={addSubTotal(values, 'male')}
                                         onChangeText={handleChange('subTotal.male')}
                                     />
                                     <FormControl.ErrorMessage
@@ -251,6 +242,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age1_2.female}`}
                                         onChangeText={handleChange('age1_2.female')}
                                     />
                                     <FormControl.ErrorMessage
@@ -273,6 +266,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age3_5.female}`}
                                         onChangeText={handleChange('age3_5.female')}
                                     />
                                     <FormControl.ErrorMessage
@@ -295,6 +290,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age6_11.female}`}
                                         onChangeText={handleChange('age6_11.female')}
                                     />
                                     <FormControl.ErrorMessage
@@ -317,6 +314,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         w="100%"
                                         placeholder="0"
                                         keyboardType="numeric"
+                                        isDisabled={isCampusPastor}
+                                        value={`${values.age12_above.female}`}
                                         onChangeText={handleChange('age12_above.female')}
                                     />
                                 </FormControl>
@@ -337,15 +336,19 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                     <InputComponent
                                         w="66%"
                                         isDisabled
-                                        value={addGrandTotal(values)}
                                         keyboardType="numeric"
+                                        value={addGrandTotal(values)}
                                         onChangeText={handleChange('grandTotal')}
                                     />
                                 </HStack>
                             </FormControl>
                             <Divider />
                             <FormControl>
-                                <TextAreaComponent placeholder="Any other information" />
+                                <TextAreaComponent
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.otherInfo}`}
+                                    placeholder="Any other information"
+                                />
                             </FormControl>
                             <If condition={!isCampusPastor}>
                                 <FormControl>

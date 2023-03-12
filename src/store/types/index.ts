@@ -247,7 +247,7 @@ export interface IRequestDepartmentPayload {
 
 // Campus
 export interface ICampus extends ILog {
-    location: {
+    coordinates: {
         long: number;
         lat: number;
     };
@@ -294,6 +294,7 @@ export interface IService {
     clockInEndTime: number;
     rangeToClockIn: number;
     createdAt: string;
+    isGlobalService: boolean;
     __v: number;
     campus: {
         LGA: string;

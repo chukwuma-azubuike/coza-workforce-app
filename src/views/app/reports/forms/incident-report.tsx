@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -11,23 +10,22 @@ import moment from 'moment';
 import TextAreaComponent from '../../../../components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 
 const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as IIncidentReportPayload;
 
     const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateIncidentReportMutation();
 
     const onSubmit = (values: IIncidentReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IIncidentReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IIncidentReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -52,7 +50,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = { imageUrl: '' } as IIncidentReportPayload;
+    const INITIAL_VALUES = { ...params, imageUrl: params.imageUrl || '' };
 
     return (
         <Formik<IIncidentReportPayload>
