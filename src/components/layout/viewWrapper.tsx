@@ -20,7 +20,7 @@ const ViewWrapper = (props: IViewWrapper) => {
     const ActiveView = scroll ? ScrollView : View;
 
     return (
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
             <ActiveView
                 _light={{ background: 'white' }}
                 _dark={{ background: 'black' }}
