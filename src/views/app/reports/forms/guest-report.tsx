@@ -57,8 +57,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const INITIAL_VALUES = {
         ...params,
-        firstTimersCount: params.firstTimersCount || 0,
-        newConvertsCount: params.newConvertsCount || 0,
+        firstTimersCount: params.firstTimersCount || '',
+        newConvertsCount: params.newConvertsCount || '',
     };
 
     return (

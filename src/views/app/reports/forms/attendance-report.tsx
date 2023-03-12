@@ -58,12 +58,12 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
 
     const INITIAL_VALUES = {
         ...params,
-        femaleGuestCount: params.femaleGuestCount || 0,
-        maleGuestCount: params.maleGuestCount || 0,
+        femaleGuestCount: params.femaleGuestCount || '',
+        maleGuestCount: params.maleGuestCount || '',
         otherInfo: params.otherInfo || '',
         imageUrl: params.imageUrl || '',
         infants: params.infants || '',
-        total: params.total || 0,
+        total: params.total || '',
     };
 
     const addValues = (values: IAttendanceReportPayload) => {
