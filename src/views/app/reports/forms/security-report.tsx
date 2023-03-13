@@ -20,6 +20,8 @@ import { Platform } from 'react-native';
 const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ISecurityReportPayload;
 
+    const { status, createdAt } = params;
+
     const { isCampusPastor } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateSecurityReportMutation();
@@ -86,7 +88,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment().format('Do MMMM, YYYY')}
+                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <FieldArray
                             name="locations"
@@ -180,7 +182,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                         handleSubmit();
                                     }}
                                 >
-                                    Submit
+                                    {`${!status ? 'Submit' : 'Update'}`}
                                 </ButtonComponent>
                             </FormControl>
                         </If>

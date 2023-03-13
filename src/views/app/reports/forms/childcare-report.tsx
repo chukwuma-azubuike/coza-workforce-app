@@ -19,6 +19,8 @@ import useRole from '../../../../hooks/role';
 const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IChildCareReportPayload;
 
+    const { status, createdAt } = params;
+
     const { isCampusPastor } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateChildCareReportMutation();
@@ -96,7 +98,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment().format('Do MMMM, YYYY')}
+                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <HStack px={4} flex={1} justifyContent="space-between">
                             <VStack space={4} mt={12}>
@@ -363,7 +365,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                             handleSubmit();
                                         }}
                                     >
-                                        Submit
+                                        {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
                                 </FormControl>
                             </If>
