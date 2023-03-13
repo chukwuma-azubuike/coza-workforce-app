@@ -17,6 +17,8 @@ import If from '../../../../components/composite/if-container';
 const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IAttendanceReportPayload;
 
+    const { status, createdAt } = params;
+
     const { isCampusPastor } = useRole();
 
     const [updateReport, { reset, error, isError, isSuccess, isLoading }] = useCreateAttendanceReportMutation();
@@ -81,7 +83,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment().format('Do MMMM, YYYY')}
+                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
                             <FormControl isRequired>
@@ -154,7 +156,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                             handleSubmit();
                                         }}
                                     >
-                                        Submit
+                                        {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
                                 </FormControl>
                             </If>
