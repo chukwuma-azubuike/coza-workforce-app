@@ -18,6 +18,7 @@ enum DEPARTMENTS {
     ushery = 'Ushery Board',
     witty = 'Witty Inventions',
     CTS = 'COZA Transfer Service',
+    ME = 'Monitoring & Evalauation',
     childcare = 'Children Ministry',
     programs = 'Programme Coordinator',
     PRU = 'Public Relations Unit (PRU)',
@@ -32,7 +33,11 @@ const useRole = () => {
 
     return {
         // User Object
-        user: currentUser,
+        user: {
+            ...currentUser,
+            _id: currentUser.userId || currentUser._id,
+            userId: currentUser.userId || currentUser._id,
+        },
 
         // Roles
         isHOD: roleName === ROLES.AHOD,
@@ -44,7 +49,6 @@ const useRole = () => {
         isCampusPastor: roleName === ROLES.campusPastor,
 
         // Departments
-        isQC: departmentName === DEPARTMENTS.QC,
         isCTS: departmentName === DEPARTMENTS.CTS,
         isPCU: departmentName === DEPARTMENTS.PCU,
         isPRU: departmentName === DEPARTMENTS.PRU,
@@ -52,6 +56,7 @@ const useRole = () => {
         isPrograms: departmentName === DEPARTMENTS.programs,
         isSecurity: departmentName === DEPARTMENTS.security,
         isChildcare: departmentName === DEPARTMENTS.childcare,
+        isQC: departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME,
     };
 };
 

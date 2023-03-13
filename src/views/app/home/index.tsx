@@ -19,7 +19,6 @@ import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
-import { Box } from 'native-base';
 
 interface IInitialHomeState {
     latestService: {

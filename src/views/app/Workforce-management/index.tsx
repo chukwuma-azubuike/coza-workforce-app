@@ -8,6 +8,7 @@ import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 
 const ROUTES = [
     { key: 'team', title: 'Team' },
@@ -74,17 +75,19 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     const [index, setIndex] = React.useState(0);
 
     return (
-        <ViewWrapper>
-            <TabComponent
-                onIndexChange={setIndex}
-                renderScene={renderScene}
-                tabBarScroll={allRoutes.length > 2}
-                navigationState={{ index, routes: allRoutes }}
-            />
-            <If condition={isCampusPastor || isQC || isGlobalPastor || isSuperAdmin}>
-                <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
-            </If>
-        </ViewWrapper>
+        <ErrorBoundary>
+            <ViewWrapper>
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    tabBarScroll={allRoutes.length > 2}
+                    navigationState={{ index, routes: allRoutes }}
+                />
+                <If condition={isCampusPastor || isQC || isGlobalPastor || isSuperAdmin}>
+                    <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
+                </If>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 

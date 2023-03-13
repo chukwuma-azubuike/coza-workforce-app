@@ -8,7 +8,6 @@ import { DateTimePickerComponent } from '../../../components/composite/date-pick
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useNavigation } from '@react-navigation/native';
 import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '../../../store/services/permissions';
 import { Formik, FormikConfig } from 'formik';
@@ -17,6 +16,7 @@ import useRole from '../../../hooks/role';
 import { RequestPermissionSchema } from '../../../utils/schemas';
 import useScreenFocus from '../../../hooks/focus';
 import moment from 'moment';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 
 const RequestPermission: React.FC = () => {
     const { user } = useRole();
@@ -25,8 +25,6 @@ const RequestPermission: React.FC = () => {
 
     const { setModalState } = useModal();
 
-    const { isLightMode } = useAppColorMode();
-
     const { data: categories } = useGetPermissionCategoriesQuery();
 
     const [requestPermission, { isSuccess, isError, reset, isLoading }] = useRequestPermissionMutation();
@@ -34,8 +32,8 @@ const RequestPermission: React.FC = () => {
     const handleSubmit: FormikConfig<IRequestPermissionPayload>['onSubmit'] = (values, { resetForm }) => {
         requestPermission({
             ...values,
-            startDate: moment(values.startDate).unix() * 1000,
-            endDate: moment(values.endDate).unix() * 1000,
+            startDate: moment(values.startDate).unix(),
+            endDate: moment(values.endDate).unix(),
         });
         resetForm(INITIAL_VALUES);
     };
@@ -99,8 +97,8 @@ const RequestPermission: React.FC = () => {
     });
 
     return (
-        <ViewWrapper>
-            <>
+        <ErrorBoundary>
+            <ViewWrapper>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Box alignItems="center" w="100%">
                         <Formik<IRequestPermissionPayload>
@@ -109,126 +107,132 @@ const RequestPermission: React.FC = () => {
                             initialValues={INITIAL_VALUES}
                             validationSchema={RequestPermissionSchema}
                         >
-                            {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => (
-                                <VStack w="100%" space={1}>
-                                    <HStack justifyContent="space-between">
-                                        <FormControl
-                                            w="1/2"
-                                            isRequired
-                                            isInvalid={!!errors.startDate && touched.startDate}
-                                        >
-                                            <DateTimePickerComponent
-                                                label="Start date"
-                                                fieldName="startDate"
-                                                minimumDate={new Date()}
-                                                onSelectDate={setFieldValue}
-                                            />
-                                            {errors.startDate && (
-                                                <Text color="error.400" fontSize="xs">
-                                                    Please select an end date
-                                                </Text>
-                                            )}
-                                        </FormControl>
-                                        <FormControl w="1/2" isRequired isInvalid={!!errors.endDate && touched.endDate}>
-                                            <DateTimePickerComponent
-                                                label="End date"
-                                                fieldName="endDate"
-                                                minimumDate={new Date()}
-                                                onSelectDate={setFieldValue}
-                                            />
-                                            {errors.endDate && (
-                                                <Text color="error.400" fontSize="xs">
-                                                    Please select an end date
-                                                </Text>
-                                            )}
-                                        </FormControl>
-                                    </HStack>
-                                    <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
-                                        <FormControl.Label>Category</FormControl.Label>
-                                        <SelectComponent
-                                            defaultValue="work"
-                                            selectedValue={values.categoryId}
-                                            onValueChange={handleChange('categoryId')}
-                                            dropdownIcon={
-                                                <HStack mr={2} space={2}>
-                                                    {/* <Icon
-                                                        type="ionicon"
-                                                        name="briefcase-outline"
-                                                        color={
-                                                            isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.veryLightGray
-                                                        }
-                                                    /> */}
-                                                    <Icon
-                                                        type="entypo"
-                                                        name="chevron-small-down"
-                                                        color={THEME_CONFIG.lightGray}
+                            {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
+                                const handleDate = (fieldName: string, value: any) => {
+                                    setFieldValue(fieldName, value);
+                                };
+
+                                return (
+                                    <VStack w="100%" space={1}>
+                                        <HStack justifyContent="space-between">
+                                            <FormControl
+                                                w="1/2"
+                                                isRequired
+                                                isInvalid={!!errors.startDate && touched.startDate}
+                                            >
+                                                <DateTimePickerComponent
+                                                    label="Start date"
+                                                    fieldName="startDate"
+                                                    minimumDate={new Date()}
+                                                    onSelectDate={handleDate}
+                                                />
+                                                {errors.startDate && (
+                                                    <Text color="error.400" fontSize="xs">
+                                                        Please select an end date
+                                                    </Text>
+                                                )}
+                                            </FormControl>
+                                            <FormControl
+                                                w="1/2"
+                                                isRequired
+                                                isInvalid={!!errors.endDate && touched.endDate}
+                                            >
+                                                <DateTimePickerComponent
+                                                    label="End date"
+                                                    fieldName="endDate"
+                                                    minimumDate={new Date()}
+                                                    onSelectDate={setFieldValue}
+                                                />
+                                                {errors.endDate && (
+                                                    <Text color="error.400" fontSize="xs">
+                                                        Please select an end date
+                                                    </Text>
+                                                )}
+                                            </FormControl>
+                                        </HStack>
+                                        <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
+                                            <FormControl.Label>Category</FormControl.Label>
+                                            <SelectComponent
+                                                defaultValue="work"
+                                                selectedValue={values.categoryId}
+                                                onValueChange={handleChange('categoryId')}
+                                                dropdownIcon={
+                                                    <HStack mr={2} space={2}>
+                                                        <Icon
+                                                            type="entypo"
+                                                            name="chevron-small-down"
+                                                            color={THEME_CONFIG.lightGray}
+                                                        />
+                                                    </HStack>
+                                                }
+                                            >
+                                                {categories?.map((category, index) => (
+                                                    <SelectItemComponent
+                                                        value={category._id}
+                                                        label={category.name}
+                                                        key={`category-${index}`}
+                                                        icon={iconMap[category.name.toLowerCase()]}
                                                     />
-                                                </HStack>
-                                            }
-                                        >
-                                            {categories?.map((category, index) => (
-                                                <SelectItemComponent
-                                                    value={category._id}
-                                                    label={category.name}
-                                                    key={`category-${index}`}
-                                                    icon={iconMap[category.name.toLowerCase()]}
-                                                />
-                                            ))}
-                                        </SelectComponent>
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.categoryId}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.description && touched.description}>
-                                        <FormControl.Label>Description</FormControl.Label>
-                                        <TextAreaComponent
+                                                ))}
+                                            </SelectComponent>
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.categoryId}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl
                                             isRequired
-                                            value={values.description}
-                                            placeholder="Brief description"
-                                            onChangeText={handleChange('description')}
-                                        />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
+                                            isInvalid={!!errors?.description && touched.description}
                                         >
-                                            {errors?.description}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl>
-                                        <ButtonComponent
-                                            mt={4}
-                                            isLoading={isLoading}
-                                            onPress={handleSubmit as (event: any) => void}
-                                        >
-                                            Submit for Approval
-                                        </ButtonComponent>
-                                    </FormControl>
-                                </VStack>
-                            )}
+                                            <FormControl.Label>Description</FormControl.Label>
+                                            <TextAreaComponent
+                                                isRequired
+                                                value={values.description}
+                                                placeholder="Brief description"
+                                                onChangeText={handleChange('description')}
+                                            />
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.description}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl>
+                                            <ButtonComponent
+                                                mt={4}
+                                                isLoading={isLoading}
+                                                onPress={handleSubmit as (event: any) => void}
+                                            >
+                                                Submit for Approval
+                                            </ButtonComponent>
+                                        </FormControl>
+                                    </VStack>
+                                );
+                            }}
                         </Formik>
                     </Box>
                 </VStack>
-            </>
-        </ViewWrapper>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 

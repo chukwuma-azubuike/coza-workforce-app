@@ -26,6 +26,8 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const {
         isQC,
+        isHOD,
+        isAHOD,
         user: { userId, department },
     } = useRole();
 
@@ -193,6 +195,20 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         },
     });
 
+    const qcAction = React.useMemo(() => {
+        if (isQC && userId === ticket?.user?._id) return false;
+        if (!isQC) return false;
+
+        return true;
+    }, [isQC, userId, ticket?.user?._id]);
+
+    const offenderAction = React.useMemo(() => {
+        if (userId === ticket?.user?._id) return true;
+        if (ticket?.department?._id === department?._id && ticket?.isDepartment) return true;
+
+        return false;
+    }, []);
+
     return (
         <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
             <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
@@ -306,7 +322,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             <TextAreaComponent
                                 onChangeText={handleChange}
                                 value={ticket?.contestComment}
-                                isDisabled={status !== 'ISSUED'} // || ticket?.user?._id !== userId
+                                isDisabled={status !== 'ISSUED' && ticket?.user?._id !== userId}
                             />
                         </If>
                         <If condition={isDepartment}>
@@ -327,12 +343,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                         />
                     </VStack>
-                    <If condition={userId === ticket?.user?._id || ticket?.department?._id === department?._id}>
-                        <HStack space={4} justifyContent="space-between">
+                    <If condition={offenderAction}>
+                        <HStack space={4} w="95%" justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
                                 secondary
-                                width={150}
+                                width="1/2"
                                 onPress={handleSubmit}
                                 isLoading={contestLoading}
                                 isDisabled={!comment && status === 'ISSUED'}
@@ -341,7 +357,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                             <ButtonComponent
                                 size="md"
-                                width={150}
+                                width="1/2"
                                 onPress={handleAcknowledge}
                                 isLoading={acknowledgeLoading}
                                 isDisabled={
@@ -353,12 +369,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                         </HStack>
                     </If>
-                    <If condition={isQC && userId !== ticket?.user?._id}>
-                        <HStack space={4} justifyContent="space-between">
+                    <If condition={qcAction}>
+                        <HStack space={4} w="95%" justifyContent="space-between">
                             <ButtonComponent
                                 size="md"
                                 secondary
-                                width={150}
+                                width="1/2"
                                 isLoading={retractLoading}
                                 onPress={handleRetractTicket}
                             >
@@ -366,7 +382,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                             <ButtonComponent
                                 size="md"
-                                width={150}
+                                width="1/2"
                                 isLoading={replyLoading}
                                 onPress={handleReplySubmit}
                                 isDisabled={!contestReplyComment}

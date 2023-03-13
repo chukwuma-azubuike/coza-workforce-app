@@ -1,3 +1,4 @@
+import { IStatus } from './../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
@@ -62,6 +63,12 @@ export interface ICampusReportSummary<R = unknown> {
         } & R;
     }[];
     incidentReport: unknown[];
+}
+
+export interface IDepartmentReportListById {
+    _id: string;
+    status: IStatus;
+    createdAt: string;
 }
 
 export const reportsServiceSlice = createApi({
@@ -192,13 +199,13 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
         }),
 
-        getDepartmentReportsList: endpoint.query<IDepartmentReportResponse[], IDepartment['_id']>({
+        getDepartmentReportsList: endpoint.query<IDepartmentReportListById[], IDepartment['_id']>({
             query: departmentId => ({
-                url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}`,
+                url: `/${SERVICE_URL}/getReportByDepartmentID/${departmentId}`,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<IDepartmentReportResponse[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<IDepartmentReportListById[]>) => res.data,
         }),
 
         // Add your endpoints here

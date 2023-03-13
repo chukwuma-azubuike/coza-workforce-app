@@ -22,12 +22,17 @@ import Loading from '../../../../components/atoms/loading';
 import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import useScreenFocus from '../../../../hooks/focus';
 import { useGetCampusTicketReportQuery } from '../../../../store/services/tickets';
+import { useGetCampusByIdQuery } from '../../../../store/services/campus';
+import ErrorBoundary from '../../../../components/composite/error-boundary';
 
 const Clocker: React.FC = () => {
     const [deviceCoordinates, setDeviceCoordinates] = useState<GeoCoordinates>(null as unknown as GeoCoordinates);
 
     const {
-        user: { department, campus },
+        isAHOD,
+        isHOD,
+        isCampusPastor,
+        user: { department, campus, userId },
     } = useRole();
 
     const { data: latestService, refetch: refetchService } = useGetLatestServiceQuery(campus?._id as string);
@@ -38,7 +43,7 @@ const Clocker: React.FC = () => {
         refetch: attendanceReportRefetch,
     } = useGetDepartmentAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        departmentId: department._id,
+        departmentId: department?._id,
     });
 
     const {
@@ -47,7 +52,7 @@ const Clocker: React.FC = () => {
         isLoading: leadersLoading,
     } = useGetLeadersAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        campusId: campus._id,
+        campusId: campus?._id,
     });
 
     const {
@@ -56,12 +61,12 @@ const Clocker: React.FC = () => {
         isLoading: workersLoading,
     } = useGetWorkersAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        campusId: campus._id,
+        campusId: campus?._id,
     });
 
     const { data: tickets, refetch: refetchTickets } = useGetCampusTicketReportQuery({
         serviceId: latestService?._id as string,
-        campusId: campus._id,
+        campusId: campus?._id,
     });
 
     useScreenFocus({
@@ -78,9 +83,17 @@ const Clocker: React.FC = () => {
         latestService: { data },
     } = React.useContext(HomeContext);
 
+    const { data: campusData } = useGetCampusByIdQuery(campus._id);
+
+    const selectCoordinateRef = React.useMemo(() => {
+        if (data?.isGlobalService) return data.coordinates;
+
+        return campusData?.coordinates;
+    }, [data, campusData]);
+
     const campusCoordinates = {
-        latitude: data?.coordinates.lat,
-        longitude: data?.coordinates.long,
+        latitude: selectCoordinateRef?.lat,
+        longitude: selectCoordinateRef?.long,
     };
 
     const { isInRange, distance } = useGeoLocation({
@@ -99,11 +112,9 @@ const Clocker: React.FC = () => {
         );
     }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude, data?.coordinates.lat]);
 
-    const { isAHOD, isHOD, isCampusPastor, user } = useRole();
-
     const vh = Dimensions.get('window').height;
 
-    const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 300 : vh - 300;
+    const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 360 : vh - 300;
 
     return (
         <Center px={4} pt={8} _dark={{ bg: 'black' }}>
@@ -117,12 +128,14 @@ const Clocker: React.FC = () => {
                 />
                 <CampusTicketSummary tickets={tickets} />
             </If>
-            {!user ? (
+            {!userId ? (
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>
                     <VStack h={heightOffset} alignItems="center" justifyContent="space-between">
-                        <ClockButton deviceCoordinates={deviceCoordinates} isInRange={!!isInRange} />
+                        <ErrorBoundary>
+                            <ClockButton deviceCoordinates={deviceCoordinates} isInRange={!!isInRange} />
+                        </ErrorBoundary>
                         <CampusLocation />
                         <If condition={isAHOD || isHOD}>
                             <TeamAttendanceSummary
