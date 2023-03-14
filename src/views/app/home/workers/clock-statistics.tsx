@@ -17,7 +17,7 @@ interface IStatProps {
 
 const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
     return (
-        <VStack alignItems="center" space={0} minW='1/3'>
+        <VStack alignItems="center" space={0} minW="1/3">
             <Icon
                 size={25}
                 name={icon}

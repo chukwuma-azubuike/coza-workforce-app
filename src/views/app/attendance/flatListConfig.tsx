@@ -303,10 +303,15 @@ const campusColumns_1: IFlatListColumn[] = [
                 />
                 <VStack justifyContent="center">
                     <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                        {Utils.capitalizeFirstChar(elm.user?.firstName)}
+                        {Utils.truncateString(
+                            `${Utils.capitalizeFirstChar(elm.user?.firstName)} ${Utils.capitalizeFirstChar(
+                                elm.user?.lastName
+                            )}`,
+                            20
+                        )}
                     </Text>
-                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                        {Utils.capitalizeFirstChar(elm.user?.lastName)}
+                    <Text bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                        {Utils.truncateString(elm?.departmentName, 20)}
                     </Text>
                 </VStack>
             </HStack>
