@@ -207,7 +207,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         if (ticket?.department?._id === department?._id && ticket?.isDepartment) return true;
 
         return false;
-    }, []);
+    }, [ticket?.department?._id, userId, ticket?.user?._id, ticket?.isDepartment, department?._id]);
 
     return (
         <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>

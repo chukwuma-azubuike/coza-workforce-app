@@ -133,7 +133,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                 duration: 6,
                 render: (
                     <ModalAlertComponent
-                        description={'Your are not within range of any campus!'}
+                        description={'You are not within range of any campus!'}
                         iconName={'warning-outline'}
                         iconType={'ionicon'}
                         status={'warning'}

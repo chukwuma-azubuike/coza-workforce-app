@@ -83,10 +83,10 @@ const Clocker: React.FC = () => {
         latestService: { data },
     } = React.useContext(HomeContext);
 
-    const { data: campusData } = useGetCampusByIdQuery(campus._id);
+    const { data: campusData } = useGetCampusByIdQuery(campus?._id);
 
     const selectCoordinateRef = React.useMemo(() => {
-        if (data?.isGlobalService) return data.coordinates;
+        if (data?.isGlobalService) return data?.coordinates;
 
         return campusData?.coordinates;
     }, [data, campusData]);
@@ -105,7 +105,7 @@ const Clocker: React.FC = () => {
     React.useEffect(() => {
         Geolocation.getCurrentPosition(
             position => {
-                setDeviceCoordinates(position.coords);
+                setDeviceCoordinates(position?.coords);
             },
             error => {},
             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
@@ -117,7 +117,7 @@ const Clocker: React.FC = () => {
     const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 360 : vh - 300;
 
     return (
-        <Center px={4} pt={8} _dark={{ bg: 'black' }}>
+        <Center pt={8} _dark={{ bg: 'black' }}>
             <Timer />
             <If condition={isCampusPastor}>
                 <CampusAttendanceSummary

@@ -161,7 +161,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         if (status !== 'PENDING') return false;
 
         return true;
-    }, [permission, status, requestorId, user._id, isQC, permission?.department._id, user.department._id]);
+    }, [permission, status, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
