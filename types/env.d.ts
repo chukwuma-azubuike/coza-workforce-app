@@ -7,4 +7,6 @@ declare module '@env' {
     export const SUPPORT_EMAIL: string;
     export const CLOCK_IN_MIN_DISTANCE: number;
     export const SENTRY_DNS: string;
+    export const UPLOAD_URL: string;
+    export const UPLOAD_API_KEY: string;
 }

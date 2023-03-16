@@ -94,7 +94,6 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                         type: 'ionicon',
                                                     }}
                                                     onChangeText={handleChange('email')}
-                                                    type="email"
                                                     isDisabled
                                                     isRequired
                                                     value={values?.email}
@@ -113,7 +112,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                         name: 'call-outline',
                                                         type: 'ionicon',
                                                     }}
-                                                    type="number"
+                                                    value={values?.phoneNumber}
                                                     onChangeText={handleChange('phoneNumber')}
                                                     keyboardType="phone-pad"
                                                     placeholder="Eg: +2347012345678"
@@ -141,6 +140,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                         name: 'home',
                                                         type: 'antdesign',
                                                     }}
+                                                    value={values?.address}
                                                     onChangeText={handleChange('address')}
                                                     placeholder="Enter your home address"
                                                 />
