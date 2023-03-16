@@ -46,32 +46,12 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     ] = useLoginMutation();
 
     const onSubmit = (values: IRegisterPayload) => {
-        delete values.confirmPassword;
-        delete values.departmentName;
+        delete formValues.confirmPassword;
+        delete formValues.departmentName;
 
-        register(values);
+        register(formValues);
         setLoginValues({ password: values.password, email: values.email });
     };
-
-    interface GIn {
-        address: 'Iju';
-        birthDay: '2023-03-15T13:39:00.000Z';
-        campusId: '6361a285832e7fbd65897cb7';
-        departmentId: '639cde4ff520b583761aed5b';
-        email: 'ranechopro@gmail.com';
-        firstName: 'Chukwuma';
-        gender: undefined;
-        lastName: 'Azubuike';
-        maritalStatus: 'married';
-        nextOfKin: 'Chimps';
-        nextOfKinPhoneNo: '+2347036215474';
-        occupation: 'Engineer';
-        password: 'Far2kind/';
-        phoneNumber: '+2347036215474';
-        placeOfWork: 'Toptal';
-        roleId: '638a5f1e8eb1e1ef2b0be2a7';
-        socialMedia: { facebook: 'Okay'; instagram: 'Plain'; twitter: 'Naaa' };
-    }
 
     const dispatch = useAppDispatch();
 

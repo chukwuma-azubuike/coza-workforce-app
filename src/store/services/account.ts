@@ -138,10 +138,7 @@ export const accountServiceSlice = createApi({
             query: body => ({
                 url: `/${SERVICE_URL}/register`,
                 method: REST_API_VERBS.POST,
-                body: {
-                    ...body,
-                    pictureUrl: '',
-                },
+                body,
             }),
         }),
 
