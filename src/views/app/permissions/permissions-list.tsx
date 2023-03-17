@@ -36,14 +36,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     navigation.navigate('Permission Details' as never, elm as never);
                 };
 
-                const {
-                    requestor: { lastName, firstName, pictureUrl, department },
-                    departmentName,
-                    categoryName,
-                    description,
-                    category,
-                    status,
-                } = elm;
+                const { requestor, departmentName, categoryName, description, category, status } = elm;
 
                 return (
                     <TouchableNativeFeedback
@@ -61,7 +54,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     >
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={pictureUrl || AVATAR_FALLBACK_URL} />
+                                <AvatarComponent imageUrl={requestor?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 <VStack justifyContent="space-between">
                                     {type === 'own' && (
                                         <>
@@ -76,9 +69,9 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                     {type === 'team' && (
                                         <>
                                             <Text bold>
-                                                {`${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                    lastName
-                                                )}`}
+                                                {`${Utils.capitalizeFirstChar(
+                                                    requestor?.firstName
+                                                )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
                                             </Text>
                                             <Text fontSize="sm" color="gray.400">
                                                 {categoryName}
@@ -88,9 +81,9 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                     {type === 'campus' && (
                                         <>
                                             <Text bold>
-                                                {`${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                    lastName
-                                                )}`}
+                                                {`${Utils.capitalizeFirstChar(
+                                                    requestor?.firstName
+                                                )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
                                             </Text>
                                             <Text fontSize="sm" color="gray.600">
                                                 {departmentName}

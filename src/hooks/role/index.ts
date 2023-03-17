@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAppSelector } from '../../store/hooks';
 import { selectCurrentUser } from '../../store/services/users';
+import { useAuth } from '../auth';
 
 enum ROLES {
     HOD = 'HOD',
@@ -30,6 +31,14 @@ const useRole = () => {
 
     const roleName = currentUser?.role?.name;
     const departmentName = currentUser?.department?.departmentName;
+
+    const { logOut } = useAuth();
+
+    React.useEffect(() => {
+        if (!!currentUser._id && !!currentUser.userId) {
+            logOut();
+        }
+    }, []);
 
     return {
         // User Object

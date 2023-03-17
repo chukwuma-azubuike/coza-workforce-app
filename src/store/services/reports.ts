@@ -1,4 +1,4 @@
-import { IStatus } from './../types/index';
+import { ICampus, IStatus } from './../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
@@ -27,6 +27,33 @@ export interface IGlobalWorkforceReportSummary {
     absentWorkers: number;
 }
 
+export interface IGSPReport {
+    workers: {
+        totalWorkers: number;
+        activeWorkers: number;
+        presentWorkers: number;
+        lateWorkers: number;
+        absentWorkers: number;
+    };
+    serviceAttendance: {
+        totalAttenance: number;
+        menAttendance: number;
+        womenAttendance: number;
+        teenagerAttendance: number;
+        childrenAttendance: number;
+    };
+    guestAttendance: {
+        firstTimer: number;
+        newConvert: number;
+    };
+    busCount: {
+        location: number;
+        totalGuest: number;
+        totalAdult: number;
+        totalChildren: number;
+        totalCars: number;
+    };
+}
 export interface ICarsReportSummary {
     totalCars: number;
 }
@@ -133,6 +160,16 @@ export const reportsServiceSlice = createApi({
             }),
         }),
 
+        getGSPReport: endpoint.query<IGSPReport, { serviceId?: IService['_id']; campusId?: ICampus['_id'] }>({
+            query: params => ({
+                url: `/${SERVICE_URL}/gspReport`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<IGSPReport>) => res.data,
+        }),
+
         getGlobalWorkforceSummary: endpoint.query<IGlobalWorkforceReportSummary, void>({
             query: () => ({
                 url: `/${SERVICE_URL}/gspReport`,
@@ -214,6 +251,7 @@ export const reportsServiceSlice = createApi({
 
 // Use exported hook in relevant components
 export const {
+    useGetGSPReportQuery,
     useGetBusSummaryQuery,
     useGetCarsSummaryQuery,
     useGetGuestSummaryQuery,

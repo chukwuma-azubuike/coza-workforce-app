@@ -59,7 +59,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
         if (latestService) {
-            issueTicket({ ...values, serviceId: latestService._id, userId });
+            issueTicket({ ...values, serviceId: latestService._id, userId: isIndividual ? values.userId : userId });
         } else {
             setModalState({
                 status: 'info',
