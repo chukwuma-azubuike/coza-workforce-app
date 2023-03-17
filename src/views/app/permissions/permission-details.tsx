@@ -16,7 +16,6 @@ import {
     useApprovePermissionMutation,
     useDeclinePermissionMutation,
     useGetPermissionByIdQuery,
-    useUpdatePermissionMutation,
 } from '../../../store/services/permissions';
 import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
 
@@ -36,9 +35,28 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
 
     const navigate = props.navigation;
 
-    const { user, isHOD, isAHOD, isCampusPastor, isQC } = useRole();
+    interface NJ {
+        _id: '6412441eb7679db1b5c47e0f';
+        campus: { _id: '6361a285832e7fbd65897cb7'; campusName: 'Lagos Campus' };
+        category: { _id: '64066dcee600a0a85e5956ab'; name: 'Education' };
+        categoryName: 'Education';
+        createdAt: 1678918686890;
+        department: { _id: '639cde4ff520b583761aed5b'; departmentName: 'COZA Transfer Service' };
+        departmentName: 'COZA Transfer Service';
+        description: 'Ed conference in Sydney';
+        endDate: 1682806620000000;
+        requestor: {
+            _id: '6411df3ab7679db1b5c46f57';
+            email: 'ranechopro@gmail.com';
+            firstName: 'Chukwuma';
+            lastName: 'Azubuike';
+            pictureUrl: 'https://i.ibb.co/FD9P3x5/D857-C2-AC-D2-D3-4-E5-A-A441-0-B10-A1-A1-DDDE.jpg';
+        };
+        startDate: 1680214620000000;
+        status: 'APPROVED';
+    }
 
-    const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(comment);
+    const { user, isHOD, isAHOD, isCampusPastor, isQC } = useRole();
 
     const {
         refetch,
@@ -49,10 +67,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         isSuccess: permissionIsSuccess,
     } = useGetPermissionByIdQuery(_id);
 
-    const [
-        updatePermission,
-        { isSuccess: updateIsSuccess, isError: updateIsError, isLoading: updateLoading, reset: updateReset },
-    ] = useUpdatePermissionMutation();
+    const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(
+        permission?.comment as string
+    );
 
     const [
         approve,
@@ -79,42 +96,21 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     useScreenFocus({
         onFocus: () => {
             refetch();
-            setPermissionComment('');
+            if (!permission?.comment) setPermissionComment('');
         },
     });
 
-    const handleUpdate = (status: IUpdatePermissionPayload['status']) => {
-        updatePermission({ comment: permissionComment, _id, status } as IUpdatePermissionPayload);
-    };
+    const handleApprove = () =>
+        approve({ approverId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
 
-    const handleApprove = () => approve({ approverId: user.userId, permissionId: permission?._id as string });
-
-    const handleDecline = () => decline({ declinerId: user.userId, permissionId: permission?._id as string });
+    const handleDecline = () =>
+        decline({ declinerId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
 
     const handleChange = (comment: string) => {
         setPermissionComment(comment);
     };
 
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (updateIsSuccess) {
-            setModalState({
-                status: 'success',
-                message: 'Permission updated',
-            });
-            setPermissionComment('');
-            updateReset();
-            navigate.goBack();
-        }
-        if (updateIsError) {
-            setModalState({
-                status: 'error',
-                message: 'Oops something went wrong.',
-            });
-            updateReset();
-        }
-    }, [updateIsSuccess, updateIsError]);
 
     React.useEffect(() => {
         if (approveIsSuccess) {
@@ -161,7 +157,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         if (status !== 'PENDING') return false;
 
         return true;
-    }, [permission, status, requestorId, user._id, isQC, permission?.department._id, user.department._id]);
+    }, [permission, status, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
@@ -267,7 +263,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Status
                         </Text>
-                        <StatusTag>{status}</StatusTag>
+                        <StatusTag>{permission?.status as any}</StatusTag>
                     </HStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
