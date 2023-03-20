@@ -19,7 +19,7 @@ const CampusLocation = () => {
                     size={15}
                 />
                 <Text fontWeight="semibold" color="gray.600" fontSize="md" ml={1}>
-                    {!isError ? data?.campus.campusName : ''}
+                    {!isError ? data?.campus?.campusName : ''}
                 </Text>
             </Flex>
         </Center>

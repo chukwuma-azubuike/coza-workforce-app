@@ -41,6 +41,7 @@ const Clocker: React.FC = () => {
         data: attendanceReport,
         isLoading: attendanceReportLoading,
         refetch: attendanceReportRefetch,
+        error: attendanceReportError,
     } = useGetDepartmentAttendanceReportQuery({
         serviceId: latestService?._id as string,
         departmentId: department?._id,
