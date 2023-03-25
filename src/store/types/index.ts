@@ -101,6 +101,24 @@ export interface IUser {
     };
 }
 
+export type IEditProfilePayload = Pick<
+    IUser,
+    | '_id'
+    | 'gender'
+    | 'address'
+    | 'birthDay'
+    | 'firstName'
+    | 'lastName'
+    | 'socialMedia'
+    | 'maritalStatus'
+    | 'nextOfKin'
+    | 'nextOfKinPhoneNo'
+    | 'occupation'
+    | 'pictureUrl'
+    | 'placeOfWork'
+    | 'phoneNumber'
+>;
+
 export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
 
 // Attendance

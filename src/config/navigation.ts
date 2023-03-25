@@ -33,6 +33,7 @@ import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import UserDetails from '../views/app/workforce-management/user-details';
 import WorkforceClockin from '../views/app/workforce-clockin';
+import EditProfile from '../views/app/profile/edit-profile';
 
 export interface IAppRoute {
     name: string;
@@ -143,7 +144,17 @@ const AppRoutes: IAppRoute[] = [
         name: 'Profile',
         component: Profile,
         options: { title: 'Profile' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'Edit Profile',
+                component: EditProfile,
+                options: { title: 'Edit Profile' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person-outline', type: 'ionicon' },
+            },
+        ],
         users: [],
         inMenuBar: false,
         icon: { name: 'person-outline', type: 'ionicon' },
