@@ -32,6 +32,8 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import UserDetails from '../views/app/workforce-management/user-details';
+import WorkforceClockin from '../views/app/workforce-clockin';
+
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
@@ -264,6 +266,15 @@ const AppRoutes: IAppRoute[] = [
         users: ['admin', 'HOD', 'AHOD', 'QC'],
         inMenuBar: false,
         icon: { name: 'database-cog-outline', type: 'material-community' },
+    },
+    {
+        name: 'Workforce clock in',
+        component: WorkforceClockin,
+        options: { title: 'Workforce clock in' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        inMenuBar: false,
+        icon: { name: 'timer-outline', type: 'material-community' },
     },
     // {
     //     name: 'Settings',

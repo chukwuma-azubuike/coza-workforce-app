@@ -1,4 +1,5 @@
-import { GeoCoordinates } from 'react-native-geolocation-service';
+import React from 'react';
+import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { ICampusCoordinates } from '../../store/services/attendance';
 
 const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campusCoordinates: ICampusCoordinates) => {
@@ -27,14 +28,29 @@ const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campus
 
 interface IUseGeoLocationArgs {
     rangeToClockIn: number;
-    deviceCoordinates: GeoCoordinates;
     campusCoordinates: ICampusCoordinates;
 }
 
 const useGeoLocation = (props: IUseGeoLocationArgs) => {
-    const { deviceCoordinates, campusCoordinates, rangeToClockIn } = props;
+    const { campusCoordinates, rangeToClockIn } = props;
 
     let distance = Infinity;
+
+    const [nudge, setNudge] = React.useState<boolean>(false);
+
+    const refresh = async () => {
+        setNudge(prev => !prev);
+
+        const result = await Geolocation.getCurrentPosition(
+            position => {
+                setDeviceCoordinates(position?.coords);
+            },
+            error => {},
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+
+        return result;
+    };
 
     const isInRange = () => {
         if (deviceCoordinates && campusCoordinates) {
@@ -50,9 +66,23 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
         }
     };
 
+    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
+
+    React.useEffect(() => {
+        Geolocation.getCurrentPosition(
+            position => {
+                setDeviceCoordinates(position?.coords);
+            },
+            error => {},
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+    }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude, nudge]);
+
     return {
-        isInRange: isInRange(),
+        isInRange: !!isInRange(),
+        deviceCoordinates,
         distance,
+        refresh,
     };
 };
 
