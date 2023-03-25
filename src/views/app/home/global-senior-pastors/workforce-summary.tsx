@@ -96,7 +96,7 @@ const WorkForceSummary: React.FC = () => {
                             <SelectItemComponent
                                 value={service._id}
                                 key={`service-${index}`}
-                                label={`${service.name} - ${moment(service.createdAt).format('Do MMM YYYY')}`}
+                                label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>

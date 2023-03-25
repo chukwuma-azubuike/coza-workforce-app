@@ -110,7 +110,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             40
                         )}
                     >
-                        <Center py={2} minWidth={60}>
+                        <Center py={3} minWidth={60}>
                             <Icon
                                 size={22}
                                 name={iconName}
