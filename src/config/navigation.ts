@@ -32,6 +32,9 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import UserDetails from '../views/app/workforce-management/user-details';
+import WorkforceClockin from '../views/app/workforce-clockin';
+import EditProfile from '../views/app/profile/edit-profile';
+
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
@@ -141,7 +144,17 @@ const AppRoutes: IAppRoute[] = [
         name: 'Profile',
         component: Profile,
         options: { title: 'Profile' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'Edit Profile',
+                component: EditProfile,
+                options: { title: 'Edit Profile' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person-outline', type: 'ionicon' },
+            },
+        ],
         users: [],
         inMenuBar: false,
         icon: { name: 'person-outline', type: 'ionicon' },
@@ -264,6 +277,15 @@ const AppRoutes: IAppRoute[] = [
         users: ['admin', 'HOD', 'AHOD', 'QC'],
         inMenuBar: false,
         icon: { name: 'database-cog-outline', type: 'material-community' },
+    },
+    {
+        name: 'Workforce clock in',
+        component: WorkforceClockin,
+        options: { title: 'Workforce clock in' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        inMenuBar: false,
+        icon: { name: 'timer-outline', type: 'material-community' },
     },
     // {
     //     name: 'Settings',

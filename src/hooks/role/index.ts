@@ -11,6 +11,7 @@ enum ROLES {
     superAdmin = 'Super  Admins',
     campusPastor = 'Campus Pastor',
     globalPastor = 'Global Pastor',
+    campusCoordinator = 'Campus Coordinator',
 }
 
 enum DEPARTMENTS {
@@ -55,7 +56,7 @@ const useRole = () => {
         isWorker: roleName === ROLES.worker,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,
-        isCampusPastor: roleName === ROLES.campusPastor,
+        isCampusPastor: roleName === ROLES.campusPastor || roleName === ROLES.campusCoordinator,
 
         // Departments
         isCTS: departmentName === DEPARTMENTS.CTS,

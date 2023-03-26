@@ -93,7 +93,7 @@ export const attendanceServiceSlice = createApi({
             { serviceId: string; departmentId: string }
         >({
             query: ({ serviceId, departmentId }) => ({
-                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId} `,
+                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -113,7 +113,7 @@ export const attendanceServiceSlice = createApi({
             { serviceId: string; campusId: string }
         >({
             query: ({ serviceId, campusId }) => ({
-                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId} `,
+                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -133,7 +133,7 @@ export const attendanceServiceSlice = createApi({
             { serviceId: string; campusId: string }
         >({
             query: ({ serviceId, campusId }) => ({
-                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId} `,
+                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}`,
                 method: REST_API_VERBS.GET,
             }),
 

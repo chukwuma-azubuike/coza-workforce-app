@@ -125,3 +125,12 @@ export const RequestPermissionSchema = Yup.object().shape({
     startDate: Yup.string().required('Kindly select a start date.'),
     endDate: Yup.string().required('Kindly select an end date.'),
 });
+
+export const WorkforceClockinSchema = Yup.object().shape({
+    userId: Yup.string().required('You are required to select a category.'),
+    clockIn: Yup.string().required('You are required to select a category.'),
+    clockOut: Yup.string().required('You are required to select a category.'),
+    serviceId: Yup.string().required('You are required to select a category.'),
+    campusId: Yup.string().required('You are required to select a category.'),
+    departmentId: Yup.string().required('You are required to select a category.'),
+});
