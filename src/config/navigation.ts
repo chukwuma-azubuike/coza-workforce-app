@@ -11,7 +11,6 @@ import Notifications from '../views/app/notifications';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
 // import Settings from '../views/app/settings';
-import WorkforceManagement from '../views/app/workforce-management';
 // import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
@@ -36,6 +35,7 @@ import EditProfile from '../views/app/profile/edit-profile';
 import UserDetails from '../views/app/workforce-management/user-details';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
+import WorkforceManagement from '../views/app/workforce-management';
 
 export interface IAppRoute {
     name: string;
