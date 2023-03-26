@@ -7,12 +7,24 @@ import { IRegistrationPageStep } from './types';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { RegisterFormContext } from '.';
-import { Formik } from 'formik';
+import { Field, Formik } from 'formik';
 import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_1 } from '../../../utils/schemas';
+import PhoneNumberInput from '../../../components/atoms/phone-input';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
+
+    const validate = (values: IRegisterPayload) => {
+        const errors: Partial<IRegisterPayload> = {};
+
+        if (!isValidPhoneNumber(values.phoneNumber)) {
+            errors.phoneNumber = 'Invalid phone number';
+        }
+
+        return errors;
+    };
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
@@ -28,6 +40,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                 validateOnMount={false}
                                 validationSchema={RegisterSchema_1}
                                 initialValues={formValues as IRegisterPayload}
+                                validate={validate}
                             >
                                 {({
                                     errors,
@@ -101,37 +114,12 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     placeholder="jondoe@gmail.com"
                                                 />
                                             </FormControl>
-                                            <FormControl
-                                                isRequired
-                                                isInvalid={!!errors?.phoneNumber && touched.phoneNumber}
-                                            >
-                                                <FormControl.Label>Phone number</FormControl.Label>
-                                                <InputComponent
-                                                    isRequired
-                                                    leftIcon={{
-                                                        name: 'call-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    value={values?.phoneNumber}
-                                                    onChangeText={handleChange('phoneNumber')}
-                                                    keyboardType="phone-pad"
-                                                    placeholder="Eg: +2347012345678"
-                                                />
-                                                <FormControl.ErrorMessage
-                                                    fontSize="2xl"
-                                                    mt={3}
-                                                    leftIcon={
-                                                        <Icon
-                                                            size={16}
-                                                            name="warning"
-                                                            type="antdesign"
-                                                            color={THEME_CONFIG.error}
-                                                        />
-                                                    }
-                                                >
-                                                    {errors?.phoneNumber}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
+                                            <Field
+                                                name="phoneNumber"
+                                                label="Phone Number"
+                                                required
+                                                component={PhoneNumberInput}
+                                            />
                                             <FormControl isRequired isInvalid={!!errors?.address && touched.address}>
                                                 <FormControl.Label>Address</FormControl.Label>
                                                 <InputComponent

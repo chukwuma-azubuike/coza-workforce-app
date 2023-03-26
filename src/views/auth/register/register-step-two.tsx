@@ -7,15 +7,27 @@ import { IRegistrationPageStep } from './types';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import { Formik } from 'formik';
+import { Field, Formik } from 'formik';
 import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_2 } from '../../../utils/schemas';
 import { RegisterFormContext } from '.';
+import PhoneNumberInput from '../../../components/atoms/phone-input';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const handleBackPress = () => onStepPress(0);
 
     const onSubmit = () => {};
+
+    const validate = (values: IRegisterPayload) => {
+        const errors: Partial<IRegisterPayload> = {};
+
+        if (!isValidPhoneNumber(values.nextOfKinPhoneNo)) {
+            errors.nextOfKinPhoneNo = 'Invalid phone number';
+        }
+
+        return errors;
+    };
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
@@ -31,6 +43,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                 validateOnMount={false}
                                 validationSchema={RegisterSchema_2}
                                 initialValues={formValues as IRegisterPayload}
+                                validate={validate}
                             >
                                 {({
                                     errors,
@@ -136,36 +149,12 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <FormControl
-                                                isRequired
-                                                isInvalid={!!errors?.nextOfKinPhoneNo && touched.nextOfKinPhoneNo}
-                                            >
-                                                <FormControl.Label>Next of Kin Contact</FormControl.Label>
-                                                <InputComponent
-                                                    isRequired
-                                                    leftIcon={{
-                                                        name: 'call-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    keyboardType="phone-pad"
-                                                    placeholder="Eg: +2347012345678"
-                                                    onChangeText={handleChange('nextOfKinPhoneNo')}
-                                                />
-                                                <FormControl.ErrorMessage
-                                                    fontSize="2xl"
-                                                    mt={3}
-                                                    leftIcon={
-                                                        <Icon
-                                                            size={16}
-                                                            name="warning"
-                                                            type="antdesign"
-                                                            color={THEME_CONFIG.error}
-                                                        />
-                                                    }
-                                                >
-                                                    {errors?.nextOfKinPhoneNo}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
+                                            <Field
+                                                name="nextOfKinPhoneNo"
+                                                label="Next of Kin Contact"
+                                                required
+                                                component={PhoneNumberInput}
+                                            />
 
                                             <FormControl
                                                 isRequired

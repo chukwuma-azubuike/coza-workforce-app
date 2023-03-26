@@ -11,7 +11,6 @@ import Notifications from '../views/app/notifications';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
 // import Settings from '../views/app/settings';
-import WorkforceManagement from '../views/app/workforce-management';
 // import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
@@ -31,7 +30,8 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-import UserDetails from '../views/app/workforce-management/user-details';
+import WorkforceManagement from '../views/app/Workforce-management';
+import UserDetails from '../views/app/Workforce-management/user-details';
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
