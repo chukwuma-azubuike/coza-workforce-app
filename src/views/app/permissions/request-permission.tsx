@@ -49,7 +49,7 @@ const RequestPermission: React.FC = () => {
         }
         if (isError) {
             setModalState({
-                message: 'Oops something went',
+                message: 'Oops something went wrong',
                 status: 'error',
             });
             reset();

@@ -1,38 +1,40 @@
 import React from 'react';
 import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-base';
+import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableNativeFeedback } from 'react-native';
-import useModal from '../../../../hooks/modal/useModal';
+import useModal from '../../../hooks/modal/useModal';
 import moment from 'moment';
-import ModalAlertComponent from '../../../../components/composite/modal-alert';
-import { HomeContext } from '..';
-import { useClockInMutation, useClockOutMutation } from '../../../../store/services/attendance';
-import useRole from '../../../../hooks/role';
-import { GeoCoordinates } from 'react-native-geolocation-service';
-import If from '../../../../components/composite/if-container';
-import Utils from '../../../../utils';
+import ModalAlertComponent from '../../../components/composite/modal-alert';
+import { useClockInMutation, useClockOutMutation } from '../../../store/services/attendance';
+import useRole from '../../../hooks/role';
+import If from '../../../components/composite/if-container';
+import Utils from '../../../utils';
+import { useGetLatestServiceQuery } from '../../../store/services/services';
+import { IThirdPartyUserDetails } from '.';
 
-interface IClockButtonProps {
-    isInRange: boolean;
+interface ThirdPartyClockButton extends IThirdPartyUserDetails {
+    action: boolean;
+    isInRangeProp: boolean;
     deviceCoordinates: GeoCoordinates;
-    refreshLocation: () => Promise<void>;
 }
 
-const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockButtonProps) => {
+const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
+    action,
+    userId,
+    roleId,
+    campusId,
+    departmentId,
+    deviceCoordinates,
+    isInRangeProp: isInRange,
+}) => {
     const {
-        latestService: {
-            data: latestServiceData,
-            isError: isLatestServiceError,
-            isSuccess: isLatestServiceSuccess,
-            isLoading: isLatestServiceLoading,
-        },
-        latestAttendance: { latestAttendanceData, latestAttendanceIsLoading },
-    } = React.useContext(HomeContext);
+        user: { campus },
+    } = useRole();
+    const { setModalState } = useModal();
 
-    const { user } = useRole();
-
-    const [clockedOut, setClockedOut] = React.useState<boolean>(false);
+    const { data: latestService } = useGetLatestServiceQuery(campus._id);
 
     const [clockIn, { isError, error, isSuccess, isLoading, reset: clockInReset }] = useClockInMutation();
 
@@ -42,13 +44,49 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
             isError: isClockOutErr,
             isSuccess: clockOutSuccess,
             isLoading: clockOutLoading,
-            data: clockOutData,
             reset: clockOutReset,
             error: clockOutError,
         },
     ] = useClockOutMutation();
 
-    const { setModalState } = useModal();
+    const handlePress = () => {
+        if (!isInRange) {
+            setModalState({
+                duration: 6,
+                render: (
+                    <ModalAlertComponent
+                        description={'You are not within range of any campus!'}
+                        iconName={'warning-outline'}
+                        iconType={'ionicon'}
+                        status={'warning'}
+                    />
+                ),
+            });
+            return;
+        }
+        if (canClockIn) {
+            clockIn({
+                userId: userId,
+                clockIn: `${moment().unix()}`,
+                clockOut: null,
+                serviceId: latestService?._id as string,
+                coordinates: {
+                    lat: `${deviceCoordinates.latitude}`,
+                    long: `${deviceCoordinates.longitude}`,
+                },
+                campusId: campusId,
+                departmentId: departmentId,
+                roleId: roleId,
+            });
+            return;
+        }
+        // if (canClockOut) {
+        //     clockOut(latestAttendanceData[0]._id as string).then(res => {
+        //         if (res) setClockedOut(true);
+        //     });
+        //     return;
+        // }
+    };
 
     React.useEffect(() => {
         let cleanUp = true;
@@ -57,7 +95,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
                 duration: 3,
                 render: (
                     <ModalAlertComponent
-                        description={`You clocked in at ${moment().format('LT')}`}
+                        description={`Clocked in at ${moment().format('LT')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
@@ -116,64 +154,17 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
         }
     }, [isClockOutErr]);
 
-    const clockedIn = latestAttendanceData?.length && latestAttendanceData[0].clockIn ? true : false;
+    const canClockIn = isInRange && latestService && userId;
 
-    const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut;
+    const canClockOut = !action && canClockIn;
 
-    const canClockIn = isInRange && latestServiceData && !clockedIn;
-
-    const canClockOut =
-        latestAttendanceData?.length &&
-        latestAttendanceData[0].clockIn &&
-        !latestAttendanceData[0].clockOut &&
-        isInRange;
-
-    const handlePress = async () => {
-        refreshLocation().then(() => {
-            if (!isInRange) {
-                setModalState({
-                    duration: 6,
-                    render: (
-                        <ModalAlertComponent
-                            description={'You are not within range of any campus!'}
-                            iconName={'warning-outline'}
-                            iconType={'ionicon'}
-                            status={'warning'}
-                        />
-                    ),
-                });
-                return;
-            }
-            if (canClockIn) {
-                clockIn({
-                    userId: user?.userId as string,
-                    clockIn: `${moment().unix()}`,
-                    clockOut: null,
-                    serviceId: latestServiceData?._id as string,
-                    coordinates: {
-                        lat: `${deviceCoordinates.latitude}`,
-                        long: `${deviceCoordinates.longitude}`,
-                    },
-                    campusId: user?.campus._id,
-                    departmentId: user?.department._id,
-                    roleId: user?.role._id,
-                });
-                return;
-            }
-            if (canClockOut && latestAttendanceData) {
-                clockOut(latestAttendanceData[0]._id as string).then(res => {
-                    if (res) setClockedOut(true);
-                });
-                return;
-            }
-        });
-    };
+    const disabled = !userId || !latestService;
 
     return (
         <Pressable>
             {canClockIn && (
                 <LottieView
-                    source={require('../../../../assets/json/clock-button-animation.json')}
+                    source={require('../../../assets/json/clock-button-animation.json')}
                     resizeMode="cover"
                     style={{
                         left: Utils.IOS16 ? -13 : -20,
@@ -191,7 +182,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
                     h={200}
                     shadow={9}
                     borderRadius="full"
-                    _isDisabled={disabled}
+                    isDisabled={disabled}
                     backgroundColor={
                         canClockIn ? 'primary.600' : canClockOut ? 'rose.400' : disabled ? 'gray.400' : 'gray.400'
                     }
@@ -222,4 +213,4 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
     );
 };
 
-export default ClockButton;
+export default ThirdPartyClockButton;
