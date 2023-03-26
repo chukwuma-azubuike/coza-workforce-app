@@ -33,6 +33,7 @@
         "@rneui/themed": "^4.0.0-rc.7",
         "@sentry/react-native": "5.1.0",
         "@types/lodash": "^4.14.191",
+        "@types/react": "^17",
         "@types/react-native-dotenv": "^0.2.0",
         "@types/react-native-version-check": "^3.4.5",
         "@types/redux-logger": "^3.0.9",
