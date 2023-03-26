@@ -2,7 +2,7 @@ import React from 'react';
 import { REST_API_VERBS } from '../../store/types';
 import { UPLOAD_API_KEY, UPLOAD_URL } from '@env';
 
-// import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { IImbbAlbumId } from '../../config/uploadConfig';
 
 export interface IUploadResponseImgBB {
@@ -97,13 +97,13 @@ const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
 
     const initialise = () => {
         reset();
-        // launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (res: any) => {
-        //     if (res?.assets[0]?.fileSize > MAX_IMAGE_SIZE) {
-        //         setError(`File must not be larger than ${MAX_IMAGE_SIZE / 1000000}mb`);
-        //         return;
-        //     }
-        //     uploadImage(res?.assets[0]);
-        // });
+        launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (res: any) => {
+            if (res?.assets[0]?.fileSize > MAX_IMAGE_SIZE) {
+                setError(`File must not be larger than ${MAX_IMAGE_SIZE / 1000000}mb`);
+                return;
+            }
+            uploadImage(res?.assets[0]);
+        });
     };
 
     return {
