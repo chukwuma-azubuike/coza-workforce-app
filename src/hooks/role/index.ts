@@ -20,7 +20,7 @@ enum DEPARTMENTS {
     ushery = 'Ushery Board',
     witty = 'Witty Inventions',
     CTS = 'COZA Transfer Service',
-    ME = 'Monitoring & Evalauation',
+    ME = 'Monitoring & Evaluation',
     childcare = 'Children Ministry',
     programs = 'Programme Coordinator',
     PRU = 'Public Relations Unit (PRU)',
