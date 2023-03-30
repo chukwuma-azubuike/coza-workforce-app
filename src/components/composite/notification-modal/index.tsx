@@ -26,7 +26,7 @@ const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setM
             () => {
                 setModalState({ open: false });
             },
-            duration ? duration * 1000 : 2000 // Modal timeout
+            duration ? duration * 1000 : 3000 // Modal timeout
         );
     }, [message, render]);
 

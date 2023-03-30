@@ -4,20 +4,15 @@ import { StatCardComponent } from '../../../../components/composite/card';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { Icon, ListItem } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../../config/appConfig';
-import {
-    useGetGlobalWorkforceSummaryQuery,
-    useGetGuestSummaryQuery,
-    useGetBusSummaryQuery,
-    useGetServiceAttendanceSummaryQuery,
-    useGetCarsSummaryQuery,
-} from '../../../../store/services/reports';
+import { useGetGSPReportQuery } from '../../../../store/services/reports';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
 import { useGetCampusesQuery } from '../../../../store/services/campus';
-import { useGetServicesQuery } from '../../../../store/services/services';
+import { useGetLatestServiceQuery, useGetServicesQuery } from '../../../../store/services/services';
 import moment from 'moment';
 import { ICampus, IService } from '../../../../store/types';
 import Utils from '../../../../utils';
+import useRole from '../../../../hooks/role';
 
 const WorkForceSummary: React.FC = () => {
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
@@ -25,76 +20,65 @@ const WorkForceSummary: React.FC = () => {
     const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
     const [expandedBusCount, setExpandedBusCount] = React.useState<boolean>(false);
 
+    const { user } = useRole();
     const { isDarkMode } = useAppColorMode();
-
-    const {
-        data: globaWorkforceData,
-        refetch: globaWorkforceRefetch,
-        isLoading: globaWorkforceIsLoading,
-    } = useGetGlobalWorkforceSummaryQuery();
-
-    const {
-        data: serviceAttendanceData,
-        refetch: serviceAttendanceRefetch,
-        isLoading: serviceAttendanceIsLoading,
-    } = useGetServiceAttendanceSummaryQuery();
-
-    const {
-        data: guestSummaryData,
-        refetch: guestSummaryRefetch,
-        isLoading: guestSummaryIsLoading,
-    } = useGetGuestSummaryQuery();
-
-    const {
-        data: busSummaryData,
-        refetch: busSummaryRefetch,
-        isLoading: busSummaryIsLoading,
-    } = useGetBusSummaryQuery();
-
-    const {
-        data: carsSummaryData,
-        refetch: carsSummaryRefetch,
-        isLoading: carsSummaryIsLoading,
-    } = useGetCarsSummaryQuery();
-
-    const refresh = () => {
-        globaWorkforceRefetch();
-        serviceAttendanceRefetch();
-        guestSummaryRefetch();
-        busSummaryRefetch();
-        carsSummaryRefetch();
-    };
-
-    const { isLightMode } = useAppColorMode();
 
     const { data: campuses, error, isLoading: campusesLoading, isSuccess: campusIsSuccess } = useGetCampusesQuery();
     const { data: services, isSuccess: servicesIsSuccess } = useGetServicesQuery();
 
-    const [campusId, setCampusId] = React.useState<ICampus['_id']>('Global');
+    const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
+
+    const [campusId, setCampusId] = React.useState<ICampus['_id']>();
     const setCampus = (value: ICampus['_id']) => {
         setCampusId(value);
     };
 
-    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+    const [serviceId, setServiceId] = React.useState<IService['_id']>('Global');
     const setService = (value: ICampus['_id']) => {
         setServiceId(value);
     };
 
+    const {
+        data: gspReport,
+        refetch,
+        isLoading,
+        isFetching,
+    } = useGetGSPReportQuery({ serviceId, campusId }, { refetchOnMountOrArgChange: true });
+
+    const gspReportIsLoading = isLoading || isFetching;
+
+    const refresh = () => {
+        refetch();
+        latestServiceRefetch();
+    };
+
+    const workers = gspReport?.workers;
+    const busCount = gspReport?.busCount;
+    const guestAttendance = gspReport?.guestAttendance;
+    const serviceAttendance = gspReport?.serviceAttendance;
+
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
-            campuses && [{ _id: 'Global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
+            campuses && [
+                { _id: undefined, campusName: 'Global' },
+                ...Utils.sortStringAscending(campuses, 'campusName'),
+            ],
         [campusIsSuccess]
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
-        () => services && Utils.sortStringAscending(services, 'createdAt'),
+        () => services && Utils.sortByDate(services, 'createdAt'),
         [servicesIsSuccess]
     );
 
     const campusName = React.useMemo<ICampus['campusName'] | undefined>(
         () => sortedCampuses?.find(a => a._id === campusId)?.campusName,
-        [campusId]
+        [sortedCampuses, campusId]
     );
+
+    React.useEffect(() => {
+        services && setServiceId(services[services.length - 1]._id);
+    }, [services]);
 
     return (
         <>
@@ -112,13 +96,13 @@ const WorkForceSummary: React.FC = () => {
                             <SelectItemComponent
                                 value={service._id}
                                 key={`service-${index}`}
-                                label={`${service.name} - ${moment(service.createdAt).format('Do MMM YYYY')}`}
+                                label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>
                 </FormControl>
             </HStack>
-            <ViewWrapper scroll onRefresh={refresh} refreshing={globaWorkforceIsLoading}>
+            <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
                 <ListItem.Accordion
                     content={
                         <>
@@ -131,7 +115,7 @@ const WorkForceSummary: React.FC = () => {
                             />
                             <ListItem.Content>
                                 <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                                    {`${campusName || campusId} Workforce`}
+                                    {`${campusName} Workforce`}
                                 </Text>
                             </ListItem.Content>
                         </>
@@ -166,50 +150,50 @@ const WorkForceSummary: React.FC = () => {
                 >
                     <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Total"
-                            suffix="+12"
+                            // suffix="+12"
                             iconName="groups"
                             iconType="material"
-                            isLoading={globaWorkforceIsLoading}
-                            value={globaWorkforceData?.totalWorkers}
+                            isLoading={gspReportIsLoading}
+                            value={workers?.totalWorkers}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Active"
-                            suffix="+15"
+                            // suffix="+15"
                             iconName="check-square"
                             iconType="feather"
-                            isLoading={globaWorkforceIsLoading}
-                            value={globaWorkforceData?.activeWrokers}
+                            isLoading={gspReportIsLoading}
+                            value={workers?.activeWorkers}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Present"
-                            suffix="+25"
+                            // suffix="+25"
                             iconName="event-available"
                             iconType="material"
-                            isLoading={globaWorkforceIsLoading}
-                            value={globaWorkforceData?.presentWorkers}
+                            isLoading={gspReportIsLoading}
+                            value={workers?.presentWorkers}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Late"
-                            suffix="-8"
+                            // suffix="-8"
                             iconType="entypo"
                             iconName="back-in-time"
-                            isLoading={globaWorkforceIsLoading}
-                            value={globaWorkforceData?.lateWorkers}
+                            isLoading={gspReportIsLoading}
+                            value={workers?.lateWorkers}
                             iconColor={THEME_CONFIG.rose}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Absent"
-                            suffix="-21"
+                            // suffix="-21"
                             iconName="groups"
                             iconType="material"
-                            isLoading={globaWorkforceIsLoading}
-                            value={globaWorkforceData?.absentWorkers}
+                            isLoading={gspReportIsLoading}
+                            value={workers?.absentWorkers}
                             iconColor={THEME_CONFIG.rose}
                         />
                     </Stack>
@@ -261,44 +245,49 @@ const WorkForceSummary: React.FC = () => {
                 >
                     <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Total"
-                            suffix="+27"
+                            // suffix="+27"
                             iconName="account-group"
                             iconType="material-community"
-                            value={serviceAttendanceData?.total}
+                            isLoading={gspReportIsLoading}
+                            value={serviceAttendance?.totalAttenance}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Men"
-                            suffix="+12"
-                            iconName="man-outline"
+                            // suffix="+12"
                             iconType="ionicon"
-                            value={serviceAttendanceData?.men}
+                            iconName="man-outline"
+                            isLoading={gspReportIsLoading}
+                            value={serviceAttendance?.menAttendance}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Women"
-                            suffix="+12"
+                            // suffix="+12"
                             iconName="woman-outline"
                             iconType="ionicon"
-                            value={serviceAttendanceData?.women}
+                            isLoading={gspReportIsLoading}
+                            value={serviceAttendance?.womenAttendance}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Teenagers"
-                            suffix="+17"
+                            // suffix="+17"
                             iconName="child"
                             iconType="font-awesome"
-                            value={serviceAttendanceData?.teenagers}
+                            isLoading={gspReportIsLoading}
+                            value={serviceAttendance?.teenagerAttendance}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Children"
-                            suffix="+12"
+                            // suffix="+12"
                             iconName="child"
                             iconType="font-awesome"
-                            value={serviceAttendanceData?.children}
+                            isLoading={gspReportIsLoading}
+                            value={serviceAttendance?.childrenAttendance}
                         />
                     </Stack>
                 </ListItem.Accordion>
@@ -349,20 +338,22 @@ const WorkForceSummary: React.FC = () => {
                 >
                     <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
-                            percent
+                            // percent
                             label="First timers"
-                            suffix="+22"
+                            // suffix="+22"
                             iconName="badge"
                             iconType="simple-line-icon"
-                            value={guestSummaryData?.firstTimers}
+                            isLoading={gspReportIsLoading}
+                            value={guestAttendance?.firstTimer}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="New Converts"
-                            suffix="+32"
+                            // suffix="+32"
                             iconName="person-add-outline"
                             iconType="ionicon"
-                            value={guestSummaryData?.newConvert}
+                            isLoading={gspReportIsLoading}
+                            value={guestAttendance?.newConvert}
                         />
                     </Stack>
                 </ListItem.Accordion>
@@ -413,44 +404,49 @@ const WorkForceSummary: React.FC = () => {
                 >
                     <Stack py={3} flexDirection="row" flexWrap="wrap">
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Locations"
-                            suffix="+9"
+                            // suffix="+9"
                             iconName="location-outline"
                             iconType="ionicon"
-                            value={busSummaryData?.locations}
+                            isLoading={gspReportIsLoading}
+                            value={busCount?.location}
                         />
                         <StatCardComponent
-                            percent
-                            label="Total Guests"
-                            suffix="+12"
+                            // percent
+                            // suffix="+12"
+                            label="Adults"
                             iconName="child"
                             iconType="font-awesome"
-                            value={busSummaryData?.locations}
+                            isLoading={gspReportIsLoading}
+                            value={busCount?.totalChildren}
                         />
                         <StatCardComponent
-                            percent
-                            label="Adults"
-                            suffix="+12"
+                            // percent
+                            label="Total Guests"
+                            // suffix="+12"
                             iconName="account-group"
                             iconType="material-community"
-                            value={busSummaryData?.adult}
+                            isLoading={gspReportIsLoading}
+                            value={busCount?.totalGuest}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Chldren"
-                            suffix="+12"
-                            iconName="child"
-                            iconType="font-awesome"
-                            value={busSummaryData?.children}
+                            // suffix="+12"
+                            iconName="account-group"
+                            iconType="material-community"
+                            isLoading={gspReportIsLoading}
+                            value={busCount?.totalAdult}
                         />
                         <StatCardComponent
-                            percent
+                            // percent
                             label="Cars"
-                            suffix="+37"
+                            // suffix="+37"
                             iconType="ionicon"
                             iconName="car-sport-outline"
-                            value={carsSummaryData?.totalCars}
+                            isLoading={gspReportIsLoading}
+                            value={busCount?.totalCars}
                         />
                     </Stack>
                 </ListItem.Accordion>

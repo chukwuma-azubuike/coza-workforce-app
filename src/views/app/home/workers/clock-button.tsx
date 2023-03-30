@@ -16,9 +16,10 @@ import Utils from '../../../../utils';
 interface IClockButtonProps {
     isInRange: boolean;
     deviceCoordinates: GeoCoordinates;
+    refreshLocation: () => Promise<void>;
 }
 
-const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
+const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockButtonProps) => {
     const {
         latestService: {
             data: latestServiceData,
@@ -33,7 +34,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
 
     const [clockedOut, setClockedOut] = React.useState<boolean>(false);
 
-    const [clockIn, { isError, error, isSuccess, isLoading, data }] = useClockInMutation();
+    const [clockIn, { isError, error, isSuccess, isLoading, reset: clockInReset }] = useClockInMutation();
 
     const [
         clockOut,
@@ -42,6 +43,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             isSuccess: clockOutSuccess,
             isLoading: clockOutLoading,
             data: clockOutData,
+            reset: clockOutReset,
             error: clockOutError,
         },
     ] = useClockOutMutation();
@@ -62,6 +64,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     />
                 ),
             });
+            clockInReset();
         }
 
         return () => {
@@ -83,6 +86,7 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
                     />
                 ),
             });
+            clockOutReset();
         }
 
         return () => {
@@ -95,8 +99,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: error?.data.message || 'Oops something went wrong',
+                message: error?.data?.message || 'Oops something went wrong',
             });
+            clockInReset();
         }
     }, [isError]);
 
@@ -105,8 +110,9 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: clockOutError?.data.message || 'Oops something went wrong',
+                message: clockOutError?.data?.message || 'Oops something went wrong',
             });
+            clockOutReset();
         }
     }, [isClockOutErr]);
 
@@ -117,42 +123,50 @@ const ClockButton = ({ isInRange, deviceCoordinates }: IClockButtonProps) => {
     const canClockIn = isInRange && latestServiceData && !clockedIn;
 
     const canClockOut =
-        latestAttendanceData?.length && latestAttendanceData[0].clockIn && !latestAttendanceData[0].clockOut;
+        latestAttendanceData?.length &&
+        latestAttendanceData[0].clockIn &&
+        !latestAttendanceData[0].clockOut &&
+        isInRange;
 
-    const handlePress = () => {
-        if (!isInRange) {
-            setModalState({
-                duration: 6,
-                render: (
-                    <ModalAlertComponent
-                        description={'Your are not within range of any campus!'}
-                        iconName={'warning-outline'}
-                        iconType={'ionicon'}
-                        status={'warning'}
-                    />
-                ),
-            });
-        }
-        if (canClockIn) {
-            clockIn({
-                userId: user?.userId as string,
-                clockIn: `${moment().unix()}`,
-                clockOut: null,
-                serviceId: latestServiceData?._id as string,
-                coordinates: {
-                    lat: `${deviceCoordinates.latitude}`,
-                    long: `${deviceCoordinates.longitude}`,
-                },
-                campusId: user?.campus._id,
-                departmentId: user?.department._id,
-                roleId: user?.role._id,
-            });
-        }
-        if (canClockOut && latestAttendanceData) {
-            clockOut(latestAttendanceData[0]._id as string).then(res => {
-                if (res) setClockedOut(true);
-            });
-        }
+    const handlePress = async () => {
+        refreshLocation().then(() => {
+            if (!isInRange) {
+                setModalState({
+                    duration: 6,
+                    render: (
+                        <ModalAlertComponent
+                            description={'You are not within range of any campus!'}
+                            iconName={'warning-outline'}
+                            iconType={'ionicon'}
+                            status={'warning'}
+                        />
+                    ),
+                });
+                return;
+            }
+            if (canClockIn) {
+                clockIn({
+                    userId: user?.userId as string,
+                    clockIn: `${moment().unix()}`,
+                    clockOut: null,
+                    serviceId: latestServiceData?._id as string,
+                    coordinates: {
+                        lat: `${deviceCoordinates.latitude}`,
+                        long: `${deviceCoordinates.longitude}`,
+                    },
+                    campusId: user?.campus._id,
+                    departmentId: user?.department._id,
+                    roleId: user?.role._id,
+                });
+                return;
+            }
+            if (canClockOut && latestAttendanceData) {
+                clockOut(latestAttendanceData[0]._id as string).then(res => {
+                    if (res) setClockedOut(true);
+                });
+                return;
+            }
+        });
     };
 
     return (

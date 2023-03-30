@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -14,27 +13,29 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
+import { Platform } from 'react-native';
 
 const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as ITransferReportPayload;
+
+    const { status, createdAt } = params;
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateTransferReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateTransferReportMutation();
 
     const onSubmit = (values: ITransferReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: ITransferReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: ITransferReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -48,6 +49,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -56,21 +58,24 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
-        imageUrl: '',
-        otherInfo: '',
-        locations: [{ name: '', adultCount: 0, minorCount: 0 }],
         ...params,
+        imageUrl: params.imageUrl || '',
+        otherInfo: params.otherInfo || '',
+        locations: params?.locations?.length ? params?.locations : [{ name: '', adultCount: '', minorCount: '' }],
     } as ITransferReportPayload;
 
     const addValues = (values: ITransferReportPayload, field: 'adultCount' | 'minorCount') => {
-        return values.locations.length
-            ? (values.locations.map(a => a[field]).reduce((a, b) => +a + +b) as unknown as string)
+        return values?.locations?.length
+            ? (values?.locations?.map(a => a[field]).reduce((a, b) => +a + +b) as unknown as string)
             : '0';
     };
+
+    const isIOS = Platform.OS === 'ios';
 
     return (
         <Formik<ITransferReportPayload>
@@ -83,19 +88,21 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment().format('Do MMMM, YYYY')}
+                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
 
                         <FieldArray
                             name="locations"
                             render={arrayHelpers => (
                                 <VStack>
-                                    {values.locations.map((locations, idx) => (
+                                    {values?.locations?.map((location, idx) => (
                                         <HStack mb={4} space={2} key={idx} alignItems="flex-end">
                                             <FormControl isRequired w="30.5%">
                                                 <FormControl.Label>Location</FormControl.Label>
                                                 <InputComponent
                                                     placeholder="Name"
+                                                    value={`${location.name}`}
+                                                    isDisabled={isCampusPastor}
                                                     onChangeText={handleChange(`locations[${idx}].name`)}
                                                 />
                                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -107,6 +114,8 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                 <InputComponent
                                                     placeholder="0"
                                                     keyboardType="numeric"
+                                                    isDisabled={isCampusPastor}
+                                                    value={`${location.adultCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].adultCount`)}
                                                 />
                                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -118,6 +127,8 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                 <InputComponent
                                                     placeholder="0"
                                                     keyboardType="numeric"
+                                                    isDisabled={isCampusPastor}
+                                                    value={`${location.minorCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].minorCount`)}
                                                 />
                                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -126,11 +137,12 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             </FormControl>
                                             <FormControl w="14%">
                                                 <ButtonComponent
-                                                    h="54px"
+                                                    h={isIOS ? '46px' : '54px'}
                                                     leftIcon={
                                                         <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
                                                     }
                                                     onPress={() => arrayHelpers.remove(idx)}
+                                                    isDisabled={isCampusPastor}
                                                     secondary
                                                     size={12}
                                                 />
@@ -140,15 +152,15 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
 
                                     <HStack mb={4}>
                                         <ButtonComponent
-                                            isDisabled={isLoading}
                                             leftIcon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             onPress={() => {
                                                 arrayHelpers.push({
                                                     name: '',
-                                                    adultCount: 0,
-                                                    minorCount: 0,
+                                                    adultCount: '',
+                                                    minorCount: '',
                                                 });
                                             }}
+                                            isDisabled={isCampusPastor || isLoading}
                                             width="100%"
                                             secondary
                                             size={10}
@@ -182,6 +194,8 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <Divider />
                         <FormControl my={4}>
                             <TextAreaComponent
+                                isDisabled={isCampusPastor}
+                                value={`${values.otherInfo}`}
                                 placeholder="Any other information"
                                 onChangeText={handleChange('otherInfo')}
                             />
@@ -197,13 +211,14 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                         handleSubmit();
                                     }}
                                 >
-                                    Submit
+                                    {`${!status ? 'Submit' : 'Update'}`}
                                 </ButtonComponent>
                             </FormControl>
                         </If>
                         <If condition={isCampusPastor}>
                             <FormControl mb={6}>
                                 <TextAreaComponent
+                                    value={values.pastorComment}
                                     placeholder="Pastor's comment"
                                     onChangeText={handleChange('pastorComment')}
                                 />

@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
+import { Platform } from 'react-native';
 import ButtonComponent from '../../../components/atoms/button';
 import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
@@ -16,10 +17,8 @@ import {
     useApprovePermissionMutation,
     useDeclinePermissionMutation,
     useGetPermissionByIdQuery,
-    useUpdatePermissionMutation,
 } from '../../../store/services/permissions';
 import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
-import Utils from '../../../utils';
 
 const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
@@ -37,43 +36,20 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
 
     const navigate = props.navigation;
 
-    const { user, isHOD, isAHOD, isCampusPastor } = useRole();
-
-    const canApprove = (userId: string, requestor: string, isHod: boolean, isAHod: boolean, isPastor: boolean) => {
-        // Member permission
-        if (!isHod && !isAHod && !isPastor) {
-            return false;
-        }
-        // HOD permission
-        if ((isHod || isAHod) && userId === requestor) {
-            return false;
-        }
-        // Peer permission
-        if ((isHod || isAHod) && user.department._id === department?._id) {
-            return false;
-        }
-        return true;
-    };
-
-    const disable = React.useMemo(
-        () => canApprove(user.userId, requestorId, isHOD, isAHOD, isCampusPastor),
-        [user.userId, requestorId, isHOD, isAHOD, isCampusPastor]
-    );
-
-    const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(comment);
+    const { user, isHOD, isAHOD, isCampusPastor, isQC } = useRole();
 
     const {
         refetch,
+        isFetching,
         data: permission,
         isLoading: permissionLoading,
         isError: permissionIsError,
         isSuccess: permissionIsSuccess,
     } = useGetPermissionByIdQuery(_id);
 
-    const [
-        updatePermission,
-        { isSuccess: updateIsSuccess, isError: updateIsError, isLoading: updateLoading, reset: updateReset },
-    ] = useUpdatePermissionMutation();
+    const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(
+        permission?.comment as string
+    );
 
     const [
         approve,
@@ -98,41 +74,23 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     ] = useDeclinePermissionMutation();
 
     useScreenFocus({
-        onFocus: refetch,
+        onFocus: () => {
+            refetch();
+            if (!permission?.comment) setPermissionComment('');
+        },
     });
 
-    const handleUpdate = (status: IUpdatePermissionPayload['status']) => {
-        updatePermission({ comment: permissionComment, _id, status } as IUpdatePermissionPayload);
-    };
+    const handleApprove = () =>
+        approve({ approverId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
 
-    const handleApprove = () => approve({ approverId: user.userId, permissionId: permission?._id as string });
-
-    const handleDecline = () => decline({ declinerId: user.userId, permissionId: permission?._id as string });
+    const handleDecline = () =>
+        decline({ declinerId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
 
     const handleChange = (comment: string) => {
         setPermissionComment(comment);
     };
 
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (updateIsSuccess) {
-            setModalState({
-                status: 'success',
-                message: 'Permission updated',
-            });
-            setPermissionComment('');
-            updateReset();
-            navigate.goBack();
-        }
-        if (updateIsError) {
-            setModalState({
-                status: 'error',
-                message: 'Oops something went wrong.',
-            });
-            updateReset();
-        }
-    }, [updateIsSuccess, updateIsError]);
 
     React.useEffect(() => {
         if (approveIsSuccess) {
@@ -146,8 +104,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         }
         if (approveIsError) {
             setModalState({
+                duration: 6,
                 status: 'error',
-                message: 'Oops something went wrong',
+                message: approveError?.data?.message || 'Oops something went wrong',
             });
             approveReset();
         }
@@ -166,14 +125,22 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         if (declineIsError) {
             setModalState({
                 status: 'error',
-                message: 'Oops something went wrong',
+                message: declineError?.data?.message || 'Oops something went wrong',
             });
             declineReset();
         }
     }, [declineIsSuccess, declineIsError]);
 
+    const takePermissionAction = React.useMemo(() => {
+        if (requestorId === user._id) return false;
+        if (isQC && permission?.department._id !== user.department._id) return false;
+        if (status !== 'PENDING') return false;
+
+        return true;
+    }, [permission, status, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
+
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
             <CardComponent isLoading={permissionLoading} mt={1} px={2} py={8} mx={3} mb={10}>
                 <VStack space={4}>
                     <HStack
@@ -263,7 +230,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Description
                         </Text>
-                        <TextAreaComponent isDisabled value={description} />
+                        <TextAreaComponent isDisabled={Platform.OS !== 'android'} value={description} />
                     </VStack>
                     <HStack
                         pb={2}
@@ -276,35 +243,39 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Status
                         </Text>
-                        <StatusTag>{status}</StatusTag>
+                        <StatusTag>{permission?.status as any}</StatusTag>
                     </HStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
-                            {`${isCampusPastor ? 'Pastor' : 'HOD/AHOD'}'s Comment`}
+                            {!isHOD && !isAHOD && !isCampusPastor
+                                ? "Leader's comment"
+                                : (isAHOD || isHOD) && requestorId === user.userId
+                                ? "Pastor's comment"
+                                : 'Comment'}
                         </Text>
                         <TextAreaComponent
-                            value={permissionComment}
                             onChangeText={handleChange}
-                            isDisabled={status !== 'PENDING' && disable}
+                            isDisabled={!takePermissionAction}
+                            value={permissionComment || permission?.comment}
                         />
                     </VStack>
-                    <If condition={status === 'PENDING' && user.userId !== requestorId}>
-                        <HStack space={4} justifyContent="space-between">
+                    <If condition={takePermissionAction}>
+                        <HStack space={4} w="95%" justifyContent="space-between">
                             <ButtonComponent
-                                isDisabled={status === 'DECLINED' || !permissionComment}
+                                isDisabled={!permissionComment || approveIsLoading}
                                 isLoading={declineIsLoading}
                                 onPress={handleDecline}
-                                width={150}
+                                width="1/2"
                                 secondary
                                 size="md"
                             >
                                 Decline
                             </ButtonComponent>
                             <ButtonComponent
-                                isDisabled={status === 'APPROVED'}
+                                isDisabled={declineIsLoading}
                                 isLoading={approveIsLoading}
                                 onPress={handleApprove}
-                                width={150}
+                                width="1/2"
                                 size="md"
                             >
                                 Approve

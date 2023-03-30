@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -12,27 +11,28 @@ import TextAreaComponent from '../../../../components/atoms/text-area';
 import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import If from '../../../../components/composite/if-container';
 import useRole from '../../../../hooks/role';
 
 const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as IGuestReportPayload;
+
+    const { status, createdAt } = params;
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateGuestReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateGuestReportMutation();
 
     const onSubmit = (values: IGuestReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IGuestReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IGuestReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -46,6 +46,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'success',
                 message: 'Report updated',
             });
+            reset();
             navigation.goBack();
         }
         if (isError) {
@@ -54,13 +55,14 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
-        firstTimersCount: 0,
-        newConvertsCount: 0,
         ...params,
+        firstTimersCount: params.firstTimersCount || '',
+        newConvertsCount: params.newConvertsCount || '',
     };
 
     return (
@@ -74,7 +76,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment().format('Do MMMM, YYYY')}
+                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
                             <FormControl isRequired>
@@ -82,6 +84,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.firstTimersCount}`}
                                     onChangeText={handleChange('firstTimersCount')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -93,6 +97,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <InputComponent
                                     placeholder="0"
                                     keyboardType="numeric"
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.newConvertsCount}`}
                                     onChangeText={handleChange('newConvertsCount')}
                                 />
                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
@@ -102,6 +108,8 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <Divider />
                             <FormControl mb={2}>
                                 <TextAreaComponent
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.otherInfo}`}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                 />
@@ -112,14 +120,16 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
-                                        Submit
+                                        {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
                                 </FormControl>
                             </If>
                             <If condition={isCampusPastor}>
                                 <FormControl mb={6}>
                                     <TextAreaComponent
+                                        isDisabled={isCampusPastor}
                                         placeholder="Pastor's comment"
+                                        value={`${values.pastorComment}`}
                                         onChangeText={handleChange('pastorComment')}
                                     />
                                 </FormControl>

@@ -21,8 +21,8 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
             px={2}
             borderTopWidth={0.5}
             justifyContent="space-between"
-            _dark={{ bg: 'gray.900', borderColor: 'gray.700' }}
-            _light={{ bg: 'gray.100', borderColor: 'gray.300' }}
+            _dark={{ bg: 'black', borderColor: 'gray.800' }}
+            _light={{ bg: 'white', borderColor: 'gray.300' }}
         >
             {state.routes.map((route: RouteProp<ParamListBase>, index: number) => {
                 let isFocused = state.index === index;
@@ -110,7 +110,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                             40
                         )}
                     >
-                        <Center py={2} minWidth={60}>
+                        <Center py={3} minWidth={60}>
                             <Icon
                                 size={22}
                                 name={iconName}
@@ -130,7 +130,8 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                                             ? THEME_CONFIG.primary
                                             : THEME_CONFIG.primaryLight
                                         : THEME_CONFIG.lightGray,
-                                    fontSize: 12,
+                                    fontSize: 10,
+                                    marginTop: 4,
                                 }}
                             >
                                 {label}

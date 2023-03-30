@@ -9,6 +9,7 @@ import {
     REST_API_VERBS,
     IDepartment,
     IDefaultQueryParams,
+    IEditProfilePayload,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -138,10 +139,7 @@ export const accountServiceSlice = createApi({
             query: body => ({
                 url: `/${SERVICE_URL}/register`,
                 method: REST_API_VERBS.POST,
-                body: {
-                    ...body,
-                    pictureUrl: '',
-                },
+                body,
             }),
         }),
 
@@ -149,10 +147,15 @@ export const accountServiceSlice = createApi({
             query: body => ({
                 url: `/${SERVICE_URL}/createUser`,
                 method: REST_API_VERBS.POST,
-                body: {
-                    ...body,
-                    pictureUrl: '',
-                },
+                body,
+            }),
+        }),
+
+        updateUser: endpoint.mutation<IRegisterResponse, IEditProfilePayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/update/${body._id}`,
+                method: REST_API_VERBS.PATCH,
+                body,
             }),
         }),
 
@@ -196,6 +199,7 @@ export const {
     useRegisterMutation,
     useGetUserByIdQuery,
     useCreateUserMutation,
+    useUpdateUserMutation,
     useValidateEmailOTPMutation,
     useGetUsersByDepartmentIdQuery,
 } = accountServiceSlice;

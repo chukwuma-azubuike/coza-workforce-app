@@ -159,7 +159,7 @@ const Campus: React.FC = memo(() => {
 
     useScreenFocus({ onFocus: refetch });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'departmentName'), [isLoading]);
+    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'departmentName'), [isLoading, data]);
 
     return (
         <FlatListComponent

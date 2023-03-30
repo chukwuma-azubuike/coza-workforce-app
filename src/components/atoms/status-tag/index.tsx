@@ -10,10 +10,11 @@ interface IStatusTag extends ITagProps {
 const StatusTag: React.FC<IStatusTag> = props => {
     const { children: status } = props;
 
-    const green = status === 'ACKNOWLEGDED' || status === 'ACTIVE' || status === 'APPROVED' || status === 'SUBMITTED';
+    const green = status === 'ACKNOWLEGDED' || status === 'ACTIVE' || status === 'APPROVED';
     const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
     const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED';
     const red = status === 'DECLINED' || status === 'INACTIVE' || status === 'REJECTED' || status === 'CONTESTED';
+    const blue = status === 'SUBMITTED';
 
     return (
         <Tag
@@ -30,6 +31,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
                     ? 'error.200'
                     : amber
                     ? 'amber.100'
+                    : blue
+                    ? 'blue.100'
                     : 'gray.300',
             }}
             _light={{
@@ -41,6 +44,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
                     ? 'error.100'
                     : amber
                     ? 'amber.100'
+                    : blue
+                    ? 'blue.100'
                     : 'gray.200',
             }}
             _text={{
@@ -53,6 +58,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
                         ? 'error.700'
                         : amber
                         ? 'amber.700'
+                        : blue
+                        ? 'blue.700'
                         : 'gray.700',
                     fontSize: 'xs',
                 },
@@ -65,6 +72,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
                         ? 'error.700'
                         : amber
                         ? 'amber.700'
+                        : blue
+                        ? 'blue.700'
                         : 'gray.700',
                     fontSize: 'xs',
                 },

@@ -17,7 +17,7 @@ interface IStatProps {
 
 const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
     return (
-        <VStack alignItems="center" space={0} w={32}>
+        <VStack alignItems="center" space={0} minW="1/3">
             <Icon
                 size={25}
                 name={icon}
@@ -52,7 +52,7 @@ const ClockStatistics = () => {
     } = React.useContext(HomeContext);
 
     return (
-        <HStack justifyContent="center">
+        <HStack justifyContent="center" justifyItems="center">
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockIn : ''}
                 icon="check-circle"

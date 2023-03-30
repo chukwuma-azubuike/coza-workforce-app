@@ -12,7 +12,7 @@ import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_2 } from '../../../utils/schemas';
 import { RegisterFormContext } from '.';
 import PhoneNumberInput from '../../../components/atoms/phone-input';
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import { isValidPhoneNumber } from 'libphonenumber-js'
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const handleBackPress = () => onStepPress(0);
@@ -149,6 +149,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
+                                            
                                             <Field
                                                 name="nextOfKinPhoneNo"
                                                 label="Next of Kin Contact"
