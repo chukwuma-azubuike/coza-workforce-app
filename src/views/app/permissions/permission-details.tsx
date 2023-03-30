@@ -3,6 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
+import { Platform } from 'react-native';
 import ButtonComponent from '../../../components/atoms/button';
 import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
@@ -34,27 +35,6 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     } = props.route.params as IPermission;
 
     const navigate = props.navigation;
-
-    interface NJ {
-        _id: '6412441eb7679db1b5c47e0f';
-        campus: { _id: '6361a285832e7fbd65897cb7'; campusName: 'Lagos Campus' };
-        category: { _id: '64066dcee600a0a85e5956ab'; name: 'Education' };
-        categoryName: 'Education';
-        createdAt: 1678918686890;
-        department: { _id: '639cde4ff520b583761aed5b'; departmentName: 'COZA Transfer Service' };
-        departmentName: 'COZA Transfer Service';
-        description: 'Ed conference in Sydney';
-        endDate: 1682806620000000;
-        requestor: {
-            _id: '6411df3ab7679db1b5c46f57';
-            email: 'ranechopro@gmail.com';
-            firstName: 'Chukwuma';
-            lastName: 'Azubuike';
-            pictureUrl: 'https://i.ibb.co/FD9P3x5/D857-C2-AC-D2-D3-4-E5-A-A441-0-B10-A1-A1-DDDE.jpg';
-        };
-        startDate: 1680214620000000;
-        status: 'APPROVED';
-    }
 
     const { user, isHOD, isAHOD, isCampusPastor, isQC } = useRole();
 
@@ -250,7 +230,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Description
                         </Text>
-                        <TextAreaComponent isDisabled value={description} />
+                        <TextAreaComponent isDisabled={Platform.OS !== 'android'} value={description} />
                     </VStack>
                     <HStack
                         pb={2}
