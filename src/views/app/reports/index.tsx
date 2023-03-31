@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
 import CampusReport from './campus-report';
 import {
-    ICampusReportSummary,
     IDepartmentReportListById,
     useGetDepartmentalReportQuery,
     useGetDepartmentReportsListQuery,
@@ -16,7 +15,6 @@ import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import useScreenFocus from '../../../hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import Utils from '../../../utils';
 import { HStack, Text } from 'native-base';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { TouchableNativeFeedback } from 'react-native';
@@ -86,11 +84,11 @@ const Reports: React.FC = () => {
         isPCU,
         isUshery,
         isSecurity,
-        isPRU,
         isChildcare,
         isCampusPastor,
         isHOD,
         isAHOD,
+        isPrograms,
         isGlobalPastor,
     } = useRole();
 
@@ -142,7 +140,7 @@ const Reports: React.FC = () => {
         if (isSecurity) {
             return 'Security Report';
         }
-        if (isPRU) {
+        if (isPrograms) {
             return 'Service Report';
         }
         if (isChildcare) {
