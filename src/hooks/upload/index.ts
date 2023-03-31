@@ -63,12 +63,6 @@ const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
                 name: imageData.fileName,
             });
 
-            formData.append('album', albumId); // Include the album ID in the request
-
-            const uri = await fetch(imageData.uri);
-            const blob = await uri.blob();
-            formData.append('image', blob);
-
             const response = await fetch(UPLOAD_URL, {
                 method: REST_API_VERBS.POST,
                 body: formData,
