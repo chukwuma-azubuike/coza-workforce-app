@@ -27,12 +27,18 @@ interface IClockerProps {
     isInRange: boolean;
     deviceCoordinates: GeoCoordinates;
     refreshLocation: () => Promise<void>;
+    verifyRangeBeforeAction: (successCallback: () => any, errorCallback: () => any) => Promise<void>;
 }
 
-const Clocker: React.FC<IClockerProps> = ({ refreshLocation, deviceCoordinates, isInRange }) => {
+const Clocker: React.FC<IClockerProps> = ({
+    verifyRangeBeforeAction,
+    deviceCoordinates,
+    refreshLocation,
+    isInRange,
+}) => {
     const {
-        isAHOD,
         isHOD,
+        isAHOD,
         isCampusPastor,
         user: { department, campus, userId },
     } = useRole();
@@ -118,6 +124,7 @@ const Clocker: React.FC<IClockerProps> = ({ refreshLocation, deviceCoordinates, 
                                 isInRange={!!isInRange}
                                 refreshLocation={refreshLocation}
                                 deviceCoordinates={deviceCoordinates}
+                                verifyRangeBeforeAction={verifyRangeBeforeAction}
                             />
                         </ErrorBoundary>
                         <CampusLocation />

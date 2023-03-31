@@ -38,6 +38,20 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
 
     const [nudge, setNudge] = React.useState<boolean>(false);
 
+    const verifyRangeBeforeAction = async (successCallback: () => any, errorCallback: () => any) => {
+        await Geolocation.getCurrentPosition(
+            position => {
+                if (isInRange(position?.coords, campusCoordinates)) {
+                    successCallback();
+                } else {
+                    errorCallback();
+                }
+            },
+            error => {},
+            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+    };
+
     const refresh = async () => {
         setNudge(prev => !prev);
 
@@ -52,10 +66,13 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
         return result;
     };
 
-    const isInRange = () => {
-        if (deviceCoordinates && campusCoordinates) {
+    const isInRange = (
+        deviceCoordinatesArg: GeoCoordinates = deviceCoordinates,
+        campusCoordinatesArg: ICampusCoordinates = campusCoordinates
+    ) => {
+        if (deviceCoordinatesArg && campusCoordinatesArg) {
             try {
-                distance = distanceBetweenTwoCoordinates(deviceCoordinates, campusCoordinates);
+                distance = distanceBetweenTwoCoordinates(deviceCoordinatesArg, campusCoordinatesArg);
                 if (distance <= +rangeToClockIn) {
                     return true;
                 }
@@ -80,6 +97,7 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
 
     return {
         isInRange: !!isInRange(),
+        verifyRangeBeforeAction,
         deviceCoordinates,
         distance,
         refresh,
