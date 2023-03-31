@@ -12,22 +12,12 @@ import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_2 } from '../../../utils/schemas';
 import { RegisterFormContext } from '.';
 import PhoneNumberInput from '../../../components/atoms/phone-input';
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import Utils from '../../../utils';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const handleBackPress = () => onStepPress(0);
 
     const onSubmit = () => {};
-
-    const validate = (values: IRegisterPayload) => {
-        const errors: Partial<IRegisterPayload> = {};
-
-        if (!isValidPhoneNumber(values.nextOfKinPhoneNo)) {
-            errors.nextOfKinPhoneNo = 'Invalid phone number';
-        }
-
-        return errors;
-    };
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
@@ -43,7 +33,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                 validateOnMount={false}
                                 validationSchema={RegisterSchema_2}
                                 initialValues={formValues as IRegisterPayload}
-                                validate={validate}
+                                validate={value => Utils.validatePhoneNumber(value.nextOfKinPhoneNo)}
                             >
                                 {({
                                     errors,
