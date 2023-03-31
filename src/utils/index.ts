@@ -4,6 +4,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import { IToken, IUser } from '../store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 class Utils {
     /************ Version Specific ************/
@@ -17,7 +18,9 @@ class Utils {
     }
 
     static capitalizeFirstChar(char: string, separator: string = ' ') {
-        if (!char) return '';
+        if (!char) {
+            return '';
+        }
 
         let splitChar = this.splitString(char, separator);
         let firstChar = splitChar.charAt(0).toUpperCase();
@@ -180,7 +183,9 @@ class Utils {
     static groupListByKey = (array: any[] = [], key: string) => {
         const map: any = {};
 
-        if (!array?.length || !array) return [];
+        if (!array?.length || !array) {
+            return [];
+        }
 
         for (let i = 0; i < array.length; i++) {
             let keyInMap = array[i][key];
@@ -196,6 +201,18 @@ class Utils {
             }
         }
         return Object.entries(map);
+    };
+
+    /************** validatePhoneNumber ***************/
+
+    static validatePhoneNumber = (phoneNumber: string) => {
+        const errors: Record<string, string> = {};
+
+        if (!isValidPhoneNumber(phoneNumber)) {
+            errors.phoneNumber = 'Invalid phone number';
+        }
+
+        return errors;
     };
 }
 
