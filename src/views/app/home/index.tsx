@@ -12,7 +12,6 @@ import { ICampusCoordinates, useGetAttendanceQuery } from '../../../store/servic
 import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
-import { HomeSkeleton } from '../../../components/layout/skeleton';
 import { CampusReportSummary } from './campus-pastors/report-summary';
 import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
 import { useGetUserByIdQuery } from '../../../store/services/account';
@@ -136,33 +135,25 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            {!user ? (
-                <ViewWrapper>
-                    <HomeSkeleton />
-                </ViewWrapper>
-            ) : (
-                <>
-                    <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
-                        <If condition={user ? true : false}>
-                            <TopNav {...navigation} />
-                            <If condition={!isGlobalPastor}>
-                                <Clocker
-                                    isInRange={isInRange}
-                                    refreshLocation={refresh}
-                                    deviceCoordinates={deviceCoordinates}
-                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
-                                />
-                            </If>
-                            <If condition={isGlobalPastor}>
-                                <GSPView />
-                            </If>
-                        </If>
-                        <If condition={isCampusPastor}>
-                            <CampusReportSummary refetchService={handleRefresh} serviceId={latestService?._id} />
-                        </If>
-                    </ViewWrapper>
-                </>
-            )}
+            <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
+                <If condition={user ? true : false}>
+                    <TopNav {...navigation} />
+                    <If condition={!isGlobalPastor}>
+                        <Clocker
+                            isInRange={isInRange}
+                            refreshLocation={refresh}
+                            deviceCoordinates={deviceCoordinates}
+                            verifyRangeBeforeAction={verifyRangeBeforeAction}
+                        />
+                    </If>
+                    <If condition={isGlobalPastor}>
+                        <GSPView />
+                    </If>
+                </If>
+                <If condition={isCampusPastor}>
+                    <CampusReportSummary refetchService={handleRefresh} serviceId={latestService?._id} />
+                </If>
+            </ViewWrapper>
         </HomeContext.Provider>
     );
 };

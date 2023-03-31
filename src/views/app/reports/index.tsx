@@ -20,12 +20,12 @@ import ErrorBoundary from '../../../components/composite/error-boundary';
 import { TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import StatusTag from '../../../components/atoms/status-tag';
-import { IStatus } from '../../../store/types';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
 import moment from 'moment';
+import { IReportFormProps } from './forms/types';
 
-const DepartmentReportListRow: React.FC<{ createdAt: string; status: IStatus }> = props => {
+const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
     const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
 
@@ -62,7 +62,7 @@ const DepartmentReportListRow: React.FC<{ createdAt: string; status: IStatus }> 
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.createdAt).format('Do, MMMM YYYY')}
+                    {moment(props.updatedAt).format('Do, MMMM YYYY')}
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
