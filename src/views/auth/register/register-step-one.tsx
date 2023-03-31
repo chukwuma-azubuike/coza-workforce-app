@@ -11,20 +11,10 @@ import { Field, Formik } from 'formik';
 import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_1 } from '../../../utils/schemas';
 import PhoneNumberInput from '../../../components/atoms/phone-input';
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import Utils from '../../../utils';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
-
-    const validate = (values: IRegisterPayload) => {
-        const errors: Partial<IRegisterPayload> = {};
-
-        if (!isValidPhoneNumber(values.phoneNumber)) {
-            errors.phoneNumber = 'Invalid phone number';
-        }
-
-        return errors;
-    };
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
@@ -40,7 +30,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                 validateOnMount={false}
                                 validationSchema={RegisterSchema_1}
                                 initialValues={formValues as IRegisterPayload}
-                                validate={validate}
+                                validate={value => Utils.validatePhoneNumber(value.phoneNumber)}
                             >
                                 {({
                                     errors,
