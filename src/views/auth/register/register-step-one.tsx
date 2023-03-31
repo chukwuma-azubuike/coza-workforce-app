@@ -11,7 +11,6 @@ import { Field, Formik } from 'formik';
 import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_1 } from '../../../utils/schemas';
 import PhoneNumberInput from '../../../components/atoms/phone-input';
-import { isValidPhoneNumber } from 'libphonenumber-js';
 import Utils from '../../../utils';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
