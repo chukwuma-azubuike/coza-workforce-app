@@ -3,39 +3,60 @@ import { Box, FormControl, Heading, HStack, Stack, Text, VStack } from 'native-b
 import { InputComponent } from '../../../components/atoms/input';
 import ButtonComponent from '../../../components/atoms/button';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { IRegistrationPageStep } from './types';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { Formik } from 'formik';
-import { IRegisterPayload } from '../../../store/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RegisterSchema } from '../../../utils/schemas';
+import { ResetPasswordSchema } from '../../../utils/schemas';
 import { TouchableRipple } from 'react-native-paper';
-import Logo from '../../../components/atoms/logo';
-import { ParamListBase } from '@react-navigation/native';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
 import SupportLink from '../support-link';
+import { IRegisterFormProps } from '../register/types';
+import { IResetPasswordPayload, useResetPasswordMutation } from '../../../store/services/account';
+import useModal from '../../../hooks/modal/useModal';
 
-const ResetPassword: React.FC<IRegistrationPageStep<NativeStackScreenProps<ParamListBase>>> = ({
-    errors,
-    isLoading,
-    onStepPress,
-    handleSubmit,
-    handleChange,
-    loginIsLoading,
-    navigation,
-}) => {
+const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
-
     const handleIconPress = () => setShowPassword(prev => !prev);
-    const handleBackPress = () => onStepPress(2);
 
-    const onSubmit = () => {
-        if (!errors.password && !errors.confirmPassword) handleSubmit();
+    const { email, OTP } = props?.route?.params as unknown as IResetPasswordPayload;
+
+    console.log('Raw params ->', props.route.params);
+
+    const [resetPassword, { reset, isSuccess, isError, isLoading }] = useResetPasswordMutation();
+
+    const onSubmit = (value: Omit<IResetPasswordPayload, 'OTP' | 'email'>) => {
+        console.log({ ...value, OTP });
+        resetPassword({ password: value.password, email, OTP });
     };
-    const init = {
+
+    const initialValues = {
         password: '',
         confirmPassword: '',
     };
+
+    const { navigate } = useNavigation();
+
+    const navigateToLogin = () => navigate('Login' as never);
+
+    const { setModalState } = useModal();
+
+    React.useEffect(() => {
+        if (isError) {
+            setModalState({
+                status: 'error',
+                message: 'Oops, something went wrong!',
+            });
+            reset();
+        }
+        if (isSuccess) {
+            setModalState({
+                status: 'success',
+                message: 'Password reset successful',
+            });
+            navigateToLogin();
+        }
+    }, [isError, isSuccess]);
 
     return (
         <ViewWrapper>
@@ -44,12 +65,12 @@ const ResetPassword: React.FC<IRegistrationPageStep<NativeStackScreenProps<Param
                     {/* <Logo /> */}
                     <Heading>Reset password</Heading>
                     <Box alignItems="center" w="100%">
-                        <Formik
+                        <Formik<{ email: string; password: string }>
                             validateOnChange
                             enableReinitialize
-                            onSubmit={handleSubmit}
-                            initialValues={init}
-                            validationSchema={RegisterSchema}
+                            onSubmit={onSubmit}
+                            validationSchema={ResetPasswordSchema}
+                            initialValues={initialValues as unknown as IResetPasswordPayload}
                         >
                             {({
                                 errors,
@@ -124,21 +145,14 @@ const ResetPassword: React.FC<IRegistrationPageStep<NativeStackScreenProps<Param
                                             </FormControl.ErrorMessage>
                                         </FormControl>
                                         <FormControl>
-                                            <HStack space={4} justifyContent="center">
-                                                {/* <ButtonComponent onPress={handleBackPress} width={160} secondary mt={4}>
-                                        Go back
-                                    </ButtonComponent> */}
-                                                <ButtonComponent
-                                                    isLoading={isLoading || loginIsLoading}
-                                                    isLoadingText={loginIsLoading ? 'Logging in...' : 'Signing up...'}
-                                                    // onPress={onSubmit}
-                                                    onPress={() => navigation.navigate('Login')}
-                                                    width={160}
-                                                    mt={4}
-                                                >
-                                                    Save
-                                                </ButtonComponent>
-                                            </HStack>
+                                            <ButtonComponent
+                                                mt={4}
+                                                isLoading={isLoading}
+                                                onPress={handleSubmit}
+                                                isLoadingText="Resetting your password..."
+                                            >
+                                                Save
+                                            </ButtonComponent>
                                         </FormControl>
                                     </Stack>
                                 );
@@ -151,9 +165,9 @@ const ResetPassword: React.FC<IRegistrationPageStep<NativeStackScreenProps<Param
                             Remember your password?
                         </Text>
                         <TouchableRipple
-                            style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                            onPress={navigateToLogin}
                             rippleColor="rgba(255, 255, 255, 0)"
-                            onPress={() => navigation.navigate('Login')}
+                            style={{ paddingHorizontal: 6, borderRadius: 10 }}
                         >
                             <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
                                 Login

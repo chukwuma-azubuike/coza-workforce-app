@@ -33,7 +33,7 @@ import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import WorkforceClockin from '../views/app/workforce-clockin';
 import EditProfile from '../views/app/profile/edit-profile';
-import UserDetails from '../views/app/Workforce-management/user-details';
+import UserDetails from '../views/app/workforce-management/user-details';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
 

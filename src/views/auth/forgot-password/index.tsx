@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, Heading, Modal, VStack } from 'native-base';
+import { Box, FormControl, Heading, HStack, Modal, Text, VStack } from 'native-base';
 import { Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -13,10 +13,7 @@ import { EmailSchema } from '../../../utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import If from '../../../components/composite/if-container';
-// import { APP_NAME, APP_SLOGAN } from '@env';
 import { TouchableRipple } from 'react-native-paper';
-// import useWelcome from './hooks';
-import Logo from '../../../components/atoms/logo';
 import useForgotPassword from './hooks';
 import SupportLink from '../support-link';
 
@@ -57,7 +54,6 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                         />
                     </TouchableRipple>
                     <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
-                        {/* <Logo /> */}
                         <Heading>Forgot Password</Heading>
                         <Box alignItems="center" w="100%">
                             <Formik
@@ -97,8 +93,7 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                                                 mt={4}
                                                 isLoading={isLoading}
                                                 onPress={handleSubmit}
-                                                // onPress={() => navigation.navigate('Reset Password')}
-                                                isLoadingText="Checking for your email..."
+                                                isLoadingText="Sending your OTP..."
                                             >
                                                 Continue
                                             </ButtonComponent>
@@ -107,6 +102,19 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                                 )}
                             </Formik>
                         </Box>
+                        <HStack alignItems="center">
+                            <Text fontSize="md" color="gray.400">
+                                Remember you password?
+                            </Text>
+                            <TouchableRipple
+                                style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                                onPress={() => navigation.navigate('Login')}
+                            >
+                                <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
+                                    Login
+                                </Text>
+                            </TouchableRipple>
+                        </HStack>
                     </VStack>
                     <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
                         <SupportLink />
@@ -118,16 +126,6 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                     <Modal.Body bg="gray.800" p={isIOS ? 4 : 0}>
                         <If condition={isSuccess && !isError && !isErrorValidate}>
                             <OTPInput
-                                render={
-                                    isSuccessValidate ? (
-                                        <ModalAlertComponent
-                                            description="You can now continue your registration"
-                                            iconName="checkmark-circle"
-                                            iconType="ionicon"
-                                            status="success"
-                                        />
-                                    ) : null
-                                }
                                 value={otpValue}
                                 setValue={setOtpValue}
                                 done={isSuccessValidate}

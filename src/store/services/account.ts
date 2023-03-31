@@ -52,6 +52,23 @@ export type IVerifyEmailOTPResponse = IDefaultResponse<{
     roleId: string;
 }>;
 
+export interface IVerifyForgotPassword {
+    OTP: number;
+    isUsed: boolean;
+    _id: IUser['_id'];
+    createdAt: string;
+    updatedAt: string;
+    email: IUser['email'];
+}
+
+export type IVerifyForgotPasswordOTPResponse = IDefaultResponse<IVerifyForgotPassword>;
+
+export interface IResetPasswordPayload {
+    OTP: string;
+    email: string;
+    password: string;
+}
+
 interface IVerifyEmailResponseTransform {
     email: string;
     gender: string;
@@ -159,6 +176,32 @@ export const accountServiceSlice = createApi({
             }),
         }),
 
+        sendForgotPasswordOTP: endpoint.query<ISendOTPResponse, string>({
+            query: email => `/${SERVICE_URL}/forget-password/otp/${email}`,
+        }),
+        // /account/forget-password/validate
+
+        validateForgotPasswordOTP: endpoint.mutation<IVerifyForgotPassword, IVerifyEmailOTPPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/forget-password/validate`,
+                method: REST_API_VERBS.PATCH,
+                body,
+            }),
+
+            transformResponse: (response: IVerifyForgotPasswordOTPResponse) => response.data,
+        }),
+
+        resetPassword: endpoint.mutation<IUser, IResetPasswordPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/forget-password/${body.OTP}`,
+                method: REST_API_VERBS.POST,
+                body: {
+                    email: body.email,
+                    password: body.password,
+                },
+            }),
+        }),
+
         /*********** User **********/
 
         getUserById: endpoint.query<IUser, string>({
@@ -200,6 +243,9 @@ export const {
     useGetUserByIdQuery,
     useCreateUserMutation,
     useUpdateUserMutation,
+    useResetPasswordMutation,
     useValidateEmailOTPMutation,
+    useSendForgotPasswordOTPQuery,
     useGetUsersByDepartmentIdQuery,
+    useValidateForgotPasswordOTPMutation,
 } = accountServiceSlice;

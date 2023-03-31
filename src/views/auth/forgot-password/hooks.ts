@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useSendOTPQuery, useValidateEmailOTPMutation } from '../../../store/services/account';
+import { useSendForgotPasswordOTPQuery, useValidateForgotPasswordOTPMutation } from '../../../store/services/account';
 import { CELL_COUNT } from '../../../components/atoms/otp-input';
 import Utils from '../../../utils';
 
@@ -14,22 +14,23 @@ const useForgotPassword = () => {
         (isError || isErrorValidate) && setModalVisible(false);
     };
 
-    const { isLoading, error, isSuccess, isError, data } = useSendOTPQuery(email, {
+    const { isLoading, error, isSuccess, isError, data } = useSendForgotPasswordOTPQuery(email, {
         skip: !email,
     });
 
     const { navigate } = useNavigation();
 
     const [
-        validateEmail,
+        validateForgotPasswordOTP,
         {
+            reset: validateReset,
             data: validateData,
             error: validateError,
             isError: isErrorValidate,
             isSuccess: isSuccessValidate,
             isLoading: isLoadingValidate,
         },
-    ] = useValidateEmailOTPMutation();
+    ] = useValidateForgotPasswordOTPMutation();
 
     const handleSubmit = (values: { email: string }) => {
         setEmail('');
@@ -43,6 +44,7 @@ const useForgotPassword = () => {
                 setModalVisible(false);
                 setEmail('');
             }, 6000);
+            setOtpValue('');
         }
         if (isSuccess) {
             setModalVisible(true);
@@ -51,23 +53,21 @@ const useForgotPassword = () => {
 
     React.useEffect(() => {
         if (isSuccessValidate) {
-            setTimeout(() => {
-                navigate('Reset Password' as never, validateData as never);
-            }, 2000);
-            setTimeout(() => {
-                setModalVisible(false);
-            }, 3000);
+            navigate('Reset Password' as never, validateData as never);
+            setModalVisible(false);
+            validateReset();
         }
         if (isErrorValidate) {
             setTimeout(() => {
                 setModalVisible(false);
+                validateReset();
             }, 3000);
         }
     }, [isErrorValidate, isSuccessValidate]);
 
     React.useEffect(() => {
         if (otpValue.length === CELL_COUNT) {
-            validateEmail({ email, otp: +otpValue });
+            validateForgotPasswordOTP({ email, otp: +otpValue });
         }
     }, [otpValue]);
 
