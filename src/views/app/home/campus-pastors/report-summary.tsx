@@ -127,6 +127,11 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, r
 
     const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
 
+    const submittedReportCount = React.useMemo(
+        () => data?.departmentalReport.filter(dept => dept?.report?.status === 'SUBMITTED').length,
+        [data]
+    );
+
     useScreenFocus({ onFocus: !isUninitialized ? refetch : undefined });
 
     return (
@@ -150,8 +155,12 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, r
                         </HStack>
                     </ButtonComponent>
                     <Flex alignItems="baseline" flexDirection="row">
-                        <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>{`${0}`}</Text>
-                        <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${6}`}</Text>
+                        <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                            {submittedReportCount || 0}
+                        </Text>
+                        <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${
+                            sortedData?.length || 0
+                        }`}</Text>
                     </Flex>
                 </HStack>
                 <Divider />

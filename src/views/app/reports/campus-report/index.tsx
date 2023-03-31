@@ -41,10 +41,10 @@ const CampusReport: React.FC<ICampusReport> = props => {
                 headers: ['Male', 'Female', 'Infants', 'Total'],
                 rows: [
                     {
-                        male: rawData?.maleGuestCount,
-                        female: rawData?.femaleGuestCount,
-                        infants: rawData?.infants,
-                        total: rawData?.total,
+                        male: +rawData?.maleGuestCount,
+                        female: +rawData?.femaleGuestCount,
+                        infants: +rawData?.infants,
+                        total: +rawData?.total,
                     },
                 ],
             };
@@ -63,8 +63,8 @@ const CampusReport: React.FC<ICampusReport> = props => {
             return {
                 headers: ['First Timers', 'New Converts'],
                 column: {
-                    firstTimers: rawData?.firstTimersCount,
-                    newConverts: rawData?.newConvertsCount,
+                    firstTimers: +rawData?.firstTimersCount,
+                    newConverts: +rawData?.newConvertsCount,
                 },
             };
         }
@@ -83,9 +83,9 @@ const CampusReport: React.FC<ICampusReport> = props => {
                 if (elm[0] === 'age12_above' || elm[0] === 'age6_11' || elm[0] === 'age3_5' || elm[0] === 'age1_2') {
                     return {
                         age: Utils.capitalizeFirstChar(elm[0], '_').split(' ').join(' - ').split('Age').join('Age '),
-                        male: elm[1].male,
-                        female: elm[1].female,
-                        total: elm[1].male + elm[1].male,
+                        male: +elm[1].male,
+                        female: +elm[1].female,
+                        total: +elm[1].male + +elm[1].female,
                     };
                 }
             });

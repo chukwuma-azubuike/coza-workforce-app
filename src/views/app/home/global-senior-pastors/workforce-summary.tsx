@@ -60,6 +60,11 @@ const WorkForceSummary: React.FC = () => {
     const guestAttendance = gspReport?.guestAttendance;
     const serviceAttendance = gspReport?.serviceAttendance;
 
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment(service.serviceTime).unix() <= moment().unix()),
+        [services, servicesIsSuccess]
+    );
+
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
             campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
@@ -67,8 +72,8 @@ const WorkForceSummary: React.FC = () => {
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
-        () => services && Utils.sortByDate(services, 'createdAt'),
-        [servicesIsSuccess]
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
     );
 
     const campusName = React.useMemo<ICampus['campusName'] | undefined>(
@@ -77,8 +82,8 @@ const WorkForceSummary: React.FC = () => {
     );
 
     React.useEffect(() => {
-        services && setServiceId(services[services.length - 1]._id);
-    }, [services]);
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
 
     return (
         <>
