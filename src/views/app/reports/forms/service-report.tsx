@@ -1,4 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '../../../../hooks/modal/useModal';
@@ -13,27 +12,28 @@ import TextAreaComponent from '../../../../components/atoms/text-area';
 import { InputComponent } from '../../../../components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { IReportFormProps } from './types';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
 
 const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IReportFormProps;
+    const params = props.route.params as IServiceReportPayload;
+
+    const { status, createdAt } = params;
 
     const { isCampusPastor } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateServiceReportMutation();
+    const [updateReport, { error, isError, isSuccess, reset, isLoading }] = useCreateServiceReportMutation();
 
     const onSubmit = (values: IServiceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'SUBMITTED' });
+        updateReport({ ...values, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IServiceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IServiceReportPayload) => {
-        updateReport({ ...values, ...params, status: 'APPROVED' });
+        updateReport({ ...values, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
@@ -48,6 +48,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 message: 'Report updated',
             });
             navigation.goBack();
+            reset();
         }
         if (isError) {
             setModalState({
@@ -55,16 +56,17 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'error',
                 message: 'Something went wrong!',
             });
+            reset();
         }
     }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
-        serviceStartTime: '',
-        serviceEndTime: '',
-        serviceReportLink: '',
-        observations: '',
-        imageUrl: '',
         ...params,
+        serviceStartTime: params.serviceStartTime || '',
+        serviceEndTime: params.serviceEndTime || '',
+        serviceReportLink: params.serviceReportLink || '',
+        observations: params.observations || '',
+        imageUrl: params.imageUrl || '',
     };
 
     return (
@@ -78,7 +80,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment().format('Do MMMM, YYYY')}
+                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
                             <HStack justifyContent="space-between">
@@ -99,6 +101,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 <FormControl.Label>Link to Service Report</FormControl.Label>
                                 <InputComponent
                                     keyboardType="url"
+                                    value={values.serviceReportLink}
                                     placeholder="https://www.link-to-report.com"
                                     onChangeText={handleChange('serviceReportLink')}
                                 />
@@ -109,6 +112,8 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             <Divider />
                             <FormControl mb={2}>
                                 <TextAreaComponent
+                                    isDisabled={isCampusPastor}
+                                    value={`${values.observations}`}
                                     placeholder="Service Observations"
                                     onChangeText={handleChange('observations')}
                                 />
@@ -119,7 +124,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
-                                        Submit
+                                        {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
                                 </FormControl>
                             </If>

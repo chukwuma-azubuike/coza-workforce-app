@@ -9,7 +9,7 @@ import { isValidPhoneNumber } from 'libphonenumber-js';
 class Utils {
     /************ Version Specific ************/
 
-    static IOS16 = Platform.OS === 'ios' && +Platform.Version >= 16.0;
+    static IOS16 = Platform.OS === 'ios' && +Platform.Version.substring(0, 4) >= 14.0;
 
     /************ String logic ************/
 
@@ -191,7 +191,7 @@ class Utils {
             let keyInMap = array[i][key];
 
             if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
-                keyInMap = moment(array[i][key]).format('Do MMMM, YYYY');
+                keyInMap = moment(array[i][key]).format('MMMM Do, YYYY');
             }
 
             if (map[keyInMap]) {

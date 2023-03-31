@@ -4,6 +4,7 @@ import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
+import ErrorBoundary from '../../../components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
@@ -29,20 +30,13 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <>
+        <ErrorBoundary>
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     navigation.navigate('Permission Details' as never, elm as never);
                 };
 
-                const {
-                    requestor: { lastName, firstName, pictureUrl, department },
-                    departmentName,
-                    categoryName,
-                    description,
-                    category,
-                    status,
-                } = elm;
+                const { requestor, departmentName, categoryName, description, category, status } = elm;
 
                 return (
                     <TouchableNativeFeedback
@@ -60,7 +54,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     >
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={pictureUrl || AVATAR_FALLBACK_URL} />
+                                <AvatarComponent imageUrl={requestor?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 <VStack justifyContent="space-between">
                                     {type === 'own' && (
                                         <>
@@ -75,9 +69,9 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                     {type === 'team' && (
                                         <>
                                             <Text bold>
-                                                {`${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                    lastName
-                                                )}`}
+                                                {`${Utils.capitalizeFirstChar(
+                                                    requestor?.firstName
+                                                )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
                                             </Text>
                                             <Text fontSize="sm" color="gray.400">
                                                 {categoryName}
@@ -87,9 +81,9 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                                     {type === 'campus' && (
                                         <>
                                             <Text bold>
-                                                {`${Utils.capitalizeFirstChar(firstName)} ${Utils.capitalizeFirstChar(
-                                                    lastName
-                                                )}`}
+                                                {`${Utils.capitalizeFirstChar(
+                                                    requestor?.firstName
+                                                )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
                                             </Text>
                                             <Text fontSize="sm" color="gray.600">
                                                 {departmentName}
@@ -106,7 +100,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     </TouchableNativeFeedback>
                 );
             })}
-        </>
+        </ErrorBoundary>
     );
 };
 
@@ -131,7 +125,7 @@ const MyPermissionsList: React.FC = memo(() => {
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'dateCreated'), [data]);
 
     return (
-        <>
+        <ErrorBoundary>
             {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
             <FlatListComponent
                 onRefresh={refetch}
@@ -140,7 +134,7 @@ const MyPermissionsList: React.FC = memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
@@ -167,7 +161,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
     const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
 
     return (
-        <>
+        <ErrorBoundary>
             {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
             <FlatListComponent
                 onRefresh={refetch}
@@ -176,7 +170,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 
@@ -203,7 +197,7 @@ const CampusPermissions: React.FC = memo(() => {
     });
 
     return (
-        <>
+        <ErrorBoundary>
             {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
             <FlatListComponent
                 onRefresh={refetch}
@@ -212,7 +206,7 @@ const CampusPermissions: React.FC = memo(() => {
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-        </>
+        </ErrorBoundary>
     );
 });
 

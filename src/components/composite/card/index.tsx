@@ -74,30 +74,39 @@ interface IStatCardComponentProps {
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent } = props;
+    const { iconColor = THEME_CONFIG.success, percent, isLoading } = props;
 
     return (
-        <CardComponent w={['168px', '20%']} h={135}>
-            <HStack justifyContent="space-between" borderWidth={0} w="100%">
-                <VStack w="100%" justifyContent="space-between" h={110}>
-                    <HStack justifyContent="space-between" w="100%" alignItems="center">
-                        <Text bold fontSize="4xl" _dark={{ color: 'primary.500' }} _light={{ color: 'primary.600' }}>
-                            <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
-                        </Text>
-                        <Text fontSize="md" fontWeight="light" color={iconColor ? iconColor : 'success.400'}>
-                            {`${props.suffix}${percent ? '%' : ''}`}
-                        </Text>
-                    </HStack>
-                    <HStack alignItems="center" justifyContent="space-between" w="full">
-                        <Text fontWeight="light" color="gray.400" fontSize="lg">
-                            {props.label}
-                        </Text>
-                        {props.iconName && (
-                            <Icon name={props.iconName} type={props.iconType} color={iconColor} size={25} />
-                        )}
-                    </HStack>
-                </VStack>
-            </HStack>
+        <CardComponent w={['45.6%', '20%']} h={135}>
+            {isLoading ? (
+                <FlatListSkeleton count={2} />
+            ) : (
+                <HStack justifyContent="space-between" borderWidth={0} w="100%">
+                    <VStack w="100%" justifyContent="space-between" h={110}>
+                        <HStack justifyContent="space-between" w="100%" alignItems="center">
+                            <Text
+                                bold
+                                fontSize="4xl"
+                                _dark={{ color: 'primary.500' }}
+                                _light={{ color: 'primary.600' }}
+                            >
+                                <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
+                            </Text>
+                            <Text fontSize="md" fontWeight="light" color={iconColor ? iconColor : 'success.400'}>
+                                {percent && `${props.suffix}${percent ? '%' : ''}`}
+                            </Text>
+                        </HStack>
+                        <HStack alignItems="center" justifyContent="space-between" w="full">
+                            <Text fontWeight="light" color="gray.400" fontSize="lg">
+                                {props.label}
+                            </Text>
+                            {props.iconName && (
+                                <Icon name={props.iconName} type={props.iconType} color={iconColor} size={25} />
+                            )}
+                        </HStack>
+                    </VStack>
+                </HStack>
+            )}
         </CardComponent>
     );
 });

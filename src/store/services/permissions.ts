@@ -16,10 +16,12 @@ const SERVICE_URL = 'permissions';
 interface IDeclinePermission {
     permissionId: IPermission['_id'];
     declinerId: IUser['userId'];
+    comment: string;
 }
 interface IApprovePermission {
     permissionId: IPermission['_id'];
     approverId: IUser['userId'];
+    comment: string;
 }
 
 export const permissionsServiceSlice = createApi({
@@ -38,18 +40,11 @@ export const permissionsServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
-        updatePermission: endpoint.mutation<IPermission, IUpdatePermissionPayload>({
-            query: body => ({
-                url: `/${SERVICE_URL}/updatePermission/${body._id}`,
-                method: REST_API_VERBS.PUT,
-                body,
-            }),
-        }),
-
         approvePermission: endpoint.mutation<IPermission, IApprovePermission>({
             query: body => ({
                 url: `/${SERVICE_URL}/approve/${body.permissionId}/${body.approverId}`,
                 method: REST_API_VERBS.PATCH,
+                body: { comment: body.comment },
             }),
         }),
 
@@ -57,6 +52,7 @@ export const permissionsServiceSlice = createApi({
             query: body => ({
                 url: `/${SERVICE_URL}/reject/${body.permissionId}/${body.declinerId}`,
                 method: REST_API_VERBS.PATCH,
+                body: { comment: body.comment },
             }),
         }),
 
@@ -86,7 +82,6 @@ export const permissionsServiceSlice = createApi({
 export const {
     useGetPermissionsQuery,
     useGetPermissionByIdQuery,
-    useUpdatePermissionMutation,
     useRequestPermissionMutation,
     useApprovePermissionMutation,
     useDeclinePermissionMutation,

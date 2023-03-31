@@ -1,5 +1,5 @@
 import React, { ReactChildren } from 'react';
-import { RefreshControl, ViewProps } from 'react-native';
+import { KeyboardAvoidingView, Platform, RefreshControl, ViewProps } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 import { IScrollViewProps, ScrollView, View } from 'native-base';
@@ -20,15 +20,20 @@ const ViewWrapper = (props: IViewWrapper) => {
     const ActiveView = scroll ? ScrollView : View;
 
     return (
-        <ActiveView
-            _light={{ background: 'white' }}
-            _dark={{ background: 'black' }}
-            style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16 }}
-            refreshControl={onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />}
-            {...props}
-        >
-            {props.children ? props.children : <Empty />}
-        </ActiveView>
+        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+            <ActiveView
+                _light={{ background: 'white' }}
+                _dark={{ background: 'black' }}
+                style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16 }}
+                refreshControl={
+                    onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
+                }
+                flex={1}
+                {...props}
+            >
+                {props.children ? props.children : <Empty />}
+            </ActiveView>
+        </KeyboardAvoidingView>
     );
 };
 

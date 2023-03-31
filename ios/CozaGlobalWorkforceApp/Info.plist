@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Access to your photo library is needed to allow you select an image to be used as your profile picture on the app.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Access to your camera is needed to allow you take a photo of yourself to be used as your profile picture on the app.</string>
+	<key>AsyncStorage_excludeFromBackup</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -56,6 +62,8 @@
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
 	</array>
+	<key>UIFileSharingEnabled</key>
+	<false/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen.storyboard</string>
 	<key>UIRequiredDeviceCapabilities</key>

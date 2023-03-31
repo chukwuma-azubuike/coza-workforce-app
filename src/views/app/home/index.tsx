@@ -8,7 +8,7 @@ import { usePreventGoBack } from '../../../hooks/navigation';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import useRole from '../../../hooks/role';
 import { IAttendance, IService } from '../../../store/types';
-import { useGetAttendanceQuery } from '../../../store/services/attendance';
+import { ICampusCoordinates, useGetAttendanceQuery } from '../../../store/services/attendance';
 import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
@@ -19,7 +19,8 @@ import { useGetUserByIdQuery } from '../../../store/services/account';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
-import { Box } from 'native-base';
+import useGeoLocation from '../../../hooks/geo-location';
+import { useGetCampusByIdQuery } from '../../../store/services/campus';
 
 interface IInitialHomeState {
     latestService: {
@@ -77,8 +78,6 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         }
     );
 
-    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
-
     const initialState = {
         latestService: { data: latestService, isError, isSuccess, isLoading },
         latestAttendance: {
@@ -87,25 +86,37 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             latestAttendanceIsSuccess,
             latestAttendanceIsLoading,
         },
-        currentCoordinates: deviceCoordinates,
     };
 
+    const { data: campusData } = useGetCampusByIdQuery(user?.campus?._id);
+
+    const selectCoordinateRef = React.useMemo(() => {
+        if (latestService?.isGlobalService) return latestService?.coordinates;
+
+        return campusData?.coordinates;
+    }, [latestService, campusData]);
+
+    const campusCoordinates = {
+        latitude: selectCoordinateRef?.lat,
+        longitude: selectCoordinateRef?.long,
+    };
+
+    const { refresh, isInRange, deviceCoordinates } = useGeoLocation({
+        rangeToClockIn: latestService?.rangeToClockIn as number,
+        campusCoordinates: campusCoordinates as ICampusCoordinates,
+    });
+
     const handleRefresh = () => {
+        refresh();
         if (!isGlobalPastor) {
             refetch();
             latestAttendanceRefetch();
-            Geolocation.watchPosition(props => {
-                setDeviceCoordinates(props.coords);
-            });
         }
     };
 
     React.useEffect(() => {
         Utils.checkLocationPermission();
         Utils.requestLocationPermission();
-        Geolocation.watchPosition(({ coords }) => {
-            setDeviceCoordinates(coords);
-        });
     }, []);
 
     React.useEffect(() => {
@@ -135,7 +146,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                         <If condition={user ? true : false}>
                             <TopNav {...navigation} />
                             <If condition={!isGlobalPastor}>
-                                <Clocker />
+                                <Clocker
+                                    isInRange={isInRange}
+                                    refreshLocation={refresh}
+                                    deviceCoordinates={deviceCoordinates}
+                                />
                             </If>
                             <If condition={isGlobalPastor}>
                                 <GSPView />

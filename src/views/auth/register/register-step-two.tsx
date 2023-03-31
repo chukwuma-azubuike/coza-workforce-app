@@ -139,6 +139,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
+
                                             <Field
                                                 name="nextOfKinPhoneNo"
                                                 label="Next of Kin Contact"

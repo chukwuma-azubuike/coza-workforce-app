@@ -1,3 +1,4 @@
+import { ICampus, IStatus } from './../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
@@ -26,6 +27,33 @@ export interface IGlobalWorkforceReportSummary {
     absentWorkers: number;
 }
 
+export interface IGSPReport {
+    workers: {
+        totalWorkers: number;
+        activeWorkers: number;
+        presentWorkers: number;
+        lateWorkers: number;
+        absentWorkers: number;
+    };
+    serviceAttendance: {
+        totalAttenance: number;
+        menAttendance: number;
+        womenAttendance: number;
+        teenagerAttendance: number;
+        childrenAttendance: number;
+    };
+    guestAttendance: {
+        firstTimer: number;
+        newConvert: number;
+    };
+    busCount: {
+        location: number;
+        totalGuest: number;
+        totalAdult: number;
+        totalChildren: number;
+        totalCars: number;
+    };
+}
 export interface ICarsReportSummary {
     totalCars: number;
 }
@@ -62,6 +90,12 @@ export interface ICampusReportSummary<R = unknown> {
         } & R;
     }[];
     incidentReport: unknown[];
+}
+
+export interface IDepartmentReportListById {
+    _id: string;
+    status: IStatus;
+    createdAt: string;
 }
 
 export const reportsServiceSlice = createApi({
@@ -124,6 +158,16 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+        }),
+
+        getGSPReport: endpoint.query<IGSPReport, { serviceId?: IService['_id']; campusId?: ICampus['_id'] }>({
+            query: params => ({
+                url: `/${SERVICE_URL}/gspReport`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<IGSPReport>) => res.data,
         }),
 
         getGlobalWorkforceSummary: endpoint.query<IGlobalWorkforceReportSummary, void>({
@@ -192,13 +236,13 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
         }),
 
-        getDepartmentReportsList: endpoint.query<IDepartmentReportResponse[], IDepartment['_id']>({
+        getDepartmentReportsList: endpoint.query<IDepartmentReportListById[], IDepartment['_id']>({
             query: departmentId => ({
-                url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}`,
+                url: `/${SERVICE_URL}/getReportByDepartmentID/${departmentId}`,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<IDepartmentReportResponse[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<IDepartmentReportListById[]>) => res.data,
         }),
 
         // Add your endpoints here
@@ -207,6 +251,7 @@ export const reportsServiceSlice = createApi({
 
 // Use exported hook in relevant components
 export const {
+    useGetGSPReportQuery,
     useGetBusSummaryQuery,
     useGetCarsSummaryQuery,
     useGetGuestSummaryQuery,

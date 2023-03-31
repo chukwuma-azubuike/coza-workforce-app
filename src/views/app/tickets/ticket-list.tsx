@@ -81,9 +81,11 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                     {type === 'team' && (
                                         <>
                                             <Text bold>
-                                                {`${Utils.capitalizeFirstChar(
-                                                    isDepartment ? departmentName : user?.firstName
-                                                )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
+                                                {isDepartment
+                                                    ? departmentName
+                                                    : `${Utils.capitalizeFirstChar(
+                                                          user?.firstName
+                                                      )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
                                             </Text>
                                             <Text
                                                 fontSize="sm"
@@ -109,10 +111,18 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                                                 _dark={{ color: 'gray.300' }}
                                                 _light={{ color: 'gray.600' }}
                                             >
-                                                {`${Utils.capitalizeFirstChar(departmentName || '')} ${
-                                                    isDepartment ? ' - Departmental' : ''
-                                                }`}
+                                                {departmentName || ''}
                                             </Text>
+                                            {isDepartment && (
+                                                <Text
+                                                    fontSize="sm"
+                                                    bold={isDepartment}
+                                                    _dark={{ color: 'gray.300' }}
+                                                    _light={{ color: 'gray.600' }}
+                                                >
+                                                    Departmental
+                                                </Text>
+                                            )}
                                             <Text
                                                 fontSize="sm"
                                                 _dark={{ color: 'gray.300' }}
