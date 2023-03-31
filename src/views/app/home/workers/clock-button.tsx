@@ -12,14 +12,16 @@ import useRole from '../../../../hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import If from '../../../../components/composite/if-container';
 import Utils from '../../../../utils';
+import { Alert } from 'react-native';
 
 interface IClockButtonProps {
     isInRange: boolean;
     deviceCoordinates: GeoCoordinates;
     refreshLocation: () => Promise<void>;
+    verifyRangeBeforeAction: (successCallback: () => any, errorCallback: () => any) => Promise<void>;
 }
 
-const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockButtonProps) => {
+const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRangeBeforeAction }: IClockButtonProps) => {
     const {
         latestService: {
             data: latestServiceData,
@@ -128,45 +130,81 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
         !latestAttendanceData[0].clockOut &&
         isInRange;
 
+    const handleClockout = () => {
+        if (canClockOut) {
+            verifyRangeBeforeAction(
+                () =>
+                    clockOut(latestAttendanceData[0]._id as string).then(res => {
+                        if (res) setClockedOut(true);
+                    }),
+                () =>
+                    setModalState({
+                        duration: 6,
+                        render: (
+                            <ModalAlertComponent
+                                description={'You are not within range of any campus!'}
+                                iconName={'warning-outline'}
+                                iconType={'ionicon'}
+                                status={'warning'}
+                            />
+                        ),
+                    })
+            );
+            return;
+        }
+    };
+
     const handlePress = async () => {
-        refreshLocation().then(() => {
-            if (!isInRange) {
-                setModalState({
-                    duration: 6,
-                    render: (
-                        <ModalAlertComponent
-                            description={'You are not within range of any campus!'}
-                            iconName={'warning-outline'}
-                            iconType={'ionicon'}
-                            status={'warning'}
-                        />
-                    ),
-                });
-                return;
-            }
-            if (canClockIn) {
-                clockIn({
-                    userId: user?.userId as string,
-                    clockIn: `${moment().unix()}`,
-                    clockOut: null,
-                    serviceId: latestServiceData?._id as string,
-                    coordinates: {
-                        lat: `${deviceCoordinates.latitude}`,
-                        long: `${deviceCoordinates.longitude}`,
-                    },
-                    campusId: user?.campus._id,
-                    departmentId: user?.department._id,
-                    roleId: user?.role._id,
-                });
-                return;
-            }
-            if (canClockOut && latestAttendanceData) {
-                clockOut(latestAttendanceData[0]._id as string).then(res => {
-                    if (res) setClockedOut(true);
-                });
-                return;
-            }
-        });
+        refreshLocation();
+
+        if (!isInRange) {
+            setModalState({
+                duration: 6,
+                render: (
+                    <ModalAlertComponent
+                        description={'You are not within range of any campus!'}
+                        iconName={'warning-outline'}
+                        iconType={'ionicon'}
+                        status={'warning'}
+                    />
+                ),
+            });
+            return;
+        }
+
+        if (canClockIn) {
+            clockIn({
+                userId: user?.userId as string,
+                clockIn: `${moment().unix()}`,
+                clockOut: null,
+                serviceId: latestServiceData?._id as string,
+                coordinates: {
+                    lat: `${deviceCoordinates.latitude}`,
+                    long: `${deviceCoordinates.longitude}`,
+                },
+                campusId: user?.campus._id,
+                departmentId: user?.department._id,
+                roleId: user?.role._id,
+            });
+            return;
+        }
+
+        if (canClockOut && latestAttendanceData) {
+            Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
+                {
+                    text: 'Yes',
+                    style: 'default',
+                    isPreferred: true,
+                    onPress: handleClockout,
+                },
+                {
+                    text: 'No',
+                    isPreferred: false,
+                    style: 'destructive',
+                },
+            ]);
+            return;
+        }
     };
 
     return (
@@ -223,3 +261,5 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates }: IClockBu
 };
 
 export default ClockButton;
+
+// TODO: Update ENV to production before deployment

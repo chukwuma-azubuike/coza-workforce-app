@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import useModal from '../../../hooks/modal/useModal';
 import CampusReport from './campus-report';
 import {
-    ICampusReportSummary,
     IDepartmentReportListById,
     useGetDepartmentalReportQuery,
     useGetDepartmentReportsListQuery,
@@ -16,18 +15,17 @@ import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import useScreenFocus from '../../../hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import Utils from '../../../utils';
 import { HStack, Text } from 'native-base';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import StatusTag from '../../../components/atoms/status-tag';
-import { IStatus } from '../../../store/types';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
 import moment from 'moment';
+import { IReportFormProps } from './forms/types';
 
-const DepartmentReportListRow: React.FC<{ createdAt: string; status: IStatus }> = props => {
+const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
     const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
 
@@ -64,7 +62,7 @@ const DepartmentReportListRow: React.FC<{ createdAt: string; status: IStatus }> 
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.createdAt).format('Do, MMMM YYYY')}
+                    {moment(props.updatedAt).format('Do, MMMM YYYY')}
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
@@ -86,11 +84,11 @@ const Reports: React.FC = () => {
         isPCU,
         isUshery,
         isSecurity,
-        isPRU,
         isChildcare,
         isCampusPastor,
         isHOD,
         isAHOD,
+        isPrograms,
         isGlobalPastor,
     } = useRole();
 
@@ -142,7 +140,7 @@ const Reports: React.FC = () => {
         if (isSecurity) {
             return 'Security Report';
         }
-        if (isPRU) {
+        if (isPrograms) {
             return 'Service Report';
         }
         if (isChildcare) {

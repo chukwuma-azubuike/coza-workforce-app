@@ -308,8 +308,12 @@ export interface IService {
         long: number;
         lat: number;
     };
-    clockInStartTime: number;
-    clockInEndTime: number;
+    serviceTime: string;
+    clockInStartTime: string;
+    clockInEndTime: string;
+    workersLateStartTime: string;
+    leadersLateStartTime: string;
+    serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
     isGlobalService: boolean;

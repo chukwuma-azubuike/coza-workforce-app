@@ -28,7 +28,7 @@ const WorkForceSummary: React.FC = () => {
 
     const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
 
-    const [campusId, setCampusId] = React.useState<ICampus['_id']>();
+    const [campusId, setCampusId] = React.useState<ICampus['_id']>('global');
     const setCampus = (value: ICampus['_id']) => {
         setCampusId(value);
     };
@@ -43,7 +43,10 @@ const WorkForceSummary: React.FC = () => {
         refetch,
         isLoading,
         isFetching,
-    } = useGetGSPReportQuery({ serviceId, campusId }, { refetchOnMountOrArgChange: true });
+    } = useGetGSPReportQuery(
+        { serviceId, campusId: campusId === 'global' ? undefined : campusId },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const gspReportIsLoading = isLoading || isFetching;
 
@@ -57,18 +60,20 @@ const WorkForceSummary: React.FC = () => {
     const guestAttendance = gspReport?.guestAttendance;
     const serviceAttendance = gspReport?.serviceAttendance;
 
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment(service.serviceTime).unix() <= moment().unix()),
+        [services, servicesIsSuccess]
+    );
+
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
-            campuses && [
-                { _id: undefined, campusName: 'Global' },
-                ...Utils.sortStringAscending(campuses, 'campusName'),
-            ],
+            campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
         [campusIsSuccess]
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
-        () => services && Utils.sortByDate(services, 'createdAt'),
-        [servicesIsSuccess]
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
     );
 
     const campusName = React.useMemo<ICampus['campusName'] | undefined>(
@@ -77,8 +82,8 @@ const WorkForceSummary: React.FC = () => {
     );
 
     React.useEffect(() => {
-        services && setServiceId(services[services.length - 1]._id);
-    }, [services]);
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
 
     return (
         <>
@@ -115,7 +120,7 @@ const WorkForceSummary: React.FC = () => {
                             />
                             <ListItem.Content>
                                 <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                                    {`${campusName} Workforce`}
+                                    {`${campusName ? campusName : ''} Workforce`}
                                 </Text>
                             </ListItem.Content>
                         </>

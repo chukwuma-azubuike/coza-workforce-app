@@ -22,9 +22,9 @@ enum DEPARTMENTS {
     CTS = 'COZA Transfer Service',
     ME = 'Monitoring & Evaluation',
     childcare = 'Children Ministry',
-    programs = 'Programme Coordinator',
+    programs = 'Programme Coordination',
     PRU = 'Public Relations Unit (PRU)',
-    security = 'Digital Surveillance Security',
+    security = 'Traffic & Security',
 }
 
 const useRole = () => {

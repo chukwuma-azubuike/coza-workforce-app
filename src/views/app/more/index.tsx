@@ -18,7 +18,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const roleFilterArray = [
         { role: isGlobalPastor, routes: ['Reports', 'Workforce clock in'] },
-        { role: isHOD || isAHOD || isCampusPastor, routes: ['Workforce clock in'] },
+        { role: (isHOD && !isQC) || (isAHOD && !isQC) || isCampusPastor, routes: ['Workforce clock in'] },
     ];
 
     const assertFilterRole = React.useMemo(() => roleFilterArray.find(filter => filter.role), [roleFilterArray]);
