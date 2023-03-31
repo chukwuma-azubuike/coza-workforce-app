@@ -134,3 +134,22 @@ export const WorkforceClockinSchema = Yup.object().shape({
     campusId: Yup.string().required('You are required to select a category.'),
     departmentId: Yup.string().required('You are required to select a category.'),
 });
+
+export const ResetPasswordSchema = Yup.object().shape({
+    password: Yup.string()
+        .required('Password is required')
+        .min(8, 'Password must be at least 8 characters')
+        .matches(RegExp('^(?=.*[0-9])'), {
+            message: 'At least one digit is required',
+        })
+        .matches(RegExp('^(?=.*[a-z])'), {
+            message: 'At least one lowercase character is required',
+        })
+        .matches(RegExp('^(?=.*[A-Z])'), {
+            message: 'At least one uppercase character is required',
+        })
+        .matches(/(\W)/, 'At least one special character is required'),
+    confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .required('Confirming you password is required.'),
+});
