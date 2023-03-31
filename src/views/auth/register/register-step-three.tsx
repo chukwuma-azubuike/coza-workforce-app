@@ -9,8 +9,8 @@ import { Formik } from 'formik';
 import { IRegisterPayload } from '../../../store/types';
 import { RegisterSchema_3 } from '../../../utils/schemas';
 import { RegisterFormContext } from '.';
-// import { IMGBB_ALBUM_ID } from '../../../config/uploadConfig';
-// import useUpload from '../../../hooks/upload';
+import { IMGBB_ALBUM_ID } from '../../../config/uploadConfig';
+import useUpload from '../../../hooks/upload';
 import UploadButton from '../../../components/atoms/upload';
 
 const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
@@ -19,20 +19,20 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
-    // const { initialise, loading, isSuccess, isError, error, data, reset } = useUpload({
-    //     albumId: IMGBB_ALBUM_ID.PROFILE_PICTURE,
-    // });
+    const { initialise, loading, isSuccess, isError, error, data, reset } = useUpload({
+        albumId: IMGBB_ALBUM_ID.PROFILE_PICTURE,
+    });
 
-    // React.useEffect(() => {
-    //     if (data?.display_url && isSuccess) {
-    //         setFormValues(prev => {
-    //             return { ...prev, pictureUrl: data.display_url };
-    //         });
-    //     }
-    //     if (isError) {
-    //         reset();
-    //     }
-    // }, [isSuccess, isError, data]);
+    React.useEffect(() => {
+        if (data?.display_url && isSuccess) {
+            setFormValues(prev => {
+                return { ...prev, pictureUrl: data.display_url };
+            });
+        }
+        if (isError) {
+            reset();
+        }
+    }, [isSuccess, isError, data]);
 
     return (
         <ViewWrapper scroll>
@@ -130,7 +130,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            {/* <FormControl>
+                                            <FormControl>
                                                 <UploadButton
                                                     mt={2}
                                                     error={error}
@@ -145,10 +145,10 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                 <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
-                                            </FormControl> */}
+                                            </FormControl>
                                             <HStack space={4} w="95%" justifyContent="space-between">
                                                 <ButtonComponent
-                                                    // isDisabled={loading}
+                                                    isDisabled={loading}
                                                     onPress={handleBackPress}
                                                     width="1/2"
                                                     secondary
@@ -157,7 +157,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     Go back
                                                 </ButtonComponent>
                                                 <ButtonComponent
-                                                    // isDisabled={loading}
+                                                    isDisabled={loading}
                                                     onPress={handleContinuePress}
                                                     width="1/2"
                                                     mt={4}
