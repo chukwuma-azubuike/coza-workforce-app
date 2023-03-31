@@ -1,7 +1,8 @@
 import { IStore } from '../..';
-import { API_BASE_URL } from '@env';
+import APP_ENV from '../../../config/envConfig';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+const { API_BASE_URL } = APP_ENV();
 export class fetchUtils {
     static baseQuery = fetchBaseQuery({
         baseUrl: API_BASE_URL,

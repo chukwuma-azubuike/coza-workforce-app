@@ -28,7 +28,7 @@ const WorkForceSummary: React.FC = () => {
 
     const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
 
-    const [campusId, setCampusId] = React.useState<ICampus['_id']>();
+    const [campusId, setCampusId] = React.useState<ICampus['_id']>('global');
     const setCampus = (value: ICampus['_id']) => {
         setCampusId(value);
     };
@@ -43,7 +43,10 @@ const WorkForceSummary: React.FC = () => {
         refetch,
         isLoading,
         isFetching,
-    } = useGetGSPReportQuery({ serviceId, campusId }, { refetchOnMountOrArgChange: true });
+    } = useGetGSPReportQuery(
+        { serviceId, campusId: campusId === 'global' ? undefined : campusId },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const gspReportIsLoading = isLoading || isFetching;
 
@@ -59,10 +62,7 @@ const WorkForceSummary: React.FC = () => {
 
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
-            campuses && [
-                { _id: undefined, campusName: 'Global' },
-                ...Utils.sortStringAscending(campuses, 'campusName'),
-            ],
+            campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
         [campusIsSuccess]
     );
 
@@ -115,7 +115,7 @@ const WorkForceSummary: React.FC = () => {
                             />
                             <ListItem.Content>
                                 <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                                    {`${campusName} Workforce`}
+                                    {`${campusName ? campusName : ''} Workforce`}
                                 </Text>
                             </ListItem.Content>
                         </>

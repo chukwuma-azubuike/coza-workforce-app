@@ -101,7 +101,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         longitude: selectCoordinateRef?.long,
     };
 
-    const { refresh, isInRange, deviceCoordinates } = useGeoLocation({
+    const { refresh, isInRange, deviceCoordinates, verifyRangeBeforeAction } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
         campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
@@ -150,6 +150,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                                     isInRange={isInRange}
                                     refreshLocation={refresh}
                                     deviceCoordinates={deviceCoordinates}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
                                 />
                             </If>
                             <If condition={isGlobalPastor}>
