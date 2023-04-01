@@ -117,7 +117,6 @@ export const CampusAttendance: React.FC = React.memo(() => {
     //         if (prev + page > 0) return prev + page;
     //         return prev;
     //     });
-    //     console.log(page);
     // };
 
     // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isFetching });

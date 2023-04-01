@@ -25,7 +25,7 @@ export interface IThirdPartyUserDetails {
     departmentId: string;
 }
 
-const WorkforceClockin: React.FC = () => {
+const ManualClockin: React.FC = () => {
     const [campusId, setCampusId] = React.useState<string>();
     const [departmentId, setDepartmentId] = React.useState<string>();
     const [thirdPartyUser, setThirdPartyUserId] = React.useState<IUser>();
@@ -232,13 +232,13 @@ const WorkforceClockin: React.FC = () => {
 
                                 <Center w="full" mt={10}>
                                     <ThirdPartyClockButton
-                                        action
                                         isInRangeProp={isInRange}
                                         campusId={campusId as string}
                                         deviceCoordinates={deviceCoordinates}
                                         departmentId={departmentId as string}
                                         userId={thirdPartyUser?._id as string}
                                         roleId={thirdPartyUser?.role?._id as string}
+                                        campusCoordinates={campusCoordinates as ICampusCoordinates}
                                     />
                                 </Center>
                             </VStack>
@@ -250,4 +250,4 @@ const WorkforceClockin: React.FC = () => {
     );
 };
 
-export default WorkforceClockin;
+export default ManualClockin;
