@@ -44,7 +44,7 @@ export interface IUploadResponseImgBB {
     status: number;
 }
 
-const MAX_IMAGE_SIZE = 2000000;
+const MAX_IMAGE_SIZE = 5000000;
 
 const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
     const [loading, setLoading] = React.useState<boolean>(false);

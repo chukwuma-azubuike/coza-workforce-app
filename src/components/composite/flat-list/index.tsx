@@ -26,21 +26,24 @@ export interface IFlatListComponentProps {
     emptyMessage?: string;
     navLink?: string;
     showHeader?: boolean;
+    fetchMoreData?: () => void;
     emptySize?: number | string;
 }
 
-const FlatListComponent = ({
-    data,
-    padding,
-    columns,
-    onRefresh,
-    refreshing,
-    emptySize,
-    navLink,
-    isLoading,
-    emptyMessage,
-    showHeader = true,
-}: IFlatListComponentProps) => {
+const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
+    const {
+        data,
+        padding,
+        columns,
+        onRefresh,
+        refreshing,
+        emptySize,
+        navLink,
+        isLoading,
+        emptyMessage,
+        fetchMoreData,
+        showHeader = true,
+    } = props;
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
     const { isLightMode } = useAppColorMode();
@@ -66,6 +69,17 @@ const FlatListComponent = ({
                                 }
                                 data={data}
                                 nestedScrollEnabled
+                                onEndReachedThreshold={0.2}
+                                onEndReached={fetchMoreData}
+                                onScrollEndDrag={fetchMoreData}
+                                ListEmptyComponent={
+                                    <Empty
+                                        width={emptySize}
+                                        isLoading={isLoading}
+                                        message={emptyMessage}
+                                        refresh={onRefresh}
+                                    />
+                                }
                                 keyExtractor={item => item.id}
                                 renderItem={({ item }) => (
                                     <Box
@@ -103,6 +117,14 @@ const FlatListComponent = ({
                                     )
                                 }
                                 nestedScrollEnabled
+                                ListEmptyComponent={
+                                    <Empty
+                                        width={emptySize}
+                                        isLoading={isLoading}
+                                        message={emptyMessage}
+                                        refresh={onRefresh}
+                                    />
+                                }
                                 keyExtractor={item => item.id}
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
