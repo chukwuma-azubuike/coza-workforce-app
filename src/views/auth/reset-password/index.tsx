@@ -21,12 +21,9 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const { email, OTP } = props?.route?.params as unknown as IResetPasswordPayload;
 
-    console.log('Raw params ->', props.route.params);
-
     const [resetPassword, { reset, isSuccess, isError, isLoading }] = useResetPasswordMutation();
 
     const onSubmit = (value: Omit<IResetPasswordPayload, 'OTP' | 'email'>) => {
-        console.log({ ...value, OTP });
         resetPassword({ password: value.password, email, OTP });
     };
 
