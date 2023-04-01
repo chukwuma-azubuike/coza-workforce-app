@@ -20,7 +20,7 @@ import { Platform } from 'react-native';
 const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ITransferReportPayload;
 
-    const { status, createdAt } = params;
+    const { status, updatedAt } = params;
 
     const { isCampusPastor } = useRole();
 
@@ -88,7 +88,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
+                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
 
                         <FieldArray

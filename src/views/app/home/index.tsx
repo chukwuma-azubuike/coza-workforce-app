@@ -5,7 +5,7 @@ import Clocker from './workers/clocker';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import TopNav from './top-nav';
 import { usePreventGoBack } from '../../../hooks/navigation';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
+import { useGetLatestServiceQuery, useGetServicesQuery } from '../../../store/services/services';
 import useRole from '../../../hooks/role';
 import { IAttendance, IService } from '../../../store/types';
 import { ICampusCoordinates, useGetAttendanceQuery } from '../../../store/services/attendance';
@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
 import useGeoLocation from '../../../hooks/geo-location';
-import { useGetCampusByIdQuery } from '../../../store/services/campus';
+import { useGetCampusByIdQuery, useGetCampusesQuery } from '../../../store/services/campus';
 
 interface IInitialHomeState {
     latestService: {
@@ -87,6 +87,8 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         },
     };
 
+    const { data: services, refetch: refetchServices, isSuccess: servicesIsSuccess } = useGetServicesQuery();
+
     const { data: campusData } = useGetCampusByIdQuery(user?.campus?._id);
 
     const selectCoordinateRef = React.useMemo(() => {
@@ -109,6 +111,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         refresh();
         if (!isGlobalPastor) {
             refetch();
+            refetchServices();
             latestAttendanceRefetch();
         }
     };
@@ -147,7 +150,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                         />
                     </If>
                     <If condition={isGlobalPastor}>
-                        <GSPView />
+                        <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
                     </If>
                 </If>
                 <If condition={isCampusPastor}>

@@ -9,6 +9,7 @@ import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '../../../components/composite/error-boundary';
+// import useFetchMoreData from '../../../hooks/fetch-more-data';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -35,13 +36,15 @@ export const MyAttendance: React.FC = React.memo(() => {
 export const TeamAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
+    const { data: latestService } = useGetLatestServiceQuery(user?.campus?._id);
     const {
         data: membersClockedIn,
         isLoading,
         refetch,
         isFetching,
     } = useGetAttendanceQuery({
-        departmentId: user?.department._id,
+        departmentId: user?.department?._id,
+        serviceId: latestService?._id,
     });
 
     const { data: members } = useGetUsersByDepartmentIdQuery(user?.department._id);
@@ -93,19 +96,31 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
+    // const [page, setPageCount] = React.useState<number>(1);
 
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
-
     const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
         {
+            // page,
+            // limit: 2,
             campusId: user?.campus._id,
-            //  serviceId: latestService?._id
+            serviceId: latestService?._id,
         },
         {
-            // skip: !latestService,
+            skip: !latestService,
             refetchOnMountOrArgChange: true,
         }
     );
+
+    // const setPage = (page: number) => () => {
+    //     setPageCount(prev => {
+    //         if (prev + page > 0) return prev + page;
+    //         return prev;
+    //     });
+    //     console.log(page);
+    // };
+
+    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isFetching });
 
     return (
         <ErrorBoundary>
@@ -114,6 +129,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 padding
                 columns={campusColumns_1}
                 data={data as IAttendance[]}
+                // fetchMoreData={setPage(1)}
                 onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
