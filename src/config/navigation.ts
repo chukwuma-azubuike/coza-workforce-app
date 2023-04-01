@@ -31,11 +31,12 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import ManualClockin from '../views/app/manual-clockin';
+import WorkforceManagement from '../views/app/workforce-management';
+import WorkforceClockin from '../views/app/workforce-clockin';
 import EditProfile from '../views/app/profile/edit-profile';
 import UserDetails from '../views/app/workforce-management/user-details';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
-import WorkforceManagement from '../views/app/workforce-management';
 
 export interface IAppRoute {
     name: string;
