@@ -194,12 +194,10 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                 {
                     text: 'Yes',
                     style: 'default',
-                    isPreferred: true,
                     onPress: handleClockout,
                 },
                 {
                     text: 'No',
-                    isPreferred: false,
                     style: 'destructive',
                 },
             ]);

@@ -3,30 +3,36 @@ import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-ba
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
-import { TouchableNativeFeedback } from 'react-native';
+import { Alert, TouchableNativeFeedback } from 'react-native';
 import useModal from '../../../hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
-import { useClockInMutation, useClockOutMutation } from '../../../store/services/attendance';
+import {
+    ICampusCoordinates,
+    useClockInMutation,
+    useClockOutMutation,
+    useGetAttendanceQuery,
+} from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 import Utils from '../../../utils';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { IThirdPartyUserDetails } from '.';
+import useGeoLocation from '../../../hooks/geo-location';
 
 interface ThirdPartyClockButton extends IThirdPartyUserDetails {
-    action: boolean;
     isInRangeProp: boolean;
     deviceCoordinates: GeoCoordinates;
+    campusCoordinates: ICampusCoordinates;
 }
 
 const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
-    action,
     userId,
     roleId,
     campusId,
     departmentId,
     deviceCoordinates,
+    campusCoordinates,
     isInRangeProp: isInRange,
 }) => {
     const {
@@ -38,6 +44,28 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
 
     const [clockIn, { isError, error, isSuccess, isLoading, reset: clockInReset }] = useClockInMutation();
 
+    const { refresh, verifyRangeBeforeAction } = useGeoLocation({
+        rangeToClockIn: latestService?.rangeToClockIn as number,
+        campusCoordinates: campusCoordinates as ICampusCoordinates,
+    });
+
+    const {
+        data: latestAttendanceData,
+        isError: latestAttendanceIsError,
+        isSuccess: latestAttendanceIsSuccess,
+        isLoading: latestAttendanceIsLoading,
+        refetch: latestAttendanceRefetch,
+    } = useGetAttendanceQuery(
+        {
+            userId,
+            serviceId: latestService?._id,
+        },
+        {
+            skip: !userId,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
     const [
         clockOut,
         {
@@ -48,6 +76,27 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
             error: clockOutError,
         },
     ] = useClockOutMutation();
+
+    const handleClockout = () => {
+        if (canClockOut) {
+            verifyRangeBeforeAction(
+                () => clockOut(latestAttendanceData[0]?._id as string),
+                () =>
+                    setModalState({
+                        duration: 6,
+                        render: (
+                            <ModalAlertComponent
+                                description={'You are not within range of any campus!'}
+                                iconName={'warning-outline'}
+                                iconType={'ionicon'}
+                                status={'warning'}
+                            />
+                        ),
+                    })
+            );
+            return;
+        }
+    };
 
     const handlePress = () => {
         if (!isInRange) {
@@ -80,12 +129,20 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
             });
             return;
         }
-        // if (canClockOut) {
-        //     clockOut(latestAttendanceData[0]._id as string).then(res => {
-        //         if (res) setClockedOut(true);
-        //     });
-        //     return;
-        // }
+        if (canClockOut && latestAttendanceData) {
+            Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
+                {
+                    text: 'Yes',
+                    style: 'default',
+                    onPress: handleClockout,
+                },
+                {
+                    text: 'No',
+                    style: 'destructive',
+                },
+            ]);
+            return;
+        }
     };
 
     React.useEffect(() => {
@@ -117,7 +174,7 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
             setModalState({
                 render: (
                     <ModalAlertComponent
-                        description={`You clocked out at ${moment().format('LT')}`}
+                        description={`Clocked out at ${moment().format('LT')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
@@ -131,6 +188,17 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
             cleanUp = false;
         };
     }, [clockOutSuccess]);
+
+    React.useEffect(() => {
+        if (isClockOutErr) {
+            setModalState({
+                defaultRender: true,
+                status: 'warning',
+                message: clockOutError?.data?.message || 'Oops something went wrong',
+            });
+            clockOutReset();
+        }
+    }, [isClockOutErr]);
 
     React.useEffect(() => {
         if (isError) {
@@ -154,9 +222,15 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
         }
     }, [isClockOutErr]);
 
-    const canClockIn = isInRange && latestService && userId;
+    const clockedIn = latestAttendanceData?.length && latestAttendanceData[0].clockIn ? true : false;
 
-    const canClockOut = !action && canClockIn;
+    const canClockIn = isInRange && latestService && userId && !clockedIn;
+
+    const canClockOut =
+        latestAttendanceData?.length &&
+        latestAttendanceData[0].clockIn &&
+        !latestAttendanceData[0].clockOut &&
+        isInRange;
 
     const disabled = !userId || !latestService;
 

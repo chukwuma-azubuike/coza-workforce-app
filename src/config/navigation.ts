@@ -31,7 +31,7 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-import WorkforceClockin from '../views/app/workforce-clockin';
+import ManualClockin from '../views/app/manual-clockin';
 import EditProfile from '../views/app/profile/edit-profile';
 import UserDetails from '../views/app/workforce-management/user-details';
 import ForgotPassword from '../views/auth/forgot-password';
@@ -281,9 +281,9 @@ const AppRoutes: IAppRoute[] = [
         icon: { name: 'database-cog-outline', type: 'material-community' },
     },
     {
-        name: 'Workforce clock in',
-        component: WorkforceClockin,
-        options: { title: 'Workforce clock in' },
+        name: 'Manual clock in',
+        component: ManualClockin,
+        options: { title: 'Manual clock in' },
         submenus: [],
         users: ['admin', 'HOD', 'AHOD', 'QC'],
         inMenuBar: false,
