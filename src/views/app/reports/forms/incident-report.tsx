@@ -22,14 +22,6 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         updateReport({ ...values, status: 'SUBMITTED' });
     };
 
-    const onRequestReview = (values: IIncidentReportPayload) => {
-        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
-    };
-
-    const onApprove = (values: IIncidentReportPayload) => {
-        updateReport({ ...values, status: 'APPROVED' });
-    };
-
     const navigation = useNavigation();
 
     const { setModalState } = useModal();
