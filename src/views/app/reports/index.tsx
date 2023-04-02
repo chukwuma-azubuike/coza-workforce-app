@@ -24,6 +24,8 @@ import useAppColorMode from '../../../hooks/theme/colorMode';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
 import moment from 'moment';
 import { IReportFormProps } from './forms/types';
+import { IIncidentReportPayload } from '../../../store/types';
+import Utils from '../../../utils';
 
 const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
     const navigation = useNavigation();
@@ -62,9 +64,58 @@ const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'st
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.updatedAt).format('Do, MMMM YYYY')}
+                    {moment(props.updatedAt).format('Do, MMMM YYYY - LT')}
+                </Text>
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
+                    Departmental
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
+            </HStack>
+        </TouchableNativeFeedback>
+    );
+};
+
+const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' | 'details'>> = props => {
+    const navigation = useNavigation();
+    const { isLightMode } = useAppColorMode();
+
+    const handlePress = () => {
+        navigation.navigate('Incident Report' as never, props as never);
+    };
+
+    return (
+        <TouchableNativeFeedback
+            disabled={false}
+            delayPressIn={0}
+            onPress={handlePress}
+            accessibilityRole="button"
+            background={TouchableNativeFeedback.Ripple(
+                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                false,
+                220
+            )}
+            style={{ paddingHorizontal: 20 }}
+        >
+            <HStack
+                p={2}
+                px={4}
+                my={1.5}
+                w="full"
+                borderRadius={10}
+                alignItems="center"
+                _dark={{ bg: 'gray.900' }}
+                _light={{ bg: 'gray.50' }}
+                justifyContent="space-between"
+            >
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
+                    {moment(props.createdAt).format('Do, MMMM YYYY - LT')}
+                </Text>
+                <Text _dark={{ color: 'rose.400' }} _light={{ color: 'rose.500' }} bold>
+                    Incident
+                </Text>
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
+                    {Utils.truncateString(props.details, 10)}
+                </Text>
             </HStack>
         </TouchableNativeFeedback>
     );
@@ -74,6 +125,13 @@ const reportColumns: IFlatListColumn[] = [
     {
         dataIndex: 'createdAt',
         render: (_: IDepartmentReportListById, key) => <DepartmentReportListRow {..._} />,
+    },
+];
+
+const incidentReportColumns: IFlatListColumn[] = [
+    {
+        dataIndex: 'createdAt',
+        render: (_: IIncidentReportPayload, key) => <IncidentReportListRow {..._} />,
     },
 ];
 
@@ -98,6 +156,7 @@ const Reports: React.FC = () => {
         {
             departmentId: user?.department._id as string,
             serviceId: latestServiceData?._id as string,
+            campusId: user?.campus?._id as string,
         },
         {
             skip: !user?.department._id,
@@ -111,10 +170,10 @@ const Reports: React.FC = () => {
     } = useRole();
 
     const {
-        data: reportList,
         refetch: reportsRefetch,
         isLoading: reportsIsLoading,
         isFetching: reportsIsFetching,
+        data: departmentAndIncidentReport,
     } = useGetDepartmentReportsListQuery(_id);
 
     useScreenFocus({
@@ -161,6 +220,23 @@ const Reports: React.FC = () => {
     };
 
     const goToDepartmentReport = () => {
+        if (departmentAndIncidentReport?.departmentalReport?.length) {
+            const latestReport = departmentAndIncidentReport?.departmentalReport?.find(
+                report => report.serviceId === latestServiceData?._id
+            );
+
+            if (latestReport?.status !== 'PENDING') {
+                setModalState({
+                    duration: 6,
+                    status: 'info',
+                    message:
+                        'Your report has already been submitted for this service. Kindly select from the list to update.',
+                });
+            }
+
+            return;
+        }
+
         if (!goToReportRoute()) {
             setModalState({
                 status: 'info',
@@ -188,15 +264,21 @@ const Reports: React.FC = () => {
                     <FlatListSkeleton count={9} />
                 </If>
                 <If condition={isCampusPastor}>
-                    <CampusReport serviceId={latestServiceData?._id} />
+                    <CampusReport campusId={user?.campus?._id} serviceId={latestServiceData?._id} />
                 </If>
                 <If condition={isHOD || isAHOD}>
                     <FlatListComponent
-                        data={reportList || []}
+                        showEmpty={false}
                         columns={reportColumns}
                         onRefresh={reportsRefetch}
                         isLoading={reportsIsLoading || reportsIsFetching}
                         refreshing={reportsIsLoading || reportsIsFetching}
+                        data={departmentAndIncidentReport?.departmentalReport || []}
+                    />
+                    <FlatListComponent
+                        showEmpty={false}
+                        columns={incidentReportColumns}
+                        data={departmentAndIncidentReport?.incidentReport || []}
                     />
                 </If>
                 <If condition={!isGlobalPastor && !isCampusPastor}>

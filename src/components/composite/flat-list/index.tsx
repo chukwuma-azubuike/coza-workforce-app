@@ -28,6 +28,7 @@ export interface IFlatListComponentProps {
     showHeader?: boolean;
     fetchMoreData?: () => void;
     emptySize?: number | string;
+    showEmpty?: boolean;
 }
 
 const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
@@ -40,6 +41,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         emptySize,
         navLink,
         isLoading,
+        showEmpty = true,
         emptyMessage,
         fetchMoreData,
         showHeader = true,
@@ -199,7 +201,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
             ) : isLoading ? (
                 <FlatListSkeleton />
             ) : (
-                <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
+                showEmpty && (
+                    <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
+                )
             )}
         </>
     );

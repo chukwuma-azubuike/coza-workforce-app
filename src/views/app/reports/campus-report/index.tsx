@@ -1,7 +1,6 @@
 import moment from 'moment';
-import { KeyboardAvoidingView, VStack, FormControl, Text, HStack, Divider } from 'native-base';
+import { VStack, Text, HStack, Divider } from 'native-base';
 import React from 'react';
-import TextAreaComponent from '../../../../components/atoms/text-area';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
 import {
@@ -19,16 +18,18 @@ import VerticalTable from './vertical-table';
 
 interface ICampusReport {
     serviceId?: string;
+    campusId?: string;
 }
 
 const CampusReport: React.FC<ICampusReport> = props => {
-    const { serviceId } = props;
+    const { serviceId, campusId } = props;
 
-    const [actions, setActions] = React.useState<string>('');
-
-    const { data, refetch, isLoading, isSuccess, isError } = useGetCampusReportSummaryQuery(serviceId as string, {
-        skip: !serviceId,
-    });
+    const { data, refetch, isLoading, isSuccess, isError } = useGetCampusReportSummaryQuery(
+        { serviceId: serviceId as string, campusId: campusId as string },
+        {
+            skip: !serviceId,
+        }
+    );
 
     const serviceAttendance = React.useMemo(() => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Ushery Board')
@@ -99,7 +100,7 @@ const CampusReport: React.FC<ICampusReport> = props => {
     }, [data]);
 
     const carCount = React.useMemo(() => {
-        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Digital Surveillance Security')
+        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Traffic & Security')
             ?.report as unknown as ISecurityReportPayload;
 
         if (!rawData) return { headers: [], rows: [] };
@@ -158,7 +159,7 @@ const CampusReport: React.FC<ICampusReport> = props => {
     }>();
 
     const serviceObservation = React.useMemo(() => {
-        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Programme Coordinator')
+        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Programme Coordination')
             ?.report as unknown as IServiceReportPayload;
 
         if (!rawData) return { headers: [], rows: [] };
@@ -186,14 +187,15 @@ const CampusReport: React.FC<ICampusReport> = props => {
         if (data?.incidentReport.length) {
             const rawData = data?.incidentReport as {
                 incidentReport: IIncidentReportPayload;
+                departmentName: string;
             }[];
 
             if (!rawData) return { headers: [], rows: [] };
 
             const rows = rawData?.map(elm => {
                 return {
-                    department: elm.incidentReport.departmentName || elm.incidentReport.departmentId,
-                    incident: elm.incidentReport.details,
+                    department: elm?.departmentName,
+                    incident: elm?.incidentReport?.details,
                 };
             });
 
@@ -236,12 +238,12 @@ const CampusReport: React.FC<ICampusReport> = props => {
                         borderBottomColor="gray.300"
                         justifyContent={'space-between'}
                     >
-                        <Text>Start Time -</Text>
-                        <Text color="primary.600">
+                        <Text>Start Time:</Text>
+                        <Text color="primary.500" bold>
                             {serviceTime?.start ? moment(serviceTime?.start).format('LT') : '--:--'}
                         </Text>
-                        <Text>End Time -</Text>
-                        <Text color="primary.600">
+                        <Text>End Time:</Text>
+                        <Text color="primary.500" bold>
                             {serviceTime?.end ? moment(serviceTime?.end).format('LT') : '--:--'}
                         </Text>
                     </HStack>
@@ -249,17 +251,6 @@ const CampusReport: React.FC<ICampusReport> = props => {
                 <Divider />
                 <VerticalTable isLoading={isLoading} title="Incidents" tableData={incidentReport} />
                 <Divider />
-                <KeyboardAvoidingView w="100%" marginTop={'30px'} paddingBottom={'50px'}>
-                    <FormControl>
-                        <FormControl.Label mb={4}>Actions/Recommendations</FormControl.Label>
-                        <TextAreaComponent
-                            onChangeText={text => setActions(text)}
-                            placeholder="Details"
-                            value={actions}
-                            w="100%"
-                        />
-                    </FormControl>
-                </KeyboardAvoidingView>
             </VStack>
         </ViewWrapper>
     );

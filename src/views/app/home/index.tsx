@@ -50,11 +50,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
     const {
-        data: latestService,
         isError,
+        refetch,
         isSuccess,
         isLoading,
-        refetch,
+        data: latestService,
     } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
@@ -68,11 +68,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
         {
-            userId: user?.userId as string,
+            userId: latestService && (user?.userId as string), // Passing the userId an undefined value negates the call
             serviceId: latestService?._id,
         },
         {
-            skip: !user && !latestService,
+            skip: !latestService, // Fetch only if there is a service available
             refetchOnMountOrArgChange: true,
         }
     );
@@ -139,7 +139,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
-                <If condition={user ? true : false}>
+                <If condition={!!user}>
                     <TopNav {...navigation} />
                     <If condition={!isGlobalPastor}>
                         <Clocker
@@ -154,7 +154,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                     </If>
                 </If>
                 <If condition={isCampusPastor}>
-                    <CampusReportSummary refetchService={handleRefresh} serviceId={latestService?._id} />
+                    <CampusReportSummary
+                        campusId={user?.campus?._id}
+                        refetchService={handleRefresh}
+                        serviceId={latestService?._id as string}
+                    />
                 </If>
             </ViewWrapper>
         </HomeContext.Provider>

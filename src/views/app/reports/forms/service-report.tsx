@@ -54,7 +54,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: 'Something went wrong!',
+                message: error?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -89,12 +89,14 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     label="Service Start Time"
                                     fieldName="serviceStartTime"
                                     onSelectDate={setFieldValue}
+                                    value={values?.serviceStartTime}
                                 />
                                 <DateTimePickerComponent
                                     mode="time"
                                     label="Service End Time"
                                     fieldName="serviceEndTime"
                                     onSelectDate={setFieldValue}
+                                    value={values?.serviceEndTime}
                                 />
                             </HStack>
                             <FormControl isRequired>
@@ -113,9 +115,9 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             <FormControl mb={2}>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
-                                    value={`${values.observations}`}
                                     placeholder="Service Observations"
                                     onChangeText={handleChange('observations')}
+                                    value={!!values?.observations ? values?.observations : undefined}
                                 />
                             </FormControl>
                             <If condition={!isCampusPastor}>
@@ -131,8 +133,10 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             <If condition={isCampusPastor}>
                                 <FormControl mb={6}>
                                     <TextAreaComponent
+                                        isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
+                                        value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </FormControl>
                                 <HStack space={4} justifyContent="space-between" w="95%">

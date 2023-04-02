@@ -405,6 +405,7 @@ export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
 }
 
 export interface IDepartmentReportResponse {
+    departmentName: string;
     departmentalReport: {
         departmentId: IDepartment['_id'];
         departmentName: string;

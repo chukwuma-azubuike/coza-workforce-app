@@ -54,7 +54,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: 'Something went wrong!',
+                message: error?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -355,8 +355,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                             <FormControl>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
-                                    value={`${values?.otherInfo}`}
                                     placeholder="Any other information"
+                                    value={!!values?.otherInfo ? values?.otherInfo : undefined}
                                 />
                             </FormControl>
                             <If condition={!isCampusPastor}>
@@ -377,8 +377,10 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                             <If condition={isCampusPastor}>
                                 <FormControl mb={6}>
                                     <TextAreaComponent
+                                        isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
+                                        value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </FormControl>
                                 <HStack space={4} justifyContent="space-between" w="95%">

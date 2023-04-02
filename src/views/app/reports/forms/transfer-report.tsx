@@ -56,7 +56,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: 'Something went wrong!',
+                message: error?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -218,9 +218,10 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <If condition={isCampusPastor}>
                             <FormControl mb={6}>
                                 <TextAreaComponent
-                                    value={values.pastorComment}
+                                    isDisabled={!isCampusPastor}
                                     placeholder="Pastor's comment"
                                     onChangeText={handleChange('pastorComment')}
+                                    value={values?.pastorComment ? values?.pastorComment : ''}
                                 />
                             </FormControl>
                             <HStack space={4} justifyContent="space-between" w="95%">
