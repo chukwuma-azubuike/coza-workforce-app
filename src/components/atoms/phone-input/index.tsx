@@ -32,7 +32,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
     const formik = useFormikContext<any>();
     const { setFieldValue, touched, errors } = formik;
 
-    const [countryCode, setCountryCode] = React.useState<CountryCode>(deviceCountryCode); // default country code
+    const [countryCode, setCountryCode] = React.useState<CountryCode>(deviceCountryCode || 'NG'); // default country code
     const [phone, setPhone] = React.useState<string>(''); // default country code
 
     const handleCountryCodeChange = (country: { cca2: CountryCode }) => {
@@ -57,6 +57,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
                     withCallingCode
                     countryCode={countryCode as any}
                     onSelect={handleCountryCodeChange as (country: Country) => void}
+                    containerButtonStyle={{ width: Platform.OS === 'ios' ? '10%' : undefined }}
                 />
                 <InputComponent
                     w="89%"
