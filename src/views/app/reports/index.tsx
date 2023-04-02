@@ -64,7 +64,7 @@ const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'st
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.updatedAt).format('Do, MMMM YYYY - LT')}
+                    {moment(props.updatedAt).format('DD/MM/YYYY')}
                 </Text>
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
                     Departmental
@@ -108,7 +108,7 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.createdAt).format('Do, MMMM YYYY - LT')}
+                    {moment(props.createdAt).format('DD/MM/YYYY')}
                 </Text>
                 <Text _dark={{ color: 'rose.400' }} _light={{ color: 'rose.500' }} bold>
                     Incident
@@ -220,23 +220,6 @@ const Reports: React.FC = () => {
     };
 
     const goToDepartmentReport = () => {
-        if (departmentAndIncidentReport?.departmentalReport?.length) {
-            const latestReport = departmentAndIncidentReport?.departmentalReport?.find(
-                report => report.serviceId === latestServiceData?._id
-            );
-
-            if (latestReport?.status !== 'PENDING') {
-                setModalState({
-                    duration: 6,
-                    status: 'info',
-                    message:
-                        'Your report has already been submitted for this service. Kindly select from the list to update.',
-                });
-            }
-
-            return;
-        }
-
         if (!goToReportRoute()) {
             setModalState({
                 status: 'info',
