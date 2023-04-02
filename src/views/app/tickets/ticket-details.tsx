@@ -211,7 +211,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     return (
         <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
-            <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
+            <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} pt={8} pb={4} mx={3} mb={10}>
                 <VStack space={4}>
                     <HStack
                         space={2}
@@ -314,7 +314,13 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text>{ticket?.ticketSummary}</Text>
                     </HStack>
 
-                    <VStack space={2} pb={2} w="full" justifyContent="space-between">
+                    <VStack
+                        pb={2}
+                        w="full"
+                        space={2}
+                        justifyContent="space-between"
+                        minHeight={ticket?.contestComment ? (ticket?.contestComment?.length * 7) / 8 : undefined}
+                    >
                         <Text alignSelf="flex-start" bold>
                             Contest Comment
                         </Text>
@@ -323,6 +329,9 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 onChangeText={handleChange}
                                 value={ticket?.contestComment}
                                 isDisabled={status !== 'ISSUED' && ticket?.user?._id !== userId}
+                                minHeight={
+                                    ticket?.contestComment ? (ticket?.contestComment?.length * 3) / 4 : undefined
+                                }
                             />
                         </If>
                         <If condition={isDepartment}>
@@ -333,13 +342,22 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             />
                         </If>
                     </VStack>
-                    <VStack space={2} pb={2} w="full" justifyContent="space-between">
+                    <VStack
+                        pb={2}
+                        w="full"
+                        space={2}
+                        justifyContent="space-between"
+                        minHeight={ticket?.contestComment ? (ticket?.contestReplyComment?.length * 7) / 8 : undefined}
+                    >
                         <Text alignSelf="flex-start" bold>
                             Quality Control Reply
                         </Text>
                         <TextAreaComponent
                             onChangeText={handleReplyChange}
                             value={ticket?.contestReplyComment}
+                            minHeight={
+                                ticket?.contestComment ? (ticket?.contestReplyComment?.length * 3) / 4 : undefined
+                            }
                             isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                         />
                     </VStack>

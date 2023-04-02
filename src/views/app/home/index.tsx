@@ -5,14 +5,13 @@ import Clocker from './workers/clocker';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import TopNav from './top-nav';
 import { usePreventGoBack } from '../../../hooks/navigation';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
+import { useGetLatestServiceQuery, useGetServicesQuery } from '../../../store/services/services';
 import useRole from '../../../hooks/role';
 import { IAttendance, IService } from '../../../store/types';
 import { ICampusCoordinates, useGetAttendanceQuery } from '../../../store/services/attendance';
 import If from '../../../components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '../../../utils';
-import { HomeSkeleton } from '../../../components/layout/skeleton';
 import { CampusReportSummary } from './campus-pastors/report-summary';
 import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
 import { useGetUserByIdQuery } from '../../../store/services/account';
@@ -20,7 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
 import useGeoLocation from '../../../hooks/geo-location';
-import { useGetCampusByIdQuery } from '../../../store/services/campus';
+import { useGetCampusByIdQuery, useGetCampusesQuery } from '../../../store/services/campus';
 
 interface IInitialHomeState {
     latestService: {
@@ -51,11 +50,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
     const {
-        data: latestService,
         isError,
+        refetch,
         isSuccess,
         isLoading,
-        refetch,
+        data: latestService,
     } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
@@ -69,11 +68,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
         {
-            userId: user?.userId as string,
+            userId: latestService && (user?.userId as string), // Passing the userId an undefined value negates the call
             serviceId: latestService?._id,
         },
         {
-            skip: !user && !latestService,
+            skip: !latestService, // Fetch only if there is a service available
             refetchOnMountOrArgChange: true,
         }
     );
@@ -87,6 +86,8 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             latestAttendanceIsLoading,
         },
     };
+
+    const { data: services, refetch: refetchServices, isSuccess: servicesIsSuccess } = useGetServicesQuery();
 
     const { data: campusData } = useGetCampusByIdQuery(user?.campus?._id);
 
@@ -110,6 +111,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         refresh();
         if (!isGlobalPastor) {
             refetch();
+            refetchServices();
             latestAttendanceRefetch();
         }
     };
@@ -136,33 +138,29 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            {!user ? (
-                <ViewWrapper>
-                    <HomeSkeleton />
-                </ViewWrapper>
-            ) : (
-                <>
-                    <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
-                        <If condition={user ? true : false}>
-                            <TopNav {...navigation} />
-                            <If condition={!isGlobalPastor}>
-                                <Clocker
-                                    isInRange={isInRange}
-                                    refreshLocation={refresh}
-                                    deviceCoordinates={deviceCoordinates}
-                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
-                                />
-                            </If>
-                            <If condition={isGlobalPastor}>
-                                <GSPView />
-                            </If>
-                        </If>
-                        <If condition={isCampusPastor}>
-                            <CampusReportSummary refetchService={handleRefresh} serviceId={latestService?._id} />
-                        </If>
-                    </ViewWrapper>
-                </>
-            )}
+            <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
+                <If condition={!!user}>
+                    <TopNav {...navigation} />
+                    <If condition={!isGlobalPastor}>
+                        <Clocker
+                            isInRange={isInRange}
+                            refreshLocation={refresh}
+                            deviceCoordinates={deviceCoordinates}
+                            verifyRangeBeforeAction={verifyRangeBeforeAction}
+                        />
+                    </If>
+                    <If condition={isGlobalPastor}>
+                        <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
+                    </If>
+                </If>
+                <If condition={isCampusPastor}>
+                    <CampusReportSummary
+                        campusId={user?.campus?._id}
+                        refetchService={handleRefresh}
+                        serviceId={latestService?._id as string}
+                    />
+                </If>
+            </ViewWrapper>
         </HomeContext.Provider>
     );
 };

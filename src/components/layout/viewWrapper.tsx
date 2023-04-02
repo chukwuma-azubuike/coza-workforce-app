@@ -1,8 +1,10 @@
 import React, { ReactChildren } from 'react';
 import { KeyboardAvoidingView, Platform, RefreshControl, ViewProps } from 'react-native';
+// import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 import { IScrollViewProps, ScrollView, View } from 'native-base';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 interface IViewWrapper
     extends IScrollViewProps,
@@ -19,11 +21,17 @@ const ViewWrapper = (props: IViewWrapper) => {
     const { scroll, onRefresh, refreshing, noPadding } = props;
     const ActiveView = scroll ? ScrollView : View;
 
+    const height = useHeaderHeight();
+
     return (
-        <KeyboardAvoidingView behavior="height" style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            keyboardVerticalOffset={height + 50}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
             <ActiveView
-                _light={{ background: 'white' }}
                 _dark={{ background: 'black' }}
+                _light={{ background: 'white' }}
                 style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16 }}
                 refreshControl={
                     onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />

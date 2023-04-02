@@ -79,6 +79,7 @@ export interface IBusReportSummary {
 }
 
 export interface ICampusReportSummary<R = unknown> {
+    departmentName: string;
     departmentalReport: {
         status: IReportStatus;
         departmentName: string;
@@ -96,6 +97,14 @@ export interface IDepartmentReportListById {
     _id: string;
     status: IStatus;
     createdAt: string;
+    updatedAt: string;
+    updatedBy: string;
+    serviceId: string;
+}
+
+export interface IDepartmentAndIncidentReport {
+    departmentalReport: IDepartmentReportListById[];
+    incidentReport: IIncidentReportPayload & { _id: string }[];
 }
 
 export const reportsServiceSlice = createApi({
@@ -106,7 +115,7 @@ export const reportsServiceSlice = createApi({
     endpoints: endpoint => ({
         createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateChildChareReport/${body._id}`,
+                url: `/${SERVICE_URL}/updateChildChareReport/${body._id}/${body.campusId}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -122,7 +131,7 @@ export const reportsServiceSlice = createApi({
 
         createAttendanceReport: endpoint.mutation<void, IAttendanceReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}`,
+                url: `/${SERVICE_URL}/updateAttendanceReport/${body._id}/${body.campusId}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -130,7 +139,7 @@ export const reportsServiceSlice = createApi({
 
         createGuestReport: endpoint.mutation<void, IGuestReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateGuestReport/${body._id}`,
+                url: `/${SERVICE_URL}/updateGuestReport/${body._id}/${body.campusId}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -138,7 +147,7 @@ export const reportsServiceSlice = createApi({
 
         createSecurityReport: endpoint.mutation<void, ISecurityReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateSecurityReport/${body._id}`,
+                url: `/${SERVICE_URL}/updateSecurityReport/${body._id}/${body.campusId}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -146,7 +155,7 @@ export const reportsServiceSlice = createApi({
 
         createTransferReport: endpoint.mutation<void, ITransferReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateTransferReport/${body._id}`,
+                url: `/${SERVICE_URL}/updateTransferReport/${body._id}/${body.campusId}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -154,7 +163,7 @@ export const reportsServiceSlice = createApi({
 
         createServiceReport: endpoint.mutation<void, IServiceReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/updateServiceReport/${body._id}`,
+                url: `/${SERVICE_URL}/updateServiceReport/${body._id}/${body.campusId}`,
                 method: REST_API_VERBS.PUT,
                 body,
             }),
@@ -217,32 +226,35 @@ export const reportsServiceSlice = createApi({
 
         getDepartmentalReport: endpoint.query<
             IDepartmentReportResponse,
-            { departmentId: IDepartment['_id']; serviceId: IService['_id'] }
+            { departmentId: IDepartment['_id']; serviceId: IService['_id']; campusId: ICampus['_id'] }
         >({
-            query: ({ departmentId, serviceId }) => ({
-                url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}/${serviceId}`,
+            query: ({ departmentId, serviceId, campusId }) => ({
+                url: `/${SERVICE_URL}/getReportByDepartment/${departmentId}/${serviceId}/${campusId}`,
                 method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<IDepartmentReportResponse>) => res.data,
         }),
 
-        getCampusReportSummary: endpoint.query<ICampusReportSummary, IService['_id']>({
-            query: serviceId => ({
-                url: `/${SERVICE_URL}/getServiceReports/${serviceId}`,
+        getCampusReportSummary: endpoint.query<
+            ICampusReportSummary,
+            { serviceId: IService['_id']; campusId: ICampus['_id'] }
+        >({
+            query: ({ serviceId, campusId }) => ({
+                url: `/${SERVICE_URL}/getServiceReports/${serviceId}/${campusId}`,
                 method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
         }),
 
-        getDepartmentReportsList: endpoint.query<IDepartmentReportListById[], IDepartment['_id']>({
+        getDepartmentReportsList: endpoint.query<IDepartmentAndIncidentReport, IDepartment['_id']>({
             query: departmentId => ({
                 url: `/${SERVICE_URL}/getReportByDepartmentID/${departmentId}`,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<IDepartmentReportListById[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => res.data,
         }),
 
         // Add your endpoints here

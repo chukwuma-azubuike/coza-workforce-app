@@ -11,7 +11,6 @@ import Notifications from '../views/app/notifications';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
 // import Settings from '../views/app/settings';
-import WorkforceManagement from '../views/app/workforce-management';
 // import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
@@ -31,9 +30,12 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-import UserDetails from '../views/app/workforce-management/user-details';
-import WorkforceClockin from '../views/app/workforce-clockin';
+import ManualClockin from '../views/app/manual-clockin';
+import WorkforceManagement from '../views/app/workforce-management';
 import EditProfile from '../views/app/profile/edit-profile';
+import UserDetails from '../views/app/workforce-management/user-details';
+import ForgotPassword from '../views/auth/forgot-password';
+import ResetPassword from '../views/auth/reset-password';
 
 export interface IAppRoute {
     name: string;
@@ -279,9 +281,9 @@ const AppRoutes: IAppRoute[] = [
         icon: { name: 'database-cog-outline', type: 'material-community' },
     },
     {
-        name: 'Workforce clock in',
-        component: WorkforceClockin,
-        options: { title: 'Workforce clock in' },
+        name: 'Manual clock in',
+        component: ManualClockin,
+        options: { title: 'Manual clock in' },
         submenus: [],
         users: ['admin', 'HOD', 'AHOD', 'QC'],
         inMenuBar: false,
@@ -336,6 +338,22 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         name: 'Register',
         component: Register,
         options: { title: 'Register' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+    },
+    {
+        name: 'Forgot Password',
+        component: ForgotPassword,
+        options: { title: 'Forgot Password' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+    },
+    {
+        name: 'Reset Password',
+        component: ResetPassword,
+        options: { title: 'Reset Password' },
         submenus: [],
         users: [],
         inMenuBar: false,

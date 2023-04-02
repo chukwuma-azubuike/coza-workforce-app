@@ -18,7 +18,7 @@ type Props = {
 const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter = true }) => {
     return (
         <Box>
-            <Text fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
+            <Text textAlign="left" fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
                 {title}
             </Text>
             {children}
@@ -36,9 +36,12 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                         w={`${100 / tableData?.headers?.length}%`}
                                         key={`${item}-${index}`}
                                         bg="primary.600"
+                                        textAlign="left"
                                         p={3}
                                     >
-                                        <Text color="white">{item}</Text>
+                                        <Text textAlign="left" color="white">
+                                            {item}
+                                        </Text>
                                     </Box>
                                 ))}
                             </HStack>
@@ -53,6 +56,7 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                                 fontSize: '15px',
                                                 fontWeight: '500',
                                             }}
+                                            textAlign="left"
                                             _light={{ color: 'gray.700', bgColor: 'gray.200' }}
                                             _dark={{ color: 'gray.300', bgColor: 'gray.900' }}
                                         >

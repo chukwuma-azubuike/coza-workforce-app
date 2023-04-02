@@ -14,7 +14,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IIncidentReportPayload;
 
-    const { status, createdAt } = params;
+    const { status, updatedAt, details } = params;
 
     const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateIncidentReportMutation();
 
@@ -67,15 +67,30 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
+                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
-                        <VStack space={4} mt={4} px={4}>
+                        <VStack
+                            mt={4}
+                            px={4}
+                            space={4}
+                            minHeight={details?.length ? (details?.length * 7) / 8 : undefined}
+                        >
                             <FormControl isRequired mb={2}>
                                 <FormControl.Label mb={4}>Details of Incident</FormControl.Label>
-                                <TextAreaComponent placeholder="Enter details" onChangeText={handleChange('details')} />
+                                <TextAreaComponent
+                                    value={details}
+                                    isDisabled={!!details}
+                                    placeholder="Enter details"
+                                    onChangeText={handleChange('details')}
+                                    minHeight={details?.length ? (details?.length * 3) / 4 : undefined}
+                                />
                             </FormControl>
                             <FormControl>
-                                <ButtonComponent isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
+                                <ButtonComponent
+                                    isLoading={isLoading}
+                                    isDisabled={!!details}
+                                    onPress={handleSubmit as (event: any) => void}
+                                >
                                     {`${!status ? 'Submit' : 'Update'}`}
                                 </ButtonComponent>
                             </FormControl>

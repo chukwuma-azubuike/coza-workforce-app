@@ -7,14 +7,19 @@ import { THEME_CONFIG } from '../../../../config/appConfig';
 import { useGetGSPReportQuery } from '../../../../store/services/reports';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
-import { useGetCampusesQuery } from '../../../../store/services/campus';
-import { useGetLatestServiceQuery, useGetServicesQuery } from '../../../../store/services/services';
+import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import moment from 'moment';
 import { ICampus, IService } from '../../../../store/types';
 import Utils from '../../../../utils';
 import useRole from '../../../../hooks/role';
+import { useGetCampusesQuery } from '../../../../store/services/campus';
 
-const WorkForceSummary: React.FC = () => {
+interface WorkforceSummaryProps {
+    servicesIsSuccess: boolean;
+    services: IService[];
+}
+
+const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesIsSuccess }) => {
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
     const [expandedAttendance, setExpandedAttendance] = React.useState<boolean>(false);
     const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
@@ -23,9 +28,7 @@ const WorkForceSummary: React.FC = () => {
     const { user } = useRole();
     const { isDarkMode } = useAppColorMode();
 
-    const { data: campuses, error, isLoading: campusesLoading, isSuccess: campusIsSuccess } = useGetCampusesQuery();
-    const { data: services, isSuccess: servicesIsSuccess } = useGetServicesQuery();
-
+    const { data: campuses, isSuccess: campusIsSuccess } = useGetCampusesQuery();
     const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
 
     const [campusId, setCampusId] = React.useState<ICampus['_id']>('global');
@@ -60,6 +63,11 @@ const WorkForceSummary: React.FC = () => {
     const guestAttendance = gspReport?.guestAttendance;
     const serviceAttendance = gspReport?.serviceAttendance;
 
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
             campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
@@ -67,8 +75,8 @@ const WorkForceSummary: React.FC = () => {
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
-        () => services && Utils.sortByDate(services, 'createdAt'),
-        [servicesIsSuccess]
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
     );
 
     const campusName = React.useMemo<ICampus['campusName'] | undefined>(
@@ -77,8 +85,8 @@ const WorkForceSummary: React.FC = () => {
     );
 
     React.useEffect(() => {
-        services && setServiceId(services[services.length - 1]._id);
-    }, [services]);
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
 
     return (
         <>

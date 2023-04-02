@@ -20,7 +20,7 @@ import { Platform } from 'react-native';
 const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ISecurityReportPayload;
 
-    const { status, createdAt } = params;
+    const { status, updatedAt } = params;
 
     const { isCampusPastor } = useRole();
 
@@ -56,7 +56,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: 'Something went wrong!',
+                message: error?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -88,7 +88,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
+                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <FieldArray
                             name="locations"
@@ -189,9 +189,10 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <If condition={isCampusPastor}>
                             <FormControl mb={6}>
                                 <TextAreaComponent
-                                    value={values.pastorComment}
+                                    isDisabled={!isCampusPastor}
                                     placeholder="Pastor's comment"
                                     onChangeText={handleChange('pastorComment')}
+                                    value={values?.pastorComment ? values?.pastorComment : ''}
                                 />
                             </FormControl>
                             <HStack space={4} justifyContent="space-between" w="95%">
