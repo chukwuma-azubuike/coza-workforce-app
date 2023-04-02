@@ -9,7 +9,8 @@ import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '../../../components/composite/error-boundary';
-// import useFetchMoreData from '../../../hooks/fetch-more-data';
+// import ButtonComponent from '../../../components/atoms/button'; // TODO: Restored when pagination is fixed
+import useFetchMoreData from '../../../hooks/fetch-more-data';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -96,13 +97,14 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
+    // TODO: Restored when pagination is fixed
     // const [page, setPageCount] = React.useState<number>(1);
 
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
     const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
         {
-            // page,
-            // limit: 2,
+            // page, // TODO: Restored when pagination is fixed
+            limit: 50,
             campusId: user?.campus._id,
             serviceId: latestService?._id,
         },
@@ -112,14 +114,16 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    // const setPage = (page: number) => () => {
+    // TODO: Restored when pagination is fixed
+    // const setPage = (pageArg: number) => () => {
+    //     console.log('End reached!', page + pageArg);
     //     setPageCount(prev => {
-    //         if (prev + page > 0) return prev + page;
+    //         if (prev + pageArg > 0) return prev + pageArg;
     //         return prev;
     //     });
     // };
 
-    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isFetching });
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess });
 
     return (
         <ErrorBoundary>
@@ -127,12 +131,25 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <FlatListComponent
                 padding
                 columns={campusColumns_1}
-                data={data as IAttendance[]}
-                // fetchMoreData={setPage(1)}
+                data={moreData as IAttendance[]}
+                // fetchMoreData={setPage(1)} // TODO: Restored when pagination is fixed
                 onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
+            {/* TODO: Restored when pagination is fixed */}
+            {/* <ButtonComponent
+                mt={4}
+                size="xs"
+                secondary
+                width={120}
+                margin="auto"
+                onPress={setPage(1)}
+                isLoading={isLoading || isFetching}
+                isDisabled={isLoading || isFetching}
+            >
+                Load more
+            </ButtonComponent> */}
         </ErrorBoundary>
     );
 });
