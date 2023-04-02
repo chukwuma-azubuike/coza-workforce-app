@@ -58,6 +58,7 @@ interface IDateTimePickerProps {
     minimumDate?: Date;
     maximumDate?: Date;
     fieldName?: string;
+    value?: string | Date;
     onSelectDate?: (fieldName: string, value: any) => void;
     dateFormat?: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
 }
@@ -65,6 +66,7 @@ interface IDateTimePickerProps {
 const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     mode,
     label,
+    value,
     fieldName,
     minimumDate,
     maximumDate,
@@ -73,7 +75,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
 }: IDateTimePickerProps) => {
     const isIOS = Platform.OS === 'ios';
 
-    const [date, setDate] = React.useState<Date>(new Date());
+    const [date, setDate] = React.useState<Date>(value ? new Date(value) : new Date());
     const [show, setShow] = React.useState<boolean>(isIOS);
 
     const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
