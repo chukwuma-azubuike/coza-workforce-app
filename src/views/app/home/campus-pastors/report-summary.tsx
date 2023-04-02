@@ -19,12 +19,12 @@ interface ReportSummaryListRowProps {
 }
 
 enum ReportSummaryMap {
-    Childcare = 'Childcare Report',
-    Ushery = 'Attendance Report',
     PCU = 'Guest Report',
-    Security = 'Security Report',
     CTS = 'Transfer Report',
-    PRU = 'Service Report',
+    Ushery = 'Attendance Report',
+    Security = 'Security Report',
+    Programme = 'Service Report',
+    Childcare = 'Childcare Report',
 }
 
 interface ReportSummaryMapIndex {
@@ -36,8 +36,8 @@ export const ReportRouteIndex: ReportSummaryMapIndex = {
     'Ushery Board': ReportSummaryMap.Ushery,
     'COZA Transfer Service': ReportSummaryMap.CTS,
     'Children Ministry': ReportSummaryMap.Childcare,
-    'Public Relations Unit (PRU)': ReportSummaryMap.PRU,
-    'Digital Surveillance Security': ReportSummaryMap.Security,
+    'Traffic & Security': ReportSummaryMap.Security,
+    'Programme Coordination': ReportSummaryMap.Programme,
 };
 
 const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
@@ -79,7 +79,7 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                             justifyContent="space-between"
                         >
                             <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                                {`${elm.departmentName} Report`}
+                                {`${elm?.departmentName} Report`}
                             </Text>
                             <StatusTag>{elm?.report.status as any}</StatusTag>
                         </HStack>
@@ -91,13 +91,14 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
 };
 
 interface ICampusReportSummaryProps {
-    serviceId?: string;
+    campusId: string;
+    serviceId: string;
     refetchService: () => void;
 }
 
-const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, refetchService }) => {
+const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, campusId, refetchService }) => {
     const { data, refetch, isLoading, isFetching, isUninitialized } = useGetCampusReportSummaryQuery(
-        serviceId as string,
+        { serviceId: serviceId as string, campusId: campusId as string },
         {
             skip: !serviceId,
         }
@@ -127,6 +128,11 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, r
 
     const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
 
+    const submittedReportCount = React.useMemo(
+        () => data?.departmentalReport.filter(dept => dept?.report?.status !== 'PENDING').length,
+        [data]
+    );
+
     useScreenFocus({ onFocus: !isUninitialized ? refetch : undefined });
 
     return (
@@ -150,8 +156,12 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, r
                         </HStack>
                     </ButtonComponent>
                     <Flex alignItems="baseline" flexDirection="row">
-                        <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>{`${0}`}</Text>
-                        <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${6}`}</Text>
+                        <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                            {submittedReportCount || 0}
+                        </Text>
+                        <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${
+                            sortedData?.length || 0
+                        }`}</Text>
                     </Flex>
                 </HStack>
                 <Divider />

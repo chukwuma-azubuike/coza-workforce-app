@@ -308,8 +308,12 @@ export interface IService {
         long: number;
         lat: number;
     };
-    clockInStartTime: number;
-    clockInEndTime: number;
+    serviceTime: string;
+    clockInStartTime: string;
+    clockInEndTime: string;
+    workersLateStartTime: string;
+    leadersLateStartTime: string;
+    serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
     isGlobalService: boolean;
@@ -401,6 +405,7 @@ export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
 }
 
 export interface IDepartmentReportResponse {
+    departmentName: string;
     departmentalReport: {
         departmentId: IDepartment['_id'];
         departmentName: string;

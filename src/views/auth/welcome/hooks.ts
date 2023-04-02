@@ -28,11 +28,12 @@ const useWelcome = () => {
             isError: isErrorValidate,
             isSuccess: isSuccessValidate,
             isLoading: isLoadingValidate,
-            reset,
+            reset: resetValidate,
         },
     ] = useValidateEmailOTPMutation();
 
     const handleSubmit = (values: { email: string }) => {
+        if (validateData || validateError) resetValidate();
         setEmail('');
         setEmail(Utils.formatEmail(values.email));
     };
@@ -44,12 +45,11 @@ const useWelcome = () => {
                 setModalVisible(false);
                 setEmail('');
                 setOtpValue('');
-                reset();
             }, 6000);
+            resetValidate();
         }
         if (isSuccess) {
             setModalVisible(true);
-            reset();
             setOtpValue('');
         }
     }, [isError, isSuccess]);
@@ -76,6 +76,11 @@ const useWelcome = () => {
         }
     }, [otpValue]);
 
+    interface PK {
+        data: { data: null; isError: true; isSuccessful: false; message: 'no valid token '; status: 400 };
+        status: 500;
+    }
+
     return {
         handleSubmit,
         validateData,
@@ -84,6 +89,7 @@ const useWelcome = () => {
         isSuccessValidate,
         isLoadingValidate,
         modalVisible,
+        resetValidate,
         setModalVisible,
         otpValue,
         setOtpValue,

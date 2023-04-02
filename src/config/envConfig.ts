@@ -2,7 +2,6 @@ import React from 'react';
 import { APP_NAME, API_KEY, PROD_API_BASE_URL, STAGING_API_BASE_URL, ENV } from '@env';
 
 const APP_ENV = () => {
-    console.log(ENV);
     switch (ENV) {
         case 'development':
             return {

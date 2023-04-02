@@ -44,7 +44,7 @@ export interface IUploadResponseImgBB {
     status: number;
 }
 
-const MAX_IMAGE_SIZE = 2000000;
+const MAX_IMAGE_SIZE = 5000000;
 
 const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
     const [loading, setLoading] = React.useState<boolean>(false);
@@ -62,12 +62,6 @@ const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
                 type: imageData.type,
                 name: imageData.fileName,
             });
-
-            formData.append('album', albumId); // Include the album ID in the request
-
-            const uri = await fetch(imageData.uri);
-            const blob = await uri.blob();
-            formData.append('image', blob);
 
             const response = await fetch(UPLOAD_URL, {
                 method: REST_API_VERBS.POST,

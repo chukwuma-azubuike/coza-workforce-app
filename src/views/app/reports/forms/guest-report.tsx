@@ -17,7 +17,7 @@ import useRole from '../../../../hooks/role';
 const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IGuestReportPayload;
 
-    const { status, createdAt } = params;
+    const { status, updatedAt } = params;
 
     const { isCampusPastor } = useRole();
 
@@ -53,7 +53,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: 'Something went wrong!',
+                message: error?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -76,7 +76,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(createdAt || undefined).format('Do MMMM, YYYY')}
+                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
                             <FormControl isRequired>
@@ -109,9 +109,9 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <FormControl mb={2}>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
-                                    value={`${values.otherInfo}`}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
+                                    value={!!values?.otherInfo ? values?.otherInfo : undefined}
                                 />
                             </FormControl>
                             <If condition={!isCampusPastor}>
@@ -127,10 +127,10 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <If condition={isCampusPastor}>
                                 <FormControl mb={6}>
                                     <TextAreaComponent
-                                        isDisabled={isCampusPastor}
+                                        isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
-                                        value={`${values.pastorComment}`}
                                         onChangeText={handleChange('pastorComment')}
+                                        value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </FormControl>
                                 <HStack space={4} justifyContent="space-between" w="95%">

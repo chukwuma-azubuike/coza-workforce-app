@@ -9,7 +9,6 @@ import { useLoginMutation } from '../../../store/services/account';
 import { Formik } from 'formik';
 import { LoginSchema } from '../../../utils/schemas';
 import { ILoginPayload } from '../../../store/types';
-import { IRegisterFormProps } from '../register/types';
 import useModal from '../../../hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
@@ -69,7 +68,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                         <Logo />
                         <Heading mt={4}>Welcome back</Heading>
                     </Center>
-                    <Box alignItems="center" w="100%">
+                    <Box alignItems="center" w="100%" mb={3}>
                         <Formik<ILoginPayload>
                             validateOnChange
                             enableReinitialize
@@ -126,7 +125,21 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                             }}
                         </Formik>
                     </Box>
-                    <HStack alignItems="center" justifyContent="center">
+                    <TouchableRipple
+                        rippleColor="rgba(255, 255, 255, 0)"
+                        style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                        onPress={() => navigation.navigate('Forgot Password')}
+                    >
+                        <Text
+                            fontSize="md"
+                            _dark={{ color: 'primary.400' }}
+                            _light={{ color: 'primary.500' }}
+                            textAlign="center"
+                        >
+                            Forgot Password?
+                        </Text>
+                    </TouchableRipple>
+                    <HStack alignItems="center" justifyContent="center" padding={0}>
                         <Text fontSize="md" color="gray.400">
                             Not yet registered?
                         </Text>

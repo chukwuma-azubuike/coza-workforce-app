@@ -9,6 +9,8 @@ import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '../../../components/composite/error-boundary';
+// import ButtonComponent from '../../../components/atoms/button'; // TODO: Restored when pagination is fixed
+import useFetchMoreData from '../../../hooks/fetch-more-data';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -35,13 +37,15 @@ export const MyAttendance: React.FC = React.memo(() => {
 export const TeamAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
+    const { data: latestService } = useGetLatestServiceQuery(user?.campus?._id);
     const {
         data: membersClockedIn,
         isLoading,
         refetch,
         isFetching,
     } = useGetAttendanceQuery({
-        departmentId: user?.department._id,
+        departmentId: user?.department?._id,
+        serviceId: latestService?._id,
     });
 
     const { data: members } = useGetUsersByDepartmentIdQuery(user?.department._id);
@@ -93,19 +97,33 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
+    // TODO: Restored when pagination is fixed
+    // const [page, setPageCount] = React.useState<number>(1);
 
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
-
     const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
         {
+            // page, // TODO: Restored when pagination is fixed
+            limit: 50,
             campusId: user?.campus._id,
-            //  serviceId: latestService?._id
+            serviceId: latestService?._id,
         },
         {
-            // skip: !latestService,
+            skip: !latestService,
             refetchOnMountOrArgChange: true,
         }
     );
+
+    // TODO: Restored when pagination is fixed
+    // const setPage = (pageArg: number) => () => {
+    //     console.log('End reached!', page + pageArg);
+    //     setPageCount(prev => {
+    //         if (prev + pageArg > 0) return prev + pageArg;
+    //         return prev;
+    //     });
+    // };
+
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess });
 
     return (
         <ErrorBoundary>
@@ -113,11 +131,25 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <FlatListComponent
                 padding
                 columns={campusColumns_1}
-                data={data as IAttendance[]}
+                data={moreData as IAttendance[]}
+                // fetchMoreData={setPage(1)} // TODO: Restored when pagination is fixed
                 onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
+            {/* TODO: Restored when pagination is fixed */}
+            {/* <ButtonComponent
+                mt={4}
+                size="xs"
+                secondary
+                width={120}
+                margin="auto"
+                onPress={setPage(1)}
+                isLoading={isLoading || isFetching}
+                isDisabled={isLoading || isFetching}
+            >
+                Load more
+            </ButtonComponent> */}
         </ErrorBoundary>
     );
 });
