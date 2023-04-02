@@ -13,7 +13,7 @@ const inMenuBarNames = AppRoutes.map(route => {
 });
 
 const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
-    const { isWorker } = useRole();
+    const { isWorker, isQC } = useRole();
     const { isLightMode } = useAppColorMode();
 
     return (
@@ -92,7 +92,7 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
                 }
 
                 // Roles and permissions filter
-                if (isWorker && route.name === 'More') return;
+                if (isWorker && !isQC && route.name === 'More') return;
 
                 return (
                     <TouchableNativeFeedback
