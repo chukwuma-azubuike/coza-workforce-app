@@ -19,20 +19,23 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const { status, updatedAt } = params;
 
-    const { isCampusPastor } = useRole();
+    const {
+        isCampusPastor,
+        user: { userId },
+    } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateGuestReportMutation();
 
     const onSubmit = (values: IGuestReportPayload) => {
-        updateReport({ ...values, status: 'SUBMITTED' });
+        updateReport({ ...values, userId, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IGuestReportPayload) => {
-        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IGuestReportPayload) => {
-        updateReport({ ...values, status: 'APPROVED' });
+        updateReport({ ...values, userId, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
