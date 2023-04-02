@@ -20,20 +20,23 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const { status, updatedAt } = params;
 
-    const { isCampusPastor } = useRole();
+    const {
+        isCampusPastor,
+        user: { userId },
+    } = useRole();
 
     const [updateReport, { error, isError, isSuccess, reset, isLoading }] = useCreateServiceReportMutation();
 
     const onSubmit = (values: IServiceReportPayload) => {
-        updateReport({ ...values, status: 'SUBMITTED' });
+        updateReport({ ...values, userId, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IServiceReportPayload) => {
-        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IServiceReportPayload) => {
-        updateReport({ ...values, status: 'APPROVED' });
+        updateReport({ ...values, userId, status: 'APPROVED' });
     };
 
     const navigation = useNavigation();
