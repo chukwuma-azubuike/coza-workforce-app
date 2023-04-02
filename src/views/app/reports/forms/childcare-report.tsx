@@ -21,20 +21,23 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
 
     const { status, updatedAt } = params;
 
-    const { isCampusPastor } = useRole();
+    const {
+        isCampusPastor,
+        user: { userId },
+    } = useRole();
 
     const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateChildCareReportMutation();
 
     const onSubmit = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, status: 'SUBMITTED' });
+        updateReport({ ...values, userId, status: 'SUBMITTED' });
     };
 
     const onRequestReview = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, status: 'REVIEW_REQUESTED' });
+        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
     };
 
     const onApprove = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, status: 'APPROVED' });
+        updateReport({ ...values, userId, status: 'APPROVED' });
     };
 
     const { setModalState } = useModal();
