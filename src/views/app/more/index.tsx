@@ -12,13 +12,13 @@ import useRole from '../../../hooks/role';
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
 
-    const { isGlobalPastor, isHOD, isAHOD, isQC, isCampusPastor } = useRole();
+    const { isGlobalPastor, isHOD, isAHOD, isQC } = useRole();
 
     const routeFilters = ['Profile', 'Notifications'];
 
     const roleFilterArray = [
         { role: isGlobalPastor, routes: ['Reports', 'Manual clock in'] },
-        { role: (isHOD && !isQC) || (isAHOD && !isQC) || isCampusPastor, routes: ['Manual clock in'] },
+        { role: (isHOD && !isQC) || (isAHOD && !isQC), routes: ['Manual clock in'] },
     ];
 
     const assertFilterRole = React.useMemo(() => roleFilterArray.find(filter => filter.role), [roleFilterArray]);

@@ -89,6 +89,7 @@ export interface IUser {
     occupation: string;
     phoneNumber: string;
     pictureUrl: string;
+    qrCodeUrl: string;
     placeOfWork: string;
     role: IRole;
     department: IDepartment;
@@ -189,6 +190,7 @@ export interface ICreateTicketPayload {
     campusId: ICampus['_id'];
     userId?: IUser['_id'];
     categoryId: string;
+    isCampus: boolean;
     isDepartment: boolean;
     isIndividual: boolean;
     isRetracted: boolean;
@@ -308,6 +310,7 @@ export interface IService {
         long: number;
         lat: number;
     };
+    tag: string[];
     serviceTime: string;
     clockInStartTime: string;
     clockInEndTime: string;
@@ -331,6 +334,13 @@ export interface IService {
         state: string;
         updatedAt: string;
     };
+}
+
+// Score
+
+export interface IScore {
+    cutOffPoint: number;
+    accruedPoint: number;
 }
 
 // Reports

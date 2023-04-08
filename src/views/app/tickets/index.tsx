@@ -15,7 +15,7 @@ const ROUTES = [
     { key: 'campusTickets', title: 'Campus Tickets' },
 ];
 
-export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL';
+export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
 const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const gotoIndividual = () => {
@@ -24,6 +24,10 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
 
     const goToDepartmental = () => {
         navigation.navigate('Issue Ticket', { type: 'DEPARTMENTAL' });
+    };
+
+    const goToCampus = () => {
+        navigation.navigate('Issue Ticket', { type: 'CAMPUS' });
     };
 
     const renderScene = SceneMap({
@@ -66,6 +70,12 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                             iconType: 'ionicon',
                             iconName: 'people-outline',
                             handleClick: goToDepartmental,
+                        },
+                        {
+                            color: 'blue.800',
+                            iconName: 'church',
+                            handleClick: goToCampus,
+                            iconType: 'material-community',
                         },
                     ]}
                 />
