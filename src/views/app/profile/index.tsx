@@ -2,7 +2,7 @@ import { Icon } from '@rneui/themed';
 import moment from 'moment';
 import { Box, Heading, HStack, Stack, Text, VStack } from 'native-base';
 import React from 'react';
-import { Pressable, TouchableOpacity } from 'react-native';
+import { Image, Pressable, TouchableOpacity } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import UserInfo from '../../../components/atoms/user-info';
 import ViewWrapper from '../../../components/layout/viewWrapper';
@@ -194,6 +194,16 @@ const Profile: React.FC = () => {
                     />
                     <UserInfo heading="Birthday" name="birthDay" value={moment(user?.birthDay).format('DD MMM')} />
                 </Box>
+                {
+                    <Box h={240} p={2} w={240} mx="auto" my={4}>
+                        <Image
+                            style={{ height: '100%', width: '100%' }}
+                            source={{
+                                uri: user?.qrCodeUrl,
+                            }}
+                        />
+                    </Box>
+                }
                 <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
                     <Stack
                         my={3}
