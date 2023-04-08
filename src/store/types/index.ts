@@ -336,6 +336,13 @@ export interface IService {
     };
 }
 
+// Score
+
+export interface IScore {
+    cutOffPoint: number;
+    accruedPoint: number;
+}
+
 // Reports
 
 export interface IChildCareReportPayload extends IReportFormProps {
