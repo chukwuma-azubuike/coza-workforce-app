@@ -48,7 +48,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isSuccess: campusDepartmentsSuccess,
         isLoading: campusDepartmentsLoading,
         isFetching: campusDepartmentsIsFetching,
-    } = useGetDepartmentsByCampusIdQuery(campus._id, { skip: !campuses?.length });
+    } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campuses?.length });
 
     const {
         data: workers,
