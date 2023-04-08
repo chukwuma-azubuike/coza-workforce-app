@@ -95,8 +95,6 @@ const Profile: React.FC = () => {
         }
     }, [newUserData]);
 
-    console.log('Score -->', score);
-
     return (
         <ViewWrapper scroll>
             <VStack pb={8}>
