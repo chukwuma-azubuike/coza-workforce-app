@@ -30,7 +30,7 @@ export const departmentServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IDepartment>) => response.data,
         }),
 
-        getDepartmentsByCampusId: endpoint.query<IDepartment[], ICampus['id']>({
+        getDepartmentsByCampusId: endpoint.query<IDepartment[], ICampus['_id']>({
             query: id => `/${SERVICE_URL}/getDepartmentByCampus/${id}`,
 
             transformResponse: (response: IDefaultResponse<IDepartment[]>) => response.data,

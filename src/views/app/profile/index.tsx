@@ -19,6 +19,7 @@ import { IMGBB_ALBUM_ID } from '../../../config/uploadConfig';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../store/services/account';
 import { useAppDispatch } from '../../../store/hooks';
 import { userActionTypes } from '../../../store/services/users';
+import { useGetUserScoreQuery } from '../../../store/services/score';
 
 const Profile: React.FC = () => {
     const { user, isGlobalPastor } = useRole();
@@ -57,6 +58,8 @@ const Profile: React.FC = () => {
 
     const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
 
+    const { data: score } = useGetUserScoreQuery(user?._id);
+
     const handleProfilePicture = () => {
         initialise();
     };
@@ -91,6 +94,8 @@ const Profile: React.FC = () => {
             });
         }
     }, [newUserData]);
+
+    console.log('Score -->', score);
 
     return (
         <ViewWrapper scroll>
@@ -194,7 +199,7 @@ const Profile: React.FC = () => {
                     />
                     <UserInfo heading="Birthday" name="birthDay" value={moment(user?.birthDay).format('DD MMM')} />
                 </Box>
-                {
+                {score && score?.accruedPoint >= score?.cutOffPoint && (
                     <Box h={240} p={2} w={240} mx="auto" my={4}>
                         <Image
                             style={{ height: '100%', width: '100%' }}
@@ -203,7 +208,7 @@ const Profile: React.FC = () => {
                             }}
                         />
                     </Box>
-                }
+                )}
                 <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
                     <Stack
                         my={3}
