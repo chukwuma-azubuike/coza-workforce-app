@@ -1,3 +1,4 @@
+import { scoreServiceSlice } from './../score';
 import { accountServiceSlice } from '../account';
 import { attendanceServiceSlice } from '../attendance';
 import { complianceServiceSlice } from '../compliance';
@@ -18,6 +19,7 @@ const middlewaresSlices = [
     departmentServiceSlice.middleware,
     ticketServiceSlice.middleware,
     campusServiceSlice.middleware,
+    scoreServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;

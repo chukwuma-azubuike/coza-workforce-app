@@ -32,13 +32,21 @@ const ManualClockin: React.FC = () => {
 
     const handleSubmit = () => {};
 
-    const { data: campuses, isLoading: campusLoading } = useGetCampusesQuery();
+    const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
 
-    const { data: departments, isLoading: departmentsLoading } = useGetDepartmentsByCampusIdQuery(campusId, {
+    const {
+        data: departments,
+        isLoading: departmentsLoading,
+        isFetching: departmentIsFetching,
+    } = useGetDepartmentsByCampusIdQuery(campusId, {
         skip: !campusId,
     });
 
-    const { data: users, isLoading: usersLoading } = useGetUsersByDepartmentIdQuery(departmentId as string, {
+    const {
+        data: users,
+        isLoading: usersLoading,
+        isFetching: usersIsFetching,
+    } = useGetUsersByDepartmentIdQuery(departmentId as string, {
         skip: !departmentId,
     });
 
@@ -130,7 +138,7 @@ const ManualClockin: React.FC = () => {
                                                 value={campus._id}
                                                 key={`campus-${index}`}
                                                 label={campus.campusName}
-                                                isLoading={campusLoading}
+                                                isLoading={campusLoading || campusIsFetching}
                                             />
                                         ))}
                                     </SelectComponent>
@@ -169,8 +177,8 @@ const ManualClockin: React.FC = () => {
                                             <SelectItemComponent
                                                 value={department._id}
                                                 key={`department-${index}`}
-                                                isLoading={departmentsLoading}
                                                 label={department.departmentName}
+                                                isLoading={departmentsLoading || departmentIsFetching}
                                             />
                                         ))}
                                     </SelectComponent>
@@ -207,8 +215,8 @@ const ManualClockin: React.FC = () => {
                                     >
                                         {users?.map((user, index) => (
                                             <SelectItemComponent
-                                                isLoading={usersLoading}
                                                 key={`department-${index}`}
+                                                isLoading={usersLoading || usersIsFetching}
                                                 label={`${user.firstName} ${user.lastName}`}
                                                 value={(user._id || user.userId) as unknown as string}
                                             />
