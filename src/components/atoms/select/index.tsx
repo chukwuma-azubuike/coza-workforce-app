@@ -4,6 +4,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { Icon } from '@rneui/themed';
 import { IIconTypes } from '../../../utils/types';
 import useAppColorMode from '../../../hooks/theme/colorMode';
+import Loading from '../loading';
 
 interface ISelectComponent extends ISelectProps {}
 interface ISelectItemComponent extends ISelectItemProps {
@@ -25,7 +26,15 @@ const SelectComponent = (props: ISelectComponent) => {
             {...props}
             borderRadius={THEME_CONFIG.borderRadius}
         >
-            {props.children}
+            {props?.children?.length ? (
+                props?.children
+            ) : (
+                <SelectItemComponent
+                    w="100%"
+                    value="loading"
+                    label={(<Loading color="gray.400" mx="auto" />) as unknown as string}
+                />
+            )}
         </Select>
     );
 };

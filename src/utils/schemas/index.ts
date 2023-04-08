@@ -119,6 +119,12 @@ export const CreateDepartmentalTicketSchema = Yup.object().shape({
     ticketSummary: Yup.string().required('You are required to input a ticket description.'),
 });
 
+export const CreateCampusTicketSchema = Yup.object().shape({
+    categoryId: Yup.string().required('You are required to select a category.'),
+    campusId: Yup.string().required('You are required to select a campus'),
+    ticketSummary: Yup.string().required('You are required to input a ticket description.'),
+});
+
 export const RequestPermissionSchema = Yup.object().shape({
     categoryId: Yup.string().required('You are required to select a category.'),
     description: Yup.string().required('You are required to enter a description'),

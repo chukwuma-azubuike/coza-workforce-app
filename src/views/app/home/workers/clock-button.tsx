@@ -130,6 +130,12 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         !latestAttendanceData[0].clockOut &&
         isInRange;
 
+    React.useEffect(() => {
+        if (latestAttendanceData && !latestAttendanceData[0]?.clockIn) {
+            setClockedOut(false);
+        }
+    }, [latestAttendanceData]);
+
     const handleClockout = () => {
         if (canClockOut) {
             verifyRangeBeforeAction(

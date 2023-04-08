@@ -1,6 +1,7 @@
 import React from 'react';
 import { Center, ICenterProps, Image, Spinner, VStack } from 'native-base';
 import useAppColorMode from '../../../hooks/theme/colorMode';
+import { ColorValue } from 'react-native';
 const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
 const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
 
@@ -8,7 +9,7 @@ interface ILoadingProps extends ICenterProps {
     bootUp?: boolean;
 }
 
-const Loading: React.FC<ILoadingProps> = ({ bootUp, ...props }) => {
+const Loading: React.FC<ILoadingProps> = ({ bootUp, color = 'primary.500', ...props }) => {
     const { isLightMode } = useAppColorMode();
 
     return (
@@ -17,7 +18,7 @@ const Loading: React.FC<ILoadingProps> = ({ bootUp, ...props }) => {
                 {bootUp ? (
                     <Image alt="startuplogo" source={isLightMode ? logoBlack : logoWhite} />
                 ) : (
-                    <Spinner color="primary.500" fontSize="6xl" boxSize="xl" size="lg" />
+                    <Spinner color={color as ColorValue} fontSize="6xl" boxSize="xl" size="lg" />
                 )}
             </VStack>
         </Center>
