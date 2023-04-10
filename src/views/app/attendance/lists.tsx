@@ -67,7 +67,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                 };
             }),
         ],
-        [membersClockedIn]
+        [membersClockedIn, mergedUsers]
     );
 
     // Filter out clocked in members from user list
