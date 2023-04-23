@@ -159,3 +159,7 @@ export const ResetPasswordSchema = Yup.object().shape({
         .oneOf([Yup.ref('password'), null], 'Passwords must match')
         .required('Confirming you password is required.'),
 });
+
+export const GSPReportSchema = Yup.object().shape({
+    campusCoordinatorComment: Yup.string().required('Please provide a comment'),
+});
