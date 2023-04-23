@@ -27,7 +27,7 @@ import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '../../../store/types';
 import Utils from '../../../utils';
 
-const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
+export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
     const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
 

@@ -45,7 +45,13 @@ export interface IDefaultErrorResponse<D = null> {
 
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED' | 'REJECTED';
 
-export type IReportStatus = 'SUBMITTED' | 'PENDING' | 'REVIEW_REQUESTED' | 'APPROVED';
+export enum IReportStatus {
+    PENDING = 'PENDING',
+    APPROVED = 'APPROVED',
+    SUBMITTED = 'SUBMITTED',
+    GSP_SUBMITTED = 'GSP_SUBMITTED',
+    REVIEW_REQUESTED = 'REVIEW_REQUESTED',
+}
 
 // Authentication
 export interface IAuthParams extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
@@ -412,6 +418,7 @@ export interface IServiceReportPayload extends IReportFormProps {
 export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
     details: string;
     imageUrl: string;
+    incident: string;
 }
 
 export interface IDepartmentReportResponse {

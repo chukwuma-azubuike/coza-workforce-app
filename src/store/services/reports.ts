@@ -1,4 +1,4 @@
-import { ICampus, IStatus } from './../types/index';
+import { ICampus, IDefaultQueryParams, IStatus, IUser } from './../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
@@ -90,7 +90,10 @@ export interface ICampusReportSummary<R = unknown> {
             status: IReportStatus;
         } & R;
     }[];
-    incidentReport: unknown[];
+    incidentReport: {
+        incidentReport: IIncidentReportPayload;
+        departmentName: string;
+    }[];
 }
 
 export interface IDepartmentReportListById {
@@ -106,6 +109,29 @@ export interface IDepartmentAndIncidentReport {
     departmentalReport: IDepartmentReportListById[];
     incidentReport: IIncidentReportPayload & { _id: string }[];
 }
+
+export interface IGSPReportPayload {
+    submittedReportIds: string[];
+    incidentReportIds: string[];
+    campusCoordinatorComment: string;
+    campusId: ICampus['_id'];
+    userId: IUser['_id'];
+    serviceId: IService['_id'];
+    status: IReportStatus;
+}
+
+export interface ICampusReport {
+    serviceId: IService['_id'];
+    campusId: ICampus['_id'];
+    status: IReportStatus;
+    serviceName: string;
+    serviceTime: number;
+}
+
+export interface ICampusReportListPayload extends Pick<IDefaultQueryParams, 'limit' | 'page'> {
+    campusId: ICampus['_id'];
+}
+export interface ICampusReportList extends Array<ICampusReport> {}
 
 export const reportsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -257,6 +283,24 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => res.data,
         }),
 
+        submitGSPReport: endpoint.mutation<any, IGSPReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/submitCampusReport`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+        }),
+
+        getCampusReportList: endpoint.query<ICampusReportList, ICampusReportListPayload>({
+            query: params => ({
+                url: `/${SERVICE_URL}/getCampusPastReports`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -267,6 +311,8 @@ export const {
     useGetBusSummaryQuery,
     useGetCarsSummaryQuery,
     useGetGuestSummaryQuery,
+    useSubmitGSPReportMutation,
+    useGetCampusReportListQuery,
     useCreateGuestReportMutation,
     useGetDepartmentalReportQuery,
     useGetCampusReportSummaryQuery,
