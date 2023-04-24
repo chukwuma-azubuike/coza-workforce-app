@@ -48,7 +48,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isSuccess: campusDepartmentsSuccess,
         isLoading: campusDepartmentsLoading,
         isFetching: campusDepartmentsIsFetching,
-    } = useGetDepartmentsByCampusIdQuery(campus._id, { skip: !campuses?.length });
+    } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campuses?.length });
 
     const {
         data: workers,
@@ -149,8 +149,8 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 
     return (
-        <ViewWrapper>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
+        <ViewWrapper scroll noPadding>
+            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateTicketPayload>
                         validateOnChange

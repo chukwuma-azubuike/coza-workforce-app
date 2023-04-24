@@ -117,7 +117,7 @@ const ManualClockin: React.FC = () => {
                         };
 
                         return (
-                            <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
+                            <VStack space="md" alignItems="flex-start" w="100%" px={4}>
                                 <FormControl isRequired>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent
@@ -238,7 +238,7 @@ const ManualClockin: React.FC = () => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <Center w="full" mt={10}>
+                                <Center w="full" mt={10} h={280}>
                                     <ThirdPartyClockButton
                                         isInRangeProp={isInRange}
                                         campusId={campusId as string}

@@ -4,13 +4,17 @@ import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '../../../sto
 import Utils from '../../../utils';
 
 interface IStatusTag extends ITagProps {
-    children: IStatus | ITicketStatus | IUserStatus | IReportStatus;
+    children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;
 }
 
 const StatusTag: React.FC<IStatusTag> = props => {
     const { children: status } = props;
 
-    const green = status === 'ACKNOWLEGDED' || status === 'ACTIVE' || status === 'APPROVED';
+    const green =
+        status === 'ACKNOWLEGDED' ||
+        status === 'ACTIVE' ||
+        status === 'APPROVED' ||
+        status === IReportStatus.GSP_SUBMITTED;
     const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
     const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED';
     const red = status === 'DECLINED' || status === 'INACTIVE' || status === 'REJECTED' || status === 'CONTESTED';
@@ -79,7 +83,7 @@ const StatusTag: React.FC<IStatusTag> = props => {
                 },
             }}
         >
-            {Utils.capitalizeFirstChar(status, '_')}
+            {status ? Utils.capitalizeFirstChar(status.replace('Gsp ', ''), '_') : 'Unknown'}
         </Tag>
     );
 };
