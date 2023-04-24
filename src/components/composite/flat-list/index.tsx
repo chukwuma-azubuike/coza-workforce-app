@@ -123,7 +123,11 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 )}
                             />
                             {loadingMore && (
-                                <ActivityIndicator size="large" style={{ marginTop: 10, marginBottom: -10 }} />
+                                <ActivityIndicator
+                                    size="large"
+                                    color={THEME_CONFIG.lightGray}
+                                    style={{ paddingTop: 12, paddingBottom: -16, marginBottom: 4 }}
+                                />
                             )}
                         </Box>
                     </If>
@@ -217,7 +221,11 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 )}
                             />
                             {loadingMore && (
-                                <ActivityIndicator size="large" style={{ marginTop: 10, marginBottom: -10 }} />
+                                <ActivityIndicator
+                                    size="large"
+                                    color={THEME_CONFIG.lightGray}
+                                    style={{ paddingTop: 12, paddingBottom: -16, marginBottom: 4 }}
+                                />
                             )}
                         </Box>
                     </If>
