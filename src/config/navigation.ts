@@ -36,10 +36,11 @@ import EditProfile from '../views/app/profile/edit-profile';
 import UserDetails from '../views/app/workforce-management/user-details';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
+import CampusReport from '../views/app/reports/campus-report/reportDetails';
 
 export interface IAppRoute {
     name: string;
-    component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>>;
+    component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>> | React.FC<any>;
     options: any;
     submenus: IAppRoute[] | [];
     users: string[] | [];
@@ -224,6 +225,15 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Transfer Report',
                 component: TransferReport,
                 options: { title: 'Transfer Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'graph', type: 'octicon' },
+            },
+            {
+                name: 'Campus Report',
+                component: CampusReport,
+                options: { title: 'Campus Report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
