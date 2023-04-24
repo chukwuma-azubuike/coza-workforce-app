@@ -427,7 +427,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             iconName="child"
                             iconType="font-awesome"
                             isLoading={gspReportIsLoading}
-                            value={busCount?.totalChildren}
+                            value={busCount?.totalAdult}
                         />
                         <StatCardComponent
                             // percent
@@ -445,7 +445,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             iconName="account-group"
                             iconType="material-community"
                             isLoading={gspReportIsLoading}
-                            value={busCount?.totalAdult}
+                            value={busCount?.totalChildren}
                         />
                         <StatCardComponent
                             // percent

@@ -1,259 +1,110 @@
+import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
-import { VStack, Text, HStack, Divider } from 'native-base';
+import { HStack, Text } from 'native-base';
 import React from 'react';
+import { TouchableNativeFeedback } from 'react-native';
+import StatusTag from '../../../../components/atoms/status-tag';
+import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
-import {
-    IAttendanceReportPayload,
-    IChildCareReportPayload,
-    IGuestReportPayload,
-    IIncidentReportPayload,
-    ISecurityReportPayload,
-    IServiceReportPayload,
-    ITransferReportPayload,
-} from '../../../../store/types';
+import { THEME_CONFIG } from '../../../../config/appConfig';
+import useFetchMoreData from '../../../../hooks/fetch-more-data';
+import useAppColorMode from '../../../../hooks/theme/colorMode';
+import { ICampusReport, useGetCampusReportListQuery } from '../../../../store/services/reports';
 import Utils from '../../../../utils';
-import HorizontalTable from './horizontal-table';
-import VerticalTable from './vertical-table';
 
-interface ICampusReport {
+export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
+    const navigation = useNavigation();
+    const { isLightMode } = useAppColorMode();
+
+    const handlePress = () => {
+        navigation.navigate('Campus Report' as never, props as never);
+    };
+
+    return (
+        <TouchableNativeFeedback
+            disabled={false}
+            delayPressIn={0}
+            onPress={handlePress}
+            accessibilityRole="button"
+            background={TouchableNativeFeedback.Ripple(
+                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                false,
+                220
+            )}
+            style={{ paddingHorizontal: 20 }}
+        >
+            <HStack
+                p={2}
+                px={4}
+                my={1.5}
+                w="full"
+                borderRadius={10}
+                alignItems="center"
+                _dark={{ bg: 'gray.900' }}
+                _light={{ bg: 'gray.50' }}
+                justifyContent="space-between"
+            >
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
+                    {moment(props?.serviceTime).format('DD/MM/YYYY')}
+                </Text>
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
+                    {Utils.truncateString(props?.serviceName)}
+                </Text>
+                <StatusTag>{props?.status as any}</StatusTag>
+            </HStack>
+        </TouchableNativeFeedback>
+    );
+};
+interface ICampusReportPayload {
     serviceId?: string;
-    campusId?: string;
+    campusId: string;
 }
 
-const CampusReport: React.FC<ICampusReport> = props => {
+const reportColumns: IFlatListColumn[] = [
+    {
+        dataIndex: 'createdAt',
+        render: (_: ICampusReport, key) => <DepartmentReportListRow {..._} />,
+    },
+];
+
+const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
     const { serviceId, campusId } = props;
 
-    const { data, refetch, isLoading, isSuccess, isError } = useGetCampusReportSummaryQuery(
-        { serviceId: serviceId as string, campusId: campusId as string },
+    const [page, setPage] = React.useState<number>(0);
+
+    const { data, refetch, isLoading, isFetching, isSuccess, isError } = useGetCampusReportListQuery(
         {
-            skip: !serviceId,
+            page,
+            campusId,
+            limit: 10,
+        },
+        {
+            refetchOnMountOrArgChange: true,
         }
     );
-
-    const serviceAttendance = React.useMemo(() => {
-        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Ushery Board')
-            ?.report as unknown as IAttendanceReportPayload;
-
-        if (!rawData) return { headers: [], rows: [] };
-
-        if (data?.departmentalReport) {
-            return {
-                headers: ['Male', 'Female', 'Infants', 'Total'],
-                rows: [
-                    {
-                        male: +rawData?.maleGuestCount,
-                        female: +rawData?.femaleGuestCount,
-                        infants: +rawData?.infants,
-                        total: +rawData?.total,
-                    },
-                ],
-            };
-        }
-
-        return { headers: [], rows: [] };
-    }, [data]);
-
-    const guestsAttendance = React.useMemo(() => {
-        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'PCU')
-            ?.report as unknown as IGuestReportPayload;
-
-        if (!rawData) return { headers: [], column: [] };
-
-        if (data?.departmentalReport) {
-            return {
-                headers: ['First Timers', 'New Converts'],
-                column: {
-                    firstTimers: +rawData?.firstTimersCount,
-                    newConverts: +rawData?.newConvertsCount,
-                },
-            };
-        }
-
-        return { headers: [], column: [] };
-    }, [data]);
-
-    const childCareReportData = React.useMemo(() => {
-        if (data?.departmentalReport) {
-            const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Children Ministry')
-                ?.report as IChildCareReportPayload;
-
-            if (!rawData) return { headers: [], rows: [] };
-
-            const rows = Object.entries(rawData).map(elm => {
-                if (elm[0] === 'age12_above' || elm[0] === 'age6_11' || elm[0] === 'age3_5' || elm[0] === 'age1_2') {
-                    return {
-                        age: Utils.capitalizeFirstChar(elm[0], '_').split(' ').join(' - ').split('Age').join('Age '),
-                        male: +elm[1].male,
-                        female: +elm[1].female,
-                        total: +elm[1].male + +elm[1].female,
-                    };
-                }
-            });
-            return {
-                headers: ['Age', 'Male', 'Female', 'Sub total'],
-                rows: Utils.filter(rows, undefined),
-            };
-        }
-
-        return { headers: [], rows: [] };
-    }, [data]);
-
-    const carCount = React.useMemo(() => {
-        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Traffic & Security')
-            ?.report as unknown as ISecurityReportPayload;
-
-        if (!rawData) return { headers: [], rows: [] };
-
-        const rows = Object.entries(rawData).map(elm => {
-            if (elm[0] === 'locations') {
-                return elm[1];
-            }
-        });
-
-        return {
-            headers: ['Car Park', 'Car Count'],
-            rows: Utils.filter(
-                rows.flatMap(elm => {
-                    return elm;
-                }),
-                undefined
-            ).map(elm => {
-                return { ...elm, total: +elm.minorCount + +elm.adultCount };
-            }),
-        };
-    }, [data]);
-
-    const busCount = React.useMemo(() => {
-        if (data?.departmentalReport) {
-            const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'COZA Transfer Service')
-                ?.report as ITransferReportPayload;
-
-            if (!rawData) return { headers: [], rows: [] };
-
-            const rows = Object.entries(rawData).map(elm => {
-                if (elm[0] === 'locations') {
-                    return elm[1];
-                }
-            });
-
-            return {
-                headers: ['Location', 'Adults', 'Children', 'Total'],
-                rows: Utils.filter(
-                    rows.flatMap(elm => {
-                        return elm;
-                    }),
-                    undefined
-                ).map(elm => {
-                    return { ...elm, total: +elm.minorCount + +elm.adultCount };
-                }),
-            };
-        }
-
-        return { headers: [], rows: [] };
-    }, [data]);
-
-    const [serviceTime, setServiceTime] = React.useState<{
-        start: IServiceReportPayload['serviceStartTime'];
-        end: IServiceReportPayload['serviceEndTime'];
-    }>();
-
-    const serviceObservation = React.useMemo(() => {
-        const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Programme Coordination')
-            ?.report as unknown as IServiceReportPayload;
-
-        if (!rawData) return { headers: [], rows: [] };
-
-        if (data?.departmentalReport) {
-            setServiceTime({
-                start: rawData?.serviceStartTime,
-                end: rawData?.serviceEndTime,
-            });
-
-            return {
-                headers: ['Observations'],
-                rows: [
-                    {
-                        observations: rawData?.observations ? rawData?.observations : 'null',
-                    },
-                ],
-            };
-        }
-
-        return { headers: [], rows: [] };
-    }, [data]);
-
-    const incidentReport = React.useMemo(() => {
-        if (data?.incidentReport.length) {
-            const rawData = data?.incidentReport as {
-                incidentReport: IIncidentReportPayload;
-                departmentName: string;
-            }[];
-
-            if (!rawData) return { headers: [], rows: [] };
-
-            const rows = rawData?.map(elm => {
-                return {
-                    department: elm?.departmentName,
-                    incident: elm?.incidentReport?.details,
-                };
-            });
-
-            return {
-                headers: ['Department', 'Incident'],
-                rows,
-            };
-        }
-
-        return { headers: [], rows: [] };
-    }, [data]);
 
     const handleRefresh = () => {
         serviceId && refetch();
     };
 
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: 'serviceId' });
+
+    const fetchMoreData = () => {
+        setPage(prev => prev + 1);
+    };
+
     return (
-        <ViewWrapper scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
-            <VStack px={4} space={10}>
-                <Divider />
-                <VerticalTable isLoading={isLoading} title="Service Attendance" tableData={serviceAttendance} />
-                <Divider />
-                <HorizontalTable isLoading={isLoading} title="Guests Attendance" tableData={guestsAttendance} />
-                <Divider />
-                <VerticalTable isLoading={isLoading} title="Childcare Report" tableData={childCareReportData} />
-                <Divider />
-                <VerticalTable isLoading={isLoading} title="Car Count" tableData={carCount} />
-                <Divider />
-                <VerticalTable isLoading={isLoading} title="Bus Count (Pick Up)" tableData={busCount} />
-                <Divider />
-                <VerticalTable
-                    title="Service Programme Observation"
-                    tableData={serviceObservation}
-                    alignItemsCenter={false}
-                >
-                    <HStack
-                        marginBottom={3}
-                        paddingBottom={2}
-                        borderBottomWidth={1}
-                        borderBottomColor="gray.300"
-                        justifyContent={'space-between'}
-                    >
-                        <Text>Start Time:</Text>
-                        <Text color="primary.500" bold>
-                            {serviceTime?.start ? moment(serviceTime?.start).format('LT') : '--:--'}
-                        </Text>
-                        <Text>End Time:</Text>
-                        <Text color="primary.500" bold>
-                            {serviceTime?.end ? moment(serviceTime?.end).format('LT') : '--:--'}
-                        </Text>
-                    </HStack>
-                </VerticalTable>
-                <Divider />
-                <VerticalTable isLoading={isLoading} title="Incidents" tableData={incidentReport} />
-                <Divider />
-            </VStack>
+        <ViewWrapper py={0} noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+            <FlatListComponent
+                onRefresh={refetch}
+                data={moreData as any}
+                refreshing={isFetching}
+                columns={reportColumns}
+                fetchMoreData={fetchMoreData}
+                isLoading={isLoading || isFetching}
+            />
         </ViewWrapper>
     );
 };
 
-export default CampusReport;
+export default CampusReportDetails;

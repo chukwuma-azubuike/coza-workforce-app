@@ -226,20 +226,14 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text>{moment(endDate).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
-                    <VStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        minHeight={description?.length ? (description?.length * 7) / 8 : undefined}
-                    >
+                    <VStack pb={2} w="full" space={2}>
                         <Text alignSelf="flex-start" bold>
                             Description
                         </Text>
-                        <TextAreaComponent
-                            value={description}
-                            isDisabled={Platform.OS !== 'android'}
-                            minHeight={description?.length ? (description?.length * 3) / 4 : undefined}
-                        />
+                        {!description && (
+                            <TextAreaComponent value={description} isDisabled={Platform.OS !== 'android'} />
+                        )}
+                        {description && <Text flexWrap="wrap">{description}</Text>}
                     </VStack>
                     <HStack
                         pb={2}
@@ -254,12 +248,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         </Text>
                         <StatusTag>{permission?.status as any}</StatusTag>
                     </HStack>
-                    <VStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        minHeight={permission?.comment ? (permission?.comment?.length * 7) / 8 : undefined}
-                    >
+                    <VStack pb={2} w="full" space={2}>
                         <Text alignSelf="flex-start" bold>
                             {!isHOD && !isAHOD && !isCampusPastor
                                 ? "Leader's comment"
@@ -267,12 +256,16 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ? "Pastor's comment"
                                 : 'Comment'}
                         </Text>
-                        <TextAreaComponent
-                            onChangeText={handleChange}
-                            isDisabled={!takePermissionAction}
-                            value={permissionComment || permission?.comment}
-                            minHeight={permission?.comment ? (permission?.comment?.length * 3) / 4 : undefined}
-                        />
+                        {!permissionComment && (
+                            <TextAreaComponent
+                                onChangeText={handleChange}
+                                isDisabled={!takePermissionAction}
+                                value={permissionComment || permission?.comment}
+                            />
+                        )}
+                        {(permissionComment || permission?.comment) && (
+                            <Text flexWrap="wrap">{permissionComment || permission?.comment}</Text>
+                        )}
                     </VStack>
                     <If condition={takePermissionAction}>
                         <HStack space={4} w="95%" justifyContent="space-between">

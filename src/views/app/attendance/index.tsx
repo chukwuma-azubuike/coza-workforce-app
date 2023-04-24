@@ -31,7 +31,7 @@ const Attendance: React.FC = () => {
     }, []);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper py={0}>
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}

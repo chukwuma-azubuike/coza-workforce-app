@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, FlatList, HStack, Text, VStack } from 'native-base';
 import If from '../if-container';
 import Utils from '../../../utils';
-import { RefreshControl, TouchableNativeFeedback } from 'react-native';
+import { ActivityIndicator, RefreshControl, TouchableNativeFeedback } from 'react-native';
 import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
 import moment from 'moment';
@@ -56,6 +56,21 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         return;
     };
 
+    const [loadingMore, setloadingMore] = React.useState<boolean>(false);
+
+    const handleMore = () => {
+        if (fetchMoreData && !refreshing) {
+            fetchMoreData();
+            setloadingMore(true);
+        }
+    };
+
+    React.useEffect(() => {
+        if (!refreshing) {
+            setloadingMore(false);
+        }
+    }, [refreshing]);
+
     return (
         <>
             {data && data[0] ? (
@@ -71,9 +86,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 }
                                 data={data}
                                 nestedScrollEnabled
-                                onEndReachedThreshold={0.2}
-                                onEndReached={fetchMoreData}
-                                onScrollEndDrag={fetchMoreData}
+                                onEndReached={handleMore}
+                                onEndReachedThreshold={0.1}
+                                onScrollEndDrag={handleMore}
                                 ListEmptyComponent={
                                     <Empty
                                         width={emptySize}
@@ -107,6 +122,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     </Box>
                                 )}
                             />
+                            {loadingMore && (
+                                <ActivityIndicator size="large" style={{ marginTop: 10, marginBottom: -10 }} />
+                            )}
                         </Box>
                     </If>
                     <If condition={!data[0][0]}>
@@ -127,6 +145,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                         refresh={onRefresh}
                                     />
                                 }
+                                onEndReached={handleMore}
+                                onEndReachedThreshold={0.1}
+                                onScrollEndDrag={handleMore}
                                 keyExtractor={item => item.id}
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
@@ -195,6 +216,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     </TouchableNativeFeedback>
                                 )}
                             />
+                            {loadingMore && (
+                                <ActivityIndicator size="large" style={{ marginTop: 10, marginBottom: -10 }} />
+                            )}
                         </Box>
                     </If>
                 </>
