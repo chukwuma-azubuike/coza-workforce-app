@@ -59,8 +59,10 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     const [loadingMore, setloadingMore] = React.useState<boolean>(false);
 
     const handleMore = () => {
-        setloadingMore(true);
-        fetchMoreData && !refreshing && fetchMoreData();
+        if (fetchMoreData && !refreshing) {
+            fetchMoreData();
+            setloadingMore(true);
+        }
     };
 
     React.useEffect(() => {
@@ -120,6 +122,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     </Box>
                                 )}
                             />
+                            {loadingMore && (
+                                <ActivityIndicator size="large" style={{ marginTop: 10, marginBottom: -10 }} />
+                            )}
                         </Box>
                     </If>
                     <If condition={!data[0][0]}>

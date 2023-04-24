@@ -2,7 +2,7 @@ import React from 'react';
 import uniqBy from 'lodash/uniqBy';
 
 const useFetchMoreData = ({
-    uniqKey,
+    uniqKey = '_id',
     dataSet,
     isSuccess,
 }: {

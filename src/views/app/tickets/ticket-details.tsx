@@ -22,7 +22,7 @@ import {
 import { ICreateTicketPayload, ITicket } from '../../../store/types';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { contestComment, _id, status, isDepartment, isIndividual, createdAt } = props.route.params as ITicket;
+    const { _id } = props.route.params as ITicket;
 
     const {
         isQC,
@@ -73,6 +73,11 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             error: acknowledgeError,
         },
     ] = useUpdateTicketMutation();
+
+    interface NO {
+        contestComment: 'Contest test';
+        status: 'RETRACTED';
+    }
 
     const [comment, setComment] = React.useState<string>();
     const [contestReplyComment, setContestReplyComment] = React.useState<string | undefined>(
@@ -224,7 +229,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Date
                         </Text>
-                        <Text>{moment(createdAt).format('Do MMMM YYYY')}</Text>
+                        <Text>{moment(ticket?.createdAt).format('Do MMMM YYYY')}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -250,7 +255,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Ticket type
                         </Text>
-                        <Text>{isDepartment ? 'Departmental' : 'Individual'}</Text>
+                        <Text>{ticket?.isDepartment ? 'Departmental' : 'Individual'}</Text>
                     </HStack>
 
                     <HStack
@@ -264,7 +269,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Status
                         </Text>
-                        <StatusTag>{status}</StatusTag>
+                        <StatusTag>{ticket?.status}</StatusTag>
                     </HStack>
 
                     <HStack
@@ -293,7 +298,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             Offender
                         </Text>
                         <Text>
-                            {isIndividual
+                            {ticket?.isIndividual
                                 ? `${ticket?.user?.firstName} ${ticket?.user?.lastName}`
                                 : `${ticket?.department?.departmentName}`}
                         </Text>
@@ -314,52 +319,40 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text>{ticket?.ticketSummary}</Text>
                     </HStack>
 
-                    <VStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        justifyContent="space-between"
-                        minHeight={ticket?.contestComment ? (ticket?.contestComment?.length * 7) / 8 : undefined}
-                    >
+                    <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
                             Contest Comment
                         </Text>
-                        <If condition={isIndividual}>
-                            <TextAreaComponent
-                                onChangeText={handleChange}
-                                value={ticket?.contestComment}
-                                isDisabled={status !== 'ISSUED' && ticket?.user?._id !== userId}
-                                minHeight={
-                                    ticket?.contestComment ? (ticket?.contestComment?.length * 3) / 4 : undefined
-                                }
-                            />
+                        <If condition={ticket?.isIndividual}>
+                            {!ticket?.contestComment && (
+                                <TextAreaComponent
+                                    onChangeText={handleChange}
+                                    value={ticket?.contestComment}
+                                    isDisabled={ticket?.status !== 'ISSUED' && ticket?.user?._id !== userId}
+                                />
+                            )}
+                            {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
                         </If>
-                        <If condition={isDepartment}>
+                        <If condition={ticket?.isDepartment}>
                             <TextAreaComponent
                                 onChangeText={handleChange}
                                 value={ticket?.contestComment}
-                                isDisabled={status !== 'ISSUED' || ticket?.department?._id !== department?._id}
+                                isDisabled={ticket?.status !== 'ISSUED' || ticket?.department?._id !== department?._id}
                             />
                         </If>
                     </VStack>
-                    <VStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        justifyContent="space-between"
-                        minHeight={ticket?.contestComment ? (ticket?.contestReplyComment?.length * 7) / 8 : undefined}
-                    >
+                    <VStack pb={2} w="full" space={2} justifyContent="space-between">
                         <Text alignSelf="flex-start" bold>
-                            Quality Control Reply
+                            QC / M&E Reply
                         </Text>
-                        <TextAreaComponent
-                            onChangeText={handleReplyChange}
-                            value={ticket?.contestReplyComment}
-                            minHeight={
-                                ticket?.contestComment ? (ticket?.contestReplyComment?.length * 3) / 4 : undefined
-                            }
-                            isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
-                        />
+                        {!ticket?.contestReplyComment && (
+                            <TextAreaComponent
+                                onChangeText={handleReplyChange}
+                                value={ticket?.contestReplyComment}
+                                isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
+                            />
+                        )}
+                        {ticket?.contestReplyComment && <Text flexWrap="wrap">{ticket?.contestReplyComment}</Text>}
                     </VStack>
                     <If condition={offenderAction}>
                         <HStack space={4} w="95%" justifyContent="space-between">
@@ -369,7 +362,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 width="1/2"
                                 onPress={handleSubmit}
                                 isLoading={contestLoading}
-                                isDisabled={!comment && status === 'ISSUED'}
+                                isDisabled={!comment && ticket?.status === 'ISSUED'}
                             >
                                 Contest ticket
                             </ButtonComponent>
@@ -379,7 +372,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 onPress={handleAcknowledge}
                                 isLoading={acknowledgeLoading}
                                 isDisabled={
-                                    status !== 'ISSUED' &&
+                                    ticket?.status !== 'ISSUED' &&
                                     (userId !== ticket?.user?._id || ticket?.department._id !== department._id)
                                 }
                             >
