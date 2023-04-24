@@ -256,7 +256,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ? "Pastor's comment"
                                 : 'Comment'}
                         </Text>
-                        {!permissionComment && (
+                        {(!permissionComment && !permission?.comment) && (
                             <TextAreaComponent
                                 onChangeText={handleChange}
                                 isDisabled={!takePermissionAction}

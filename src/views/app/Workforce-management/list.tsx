@@ -1,6 +1,6 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
-import React, { memo, useMemo } from 'react';
+import React, { memo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
@@ -12,8 +12,7 @@ import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetUsersQuery } from '../../../store/services/account';
-import {} from '../../../store/services/tickets';
-import { IDepartment, IUser } from '../../../store/types';
+import { IUser } from '../../../store/types';
 import Utils from '../../../utils';
 
 const UserListRow: React.FC<IUser> = user => {
@@ -124,7 +123,7 @@ const MyTeam: React.FC = memo(() => {
 
     const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
         { departmentId: department._id, limit: 10, page },
-        { skip: !isScreenFocused }
+        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
@@ -166,7 +165,7 @@ const Campus: React.FC = memo(() => {
 
     const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
         { campusId: campus._id, limit: 10, page },
-        { skip: !isScreenFocused }
+        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
