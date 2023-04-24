@@ -158,7 +158,10 @@ const MyTicketsList: React.FC = memo(() => {
     } = useRole();
 
     const [page, setPageCount] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching, refetch } = useGetTicketsQuery({ userId, limit: 10, page });
+    const { data, isLoading, isSuccess, isFetching, refetch } = useGetTicketsQuery(
+        { userId, limit: 10, page },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const setPage = (pageArg: number) => () => {
         if (!isFetching && !isLoading) {
@@ -207,11 +210,14 @@ const MyTeamTicketsList: React.FC = memo(() => {
     } = useRole();
 
     const [page, setPageCount] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery({
-        departmentId: department._id,
-        limit: 10,
-        page,
-    });
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery(
+        {
+            departmentId: department._id,
+            limit: 10,
+            page,
+        },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const setPage = (pageArg: number) => () => {
         if (!isFetching && !isLoading) {
@@ -261,11 +267,14 @@ const CampusTickets: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery({
-        campusId: campus._id,
-        limit: 10,
-        page,
-    });
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery(
+        {
+            campusId: campus._id,
+            limit: 10,
+            page,
+        },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const setPage = (pageArg: number) => () => {
         if (!isFetching && !isLoading) {
