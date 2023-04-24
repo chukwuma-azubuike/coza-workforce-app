@@ -2,31 +2,42 @@ import React from 'react';
 import FlatListComponent from '../../../components/composite/flat-list';
 import { campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns } from './flatListConfig';
 import { MonthPicker } from '../../../components/composite/date-picker';
-import { useGetAttendanceByUserIdQuery, useGetAttendanceQuery } from '../../../store/services/attendance';
+import { useGetAttendanceQuery } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { IAttendance } from '../../../store/types';
 import { useGetLatestServiceQuery } from '../../../store/services/services';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '../../../components/composite/error-boundary';
-// import ButtonComponent from '../../../components/atoms/button'; // TODO: Restored when pagination is fixed
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
-    const { data, isLoading, refetch, isFetching } = useGetAttendanceByUserIdQuery(
-        user?._id || (user?.userId as string)
-    );
+    const [page, setPage] = React.useState<number>(1);
+
+    const { data, isLoading, refetch, isFetching, isSuccess } = useGetAttendanceQuery({
+        userId: user?._id,
+        limit: 10,
+        page,
+    });
+
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
+
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) {
+            setPage(prev => prev + 1);
+        }
+    };
 
     return (
         <ErrorBoundary>
-            <MonthPicker />
             <FlatListComponent
                 padding
                 onRefresh={refetch}
-                data={data as IAttendance[]}
+                fetchMoreData={fetchMoreData}
                 columns={myAttendanceColumns}
+                data={moreData as IAttendance[]}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
@@ -97,14 +108,13 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
-    // TODO: Restored when pagination is fixed
-    // const [page, setPageCount] = React.useState<number>(1);
+    const [page, setPageCount] = React.useState<number>(1);
 
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
     const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
         {
-            // page, // TODO: Restored when pagination is fixed
-            limit: 50,
+            page,
+            limit: 10,
             campusId: user?.campus._id,
             serviceId: latestService?._id,
         },
@@ -114,16 +124,16 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    // TODO: Restored when pagination is fixed
-    // const setPage = (pageArg: number) => () => {
-    //     console.log('End reached!', page + pageArg);
-    //     setPageCount(prev => {
-    //         if (prev + pageArg > 0) return prev + pageArg;
-    //         return prev;
-    //     });
-    // };
+    const setPage = (pageArg: number) => () => {
+        if (!isFetching && !isLoading) {
+            setPageCount(prev => {
+                if (prev + pageArg > 0) return prev + pageArg;
+                return prev;
+            });
+        }
+    };
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess });
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
     return (
         <ErrorBoundary>
@@ -131,25 +141,12 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <FlatListComponent
                 padding
                 columns={campusColumns_1}
+                fetchMoreData={setPage(1)}
                 data={moreData as IAttendance[]}
-                // fetchMoreData={setPage(1)} // TODO: Restored when pagination is fixed
                 onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
             />
-            {/* TODO: Restored when pagination is fixed */}
-            {/* <ButtonComponent
-                mt={4}
-                size="xs"
-                secondary
-                width={120}
-                margin="auto"
-                onPress={setPage(1)}
-                isLoading={isLoading || isFetching}
-                isDisabled={isLoading || isFetching}
-            >
-                Load more
-            </ButtonComponent> */}
         </ErrorBoundary>
     );
 });

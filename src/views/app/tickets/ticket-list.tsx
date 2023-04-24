@@ -1,13 +1,13 @@
+import React, { memo } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
-import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
+import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
@@ -157,11 +157,21 @@ const MyTicketsList: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, isFetching, refetch } = useGetTicketsQuery({ userId });
+    const [page, setPageCount] = React.useState<number>(1);
+    const { data, isLoading, isSuccess, isFetching, refetch } = useGetTicketsQuery({ userId, limit: 10, page });
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data : [], 'createdAt'), [data]);
+    const setPage = (pageArg: number) => () => {
+        if (!isFetching && !isLoading) {
+            setPageCount(prev => {
+                if (prev + pageArg > 0) return prev + pageArg;
+                return prev;
+            });
+        }
+    };
 
-    const groupedData = useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+    const sortedData = React.useMemo(() => Utils.sortByDate(moreData || [], 'createdAt'), [moreData]);
+    const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
 
     useScreenFocus({ onFocus: refetch });
 
@@ -169,6 +179,7 @@ const MyTicketsList: React.FC = memo(() => {
         <FlatListComponent
             data={groupedData}
             onRefresh={refetch}
+            fetchMoreData={setPage(1)}
             columns={myTicketsColumns}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}
@@ -195,15 +206,26 @@ const MyTeamTicketsList: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch, isFetching } = useGetTicketsQuery({
+    const [page, setPageCount] = React.useState<number>(1);
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery({
         departmentId: department._id,
-        limit: 20,
-        page: 1,
+        limit: 10,
+        page,
     });
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data : [], 'createdAt'), [data]);
+    const setPage = (pageArg: number) => () => {
+        if (!isFetching && !isLoading) {
+            setPageCount(prev => {
+                if (prev + pageArg > 0) return prev + pageArg;
+                return prev;
+            });
+        }
+    };
 
-    const groupedData = useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+
+    const sortedData = React.useMemo(() => Utils.sortByDate(moreData || [], 'createdAt'), [moreData]);
+    const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
 
     useScreenFocus({ onFocus: refetch });
 
@@ -211,6 +233,7 @@ const MyTeamTicketsList: React.FC = memo(() => {
         <FlatListComponent
             data={groupedData}
             onRefresh={refetch}
+            fetchMoreData={setPage(1)}
             columns={teamTicketsColumns}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}
@@ -230,6 +253,7 @@ const CampusTickets: React.FC = memo(() => {
             render: (_: ITicket, key) => <TicketListRow type="campus" {..._} key={key} />,
         },
     ];
+    const [page, setPageCount] = React.useState<number>(1);
 
     const {
         user: { campus },
@@ -237,15 +261,25 @@ const CampusTickets: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, error, refetch, isFetching } = useGetTicketsQuery({
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery({
         campusId: campus._id,
-        limit: 20,
-        page: 1,
+        limit: 10,
+        page,
     });
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data : [], 'createdAt'), [data]);
+    const setPage = (pageArg: number) => () => {
+        if (!isFetching && !isLoading) {
+            setPageCount(prev => {
+                if (prev + pageArg > 0) return prev + pageArg;
+                return prev;
+            });
+        }
+    };
 
-    const groupedData = useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+
+    const sortedData = React.useMemo(() => Utils.sortByDate(moreData || [], 'createdAt'), [moreData]);
+    const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
 
     useScreenFocus({ onFocus: refetch });
 
@@ -253,6 +287,7 @@ const CampusTickets: React.FC = memo(() => {
         <FlatListComponent
             data={groupedData}
             onRefresh={refetch}
+            fetchMoreData={setPage(1)}
             columns={teamTicketsColumns}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}

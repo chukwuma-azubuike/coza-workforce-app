@@ -11,6 +11,7 @@ const TextAreaComponent = (props: ITextAreaComponent) => {
             w="100%"
             size="lg"
             {...props}
+            autoCompleteType
             _light={{
                 bg: 'gray.100',
             }}

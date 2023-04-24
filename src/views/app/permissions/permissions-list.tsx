@@ -8,6 +8,7 @@ import ErrorBoundary from '../../../components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
+import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
@@ -116,13 +117,28 @@ const MyPermissionsList: React.FC = memo(() => {
         user: { userId },
     } = useRole();
 
-    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ requestor: userId });
+    const [page, setPage] = React.useState<number>(1);
+
+    const { data, isLoading, refetch, isFetching, isSuccess } = useGetPermissionsQuery(
+        { requestor: userId, limit: 10, page },
+        {
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
+    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
     useScreenFocus({
         onFocus: refetch,
     });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'dateCreated'), [data]);
+    const fetchMoreData = () => {
+        if (!isLoading && !isFetching) {
+            setPage(prev => prev + 1);
+        }
+    };
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'dateCreated'), [moreData]);
 
     return (
         <ErrorBoundary>
@@ -130,6 +146,7 @@ const MyPermissionsList: React.FC = memo(() => {
             <FlatListComponent
                 onRefresh={refetch}
                 data={memoizedData}
+                fetchMoreData={fetchMoreData}
                 columns={myPermissionsColumns}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
@@ -152,13 +169,26 @@ const MyTeamPermissionsList: React.FC = memo(() => {
         },
     } = useRole();
 
-    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ departmentId: _id });
+    const [page, setPage] = React.useState<number>(1);
+
+    const { data, isLoading, refetch, isFetching, isSuccess } = useGetPermissionsQuery(
+        { departmentId: _id, limit: 10, page },
+        {
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
+    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
     useScreenFocus({
         onFocus: refetch,
     });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) setPage(prev => prev + 1);
+    };
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'createdAt'), [moreData]);
 
     return (
         <ErrorBoundary>
@@ -166,6 +196,7 @@ const MyTeamPermissionsList: React.FC = memo(() => {
             <FlatListComponent
                 onRefresh={refetch}
                 data={memoizedData}
+                fetchMoreData={fetchMoreData}
                 columns={teamPermissionsColumns}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
@@ -188,9 +219,26 @@ const CampusPermissions: React.FC = memo(() => {
         },
     } = useRole();
 
-    const { data, isLoading, refetch, isFetching } = useGetPermissionsQuery({ campusId: _id, limit: 20 });
+    const [page, setPage] = React.useState<number>(1);
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'createdAt'), [data]);
+    const { data, isLoading, refetch, isFetching, isSuccess } = useGetPermissionsQuery(
+        {
+            campusId: _id,
+            limit: 10,
+            page,
+        },
+        {
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
+    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+
+    const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'createdAt'), [moreData]);
+
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) setPage(prev => prev + 1);
+    };
 
     useScreenFocus({
         onFocus: refetch,
@@ -202,6 +250,7 @@ const CampusPermissions: React.FC = memo(() => {
             <FlatListComponent
                 onRefresh={refetch}
                 data={memoizedData}
+                fetchMoreData={fetchMoreData}
                 columns={teamPermissionsColumns}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}

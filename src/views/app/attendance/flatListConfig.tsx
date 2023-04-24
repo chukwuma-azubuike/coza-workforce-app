@@ -21,18 +21,22 @@ const myAttendanceColumns: IFlatListColumn[] = [
         render: (elm: IAttendance, key) => {
             return (
                 <Box
-                    key={`date-${key}`}
-                    size="42px"
-                    borderWidth={0.2}
                     pb={1}
+                    size="52px"
+                    borderWidth={0.2}
+                    key={`date-${key}`}
                     borderColor={isLightMode ? 'gray.700' : 'gray.500'}
                 >
                     <Center pt={0}>
-                        <Text bold fontSize={16} color={isLightMode ? 'gray.700' : 'gray.300'}>
+                        <Text bold fontSize={14} color={isLightMode ? 'gray.700' : 'gray.300'}>
                             {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
                         </Text>
-                        <Text bold color={isLightMode ? 'gray.700' : 'gray.300'} fontSize={12}>
+                        <Text bold color={isLightMode ? 'gray.700' : 'gray.300'} fontSize={10}>
                             {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
+                        </Text>
+                        <Text bold color={isLightMode ? 'gray.700' : 'gray.300'} fontSize={10}>
+                            {moment(elm.createdAt).format('MMMM').substring(0, 3)} /{' '}
+                            {moment(elm.createdAt).format('YY')}
                         </Text>
                     </Center>
                 </Box>

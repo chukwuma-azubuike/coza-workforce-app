@@ -26,8 +26,8 @@ const ViewWrapper = (props: IViewWrapper) => {
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
-            keyboardVerticalOffset={height + 50}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={height}
+            behavior={Platform.OS === 'ios' ? 'height' : undefined}
         >
             <ActiveView
                 _dark={{ background: 'black' }}

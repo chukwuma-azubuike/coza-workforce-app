@@ -42,14 +42,36 @@ class Utils {
 
     /**************** Sorting ****************/
 
+    /**
+     *
+     * @param arrObject Array of sort
+     * @param key Key to sort by
+     * @returns Sorted Array
+     */
+
     static sortStringAscending = (arrObject: any[], key: string) =>
         [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+
+    /**
+     *
+     * @param arrObject Array to sort
+     * @param key Key to sort by
+     * @returns Sorted Array
+     */
 
     static sortByDate = (arrObject: any[], key: string) => {
         return [...arrObject].sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
     };
 
     /*************** Filters ****************/
+
+    /**
+     *
+     * @param arr Array
+     * @param citeria filter key
+     * @returns Array
+     */
+
     static filter(arr?: any[], citeria?: any) {
         if (arr) {
             return arr.filter(elm => elm !== citeria);
@@ -58,6 +80,13 @@ class Utils {
     }
 
     /********** Date and Time Logic ***********/
+
+    /**
+     *
+     * @param date_1 string
+     * @param date_2 string
+     * @returns {string, string, string}
+     */
 
     static timeDifference(date_1: string, date_2: string) {
         if (!date_1 || !date_2) {
