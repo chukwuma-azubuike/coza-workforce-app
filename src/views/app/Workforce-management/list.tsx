@@ -7,12 +7,13 @@ import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
+import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetUsersQuery } from '../../../store/services/account';
 import {} from '../../../store/services/tickets';
-import { IUser } from '../../../store/types';
+import { IDepartment, IUser } from '../../../store/types';
 import Utils from '../../../utils';
 
 const UserListRow: React.FC<IUser> = user => {
@@ -119,19 +120,29 @@ const MyTeam: React.FC = memo(() => {
     } = useRole();
 
     const isScreenFocused = useIsFocused();
+    const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, error, refetch, isFetching } = useGetUsersQuery(
-        { departmentId: department._id },
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
+        { departmentId: department._id, limit: 10, page },
         { skip: !isScreenFocused }
     );
+
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
+
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) {
+            setPage(prev => prev + 1);
+        }
+    };
 
     useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            data={data || []}
             onRefresh={refetch}
+            data={moreData || []}
             columns={teamColumns}
+            fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}
         />
@@ -151,21 +162,34 @@ const Campus: React.FC = memo(() => {
     } = useRole();
 
     const isScreenFocused = useIsFocused();
+    const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, error, refetch, isFetching } = useGetUsersQuery(
-        { campusId: campus._id, limit: 200 },
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
+        { campusId: campus._id, limit: 10, page },
         { skip: !isScreenFocused }
     );
 
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
+
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) {
+            setPage(prev => prev + 1);
+        }
+    };
+
     useScreenFocus({ onFocus: refetch });
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(data, 'departmentName'), [isLoading, data]);
+    const sortedGroupedData = React.useMemo(
+        () => moreData && Utils.groupListByKey(Utils.sortStringAscending(moreData, 'departmentName'), 'departmentName'),
+        [isSuccess]
+    );
 
     return (
         <FlatListComponent
-            data={memoizedData}
             onRefresh={refetch}
             columns={campusColumns}
+            fetchMoreData={fetchMoreData}
+            data={sortedGroupedData || []}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}
         />
