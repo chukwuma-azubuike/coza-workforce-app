@@ -26,12 +26,6 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
     const { isLightMode } = useAppColorMode();
     const { type } = props;
 
-    const {
-        user: {
-            department: { departmentName },
-        },
-    } = useRole();
-
     return (
         <>
             {props[1]?.map((elm, index) => {
@@ -39,8 +33,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const { status, remarks, ticketSummary, category, isIndividual, isDepartment, user, departmentName } =
-                    elm;
+                const { status, category, isIndividual, isDepartment, user, departmentName } = elm;
 
                 return (
                     <TouchableNativeFeedback

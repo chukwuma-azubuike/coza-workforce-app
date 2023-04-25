@@ -76,7 +76,7 @@ const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
                 setUploadResponse(json);
             } else {
                 setLoading(false);
-                setError(json);
+                setError(JSON.stringify(json));
             }
         } catch (error) {
             setLoading(false);

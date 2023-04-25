@@ -180,7 +180,7 @@ const Campus: React.FC = memo(() => {
 
     const sortedGroupedData = React.useMemo(
         () => moreData && Utils.groupListByKey(Utils.sortStringAscending(moreData, 'departmentName'), 'departmentName'),
-        [isSuccess]
+        [moreData]
     );
 
     return (
