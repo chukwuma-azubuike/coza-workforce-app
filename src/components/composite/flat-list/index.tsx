@@ -95,16 +95,14 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 )}
                                 ListFooterComponentStyle={{ paddingBottom: 20 }}
                                 ListFooterComponent={
-                                    <ActivityIndicator hidesWhenStopped animating={loadingMore} size="small" />
+                                    <ActivityIndicator
+                                        size="small"
+                                        hidesWhenStopped
+                                        animating={loadingMore}
+                                        color={THEME_CONFIG.lightGray}
+                                    />
                                 }
                             />
-                            {loadingMore && (
-                                <ActivityIndicator
-                                    size="large"
-                                    color={THEME_CONFIG.lightGray}
-                                    style={{ paddingTop: 12, paddingBottom: -16, marginBottom: 4 }}
-                                />
-                            )}
                         </Box>
                     </If>
                     <If condition={!data[0][0]}>
@@ -152,16 +150,14 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 )}
                                 ListFooterComponentStyle={{ paddingBottom: 20 }}
                                 ListFooterComponent={
-                                    <ActivityIndicator hidesWhenStopped animating={loadingMore} size="small" />
+                                    <ActivityIndicator
+                                        size="small"
+                                        hidesWhenStopped
+                                        animating={loadingMore}
+                                        color={THEME_CONFIG.lightGray}
+                                    />
                                 }
                             />
-                            {loadingMore && (
-                                <ActivityIndicator
-                                    size="large"
-                                    color={THEME_CONFIG.lightGray}
-                                    style={{ paddingTop: 12, paddingBottom: -16, marginBottom: 4 }}
-                                />
-                            )}
                         </Box>
                     </If>
                 </>
