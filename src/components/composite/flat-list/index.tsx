@@ -48,14 +48,6 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     } = props;
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
-    const { isLightMode } = useAppColorMode();
-    const { navigate } = useNavigation();
-
-    const navigateTo = () => {
-        if (navLink) navigate(navLink as never);
-        return;
-    };
-
     const [loadingMore, setloadingMore] = React.useState<boolean>(false);
 
     const handleMore = () => {
@@ -97,30 +89,14 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                         refresh={onRefresh}
                                     />
                                 }
-                                keyExtractor={item => item.id}
+                                keyExtractor={item => item._id}
                                 renderItem={({ item }) => (
-                                    <Box
-                                        _dark={{
-                                            borderColor: 'muted.50',
-                                        }}
-                                        _light={{
-                                            borderColor: 'gray.300',
-                                        }}
-                                        flex={1}
-                                        p={2}
-                                    >
-                                        {showHeader ? (
-                                            <Text pb={3} fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
-                                                {moment(item[0]).format() !== 'Invalid date'
-                                                    ? moment(item[0]).format('Do MMMM, YYYY')
-                                                    : Utils.capitalizeFirstChar(item[0])}
-                                            </Text>
-                                        ) : null}
-                                        <VStack flex={2} py={1}>
-                                            {columns.map((column, idx) => column.render(item, idx))}
-                                        </VStack>
-                                    </Box>
+                                    <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />
                                 )}
+                                ListFooterComponentStyle={{ paddingBottom: 20 }}
+                                ListFooterComponent={
+                                    <ActivityIndicator hidesWhenStopped animating={loadingMore} size="small" />
+                                }
                             />
                             {loadingMore && (
                                 <ActivityIndicator
@@ -152,7 +128,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 onEndReached={handleMore}
                                 onEndReachedThreshold={0.1}
                                 onScrollEndDrag={handleMore}
-                                keyExtractor={item => item.id}
+                                keyExtractor={item => item._id}
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
                                         <Box bg="transparent" py={3} flex={1} textAlign="left" w="full">
@@ -167,58 +143,17 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     ) : null
                                 }
                                 renderItem={({ item }) => (
-                                    <TouchableNativeFeedback
-                                        disabled={false}
-                                        delayPressIn={0}
-                                        accessibilityRole="button"
-                                        style={{ paddingHorizontal: 20 }}
-                                        onPress={item?.onPress || navigateTo}
-                                        background={TouchableNativeFeedback.Ripple(
-                                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                                            false,
-                                            220
-                                        )}
-                                    >
-                                        <Box
-                                            borderBottomWidth={0.2}
-                                            _dark={{
-                                                borderColor: 'gray.500',
-                                            }}
-                                            _light={{
-                                                borderColor: 'gray.300',
-                                            }}
-                                            pl={['0', '4']}
-                                            pr={['0', '5']}
-                                            flex={1}
-                                            py={2}
-                                        >
-                                            <HStack
-                                                justifyContent="space-between"
-                                                px={padding ? 3 : 0}
-                                                alignItems="center"
-                                                space={[2, 3]}
-                                            >
-                                                {columns.map((column, idx) => {
-                                                    if (column.render) return column.render(item, idx);
-                                                    return (
-                                                        <Text
-                                                            color="gray.500"
-                                                            _dark={{
-                                                                color: 'gray.200',
-                                                            }}
-                                                            textAlign="left"
-                                                            key={idx}
-                                                            flex={1}
-                                                            w="full"
-                                                        >
-                                                            {item[column.dataIndex as never]}
-                                                        </Text>
-                                                    );
-                                                })}
-                                            </HStack>
-                                        </Box>
-                                    </TouchableNativeFeedback>
+                                    <ListComponent_2
+                                        item={item}
+                                        padding={padding}
+                                        columns={columns}
+                                        navLink={navLink}
+                                    />
                                 )}
+                                ListFooterComponentStyle={{ paddingBottom: 20 }}
+                                ListFooterComponent={
+                                    <ActivityIndicator hidesWhenStopped animating={loadingMore} size="small" />
+                                }
                             />
                             {loadingMore && (
                                 <ActivityIndicator
@@ -242,3 +177,92 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
 };
 
 export default FlatListComponent;
+
+const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }> = React.memo(
+    ({ item, showHeader, columns }) => {
+        return (
+            <Box
+                _dark={{
+                    borderColor: 'muted.50',
+                }}
+                _light={{
+                    borderColor: 'gray.300',
+                }}
+                flex={1}
+                p={2}
+            >
+                {showHeader ? (
+                    <Text pb={3} fontSize="md" borderColor="gray.300" borderBottomWidth={0.2}>
+                        {moment(item[0]).format() !== 'Invalid date'
+                            ? moment(item[0]).format('Do MMMM, YYYY')
+                            : Utils.capitalizeFirstChar(item[0])}
+                    </Text>
+                ) : null}
+                <VStack flex={2} py={1}>
+                    {columns?.map((column, idx) => column.render(item, idx))}
+                </VStack>
+            </Box>
+        );
+    }
+);
+
+const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }> = React.memo(
+    ({ item, padding, columns, navLink }) => {
+        const { isLightMode } = useAppColorMode();
+        const { navigate } = useNavigation();
+
+        const navigateTo = () => {
+            if (navLink) navigate(navLink as never);
+            return;
+        };
+
+        return (
+            <TouchableNativeFeedback
+                disabled={false}
+                delayPressIn={0}
+                accessibilityRole="button"
+                style={{ paddingHorizontal: 20 }}
+                onPress={item?.onPress || navigateTo}
+                background={TouchableNativeFeedback.Ripple(
+                    isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                    false,
+                    220
+                )}
+            >
+                <Box
+                    borderBottomWidth={0.2}
+                    _dark={{
+                        borderColor: 'gray.500',
+                    }}
+                    _light={{
+                        borderColor: 'gray.300',
+                    }}
+                    pl={['0', '4']}
+                    pr={['0', '5']}
+                    flex={1}
+                    py={2}
+                >
+                    <HStack justifyContent="space-between" px={padding ? 3 : 0} alignItems="center" space={[2, 3]}>
+                        {columns?.map((column, idx) => {
+                            if (column.render) return column.render(item, idx);
+                            return (
+                                <Text
+                                    color="gray.500"
+                                    _dark={{
+                                        color: 'gray.200',
+                                    }}
+                                    textAlign="left"
+                                    key={idx}
+                                    flex={1}
+                                    w="full"
+                                >
+                                    {item[column.dataIndex as never]}
+                                </Text>
+                            );
+                        })}
+                    </HStack>
+                </Box>
+            </TouchableNativeFeedback>
+        );
+    }
+);

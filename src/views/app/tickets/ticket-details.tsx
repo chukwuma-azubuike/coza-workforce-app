@@ -26,8 +26,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const {
         isQC,
-        isHOD,
-        isAHOD,
         user: { userId, department },
     } = useRole();
 
@@ -348,7 +346,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         {!ticket?.contestReplyComment && (
                             <TextAreaComponent
                                 onChangeText={handleReplyChange}
-                                value={ticket?.contestReplyComment}
                                 isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                             />
                         )}

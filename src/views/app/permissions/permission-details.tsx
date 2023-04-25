@@ -256,16 +256,10 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ? "Pastor's comment"
                                 : 'Comment'}
                         </Text>
-                        {!permissionComment && !permission?.comment && (
-                            <TextAreaComponent
-                                onChangeText={handleChange}
-                                isDisabled={!takePermissionAction}
-                                value={permissionComment || permission?.comment}
-                            />
+                        {!permissionComment && (
+                            <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
-                        {(permissionComment || permission?.comment) && (
-                            <Text flexWrap="wrap">{permissionComment || permission?.comment}</Text>
-                        )}
+                        {permissionComment && <Text flexWrap="wrap">{permission?.comment}</Text>}
                     </VStack>
                     <If condition={takePermissionAction}>
                         <HStack space={4} w="95%" justifyContent="space-between">
