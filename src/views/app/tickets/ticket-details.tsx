@@ -346,7 +346,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         {!ticket?.contestReplyComment && (
                             <TextAreaComponent
                                 onChangeText={handleReplyChange}
-                                value={ticket?.contestReplyComment}
                                 isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                             />
                         )}
