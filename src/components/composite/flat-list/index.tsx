@@ -95,7 +95,12 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 )}
                                 ListFooterComponentStyle={{ paddingBottom: 20 }}
                                 ListFooterComponent={
-                                    <ActivityIndicator hidesWhenStopped animating={loadingMore} size="small" />
+                                    <ActivityIndicator
+                                        size="small"
+                                        hidesWhenStopped
+                                        animating={loadingMore}
+                                        color={THEME_CONFIG.lightGray}
+                                    />
                                 }
                             />
                         </Box>
@@ -145,7 +150,12 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 )}
                                 ListFooterComponentStyle={{ paddingBottom: 20 }}
                                 ListFooterComponent={
-                                    <ActivityIndicator hidesWhenStopped animating={loadingMore} size="small" />
+                                    <ActivityIndicator
+                                        size="small"
+                                        hidesWhenStopped
+                                        animating={loadingMore}
+                                        color={THEME_CONFIG.lightGray}
+                                    />
                                 }
                             />
                         </Box>
