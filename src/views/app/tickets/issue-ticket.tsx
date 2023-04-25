@@ -206,14 +206,18 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             placeholder="Choose department"
                                             onValueChange={handleDepartment}
                                         >
-                                            {campusDepartments?.map((department, index) => (
-                                                <SelectItemComponent
-                                                    value={department._id}
-                                                    key={`department-${index}`}
-                                                    label={department.departmentName}
-                                                    isLoading={campusDepartmentsLoading || campusDepartmentsIsFetching}
-                                                />
-                                            ))}
+                                            {Utils.sortItem(campusDepartments, 'departmentName')?.map(
+                                                (department, index) => (
+                                                    <SelectItemComponent
+                                                        value={department._id}
+                                                        key={`department-${index}`}
+                                                        label={department.departmentName}
+                                                        isLoading={
+                                                            campusDepartmentsLoading || campusDepartmentsIsFetching
+                                                        }
+                                                    />
+                                                )
+                                            )}
                                         </SelectComponent>
                                         <FormControl.ErrorMessage
                                             fontSize="2xl"
