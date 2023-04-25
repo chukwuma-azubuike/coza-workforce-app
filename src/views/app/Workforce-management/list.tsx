@@ -124,7 +124,7 @@ const MyTeam: React.FC = memo(() => {
 
     const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
         { departmentId: department._id, limit: 10, page },
-        { skip: !isScreenFocused }
+        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
@@ -166,7 +166,7 @@ const Campus: React.FC = memo(() => {
 
     const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
         { campusId: campus._id, limit: 10, page },
-        { skip: !isScreenFocused }
+        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
@@ -181,7 +181,7 @@ const Campus: React.FC = memo(() => {
 
     const sortedGroupedData = React.useMemo(
         () => moreData && Utils.groupListByKey(Utils.sortStringAscending(moreData, 'departmentName'), 'departmentName'),
-        [isSuccess]
+        [moreData]
     );
 
     return (

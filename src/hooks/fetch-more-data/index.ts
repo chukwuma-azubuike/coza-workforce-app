@@ -23,7 +23,7 @@ const useFetchMoreData = ({
                 return prev;
             });
         }
-    }, [isSuccess]);
+    }, [isSuccess, dataSet]);
 
     return { data: data || dataSet };
 };

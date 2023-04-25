@@ -32,7 +32,7 @@ const ViewWrapper = (props: IViewWrapper) => {
             <ActiveView
                 _dark={{ background: 'black' }}
                 _light={{ background: 'white' }}
-                style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16 }}
+                style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16, paddingBottom: 0 }}
                 refreshControl={
                     onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                 }
