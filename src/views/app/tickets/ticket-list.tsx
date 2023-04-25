@@ -26,12 +26,6 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
     const { isLightMode } = useAppColorMode();
     const { type } = props;
 
-    const {
-        user: {
-            department: { departmentName },
-        },
-    } = useRole();
-
     return (
         <>
             {props[1]?.map((elm, index) => {
@@ -39,8 +33,7 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const { status, remarks, ticketSummary, category, isIndividual, isDepartment, user, departmentName } =
-                    elm;
+                const { status, category, isIndividual, isDepartment, user, departmentName } = elm;
 
                 return (
                     <TouchableNativeFeedback
@@ -158,7 +151,10 @@ const MyTicketsList: React.FC = memo(() => {
     } = useRole();
 
     const [page, setPageCount] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching, refetch } = useGetTicketsQuery({ userId, limit: 10, page });
+    const { data, isLoading, isSuccess, isFetching, refetch } = useGetTicketsQuery(
+        { userId, limit: 10, page },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const setPage = (pageArg: number) => () => {
         if (!isFetching && !isLoading) {
@@ -207,11 +203,14 @@ const MyTeamTicketsList: React.FC = memo(() => {
     } = useRole();
 
     const [page, setPageCount] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery({
-        departmentId: department._id,
-        limit: 10,
-        page,
-    });
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery(
+        {
+            departmentId: department._id,
+            limit: 10,
+            page,
+        },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const setPage = (pageArg: number) => () => {
         if (!isFetching && !isLoading) {
@@ -261,11 +260,14 @@ const CampusTickets: React.FC = memo(() => {
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery({
-        campusId: campus._id,
-        limit: 10,
-        page,
-    });
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetTicketsQuery(
+        {
+            campusId: campus._id,
+            limit: 10,
+            page,
+        },
+        { refetchOnMountOrArgChange: true }
+    );
 
     const setPage = (pageArg: number) => () => {
         if (!isFetching && !isLoading) {

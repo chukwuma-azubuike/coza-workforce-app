@@ -26,8 +26,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const {
         isQC,
-        isHOD,
-        isAHOD,
         user: { userId, department },
     } = useRole();
 
