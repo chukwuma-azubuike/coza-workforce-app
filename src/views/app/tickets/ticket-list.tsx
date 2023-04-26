@@ -6,7 +6,7 @@ import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
@@ -51,7 +51,13 @@ const TicketListRow: React.FC<TicketListRowProps> = props => {
                     >
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                <AvatarComponent
+                                    imageUrl={
+                                        isIndividual
+                                            ? user?.pictureUrl || AVATAR_FALLBACK_URL
+                                            : AVATAR_GROUP_FALLBACK_URL
+                                    }
+                                />
                                 <VStack justifyContent="space-between">
                                     {type === 'own' && (
                                         <>

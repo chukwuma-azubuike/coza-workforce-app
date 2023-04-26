@@ -3,12 +3,14 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
+import AvatarComponent from '../../../components/atoms/avatar';
 import ButtonComponent from '../../../components/atoms/button';
 import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import CardComponent from '../../../components/composite/card';
 import If from '../../../components/composite/if-container';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
 import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
@@ -216,6 +218,17 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
             <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} pt={8} pb={4} mx={3} mb={10}>
                 <VStack space={4}>
+                    <AvatarComponent
+                        size="xl"
+                        shadow={9}
+                        lastName={ticket?.user?.lastName}
+                        firstName={ticket?.user?.firstName}
+                        imageUrl={
+                            ticket?.isIndividual
+                                ? ticket?.user?.pictureUrl || AVATAR_FALLBACK_URL
+                                : AVATAR_GROUP_FALLBACK_URL
+                        }
+                    />
                     <HStack
                         space={2}
                         pb={2}
@@ -332,11 +345,16 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
                         </If>
                         <If condition={ticket?.isDepartment}>
-                            <TextAreaComponent
-                                onChangeText={handleChange}
-                                value={ticket?.contestComment}
-                                isDisabled={ticket?.status !== 'ISSUED' || ticket?.department?._id !== department?._id}
-                            />
+                            {!ticket?.contestComment && (
+                                <TextAreaComponent
+                                    onChangeText={handleChange}
+                                    value={ticket?.contestComment}
+                                    isDisabled={
+                                        ticket?.status !== 'ISSUED' || ticket?.department?._id !== department?._id
+                                    }
+                                />
+                            )}
+                            {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
                         </If>
                     </VStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">
