@@ -4,12 +4,14 @@ import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
+import AvatarComponent from '../../../components/atoms/avatar';
 import ButtonComponent from '../../../components/atoms/button';
 import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import CardComponent from '../../../components/composite/card';
 import If from '../../../components/composite/if-container';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
@@ -43,6 +45,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         isFetching,
         data: permission,
         isLoading: permissionLoading,
+        isFetching: permissionIsFetching,
         isError: permissionIsError,
         isSuccess: permissionIsSuccess,
     } = useGetPermissionByIdQuery(_id);
@@ -141,8 +144,23 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
-            <CardComponent isLoading={permissionLoading} mt={1} px={2} pt={8} pb={4} mx={3} mb={10}>
+            <CardComponent
+                mt={1}
+                px={2}
+                pt={8}
+                pb={4}
+                mx={3}
+                mb={10}
+                isLoading={permissionLoading || permissionIsFetching}
+            >
                 <VStack space={4}>
+                    <AvatarComponent
+                        size="xl"
+                        shadow={9}
+                        lastName={lastName}
+                        firstName={firstName}
+                        imageUrl={pictureUrl || AVATAR_FALLBACK_URL}
+                    />
                     <HStack
                         pb={2}
                         w="full"
