@@ -126,17 +126,12 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
             <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
-                <AvatarComponent
-                    mr={4}
-                    size="xs"
-                    badge={!!elm.clockIn}
-                    imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png"
-                />
+                <AvatarComponent mr={4} size="md" badge={!!elm.clockIn} imageUrl={AVATAR_FALLBACK_URL} />
                 <VStack justifyContent="center">
-                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.firstName)}
                     </Text>
-                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.lastName)}
                     </Text>
                 </VStack>
@@ -202,17 +197,12 @@ const campusColumns: IFlatListColumn[] = [
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
             <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
-                <AvatarComponent
-                    mr={4}
-                    size="xs"
-                    badge={!!elm.clockIn}
-                    imageUrl="https://i.ibb.co/P6k4dWF/Group-3.png"
-                />
+                <AvatarComponent mr={4} size="xs" badge={!!elm.clockIn} imageUrl={AVATAR_FALLBACK_URL} />
                 <VStack justifyContent="center">
-                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.firstName)}
                     </Text>
-                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.lastName)}
                     </Text>
                 </VStack>
@@ -306,7 +296,7 @@ const campusColumns_1: IFlatListColumn[] = [
                     imageUrl={elm.user?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
                 <VStack justifyContent="center">
-                    <Text color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.truncateString(
                             `${Utils.capitalizeFirstChar(elm.user?.firstName)} ${Utils.capitalizeFirstChar(
                                 elm.user?.lastName
@@ -314,7 +304,7 @@ const campusColumns_1: IFlatListColumn[] = [
                             20
                         )}
                     </Text>
-                    <Text bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                    <Text flexWrap="wrap" bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.truncateString(elm?.departmentName, 20)}
                     </Text>
                 </VStack>

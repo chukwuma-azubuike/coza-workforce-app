@@ -40,6 +40,7 @@ export const MyAttendance: React.FC = React.memo(() => {
                 data={moreData as IAttendance[]}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
     );
@@ -101,6 +102,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                 isLoading={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
                 refreshing={isLoading || isFetching}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
     );
@@ -146,6 +148,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
     );
