@@ -1,4 +1,5 @@
 import { IReportFormProps } from '../../views/app/reports/forms/types';
+import store from '..';
 
 // General types
 export interface ILog {
@@ -205,6 +206,18 @@ export interface ICreateTicketPayload {
     issuedBy: IUser['_id'];
 }
 
+export interface ICreateServicePayload {
+    serviceType: string;
+    serviceName: string;
+    serviceTag: string;
+    startTime: string | Date;
+    startDate: string | Date;
+    endTime: string | Date;
+    clockinTime: string | Date;
+    leaderLateTime: string | Date;
+    workerLateTime: string | Date;
+}
+
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
 
 // Permissions
@@ -340,6 +353,20 @@ export interface IService {
         state: string;
         updatedAt: string;
     };
+}
+export interface ICreateService {
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    serviceTime: number | null;
+    clockInStartTime: number | null;
+    workersLateStartTime: number | null;
+    leadersLateStartTime: number | null;
+    serviceEndTime: number | null;
+    rangeToClockIn: number;
+    isGlobalService: boolean;
 }
 
 // Score

@@ -17,7 +17,7 @@ import Tickets from '../views/app/tickets';
 import TicketDetails from '../views/app/tickets/ticket-details';
 import IssueTicket from '../views/app/tickets/issue-ticket';
 import { IIconTypes } from '../utils/types';
-// import ServiceManagement from '../views/app/service-management';
+import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
 import PermissionDetails from '../views/app/permissions/permission-details';
@@ -31,12 +31,12 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import ManualClockin from '../views/app/manual-clockin';
-import WorkforceManagement from '../views/app/workforce-management';
 import EditProfile from '../views/app/profile/edit-profile';
-import UserDetails from '../views/app/workforce-management/user-details';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
+import WorkforceManagement from '../views/app/Workforce-management';
+import UserDetails from '../views/app/Workforce-management/user-details';
 
 export interface IAppRoute {
     name: string;
@@ -262,15 +262,15 @@ const AppRoutes: IAppRoute[] = [
     //     inMenuBar: false,
     //     icon: { name: 'hand-left-outline', type: 'ionicon' },
     // },
-    // {
-    //     name: 'Service management',
-    //     component: ServiceManagement,
-    //     options: { title: 'Service management' },
-    //     submenus: [],
-    //     users: ['QC', 'programs'],
-    //     inMenuBar: false,
-    //     icon: { name: 'church', type: 'material-community' },
-    // },
+    {
+        name: 'Service management',
+        component: ServiceManagement,
+        options: { title: 'Service management' },
+        submenus: [],
+        users: ['QC', 'programs'],
+        inMenuBar: false,
+        icon: { name: 'church', type: 'material-community' },
+    },
     {
         name: 'Workforce management',
         component: WorkforceManagement,
