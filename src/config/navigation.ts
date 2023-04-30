@@ -17,7 +17,6 @@ import Tickets from '../views/app/tickets';
 import TicketDetails from '../views/app/tickets/ticket-details';
 import IssueTicket from '../views/app/tickets/issue-ticket';
 import { IIconTypes } from '../utils/types';
-import ServiceManagement from '../views/app/service-management';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
 import PermissionDetails from '../views/app/permissions/permission-details';
@@ -37,6 +36,8 @@ import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
 import WorkforceManagement from '../views/app/Workforce-management';
 import UserDetails from '../views/app/Workforce-management/user-details';
+import ServiceManagement from '../views/app/service-management';
+import CreateServiceManagement from '../views/app/service-management/service-management';
 
 export interface IAppRoute {
     name: string;
@@ -266,11 +267,22 @@ const AppRoutes: IAppRoute[] = [
         name: 'Service management',
         component: ServiceManagement,
         options: { title: 'Service management' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'Create service',
+                component: CreateServiceManagement,
+                options: { title: 'Create service' },
+                submenus: [],
+                users: ['QC', 'programs'],
+                inMenuBar: false,
+                icon: { name: 'church', type: 'material-community' },
+            },
+        ],
         users: ['QC', 'programs'],
         inMenuBar: false,
         icon: { name: 'church', type: 'material-community' },
     },
+
     {
         name: 'Workforce management',
         component: WorkforceManagement,
