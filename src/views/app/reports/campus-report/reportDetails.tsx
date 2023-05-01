@@ -243,7 +243,10 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         () => submittedReports?.map(report => report?.report?._id),
         [submittedReports]
     );
-    const incidentReportIds = React.useMemo(() => data?.incidentReport.map(report => report), [data]);
+    const incidentReportIds = React.useMemo(
+        () => data?.incidentReport.map(report => report?.incidentReport?._id),
+        [data]
+    );
 
     const INITIAL_VALUES = {
         campusId,
