@@ -162,9 +162,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                     <AvatarComponent
                         size="xl"
                         shadow={9}
-                        lastName={lastName}
-                        firstName={firstName}
-                        imageUrl={pictureUrl || AVATAR_FALLBACK_URL}
+                        lastName={permission?.requestor?.lastName}
+                        firstName={permission?.requestor?.firstName}
+                        imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
                     <HStack
                         pb={2}
@@ -178,7 +178,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Requester
                         </Text>
-                        <Text>{`${firstName} ${lastName}`}</Text>
+                        <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
                     </HStack>
                     <HStack
                         pb={2}

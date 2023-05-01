@@ -217,6 +217,7 @@ class Utils {
         }
 
         for (let i = 0; i < array.length; i++) {
+            if (typeof array[i] === 'undefined') continue;
             let keyInMap = array[i][key];
 
             if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
