@@ -26,6 +26,8 @@ import moment from 'moment';
 import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '../../../store/types';
 import Utils from '../../../utils';
+import GlobalReportDetails from './gsp-report';
+import { GlobalReportProvider } from './gsp-report/context';
 
 export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
     const navigation = useNavigation();
@@ -263,6 +265,11 @@ const Reports: React.FC = () => {
                         columns={incidentReportColumns}
                         data={departmentAndIncidentReport?.incidentReport || []}
                     />
+                </If>
+                <If condition={isGlobalPastor}>
+                    <GlobalReportProvider>
+                        <GlobalReportDetails />
+                    </GlobalReportProvider>
                 </If>
                 <If condition={!isGlobalPastor && !isCampusPastor}>
                     <StaggerButtonComponent

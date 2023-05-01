@@ -56,7 +56,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
 
     return (
         <>
-            {data && data[0] ? (
+            {isLoading ? (
+                <FlatListSkeleton />
+            ) : data && data[0] ? (
                 <>
                     {/* Is an array of arrays */}
                     <If condition={data[0][0]}>
@@ -152,8 +154,6 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                         </Box>
                     </If>
                 </>
-            ) : isLoading ? (
-                <FlatListSkeleton />
             ) : (
                 showEmpty && (
                     <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
