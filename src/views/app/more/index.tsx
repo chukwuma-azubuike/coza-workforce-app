@@ -17,7 +17,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     const routeFilters = ['Profile', 'Notifications'];
 
     const roleFilterArray = [
-        { role: isGlobalPastor, routes: ['Reports', 'Manual clock in'] },
+        { role: isGlobalPastor, routes: ['Manual clock in'] },
         { role: (isHOD && !isQC) || (isAHOD && !isQC), routes: ['Manual clock in'] },
     ];
 
