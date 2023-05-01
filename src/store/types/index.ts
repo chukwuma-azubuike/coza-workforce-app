@@ -415,7 +415,7 @@ export interface IServiceReportPayload extends IReportFormProps {
     imageUrl: string | null;
 }
 
-export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
+export interface IIncidentReportPayload extends IReportFormProps {
     details: string;
     imageUrl: string;
     incident: string;

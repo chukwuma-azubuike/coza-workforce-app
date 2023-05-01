@@ -29,6 +29,8 @@ export const permissionsServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    tagTypes: [SERVICE_URL],
+
     endpoints: endpoint => ({
         requestPermission: endpoint.mutation<IPermission, IRequestPermissionPayload>({
             query: body => ({
@@ -41,11 +43,15 @@ export const permissionsServiceSlice = createApi({
         }),
 
         approvePermission: endpoint.mutation<IPermission, IApprovePermission>({
-            query: body => ({
-                url: `/${SERVICE_URL}/approve/${body.permissionId}/${body.approverId}`,
+            query: ({ permissionId, approverId, ...patch }) => ({
+                url: `/${SERVICE_URL}/approve/${permissionId}/${approverId}`,
                 method: REST_API_VERBS.PATCH,
-                body: { comment: body.comment },
+                body: patch,
             }),
+
+            invalidatesTags: [SERVICE_URL],
+
+            transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
         declinePermission: endpoint.mutation<IPermission, IDeclinePermission>({
@@ -54,6 +60,10 @@ export const permissionsServiceSlice = createApi({
                 method: REST_API_VERBS.PATCH,
                 body: { comment: body.comment },
             }),
+
+            invalidatesTags: [SERVICE_URL],
+
+            transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
         getPermissions: endpoint.query<IPermission[], Omit<IDefaultQueryParams, 'userId'>>({

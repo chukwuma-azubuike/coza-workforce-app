@@ -9,7 +9,6 @@ import FlatListComponent, { IFlatListColumn } from '../../../components/composit
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
-import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetPermissionsQuery } from '../../../store/services/permissions';
@@ -105,7 +104,7 @@ const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     );
 };
 
-const MyPermissionsList: React.FC = memo(() => {
+const MyPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
     const myPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
@@ -127,10 +126,6 @@ const MyPermissionsList: React.FC = memo(() => {
     );
 
     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
-
-    useScreenFocus({
-        onFocus: refetch,
-    });
 
     const fetchMoreData = () => {
         if (!isLoading && !isFetching) {
@@ -155,7 +150,7 @@ const MyPermissionsList: React.FC = memo(() => {
     );
 });
 
-const MyTeamPermissionsList: React.FC = memo(() => {
+const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
@@ -171,8 +166,8 @@ const MyTeamPermissionsList: React.FC = memo(() => {
 
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, refetch, isFetching, isSuccess } = useGetPermissionsQuery(
-        { departmentId: _id, limit: 10, page },
+    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
+        { departmentId: _id, limit: 20, page },
         {
             refetchOnMountOrArgChange: true,
         }
@@ -180,32 +175,36 @@ const MyTeamPermissionsList: React.FC = memo(() => {
 
     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
-    useScreenFocus({
-        onFocus: refetch,
-    });
-
     const fetchMoreData = () => {
-        if (!isFetching && !isLoading) setPage(prev => prev + 1);
+        if (!isFetching && !isLoading && data) {
+            setPage(prev => prev + 1);
+        }
     };
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'createdAt'), [moreData]);
+    const memoizedData = useMemo(
+        () =>
+            Utils.groupListByKey(
+                Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                'createdAt'
+            ),
+        [updatedListItem?._id, moreData]
+    );
 
     return (
         <ErrorBoundary>
             {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
             <FlatListComponent
-                onRefresh={refetch}
                 data={memoizedData}
+                refreshing={isFetching}
                 fetchMoreData={fetchMoreData}
                 columns={teamPermissionsColumns}
                 isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
             />
         </ErrorBoundary>
     );
 });
 
-const CampusPermissions: React.FC = memo(() => {
+const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'dateCreated',
@@ -239,10 +238,6 @@ const CampusPermissions: React.FC = memo(() => {
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) setPage(prev => prev + 1);
     };
-
-    useScreenFocus({
-        onFocus: refetch,
-    });
 
     return (
         <ErrorBoundary>

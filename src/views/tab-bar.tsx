@@ -12,7 +12,7 @@ const inMenuBarNames = AppRoutes.map(route => {
     if (route.inMenuBar) return route.name;
 });
 
-const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
+const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) => {
     const { isWorker, isQC } = useRole();
     const { isLightMode } = useAppColorMode();
 
@@ -142,6 +142,6 @@ const TabBar: React.FC<any> = ({ state, descriptors, navigation }) => {
             })}
         </HStack>
     );
-};
+});
 
 export default TabBar;

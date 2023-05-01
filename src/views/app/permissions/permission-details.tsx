@@ -23,18 +23,12 @@ import {
 import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
 
 const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+    const permissionParams = props.route.params as IPermission;
+
     const {
         requestor: { firstName, lastName, pictureUrl, department, _id: requestorId },
-        startDate,
-        endDate,
-        description,
-        dateCreated,
-        status,
-        createdAt,
-        comment,
-        category,
         _id,
-    } = props.route.params as IPermission;
+    } = permissionParams;
 
     const navigate = props.navigation;
 
@@ -62,6 +56,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             isError: approveIsError,
             isLoading: approveIsLoading,
             error: approveError,
+            data: approveData,
         },
     ] = useApprovePermissionMutation();
 
@@ -73,6 +68,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             isError: declineIsError,
             isLoading: declineIsLoading,
             error: declineError,
+            data: declineData,
         },
     ] = useDeclinePermissionMutation();
 
@@ -83,8 +79,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         },
     });
 
-    const handleApprove = () =>
+    const handleApprove = () => {
         approve({ approverId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
+    };
 
     const handleDecline = () =>
         decline({ declinerId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
@@ -103,7 +100,11 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             approveReset();
-            navigate.goBack();
+            navigate.navigate('Permissions', {
+                ...permissionParams,
+                ...approveData,
+                requestor: permissionParams.requestor,
+            });
         }
         if (approveIsError) {
             setModalState({
@@ -123,7 +124,11 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             declineReset();
-            navigate.goBack();
+            navigate.navigate('Permissions', {
+                ...permissionParams,
+                ...declineData,
+                requestor: permissionParams.requestor,
+            });
         }
         if (declineIsError) {
             setModalState({
@@ -137,10 +142,10 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     const takePermissionAction = React.useMemo(() => {
         if (requestorId === user._id) return false;
         if (isQC && permission?.department._id !== user.department._id) return false;
-        if (status !== 'PENDING') return false;
+        if (permission?.status !== 'PENDING') return false;
 
         return true;
-    }, [permission, status, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
+    }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
@@ -213,7 +218,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Date Requested
                         </Text>
-                        <Text>{moment(createdAt).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.createdAt).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
                     <HStack
@@ -227,7 +232,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Start Date
                         </Text>
-                        <Text>{moment(startDate).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.startDate).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
                     <HStack
@@ -241,17 +246,17 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             End Date
                         </Text>
-                        <Text>{moment(endDate).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.endDate).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
                     <VStack pb={2} w="full" space={2}>
                         <Text alignSelf="flex-start" bold>
                             Description
                         </Text>
-                        {!description && (
-                            <TextAreaComponent value={description} isDisabled={Platform.OS !== 'android'} />
+                        {!permission?.description && (
+                            <TextAreaComponent value={permission?.description} isDisabled={Platform.OS !== 'android'} />
                         )}
-                        {description && <Text flexWrap="wrap">{description}</Text>}
+                        {permission?.description && <Text flexWrap="wrap">{permission?.description}</Text>}
                     </VStack>
                     <HStack
                         pb={2}
@@ -274,10 +279,10 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ? "Pastor's comment"
                                 : 'Comment'}
                         </Text>
-                        {!permissionComment && (
+                        {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
-                        {permissionComment && <Text flexWrap="wrap">{permission?.comment}</Text>}
+                        {permission?.comment && <Text flexWrap="wrap">{permission?.comment}</Text>}
                     </VStack>
                     <If condition={takePermissionAction}>
                         <HStack space={4} w="95%" justifyContent="space-between">
