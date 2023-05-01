@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import uniqBy from 'lodash/uniqBy';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
@@ -118,7 +119,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ up
 
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, refetch, isFetching, isSuccess } = useGetPermissionsQuery(
+    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
         { requestor: userId, limit: 10, page },
         {
             refetchOnMountOrArgChange: true,
@@ -128,23 +129,29 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ up
     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
     const fetchMoreData = () => {
-        if (!isLoading && !isFetching) {
-            setPage(prev => prev + 1);
+        if (!isFetching && !isLoading) {
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
 
-    const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'dateCreated'), [moreData]);
+    const memoizedData = useMemo(
+        () => Utils.groupListByKey(uniqBy([updatedListItem, ...(moreData || [])], '_id'), 'createdAt'),
+        [moreData]
+    );
 
     return (
         <ErrorBoundary>
             {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
             <FlatListComponent
-                onRefresh={refetch}
                 data={memoizedData}
+                refreshing={isFetching}
                 fetchMoreData={fetchMoreData}
                 columns={myPermissionsColumns}
                 isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
             />
         </ErrorBoundary>
     );
@@ -176,8 +183,12 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo((
     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
     const fetchMoreData = () => {
-        if (!isFetching && !isLoading && data) {
-            setPage(prev => prev + 1);
+        if (!isFetching && !isLoading) {
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
 
@@ -220,7 +231,7 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ up
 
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, refetch, isFetching, isSuccess } = useGetPermissionsQuery(
+    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
         {
             campusId: _id,
             limit: 10,
@@ -236,19 +247,23 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ up
     const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'createdAt'), [moreData]);
 
     const fetchMoreData = () => {
-        if (!isFetching && !isLoading) setPage(prev => prev + 1);
+        if (!isFetching && !isLoading) {
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
+        }
     };
-
     return (
         <ErrorBoundary>
             {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
             <FlatListComponent
-                onRefresh={refetch}
                 data={memoizedData}
+                refreshing={isFetching}
                 fetchMoreData={fetchMoreData}
                 columns={teamPermissionsColumns}
                 isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
             />
         </ErrorBoundary>
     );

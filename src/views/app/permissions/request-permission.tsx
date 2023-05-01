@@ -8,7 +8,7 @@ import { DateTimePickerComponent } from '../../../components/composite/date-pick
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '../../../store/services/permissions';
 import { Formik, FormikConfig } from 'formik';
 import { IRequestPermissionPayload } from '../../../store/types';
@@ -17,44 +17,44 @@ import { RequestPermissionSchema } from '../../../utils/schemas';
 import useScreenFocus from '../../../hooks/focus';
 import moment from 'moment';
 import ErrorBoundary from '../../../components/composite/error-boundary';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const RequestPermission: React.FC = () => {
+const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { user } = useRole();
-
-    const { goBack } = useNavigation();
-
+    const { navigate } = navigation;
     const { setModalState } = useModal();
 
     const { data: categories } = useGetPermissionCategoriesQuery();
+    const [requestPermission, { reset, isLoading }] = useRequestPermissionMutation();
 
-    const [requestPermission, { isSuccess, isError, reset, isLoading }] = useRequestPermissionMutation();
-
-    const handleSubmit: FormikConfig<IRequestPermissionPayload>['onSubmit'] = (values, { resetForm }) => {
-        requestPermission({
+    const handleSubmit: FormikConfig<IRequestPermissionPayload>['onSubmit'] = async (values, { resetForm }) => {
+        const result = await requestPermission({
             ...values,
             startDate: moment(values.startDate).unix(),
             endDate: moment(values.endDate).unix(),
         });
-        resetForm(INITIAL_VALUES);
-    };
 
-    React.useEffect(() => {
-        if (isSuccess) {
+        if ('data' in result) {
             setModalState({
                 message: 'Your request has been sent',
                 status: 'success',
             });
             reset();
-            goBack();
+            navigate('Permissions', {
+                ...result?.data,
+                categoryName: categories?.find(category => category._id === values.categoryId)?.name,
+                requestor: user,
+            });
+            resetForm(INITIAL_VALUES);
         }
-        if (isError) {
+
+        if ('error' in result) {
             setModalState({
                 message: 'Oops something went wrong',
                 status: 'error',
             });
-            reset();
         }
-    }, [isSuccess, isError]);
+    };
 
     const iconMap = {
         medical: {
