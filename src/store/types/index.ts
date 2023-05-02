@@ -468,6 +468,10 @@ export interface IAllService {
         long: number;
         lat: number;
     };
+    serviceTime: string;
+    workersLateStartTime: string;
+    leadersLateStartTime: string;
+    serviceEndTime: string;
     clockInStartTime: string;
     clockInEndTime: string;
     rangeToClockIn: number;

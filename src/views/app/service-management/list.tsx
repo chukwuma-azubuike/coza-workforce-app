@@ -22,14 +22,14 @@ const ServiceListRow: React.FC<IAllService> = service => {
     const { isLightMode } = useAppColorMode();
 
     const handlePress = () => {
-        navigation.navigate('User Profile' as never, service as never);
+        navigation.navigate('Create service' as never, service as never);
     };
 
     return (
         <TouchableNativeFeedback
             disabled={false}
             delayPressIn={0}
-            // onPress={handlePress}
+            onPress={handlePress}
             accessibilityRole="button"
             background={TouchableNativeFeedback.Ripple(
                 isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
@@ -46,8 +46,8 @@ const ServiceListRow: React.FC<IAllService> = service => {
                             {service?.name}
                         </Text>
                         <Text fontSize="sm" color="gray.400">
-                            {`${moment(service?.clockInStartTime).format('DD-MM-YYYY')} - ${moment(
-                                service?.clockInStartTime
+                            {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(
+                                service?.serviceTime
                             ).format('hh:mm a')}`}
                         </Text>
                     </VStack>

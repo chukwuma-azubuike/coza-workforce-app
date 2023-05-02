@@ -12,8 +12,8 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
-import { useCreateServiceMutation } from '../../../store/services/services';
-import { ICreateServicePayload } from '../../../store/types';
+import { useCreateServiceMutation, useUpdateServiceMutation } from '../../../store/services/services';
+import { IAllService, ICreateServicePayload } from '../../../store/types';
 import Utils from '../../../utils';
 import { CreateServiceSchema } from '../../../utils/schemas';
 
@@ -30,13 +30,21 @@ const tags: any = [
 const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { goBack, setOptions } = useNavigation();
 
-    const {
-        user: { campus, userId },
-    } = useRole();
+    const propItems = props.route.params as IAllService;
 
     const { setModalState } = useModal();
 
     const [createService, { isError, isLoading, isSuccess, error, reset }] = useCreateServiceMutation();
+    const [
+        updateService,
+        {
+            isError: isErrorUpdate,
+            isLoading: isLoadingUpdate,
+            isSuccess: isSuccessUpdate,
+            error: errorUpdate,
+            error: resetUpdate,
+        },
+    ] = useUpdateServiceMutation();
 
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.clockinTime);
@@ -51,19 +59,36 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         const serviceEndTime = Utils.concatDateTimeToEpoc(values.startDate, values.endTime);
         const serviceTime = Utils.concatDateTimeToEpoc(values.startDate, values.startTime);
         const workersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.workerLateTime);
-        createService({
-            clockInStartTime,
-            coordinates,
-            isGlobalService,
-            leadersLateStartTime,
-            name,
-            rangeToClockIn,
-            serviceEndTime,
-            serviceTime,
-            workersLateStartTime,
-        });
+
+        if (propItems?._id) {
+            updateService({
+                _id: propItems?._id,
+                clockInStartTime,
+                coordinates,
+                isGlobalService,
+                leadersLateStartTime,
+                name,
+                rangeToClockIn,
+                serviceEndTime,
+                serviceTime,
+                workersLateStartTime,
+            });
+        } else {
+            createService({
+                clockInStartTime,
+                coordinates,
+                isGlobalService,
+                leadersLateStartTime,
+                name,
+                rangeToClockIn,
+                serviceEndTime,
+                serviceTime,
+                workersLateStartTime,
+            });
+        }
 
         console.log({
+            _id: propItems._id,
             clockInStartTime,
             coordinates,
             isGlobalService,
@@ -76,19 +101,19 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         });
         // resetForm(INITIAL_VALUES);
     };
-
+    const serviceType = propItems?._id ? (propItems?.isGlobalService ? 'global' : 'local') : '';
     const INITIAL_VALUES: ICreateServicePayload = {
-        startTime: new Date(),
-        startDate: new Date(),
-        clockinTime: new Date(),
-        endTime: new Date(),
-        leaderLateTime: new Date(),
-        workerLateTime: new Date(),
+        startTime: propItems?.serviceTime || new Date(),
+        startDate: propItems?.serviceTime || new Date(),
+        clockinTime: propItems?.clockInStartTime || new Date(),
+        endTime: propItems?.serviceEndTime || new Date(),
+        leaderLateTime: propItems?.leadersLateStartTime || new Date(),
+        workerLateTime: propItems?.workersLateStartTime || new Date(),
         serviceTag: '',
-        serviceType: '',
-        serviceName: '',
+        serviceType: serviceType || '',
+        serviceName: propItems?.name || '',
     } as ICreateServicePayload;
-    console.log(error);
+
     React.useEffect(() => {
         if (isSuccess) {
             setModalState({
@@ -112,11 +137,34 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         }
     }, [isSuccess, isError]);
 
+    React.useEffect(() => {
+        if (isSuccessUpdate) {
+            setModalState({
+                message: 'Service successfully updated',
+                defaultRender: true,
+                status: 'success',
+                duration: 3,
+            });
+            goBack();
+            resetUpdate();
+        }
+
+        if (isErrorUpdate) {
+            setModalState({
+                message: errorUpdate?.data?.message || 'Oops, something went wrong!',
+                defaultRender: true,
+                status: 'error',
+                duration: 3,
+            });
+            reset();
+        }
+    }, [isSuccessUpdate, isErrorUpdate]);
+
     const isScreenFocused = useIsFocused();
 
     useFocusEffect(
         React.useCallback(() => {
-            setOptions({ title: 'Create Service' });
+            setOptions({ title: `${propItems?._id ? 'Update' : 'Create'} Service` });
             return () => {};
         }, [isScreenFocused])
     );
@@ -217,15 +265,18 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                 <HStack justifyContent="space-between">
                                     <DateTimePickerComponent
                                         label="Date"
+                                        mode="date"
                                         fieldName="startDate"
-                                        minimumDate={new Date()}
                                         onSelectDate={setFieldValue}
+                                        value={values.startDate}
+                                        // minimumDate={new Date()}
                                     />
                                     <DateTimePickerComponent
                                         label="Service Start Time"
                                         mode="time"
                                         fieldName="startTime"
                                         onSelectDate={setFieldValue}
+                                        value={values.startDate}
                                     />
                                 </HStack>
 
@@ -234,15 +285,15 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         label="Clock-in Time"
                                         mode="time"
                                         fieldName="clockinTime"
-                                        minimumDate={new Date()}
                                         onSelectDate={setFieldValue}
+                                        value={values.clockinTime}
                                     />
                                     <DateTimePickerComponent
                                         label="Leaders Late Time"
                                         mode="time"
                                         fieldName="leaderLateTime"
-                                        minimumDate={new Date()}
                                         onSelectDate={setFieldValue}
+                                        value={values.leaderLateTime}
                                     />
                                 </HStack>
 
@@ -251,22 +302,22 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         label="Workers Late Time"
                                         mode="time"
                                         fieldName="workerLateTime"
-                                        minimumDate={new Date()}
                                         onSelectDate={setFieldValue}
+                                        value={values.workerLateTime}
                                     />
                                     <DateTimePickerComponent
                                         label="Service End Time"
                                         mode="time"
                                         fieldName="endTime"
-                                        minimumDate={new Date()}
                                         onSelectDate={setFieldValue}
+                                        value={values.endTime}
                                     />
                                 </HStack>
 
                                 <FormControl>
                                     <ButtonComponent
                                         mt={4}
-                                        isLoading={isLoading}
+                                        isLoading={isLoading || isLoadingUpdate}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
                                         Submit

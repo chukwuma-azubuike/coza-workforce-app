@@ -247,7 +247,6 @@ class Utils {
     /************** convertToEpoc ***************/
 
     static concatDateTimeToEpoc = (date: string | Date, time: string | Date) => {
-        console.log(time, date, 'eeeeeee');
         const concatedTime = `${moment(date).format('YYYY-MM-DD')}T${moment(time).format('HH:mm:ss')}.000Z`;
         const convertedDateTime = moment(concatedTime).unix();
         const convertedDate = moment(date).unix();

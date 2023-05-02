@@ -23,9 +23,9 @@ export const servicesServiceSlice = createApi({
             }),
         }),
 
-        updateService: endpoint.mutation<'', ''>({
+        updateService: endpoint.mutation<void, ICreateService>({
             query: args => ({
-                url: `${SERVICE_URL}/${args}`,
+                url: `${SERVICE_URL}/service/updateService${args._id}`,
                 method: REST_API_VERBS.PUT,
                 body: args,
             }),
