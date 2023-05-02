@@ -26,7 +26,11 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
 
@@ -110,7 +114,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
-    const [page, setPageCount] = React.useState<number>(1);
+    const [page, setPage] = React.useState<number>(1);
 
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
     const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
@@ -126,12 +130,13 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    const setPage = (pageArg: number) => () => {
+    const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            setPageCount(prev => {
-                if (prev + pageArg > 0) return prev + pageArg;
-                return prev;
-            });
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
 
@@ -143,7 +148,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <FlatListComponent
                 padding
                 columns={campusColumns_1}
-                fetchMoreData={setPage(1)}
+                fetchMoreData={fetchMoreData}
                 data={moreData as IAttendance[]}
                 onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
