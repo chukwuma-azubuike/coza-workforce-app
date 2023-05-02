@@ -6,6 +6,9 @@ import StaggerButtonComponent from '../../../components/composite/stagger';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import useRole from '../../../hooks/role';
 import { useGetServicesQuery } from '../../../store/services/services';
+import { AddButtonComponent } from '../../../components/atoms/button';
+import { AllService } from './list';
+import TabComponent from '../../../components/composite/tabs';
 
 const ROUTES = [{ key: 'serviceManagement', title: 'Service Management' }];
 
@@ -15,30 +18,26 @@ const ServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     const gotoService = () => {
         navigation.navigate('Create service');
     };
-    const { data, isLoading, isSuccess, isFetching, refetch } = useGetServicesQuery();
-    console.log(data);
-    // const renderScene = SceneMap({
-    //     myTickets: MyTicketsList,
-    //     teamTickets: MyTeamTicketsList,
-    //     campusTickets: CampusTickets,
-    // });
-
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
 
     const [index, setIndex] = React.useState(0);
 
+    const renderScene = SceneMap({
+        serviceManagement: AllService,
+    });
+
+    const allRoutes = React.useMemo(() => {
+        return [ROUTES[0]];
+    }, []);
+
     return (
         <ViewWrapper>
-            <StaggerButtonComponent
-                buttons={[
-                    {
-                        color: 'blue.400',
-                        iconType: 'ionicon',
-                        iconName: 'person-outline',
-                        handleClick: gotoService,
-                    },
-                ]}
+            <TabComponent
+                onIndexChange={setIndex}
+                renderScene={renderScene}
+                tabBarScroll={allRoutes.length > 2}
+                navigationState={{ index, routes: allRoutes }}
             />
+            <AddButtonComponent zIndex={10} onPress={gotoService} />
         </ViewWrapper>
     );
 };

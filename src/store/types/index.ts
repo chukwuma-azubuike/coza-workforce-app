@@ -459,3 +459,18 @@ export interface IDepartmentReportResponse {
     };
     incidentReport: unknown[];
 }
+
+export interface IAllService {
+    tag: [];
+    _id: string;
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    clockInStartTime: string;
+    clockInEndTime: string;
+    rangeToClockIn: number;
+    isGlobalService: boolean;
+    createdAt: string;
+}
