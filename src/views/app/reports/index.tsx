@@ -156,27 +156,21 @@ const Reports: React.FC = () => {
 
     const { data } = useGetDepartmentalReportQuery(
         {
-            departmentId: user?.department._id as string,
+            departmentId: user?.department?._id as string,
             serviceId: latestServiceData?._id as string,
             campusId: user?.campus?._id as string,
         },
         {
-            skip: !user?.department._id,
+            skip: !user?.department?._id,
         }
     );
-
-    const {
-        user: {
-            department: { _id },
-        },
-    } = useRole();
 
     const {
         refetch: reportsRefetch,
         isLoading: reportsIsLoading,
         isFetching: reportsIsFetching,
         data: departmentAndIncidentReport,
-    } = useGetDepartmentReportsListQuery(_id);
+    } = useGetDepartmentReportsListQuery(user?.department?._id);
 
     useScreenFocus({
         onFocus: () => {
@@ -253,7 +247,6 @@ const Reports: React.FC = () => {
                 </If>
                 <If condition={isHOD || isAHOD}>
                     <FlatListComponent
-                        showEmpty={false}
                         columns={reportColumns}
                         onRefresh={reportsRefetch}
                         isLoading={reportsIsLoading || reportsIsFetching}

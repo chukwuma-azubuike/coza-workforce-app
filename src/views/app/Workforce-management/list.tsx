@@ -121,7 +121,7 @@ const MyTeam: React.FC = memo(() => {
     const isScreenFocused = useIsFocused();
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
+    const { data, isLoading, isSuccess, isFetching } = useGetUsersQuery(
         { departmentId: department._id, limit: 10, page },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
@@ -134,16 +134,13 @@ const MyTeam: React.FC = memo(() => {
         }
     };
 
-    useScreenFocus({ onFocus: refetch });
-
     return (
         <FlatListComponent
-            onRefresh={refetch}
             data={moreData || []}
             columns={teamColumns}
+            refreshing={isFetching}
             fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
         />
     );
 });
@@ -163,7 +160,7 @@ const Campus: React.FC = memo(() => {
     const isScreenFocused = useIsFocused();
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
+    const { data, isLoading, isSuccess, isFetching } = useGetUsersQuery(
         { campusId: campus._id, limit: 10, page },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
@@ -172,11 +169,13 @@ const Campus: React.FC = memo(() => {
 
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
-
-    useScreenFocus({ onFocus: refetch });
 
     const sortedGroupedData = React.useMemo(
         () => moreData && Utils.groupListByKey(Utils.sortStringAscending(moreData, 'departmentName'), 'departmentName'),
@@ -185,12 +184,11 @@ const Campus: React.FC = memo(() => {
 
     return (
         <FlatListComponent
-            onRefresh={refetch}
             columns={campusColumns}
+            refreshing={isFetching}
             fetchMoreData={fetchMoreData}
             data={sortedGroupedData || []}
             isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
         />
     );
 });
