@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { FormControl, HStack, Text } from 'native-base';
+import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
 import { GlobalReportContext } from './context';
 import { TouchableNativeFeedback } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
@@ -14,16 +14,26 @@ import { useGetServicesQuery } from '../../../../store/services/services';
 import { IService } from '../../../../store/types';
 import moment from 'moment';
 import Utils from '../../../../utils';
+import useMediaQuery from '../../../../hooks/media-query';
+import If from '../../../../components/composite/if-container';
+import CampusReportDetails from './campusReportDetails';
 
 export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
     const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
-    const { serviceId } = React.useContext(GlobalReportContext);
-
-    // const
+    const { isMobile } = useMediaQuery();
+    const { serviceId, setCampusId, setCampusName } = React.useContext(GlobalReportContext);
 
     const handlePress = () => {
-        navigation.navigate('Campus Report' as never, { ...props, serviceId } as never);
+        setCampusId(props?.campusId);
+        setCampusName(props?.campusName);
+
+        if (isMobile) {
+            navigation.navigate(
+                'Campus Report' as never,
+                { ...props, serviceId, campusName: props?.campusName } as never
+            );
+        }
     };
 
     return (
@@ -51,7 +61,7 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {props?.campusName}
+                    {props?.campusName.replace('Campus', '')}
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
@@ -97,11 +107,12 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
         refetch,
         isLoading,
         isFetching,
+        isUninitialized,
         data: campusReports,
     } = useGetGlobalReportListQuery({ serviceId }, { refetchOnMountOrArgChange: true, skip: !serviceId });
 
     const handleRefresh = () => {
-        serviceId && refetch();
+        serviceId && !isUninitialized && refetch();
     };
 
     React.useEffect(() => {
@@ -110,28 +121,45 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
         }
     }, [servicesLoading]);
 
+    const { isMobile, isTablet } = useMediaQuery();
+    const { campusId, campusName } = React.useContext(GlobalReportContext);
+
     return (
-        <ViewWrapper py={0} px={2} noPadding refreshing={isLoading} onRefresh={handleRefresh}>
-            <HStack justifyContent="space-around" w="100%" mb={6} space={10} position="static" top={3}>
-                <FormControl isRequired w="100%">
-                    <SelectComponent selectedValue={serviceId} onValueChange={setService} placeholder="Select Service">
-                        {sortedServices?.map((service, index) => (
-                            <SelectItemComponent
-                                value={service._id}
-                                key={`service-${index}`}
-                                label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
-                            />
-                        ))}
-                    </SelectComponent>
-                </FormControl>
+        <ViewWrapper py={0} px={2} noPadding refreshing={isLoading}>
+            <HStack flex={1}>
+                <VStack w={isMobile ? '100%' : '33%'} flex={1} space={3} pt={4}>
+                    <FormControl isRequired>
+                        <SelectComponent
+                            selectedValue={serviceId}
+                            onValueChange={setService}
+                            placeholder="Select Service"
+                        >
+                            {sortedServices?.map((service, index) => (
+                                <SelectItemComponent
+                                    value={service._id}
+                                    key={`service-${index}`}
+                                    label={`${service.name} - ${moment(service.clockInStartTime).format(
+                                        'Do MMM YYYY'
+                                    )}`}
+                                />
+                            ))}
+                        </SelectComponent>
+                    </FormControl>
+                    <FlatListComponent
+                        refreshing={isFetching}
+                        columns={reportColumns}
+                        onRefresh={handleRefresh}
+                        isLoading={isLoading || isFetching}
+                        data={campusReports as IGlobalReportList}
+                    />
+                </VStack>
+                <If condition={isTablet}>
+                    <Divider orientation="vertical" height="100%" m={4} />
+                    <Box w="67%">
+                        <CampusReportDetails serviceId={serviceId} campusId={campusId} campusName={campusName} />
+                    </Box>
+                </If>
             </HStack>
-            <FlatListComponent
-                onRefresh={refetch}
-                refreshing={isFetching}
-                columns={reportColumns}
-                isLoading={isLoading || isFetching}
-                data={campusReports as IGlobalReportList}
-            />
         </ViewWrapper>
     );
 };

@@ -224,8 +224,8 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                     _light={{
                         borderColor: 'gray.300',
                     }}
-                    pl={['0', '4']}
-                    pr={['0', '5']}
+                    pl={padding ? ['0', '4'] : 0}
+                    pr={padding ? ['0', '5'] : 0}
                     flex={1}
                     py={2}
                 >

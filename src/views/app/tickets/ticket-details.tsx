@@ -253,7 +253,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{ticket?.department.departmentName}</Text>
+                        <Text>{ticket?.department?.departmentName}</Text>
                     </HStack>
                     <HStack
                         space={2}
