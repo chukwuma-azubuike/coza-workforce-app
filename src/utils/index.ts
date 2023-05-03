@@ -249,6 +249,11 @@ class Utils {
         // Replace item at index
         originalList[index] = newObject;
 
+        // Push if index doesn't exist
+        if (!index) {
+            originalList.push(newObject);
+        }
+
         return originalList;
     };
 
