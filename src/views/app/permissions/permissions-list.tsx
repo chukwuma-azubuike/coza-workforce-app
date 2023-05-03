@@ -120,7 +120,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ up
     const [page, setPage] = React.useState<number>(1);
 
     const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
-        { requestor: userId, limit: 10, page },
+        { requestor: userId, limit: 20, page },
         {
             refetchOnMountOrArgChange: true,
         }
@@ -234,7 +234,7 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ up
     const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
         {
             campusId: _id,
-            limit: 10,
+            limit: 20,
             page,
         },
         {

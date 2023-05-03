@@ -8,6 +8,7 @@ import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
+import { ITicket } from '../../../store/types';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -17,7 +18,9 @@ const ROUTES = [
 
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
-const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+    const updatedListItem = route?.params as ITicket;
+
     const gotoIndividual = () => {
         navigation.navigate('Issue Ticket', { type: 'INDIVIDUAL' });
     };
@@ -31,9 +34,9 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
     };
 
     const renderScene = SceneMap({
-        myTickets: MyTicketsList,
-        teamTickets: MyTeamTicketsList,
-        campusTickets: CampusTickets,
+        myTickets: () => <MyTicketsList updatedListItem={updatedListItem} />,
+        teamTickets: () => <MyTeamTicketsList updatedListItem={updatedListItem} />,
+        campusTickets: () => <CampusTickets updatedListItem={updatedListItem} />,
     });
 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
