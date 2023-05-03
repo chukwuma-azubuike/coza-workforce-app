@@ -41,28 +41,38 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isLoading: rolesIsLoading,
     } = useGetRolesQuery();
 
-    const [uploadUser, { isError, isLoading, isSuccess, error }] = useUploadUserMutation();
+    const [uploadUser, { isLoading, error }] = useUploadUserMutation();
 
-    const submitForm: FormikConfig<ICreateUserPayload>['onSubmit'] = (values, { resetForm }) => {
-        uploadUser(values);
+    const submitForm: FormikConfig<ICreateUserPayload>['onSubmit'] = async (values, { resetForm }) => {
+        try {
+            const result = await uploadUser(values);
 
-        if (isSuccess) {
+            if ('data' in result) {
+                setModalState({
+                    message: 'User successfully created',
+                    defaultRender: true,
+                    status: 'success',
+                    duration: 3,
+                });
+                resetForm(INITIAL_VALUES);
+                goBack();
+            }
+
+            if ('error' in result) {
+                setModalState({
+                    message: `${error?.data?.message}`,
+                    defaultRender: true,
+                    status: 'error',
+                    duration: 6,
+                });
+            }
+            // eslint-disable-next-line no-catch-shadow, no-shadow
+        } catch (error) {
             setModalState({
-                message: 'User successfully created',
-                defaultRender: true,
-                status: 'success',
-                duration: 3,
-            });
-            resetForm(INITIAL_VALUES);
-            goBack();
-        }
-
-        if (isError) {
-            setModalState({
-                message: `${error?.data?.message}`,
+                message: 'Oops, something went wrong!',
                 defaultRender: true,
                 status: 'error',
-                duration: 3,
+                duration: 6,
             });
         }
     };
