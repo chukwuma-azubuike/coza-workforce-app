@@ -7,8 +7,8 @@ import useModal from '../../../hooks/modal/useModal';
 import { ParamListBase } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
 import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
-import { useGetUsersByDepartmentIdQuery, useUploadUserMutation } from '../../../store/services/account';
-import { ICreateUserPayload, IDepartment, IRole } from '../../../store/types';
+import { useUploadUserMutation } from '../../../store/services/account';
+import { ICreateUserPayload } from '../../../store/types';
 import { Formik, FormikConfig } from 'formik';
 import { CreateUserSchema } from '../../../utils/schemas';
 import { Icon } from '@rneui/themed';
@@ -24,9 +24,6 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
         user: { campus, userId },
     } = useRole();
-
-    const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
-    const [roleId, setRoleId] = React.useState<IRole['_id']>();
 
     const { setModalState } = useModal();
 
@@ -44,54 +41,10 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isLoading: rolesIsLoading,
     } = useGetRolesQuery();
 
-    const {
-        data: workers,
-        refetch: refetchWorkers,
-        isFetching: isFetchingWorkers,
-    } = useGetUsersByDepartmentIdQuery(departmentId as string, {
-        skip: !departmentId,
-    });
-
     const [uploadUser, { isError, isLoading, isSuccess, error }] = useUploadUserMutation();
 
     const submitForm: FormikConfig<ICreateUserPayload>['onSubmit'] = (values, { resetForm }) => {
-        let stop = false;
-        const newValues = {
-            ...values,
-            departmentId,
-            roleId,
-            isRegistered: false,
-        };
-
-        Object.entries(newValues).forEach(array => {
-            if (array[1] === undefined) {
-                setModalState({
-                    message: `Plese select a ${array[0]}`,
-                    defaultRender: true,
-                    status: 'error',
-                    duration: 3,
-                });
-                stop = true;
-            }
-        });
-
-        if (stop) return;
-
-        if (workers) {
-            const userExists = workers.find(worker => worker.email === values.email);
-            if (userExists) {
-                setModalState({
-                    message: 'User email already exists',
-                    defaultRender: true,
-                    status: 'error',
-                    duration: 3,
-                });
-                return;
-            }
-        }
-
-        console.log('Everything is fine');
-        uploadUser(newValues);
+        uploadUser(values);
 
         if (isSuccess) {
             setModalState({
@@ -100,11 +53,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'success',
                 duration: 3,
             });
-            console.log('success');
             resetForm(INITIAL_VALUES);
-            setDepartmentId('');
-            setRoleId('');
-
             goBack();
         }
 
@@ -118,35 +67,24 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     };
 
-    const handleDepartment = (value: IDepartment['_id']) => {
-        setDepartmentId(value);
-    };
-
     const refresh = () => {
         refetchDepartments();
         refetchRoles();
-        refetchWorkers();
-        console.log('refetched');
     };
 
     const INITIAL_VALUES = {
         firstName: '',
         lastName: '',
         email: '',
-        campusId: campus._id,
         departmentId: '',
         roleId: '',
+        campusId: campus._id,
         registeredBy: userId,
         isRegistered: false,
     } as ICreateUserPayload;
 
     return (
-        <ViewWrapper
-            scroll
-            noPadding
-            onRefresh={refresh}
-            refreshing={isFetchingDepartments || isFetchingRoles || isFetchingWorkers}
-        >
+        <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={isFetchingDepartments || isFetchingRoles}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateUserPayload>
@@ -161,12 +99,9 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <FormControl isRequired isInvalid={!!errors?.departmentId}>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
-                                        selectedValue={departmentId}
+                                        selectedValue={values.departmentId}
                                         placeholder="Choose department"
-                                        onValueChange={val => {
-                                            handleChange('departmentId');
-                                            handleDepartment(val);
-                                        }}
+                                        onValueChange={handleChange('departmentId')}
                                     >
                                         {campusDepartments?.map((department, index) => (
                                             <SelectItemComponent
@@ -195,12 +130,9 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <FormControl isRequired isInvalid={!!errors?.roleId}>
                                     <FormControl.Label>Role</FormControl.Label>
                                     <SelectComponent
-                                        selectedValue={roleId}
+                                        selectedValue={values.roleId}
                                         placeholder="Choose role"
-                                        onValueChange={val => {
-                                            handleChange('roleId');
-                                            setRoleId(val);
-                                        }}
+                                        onValueChange={handleChange('roleId')}
                                     >
                                         {allRoles?.map((role, index) => (
                                             <SelectItemComponent
@@ -223,7 +155,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             />
                                         }
                                     >
-                                        {errors?.departmentId}
+                                        {errors?.roleId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={!!errors?.firstName}>

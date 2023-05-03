@@ -16,7 +16,7 @@ export const roleServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IRole[]>) => response.data,
         }),
 
-        getRoleById: endpoint.query<IRole, void>({
+        getRoleById: endpoint.query<IRole, IRole['_id']>({
             query: id => `/${SERVICE_URL}/getRoles/${id}`,
 
             transformResponse: (response: IDefaultResponse<IRole>) => response.data,
