@@ -19,7 +19,7 @@ const APP_ENV = () => {
 
         default:
             return {
-                API_BASE_URL: PROD_API_BASE_URL,
+                API_BASE_URL: STAGING_API_BASE_URL,
                 API_KEY,
             };
             break;
