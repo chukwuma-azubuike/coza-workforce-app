@@ -30,11 +30,11 @@ import {
 } from '../../../../store/types';
 import Utils from '../../../../utils';
 import { GSPReportSchema } from '../../../../utils/schemas';
-import HorizontalTable from './horizontal-table';
-import VerticalTable from './vertical-table';
+import HorizontalTable from '../../../../components/composite/tables/horizontal-table';
+import VerticalTable from '../../../../components/composite/tables/vertical-table';
 
 const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as ICampusReport;
+    const params = props.route.params as ICampusReport & { campusName: string };
     const { serviceId, campusId } = params;
     const { user, isCampusPastor, isGlobalPastor } = useRole();
 
@@ -285,6 +285,11 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ViewWrapper py={10} scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+            {isGlobalPastor && (
+                <Text bold fontSize="3xl" mb={4} ml={4}>
+                    {params?.campusName}
+                </Text>
+            )}
             <VStack px={4} space={10}>
                 <Divider />
                 <VerticalTable
