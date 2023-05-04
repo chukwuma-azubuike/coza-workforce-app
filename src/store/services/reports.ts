@@ -94,6 +94,7 @@ export interface ICampusReportSummary<R = unknown> {
         incidentReport: IIncidentReportPayload;
         departmentName: string;
     }[];
+    campusCoordinatorComment?: string;
 }
 
 export interface IDepartmentReportListById {
@@ -128,10 +129,22 @@ export interface ICampusReport {
     serviceTime: number;
 }
 
+export interface IGlobalReport {
+    _id: string;
+    status: IReportStatus;
+    campusId: ICampus['_id'];
+    campusName: string;
+}
+
 export interface ICampusReportListPayload extends Pick<IDefaultQueryParams, 'limit' | 'page'> {
     campusId: ICampus['_id'];
 }
+export interface IGlobalReportListPayload extends Pick<IDefaultQueryParams, 'limit' | 'page'> {
+    serviceId: IService['_id'];
+}
+
 export interface ICampusReportList extends Array<ICampusReport> {}
+export interface IGlobalReportList extends Array<IGlobalReport> {}
 
 export const reportsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -301,6 +314,16 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
         }),
 
+        getGlobalReportList: endpoint.query<IGlobalReportList, IGlobalReportListPayload>({
+            query: params => ({
+                url: `/${SERVICE_URL}/gspSubmittedReport/${params.serviceId}`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<IGlobalReportList>) => res?.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -313,6 +336,7 @@ export const {
     useGetGuestSummaryQuery,
     useSubmitGSPReportMutation,
     useGetCampusReportListQuery,
+    useGetGlobalReportListQuery,
     useCreateGuestReportMutation,
     useGetDepartmentalReportQuery,
     useGetCampusReportSummaryQuery,

@@ -5,7 +5,7 @@ import { Icon } from '@rneui/themed';
 import { StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
-import { FlatListSkeleton } from '../../layout/skeleton';
+import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;
@@ -30,7 +30,7 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
             _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
         >
             {isLoading ? (
-                <FlatListSkeleton />
+                <ProfileSkeleton count={9} />
             ) : (
                 <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
                     {props.header && (

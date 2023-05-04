@@ -90,11 +90,17 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: 'serviceId' });
 
     const fetchMoreData = () => {
-        setPage(prev => prev + 1);
+        if (!isFetching && !isLoading) {
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
+        }
     };
 
     return (
-        <ViewWrapper py={0} noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+        <ViewWrapper mb={4} noPadding refreshing={isLoading} onRefresh={handleRefresh}>
             <FlatListComponent
                 onRefresh={refetch}
                 data={moreData as any}

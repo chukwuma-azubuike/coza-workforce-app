@@ -1,6 +1,7 @@
 import React from 'react';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { ICampusCoordinates } from '../../store/services/attendance';
+import useClosestCampus from '../closest-campus';
 
 const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campusCoordinates: ICampusCoordinates) => {
     let { latitude: deviceLatitude, longitude: deviceLongitude } = deviceCoordinates;
@@ -32,13 +33,17 @@ interface IUseGeoLocationArgs {
 }
 
 const useGeoLocation = (props: IUseGeoLocationArgs) => {
-    const { campusCoordinates, rangeToClockIn } = props;
+    const { rangeToClockIn } = props;
 
     let distance = Infinity;
 
     const [nudge, setNudge] = React.useState<boolean>(false);
 
-    const verifyRangeBeforeAction = async (successCallback: () => any, errorCallback: () => any) => {
+    const verifyRangeBeforeAction = async (
+        successCallback: () => any,
+        errorCallback: () => any,
+        campusCoordinates: ICampusCoordinates = closestCampusCoordinates
+    ) => {
         await Geolocation.getCurrentPosition(
             position => {
                 if (isInRange(position?.coords, campusCoordinates)) {
@@ -66,9 +71,16 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
         return result;
     };
 
+    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
+
+    const closestCampusCoordinates = useClosestCampus({
+        latitude: deviceCoordinates?.latitude,
+        longitude: deviceCoordinates?.longitude,
+    });
+
     const isInRange = (
         deviceCoordinatesArg: GeoCoordinates = deviceCoordinates,
-        campusCoordinatesArg: ICampusCoordinates = campusCoordinates
+        campusCoordinatesArg: ICampusCoordinates = closestCampusCoordinates
     ) => {
         if (deviceCoordinatesArg && campusCoordinatesArg) {
             try {
@@ -82,8 +94,6 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
             }
         }
     };
-
-    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
 
     React.useEffect(() => {
         Geolocation.getCurrentPosition(
