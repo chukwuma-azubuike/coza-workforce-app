@@ -70,3 +70,32 @@ export const FlatListSkeleton: React.FC<{
         </Center>
     );
 };
+
+export const ProfileSkeleton: React.FC<{
+    count?: number;
+}> = ({ count = 6 }) => {
+    return (
+        <Center w="full" p={0}>
+            <Skeleton
+                h={24}
+                w={24}
+                mb={3}
+                rounded="full"
+                _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+            />
+            {Array.from(Array(count).keys()).map((elm, idx) => (
+                <Skeleton
+                    h="8"
+                    my={3}
+                    w="90%"
+                    rounded="md"
+                    overflow="hidden"
+                    key={`elm-${idx}`}
+                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                />
+            ))}
+        </Center>
+    );
+};

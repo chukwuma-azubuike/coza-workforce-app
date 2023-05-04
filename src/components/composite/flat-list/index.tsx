@@ -1,8 +1,8 @@
 import React from 'react';
-import { Box, FlatList, HStack, Text, VStack } from 'native-base';
+import { Box, HStack, Text, VStack } from 'native-base';
 import If from '../if-container';
 import Utils from '../../../utils';
-import { ActivityIndicator, RefreshControl, TouchableNativeFeedback } from 'react-native';
+import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableNativeFeedback } from 'react-native';
 import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
 import moment from 'moment';
@@ -16,7 +16,7 @@ export interface IFlatListColumn {
     render?: (elm: any, key: string | number) => JSX.Element;
 }
 
-export interface IFlatListComponentProps {
+export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     data: any[];
     columns: any[];
     padding?: boolean;
@@ -48,20 +48,11 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     } = props;
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
-    const [loadingMore, setloadingMore] = React.useState<boolean>(false);
-
     const handleMore = () => {
         if (fetchMoreData && !refreshing) {
             fetchMoreData();
-            setloadingMore(true);
         }
     };
-
-    React.useEffect(() => {
-        if (!refreshing) {
-            setloadingMore(false);
-        }
-    }, [refreshing]);
 
     return (
         <>
@@ -76,7 +67,6 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                         <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                                     )
                                 }
-                                data={data}
                                 nestedScrollEnabled
                                 onEndReached={handleMore}
                                 onEndReachedThreshold={0.1}
@@ -98,17 +88,17 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     <ActivityIndicator
                                         size="small"
                                         hidesWhenStopped
-                                        animating={loadingMore}
+                                        animating={refreshing}
                                         color={THEME_CONFIG.lightGray}
                                     />
                                 }
+                                {...props}
                             />
                         </Box>
                     </If>
                     <If condition={!data[0][0]}>
                         <Box flex={1}>
                             <FlatList
-                                data={data}
                                 refreshControl={
                                     onRefresh && (
                                         <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
@@ -153,10 +143,11 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     <ActivityIndicator
                                         size="small"
                                         hidesWhenStopped
-                                        animating={loadingMore}
+                                        animating={refreshing}
                                         color={THEME_CONFIG.lightGray}
                                     />
                                 }
+                                {...props}
                             />
                         </Box>
                     </If>
@@ -233,8 +224,8 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                     _light={{
                         borderColor: 'gray.300',
                     }}
-                    pl={['0', '4']}
-                    pr={['0', '5']}
+                    pl={padding ? ['0', '4'] : 0}
+                    pr={padding ? ['0', '5'] : 0}
                     flex={1}
                     py={2}
                 >
