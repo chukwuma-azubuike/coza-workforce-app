@@ -37,7 +37,7 @@ import CampusReport from '../views/app/reports/campus-report/reportDetails';
 import WorkforceManagement from '../views/app/Workforce-management';
 import UserDetails from '../views/app/Workforce-management/user-details';
 import ServiceManagement from '../views/app/service-management';
-import CreateServiceManagement from '../views/app/service-management/service-management';
+import CreateServiceManagement from '../views/app/service-management/create-service';
 
 export interface IAppRoute {
     name: string;

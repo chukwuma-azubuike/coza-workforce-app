@@ -35,16 +35,6 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
     const { setModalState } = useModal();
 
     const [createService, { isError, isLoading, isSuccess, error, reset }] = useCreateServiceMutation();
-    const [
-        updateService,
-        {
-            isError: isErrorUpdate,
-            isLoading: isLoadingUpdate,
-            isSuccess: isSuccessUpdate,
-            error: errorUpdate,
-            error: resetUpdate,
-        },
-    ] = useUpdateServiceMutation();
 
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.clockinTime);
@@ -60,35 +50,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         const serviceTime = Utils.concatDateTimeToEpoc(values.startDate, values.startTime);
         const workersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.workerLateTime);
 
-        if (propItems?._id) {
-            updateService({
-                _id: propItems?._id,
-                clockInStartTime,
-                coordinates,
-                isGlobalService,
-                leadersLateStartTime,
-                name,
-                rangeToClockIn,
-                serviceEndTime,
-                serviceTime,
-                workersLateStartTime,
-            });
-        } else {
-            createService({
-                clockInStartTime,
-                coordinates,
-                isGlobalService,
-                leadersLateStartTime,
-                name,
-                rangeToClockIn,
-                serviceEndTime,
-                serviceTime,
-                workersLateStartTime,
-            });
-        }
-
-        console.log({
-            _id: propItems._id,
+        createService({
             clockInStartTime,
             coordinates,
             isGlobalService,
@@ -99,19 +61,19 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
             serviceTime,
             workersLateStartTime,
         });
-        // resetForm(INITIAL_VALUES);
+
+        resetForm(INITIAL_VALUES);
     };
-    const serviceType = propItems?._id ? (propItems?.isGlobalService ? 'global' : 'local') : '';
     const INITIAL_VALUES: ICreateServicePayload = {
-        startTime: propItems?.serviceTime || new Date(),
-        startDate: propItems?.serviceTime || new Date(),
-        clockinTime: propItems?.clockInStartTime || new Date(),
-        endTime: propItems?.serviceEndTime || new Date(),
-        leaderLateTime: propItems?.leadersLateStartTime || new Date(),
-        workerLateTime: propItems?.workersLateStartTime || new Date(),
+        startTime: new Date(),
+        startDate: new Date(),
+        clockinTime: new Date(),
+        endTime: new Date(),
+        leaderLateTime: new Date(),
+        workerLateTime: new Date(),
         serviceTag: '',
-        serviceType: serviceType || '',
-        serviceName: propItems?.name || '',
+        serviceType: '',
+        serviceName: '',
     } as ICreateServicePayload;
 
     React.useEffect(() => {
@@ -137,34 +99,11 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         }
     }, [isSuccess, isError]);
 
-    React.useEffect(() => {
-        if (isSuccessUpdate) {
-            setModalState({
-                message: 'Service successfully updated',
-                defaultRender: true,
-                status: 'success',
-                duration: 3,
-            });
-            goBack();
-            resetUpdate();
-        }
-
-        if (isErrorUpdate) {
-            setModalState({
-                message: errorUpdate?.data?.message || 'Oops, something went wrong!',
-                defaultRender: true,
-                status: 'error',
-                duration: 3,
-            });
-            reset();
-        }
-    }, [isSuccessUpdate, isErrorUpdate]);
-
     const isScreenFocused = useIsFocused();
 
     useFocusEffect(
         React.useCallback(() => {
-            setOptions({ title: `${propItems?._id ? 'Update' : 'Create'} Service` });
+            setOptions({ title: 'Create Service' });
             return () => {};
         }, [isScreenFocused])
     );
@@ -242,7 +181,6 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 value={tag.id}
                                                 key={`campus-${index}`}
                                                 label={tag.value}
-                                                // isLoading={campusesIsLoading || campusesIsFetching}
                                             />
                                         ))}
                                     </SelectComponent>
@@ -269,7 +207,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         fieldName="startDate"
                                         onSelectDate={setFieldValue}
                                         value={values.startDate}
-                                        // minimumDate={new Date()}
+                                        minimumDate={new Date()}
                                     />
                                     <DateTimePickerComponent
                                         label="Service Start Time"
@@ -317,7 +255,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                 <FormControl>
                                     <ButtonComponent
                                         mt={4}
-                                        isLoading={isLoading || isLoadingUpdate}
+                                        isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
                                         Submit

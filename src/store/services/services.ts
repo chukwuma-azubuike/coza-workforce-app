@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICreateService, IDefaultResponse, IService, REST_API_VERBS } from '../types';
+import { ICreateService, IDefaultQueryParams, IDefaultResponse, IService, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'service';
@@ -39,8 +39,12 @@ export const servicesServiceSlice = createApi({
             providesTags: ['latestService'],
         }),
 
-        getServices: endpoint.query<IService[], void>({
-            query: () => `/${SERVICE_URL}/getServices`,
+        getServices: endpoint.query<IService[], IDefaultQueryParams>({
+            query: params => ({
+                url: `/${SERVICE_URL}/getServices`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
 
             transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
         }),

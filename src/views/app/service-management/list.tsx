@@ -1,35 +1,30 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableNativeFeedback } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
-import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
-import { useGetUsersQuery } from '../../../store/services/account';
-import { IAllService, IUser } from '../../../store/types';
-import Utils from '../../../utils';
 import { useGetServicesQuery } from '../../../store/services/services';
-import moment from 'moment';
+import { IAllService } from '../../../store/types';
 
 const ServiceListRow: React.FC<IAllService> = service => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
+    const { isLightMode, isDarkMode } = useAppColorMode();
 
-    const handlePress = () => {
-        navigation.navigate('Create service' as never, service as never);
-    };
+    // const handlePress = () => {
+    //     console.log(service?.serviceTime);
+    // };
 
     return (
         <TouchableNativeFeedback
             disabled={false}
             delayPressIn={0}
-            onPress={handlePress}
+            // onPress={handlePress}
             accessibilityRole="button"
             background={TouchableNativeFeedback.Ripple(
                 isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
@@ -46,9 +41,9 @@ const ServiceListRow: React.FC<IAllService> = service => {
                             {service?.name}
                         </Text>
                         <Text fontSize="sm" color="gray.400">
-                            {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(
-                                service?.serviceTime
-                            ).format('hh:mm a')}`}
+                            {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(service?.serviceTime)
+                                .zone('+00:00')
+                                .format('hh:mm a')}`}
                         </Text>
                     </VStack>
                 </HStack>
@@ -70,7 +65,7 @@ const AllService: React.FC = memo(() => {
     const [page, setPage] = React.useState<number>(1);
 
     const { data, isLoading, isSuccess, refetch, isFetching } = useGetServicesQuery(
-        { limit: 10, page },
+        { limit: 20, page },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
