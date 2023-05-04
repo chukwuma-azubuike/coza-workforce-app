@@ -27,16 +27,15 @@ const tags: any = [
     { id: '7dg', value: '7DG' },
 ];
 
-const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { goBack, setOptions } = useNavigation();
-
-    const propItems = props.route.params as IAllService;
+const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+    const { navigate } = navigation;
+    const { setOptions } = useNavigation();
 
     const { setModalState } = useModal();
 
-    const [createService, { isError, isLoading, isSuccess, error, reset }] = useCreateServiceMutation();
+    const [createService, { isError, isLoading, isSuccess, error, data, reset }] = useCreateServiceMutation();
 
-    const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = (values, { resetForm }) => {
+    const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.clockinTime);
         const coordinates = {
             long: 7.505862981744857,
@@ -50,7 +49,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         const serviceTime = Utils.concatDateTimeToEpoc(values.startDate, values.startTime);
         const workersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.workerLateTime);
 
-        createService({
+        const result = await createService({
             clockInStartTime,
             coordinates,
             isGlobalService,
@@ -62,8 +61,24 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
             workersLateStartTime,
         });
 
-        resetForm(INITIAL_VALUES);
+        if ('data' in result) {
+            setModalState({
+                message: 'Service successfully created',
+                status: 'success',
+            });
+            reset();
+            navigate('Service management', data);
+            resetForm(INITIAL_VALUES);
+        }
+
+        if ('error' in result) {
+            setModalState({
+                message: 'Oops something went wrong',
+                status: 'error',
+            });
+        }
     };
+
     const INITIAL_VALUES: ICreateServicePayload = {
         startTime: new Date(),
         startDate: new Date(),
@@ -76,28 +91,28 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         serviceName: '',
     } as ICreateServicePayload;
 
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                message: 'Service successfully created',
-                defaultRender: true,
-                status: 'success',
-                duration: 3,
-            });
-            goBack();
-            reset();
-        }
+    // React.useEffect(() => {
+    //     if (isSuccess) {
+    //         setModalState({
+    //             message: 'Service successfully created',
+    //             defaultRender: true,
+    //             status: 'success',
+    //             duration: 3,
+    //         });
+    //         goBack();
+    //         reset();
+    //     }
 
-        if (isError) {
-            setModalState({
-                message: error?.data?.message || 'Oops, something went wrong!',
-                defaultRender: true,
-                status: 'error',
-                duration: 3,
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
+    //     if (isError) {
+    //         setModalState({
+    //             message: error?.data?.message || 'Oops, something went wrong!',
+    //             defaultRender: true,
+    //             status: 'error',
+    //             duration: 3,
+    //         });
+    //         reset();
+    //     }
+    // }, [isSuccess, isError]);
 
     const isScreenFocused = useIsFocused();
 

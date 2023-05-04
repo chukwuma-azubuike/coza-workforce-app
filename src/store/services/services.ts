@@ -15,7 +15,7 @@ export const servicesServiceSlice = createApi({
 
     refetchOnReconnect: true,
     endpoints: endpoint => ({
-        createService: endpoint.mutation<void, ICreateService>({
+        createService: endpoint.mutation<IService, ICreateService>({
             query: body => ({
                 url: `${SERVICE_URL}/createService`,
                 method: REST_API_VERBS.POST,

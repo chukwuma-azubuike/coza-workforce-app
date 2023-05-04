@@ -9,12 +9,14 @@ import { useGetServicesQuery } from '../../../store/services/services';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import { AllService } from './list';
 import TabComponent from '../../../components/composite/tabs';
+import { IService } from '../../../store/types';
 
 const ROUTES = [{ key: 'serviceManagement', title: 'Service Management' }];
 
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
-const ServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const ServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+    const updatedListItem = route.params as IService;
     const gotoService = () => {
         navigation.navigate('Create service');
     };
@@ -22,7 +24,7 @@ const ServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     const [index, setIndex] = React.useState(0);
 
     const renderScene = SceneMap({
-        serviceManagement: AllService,
+        serviceManagement: () => <AllService updatedListItem={updatedListItem} />,
     });
 
     const allRoutes = React.useMemo(() => {

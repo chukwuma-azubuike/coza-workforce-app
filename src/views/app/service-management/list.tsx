@@ -10,9 +10,10 @@ import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetServicesQuery } from '../../../store/services/services';
-import { IAllService } from '../../../store/types';
+import { IService } from '../../../store/types';
+import Utils from '../../../utils';
 
-const ServiceListRow: React.FC<IAllService> = service => {
+const ServiceListRow: React.FC<IService> = service => {
     const navigation = useNavigation();
     const { isLightMode, isDarkMode } = useAppColorMode();
 
@@ -53,11 +54,11 @@ const ServiceListRow: React.FC<IAllService> = service => {
     );
 };
 
-const AllService: React.FC = memo(() => {
+const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListItem }) => {
     const teamColumns: IFlatListColumn[] = [
         {
-            dataIndex: '_id',
-            render: (_: IAllService, key) => <ServiceListRow {..._} key={key} />,
+            dataIndex: 'createdAt',
+            render: (_: IService, key) => <ServiceListRow {..._} key={key} />,
         },
     ];
 
@@ -69,24 +70,32 @@ const AllService: React.FC = memo(() => {
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
+    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
+
+    const groupedData = React.useMemo(
+        () => Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['createdAt', updatedListItem?._id]),
+        [updatedListItem?._id, moreData]
+    );
 
     useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            onRefresh={refetch}
-            data={moreData || []}
-            columns={teamColumns}
+            data={groupedData}
+            refreshing={isFetching}
             fetchMoreData={fetchMoreData}
+            columns={teamColumns}
             isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
         />
     );
 });
