@@ -1,4 +1,4 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
@@ -24,14 +24,15 @@ import {
 import { ICreateTicketPayload, ITicket } from '../../../store/types';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { _id } = props.route.params as ITicket;
+    const { navigate } = props.navigation;
+    const ticketParams: ITicket = props.route.params as ITicket;
 
     const {
         isQC,
         user: { userId, department },
     } = useRole();
 
-    const { data: ticket, isFetching, isLoading, refetch, isSuccess, isError } = useGetTicketByIdQuery(_id);
+    const { data: ticket, isFetching, isLoading, refetch } = useGetTicketByIdQuery(ticketParams?._id);
     const [
         contestTicket,
         {
@@ -40,6 +41,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             isError: contestIsError,
             error: contestError,
             reset: contestReset,
+            data: contestData,
         },
     ] = useContestTicketMutation();
     const [
@@ -60,6 +62,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             isError: retractIsError,
             error: retractError,
             reset: retractReset,
+            data: retractData,
         },
     ] = useRetractTicketMutation();
 
@@ -71,13 +74,9 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             isError: acknowledgeIsError,
             reset: acknowledgeReset,
             error: acknowledgeError,
+            data: acknowledgeData,
         },
     ] = useUpdateTicketMutation();
-
-    interface NO {
-        contestComment: 'Contest test';
-        status: 'RETRACTED';
-    }
 
     const [comment, setComment] = React.useState<string>();
     const [contestReplyComment, setContestReplyComment] = React.useState<string | undefined>(
@@ -93,22 +92,22 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const handleSubmit = () => {
         contestTicket({
-            _id,
             userId,
+            _id: ticketParams?._id,
             comment: comment as string,
         });
     };
 
     const handleReplySubmit = () => {
         replyContest({
-            _id,
             userId,
+            _id: ticketParams?._id,
             comment: contestReplyComment as string,
         });
     };
 
     const handleRetractTicket = () => {
-        retractTicket(_id);
+        retractTicket(ticketParams?._id);
     };
 
     const handleAcknowledge = () => {
@@ -119,7 +118,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     };
 
     const { setModalState } = useModal();
-    const navigate = useNavigation();
 
     React.useEffect(() => {
         if (contestSuccess) {
@@ -128,7 +126,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             contestReset();
-            navigate.goBack();
+            navigate('Tickets', {
+                ...ticketParams,
+                ...contestData,
+                user: ticketParams?.user,
+                departmentName: ticketParams?.departmentName,
+            });
         }
 
         if (contestIsError) {
@@ -146,7 +149,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             resetReply();
-            navigate.goBack();
+            navigate('Tickets');
         }
 
         if (replyIsError) {
@@ -164,7 +167,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             retractReset();
-            navigate.goBack();
+            navigate('Tickets', {
+                ...ticketParams,
+                ...retractData,
+                user: ticketParams?.user,
+                departmentName: ticketParams?.departmentName,
+            });
         }
 
         if (retractIsError) {
@@ -182,7 +190,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             acknowledgeReset();
-            navigate.goBack();
+            navigate('Tickets', {
+                ...ticketParams,
+                ...acknowledgeData,
+                user: ticketParams?.user,
+                departmentName: ticketParams?.departmentName,
+            });
         }
 
         if (acknowledgeIsError) {
@@ -253,7 +266,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{ticket?.department.departmentName}</Text>
+                        <Text>{ticket?.department?.departmentName}</Text>
                     </HStack>
                     <HStack
                         space={2}

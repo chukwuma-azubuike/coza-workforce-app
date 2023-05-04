@@ -48,20 +48,11 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     } = props;
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
-    const [loadingMore, setloadingMore] = React.useState<boolean>(false);
-
     const handleMore = () => {
         if (fetchMoreData && !refreshing) {
             fetchMoreData();
-            setloadingMore(true);
         }
     };
-
-    React.useEffect(() => {
-        if (!refreshing) {
-            setloadingMore(false);
-        }
-    }, [refreshing]);
 
     return (
         <>
@@ -97,7 +88,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     <ActivityIndicator
                                         size="small"
                                         hidesWhenStopped
-                                        animating={loadingMore}
+                                        animating={refreshing}
                                         color={THEME_CONFIG.lightGray}
                                     />
                                 }
@@ -152,7 +143,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     <ActivityIndicator
                                         size="small"
                                         hidesWhenStopped
-                                        animating={loadingMore}
+                                        animating={refreshing}
                                         color={THEME_CONFIG.lightGray}
                                     />
                                 }
@@ -233,8 +224,8 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                     _light={{
                         borderColor: 'gray.300',
                     }}
-                    pl={['0', '4']}
-                    pr={['0', '5']}
+                    pl={padding ? ['0', '4'] : 0}
+                    pr={padding ? ['0', '5'] : 0}
                     flex={1}
                     py={2}
                 >

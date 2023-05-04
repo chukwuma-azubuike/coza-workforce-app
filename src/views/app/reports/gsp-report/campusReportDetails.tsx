@@ -1,5 +1,4 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Formik } from 'formik';
 import moment from 'moment';
@@ -14,7 +13,6 @@ import useScreenFocus from '../../../../hooks/focus';
 import useModal from '../../../../hooks/modal/useModal';
 import useRole from '../../../../hooks/role';
 import {
-    ICampusReport,
     IGSPReportPayload,
     useGetCampusReportSummaryQuery,
     useSubmitGSPReportMutation,
@@ -33,9 +31,14 @@ import { GSPReportSchema } from '../../../../utils/schemas';
 import HorizontalTable from '../../../../components/composite/tables/horizontal-table';
 import VerticalTable from '../../../../components/composite/tables/vertical-table';
 
-const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as ICampusReport & { campusName: string };
-    const { serviceId, campusId } = params;
+interface ICampusReportProps {
+    campusId: string;
+    serviceId: string;
+    campusName: string;
+}
+
+const CampusReportDetails: React.FC<ICampusReportProps> = props => {
+    const { serviceId, campusId, campusName } = props;
     const { user, isCampusPastor, isGlobalPastor } = useRole();
 
     const { data, refetch, isLoading, isFetching, isSuccess, isError } = useGetCampusReportSummaryQuery(
@@ -285,11 +288,9 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ViewWrapper py={10} scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
-            {isGlobalPastor && (
-                <Text bold fontSize="3xl" mb={4} ml={4}>
-                    {params?.campusName}
-                </Text>
-            )}
+            <Text bold fontSize="3xl" mb={4} ml={4}>
+                {campusName}
+            </Text>
             <VStack px={4} space={10}>
                 <Divider />
                 <VerticalTable
@@ -404,4 +405,4 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default CampusReport;
+export default CampusReportDetails;

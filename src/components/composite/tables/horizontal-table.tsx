@@ -1,8 +1,8 @@
 import { Box, HStack, Text, VStack } from 'native-base';
 import React from 'react';
-import Empty from '../../../../components/atoms/empty';
-import If from '../../../../components/composite/if-container';
-import { FlatListSkeleton } from '../../../../components/layout/skeleton';
+import Empty from '../../atoms/empty';
+import If from '../if-container';
+import { FlatListSkeleton } from '../../layout/skeleton';
 
 type Props = {
     title: string;

@@ -16,7 +16,7 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, refetch, isFetching, isSuccess } = useGetAttendanceQuery({
+    const { data, isLoading, isFetching, isSuccess } = useGetAttendanceQuery({
         userId: user?._id,
         limit: 10,
         page,
@@ -26,7 +26,11 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
 
@@ -34,7 +38,6 @@ export const MyAttendance: React.FC = React.memo(() => {
         <ErrorBoundary>
             <FlatListComponent
                 padding
-                onRefresh={refetch}
                 fetchMoreData={fetchMoreData}
                 columns={myAttendanceColumns}
                 data={moreData as IAttendance[]}
@@ -53,7 +56,6 @@ export const TeamAttendance: React.FC = React.memo(() => {
     const {
         data: membersClockedIn,
         isLoading,
-        refetch,
         isFetching,
     } = useGetAttendanceQuery({
         departmentId: user?.department?._id,
@@ -97,7 +99,6 @@ export const TeamAttendance: React.FC = React.memo(() => {
             <MonthPicker today />
             <FlatListComponent
                 padding
-                onRefresh={refetch}
                 data={uniqueAttendanceList}
                 isLoading={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
@@ -110,13 +111,13 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
-    const [page, setPageCount] = React.useState<number>(1);
+    const [page, setPage] = React.useState<number>(1);
 
     const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
-    const { data, isLoading, refetch, isSuccess, isFetching } = useGetAttendanceQuery(
+    const { data, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
         {
             page,
-            limit: 10,
+            limit: 20,
             campusId: user?.campus._id,
             serviceId: latestService?._id,
         },
@@ -126,12 +127,13 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    const setPage = (pageArg: number) => () => {
+    const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            setPageCount(prev => {
-                if (prev + pageArg > 0) return prev + pageArg;
-                return prev;
-            });
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
         }
     };
 
@@ -143,9 +145,8 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <FlatListComponent
                 padding
                 columns={campusColumns_1}
-                fetchMoreData={setPage(1)}
+                fetchMoreData={fetchMoreData}
                 data={moreData as IAttendance[]}
-                onRefresh={latestService && refetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 ListFooterComponentStyle={{ marginVertical: 20 }}

@@ -5,7 +5,7 @@ import { IToken, IUser } from '../store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import { isValidPhoneNumber } from 'libphonenumber-js';
-
+import findIndex from 'lodash/findIndex';
 class Utils {
     /************ Version Specific ************/
 
@@ -217,6 +217,7 @@ class Utils {
         }
 
         for (let i = 0; i < array.length; i++) {
+            if (typeof array[i] === 'undefined') continue;
             let keyInMap = array[i][key];
 
             if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
@@ -230,6 +231,30 @@ class Utils {
             }
         }
         return Object.entries(map);
+    };
+
+    /**
+     *
+     * @param array Original List Array
+     * @param newObject Updated object
+     * @param keyValue Key value pair to be searched
+     * @returns Updated array
+     */
+    static replaceArrayItemByNestedKey = (array: any[], newObject: any, keyValue: any[]) => {
+        if (!array || !array.length) return [];
+
+        const originalList = array;
+        const index = findIndex(originalList, keyValue);
+
+        // Replace item at index
+        originalList[index] = newObject;
+
+        // Push if index doesn't exist
+        if (!index) {
+            originalList.push(newObject);
+        }
+
+        return originalList;
     };
 
     /************** validatePhoneNumber ***************/
