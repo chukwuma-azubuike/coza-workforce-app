@@ -38,7 +38,7 @@ const ManualClockin: React.FC = () => {
         data: departments,
         isLoading: departmentsLoading,
         isFetching: departmentIsFetching,
-    } = useGetDepartmentsByCampusIdQuery(campusId, {
+    } = useGetDepartmentsByCampusIdQuery(campusId as string, {
         skip: !campusId,
     });
 
@@ -91,11 +91,7 @@ const ManualClockin: React.FC = () => {
                     initialValues={{} as IClockInPayload}
                     validationSchema={WorkforceClockinSchema}
                 >
-                    {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
-                        const handleDate = (fieldName: string, value: any) => {
-                            setFieldValue(fieldName, value);
-                        };
-
+                    {({ errors, values, handleChange }) => {
                         const onCampusChange = (value: string) => {
                             refresh();
                             setCampusId(value);

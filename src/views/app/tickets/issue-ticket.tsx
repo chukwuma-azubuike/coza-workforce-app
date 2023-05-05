@@ -5,7 +5,7 @@ import ButtonComponent from '../../../components/atoms/button';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
 import useModal from '../../../hooks/modal/useModal';
-import { ParamListBase, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { ParamListBase, useFocusEffect, useIsFocused } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
 import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
 import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
@@ -28,8 +28,7 @@ import { useGetCampusesQuery } from '../../../store/services/campus';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };
-
-    const { goBack, setOptions } = useNavigation();
+    const { setOptions, navigate } = props.navigation;
 
     const {
         user: { campus, userId },
@@ -44,8 +43,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const {
         data: campusDepartments,
-        refetch: refetchDepartments,
-        isSuccess: campusDepartmentsSuccess,
         isLoading: campusDepartmentsLoading,
         isFetching: campusDepartmentsIsFetching,
     } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campuses?.length });
@@ -53,36 +50,56 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
         data: workers,
         isLoading: workersLoading,
-        isSuccess: workersSuccess,
         isFetching: workersIsFetching,
     } = useGetUsersByDepartmentIdQuery(departmentId as string, {
         skip: !departmentId,
     });
 
-    const { data: latestService, refetch } = useGetLatestServiceQuery(campus?._id as string, {
+    const { data: latestService } = useGetLatestServiceQuery(campus?._id as string, {
         refetchOnMountOrArgChange: true,
     });
 
-    const { data: ticketCategories, isError: categoriesError } = useGetTicketCategoriesQuery();
+    const { data: ticketCategories } = useGetTicketCategoriesQuery();
 
-    const [issueTicket, { isError, isLoading, isSuccess, error, reset }] = useCreateTicketMutation();
+    const [issueTicket, { data, isLoading, error, reset }] = useCreateTicketMutation();
 
-    const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = (values, { resetForm }) => {
+    const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = async (values, { resetForm }) => {
         if (latestService) {
-            issueTicket({
+            const result = await issueTicket({
                 ...values,
                 issuedBy: userId,
                 serviceId: latestService._id,
                 userId: isIndividual ? values.userId : undefined,
             });
+
+            if ('data' in result) {
+                setModalState({
+                    message: 'Ticket successfully issued',
+                    defaultRender: true,
+                    status: 'success',
+                    duration: 3,
+                });
+                navigate('Tickets', data);
+                resetForm(INITIAL_VALUES);
+                setDepartmentId('');
+                reset();
+            }
+
+            if ('error' in result) {
+                setModalState({
+                    message: error?.data?.message || 'Oops, something went wrong!',
+                    defaultRender: true,
+                    status: 'error',
+                    duration: 3,
+                });
+                reset();
+            }
         } else {
             setModalState({
                 status: 'info',
-                message: 'You cannot issue a ticket without an ongoing service.',
+                message: 'You cannot issue tickets outside an active service!',
             });
         }
-        resetForm(INITIAL_VALUES);
-        setDepartmentId('');
     };
 
     const handleCampus = (value: ICampus['_id']) => {
@@ -91,10 +108,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const handleDepartment = (value: IDepartment['_id']) => {
         setDepartmentId(value);
-    };
-
-    const refresh = () => {
-        refetchDepartments();
     };
 
     const isDepartmental = type === 'DEPARTMENTAL';
@@ -114,29 +127,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         ticketSummary: '',
         issuedBy: '',
     } as ICreateTicketPayload;
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                message: 'Ticket successfully issued',
-                defaultRender: true,
-                status: 'success',
-                duration: 3,
-            });
-            goBack();
-            reset();
-        }
-
-        if (isError) {
-            setModalState({
-                message: error?.data?.message || 'Oops, something went wrong!',
-                defaultRender: true,
-                status: 'error',
-                duration: 3,
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const isScreenFocused = useIsFocused();
 

@@ -8,6 +8,7 @@ import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
+import { IPermission } from '../../../store/types';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -15,15 +16,17 @@ const ROUTES = [
     { key: 'campusPermissions', title: 'Campus Permissions' },
 ];
 
-const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const handlePress = () => {
         navigation.navigate('Request permission');
     };
 
+    const updatedListItem = route?.params as IPermission;
+
     const renderScene = SceneMap({
-        myPermissions: MyPermissionsList,
-        teamPermissions: MyTeamPermissionsList,
-        campusPermissions: CampusPermissions,
+        myPermissions: () => <MyPermissionsList updatedListItem={updatedListItem} />,
+        teamPermissions: () => <MyTeamPermissionsList updatedListItem={updatedListItem} />,
+        campusPermissions: () => <CampusPermissions updatedListItem={updatedListItem} />,
     });
 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
@@ -40,17 +43,15 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
 
     return (
         <ViewWrapper>
-            <>
-                <If condition={!isCampusPastor && !isGlobalPastor}>
-                    <AddButtonComponent zIndex={10} onPress={handlePress} />
-                </If>
-                <TabComponent
-                    onIndexChange={setIndex}
-                    renderScene={renderScene}
-                    tabBarScroll={allRoutes.length > 2}
-                    navigationState={{ index, routes: allRoutes }}
-                />
-            </>
+            <If condition={!isCampusPastor && !isGlobalPastor}>
+                <AddButtonComponent zIndex={10} onPress={handlePress} />
+            </If>
+            <TabComponent
+                onIndexChange={setIndex}
+                renderScene={renderScene}
+                tabBarScroll={allRoutes.length > 2}
+                navigationState={{ index, routes: allRoutes }}
+            />
         </ViewWrapper>
     );
 };

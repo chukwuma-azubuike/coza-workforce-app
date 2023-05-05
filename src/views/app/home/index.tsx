@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
 import useGeoLocation from '../../../hooks/geo-location';
-import { useGetCampusByIdQuery, useGetCampusesQuery } from '../../../store/services/campus';
+import { useGetCampusByIdQuery } from '../../../store/services/campus';
 
 interface IInitialHomeState {
     latestService: {
