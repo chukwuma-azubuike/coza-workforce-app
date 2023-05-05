@@ -19,7 +19,7 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin } = useRole();
 
     const gotoCreateWorker = () => {
-        // navigation.navigate('Create User');
+        navigation.navigate('Create User');
     };
 
     const gotoCreateCampus = () => {

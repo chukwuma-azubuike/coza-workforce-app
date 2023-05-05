@@ -8,6 +8,7 @@ import { permissionsServiceSlice } from './../permissions';
 import { departmentServiceSlice } from '../department';
 import { ticketServiceSlice } from '../tickets';
 import { campusServiceSlice } from './../campus';
+import { roleServiceSlice } from '../role';
 
 const middlewaresSlices = [
     accountServiceSlice.middleware,
@@ -20,6 +21,7 @@ const middlewaresSlices = [
     ticketServiceSlice.middleware,
     campusServiceSlice.middleware,
     scoreServiceSlice.middleware,
+    roleServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;
