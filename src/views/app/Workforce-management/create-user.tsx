@@ -15,7 +15,7 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InputComponent } from '../../../components/atoms/input';
-import { useGetRolesQuery } from '../../../store/services/role';
+import Utils from '../../../utils';
 
 const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
@@ -113,14 +113,16 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         placeholder="Choose department"
                                         onValueChange={handleChange('departmentId')}
                                     >
-                                        {campusDepartments?.map((department, index) => (
-                                            <SelectItemComponent
-                                                value={department._id}
-                                                key={`department-${index}`}
-                                                label={department.departmentName}
-                                                isLoading={campusDepartmentsLoading}
-                                            />
-                                        ))}
+                                        {Utils.sortStringAscending(campusDepartments, 'departmentName')?.map(
+                                            (department, index) => (
+                                                <SelectItemComponent
+                                                    value={department._id}
+                                                    key={`department-${index}`}
+                                                    label={department.departmentName}
+                                                    isLoading={campusDepartmentsLoading}
+                                                />
+                                            )
+                                        )}
                                     </SelectComponent>
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
