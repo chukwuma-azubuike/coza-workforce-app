@@ -11,7 +11,6 @@ import Notifications from '../views/app/notifications';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
 // import Settings from '../views/app/settings';
-// import WorkforcePermissions from '../views/app/workforce-permission';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
 import TicketDetails from '../views/app/tickets/ticket-details';
@@ -35,9 +34,9 @@ import EditProfile from '../views/app/profile/edit-profile';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
-import WorkforceManagement from '../views/app/Workforce-management';
-import UserDetails from '../views/app/Workforce-management/user-details';
-import CreateUser from '../views/app/Workforce-management/create-user';
+import WorkforceManagement from '../views/app/workforce-management';
+import UserDetails from '../views/app/workforce-management/user-details';
+import CreateUser from '../views/app/workforce-management/create-user';
 
 export interface IAppRoute {
     name: string;
