@@ -16,6 +16,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InputComponent } from '../../../components/atoms/input';
 import { useGetRolesQuery } from '../../../store/services/role';
+import Utils from '../../../utils';
 
 const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
@@ -54,7 +55,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     status: 'success',
                     duration: 3,
                 });
-                resetForm(INITIAL_VALUES);
+                resetForm(INITIAL_VALUES as any);
                 goBack();
             }
 
@@ -93,6 +94,11 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isRegistered: false,
     } as ICreateUserPayload;
 
+    const sortedCampusDepartments = React.useMemo(
+        () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
+        [campusDepartments]
+    );
+
     return (
         <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={isFetchingDepartments || isFetchingRoles}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
@@ -113,7 +119,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         placeholder="Choose department"
                                         onValueChange={handleChange('departmentId')}
                                     >
-                                        {campusDepartments?.map((department, index) => (
+                                        {sortedCampusDepartments?.map((department, index) => (
                                             <SelectItemComponent
                                                 value={department._id}
                                                 key={`department-${index}`}
