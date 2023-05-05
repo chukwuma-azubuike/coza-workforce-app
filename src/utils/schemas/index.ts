@@ -163,3 +163,11 @@ export const ResetPasswordSchema = Yup.object().shape({
 export const GSPReportSchema = Yup.object().shape({
     campusCoordinatorComment: Yup.string().required('Please provide a comment'),
 });
+
+export const CreateUserSchema = Yup.object().shape({
+    firstName: Yup.string().required('First name is required.'),
+    lastName: Yup.string().required('Last name is required.'),
+    email: Yup.string().required('email is required.'),
+    departmentId: Yup.string().required('Department is required.'),
+    roleId: Yup.string().required('Role is required.'),
+});
