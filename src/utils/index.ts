@@ -49,8 +49,10 @@ class Utils {
      * @returns Sorted Array
      */
 
-    static sortStringAscending = (arrObject: any[], key: string) =>
-        [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+    static sortStringAscending = (arrObject?: any[], key?: string) => {
+        if (arrObject && key) return [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+        return [];
+    };
 
     /**
      *
