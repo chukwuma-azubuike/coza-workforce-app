@@ -111,7 +111,7 @@ const createUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         placeholder="Choose department"
                                         onValueChange={handleDepartment}
                                     >
-                                        {Utils.sortItem(campusDepartments, 'departmentName')?.map(
+                                        {Utils.sortStringAscending(campusDepartments, 'departmentName')?.map(
                                             (department, index) => (
                                                 <SelectItemComponent
                                                     value={department._id}
