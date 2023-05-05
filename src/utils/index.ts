@@ -243,14 +243,6 @@ class Utils {
 
         return errors;
     };
-
-    /************** SortData ***************/
-
-    static sortItem = (array: any[] = [], key: string) => {
-        const sorted = [...array].sort((a, b) => a[key].localeCompare(b[key]));
-
-        return sorted;
-    };
 }
 
 export default Utils;
