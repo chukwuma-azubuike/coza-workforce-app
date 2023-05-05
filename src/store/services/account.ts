@@ -10,6 +10,7 @@ import {
     IDepartment,
     IDefaultQueryParams,
     IEditProfilePayload,
+    ICreateUserPayload,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -168,6 +169,14 @@ export const accountServiceSlice = createApi({
             }),
         }),
 
+        uploadUser: endpoint.mutation<IRegisterResponse, ICreateUserPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/createUploadedUser`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+        }),
+
         updateUser: endpoint.mutation<IRegisterResponse, IEditProfilePayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/update/${body._id}`,
@@ -248,4 +257,5 @@ export const {
     useSendForgotPasswordOTPQuery,
     useGetUsersByDepartmentIdQuery,
     useValidateForgotPasswordOTPMutation,
+    useUploadUserMutation,
 } = accountServiceSlice;
