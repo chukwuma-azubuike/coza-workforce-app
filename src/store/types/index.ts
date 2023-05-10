@@ -129,6 +129,17 @@ export type IEditProfilePayload = Pick<
 
 export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
 
+export interface ICreateUserPayload {
+    firstName: string;
+    lastName: string;
+    email: string;
+    campusId: string;
+    departmentId: string | undefined;
+    roleId: string | undefined;
+    registeredBy: string;
+    isRegistered: boolean;
+}
+
 // Attendance
 export interface IAttendance extends ILog {
     _id: string;

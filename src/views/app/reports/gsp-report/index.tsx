@@ -125,7 +125,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
     const { campusId, campusName } = React.useContext(GlobalReportContext);
 
     return (
-        <ViewWrapper py={0} px={2} noPadding refreshing={isLoading}>
+        <ViewWrapper py={0} px={2} noPadding refreshing={isLoading || servicesLoading || isFetching}>
             <HStack flex={1}>
                 <VStack w={isMobile ? '100%' : '33%'} flex={1} space={3} pt={4}>
                     <FormControl isRequired>
