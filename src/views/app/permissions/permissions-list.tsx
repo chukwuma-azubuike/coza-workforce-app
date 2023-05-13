@@ -23,7 +23,7 @@ interface IPermissionListRowProps extends IPermission {
     '1'?: IPermission[];
 }
 
-const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
+export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const navigation = useNavigation();
 
     const { type } = props;

@@ -1,7 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-// import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
 import Home from '../views/app/home';
 import Attendance from '../views/app/attendance';
@@ -37,6 +36,7 @@ import CampusReport from '../views/app/reports/campus-report/reportDetails';
 import WorkforceManagement from '../views/app/workforce-management';
 import UserDetails from '../views/app/workforce-management/user-details';
 import CreateUser from '../views/app/workforce-management/create-user';
+import UserReport from '../views/app/workforce-management/user-reports';
 
 export interface IAppRoute {
     name: string;
@@ -254,15 +254,6 @@ const AppRoutes: IAppRoute[] = [
     //     icon: { name: 'check-square', type: 'feather' },
     // },
     // {
-    //     name: 'Workforce permissions',
-    //     component: WorkforcePermissions,
-    //     options: { title: 'Workforce permissions' },
-    //     submenus: [],
-    //     users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'hand-left-outline', type: 'ionicon' },
-    // },
-    // {
     //     name: 'Service management',
     //     component: ServiceManagement,
     //     options: { title: 'Service management' },
@@ -280,6 +271,15 @@ const AppRoutes: IAppRoute[] = [
                 name: 'User Profile',
                 component: UserDetails,
                 options: { title: 'User Profile' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'User Report',
+                component: UserReport,
+                options: { title: 'User Report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -377,22 +377,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         users: [],
         inMenuBar: false,
     },
-    // {
-    //     name: 'Verify account',
-    //
-    //     component: require('../views/auth/verify-account'),
-    //     options: { title: 'Verify account' },
-    //     submenus: [],
-    //     users: [],
-    // },
-    // {
-    //     name: 'Forgot password',
-    //
-    //     component: require('../views/auth/forgot-password'),
-    //     options: { title: 'Forgot password' },
-    //     submenus: [],
-    //     users: [],
-    // },
 ];
 
 export { AppRoutes, AuthRoutes };

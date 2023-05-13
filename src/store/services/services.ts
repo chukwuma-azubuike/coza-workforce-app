@@ -39,7 +39,7 @@ export const servicesServiceSlice = createApi({
             providesTags: ['latestService'],
         }),
 
-        getServices: endpoint.query<IService[], IDefaultQueryParams | undefined>({
+        getServices: endpoint.query<IService[], IDefaultQueryParams>({
             query: () => `/${SERVICE_URL}/getServices`,
 
             transformResponse: (response: IDefaultResponse<IService[]>) => response.data,

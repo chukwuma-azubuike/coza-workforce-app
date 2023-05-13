@@ -11,6 +11,7 @@ import {
     IDefaultQueryParams,
     IEditProfilePayload,
     ICreateUserPayload,
+    IAttendanceStatus,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 

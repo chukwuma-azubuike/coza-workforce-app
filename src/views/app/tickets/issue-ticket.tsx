@@ -294,10 +294,11 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <FormControl isRequired isInvalid={!!errors?.ticketSummary && touched.ticketSummary}>
                                     <FormControl.Label>Description</FormControl.Label>
                                     <TextAreaComponent
-                                        onChangeText={handleChange('ticketSummary')}
-                                        value={values.ticketSummary}
-                                        placeholder="Details"
                                         isRequired
+                                        returnKeyType="done"
+                                        placeholder="Details"
+                                        value={values.ticketSummary}
+                                        onChangeText={handleChange('ticketSummary')}
                                     />
                                     <FormControl.ErrorMessage
                                         fontSize="2xl"
