@@ -1,9 +1,10 @@
 import React from 'react';
 import { useAppSelector } from '../../store/hooks';
+import { useGetRolesQuery } from '../../store/services/role';
 import { selectCurrentUser } from '../../store/services/users';
 import { useAuth } from '../auth';
 
-enum ROLES {
+export enum ROLES {
     HOD = 'HOD',
     AHOD = 'AHOD',
     admin = 'Admin',
@@ -31,6 +32,15 @@ enum DEPARTMENTS {
 const useRole = () => {
     const currentUser = useAppSelector(store => selectCurrentUser(store));
 
+    const { data: roleObjects } = useGetRolesQuery();
+    const leaderRoleIds = React.useMemo(
+        () =>
+            roleObjects
+                ?.filter(roleObject => roleObject.name === ROLES.HOD || roleObject.name === ROLES.AHOD)
+                .map(roleObject => roleObject._id),
+        [roleObjects]
+    );
+
     const roleName = currentUser?.role?.name;
     const departmentName = currentUser?.department?.departmentName;
 
@@ -49,6 +59,9 @@ const useRole = () => {
             _id: currentUser.userId || currentUser._id,
             userId: currentUser.userId || currentUser._id,
         },
+
+        //Role IDs
+        leaderRoleIds,
 
         // Roles
         isHOD: roleName === ROLES.AHOD,

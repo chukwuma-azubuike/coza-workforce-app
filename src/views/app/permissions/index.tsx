@@ -9,6 +9,7 @@ import TabComponent from '../../../components/composite/tabs';
 import useRole from '../../../hooks/role';
 import If from '../../../components/composite/if-container';
 import { IPermission } from '../../../store/types';
+import useMediaQuery from '../../../hooks/media-query';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -17,6 +18,7 @@ const ROUTES = [
 ];
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+    const { isMobile } = useMediaQuery();
     const handlePress = () => {
         navigation.navigate('Request permission');
     };
@@ -49,8 +51,8 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}
-                tabBarScroll={allRoutes.length > 2}
                 navigationState={{ index, routes: allRoutes }}
+                tabBarScroll={allRoutes.length > 2 && isMobile}
             />
         </ViewWrapper>
     );
