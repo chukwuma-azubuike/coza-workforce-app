@@ -107,7 +107,6 @@ const Profile: React.FC = () => {
                         <AvatarComponent
                             size="xl"
                             shadow={9}
-                            bgColor="blue.400"
                             error={uploadError}
                             lastName={user?.lastName}
                             firstName={user?.firstName}

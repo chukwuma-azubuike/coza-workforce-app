@@ -15,6 +15,8 @@ import useRole from '../../../../hooks/role';
 import { useGetCampusesQuery } from '../../../../store/services/campus';
 import { useNavigation } from '@react-navigation/native';
 import { IUserReportProps } from '../../workforce-management/user-reports';
+import useScreenFocus from '../../../../hooks/focus';
+import { UserReportContext } from '../../workforce-management/user-reports/context';
 
 interface WorkforceSummaryProps {
     servicesIsSuccess: boolean;
@@ -91,16 +93,19 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
         sortedServices && setServiceId(sortedServices[0]._id);
     }, [sortedServices]);
 
-    const handlePressCard = (type: IUserReportType) => () => {
-        const reportState: IUserReportProps = {
-            type: 'attendance',
-            status: type,
-            campusId,
-            serviceId,
-        };
+    const handlePressCard =
+        ({ status, service }: { status?: IUserReportType; service: 'attendance' | 'ticket' }) =>
+        () => {
+            const reportState: IUserReportProps = {
+                status,
+                service,
+                campusId,
+                serviceId,
+                headerTitle: `User Report - ${Utils.capitalizeFirstChar(service)}`,
+            };
 
-        navigate('User Report' as never, reportState as never);
-    };
+            navigate('User Report' as never, reportState as never);
+        };
 
     return (
         <>
@@ -197,6 +202,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             iconName="event-available"
                             isLoading={gspReportIsLoading}
                             value={workers?.presentWorkers}
+                            onPress={handlePressCard({ status: IAttendanceStatus.PRESENT, service: 'attendance' })}
                         />
                         <StatCardComponent
                             // percent
@@ -207,7 +213,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             value={workers?.lateWorkers}
                             iconColor={THEME_CONFIG.rose}
                             isLoading={gspReportIsLoading}
-                            onPress={handlePressCard(IAttendanceStatus.LATE)}
+                            onPress={handlePressCard({ status: IAttendanceStatus.LATE, service: 'attendance' })}
                         />
                         <StatCardComponent
                             // percent
@@ -218,7 +224,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             isLoading={gspReportIsLoading}
                             value={workers?.absentWorkers}
                             iconColor={THEME_CONFIG.rose}
-                            onPress={handlePressCard(IAttendanceStatus.ABSENT)}
+                            onPress={handlePressCard({ status: IAttendanceStatus.ABSENT, service: 'attendance' })}
                         />
                         <StatCardComponent
                             // percent
@@ -228,8 +234,8 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             iconColor={THEME_CONFIG.rose}
                             iconType="material-community"
                             isLoading={gspReportIsLoading}
-                            onPress={handlePressCard('ticket')}
                             iconName="ticket-confirmation-outline"
+                            onPress={handlePressCard({ service: 'ticket' })}
                         />
                     </Stack>
                 </ListItem.Accordion>

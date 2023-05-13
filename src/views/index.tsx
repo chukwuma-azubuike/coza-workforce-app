@@ -70,7 +70,11 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
                     {isLoggedIn ? (
-                        <RootStack.Screen name="App" component={AppRoute} />
+                        <RootStack.Screen
+                            name="App"
+                            component={AppRoute}
+                            options={({ route }) => ({ title: route?.params?.headerTitle })}
+                        />
                     ) : (
                         <RootStack.Screen name="Auth" component={AuthRoute} />
                     )}

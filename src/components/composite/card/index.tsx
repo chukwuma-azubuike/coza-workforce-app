@@ -32,7 +32,6 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
                 false,
                 220
             )}
-            // style={{ paddingHorizontal: 20 }}
         >
             <Box
                 py={2}
