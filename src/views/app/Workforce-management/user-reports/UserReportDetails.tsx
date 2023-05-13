@@ -16,6 +16,7 @@ import { myAttendanceColumns } from '../../attendance/flatListConfig';
 import { UserReportContext } from './context';
 import UserProfileBrief from './UserProfile';
 import Loading from '../../../../components/atoms/loading';
+import useScreenFocus from '../../../../hooks/focus';
 
 const UserPermissionsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
     const permissionsColumns: IFlatListColumn[] = [
@@ -144,7 +145,7 @@ const UserAttendanceList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ use
 const ROUTES = [
     { key: 'userAttendance', title: 'Attendance' },
     { key: 'userTickets', title: 'Tickets' },
-    { key: 'userPermissions', title: 'Permissions' },
+    // { key: 'userPermissions', title: 'Permissions' },
 ];
 
 const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
@@ -154,10 +155,18 @@ const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
     const renderScene = SceneMap({
         userTickets: () => <UserTicketsList userId={userId} />,
         userAttendance: () => <UserAttendanceList userId={userId} />,
-        userPermissions: () => <UserPermissionsList userId={userId} />,
+        // userPermissions: () => <UserPermissionsList userId={userId} />,
     });
 
     const [index, setIndex] = React.useState(0);
+
+    const { setUserId } = React.useContext(UserReportContext);
+
+    useScreenFocus({
+        onFocus: () => {
+            !props?.userId && setUserId(undefined);
+        },
+    });
 
     return (
         <ViewWrapper>

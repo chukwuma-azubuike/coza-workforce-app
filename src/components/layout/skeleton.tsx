@@ -1,5 +1,5 @@
 import React from 'react';
-import { Center, Skeleton, VStack } from 'native-base';
+import { Center, HStack, Skeleton, VStack } from 'native-base';
 
 export const HomeSkeleton: React.FC = () => {
     return (
@@ -97,5 +97,36 @@ export const ProfileSkeleton: React.FC<{
                 />
             ))}
         </Center>
+    );
+};
+
+export const ProfileSkeletonMini: React.FC<{
+    count?: number;
+}> = ({ count = 4 }) => {
+    return (
+        <HStack w="full" p={0} space={4} alignItems="center">
+            <Skeleton
+                h={32}
+                w={32}
+                mb={3}
+                rounded="full"
+                _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+            />
+            <VStack flex={1}>
+                {Array.from(Array(count).keys()).map((elm, idx) => (
+                    <Skeleton
+                        h="6"
+                        w="50%"
+                        my={1.5}
+                        rounded="md"
+                        overflow="hidden"
+                        key={`elm-${idx}`}
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                ))}
+            </VStack>
+        </HStack>
     );
 };

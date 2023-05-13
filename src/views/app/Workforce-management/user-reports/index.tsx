@@ -3,20 +3,12 @@ import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
 import { UserReportContext, UserReportProvider } from './context';
-import { Appearance, TouchableNativeFeedback } from 'react-native';
+import { TouchableNativeFeedback } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../../config/appConfig';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
-import {
-    IAttendance,
-    IAttendanceStatus,
-    ICampus,
-    IService,
-    ITicket,
-    IUserReport,
-    IUserReportType,
-} from '../../../../store/types';
+import { IAttendance, ICampus, IService, IUserReportType } from '../../../../store/types';
 import moment from 'moment';
 import Utils from '../../../../utils';
 import useMediaQuery from '../../../../hooks/media-query';
@@ -288,27 +280,31 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
 };
 
 export interface IUserReportProps {
+    headerTitle?: string;
     campusId: ICampus['_id'];
-    status: IUserReportType;
+    status?: IUserReportType;
     serviceId: IService['_id'];
-    type: 'attendance' | 'ticket';
+    service: 'attendance' | 'ticket';
 }
 
 const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { campusId, status, serviceId, type } = props.route.params as IUserReportProps;
+    const { campusId, status, serviceId, service } = props.route.params as IUserReportProps;
     const { isMobile, isTablet } = useMediaQuery();
+    const navigation = useNavigation();
 
-    const isTicket = type === 'ticket';
-    const isAttendance = type === 'attendance';
+    const isTicket = service === 'ticket';
+    const isAttendance = service === 'attendance';
 
     const { data: campuses, isLoading: campusesLoading } = useGetCampusesQuery();
 
     const sortedcampuses = React.useMemo<ICampus[] | undefined>(
-        () => campuses && Utils.sortStringAscending(campuses, 'campusName'),
+        () =>
+            campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
         [campuses]
     );
 
-    const [campusIdUpdate, setCampusId] = React.useState<ICampus['_id']>(campusId);
+    const [campusIdUpdate, setCampusId] = React.useState<ICampus['_id']>(campusId as string);
+    const isGlobal = campusIdUpdate === 'global';
 
     const {
         data: attendanceReport,
@@ -316,13 +312,22 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isFetching: attendanceIsFetching,
         isUninitialized: attendanceIsUninitialized,
     } = useGetAttendanceQuery(
-        { campusId: campusIdUpdate, serviceId, status },
+        { campusId: isGlobal ? undefined : campusIdUpdate, serviceId, status },
         { refetchOnMountOrArgChange: true, skip: !isAttendance }
     );
 
+    const attendanceReportWithCampusName = React.useMemo(() => {
+        return attendanceReport?.map(report => {
+            return {
+                ...report,
+                campusName: report?.campus?.campusName,
+            };
+        });
+    }, [attendanceReport]);
+
     const groupedAttendanceReport = React.useMemo(
-        () => Utils.groupListByKey(attendanceReport, 'departmentName'),
-        [attendanceReport]
+        () => Utils.groupListByKey(attendanceReportWithCampusName, isGlobal ? 'campusName' : 'departmentName'),
+        [attendanceReportWithCampusName]
     );
 
     const {
@@ -331,13 +336,22 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isFetching: ticketIsFetching,
         isUninitialized: ticketIsUninitialized,
     } = useGetTicketsQuery(
-        { campusId: campusIdUpdate, serviceId },
+        { campusId: isGlobal ? undefined : campusIdUpdate, serviceId },
         { refetchOnMountOrArgChange: true, skip: !isTicket }
     );
 
+    const ticketReportWithCampusName = React.useMemo(() => {
+        return ticketsReport?.map(report => {
+            return {
+                ...report,
+                campusName: report?.campus?.campusName,
+            };
+        });
+    }, [ticketsReport]);
+
     const groupedTicketsReport = React.useMemo(
-        () => Utils.groupListByKey(ticketsReport, 'departmentName'),
-        [ticketsReport]
+        () => Utils.groupListByKey(ticketReportWithCampusName, isGlobal ? 'campusName' : 'departmentName'),
+        [ticketReportWithCampusName]
     );
 
     const isLoadingAttendance = attendanceIsLoading || attendanceIsFetching;
@@ -349,12 +363,13 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     useScreenFocus({
         onFocus: () => {
-            setCampusId(campusId);
+            setCampusId(campusId as string);
+            navigation.setOptions({ headerTitle: `User ${isAttendance ? 'Attendance' : 'Ticket'} Report` });
         },
     });
 
-    const attendanceUserId = attendanceReport && attendanceReport[0]?.user?._id;
-    const ticketUserId = ticketsReport && ticketsReport[0]?.user?._id;
+    const attendanceUserId = !!attendanceReport?.length ? attendanceReport[0]?.user?._id : undefined;
+    const ticketUserId = !!ticketsReport?.length ? ticketsReport[0]?.user?._id : undefined;
     const userId = isAttendance ? attendanceUserId : ticketUserId;
 
     return (

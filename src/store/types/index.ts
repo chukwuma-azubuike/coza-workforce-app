@@ -15,7 +15,7 @@ export enum IAttendanceStatus {
     ABSENT_WITH_PERMISSION = 'ABSENT_WITH_PERMISSION',
 }
 
-export type IUserReportType = IAttendanceStatus | 'ticket';
+export type IUserReportType = IAttendanceStatus;
 
 export enum REST_API_VERBS {
     GET = 'GET',
@@ -167,6 +167,7 @@ export interface IAttendance extends ILog {
     updatedAt: string;
     user: IUser;
     service: IService;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface ICampusAttendanceSummary {
@@ -192,6 +193,7 @@ export interface ITicket extends ILog {
     category: ITicketCategory;
     departmentName: string;
     contestReplyComment: string;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface ITicketUpdatePayload {
