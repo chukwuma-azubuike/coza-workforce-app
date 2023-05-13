@@ -9,6 +9,7 @@ import TabComponent from '../../../components/composite/tabs';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { ITicket } from '../../../store/types';
+import useMediaQuery from '../../../hooks/media-query';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -19,6 +20,7 @@ const ROUTES = [
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
 const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+    const { isMobile } = useMediaQuery();
     const updatedListItem = route?.params as ITicket;
 
     const gotoIndividual = () => {
@@ -56,8 +58,8 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}
-                tabBarScroll={allRoutes.length > 2}
                 navigationState={{ index, routes: allRoutes }}
+                tabBarScroll={allRoutes.length > 2 && isMobile}
             />
             <If condition={isQC}>
                 <StaggerButtonComponent

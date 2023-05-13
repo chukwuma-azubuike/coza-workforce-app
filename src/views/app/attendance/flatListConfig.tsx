@@ -96,43 +96,99 @@ const myAttendanceColumns: IFlatListColumn[] = [
 ];
 
 export interface ITransformUserAttendanceList {
-    firstName: string;
-    lastName: string;
+    userId: string;
     clockIn: string;
+    lastName: string;
     clockOut: string;
     createdAt: string;
-    userId: string;
+    firstName: string;
+    pictureUrl: string;
+    departmentName: string;
 }
 
 const teamAttendanceDataColumns: IFlatListColumn[] = [
-    // {
-    //     title: 'Date',
-    //     dataIndex: 'date',
-    //     render: (elm: IAttendance, key) => (
-    //         <Box key={`date-${key}`} size="42px" borderWidth={0.2} borderColor={isLightMode ? 'gray.700' : 'gray.500'}>
-    //             <Center pt={0}>
-    //                 <Text bold fontSize={16} color={isLightMode ? 'gray.800' : 'gray.100'}>
-    //                     {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
-    //                 </Text>
-    //                 <Text bold color={isLightMode ? 'gray.800' : 'gray.100'} fontSize={12}>
-    //                     {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
-    //                 </Text>
-    //             </Center>
-    //         </Box>
-    //     ),
-    // },
     {
         title: 'Name',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
             <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
-                <AvatarComponent mr={4} size="md" badge={!!elm.clockIn} imageUrl={AVATAR_FALLBACK_URL} />
+                <AvatarComponent
+                    mr={4}
+                    size="md"
+                    badge={!!elm.clockIn}
+                    imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                />
                 <VStack justifyContent="center">
                     <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.firstName)}
                     </Text>
                     <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.lastName)}
+                    </Text>
+                </VStack>
+            </HStack>
+        ),
+    },
+    {
+        title: '                     Clock In',
+        dataIndex: 'clockIn',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStack key={`clockin-${key}`} minWidth={0} justifyContent="center" flex={1} textAlign="left" w="full">
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                <Text
+                    _dark={{
+                        color: elm.clockIn ? 'green.300' : 'red.300',
+                    }}
+                    color={elm.clockIn ? 'green.500' : 'red.500'}
+                    textAlign="center"
+                >
+                    {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
+                </Text>
+            </HStack>
+        ),
+    },
+    {
+        title: 'Clock Out',
+        dataIndex: 'clockOut',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                <Text
+                    color="gray.500"
+                    _dark={{
+                        color: 'warmGray.200',
+                    }}
+                >
+                    {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
+                </Text>
+            </HStack>
+        ),
+    },
+];
+
+const leadersAttendanceDataColumns: IFlatListColumn[] = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
+                <AvatarComponent
+                    mr={4}
+                    size="md"
+                    badge={!!elm.clockIn}
+                    imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                />
+                <VStack>
+                    <HStack>
+                        <Text flexWrap="wrap" bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                            {Utils.truncateString(Utils.capitalizeFirstChar(elm.firstName))}
+                        </Text>
+                        <Text flexWrap="wrap" bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                            {Utils.truncateString(Utils.capitalizeFirstChar(elm.lastName))}
+                        </Text>
+                    </HStack>
+                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                        {Utils.truncateString(elm.departmentName)}
                     </Text>
                 </VStack>
             </HStack>
@@ -347,4 +403,4 @@ const campusColumns_1: IFlatListColumn[] = [
     },
 ];
 
-export { campusColumns, campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns };
+export { campusColumns, campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns, leadersAttendanceDataColumns };
