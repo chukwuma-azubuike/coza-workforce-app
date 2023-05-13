@@ -14,13 +14,13 @@ import { useGetTicketsQuery } from '../../../store/services/tickets';
 import { ITicket } from '../../../store/types';
 import Utils from '../../../utils';
 
-interface TicketListRowProps extends ITicket {
+export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus';
     '0'?: string;
     '1'?: ITicket[];
 }
 
-const TicketListRow: React.FC<TicketListRowProps> = props => {
+export const TicketListRow: React.FC<TicketListRowProps> = props => {
     const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
     const { type } = props;
