@@ -15,8 +15,6 @@ import useRole from '../../../../hooks/role';
 import { useGetCampusesQuery } from '../../../../store/services/campus';
 import { useNavigation } from '@react-navigation/native';
 import { IUserReportProps } from '../../workforce-management/user-reports';
-import useScreenFocus from '../../../../hooks/focus';
-import { UserReportContext } from '../../workforce-management/user-reports/context';
 
 interface WorkforceSummaryProps {
     servicesIsSuccess: boolean;
