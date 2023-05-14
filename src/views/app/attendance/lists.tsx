@@ -97,19 +97,41 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
     const { data: members, refetch: usersRefetch } = useGetUsersByDepartmentIdQuery(user?.department._id);
 
-    const allMembers =
-        members?.map(member => {
+    // const allMembers =
+    //     members?.map(member => {
+    //         return {
+    //             ...member,
+    //             userId: member._id,
+    //         };
+    //     }) || [];
+    // const membersClockedInValid = membersClockedIn?.map(member => {
+    //     return {
+    //         ...member,
+    //         userId: member.user._id,
+    //     };
+    // }) || [];
+
+    const allMembers = React.useMemo(() => {
+        if (!members?.length) return [];
+
+        return members?.map(member => {
             return {
                 ...member,
                 userId: member._id,
             };
-        }) || [];
-    const membersClockedInValid = membersClockedIn?.map(member => {
-        return {
-            ...member,
-            userId: member.user._id,
-        };
-    }) || [membersClockedIn];
+        });
+    }, [members]);
+
+    const membersClockedInValid = React.useMemo(() => {
+        if (!membersClockedIn?.length) return [];
+
+        return membersClockedIn?.map(member => {
+            return {
+                ...member,
+                userId: member.user._id,
+            };
+        });
+    }, [membersClockedIn]);
 
     const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
 
