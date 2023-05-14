@@ -34,9 +34,10 @@ import EditProfile from '../views/app/profile/edit-profile';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
-import WorkforceManagement from '../views/app/workforce-management';
-import UserDetails from '../views/app/workforce-management/user-details';
-import CreateUser from '../views/app/workforce-management/create-user';
+import WorkforceManagement from '../views/app/Workforce-management';
+import UserDetails from '../views/app/Workforce-management/user-details';
+import CreateUser from '../views/app/Workforce-management/create-user';
+import Views from '../views/app/Workforce-management/view';
 
 export interface IAppRoute {
     name: string;
@@ -273,7 +274,7 @@ const AppRoutes: IAppRoute[] = [
     // },
     {
         name: 'Workforce management',
-        component: WorkforceManagement,
+        component: Views,
         options: { title: 'Workforce management' },
         submenus: [
             {

@@ -443,3 +443,18 @@ export interface IDepartmentReportResponse {
     };
     incidentReport: unknown[];
 }
+
+export interface IcampusUserData {
+    campusId: string;
+    campusName: string;
+    departments: number;
+    totalUser: number;
+    activeUser: number;
+    dormantUser: number;
+    inactiveUser: number;
+    departmentCount: {
+        departmentId: string;
+        departmentName: string;
+        userCount: number;
+    }[];
+}
