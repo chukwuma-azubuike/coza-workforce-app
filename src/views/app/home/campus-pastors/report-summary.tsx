@@ -7,7 +7,7 @@ import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../.
 import StatusTag from '../../../../components/atoms/status-tag';
 import ButtonComponent from '../../../../components/atoms/button';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableNativeFeedback, TouchableOpacity } from 'react-native';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import Utils from '../../../../utils';
 import useScreenFocus from '../../../../hooks/focus';
@@ -139,14 +139,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, c
         <>
             <VStack mt={4} px={4} overflow="scroll">
                 <HStack alignItems="baseline" justifyContent="space-between">
-                    <ButtonComponent
-                        size="xs"
-                        padding={0}
-                        width={200}
-                        shadow="none"
-                        variant="link"
-                        onPress={navigateToReports}
-                    >
+                    <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
                         <HStack alignItems="center" space={1}>
                             <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
                             <Text color="gray.400" fontSize="md" ml={2}>
@@ -154,7 +147,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, c
                             </Text>
                             <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
                         </HStack>
-                    </ButtonComponent>
+                    </TouchableOpacity>
                     <Flex alignItems="baseline" flexDirection="row">
                         <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
                             {submittedReportCount || 0}

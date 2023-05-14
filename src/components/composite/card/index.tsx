@@ -2,51 +2,67 @@ import React from 'react';
 import { VStack, Box, Divider, Text, HStack, IBoxProps } from 'native-base';
 import { IIconTypes } from '../../../utils/types';
 import { Icon } from '@rneui/themed';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableNativeFeedback } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
+import useAppColorMode from '../../../hooks/theme/colorMode';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;
     header?: React.ReactNode;
     footer?: React.ReactNode;
+    onPress?: () => void;
     isLoading?: boolean;
     divider?: boolean;
 }
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
     const { isLoading } = props;
+    const { isLightMode } = useAppColorMode();
+
     return (
-        <Box
-            py={2}
-            m={2}
-            {...props}
-            flex={[0, 1]}
-            borderWidth={0.2}
-            borderRadius={3}
-            style={style.shadowProp}
-            _dark={{ backgroundColor: 'gray.900' }}
-            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
-        >
-            {isLoading ? (
-                <ProfileSkeleton count={9} />
-            ) : (
-                <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
-                    {props.header && (
-                        <Box px="4" pt="4">
-                            {props.header}
-                        </Box>
-                    )}
-                    <Box px="4">{props.children}</Box>
-                    {props.footer && (
-                        <Box px="4" pb="4">
-                            {props.footer}
-                        </Box>
-                    )}
-                </VStack>
+        <TouchableNativeFeedback
+            disabled={false}
+            delayPressIn={0}
+            onPress={props.onPress}
+            accessibilityRole="button"
+            background={TouchableNativeFeedback.Ripple(
+                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
+                false,
+                220
             )}
-        </Box>
+        >
+            <Box
+                py={2}
+                m={2}
+                {...props}
+                flex={[0, 1]}
+                borderWidth={0.2}
+                borderRadius={3}
+                style={style.shadowProp}
+                _dark={{ backgroundColor: 'gray.900' }}
+                _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
+            >
+                {isLoading ? (
+                    <ProfileSkeleton count={9} />
+                ) : (
+                    <VStack space="4" divider={props.divider ? <Divider /> : undefined}>
+                        {props.header && (
+                            <Box px="4" pt="4">
+                                {props.header}
+                            </Box>
+                        )}
+                        <Box px="4">{props.children}</Box>
+                        {props.footer && (
+                            <Box px="4" pb="4">
+                                {props.footer}
+                            </Box>
+                        )}
+                    </VStack>
+                )}
+            </Box>
+        </TouchableNativeFeedback>
     );
 };
 
@@ -69,15 +85,17 @@ interface IStatCardComponentProps {
     percent?: boolean;
     iconName?: string;
     iconColor?: string;
-    iconType?: IIconTypes;
     isLoading?: boolean;
+    onPress?: () => void;
+    iconType?: IIconTypes;
+    width?: string | string[];
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent, isLoading } = props;
+    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45.6%', '20%'] } = props;
 
     return (
-        <CardComponent w={['45.6%', '20%']} h={135}>
+        <CardComponent w={width} h={135} onPress={onPress}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (

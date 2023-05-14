@@ -25,7 +25,7 @@ const useFetchMoreData = ({
         }
     }, [isSuccess, dataSet]);
 
-    return { data: data || dataSet };
+    return { data: (data as any[]) || (dataSet as any[]) };
 };
 
 export default useFetchMoreData;

@@ -6,6 +6,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import findIndex from 'lodash/findIndex';
+import groupBy from 'lodash/groupBy';
+import merge from 'lodash/merge';
+import forEach from 'lodash/forEach';
 class Utils {
     /************ Version Specific ************/
 
@@ -257,6 +260,19 @@ class Utils {
         }
 
         return originalList;
+    };
+
+    static mergeDuplicatesByKey = (array: any[], key: string = '_id') => {
+        const grouped = groupBy(array, key);
+
+        const merged: any[] = [];
+
+        forEach(grouped, group => {
+            const obj = merge({}, ...group);
+            merged.push(obj);
+        });
+
+        return merged;
     };
 
     /************** validatePhoneNumber ***************/

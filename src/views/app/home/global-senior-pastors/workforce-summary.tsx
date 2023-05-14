@@ -9,10 +9,12 @@ import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
 import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import moment from 'moment';
-import { ICampus, IService } from '../../../../store/types';
+import { IAttendanceStatus, ICampus, IService, IUserReportType } from '../../../../store/types';
 import Utils from '../../../../utils';
 import useRole from '../../../../hooks/role';
 import { useGetCampusesQuery } from '../../../../store/services/campus';
+import { useNavigation } from '@react-navigation/native';
+import { IUserReportProps } from '../../workforce-management/user-reports';
 
 interface WorkforceSummaryProps {
     servicesIsSuccess: boolean;
@@ -20,6 +22,7 @@ interface WorkforceSummaryProps {
 }
 
 const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesIsSuccess }) => {
+    const { navigate } = useNavigation();
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
     const [expandedAttendance, setExpandedAttendance] = React.useState<boolean>(false);
     const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
@@ -87,6 +90,20 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     React.useEffect(() => {
         sortedServices && setServiceId(sortedServices[0]._id);
     }, [sortedServices]);
+
+    const handlePressCard =
+        ({ status, service }: { status?: IUserReportType; service: 'attendance' | 'ticket' }) =>
+        () => {
+            const reportState: IUserReportProps = {
+                status,
+                service,
+                campusId,
+                serviceId,
+                headerTitle: `User Report - ${Utils.capitalizeFirstChar(service)}`,
+            };
+
+            navigate('User Report' as never, reportState as never);
+        };
 
     return (
         <>
@@ -170,8 +187,8 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             // percent
                             label="Active"
                             // suffix="+15"
-                            iconName="check-square"
                             iconType="feather"
+                            iconName="check-square"
                             isLoading={gspReportIsLoading}
                             value={workers?.activeWorkers}
                         />
@@ -179,10 +196,11 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             // percent
                             label="Present"
                             // suffix="+25"
-                            iconName="event-available"
                             iconType="material"
+                            iconName="event-available"
                             isLoading={gspReportIsLoading}
                             value={workers?.presentWorkers}
+                            onPress={handlePressCard({ status: IAttendanceStatus.PRESENT, service: 'attendance' })}
                         />
                         <StatCardComponent
                             // percent
@@ -190,9 +208,10 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             // suffix="-8"
                             iconType="entypo"
                             iconName="back-in-time"
-                            isLoading={gspReportIsLoading}
                             value={workers?.lateWorkers}
                             iconColor={THEME_CONFIG.rose}
+                            isLoading={gspReportIsLoading}
+                            onPress={handlePressCard({ status: IAttendanceStatus.LATE, service: 'attendance' })}
                         />
                         <StatCardComponent
                             // percent
@@ -203,6 +222,18 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             isLoading={gspReportIsLoading}
                             value={workers?.absentWorkers}
                             iconColor={THEME_CONFIG.rose}
+                            onPress={handlePressCard({ status: IAttendanceStatus.ABSENT, service: 'attendance' })}
+                        />
+                        <StatCardComponent
+                            // percent
+                            label="Tickets"
+                            // suffix="-21"
+                            value={workers?.tickets}
+                            iconColor={THEME_CONFIG.rose}
+                            iconType="material-community"
+                            isLoading={gspReportIsLoading}
+                            iconName="ticket-confirmation-outline"
+                            onPress={handlePressCard({ service: 'ticket' })}
                         />
                     </Stack>
                 </ListItem.Accordion>

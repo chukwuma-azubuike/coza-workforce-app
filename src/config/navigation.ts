@@ -1,7 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-// import AuthHome from '../views/auth/welcome';
 import Login from '../views/auth/login';
 import Home from '../views/app/home';
 import Attendance from '../views/app/attendance';
@@ -33,11 +32,13 @@ import EditProfile from '../views/app/profile/edit-profile';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
-import WorkforceManagement from '../views/app/workforce-management';
-import UserDetails from '../views/app/workforce-management/user-details';
-import CreateUser from '../views/app/workforce-management/create-user';
+import WorkforceManagement from '../views/app/Workforce-management';
+import UserDetails from '../views/app/Workforce-management/user-details';
+import CreateUser from '../views/app/Workforce-management/create-user';
 import ServiceManagement from '../views/app/service-management';
 import CreateServiceManagement from '../views/app/service-management/create-service';
+import UserReport from '../views/app/Workforce-management/user-reports';
+import UserReportDetailsPage from '../views/app/Workforce-management/user-reports/UserReportDetailsPage';
 
 export interface IAppRoute {
     name: string;
@@ -298,9 +299,27 @@ const AppRoutes: IAppRoute[] = [
                 icon: { name: 'person', type: 'octicon' },
             },
             {
+                name: 'User Report',
+                component: UserReport,
+                options: { title: 'User Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
                 name: 'Create User',
                 component: CreateUser,
                 options: { title: 'Create User' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'User Report Details',
+                component: UserReportDetailsPage,
+                options: { title: 'User Report Details' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -389,22 +408,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         users: [],
         inMenuBar: false,
     },
-    // {
-    //     name: 'Verify account',
-    //
-    //     component: require('../views/auth/verify-account'),
-    //     options: { title: 'Verify account' },
-    //     submenus: [],
-    //     users: [],
-    // },
-    // {
-    //     name: 'Forgot password',
-    //
-    //     component: require('../views/auth/forgot-password'),
-    //     options: { title: 'Forgot password' },
-    //     submenus: [],
-    //     users: [],
-    // },
 ];
 
 export { AppRoutes, AuthRoutes };

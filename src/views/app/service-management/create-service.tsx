@@ -13,9 +13,10 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
 import { useCreateServiceMutation, useUpdateServiceMutation } from '../../../store/services/services';
-import { IAllService, ICreateServicePayload } from '../../../store/types';
+import { CREATE_SERVICE_ENUM, IAllService, ICreateServicePayload } from '../../../store/types';
 import Utils from '../../../utils';
 import { CreateServiceSchema } from '../../../utils/schemas';
+import useScreenFocus from '../../../hooks/focus';
 
 const tags: any = [
     { id: 'cozasunday', value: 'COZASunday' },
@@ -38,13 +39,13 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.clockinTime);
         const coordinates = {
-            long: 7.505862981744857,
-            lat: 9.005452823370131,
+            long: CREATE_SERVICE_ENUM.LONG,
+            lat: CREATE_SERVICE_ENUM.LAT,
         };
         const name = values.serviceName;
         const isGlobalService = values.serviceType === 'global';
         const leadersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.leaderLateTime);
-        const rangeToClockIn = 100;
+        const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN;
         const serviceEndTime = Utils.concatDateTimeToEpoc(values.startDate, values.endTime);
         const serviceTime = Utils.concatDateTimeToEpoc(values.startDate, values.startTime);
         const workersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.workerLateTime);
@@ -91,37 +92,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         serviceName: '',
     } as ICreateServicePayload;
 
-    // React.useEffect(() => {
-    //     if (isSuccess) {
-    //         setModalState({
-    //             message: 'Service successfully created',
-    //             defaultRender: true,
-    //             status: 'success',
-    //             duration: 3,
-    //         });
-    //         goBack();
-    //         reset();
-    //     }
-
-    //     if (isError) {
-    //         setModalState({
-    //             message: error?.data?.message || 'Oops, something went wrong!',
-    //             defaultRender: true,
-    //             status: 'error',
-    //             duration: 3,
-    //         });
-    //         reset();
-    //     }
-    // }, [isSuccess, isError]);
-
-    const isScreenFocused = useIsFocused();
-
-    useFocusEffect(
-        React.useCallback(() => {
-            setOptions({ title: 'Create Service' });
-            return () => {};
-        }, [isScreenFocused])
-    );
+    useScreenFocus({ onFocus: () => setOptions({ title: 'Create Service' }) });
 
     return (
         <ViewWrapper scroll noPadding>

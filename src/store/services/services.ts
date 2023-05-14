@@ -49,7 +49,7 @@ export const servicesServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
         }),
 
-        getServiceById: endpoint.query<'', ''>({
+        getServiceById: endpoint.query<void, void>({
             query: id => `/${SERVICE_URL}/${id}`,
         }),
 
