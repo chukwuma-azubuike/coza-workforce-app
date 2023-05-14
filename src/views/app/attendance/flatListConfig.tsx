@@ -179,14 +179,14 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
                 <VStack>
-                    <HStack>
+                    <VStack>
                         <Text flexWrap="wrap" bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                             {Utils.truncateString(Utils.capitalizeFirstChar(elm.firstName))}
                         </Text>
                         <Text flexWrap="wrap" bold color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                             {Utils.truncateString(Utils.capitalizeFirstChar(elm.lastName))}
                         </Text>
-                    </HStack>
+                    </VStack>
                     <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.truncateString(elm.departmentName)}
                     </Text>

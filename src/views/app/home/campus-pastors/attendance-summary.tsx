@@ -68,7 +68,7 @@ const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
     return (
         <Center>
             <HStack alignItems="center" space={10}>
-                <TouchableOpacity onPress={handleNavigation([ROLES.HOD, ROLES.AHOD])}>
+                <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation([ROLES.HOD, ROLES.AHOD])}>
                     <VStack alignItems="center">
                         <Flex alignItems="baseline" flexDirection="row">
                             <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
@@ -89,7 +89,7 @@ const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
                         </Flex>
                     </VStack>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={handleNavigation(ROLES.worker)}>
+                <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation(ROLES.worker)}>
                     <VStack alignItems="center">
                         <Flex alignItems="baseline" flexDirection="row">
                             <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>

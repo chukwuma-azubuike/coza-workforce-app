@@ -15,7 +15,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { role: ROLES };
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
-    const isWorker = params.role === ROLES.worker;
+    const isWorker = params?.role === ROLES.worker;
 
     const ROUTES = [
         { key: 'myAttendance', title: 'My Attendance' },

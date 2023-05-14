@@ -2,12 +2,11 @@ import { useNavigation } from '@react-navigation/native';
 import uniqBy from 'lodash/uniqBy';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useRole from '../../../hooks/role';
@@ -28,8 +27,6 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
 
     const { type } = props;
 
-    const { isLightMode } = useAppColorMode();
-
     return (
         <ErrorBoundary>
             {props[1]?.map((elm, index) => {
@@ -40,19 +37,7 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                 const { requestor, departmentName, categoryName, description, category, status } = elm;
 
                 return (
-                    <TouchableNativeFeedback
-                        disabled={false}
-                        delayPressIn={0}
-                        onPress={handlePress}
-                        accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                            false,
-                            220
-                        )}
-                        key={index}
-                        style={{ paddingHorizontal: 20 }}
-                    >
+                    <TouchableOpacity activeOpacity={0.6} onPress={handlePress}>
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
                                 <AvatarComponent imageUrl={requestor?.pictureUrl || AVATAR_FALLBACK_URL} />
@@ -98,7 +83,7 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                             </HStack>
                             <StatusTag>{status}</StatusTag>
                         </HStack>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 );
             })}
         </ErrorBoundary>
@@ -215,6 +200,99 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo((
     );
 });
 
+const LeadersPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
+    const LeadersPermissionsColumns: IFlatListColumn[] = [
+        {
+            dataIndex: 'dateCreated',
+            render: (_: IPermission, key) => <PermissionListRow type="campus" {..._} key={key} />,
+        },
+    ];
+
+    const {
+        leaderRoleIds,
+        user: { campus },
+    } = useRole();
+
+    const [page, setPage] = React.useState<number>(1);
+
+    const {
+        refetch: hodRefetch,
+        data: hodsPermissions,
+        isLoading: hodLoading,
+        isSuccess: hodIsSuccess,
+        isFetching: hodIsFetching,
+    } = useGetPermissionsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[0],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const {
+        refetch: ahodRefetch,
+        data: ahodsPermissions,
+        isLoading: ahodLoading,
+        isSuccess: ahodIsSuccess,
+        isFetching: ahodIsFetching,
+    } = useGetPermissionsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[1],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const isLoading = hodLoading || ahodLoading;
+    const isSuccess = hodIsSuccess && ahodIsSuccess;
+    const isFetching = hodIsFetching || ahodIsFetching;
+    const data = hodsPermissions && ahodsPermissions ? [...ahodsPermissions, ...hodsPermissions] : [];
+
+    // const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+
+    // const fetchMoreData = () => {
+    //     if (!isFetching && !isLoading) {
+    //         if (data?.length) {
+    //             setPage(prev => prev + 1);
+    //         } else {
+    //             setPage(prev => prev - 1);
+    //         }
+    //     }
+    // };
+
+    const memoizedData = useMemo(
+        () =>
+            Utils.groupListByKey(
+                Utils.replaceArrayItemByNestedKey(data || [], updatedListItem, ['_id', updatedListItem?._id]),
+                'createdAt'
+            ),
+        [updatedListItem?._id, data]
+    );
+
+    const handleRefetch = () => {
+        hodRefetch();
+        ahodRefetch();
+    };
+
+    return (
+        <ErrorBoundary>
+            {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
+            <FlatListComponent
+                data={memoizedData}
+                refreshing={isFetching}
+                onRefresh={handleRefetch}
+                // fetchMoreData={fetchMoreData}
+                columns={LeadersPermissionsColumns}
+                isLoading={isLoading || isFetching}
+            />
+        </ErrorBoundary>
+    );
+});
+
 const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
     const teamPermissionsColumns: IFlatListColumn[] = [
         {
@@ -269,4 +347,4 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ up
     );
 });
 
-export { MyPermissionsList, MyTeamPermissionsList, CampusPermissions };
+export { MyPermissionsList, MyTeamPermissionsList, LeadersPermissionsList, CampusPermissions };

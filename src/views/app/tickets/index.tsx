@@ -3,7 +3,7 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
-import { CampusTickets, MyTicketsList, MyTeamTicketsList } from './ticket-list';
+import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
 import If from '../../../components/composite/if-container';
@@ -15,6 +15,7 @@ const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
     { key: 'teamTickets', title: 'Team Tickets' },
     { key: 'campusTickets', title: 'Campus Tickets' },
+    { key: 'leadersTickets', title: 'Leaders Tickets' },
 ];
 
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
@@ -39,6 +40,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         myTickets: () => <MyTicketsList updatedListItem={updatedListItem} />,
         teamTickets: () => <MyTeamTicketsList updatedListItem={updatedListItem} />,
         campusTickets: () => <CampusTickets updatedListItem={updatedListItem} />,
+        leadersTickets: () => <LeadersTicketsList updatedListItem={updatedListItem} />,
     });
 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
@@ -46,7 +48,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
         if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
-        if (isCampusPastor || isGlobalPastor) return [ROUTES[2]];
+        if (isCampusPastor || isGlobalPastor) return [ROUTES[3], ROUTES[2]];
 
         return [ROUTES[0]];
     }, []);

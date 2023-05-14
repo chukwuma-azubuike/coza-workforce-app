@@ -260,6 +260,98 @@ const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ update
     );
 });
 
+const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
+    const leadersTicketsColumns: IFlatListColumn[] = [
+        {
+            dataIndex: 'createdAt',
+            render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
+        },
+    ];
+
+    const {
+        user: { campus },
+        leaderRoleIds,
+    } = useRole();
+
+    const [page, setPage] = React.useState<number>(1);
+
+    const {
+        data: hodsTickets,
+        refetch: hodRefetch,
+        isLoading: hodLoading,
+        isSuccess: hodIsSuccess,
+        isFetching: hodIsFetching,
+    } = useGetTicketsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[0],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const {
+        data: ahodsTickets,
+        refetch: ahodRefetch,
+        isLoading: ahodLoading,
+        isSuccess: ahodIsSuccess,
+        isFetching: ahodIsFetching,
+    } = useGetTicketsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[1],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const isLoading = hodLoading || ahodLoading;
+    const isFetching = hodIsFetching || ahodIsFetching;
+    const isSuccess = hodIsSuccess && ahodIsSuccess;
+    const data = ahodsTickets && hodsTickets ? [...ahodsTickets, ...hodsTickets] : [];
+
+    // const fetchMoreData = () => {
+    //     if (!isFetching && !isLoading) {
+    //         if (data?.length) {
+    //             setPage(prev => prev + 1);
+    //         } else {
+    //             setPage(prev => prev - 1);
+    //         }
+    //     }
+    // };
+
+    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+
+    const sortedData = React.useMemo(() => Utils.sortByDate(data || [], 'createdAt'), [data]);
+    const groupedData = React.useMemo(
+        () =>
+            Utils.groupListByKey(
+                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                'createdAt'
+            ),
+        [updatedListItem?._id, sortedData]
+    );
+
+    const handleRefetch = () => {
+        hodRefetch();
+        ahodRefetch();
+    };
+
+    return (
+        <FlatListComponent
+            data={groupedData}
+            isLoading={isLoading}
+            onRefresh={handleRefetch}
+            // fetchMoreData={fetchMoreData}
+            columns={leadersTicketsColumns}
+            refreshing={isLoading || isFetching}
+            emptyMessage="There are no tickets issued"
+        />
+    );
+});
+
 const CampusTickets: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
     const teamTicketsColumns: IFlatListColumn[] = [
         {
@@ -322,4 +414,4 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
     );
 });
 
-export { MyTicketsList, MyTeamTicketsList, CampusTickets };
+export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets };
