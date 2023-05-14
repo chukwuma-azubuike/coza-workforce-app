@@ -106,7 +106,7 @@ const CampusListRow: React.FC<CampusUserList> = user => {
     );
 };
 
-const MyTeam: React.FC = memo(() => {
+const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     const teamColumns: IFlatListColumn[] = [
         {
             dataIndex: '_id',
@@ -145,7 +145,7 @@ const MyTeam: React.FC = memo(() => {
     );
 });
 
-const Campus: React.FC = memo(() => {
+const Campus: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     const campusColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
@@ -161,10 +161,9 @@ const Campus: React.FC = memo(() => {
     const [page, setPage] = React.useState<number>(1);
 
     const { data, isLoading, isSuccess, isFetching } = useGetUsersQuery(
-        { campusId: campus._id, limit: 10, page },
+        { campusId: campus._id, limit: 10, page, departmentId },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
-
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
 
     const fetchMoreData = () => {

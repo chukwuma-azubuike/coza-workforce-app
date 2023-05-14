@@ -1,80 +1,88 @@
-import { StyleSheet, TouchableHighlight, TouchableOpacity, View } from 'react-native';
+import { Center, Heading, Stack, Text, VStack } from 'native-base';
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import ViewWrapper from '../../../components/layout/viewWrapper';
-import { Box, Center, Flex, HStack, Heading, Stack, Text, VStack } from 'native-base';
-import CardComponent from '../../../components/composite/card';
 import useRole from '../../../hooks/role';
 import { useGetCampusSummeryByCampusIdQuery } from '../../../store/services/account';
-const list = [
-    {
-        title: 'Total',
-        value: '122',
-        color: 'purple.700',
-    },
-    {
-        title: 'Active',
-        value: '320',
-        color: 'green.700',
-    },
-    {
-        title: 'Dormant',
-        value: '430',
-        color: 'orange.700',
-    },
-    {
-        title: 'Inactive',
-        value: '500',
-        color: 'red.700',
-    },
-];
+import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import useScreenFocus from '../../../hooks/focus';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const campuslist = [
-    {
-        name: 'Campus',
-        value: 'Lagos Campus',
-    },
-    {
-        name: 'Departments',
-        value: '19',
-    },
-];
+const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+    const navigation = useNavigation();
 
-const cardlist = [
-    {
-        title: 'Avalanche',
-        value: '122',
-        flex: 1,
-    },
-    {
-        title: 'COZA Transfer Service',
-        value: '320',
-        flex: 0,
-    },
-    {
-        title: 'Internship',
-        value: '430',
-        flex: 0,
-    },
-    {
-        title: 'Photismos',
-        value: '500',
-        flex: 0,
-    },
-];
-const Views = () => {
+    const handlePress = (elm: any) => {
+        navigation.navigate('Workforce' as never, elm as never);
+    };
+
     const {
         user: { department, campus },
+        isHOD,
+        isAHOD,
+        isCampusPastor,
+        isGlobalPastor,
+        isQC,
     } = useRole();
-    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummeryByCampusIdQuery({
-        campusId: '641497441cbe4cc79e155179',
+    
+    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummeryByCampusIdQuery(campus._id);
+
+    const campusInfo = [
+        {
+            name: 'Campus',
+            value: data?.campusName,
+        },
+        {
+            name: 'Departments',
+            value: data?.departments,
+        },
+    ];
+
+    const summeryList = [
+        {
+            title: 'Total',
+            value: data?.totalUser,
+            color: 'purple.700',
+        },
+        {
+            title: 'Active',
+            value: data?.activeUser,
+            color: 'green.700',
+        },
+        {
+            title: 'Dormant',
+            value: data?.dormantUser,
+            color: 'orange.700',
+        },
+        {
+            title: 'Inactive',
+            value: data?.inactiveUser,
+            color: 'red.700',
+        },
+    ];
+
+    const Departmentlist = data?.departmentCount.map((item, index) => ({
+        ...item,
+        title: item.departmentName,
+        value: item.userCount,
+        flex: index % 2 === 0 ? 1 : 0, // set flex to 1 for even index and 0 for odd index
+    }));
+
+    const handleRoleRoute = () => {
+        if (isHOD || isAHOD) {
+            navigation('Workforce');
+        }
+    };
+
+    useScreenFocus({
+        onFocus: handleRoleRoute,
     });
 
-    console.log('ssc', data);
     return (
         <ErrorBoundary>
-            <ViewWrapper>
-                {campuslist.map((item, index) => (
+            <ViewWrapper scroll>
+                {campusInfo.map((item, index) => (
                     <Stack key={index} ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
                         <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
                             {item.name}
@@ -103,7 +111,7 @@ const Views = () => {
                     _dark={{ borderColor: 'gray.200' }}
                     _light={{ borderColor: 'gray.200' }}
                 >
-                    {list.map((item, index) => (
+                    {summeryList.map((item, index) => (
                         <Stack key={index} flexDirection="column" alignItems="center" justifyItems="center" my={2}>
                             <Heading
                                 size="xs"
@@ -129,7 +137,7 @@ const Views = () => {
                         w="full"
                         justifyContent="space-between"
                     >
-                        {cardlist.map((item, index) => (
+                        {Departmentlist?.map((item, index) => (
                             <Stack
                                 key={index}
                                 px="2"
@@ -148,26 +156,28 @@ const Views = () => {
                                     flex={item.flex}
                                     justifyContent="center"
                                 >
-                                    <Stack
-                                        space="1"
-                                        flexDirection="column"
-                                        alignItems="center"
-                                        justifyItems="center"
-                                        p={3}
-                                    >
-                                        <Heading
-                                            size="xs"
-                                            fontWeight="500"
-                                            _dark={{ color: 'white' }}
-                                            _light={{ color: 'black' }}
-                                            textAlign="center"
+                                    <TouchableOpacity activeOpacity={0.6} onPress={() => handlePress(item)}>
+                                        <Stack
+                                            space="1"
+                                            flexDirection="column"
+                                            alignItems="center"
+                                            justifyItems="center"
+                                            p={3}
                                         >
-                                            {item.title}
-                                        </Heading>
-                                        <Heading size="md" _dark={{ color: 'white' }} _light={{ color: 'black' }}>
-                                            {item.value}
-                                        </Heading>
-                                    </Stack>
+                                            <Heading
+                                                size="xs"
+                                                fontWeight="500"
+                                                _dark={{ color: 'white' }}
+                                                _light={{ color: 'black' }}
+                                                textAlign="center"
+                                            >
+                                                {item.title}
+                                            </Heading>
+                                            <Heading size="md" _dark={{ color: 'white' }} _light={{ color: 'black' }}>
+                                                {item.value}
+                                            </Heading>
+                                        </Stack>
+                                    </TouchableOpacity>
                                 </VStack>
                             </Stack>
                         ))}
@@ -187,4 +197,4 @@ const style = StyleSheet.create({
     },
 });
 
-export default Views;
+export default GlobalWorkforceSummary;

@@ -2,42 +2,44 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 // import AuthHome from '../views/auth/welcome';
-import Login from '../views/auth/login';
-import Home from '../views/app/home';
 import Attendance from '../views/app/attendance';
+import Home from '../views/app/home';
+import Login from '../views/auth/login';
 // import Compliance from '../views/app/compliance';
-import Permissions from '../views/app/permissions';
 import Notifications from '../views/app/notifications';
+import Permissions from '../views/app/permissions';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
 // import Settings from '../views/app/settings';
+import { IIconTypes } from '../utils/types';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
-import TicketDetails from '../views/app/tickets/ticket-details';
 import IssueTicket from '../views/app/tickets/issue-ticket';
-import { IIconTypes } from '../utils/types';
+import TicketDetails from '../views/app/tickets/ticket-details';
 // import ServiceManagement from '../views/app/service-management';
-import RequestPermission from '../views/app/permissions/request-permission';
-import Register from '../views/auth/register';
+import CreateUser from '../views/app/Workforce-management/create-user';
+import UserDetails from '../views/app/Workforce-management/user-details';
+import ManualClockin from '../views/app/manual-clockin';
 import PermissionDetails from '../views/app/permissions/permission-details';
-import ChildcareReport from '../views/app/reports/forms/childcare-report';
-import IncidentReport from '../views/app/reports/forms/incident-report';
+import RequestPermission from '../views/app/permissions/request-permission';
+import EditProfile from '../views/app/profile/edit-profile';
+import CampusReport from '../views/app/reports/campus-report/reportDetails';
 import AttendanceReport from '../views/app/reports/forms/attendance-report';
+import ChildcareReport from '../views/app/reports/forms/childcare-report';
 import GuestReport from '../views/app/reports/forms/guest-report';
-import ServiceReport from '../views/app/reports/forms/service-report';
+import IncidentReport from '../views/app/reports/forms/incident-report';
 import SecurityReport from '../views/app/reports/forms/security-report';
+import ServiceReport from '../views/app/reports/forms/service-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
+import ForgotPassword from '../views/auth/forgot-password';
+import Register from '../views/auth/register';
+import ResetPassword from '../views/auth/reset-password';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-import ManualClockin from '../views/app/manual-clockin';
-import EditProfile from '../views/app/profile/edit-profile';
-import ForgotPassword from '../views/auth/forgot-password';
-import ResetPassword from '../views/auth/reset-password';
-import CampusReport from '../views/app/reports/campus-report/reportDetails';
-import WorkforceManagement from '../views/app/Workforce-management';
-import UserDetails from '../views/app/Workforce-management/user-details';
-import CreateUser from '../views/app/Workforce-management/create-user';
-import Views from '../views/app/Workforce-management/view';
+import WorkforceManagement from '../views/app/Workforce-management/workforce-management';
+import GlobalWorkforceSummary from '../views/app/Workforce-management/global-workforce';
+import WorkforceSummary from '../views/app/Workforce-management';
+import CampusWorkforceSummary from '../views/app/Workforce-management/campus-workforce';
 
 export interface IAppRoute {
     name: string;
@@ -273,10 +275,19 @@ const AppRoutes: IAppRoute[] = [
     //     icon: { name: 'church', type: 'material-community' },
     // },
     {
-        name: 'Workforce management',
-        component: Views,
+        name: 'Workforce summary',
+        component: WorkforceSummary,
         options: { title: 'Workforce management' },
         submenus: [
+            {
+                name: 'Workforce management',
+                component: WorkforceManagement,
+                options: { title: 'Workforce' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
             {
                 name: 'User Profile',
                 component: UserDetails,
@@ -289,6 +300,24 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'Create User',
                 component: CreateUser,
+                options: { title: 'Create User' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Campus workforce',
+                component: CampusWorkforceSummary,
+                options: { title: 'Create User' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Global workforce',
+                component: GlobalWorkforceSummary,
                 options: { title: 'Create User' },
                 submenus: [],
                 users: [],
