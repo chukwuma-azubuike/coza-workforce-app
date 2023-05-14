@@ -6,15 +6,17 @@ import {
     myAttendanceColumns,
     teamAttendanceDataColumns,
 } from './flatListConfig';
-import { MonthPicker } from '../../../components/composite/date-picker';
 import { useGetAttendanceQuery } from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
-import { IAttendance } from '../../../store/types';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
+import { IAttendance, IService } from '../../../store/types';
+import { useGetServicesQuery } from '../../../store/services/services';
 import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '../../../store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
+import Utils from '../../../utils';
+import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
+import { Box } from 'native-base';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -57,57 +59,91 @@ export const MyAttendance: React.FC = React.memo(() => {
 export const TeamAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
-    const { data: latestService } = useGetLatestServiceQuery(user?.campus?._id);
     const {
-        data: membersClockedIn,
+        data: services,
+        refetch: refetchServices,
+        isLoading: serviceIsLoading,
+        isSuccess: servicesIsSuccess,
+    } = useGetServicesQuery({});
+
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
+    const setService = (value: IService['_id']) => {
+        setServiceId(value);
+    };
+
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
+    );
+
+    React.useEffect(() => {
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
+
+    const {
         isLoading,
         isFetching,
+        data: membersClockedIn,
     } = useGetAttendanceQuery({
+        serviceId: serviceId,
         departmentId: user?.department?._id,
-        serviceId: latestService?._id,
     });
 
-    const { data: members } = useGetUsersByDepartmentIdQuery(user?.department._id);
+    const { data: members, refetch: usersRefetch } = useGetUsersByDepartmentIdQuery(user?.department._id);
 
-    const allMembers = members || [];
-    const membersClockedInValid = membersClockedIn || [];
+    const allMembers =
+        members?.map(member => {
+            return {
+                ...member,
+                userId: member._id,
+            };
+        }) || [];
+    const membersClockedInValid = membersClockedIn?.map(member => {
+        return {
+            ...member,
+            userId: member.user._id,
+        };
+    }) || [membersClockedIn];
+
     const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
 
     const mergedAttendanceWithMemberList = React.useMemo(
-        () => [
-            ...mergedUsers.map((member: any) => {
-                return {
-                    createdAt: moment(),
-                    clockIn: member?.clockIn || 0,
-                    clockOut: member?.clockOut || 0,
-                    userId: member?.user?._id || member._id,
-                    lastName: member?.lastName || member?.user?.lastName,
-                    firstName: member?.firstName || member?.user?.firstName,
-                };
-            }),
-        ],
+        () => Utils.mergeDuplicatesByKey(mergedUsers, 'userId'),
         [membersClockedIn, mergedUsers]
     );
 
-    // Filter out clocked in members from user list
-    const uniqueAttendanceList = React.useMemo<any[]>(
-        () =>
-            mergedAttendanceWithMemberList.filter(
-                (attendance, index) =>
-                    mergedAttendanceWithMemberList.findIndex(item => item.userId === attendance.userId) === index
-            ),
-        [mergedAttendanceWithMemberList]
-    );
+    const handleRefetch = () => {
+        usersRefetch();
+        refetchServices();
+    };
 
     return (
         <ErrorBoundary>
-            <MonthPicker today />
+            <Box mb={2} px={2}>
+                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                    {sortedServices?.map((service, index) => (
+                        <SelectItemComponent
+                            value={service._id}
+                            key={`service-${index}`}
+                            isLoading={serviceIsLoading}
+                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                        />
+                    ))}
+                </SelectComponent>
+            </Box>
             <FlatListComponent
                 padding
-                data={uniqueAttendanceList}
+                onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
                 refreshing={isLoading || isFetching}
+                data={mergedAttendanceWithMemberList}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
@@ -117,31 +153,59 @@ export const TeamAttendance: React.FC = React.memo(() => {
 export const LeadersAttendance: React.FC = React.memo(() => {
     const { leaderRoleIds, user } = useRole();
 
-    const { data: latestService } = useGetLatestServiceQuery(user?.campus?._id);
+    const {
+        data: services,
+        refetch: refetchServices,
+        isLoading: serviceIsLoading,
+        isSuccess: servicesIsSuccess,
+    } = useGetServicesQuery({});
+
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
+    const setService = (value: IService['_id']) => {
+        setServiceId(value);
+    };
+
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
+    );
+
+    React.useEffect(() => {
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
+
     const {
         data: HODs,
+        refetch: refetchHods,
         isLoading: hodLoading,
         isFetching: hodFetching,
     } = useGetAttendanceQuery(
         {
+            serviceId: serviceId,
             campusId: user?.campus?._id,
-            serviceId: latestService?._id,
             roleId: leaderRoleIds && (leaderRoleIds[0] as string),
         },
-        { skip: !leaderRoleIds?.length }
+        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
     );
 
     const {
         data: AHODs,
+        refetch: refetchAHods,
         isLoading: ahodLoading,
         isFetching: ahodFetching,
     } = useGetAttendanceQuery(
         {
+            serviceId: serviceId,
             campusId: user?.campus?._id,
-            serviceId: latestService?._id,
             roleId: leaderRoleIds && (leaderRoleIds[1] as string),
         },
-        { skip: !leaderRoleIds?.length }
+        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
     );
 
     const isLoading = hodLoading || ahodLoading;
@@ -157,47 +221,63 @@ export const LeadersAttendance: React.FC = React.memo(() => {
     );
 
     const leadersClockedIn = AHODs && HODs ? [...AHODs, ...HODs] : [];
+    const allLeadersRaw = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
 
-    const allLeaders = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
-    const leadersClockedInValid = leadersClockedIn || [];
+    const allLeaders = React.useMemo(() => {
+        if (!allLeadersRaw.length) return [];
+
+        return allLeadersRaw?.map(leader => {
+            return {
+                ...leader,
+                userId: leader._id,
+            };
+        });
+    }, [allLeadersRaw]);
+
+    const leadersClockedInValid = React.useMemo(() => {
+        if (!leadersClockedIn?.length) return [];
+
+        return leadersClockedIn?.map(leader => {
+            return {
+                ...leader,
+                userId: leader.user._id,
+            };
+        });
+    }, [leadersClockedIn]);
+
     const mergedLeaders = [...leadersClockedInValid, ...allLeaders] as any;
 
-    const mergedAttendanceWithMemberList = React.useMemo(
-        () => [
-            ...mergedLeaders.map((member: any) => {
-                return {
-                    createdAt: moment(),
-                    clockIn: member?.clockIn || 0,
-                    pictureUrl: member?.pictureUrl,
-                    clockOut: member?.clockOut || 0,
-                    userId: member?.user?._id || member._id,
-                    departmentName: member?.department?.departmentName,
-                    lastName: member?.lastName || member?.user?.lastName,
-                    firstName: member?.firstName || member?.user?.firstName,
-                };
-            }),
-        ],
+    const mergedAttendanceWithLeaderList = React.useMemo(
+        () => Utils.mergeDuplicatesByKey(mergedLeaders, 'userId'),
         [leadersClockedIn, mergedLeaders]
     );
 
-    // Filter out clocked in members from user list
-    const uniqueAttendanceList = React.useMemo<any[]>(
-        () =>
-            mergedAttendanceWithMemberList.filter(
-                (attendance, index) =>
-                    mergedAttendanceWithMemberList.findIndex(item => item.userId === attendance.userId) === index
-            ),
-        [mergedAttendanceWithMemberList]
-    );
+    const handleRefetch = () => {
+        refetchHods();
+        refetchAHods();
+        refetchServices();
+    };
 
     return (
         <ErrorBoundary>
-            <MonthPicker today />
+            <Box mb={2} px={2}>
+                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                    {sortedServices?.map((service, index) => (
+                        <SelectItemComponent
+                            value={service._id}
+                            key={`service-${index}`}
+                            isLoading={serviceIsLoading}
+                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                        />
+                    ))}
+                </SelectComponent>
+            </Box>
             <FlatListComponent
                 padding
-                data={uniqueAttendanceList}
+                onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
+                data={mergedAttendanceWithLeaderList}
                 columns={leadersAttendanceDataColumns}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
@@ -209,40 +289,77 @@ export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
     const [page, setPage] = React.useState<number>(1);
 
-    const { data: latestService } = useGetLatestServiceQuery(user.campus._id);
-    const { data, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
+    const { data: services, isLoading: serviceIsLoading, isSuccess: servicesIsSuccess } = useGetServicesQuery({});
+
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
+    const setService = (value: IService['_id']) => {
+        setServiceId(value);
+    };
+
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
+    );
+
+    React.useEffect(() => {
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
+
+    const { data, refetch, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
         {
-            page,
-            limit: 20,
+            // page,
+            // limit: 20,
+            serviceId: serviceId,
             campusId: user?.campus._id,
-            serviceId: latestService?._id,
         },
         {
-            skip: !latestService,
+            skip: !serviceId,
             refetchOnMountOrArgChange: true,
         }
     );
 
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
+    // const fetchMoreData = () => {
+    //     if (!isFetching && !isLoading) {
+    //         if (data?.length) {
+    //             setPage(prev => prev + 1);
+    //         } else {
+    //             setPage(prev => prev - 1);
+    //         }
+    //     }
+    // };
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+
+    const handleRefetch = () => {
+        refetch();
+    };
 
     return (
         <ErrorBoundary>
-            <MonthPicker today />
+            <Box mb={2} px={2}>
+                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                    {sortedServices?.map((service, index) => (
+                        <SelectItemComponent
+                            value={service._id}
+                            key={`service-${index}`}
+                            isLoading={serviceIsLoading}
+                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                        />
+                    ))}
+                </SelectComponent>
+            </Box>
             <FlatListComponent
                 padding
+                onRefresh={handleRefetch}
                 columns={campusColumns_1}
-                fetchMoreData={fetchMoreData}
-                data={moreData as IAttendance[]}
+                data={data as IAttendance[]}
+                // fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
