@@ -17,10 +17,6 @@ const ServiceListRow: React.FC<IService> = service => {
     const navigation = useNavigation();
     const { isLightMode, isDarkMode } = useAppColorMode();
 
-    // const handlePress = () => {
-    //     console.log(service?.serviceTime);
-    // };
-
     return (
         <TouchableNativeFeedback
             disabled={false}
@@ -37,10 +33,7 @@ const ServiceListRow: React.FC<IService> = service => {
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
                     <VStack justifyContent="space-between">
-                        <Text bold>
-                            {/* {Utils.capitalizeFirstChar(user?.firstName)} {Utils.capitalizeFirstChar(user?.lastName)} */}
-                            {service?.name}
-                        </Text>
+                        <Text bold>{service?.name}</Text>
                         <Text fontSize="sm" color="gray.400">
                             {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(service?.serviceTime)
                                 .zone('+00:00')
