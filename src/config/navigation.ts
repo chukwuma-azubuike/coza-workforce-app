@@ -37,6 +37,7 @@ import WorkforceManagement from '../views/app/workforce-management';
 import UserDetails from '../views/app/workforce-management/user-details';
 import CreateUser from '../views/app/workforce-management/create-user';
 import UserReport from '../views/app/workforce-management/user-reports';
+import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
 
 export interface IAppRoute {
     name: string;
@@ -289,6 +290,15 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Create User',
                 component: CreateUser,
                 options: { title: 'Create User' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'User Report Details',
+                component: UserReportDetailsPage,
+                options: { title: 'User Report Details' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

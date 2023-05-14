@@ -6,8 +6,8 @@ import { IAttendance, IPermission, ITicket, IUser } from '../../../../store/type
 import ErrorBoundary from '../../../../components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import Utils from '../../../../utils';
-import { useGetPermissionsQuery } from '../../../../store/services/permissions';
-import { PermissionListRow } from '../../permissions/permissions-list';
+// import { useGetPermissionsQuery } from '../../../../store/services/permissions';
+// import { PermissionListRow } from '../../permissions/permissions-list';
 import { TicketListRow } from '../../tickets/ticket-list';
 import useFetchMoreData from '../../../../hooks/fetch-more-data';
 import { useGetTicketsQuery } from '../../../../store/services/tickets';
@@ -18,45 +18,45 @@ import UserProfileBrief from './UserProfile';
 import Loading from '../../../../components/atoms/loading';
 import useScreenFocus from '../../../../hooks/focus';
 
-const UserPermissionsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
-    const permissionsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => <PermissionListRow type="own" {..._} key={key} />,
-        },
-    ];
+// const UserPermissionsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
+//     const permissionsColumns: IFlatListColumn[] = [
+//         {
+//             dataIndex: 'dateCreated',
+//             render: (_: IPermission, key) => <PermissionListRow type="own" {..._} key={key} />,
+//         },
+//     ];
 
-    const [page, setPage] = React.useState<number>(1);
+//     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
-        { requestor: userId, limit: 20, page },
-        { skip: !userId, refetchOnMountOrArgChange: true }
-    );
+//     const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
+//         { requestor: userId, limit: 20, page },
+//         { skip: !userId, refetchOnMountOrArgChange: true }
+//     );
 
-    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+//     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
+//     const fetchMoreData = () => {
+//         if (!isFetching && !isLoading) {
+//             if (data?.length) {
+//                 setPage(prev => prev + 1);
+//             } else {
+//                 setPage(prev => prev - 1);
+//             }
+//         }
+//     };
 
-    return (
-        <ErrorBoundary>
-            <FlatListComponent
-                data={moreData}
-                refreshing={isFetching}
-                columns={permissionsColumns}
-                fetchMoreData={fetchMoreData}
-                isLoading={isLoading || isFetching}
-            />
-        </ErrorBoundary>
-    );
-});
+//     return (
+//         <ErrorBoundary>
+//             <FlatListComponent
+//                 data={moreData}
+//                 refreshing={isFetching}
+//                 columns={permissionsColumns}
+//                 fetchMoreData={fetchMoreData}
+//                 isLoading={isLoading || isFetching}
+//             />
+//         </ErrorBoundary>
+//     );
+// });
 
 const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
     const ticketColumns: IFlatListColumn[] = [
@@ -95,8 +95,8 @@ const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId
             <FlatListComponent
                 data={memoizedData}
                 refreshing={isFetching}
-                fetchMoreData={fetchMoreData}
                 columns={ticketColumns}
+                fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
             />
         </ErrorBoundary>
