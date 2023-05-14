@@ -10,6 +10,7 @@ import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { IcampusUserData } from '../../../store/types';
+import useScreenFocus from '../../../hooks/focus';
 
 const ROUTES = [
     { key: 'team', title: 'Team' },
@@ -21,15 +22,10 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin } = useRole();
 
     const { setOptions } = navigation;
-    const isScreenFocused = useIsFocused();
 
-    useFocusEffect(
-        React.useCallback(() => {
-            setOptions({ title: `${campusUsersData.departmentName || 'Workforce Management'}` });
-
-            return () => {};
-        }, [isScreenFocused])
-    );
+    useScreenFocus({
+        onFocus: () => setOptions({ title: `${campusUsersData.departmentName || 'Workforce Management'}` }),
+    });
 
     const gotoCreateWorker = () => {
         navigation.navigate('Create User');

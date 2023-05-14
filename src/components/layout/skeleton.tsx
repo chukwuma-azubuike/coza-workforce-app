@@ -161,18 +161,3 @@ export const FlexListSkeleton: React.FC<{
         </ViewWrapper>
     );
 };
-
-// <Stack key={index} ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
-//     <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-//         {item.name}
-//     </Heading>
-//     <Text
-//         ml="12"
-//         flexWrap="wrap"
-//         fontWeight="400"
-//         _dark={{ color: 'gray.400' }}
-//         _light={{ color: 'gray.600' }}
-//     >
-//         {item.value}
-//     </Text>
-// </Stack>

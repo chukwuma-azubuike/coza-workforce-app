@@ -232,7 +232,7 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
-        getCampusSummeryByCampusId: endpoint.query<IcampusUserData, string>({
+        getCampusSummaryByCampusId: endpoint.query<IcampusUserData, string>({
             query: campusId => ({
                 url: `/${USER_SERVICE_URL}/campus`,
                 method: REST_API_VERBS.GET,
@@ -258,7 +258,7 @@ export const accountServiceSlice = createApi({
 export const {
     useSendOTPQuery,
     useGetUsersQuery,
-    useGetCampusSummeryByCampusIdQuery,
+    useGetCampusSummaryByCampusIdQuery,
     useLoginMutation,
     useRegisterMutation,
     useGetUserByIdQuery,

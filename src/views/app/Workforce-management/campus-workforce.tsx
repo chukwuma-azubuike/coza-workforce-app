@@ -2,13 +2,12 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import { SmallCardComponent } from '../../../components/composite/card';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { FlatListSkeleton, FlexListSkeleton } from '../../../components/layout/skeleton';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import useRole from '../../../hooks/role';
-import { useGetCampusSummeryByCampusIdQuery } from '../../../store/services/account';
+import { useGetCampusSummaryByCampusIdQuery } from '../../../store/services/account';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = useNavigation();
@@ -20,7 +19,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     const {
         user: { campus },
     } = useRole();
-    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummeryByCampusIdQuery(campus._id);
+    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummaryByCampusIdQuery(campus._id);
 
     const campusInfo = [
         {
@@ -56,11 +55,15 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         },
     ];
 
-    const Departmentlist = data?.departmentCount.map(item => ({
-        ...item,
-        title: item.departmentName,
-        value: item.userCount,
-    }));
+    const Departmentlist = React.useMemo(
+        () =>
+            data?.departmentCount.map(item => ({
+                ...item,
+                title: item.departmentName,
+                value: item.userCount,
+            })),
+        [data]
+    );
 
     return (
         <ErrorBoundary>
@@ -141,14 +144,5 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         </ErrorBoundary>
     );
 };
-
-const style = StyleSheet.create({
-    shadowProp: {
-        shadowColor: '#171717',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-    },
-});
 
 export default CampusWorkforceSummary;
