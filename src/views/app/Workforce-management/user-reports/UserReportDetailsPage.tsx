@@ -17,6 +17,8 @@ import { UserReportContext } from './context';
 import UserProfileBrief from './UserProfile';
 import Loading from '../../../../components/atoms/loading';
 import useScreenFocus from '../../../../hooks/focus';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ParamListBase } from '@react-navigation/native';
 
 // const UserPermissionsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
 //     const permissionsColumns: IFlatListColumn[] = [
@@ -95,8 +97,8 @@ const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId
             <FlatListComponent
                 data={memoizedData}
                 refreshing={isFetching}
-                columns={ticketColumns}
                 fetchMoreData={fetchMoreData}
+                columns={ticketColumns}
                 isLoading={isLoading || isFetching}
             />
         </ErrorBoundary>
@@ -148,9 +150,9 @@ const ROUTES = [
     // { key: 'userPermissions', title: 'Permissions' },
 ];
 
-const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
-    const { userId: contextUserId } = React.useContext(UserReportContext);
-    const userId = contextUserId || (props?.userId as string);
+const UserReportDetailsPage: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route }) => {
+    const params = route.params as { userId: string };
+    const userId = params?.userId;
 
     const renderScene = SceneMap({
         userTickets: () => <UserTicketsList userId={userId} />,
@@ -160,21 +162,13 @@ const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
 
     const [index, setIndex] = React.useState(0);
 
-    const { setUserId } = React.useContext(UserReportContext);
-
-    useScreenFocus({
-        onFocus: () => {
-            !props?.userId && setUserId(undefined);
-        },
-    });
-
     return (
         <ViewWrapper>
             {!userId ? (
                 <Loading />
             ) : (
                 <>
-                    <UserProfileBrief userId={userId} />
+                    <UserProfileBrief userId={userId} isMobileView={true} />
                     <TabComponent
                         onIndexChange={setIndex}
                         renderScene={renderScene}
@@ -186,4 +180,4 @@ const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
     );
 };
 
-export default UserReportDetails;
+export default UserReportDetailsPage;

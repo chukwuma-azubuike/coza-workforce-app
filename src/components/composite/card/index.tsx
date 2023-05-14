@@ -87,16 +87,17 @@ interface IStatCardComponentProps {
     percent?: boolean;
     iconName?: string;
     iconColor?: string;
-    iconType?: IIconTypes;
     isLoading?: boolean;
     onPress?: () => void;
+    iconType?: IIconTypes;
+    width?: string | string[];
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress } = props;
+    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45.6%', '20%'] } = props;
 
     return (
-        <CardComponent w={['45.6%', '20%']} h={135} onPress={onPress}>
+        <CardComponent w={width} h={135} onPress={onPress}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (

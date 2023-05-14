@@ -235,8 +235,8 @@ export interface IUserReportListRowProps {
 
 const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
     const { isMobile } = useMediaQuery();
+    const { isLightMode } = useAppColorMode();
     const { setUserId, userId } = React.useContext(UserReportContext);
 
     return (
@@ -244,13 +244,14 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     if (isMobile) {
-                        navigation.navigate('User Profile' as never, props as never);
+                        navigation.navigate('User Report Details' as never, { userId: elm?.user._id } as never);
                     }
                     setUserId(elm?.user._id);
                 };
 
                 return (
                     <TouchableNativeFeedback
+                        key={index}
                         disabled={false}
                         delayPressIn={0}
                         onPress={handlePress}
@@ -270,7 +271,7 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            <Text>{moment(elm?.clockIn).format('HH:MM A')}</Text>
+                            {elm?.clockIn && <Text>{moment(elm?.clockIn).format('HH:MM A')}</Text>}
                         </HStack>
                     </TouchableNativeFeedback>
                 );

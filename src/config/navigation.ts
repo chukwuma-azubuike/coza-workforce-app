@@ -41,6 +41,7 @@ import GlobalWorkforceSummary from '../views/app/Workforce-management/global-wor
 import WorkforceSummary from '../views/app/Workforce-management';
 import CampusWorkforceSummary from '../views/app/Workforce-management/campus-workforce';
 import UserReport from '../views/app/Workforce-management/user-reports';
+
 // import UserReport from '../views/app/workforce-management/user-reports';
 export interface IAppRoute {
     name: string;
