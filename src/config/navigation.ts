@@ -40,7 +40,8 @@ import WorkforceManagement from '../views/app/Workforce-management/workforce-man
 import GlobalWorkforceSummary from '../views/app/Workforce-management/global-workforce';
 import WorkforceSummary from '../views/app/Workforce-management';
 import CampusWorkforceSummary from '../views/app/Workforce-management/campus-workforce';
-import UserReport from '../views/app/workforce-management/user-reports';
+import UserReport from '../views/app/Workforce-management/user-reports';
+// import UserReport from '../views/app/workforce-management/user-reports';
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>> | React.FC<any>;
@@ -273,7 +274,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'Workforce management',
                 component: WorkforceManagement,
-                options: { title: 'Workforce' },
+                options: { title: 'Workforce management' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -309,7 +310,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'Campus workforce',
                 component: CampusWorkforceSummary,
-                options: { title: 'Create User' },
+                options: { title: 'Campus management' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -318,7 +319,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'Global workforce',
                 component: GlobalWorkforceSummary,
-                options: { title: 'Create User' },
+                options: { title: 'Global workforce' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

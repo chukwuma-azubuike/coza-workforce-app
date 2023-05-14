@@ -1,5 +1,6 @@
 import React from 'react';
-import { Center, HStack, Skeleton, VStack } from 'native-base';
+import { Center, HStack, Skeleton, Stack, VStack } from 'native-base';
+import ViewWrapper from './viewWrapper';
 
 export const HomeSkeleton: React.FC = () => {
     return (
@@ -130,3 +131,48 @@ export const ProfileSkeletonMini: React.FC<{
         </HStack>
     );
 };
+
+export const FlexListSkeleton: React.FC<{
+    count?: number;
+}> = ({ count = 1 }) => {
+    return (
+        <ViewWrapper>
+            {Array.from(Array(count).keys()).map((elm, idx) => (
+                <Stack key={idx} flexDirection="row" alignItems="center" justifyItems="center" my={1}>
+                    <Skeleton
+                        h="2"
+                        flex={1}
+                        rounded="md"
+                        overflow="hidden"
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                    <Skeleton
+                        h="2"
+                        ml="12"
+                        flex={1}
+                        rounded="md"
+                        overflow="hidden"
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                </Stack>
+            ))}
+        </ViewWrapper>
+    );
+};
+
+// <Stack key={index} ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
+//     <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
+//         {item.name}
+//     </Heading>
+//     <Text
+//         ml="12"
+//         flexWrap="wrap"
+//         fontWeight="400"
+//         _dark={{ color: 'gray.400' }}
+//         _light={{ color: 'gray.600' }}
+//     >
+//         {item.value}
+//     </Text>
+// </Stack>

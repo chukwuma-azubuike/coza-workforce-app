@@ -1,5 +1,5 @@
 import React from 'react';
-import { VStack, Box, Divider, Text, HStack, IBoxProps } from 'native-base';
+import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading } from 'native-base';
 import { IIconTypes } from '../../../utils/types';
 import { Icon } from '@rneui/themed';
 import { StyleSheet, TouchableNativeFeedback } from 'react-native';
@@ -7,6 +7,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
 import useAppColorMode from '../../../hooks/theme/colorMode';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;
@@ -79,6 +80,7 @@ export default CardComponent;
 
 interface IStatCardComponentProps {
     value?: number | string;
+    flex?: number;
     label?: string;
     prefix?: string;
     suffix?: string;
@@ -125,5 +127,45 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
                 </HStack>
             )}
         </CardComponent>
+    );
+});
+
+export const SmallCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
+    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress } = props;
+    return (
+        <>
+            {isLoading ? (
+                <FlatListSkeleton count={1} />
+            ) : (
+                <Stack px="2" flexDirection="column" alignItems="center" justifyItems="center" my={2} w="1/2">
+                    <VStack
+                        space="2"
+                        w="full"
+                        style={style.shadowProp}
+                        _dark={{ background: 'gray.800' }}
+                        _light={{ background: 'white' }}
+                        borderRadius={4}
+                        flex={1}
+                        justifyContent="center"
+                    >
+                        <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
+                            <Stack space="1" flexDirection="column" alignItems="center" justifyItems="center" p={3}>
+                                <Heading size="sm" fontWeight="500" color="gray.400" textAlign="center">
+                                    {props.label}
+                                </Heading>
+                                <Text
+                                    bold
+                                    fontSize="2xl"
+                                    _dark={{ color: 'primary.500' }}
+                                    _light={{ color: 'primary.600' }}
+                                >
+                                    <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
+                                </Text>
+                            </Stack>
+                        </TouchableOpacity>
+                    </VStack>
+                </Stack>
+            )}
+        </>
     );
 });
