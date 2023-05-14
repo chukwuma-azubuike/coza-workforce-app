@@ -8,6 +8,15 @@ export interface ILog {
     updatedAt?: string;
 }
 
+export enum IAttendanceStatus {
+    LATE = 'LATE',
+    ABSENT = 'ABSENT',
+    PRESENT = 'PRESENT',
+    ABSENT_WITH_PERMISSION = 'ABSENT_WITH_PERMISSION',
+}
+
+export type IUserReportType = IAttendanceStatus;
+
 export enum REST_API_VERBS {
     GET = 'GET',
     PUT = 'PUT',
@@ -98,6 +107,7 @@ export interface IUser {
     qrCodeUrl: string;
     placeOfWork: string;
     role: IRole;
+    roleId: IRole['_id'];
     department: IDepartment;
     campus: ICampus;
     status: IUserStatus;
@@ -125,6 +135,8 @@ export type IEditProfilePayload = Pick<
     | 'placeOfWork'
     | 'phoneNumber'
 >;
+
+export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
 export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
 
@@ -156,6 +168,7 @@ export interface IAttendance extends ILog {
     updatedAt: string;
     user: IUser;
     service: IService;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface ICampusAttendanceSummary {
@@ -181,6 +194,7 @@ export interface ITicket extends ILog {
     category: ITicketCategory;
     departmentName: string;
     contestReplyComment: string;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface ITicketUpdatePayload {

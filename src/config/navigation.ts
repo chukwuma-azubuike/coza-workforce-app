@@ -40,7 +40,7 @@ import WorkforceManagement from '../views/app/Workforce-management/workforce-man
 import GlobalWorkforceSummary from '../views/app/Workforce-management/global-workforce';
 import WorkforceSummary from '../views/app/Workforce-management';
 import CampusWorkforceSummary from '../views/app/Workforce-management/campus-workforce';
-
+import UserReport from '../views/app/workforce-management/user-reports';
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>> | React.FC<any>;
@@ -257,15 +257,6 @@ const AppRoutes: IAppRoute[] = [
     //     icon: { name: 'check-square', type: 'feather' },
     // },
     // {
-    //     name: 'Workforce permissions',
-    //     component: WorkforcePermissions,
-    //     options: { title: 'Workforce permissions' },
-    //     submenus: [],
-    //     users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'hand-left-outline', type: 'ionicon' },
-    // },
-    // {
     //     name: 'Service management',
     //     component: ServiceManagement,
     //     options: { title: 'Service management' },
@@ -292,6 +283,15 @@ const AppRoutes: IAppRoute[] = [
                 name: 'User Profile',
                 component: UserDetails,
                 options: { title: 'User Profile' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'User Report',
+                component: UserReport,
+                options: { title: 'User Report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -407,22 +407,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         users: [],
         inMenuBar: false,
     },
-    // {
-    //     name: 'Verify account',
-    //
-    //     component: require('../views/auth/verify-account'),
-    //     options: { title: 'Verify account' },
-    //     submenus: [],
-    //     users: [],
-    // },
-    // {
-    //     name: 'Forgot password',
-    //
-    //     component: require('../views/auth/forgot-password'),
-    //     options: { title: 'Forgot password' },
-    //     submenus: [],
-    //     users: [],
-    // },
 ];
 
 export { AppRoutes, AuthRoutes };

@@ -29,6 +29,7 @@ export interface IGlobalWorkforceReportSummary {
 
 export interface IGSPReport {
     workers: {
+        tickets: number;
         totalWorkers: number;
         activeWorkers: number;
         presentWorkers: number;

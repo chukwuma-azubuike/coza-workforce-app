@@ -87,7 +87,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         },
     };
 
-    const { data: services, refetch: refetchServices, isSuccess: servicesIsSuccess } = useGetServicesQuery();
+    const { data: services, refetch: refetchServices, isSuccess: servicesIsSuccess } = useGetServicesQuery({});
 
     const { data: campusData } = useGetCampusByIdQuery(user?.campus?._id);
 

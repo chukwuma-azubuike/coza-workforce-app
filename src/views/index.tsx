@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, Route } from '@react-navigation/native';
 import SplashScreen from 'react-native-splash-screen';
 import AppRoute from '../routes/app';
 import { useColorScheme } from 'react-native';
@@ -70,7 +70,13 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
             <NavigationContainer theme={scheme === 'dark' ? DarkTheme : theme}>
                 <RootStack.Navigator screenOptions={{ headerShown: false }}>
                     {isLoggedIn ? (
-                        <RootStack.Screen name="App" component={AppRoute} />
+                        <RootStack.Screen
+                            name="App"
+                            component={AppRoute}
+                            options={({ route }: { route: Route<string, any> }) => ({
+                                title: route?.params?.headerTitle,
+                            })}
+                        />
                     ) : (
                         <RootStack.Screen name="Auth" component={AuthRoute} />
                     )}

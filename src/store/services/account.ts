@@ -12,6 +12,7 @@ import {
     IEditProfilePayload,
     ICreateUserPayload,
     IcampusUserData,
+    IAttendanceStatus,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 

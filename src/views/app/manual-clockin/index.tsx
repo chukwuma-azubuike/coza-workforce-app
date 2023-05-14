@@ -9,7 +9,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useScreenFocus from '../../../hooks/focus';
 import useGeoLocation from '../../../hooks/geo-location';
 import useRole from '../../../hooks/role';
-import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
+import { useGetUsersQuery } from '../../../store/services/account';
 import { ICampusCoordinates, IClockInPayload } from '../../../store/services/attendance';
 import { useGetCampusByIdQuery, useGetCampusesQuery } from '../../../store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
@@ -46,9 +46,12 @@ const ManualClockin: React.FC = () => {
         data: users,
         isLoading: usersLoading,
         isFetching: usersIsFetching,
-    } = useGetUsersByDepartmentIdQuery(departmentId as string, {
-        skip: !departmentId,
-    });
+    } = useGetUsersQuery(
+        { departmentId },
+        {
+            skip: !departmentId,
+        }
+    );
 
     const {
         user: { campus },
@@ -241,7 +244,7 @@ const ManualClockin: React.FC = () => {
                                         deviceCoordinates={deviceCoordinates}
                                         departmentId={departmentId as string}
                                         userId={thirdPartyUser?._id as string}
-                                        roleId={thirdPartyUser?.role?._id as string}
+                                        roleId={thirdPartyUser?.roleId as string}
                                         campusCoordinates={campusCoordinates as ICampusCoordinates}
                                     />
                                 </Center>

@@ -25,7 +25,7 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         isGlobalPastor,
         isQC,
     } = useRole();
-    
+
     const { data, isLoading, isSuccess, isFetching } = useGetCampusSummeryByCampusIdQuery(campus._id);
 
     const campusInfo = [
