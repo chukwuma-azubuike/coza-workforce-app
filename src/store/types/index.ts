@@ -107,6 +107,7 @@ export interface IUser {
     qrCodeUrl: string;
     placeOfWork: string;
     role: IRole;
+    roleId: IRole['_id'];
     department: IDepartment;
     campus: ICampus;
     status: IUserStatus;
