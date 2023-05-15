@@ -15,6 +15,9 @@ import { IIconTypes } from '../utils/types';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
 import IssueTicket from '../views/app/tickets/issue-ticket';
+import { IIconTypes } from '../utils/types';
+import RequestPermission from '../views/app/permissions/request-permission';
+import Register from '../views/auth/register';
 import TicketDetails from '../views/app/tickets/ticket-details';
 // import ServiceManagement from '../views/app/service-management';
 import CreateUser from '../views/app/workforce-management/create-user';
@@ -34,6 +37,14 @@ import TransferReport from '../views/app/reports/forms/transfer-report';
 import ForgotPassword from '../views/auth/forgot-password';
 import Register from '../views/auth/register';
 import ResetPassword from '../views/auth/reset-password';
+import CampusReport from '../views/app/reports/campus-report/reportDetails';
+import WorkforceManagement from '../views/app/Workforce-management';
+import UserDetails from '../views/app/Workforce-management/user-details';
+import CreateUser from '../views/app/Workforce-management/create-user';
+import ServiceManagement from '../views/app/service-management';
+import CreateServiceManagement from '../views/app/service-management/create-service';
+import UserReport from '../views/app/Workforce-management/user-reports';
+import UserReportDetailsPage from '../views/app/Workforce-management/user-reports/UserReportDetailsPage';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import WorkforceManagement from '../views/app/workforce-management/workforce-management';
@@ -249,25 +260,28 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         icon: { name: 'graph', type: 'octicon' },
     },
-    // {
-    //     name: 'Compliance',
-    //     component: Compliance,
-    //     options: { title: 'Compliance' },
-    //     submenus: [],
-    //     users: ['QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'check-square', type: 'feather' },
-    // },
-    // {
-    //     name: 'Service management',
-    //     component: ServiceManagement,
-    //     options: { title: 'Service management' },
-    //     submenus: [],
-    //     users: ['QC', 'programs'],
-    //     inMenuBar: false,
-    //     icon: { name: 'church', type: 'material-community' },
-    // },
     {
+        name: 'Service management',
+        component: ServiceManagement,
+        options: { title: 'Service management' },
+        submenus: [
+            {
+                name: 'Create service',
+                component: CreateServiceManagement,
+                options: { title: 'Create service' },
+                submenus: [],
+                users: ['QC', 'programs'],
+                inMenuBar: false,
+                icon: { name: 'church', type: 'material-community' },
+            },
+        ],
+        users: ['QC', 'programs'],
+        inMenuBar: false,
+        icon: { name: 'church', type: 'material-community' },
+    },
+    {
+        name: 'Workforce management',
+        component: WorkforceManagement,
         name: 'Workforce summary',
         component: WorkforceSummary,
         options: { title: 'Workforce management' },

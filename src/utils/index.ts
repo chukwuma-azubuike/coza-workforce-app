@@ -286,6 +286,17 @@ class Utils {
 
         return errors;
     };
+
+    /************** convertToEpoc ***************/
+
+    static concatDateTimeToEpoc = (date: string | Date, time: string | Date) => {
+        const concatedTime = `${moment(date).format('YYYY-MM-DD')}T${moment(time).format('HH:mm:ss')}.000Z`;
+        const convertedDateTime = moment(concatedTime).unix();
+        const convertedDate = moment(date).unix();
+        const convertedTime = moment(time).unix();
+
+        return date && !time ? convertedDate : time && !date ? convertedTime : time && date ? convertedDateTime : null;
+    };
 }
 
 export default Utils;

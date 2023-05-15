@@ -112,7 +112,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
             </If>
             {show && (
                 <DateTimePicker
-                    value={date}
+                    value={value ? new Date(value) : date}
                     mode={mode as any}
                     onChange={onChange}
                     accentColor={THEME_CONFIG.primary}

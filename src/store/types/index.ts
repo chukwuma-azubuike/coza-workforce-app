@@ -1,4 +1,5 @@
 import { IReportFormProps } from '../../views/app/reports/forms/types';
+import store from '..';
 
 // General types
 export interface ILog {
@@ -6,6 +7,12 @@ export interface ILog {
     createdAt?: string;
     dateUpdated?: string;
     updatedAt?: string;
+}
+
+export enum CREATE_SERVICE_ENUM {
+    LONG = 7.505862981744857,
+    LAT = 9.005452823370131,
+    RANGE_TO_CLOCKIN = 100,
 }
 
 export enum IAttendanceStatus {
@@ -230,6 +237,18 @@ export interface ICreateTicketPayload {
     issuedBy: IUser['_id'];
 }
 
+export interface ICreateServicePayload {
+    serviceType: string;
+    serviceName: string;
+    serviceTag: string;
+    startTime: string | Date;
+    startDate: string | Date;
+    endTime: string | Date;
+    clockinTime: string | Date;
+    leaderLateTime: string | Date;
+    workerLateTime: string | Date;
+}
+
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
 
 // Permissions
@@ -366,6 +385,20 @@ export interface IService {
         updatedAt: string;
     };
 }
+export interface ICreateService {
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    serviceTime: number | null;
+    clockInStartTime: number | null;
+    workersLateStartTime: number | null;
+    leadersLateStartTime: number | null;
+    serviceEndTime: number | null;
+    rangeToClockIn: number;
+    isGlobalService: boolean;
+}
 
 // Score
 
@@ -457,6 +490,24 @@ export interface IDepartmentReportResponse {
     };
     incidentReport: unknown[];
 }
+
+export interface IAllService {
+    tag: [];
+    _id: string;
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    serviceTime: string;
+    workersLateStartTime: string;
+    leadersLateStartTime: string;
+    serviceEndTime: string;
+    clockInStartTime: string;
+    clockInEndTime: string;
+    rangeToClockIn: number;
+    isGlobalService: boolean;
+    createdAt: string;
 
 export interface ICampusUserData {
     campusId: string;

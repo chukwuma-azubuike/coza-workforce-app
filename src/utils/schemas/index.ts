@@ -113,6 +113,12 @@ export const CreateIndividualTicketSchema = Yup.object().shape({
     ticketSummary: Yup.string().required('You are required to input a ticket description.'),
 });
 
+export const CreateServiceSchema = Yup.object().shape({
+    serviceTag: Yup.string().required('You are required to select the service tag.'),
+    serviceType: Yup.string().required('You are required to select the service type.'),
+    serviceName: Yup.string().required('Service name is required.'),
+});
+
 export const CreateDepartmentalTicketSchema = Yup.object().shape({
     categoryId: Yup.string().required('You are required to select a category.'),
     departmentId: Yup.string().required('You are required to select a department'),
