@@ -77,7 +77,7 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
         <ErrorBoundary>
             <ViewWrapper>
                 <Department departmentId={campusUsersData?.departmentId || user?.department?._id} />
-                <If condition={isCampusPastor || isQC || isGlobalPastor || isSuperAdmin}>
+                <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin}>
                     <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
                 </If>
             </ViewWrapper>
