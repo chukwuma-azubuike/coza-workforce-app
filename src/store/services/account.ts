@@ -81,6 +81,21 @@ interface IVerifyEmailResponseTransform {
     departmentId: string;
 }
 
+export interface IGlobalWorkforceSummary {
+    activeUser: number;
+    campusCount: number;
+    inactiveUser: number;
+    blacklistedUsers: number;
+    UnregisteredUsers: number;
+    campusWorfForce: ICampusWorkforceSummary[];
+}
+
+export interface ICampusWorkforceSummary {
+    campusId: string;
+    campusName: string;
+    userCount: number;
+}
+
 export type ILoginResponse = IDefaultResponse<{
     token: IToken;
     profile: IUser;
@@ -189,7 +204,6 @@ export const accountServiceSlice = createApi({
         sendForgotPasswordOTP: endpoint.query<ISendOTPResponse, string>({
             query: email => `/${SERVICE_URL}/forget-password/otp/${email}`,
         }),
-        // /account/forget-password/validate
 
         validateForgotPasswordOTP: endpoint.mutation<IVerifyForgotPassword, IVerifyEmailOTPPayload>({
             query: body => ({
@@ -250,6 +264,15 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
+
+        getGlobalWorkForceSummary: endpoint.query<IGlobalWorkforceSummary, void>({
+            query: () => ({
+                url: `/${USER_SERVICE_URL}/globalForce`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (response: IDefaultResponse<IGlobalWorkforceSummary>) => response.data,
+        }),
     }),
 });
 
@@ -266,6 +289,7 @@ export const {
     useValidateEmailOTPMutation,
     useSendForgotPasswordOTPQuery,
     useGetUsersByDepartmentIdQuery,
+    useGetGlobalWorkForceSummaryQuery,
     useGetCampusSummaryByCampusIdQuery,
     useValidateForgotPasswordOTPMutation,
     useUploadUserMutation,

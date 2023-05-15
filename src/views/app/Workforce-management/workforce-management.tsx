@@ -12,7 +12,7 @@ import useScreenFocus from '../../../hooks/focus';
 import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const campusUsersData = route?.params as ICampusUserData['departmentCount'][0];
+    const campusUsersData = route?.params as ICampusUserData['departmentCount'][0] & { campusId: string };
     const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin } = useRole();
 
     const { setOptions } = navigation;
@@ -66,7 +66,7 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
         return [allButtons[0]];
     }, []);
 
-    useCustomBackNavigation({ targetRoute: 'Campus workforce' });
+    useCustomBackNavigation({ targetRoute: 'Campus workforce', params: { _id: campusUsersData.campusId } });
 
     return (
         <ErrorBoundary>

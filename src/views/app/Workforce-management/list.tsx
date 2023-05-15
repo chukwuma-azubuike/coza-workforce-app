@@ -145,14 +145,10 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
         },
     ];
 
-    const {
-        user: { campus },
-    } = useRole();
-
     const isScreenFocused = useIsFocused();
 
     const { data, isLoading, isFetching } = useGetUsersQuery(
-        { campusId: campus._id, departmentId },
+        { departmentId },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 

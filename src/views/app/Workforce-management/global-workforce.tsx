@@ -4,67 +4,74 @@ import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '../../../components/composite/card';
 import ErrorBoundary from '../../../components/composite/error-boundary';
-import { FlatListSkeleton, FlexListSkeleton } from '../../../components/layout/skeleton';
+import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { useCustomBackNavigation } from '../../../hooks/navigation';
 import useRole from '../../../hooks/role';
-import { useGetCampusSummaryByCampusIdQuery } from '../../../store/services/account';
+import { useGetGlobalWorkForceSummaryQuery } from '../../../store/services/account';
+import Utils from '../../../utils';
+
+const GlobalSummary: React.FC<{ title: string; value: string | number }> = ({ title, value }) => {
+    return (
+        <Stack ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
+            <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
+                {title}
+            </Heading>
+            <Text ml="12" flexWrap="wrap" fontWeight="400" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
+                {value}
+            </Text>
+        </Stack>
+    );
+};
 
 const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = useNavigation();
 
     const handlePress = (elm: any) => {
-        navigate('Workforce management' as never, elm as never);
+        navigate('Campus workforce' as never, elm as never);
     };
 
-    const {
-        user: { campus },
-    } = useRole();
-
-    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummaryByCampusIdQuery(campus._id);
-
-    const campusInfo = [
-        {
-            name: 'Campus',
-            value: data?.campusName,
-        },
-        {
-            name: 'Departments',
-            value: data?.departments,
-        },
-    ];
+    const { data, isLoading, isFetching } = useGetGlobalWorkForceSummaryQuery();
 
     const summaryList = [
         {
-            title: 'Total',
-            color: 'purple.700',
-            value: data?.totalUser || 0,
-        },
-        {
             title: 'Active',
-            color: 'green.700',
+            color: 'purple.700',
             value: data?.activeUser || 0,
         },
         {
-            title: 'Dormant',
+            title: 'Campuses',
+            color: 'green.700',
+            value: data?.campusCount || 0,
+        },
+        {
+            title: 'Blacklisted',
             color: 'orange.700',
-            value: data?.dormantUser || 0,
+            value: data?.blacklistedUsers || 0,
         },
         {
             title: 'Inactive',
             color: 'red.700',
             value: data?.inactiveUser || 0,
         },
+        {
+            title: 'Unregistered',
+            color: 'gray.400',
+            value: data?.UnregisteredUsers || 0,
+        },
     ];
 
-    const Departmentlist = React.useMemo(
+    const campuslist = React.useMemo(
         () =>
-            data?.departmentCount.map(item => ({
-                ...item,
-                _id: item.departmentId,
-                value: item.userCount,
-                title: item.departmentName,
-            })),
+            Utils.sortStringAscending(
+                data?.campusWorfForce.map(item => ({
+                    ...item,
+                    _id: item.campusId,
+                    value: item.userCount,
+                    title: item.campusName,
+                })),
+                'title'
+            ),
         [data]
     );
 
@@ -73,27 +80,6 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     return (
         <ErrorBoundary>
             <ViewWrapper scroll>
-                {campusInfo.map((item, index) =>
-                    isLoading || isFetching ? (
-                        <FlexListSkeleton count={1} />
-                    ) : (
-                        <Stack key={index} ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
-                            <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-                                {item.name}
-                            </Heading>
-                            <Text
-                                ml="12"
-                                flexWrap="wrap"
-                                fontWeight="400"
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                            >
-                                {item.value}
-                            </Text>
-                        </Stack>
-                    )
-                )}
-
                 {isLoading || isFetching ? (
                     <FlatListSkeleton count={1} />
                 ) : (
@@ -129,12 +115,12 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 )}
 
                 <Center>
-                    <Stack py={3} flexDirection="row" flex={1} flexWrap="wrap">
+                    <Stack py={3} mb={6} flexDirection="row" flex={1} flexWrap="wrap">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (
                             <>
-                                {Departmentlist?.map((item, index) => (
+                                {campuslist?.map((item, index) => (
                                     <SmallCardComponent
                                         onPress={() => handlePress(item)}
                                         key={index}
