@@ -2,11 +2,10 @@ import React from 'react';
 import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading, Center } from 'native-base';
 import { IIconTypes } from '../../../utils/types';
 import { Icon } from '@rneui/themed';
-import { StyleSheet, TouchableNativeFeedback } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface ICardComponentProps extends IBoxProps {
@@ -20,31 +19,19 @@ interface ICardComponentProps extends IBoxProps {
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
     const { isLoading } = props;
-    const { isLightMode } = useAppColorMode();
 
     return (
-        <TouchableNativeFeedback
-            disabled={false}
-            delayPressIn={0}
-            onPress={props.onPress}
-            accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
+        <Box
+            {...props}
+            py={2}
+            flex={[0, 1]}
+            borderWidth={0.2}
+            borderRadius={3}
+            style={style.shadowProp}
+            _dark={{ backgroundColor: 'gray.900' }}
+            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
         >
-            <Box
-                py={2}
-                m={2}
-                {...props}
-                flex={[0, 1]}
-                borderWidth={0.2}
-                borderRadius={3}
-                style={style.shadowProp}
-                _dark={{ backgroundColor: 'gray.900' }}
-                _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
-            >
+            <TouchableOpacity onPress={props.onPress} style={{ margin: 4 }} activeOpacity={0.6}>
                 {isLoading ? (
                     <ProfileSkeleton count={9} />
                 ) : (
@@ -62,8 +49,8 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
                         )}
                     </VStack>
                 )}
-            </Box>
-        </TouchableNativeFeedback>
+            </TouchableOpacity>
+        </Box>
     );
 };
 
@@ -84,10 +71,10 @@ interface IStatCardComponentProps {
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45.6%', '20%'] } = props;
+    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45%', '20%'] } = props;
 
     return (
-        <CardComponent w={width} h={135} onPress={onPress}>
+        <CardComponent width={width} m={2} h={135} onPress={onPress}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (
