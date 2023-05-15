@@ -4,12 +4,14 @@ import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
+import AvatarComponent from '../../../components/atoms/avatar';
 import ButtonComponent from '../../../components/atoms/button';
 import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import CardComponent from '../../../components/composite/card';
 import If from '../../../components/composite/if-container';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
@@ -21,18 +23,12 @@ import {
 import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
 
 const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+    const permissionParams = props.route.params as IPermission;
+
     const {
         requestor: { firstName, lastName, pictureUrl, department, _id: requestorId },
-        startDate,
-        endDate,
-        description,
-        dateCreated,
-        status,
-        createdAt,
-        comment,
-        category,
         _id,
-    } = props.route.params as IPermission;
+    } = permissionParams;
 
     const navigate = props.navigation;
 
@@ -43,6 +39,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         isFetching,
         data: permission,
         isLoading: permissionLoading,
+        isFetching: permissionIsFetching,
         isError: permissionIsError,
         isSuccess: permissionIsSuccess,
     } = useGetPermissionByIdQuery(_id);
@@ -59,6 +56,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             isError: approveIsError,
             isLoading: approveIsLoading,
             error: approveError,
+            data: approveData,
         },
     ] = useApprovePermissionMutation();
 
@@ -70,6 +68,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             isError: declineIsError,
             isLoading: declineIsLoading,
             error: declineError,
+            data: declineData,
         },
     ] = useDeclinePermissionMutation();
 
@@ -80,8 +79,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         },
     });
 
-    const handleApprove = () =>
+    const handleApprove = () => {
         approve({ approverId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
+    };
 
     const handleDecline = () =>
         decline({ declinerId: user.userId, comment: permissionComment, permissionId: permission?._id as string });
@@ -100,7 +100,11 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             approveReset();
-            navigate.goBack();
+            navigate.navigate('Permissions', {
+                ...permissionParams,
+                ...approveData,
+                requestor: permissionParams.requestor,
+            });
         }
         if (approveIsError) {
             setModalState({
@@ -120,7 +124,11 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             declineReset();
-            navigate.goBack();
+            navigate.navigate('Permissions', {
+                ...permissionParams,
+                ...declineData,
+                requestor: permissionParams.requestor,
+            });
         }
         if (declineIsError) {
             setModalState({
@@ -134,15 +142,30 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     const takePermissionAction = React.useMemo(() => {
         if (requestorId === user._id) return false;
         if (isQC && permission?.department._id !== user.department._id) return false;
-        if (status !== 'PENDING') return false;
+        if (permission?.status !== 'PENDING') return false;
 
         return true;
-    }, [permission, status, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
+    }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
-            <CardComponent isLoading={permissionLoading} mt={1} px={2} pt={8} pb={4} mx={3} mb={10}>
+            <CardComponent
+                mt={1}
+                px={2}
+                pt={8}
+                pb={4}
+                mx={3}
+                mb={10}
+                isLoading={permissionLoading || permissionIsFetching}
+            >
                 <VStack space={4}>
+                    <AvatarComponent
+                        size="xl"
+                        shadow={9}
+                        lastName={permission?.requestor?.lastName}
+                        firstName={permission?.requestor?.firstName}
+                        imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
+                    />
                     <HStack
                         pb={2}
                         w="full"
@@ -155,7 +178,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Requester
                         </Text>
-                        <Text>{`${firstName} ${lastName}`}</Text>
+                        <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
                     </HStack>
                     <HStack
                         pb={2}
@@ -195,7 +218,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Date Requested
                         </Text>
-                        <Text>{moment(createdAt).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.createdAt).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
                     <HStack
@@ -209,7 +232,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Start Date
                         </Text>
-                        <Text>{moment(startDate).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.startDate).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
                     <HStack
@@ -223,17 +246,17 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             End Date
                         </Text>
-                        <Text>{moment(endDate).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.endDate).format('Do MMM, YYYY')}</Text>
                     </HStack>
 
                     <VStack pb={2} w="full" space={2}>
                         <Text alignSelf="flex-start" bold>
                             Description
                         </Text>
-                        {!description && (
-                            <TextAreaComponent value={description} isDisabled={Platform.OS !== 'android'} />
+                        {!permission?.description && (
+                            <TextAreaComponent value={permission?.description} isDisabled={Platform.OS !== 'android'} />
                         )}
-                        {description && <Text flexWrap="wrap">{description}</Text>}
+                        {permission?.description && <Text flexWrap="wrap">{permission?.description}</Text>}
                     </VStack>
                     <HStack
                         pb={2}
@@ -256,10 +279,10 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ? "Pastor's comment"
                                 : 'Comment'}
                         </Text>
-                        {!permissionComment && (
+                        {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
-                        {permissionComment && <Text flexWrap="wrap">{permission?.comment}</Text>}
+                        {permission?.comment && <Text flexWrap="wrap">{permission?.comment}</Text>}
                     </VStack>
                     <If condition={takePermissionAction}>
                         <HStack space={4} w="95%" justifyContent="space-between">

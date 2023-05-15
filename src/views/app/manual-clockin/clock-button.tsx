@@ -44,18 +44,12 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
 
     const [clockIn, { isError, error, isSuccess, isLoading, reset: clockInReset }] = useClockInMutation();
 
-    const { refresh, verifyRangeBeforeAction } = useGeoLocation({
+    const { verifyRangeBeforeAction } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
         campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
-    const {
-        data: latestAttendanceData,
-        isError: latestAttendanceIsError,
-        isSuccess: latestAttendanceIsSuccess,
-        isLoading: latestAttendanceIsLoading,
-        refetch: latestAttendanceRefetch,
-    } = useGetAttendanceQuery(
+    const { data: latestAttendanceData } = useGetAttendanceQuery(
         {
             userId,
             serviceId: latestService?._id,
@@ -125,7 +119,7 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
                 },
                 campusId: campusId,
                 departmentId: departmentId,
-                roleId: roleId,
+                roleId,
             });
             return;
         }

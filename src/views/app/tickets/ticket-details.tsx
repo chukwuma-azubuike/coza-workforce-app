@@ -1,14 +1,16 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
+import AvatarComponent from '../../../components/atoms/avatar';
 import ButtonComponent from '../../../components/atoms/button';
 import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import CardComponent from '../../../components/composite/card';
 import If from '../../../components/composite/if-container';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
 import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
@@ -22,14 +24,15 @@ import {
 import { ICreateTicketPayload, ITicket } from '../../../store/types';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { _id } = props.route.params as ITicket;
+    const { navigate } = props.navigation;
+    const ticketParams: ITicket = props.route.params as ITicket;
 
     const {
         isQC,
         user: { userId, department },
     } = useRole();
 
-    const { data: ticket, isFetching, isLoading, refetch, isSuccess, isError } = useGetTicketByIdQuery(_id);
+    const { data: ticket, isFetching, isLoading, refetch } = useGetTicketByIdQuery(ticketParams?._id);
     const [
         contestTicket,
         {
@@ -38,6 +41,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             isError: contestIsError,
             error: contestError,
             reset: contestReset,
+            data: contestData,
         },
     ] = useContestTicketMutation();
     const [
@@ -58,6 +62,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             isError: retractIsError,
             error: retractError,
             reset: retractReset,
+            data: retractData,
         },
     ] = useRetractTicketMutation();
 
@@ -69,13 +74,9 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             isError: acknowledgeIsError,
             reset: acknowledgeReset,
             error: acknowledgeError,
+            data: acknowledgeData,
         },
     ] = useUpdateTicketMutation();
-
-    interface NO {
-        contestComment: 'Contest test';
-        status: 'RETRACTED';
-    }
 
     const [comment, setComment] = React.useState<string>();
     const [contestReplyComment, setContestReplyComment] = React.useState<string | undefined>(
@@ -91,22 +92,22 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const handleSubmit = () => {
         contestTicket({
-            _id,
             userId,
+            _id: ticketParams?._id,
             comment: comment as string,
         });
     };
 
     const handleReplySubmit = () => {
         replyContest({
-            _id,
             userId,
+            _id: ticketParams?._id,
             comment: contestReplyComment as string,
         });
     };
 
     const handleRetractTicket = () => {
-        retractTicket(_id);
+        retractTicket(ticketParams?._id);
     };
 
     const handleAcknowledge = () => {
@@ -117,7 +118,6 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     };
 
     const { setModalState } = useModal();
-    const navigate = useNavigation();
 
     React.useEffect(() => {
         if (contestSuccess) {
@@ -126,7 +126,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             contestReset();
-            navigate.goBack();
+            navigate('Tickets', {
+                ...ticketParams,
+                ...contestData,
+                user: ticketParams?.user,
+                departmentName: ticketParams?.departmentName,
+            });
         }
 
         if (contestIsError) {
@@ -144,7 +149,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             resetReply();
-            navigate.goBack();
+            navigate('Tickets');
         }
 
         if (replyIsError) {
@@ -162,7 +167,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             retractReset();
-            navigate.goBack();
+            navigate('Tickets', {
+                ...ticketParams,
+                ...retractData,
+                user: ticketParams?.user,
+                departmentName: ticketParams?.departmentName,
+            });
         }
 
         if (retractIsError) {
@@ -180,7 +190,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 status: 'success',
             });
             acknowledgeReset();
-            navigate.goBack();
+            navigate('Tickets', {
+                ...ticketParams,
+                ...acknowledgeData,
+                user: ticketParams?.user,
+                departmentName: ticketParams?.departmentName,
+            });
         }
 
         if (acknowledgeIsError) {
@@ -216,6 +231,17 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
             <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} pt={8} pb={4} mx={3} mb={10}>
                 <VStack space={4}>
+                    <AvatarComponent
+                        size="xl"
+                        shadow={9}
+                        lastName={ticket?.user?.lastName}
+                        firstName={ticket?.user?.firstName}
+                        imageUrl={
+                            ticket?.isIndividual
+                                ? ticket?.user?.pictureUrl || AVATAR_FALLBACK_URL
+                                : AVATAR_GROUP_FALLBACK_URL
+                        }
+                    />
                     <HStack
                         space={2}
                         pb={2}
@@ -240,7 +266,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text alignSelf="flex-start" bold>
                             Department
                         </Text>
-                        <Text>{ticket?.department.departmentName}</Text>
+                        <Text>{ticket?.department?.departmentName}</Text>
                     </HStack>
                     <HStack
                         space={2}
@@ -332,11 +358,16 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
                         </If>
                         <If condition={ticket?.isDepartment}>
-                            <TextAreaComponent
-                                onChangeText={handleChange}
-                                value={ticket?.contestComment}
-                                isDisabled={ticket?.status !== 'ISSUED' || ticket?.department?._id !== department?._id}
-                            />
+                            {!ticket?.contestComment && (
+                                <TextAreaComponent
+                                    onChangeText={handleChange}
+                                    value={ticket?.contestComment}
+                                    isDisabled={
+                                        ticket?.status !== 'ISSUED' || ticket?.department?._id !== department?._id
+                                    }
+                                />
+                            )}
+                            {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
                         </If>
                     </VStack>
                     <VStack pb={2} w="full" space={2} justifyContent="space-between">

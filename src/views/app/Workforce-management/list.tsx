@@ -7,8 +7,6 @@ import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
-import useScreenFocus from '../../../hooks/focus';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetUsersQuery } from '../../../store/services/account';
@@ -44,7 +42,7 @@ const UserListRow: React.FC<IUser> = user => {
                             {Utils.capitalizeFirstChar(user?.firstName)} {Utils.capitalizeFirstChar(user?.lastName)}
                         </Text>
                         <Text fontSize="sm" color="gray.400">
-                            {user?.email}
+                            {Utils.truncateString(user?.email)}
                         </Text>
                     </VStack>
                 </HStack>
@@ -61,6 +59,7 @@ interface CampusUserList {
 
 const CampusListRow: React.FC<CampusUserList> = user => {
     const navigation = useNavigation();
+    const { leaderRoleIds } = useRole();
     const { isLightMode } = useAppColorMode();
 
     return (
@@ -69,6 +68,9 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                 const handlePress = () => {
                     navigation.navigate('User Profile' as never, user as never);
                 };
+
+                const isHOD = leaderRoleIds && user.roleId === leaderRoleIds[1];
+                const isAHOD = leaderRoleIds && user.roleId === leaderRoleIds[0];
 
                 return (
                     <TouchableNativeFeedback
@@ -93,11 +95,11 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                                         {Utils.capitalizeFirstChar(user?.lastName)}
                                     </Text>
                                     <Text fontSize="sm" color="gray.400">
-                                        {user?.email}
+                                        {Utils.truncateString(user?.email)}
                                     </Text>
                                 </VStack>
                             </HStack>
-                            <StatusTag>{user?.status || 'ACTIVE'}</StatusTag>
+                            <StatusTag>{isHOD ? 'HOD' : isAHOD ? 'AHOD' : user?.status || 'ACTIVE'}</StatusTag>
                         </HStack>
                     </TouchableNativeFeedback>
                 );
@@ -106,7 +108,7 @@ const CampusListRow: React.FC<CampusUserList> = user => {
     );
 };
 
-const MyTeam: React.FC = memo(() => {
+const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     const teamColumns: IFlatListColumn[] = [
         {
             dataIndex: '_id',
@@ -119,80 +121,51 @@ const MyTeam: React.FC = memo(() => {
     } = useRole();
 
     const isScreenFocused = useIsFocused();
-    const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
-        { departmentId: department._id, limit: 10, page },
+    const { data, isLoading, isFetching } = useGetUsersQuery(
+        { departmentId: department._id },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
-        }
-    };
-
-    useScreenFocus({ onFocus: refetch });
-
     return (
         <FlatListComponent
-            onRefresh={refetch}
-            data={moreData || []}
+            data={data || []}
             columns={teamColumns}
-            fetchMoreData={fetchMoreData}
+            refreshing={isFetching}
             isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
         />
     );
 });
 
-const Campus: React.FC = memo(() => {
-    const campusColumns: IFlatListColumn[] = [
+const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
+    const departmentColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
             render: (_: IUser, key) => <CampusListRow {..._} key={key} />,
         },
     ];
 
-    const {
-        user: { campus },
-    } = useRole();
-
     const isScreenFocused = useIsFocused();
-    const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetUsersQuery(
-        { campusId: campus._id, limit: 10, page },
+    const { data, isLoading, isFetching } = useGetUsersQuery(
+        { departmentId },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
-        }
-    };
-
-    useScreenFocus({ onFocus: refetch });
-
     const sortedGroupedData = React.useMemo(
-        () => moreData && Utils.groupListByKey(Utils.sortStringAscending(moreData, 'departmentName'), 'departmentName'),
-        [moreData]
+        () => data && Utils.groupListByKey(Utils.sortStringAscending(data, 'firstName'), 'departmentName'),
+        [data]
     );
 
     return (
         <FlatListComponent
-            onRefresh={refetch}
-            columns={campusColumns}
-            fetchMoreData={fetchMoreData}
+            showHeader={false}
+            refreshing={isFetching}
+            columns={departmentColumns}
             data={sortedGroupedData || []}
             isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
         />
     );
 });
 
-export { MyTeam, Campus };
+export { MyTeam, Department };
