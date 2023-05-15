@@ -1,5 +1,6 @@
 import React from 'react';
-import { Center, HStack, Skeleton, VStack } from 'native-base';
+import { Center, HStack, Skeleton, Stack, VStack } from 'native-base';
+import ViewWrapper from './viewWrapper';
 
 export const HomeSkeleton: React.FC = () => {
     return (
@@ -128,5 +129,35 @@ export const ProfileSkeletonMini: React.FC<{
                 ))}
             </VStack>
         </HStack>
+    );
+};
+
+export const FlexListSkeleton: React.FC<{
+    count?: number;
+}> = ({ count = 1 }) => {
+    return (
+        <ViewWrapper>
+            {Array.from(Array(count).keys()).map((elm, idx) => (
+                <Stack key={idx} flexDirection="row" alignItems="center" justifyItems="center" my={1}>
+                    <Skeleton
+                        h="2"
+                        flex={1}
+                        rounded="md"
+                        overflow="hidden"
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                    <Skeleton
+                        h="2"
+                        ml="12"
+                        flex={1}
+                        rounded="md"
+                        overflow="hidden"
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                </Stack>
+            ))}
+        </ViewWrapper>
     );
 };

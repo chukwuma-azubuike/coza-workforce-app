@@ -1,12 +1,12 @@
 import React from 'react';
-import { VStack, Box, Divider, Text, HStack, IBoxProps } from 'native-base';
+import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading, Center } from 'native-base';
 import { IIconTypes } from '../../../utils/types';
 import { Icon } from '@rneui/themed';
-import { StyleSheet, TouchableNativeFeedback } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;
@@ -19,31 +19,19 @@ interface ICardComponentProps extends IBoxProps {
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
     const { isLoading } = props;
-    const { isLightMode } = useAppColorMode();
 
     return (
-        <TouchableNativeFeedback
-            disabled={false}
-            delayPressIn={0}
-            onPress={props.onPress}
-            accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
+        <Box
+            {...props}
+            py={2}
+            flex={[0, 1]}
+            borderWidth={0.2}
+            borderRadius={3}
+            style={style.shadowProp}
+            _dark={{ backgroundColor: 'gray.900' }}
+            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
         >
-            <Box
-                py={2}
-                m={2}
-                {...props}
-                flex={[0, 1]}
-                borderWidth={0.2}
-                borderRadius={3}
-                style={style.shadowProp}
-                _dark={{ backgroundColor: 'gray.900' }}
-                _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
-            >
+            <TouchableOpacity onPress={props.onPress} style={{ margin: 4 }} activeOpacity={0.6}>
                 {isLoading ? (
                     <ProfileSkeleton count={9} />
                 ) : (
@@ -61,24 +49,15 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
                         )}
                     </VStack>
                 )}
-            </Box>
-        </TouchableNativeFeedback>
+            </TouchableOpacity>
+        </Box>
     );
 };
 
-const style = StyleSheet.create({
-    shadowProp: {
-        shadowColor: '#171717',
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-    },
-});
-
 export default CardComponent;
-
 interface IStatCardComponentProps {
     value?: number | string;
+    flex?: number;
     label?: string;
     prefix?: string;
     suffix?: string;
@@ -92,10 +71,10 @@ interface IStatCardComponentProps {
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45.6%', '20%'] } = props;
+    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45%', '20%'] } = props;
 
     return (
-        <CardComponent w={width} h={135} onPress={onPress}>
+        <CardComponent width={width} m={2} h={135} onPress={onPress}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (
@@ -127,4 +106,154 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
             )}
         </CardComponent>
     );
+});
+
+export const SmallCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
+    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress } = props;
+    return (
+        <>
+            {isLoading ? (
+                <FlatListSkeleton count={1} />
+            ) : (
+                <Stack px="2" flexDirection="column" alignItems="center" justifyItems="center" my={2} w="1/2">
+                    <VStack
+                        space="2"
+                        w="full"
+                        style={style.shadowProp}
+                        _dark={{ background: 'gray.800' }}
+                        _light={{ background: 'white' }}
+                        borderRadius={4}
+                        flex={1}
+                        justifyContent="center"
+                    >
+                        <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
+                            <Stack space="1" flexDirection="column" alignItems="center" justifyItems="center" p={3}>
+                                <Heading size="sm" fontWeight="500" color="gray.400" textAlign="center">
+                                    {props.label}
+                                </Heading>
+                                <Text
+                                    bold
+                                    fontSize="2xl"
+                                    _dark={{ color: 'primary.500' }}
+                                    _light={{ color: 'primary.600' }}
+                                >
+                                    <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
+                                </Text>
+                            </Stack>
+                        </TouchableOpacity>
+                    </VStack>
+                </Stack>
+            )}
+        </>
+    );
+});
+
+interface SummaryCardProps {
+    title: string;
+    color: string;
+    value?: string | number;
+}
+
+export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = props => {
+    const { summaryList } = props;
+
+    return (
+        <Stack
+            my={6}
+            padding={4}
+            borderWidth={1}
+            borderRadius={8}
+            flexDirection="row"
+            alignItems="center"
+            justifyItems="center"
+            justifyContent="space-between"
+            _dark={{ borderColor: 'gray.200' }}
+            _light={{ borderColor: 'gray.200' }}
+        >
+            {summaryList.map((item, index) => (
+                <Stack key={index} flexDirection="column" alignItems="center" justifyItems="center" my={2}>
+                    <Heading size="xs" fontWeight="400" _dark={{ color: item.color }} _light={{ color: item.color }}>
+                        {item.title}
+                    </Heading>
+                    <Heading size="xl" _dark={{ color: item.color }} _light={{ color: item.color }}>
+                        {item.value}
+                    </Heading>
+                </Stack>
+            ))}
+        </Stack>
+    );
+};
+
+interface SummaryListCardFlexProps extends Omit<SummaryCardProps, 'color'> {
+    _id: string;
+    flex: number;
+}
+
+export const SummaryListCardFlex: React.FC<{
+    summaryList?: SummaryListCardFlexProps[];
+    onPress: (args?: any) => void;
+}> = props => {
+    const { summaryList, onPress } = props;
+
+    return (
+        <Center>
+            <Stack
+                w="full"
+                padding={4}
+                flexWrap="wrap"
+                flexDirection="row"
+                alignItems="stretch"
+                justifyItems="center"
+                justifyContent="space-between"
+            >
+                {summaryList?.map((item, index) => (
+                    <Stack
+                        key={index}
+                        px="2"
+                        flexDirection="column"
+                        alignItems="center"
+                        justifyItems="center"
+                        my={2}
+                        w="1/2"
+                    >
+                        <VStack
+                            space="2"
+                            w="full"
+                            style={style.shadowProp}
+                            bg="white"
+                            borderRadius={3}
+                            flex={item.flex}
+                            justifyContent="center"
+                        >
+                            <TouchableOpacity activeOpacity={0.6} onPress={() => onPress(item)}>
+                                <Stack space="1" flexDirection="column" alignItems="center" justifyItems="center" p={3}>
+                                    <Heading
+                                        size="xs"
+                                        fontWeight="500"
+                                        _dark={{ color: 'white' }}
+                                        _light={{ color: 'black' }}
+                                        textAlign="center"
+                                    >
+                                        {item.title}
+                                    </Heading>
+                                    <Heading size="md" _dark={{ color: 'white' }} _light={{ color: 'black' }}>
+                                        {item.value}
+                                    </Heading>
+                                </Stack>
+                            </TouchableOpacity>
+                        </VStack>
+                    </Stack>
+                ))}
+            </Stack>
+        </Center>
+    );
+};
+
+const style = StyleSheet.create({
+    shadowProp: {
+        shadowRadius: 2,
+        shadowOpacity: 0.2,
+        shadowColor: '#171717',
+        shadowOffset: { width: 0, height: 0 },
+    },
 });

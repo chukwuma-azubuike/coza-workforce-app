@@ -1,35 +1,41 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import Login from '../views/auth/login';
-import Home from '../views/app/home';
+// import AuthHome from '../views/auth/welcome';
 import Attendance from '../views/app/attendance';
+import Home from '../views/app/home';
+import Login from '../views/auth/login';
 // import Compliance from '../views/app/compliance';
-import Permissions from '../views/app/permissions';
 import Notifications from '../views/app/notifications';
+import Permissions from '../views/app/permissions';
 import Profile from '../views/app/profile';
 import Reports from '../views/app/reports';
 // import Settings from '../views/app/settings';
+import { IIconTypes } from '../utils/types';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
-import TicketDetails from '../views/app/tickets/ticket-details';
 import IssueTicket from '../views/app/tickets/issue-ticket';
 import { IIconTypes } from '../utils/types';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
-import PermissionDetails from '../views/app/permissions/permission-details';
-import ChildcareReport from '../views/app/reports/forms/childcare-report';
-import IncidentReport from '../views/app/reports/forms/incident-report';
-import AttendanceReport from '../views/app/reports/forms/attendance-report';
-import GuestReport from '../views/app/reports/forms/guest-report';
-import ServiceReport from '../views/app/reports/forms/service-report';
-import SecurityReport from '../views/app/reports/forms/security-report';
-import TransferReport from '../views/app/reports/forms/transfer-report';
-import VerifyEmail from '../views/auth/welcome';
-import Welcome from '../views/auth/welcome/welcome';
+import TicketDetails from '../views/app/tickets/ticket-details';
+// import ServiceManagement from '../views/app/service-management';
+import CreateUser from '../views/app/workforce-management/create-user';
+import UserDetails from '../views/app/workforce-management/user-details';
 import ManualClockin from '../views/app/manual-clockin';
+import PermissionDetails from '../views/app/permissions/permission-details';
+import RequestPermission from '../views/app/permissions/request-permission';
 import EditProfile from '../views/app/profile/edit-profile';
+import CampusReport from '../views/app/reports/campus-report/reportDetails';
+import AttendanceReport from '../views/app/reports/forms/attendance-report';
+import ChildcareReport from '../views/app/reports/forms/childcare-report';
+import GuestReport from '../views/app/reports/forms/guest-report';
+import IncidentReport from '../views/app/reports/forms/incident-report';
+import SecurityReport from '../views/app/reports/forms/security-report';
+import ServiceReport from '../views/app/reports/forms/service-report';
+import TransferReport from '../views/app/reports/forms/transfer-report';
 import ForgotPassword from '../views/auth/forgot-password';
+import Register from '../views/auth/register';
 import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
 import WorkforceManagement from '../views/app/Workforce-management';
@@ -39,6 +45,14 @@ import ServiceManagement from '../views/app/service-management';
 import CreateServiceManagement from '../views/app/service-management/create-service';
 import UserReport from '../views/app/Workforce-management/user-reports';
 import UserReportDetailsPage from '../views/app/Workforce-management/user-reports/UserReportDetailsPage';
+import VerifyEmail from '../views/auth/welcome';
+import Welcome from '../views/auth/welcome/welcome';
+import WorkforceManagement from '../views/app/workforce-management/workforce-management';
+import GlobalWorkforceSummary from '../views/app/workforce-management/global-workforce';
+import WorkforceSummary from '../views/app/workforce-management';
+import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
+import UserReport from '../views/app/workforce-management/user-reports';
+import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
 
 export interface IAppRoute {
     name: string;
@@ -246,24 +260,6 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         icon: { name: 'graph', type: 'octicon' },
     },
-    // {
-    //     name: 'Compliance',
-    //     component: Compliance,
-    //     options: { title: 'Compliance' },
-    //     submenus: [],
-    //     users: ['QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'check-square', type: 'feather' },
-    // },
-    // {
-    //     name: 'Workforce permissions',
-    //     component: WorkforcePermissions,
-    //     options: { title: 'Workforce permissions' },
-    //     submenus: [],
-    //     users: ['admin', 'campus-pastor', 'global-pastor', 'QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'hand-left-outline', type: 'ionicon' },
-    // },
     {
         name: 'Service management',
         component: ServiceManagement,
@@ -283,16 +279,26 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         icon: { name: 'church', type: 'material-community' },
     },
-
     {
         name: 'Workforce management',
         component: WorkforceManagement,
+        name: 'Workforce summary',
+        component: WorkforceSummary,
         options: { title: 'Workforce management' },
         submenus: [
             {
+                name: 'Workforce management',
+                component: WorkforceManagement,
+                options: { title: 'Workforce management' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
                 name: 'User Profile',
                 component: UserDetails,
-                options: { title: 'User Profile' },
+                options: { title: 'User profile' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -301,16 +307,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'User Report',
                 component: UserReport,
-                options: { title: 'User Report' },
-                submenus: [],
-                users: [],
-                inMenuBar: false,
-                icon: { name: 'person', type: 'octicon' },
-            },
-            {
-                name: 'Create User',
-                component: CreateUser,
-                options: { title: 'Create User' },
+                options: { title: 'User report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -319,7 +316,34 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'User Report Details',
                 component: UserReportDetailsPage,
-                options: { title: 'User Report Details' },
+                options: { title: 'User report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Create User',
+                component: CreateUser,
+                options: { title: 'Create user' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Campus workforce',
+                component: CampusWorkforceSummary,
+                options: { title: 'Campus workforce' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Global workforce',
+                component: GlobalWorkforceSummary,
+                options: { title: 'Global workforce' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

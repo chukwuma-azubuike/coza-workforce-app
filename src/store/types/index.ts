@@ -145,7 +145,7 @@ export type IEditProfilePayload = Pick<
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD';
 
 export interface ICreateUserPayload {
     firstName: string;
@@ -508,4 +508,18 @@ export interface IAllService {
     rangeToClockIn: number;
     isGlobalService: boolean;
     createdAt: string;
+
+export interface ICampusUserData {
+    campusId: string;
+    campusName: string;
+    departments: number;
+    totalUser: number;
+    activeUser: number;
+    dormantUser: number;
+    inactiveUser: number;
+    departmentCount: {
+        departmentId: string;
+        departmentName: string;
+        userCount: number;
+    }[];
 }

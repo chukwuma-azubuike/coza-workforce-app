@@ -97,7 +97,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
         [filteredServices]
     );
 
-    const { setServiceId: setServiceId, serviceId } = React.useContext(GlobalReportContext);
+    const { setServiceId, serviceId } = React.useContext(GlobalReportContext);
 
     const setService = (value: IService['_id']) => {
         setServiceId(value);
@@ -116,10 +116,10 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
     };
 
     React.useEffect(() => {
-        if (!serviceId && services?.length) {
-            setServiceId(services[0]._id);
+        if (!serviceId && sortedServices) {
+            setServiceId(sortedServices[0]._id);
         }
-    }, [servicesLoading]);
+    }, [serviceId, services]);
 
     const { isMobile, isTablet } = useMediaQuery();
     const { campusId, campusName } = React.useContext(GlobalReportContext);

@@ -11,7 +11,7 @@ import {
     IDefaultQueryParams,
     IEditProfilePayload,
     ICreateUserPayload,
-    IAttendanceStatus,
+    ICampusUserData,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -79,6 +79,21 @@ interface IVerifyEmailResponseTransform {
     firstName: string;
     departmentName: string;
     departmentId: string;
+}
+
+export interface IGlobalWorkforceSummary {
+    activeUser: number;
+    campusCount: number;
+    inactiveUser: number;
+    blacklistedUsers: number;
+    UnregisteredUsers: number;
+    campusWorfForce: ICampusWorkforceSummary[];
+}
+
+export interface ICampusWorkforceSummary {
+    campusId: string;
+    campusName: string;
+    userCount: number;
 }
 
 export type ILoginResponse = IDefaultResponse<{
@@ -189,7 +204,6 @@ export const accountServiceSlice = createApi({
         sendForgotPasswordOTP: endpoint.query<ISendOTPResponse, string>({
             query: email => `/${SERVICE_URL}/forget-password/otp/${email}`,
         }),
-        // /account/forget-password/validate
 
         validateForgotPasswordOTP: endpoint.mutation<IVerifyForgotPassword, IVerifyEmailOTPPayload>({
             query: body => ({
@@ -231,6 +245,15 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
+        getCampusSummaryByCampusId: endpoint.query<ICampusUserData, string>({
+            query: campusId => ({
+                url: `/${USER_SERVICE_URL}/campus`,
+                method: REST_API_VERBS.GET,
+                params: { campusId },
+            }),
+
+            transformResponse: (response: IDefaultResponse<ICampusUserData>) => response.data,
+        }),
 
         getUsers: endpoint.query<IUser[], IDefaultQueryParams>({
             query: params => ({
@@ -240,6 +263,15 @@ export const accountServiceSlice = createApi({
             }),
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
+        }),
+
+        getGlobalWorkForceSummary: endpoint.query<IGlobalWorkforceSummary, void>({
+            query: () => ({
+                url: `/${USER_SERVICE_URL}/globalForce`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (response: IDefaultResponse<IGlobalWorkforceSummary>) => response.data,
         }),
     }),
 });
@@ -257,6 +289,8 @@ export const {
     useValidateEmailOTPMutation,
     useSendForgotPasswordOTPQuery,
     useGetUsersByDepartmentIdQuery,
+    useGetGlobalWorkForceSummaryQuery,
+    useGetCampusSummaryByCampusIdQuery,
     useValidateForgotPasswordOTPMutation,
     useUploadUserMutation,
 } = accountServiceSlice;

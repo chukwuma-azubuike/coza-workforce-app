@@ -8,6 +8,7 @@ import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useRole from '../../../hooks/role';
+import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
@@ -34,6 +35,8 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         [AppRoutes]
     );
 
+    useCustomBackNavigation({ targetRoute: 'Home' });
+
     return (
         <ViewWrapper>
             <VStack>
@@ -43,13 +46,13 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                             mb={2}
                             py={4}
                             key={idx}
-                            _light={{ bg: 'gray.100' }}
-                            _dark={{ bg: 'gray.900' }}
                             borderRadius={6}
                             borderColor="gray.400"
+                            _dark={{ bg: 'gray.900' }}
+                            _light={{ bg: 'gray.100' }}
                         >
                             <TouchableOpacity
-                                activeOpacity={0.4}
+                                activeOpacity={0.6}
                                 style={{ width: '100%' }}
                                 onPress={handlePress(route)}
                             >
