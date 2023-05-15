@@ -41,7 +41,7 @@ const ServiceListRow: React.FC<IService> = service => {
                         </Text>
                     </VStack>
                 </HStack>
-                <StatusTag>{service?.isGlobalService ? 'Global Service' as any : 'Local Service'}</StatusTag>
+                <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
             </HStack>
         </TouchableNativeFeedback>
     );
