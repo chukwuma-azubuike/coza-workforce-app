@@ -69,7 +69,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
             });
             reset();
             navigate('Service management', data);
-            resetForm(INITIAL_VALUES);
+            resetForm(INITIAL_VALUES as any);
         }
 
         if ('error' in result) {
@@ -110,7 +110,6 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                 <FormControl isRequired isInvalid={!!errors?.serviceName && touched.serviceName}>
                                     <FormControl.Label>Service Name</FormControl.Label>
                                     <InputComponent
-                                        keyboardType="phone-pad"
                                         value={values.serviceName}
                                         placeholder="Service Name"
                                         onChangeText={handleChange('serviceName')}
@@ -244,7 +243,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
-                                        Submit
+                                        Create service
                                     </ButtonComponent>
                                 </FormControl>
                             </VStack>
