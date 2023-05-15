@@ -15,11 +15,11 @@ const usePreventGoBack = () => {
     }, [navigation]);
 };
 
-const useCustomBackNavigation = ({ targetRoute }: { targetRoute: string }) => {
+const useCustomBackNavigation = ({ targetRoute, params }: { targetRoute: string; params?: any }) => {
     const navigation = useNavigation();
 
     const handleGoBack = () => {
-        navigation.navigate(targetRoute as never);
+        navigation.navigate(targetRoute as never, params as never);
     };
     const { isDarkMode } = useAppColorMode();
 
@@ -47,7 +47,7 @@ const useCustomBackNavigation = ({ targetRoute }: { targetRoute: string }) => {
                 />
             ),
         });
-    }, [navigation]);
+    }, [navigation, params, targetRoute]);
 };
 
 export { usePreventGoBack, useCustomBackNavigation };

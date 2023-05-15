@@ -12,16 +12,20 @@ import { useGetCampusSummaryByCampusIdQuery } from '../../../store/services/acco
 import Utils from '../../../utils';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { navigate, setOptions } = useNavigation();
+    const params = props.route.params as { _id?: string };
+    const campusId = params?._id;
+
+    const { navigate } = useNavigation();
 
     const handlePress = (elm: any) => {
-        navigate('Workforce management' as never, elm as never);
+        navigate('Workforce management' as never, { ...elm, campusId } as never);
     };
 
     const {
         user: { campus },
     } = useRole();
-    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummaryByCampusIdQuery(campus._id);
+
+    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummaryByCampusIdQuery(campusId || campus._id);
 
     const campusInfo = [
         {
@@ -63,6 +67,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 data?.departmentCount.map(item => ({
                     ...item,
                     value: item.userCount,
+                    _id: item.departmentId,
                     title: item.departmentName,
                 })),
                 'title'
