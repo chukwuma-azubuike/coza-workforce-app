@@ -13,13 +13,15 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
 
-    const { isGlobalPastor, isHOD, isAHOD, isQC, isSuperAdmin } = useRole();
+    const { isGlobalPastor, isHOD, isAHOD, isQC, isSuperAdmin, isCampusPastor } = useRole();
 
     const routeFilters = ['Profile', 'Notifications'];
 
     const roleFilterArray = [
+        { role: isQC, routes: ['Service management'] },
+        { role: isCampusPastor, routes: ['Service management'] },
+        { role: isAHOD || isHOD, routes: ['Manual clock in', 'Service management'] },
         { role: isGlobalPastor, routes: ['Manual clock in', 'Service management'] },
-        { role: !isSuperAdmin, routes: ['Service management'] },
         { role: (isHOD && !isQC) || (isAHOD && !isQC), routes: ['Manual clock in', 'Service management'] },
     ];
 
