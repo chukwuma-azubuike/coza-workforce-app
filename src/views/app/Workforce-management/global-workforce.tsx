@@ -4,6 +4,8 @@ import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '../../../components/composite/card';
 import ErrorBoundary from '../../../components/composite/error-boundary';
+import If from '../../../components/composite/if-container';
+import StaggerButtonComponent from '../../../components/composite/stagger';
 import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { useCustomBackNavigation } from '../../../hooks/navigation';
@@ -11,25 +13,14 @@ import useRole from '../../../hooks/role';
 import { useGetGlobalWorkForceSummaryQuery } from '../../../store/services/account';
 import Utils from '../../../utils';
 
-const GlobalSummary: React.FC<{ title: string; value: string | number }> = ({ title, value }) => {
-    return (
-        <Stack ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
-            <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-                {title}
-            </Heading>
-            <Text ml="12" flexWrap="wrap" fontWeight="400" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                {value}
-            </Text>
-        </Stack>
-    );
-};
-
 const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = useNavigation();
 
     const handlePress = (elm: any) => {
         navigate('Campus workforce' as never, elm as never);
     };
+
+    const { isQcHOD, isSuperAdmin, isGlobalPastor, isInternshipHOD, isCampusPastor } = useRole();
 
     const { data, isLoading, isFetching } = useGetGlobalWorkForceSummaryQuery();
 
@@ -74,6 +65,51 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             ),
         [data]
     );
+
+    const gotoCreateWorker = () => {
+        navigate('Create User' as never);
+    };
+
+    const gotoCreateCampus = () => {
+        // navigation.navigate('Create User');
+    };
+
+    const gotoCreateDepartment = () => {
+        // navigation.navigate('Create Department');
+    };
+
+    const allButtons = [
+        {
+            color: 'blue.400',
+            iconType: 'ionicon',
+            iconName: 'person-outline',
+            handleClick: gotoCreateWorker,
+        },
+        {
+            color: 'blue.600',
+            iconType: 'ionicon',
+            iconName: 'people-outline',
+            handleClick: gotoCreateDepartment,
+        },
+        {
+            color: 'blue.800',
+            iconName: 'church',
+            iconType: 'material-community',
+            handleClick: gotoCreateCampus,
+        },
+    ];
+
+    const filteredButtons = React.useMemo(() => {
+        if (isSuperAdmin || isGlobalPastor) {
+            return allButtons;
+        }
+
+        if (isCampusPastor || isInternshipHOD || isQcHOD) {
+            return [allButtons[0], allButtons[1]];
+        }
+
+        return [allButtons[0]];
+    }, []);
 
     useCustomBackNavigation({ targetRoute: 'More' });
 
@@ -134,6 +170,9 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     </Stack>
                 </Center>
             </ViewWrapper>
+            <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin}>
+                <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
+            </If>
         </ErrorBoundary>
     );
 };
