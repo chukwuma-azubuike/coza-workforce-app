@@ -46,13 +46,13 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                             mb={2}
                             py={4}
                             key={idx}
-                            _light={{ bg: 'gray.100' }}
-                            _dark={{ bg: 'gray.900' }}
                             borderRadius={6}
                             borderColor="gray.400"
+                            _dark={{ bg: 'gray.900' }}
+                            _light={{ bg: 'gray.100' }}
                         >
                             <TouchableOpacity
-                                activeOpacity={0.4}
+                                activeOpacity={0.6}
                                 style={{ width: '100%' }}
                                 onPress={handlePress(route)}
                             >
