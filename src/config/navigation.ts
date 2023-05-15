@@ -17,8 +17,8 @@ import Tickets from '../views/app/tickets';
 import IssueTicket from '../views/app/tickets/issue-ticket';
 import TicketDetails from '../views/app/tickets/ticket-details';
 // import ServiceManagement from '../views/app/service-management';
-import CreateUser from '../views/app/Workforce-management/create-user';
-import UserDetails from '../views/app/Workforce-management/user-details';
+import CreateUser from '../views/app/workforce-management/create-user';
+import UserDetails from '../views/app/workforce-management/user-details';
 import ManualClockin from '../views/app/manual-clockin';
 import PermissionDetails from '../views/app/permissions/permission-details';
 import RequestPermission from '../views/app/permissions/request-permission';
@@ -36,13 +36,12 @@ import Register from '../views/auth/register';
 import ResetPassword from '../views/auth/reset-password';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
-import WorkforceManagement from '../views/app/Workforce-management/workforce-management';
-import GlobalWorkforceSummary from '../views/app/Workforce-management/global-workforce';
-import WorkforceSummary from '../views/app/Workforce-management';
-import CampusWorkforceSummary from '../views/app/Workforce-management/campus-workforce';
-import UserReport from '../views/app/Workforce-management/user-reports';
+import WorkforceManagement from '../views/app/workforce-management/workforce-management';
+import GlobalWorkforceSummary from '../views/app/workforce-management/global-workforce';
+import WorkforceSummary from '../views/app/workforce-management';
+import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
+import UserReport from '../views/app/workforce-management/user-reports';
 
-// import UserReport from '../views/app/workforce-management/user-reports';
 export interface IAppRoute {
     name: string;
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>> | React.FC<any>;
@@ -284,7 +283,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'User Profile',
                 component: UserDetails,
-                options: { title: 'User Profile' },
+                options: { title: 'User profile' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -293,7 +292,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'User Report',
                 component: UserReport,
-                options: { title: 'User Report' },
+                options: { title: 'User report' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -302,7 +301,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'Create User',
                 component: CreateUser,
-                options: { title: 'Create User' },
+                options: { title: 'Create user' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
@@ -311,7 +310,7 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'Campus workforce',
                 component: CampusWorkforceSummary,
-                options: { title: 'Campus management' },
+                options: { title: 'Campus workforce' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

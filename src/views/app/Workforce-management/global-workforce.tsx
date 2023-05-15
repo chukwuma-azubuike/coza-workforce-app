@@ -6,6 +6,7 @@ import { SmallCardComponent } from '../../../components/composite/card';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { FlatListSkeleton, FlexListSkeleton } from '../../../components/layout/skeleton';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { useCustomBackNavigation } from '../../../hooks/navigation';
 import useRole from '../../../hooks/role';
 import { useGetCampusSummaryByCampusIdQuery } from '../../../store/services/account';
 
@@ -33,26 +34,26 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         },
     ];
 
-    const summeryList = [
+    const summaryList = [
         {
             title: 'Total',
-            value: data?.totalUser || 0,
             color: 'purple.700',
+            value: data?.totalUser || 0,
         },
         {
             title: 'Active',
-            value: data?.activeUser || 0,
             color: 'green.700',
+            value: data?.activeUser || 0,
         },
         {
             title: 'Dormant',
-            value: data?.dormantUser || 0,
             color: 'orange.700',
+            value: data?.dormantUser || 0,
         },
         {
             title: 'Inactive',
-            value: data?.inactiveUser || 0,
             color: 'red.700',
+            value: data?.inactiveUser || 0,
         },
     ];
 
@@ -60,11 +61,14 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         () =>
             data?.departmentCount.map(item => ({
                 ...item,
-                title: item.departmentName,
+                _id: item.departmentId,
                 value: item.userCount,
+                title: item.departmentName,
             })),
         [data]
     );
+
+    useCustomBackNavigation({ targetRoute: 'More' });
 
     return (
         <ErrorBoundary>
@@ -94,18 +98,18 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     <FlatListSkeleton count={1} />
                 ) : (
                     <Stack
-                        flexDirection="row"
-                        alignItems="center"
-                        padding={4}
                         my={6}
-                        justifyItems="center"
-                        justifyContent="space-between"
+                        padding={4}
                         borderWidth={1}
                         borderRadius={8}
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyItems="center"
+                        justifyContent="space-between"
                         _dark={{ borderColor: 'gray.200' }}
                         _light={{ borderColor: 'gray.200' }}
                     >
-                        {summeryList.map((item, index) => (
+                        {summaryList.map((item, index) => (
                             <Stack key={index} flexDirection="column" alignItems="center" justifyItems="center" my={2}>
                                 <Heading
                                     size="xs"

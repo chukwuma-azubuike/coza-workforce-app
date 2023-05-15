@@ -6,11 +6,13 @@ import { SmallCardComponent } from '../../../components/composite/card';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { FlatListSkeleton, FlexListSkeleton } from '../../../components/layout/skeleton';
 import ViewWrapper from '../../../components/layout/viewWrapper';
+import { useCustomBackNavigation } from '../../../hooks/navigation';
 import useRole from '../../../hooks/role';
 import { useGetCampusSummaryByCampusIdQuery } from '../../../store/services/account';
+import Utils from '../../../utils';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { navigate } = useNavigation();
+    const { navigate, setOptions } = useNavigation();
 
     const handlePress = (elm: any) => {
         navigate('Workforce management' as never, elm as never);
@@ -32,38 +34,43 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         },
     ];
 
-    const summeryList = [
+    const summaryList = [
         {
             title: 'Total',
-            value: data?.totalUser || 0,
             color: 'purple.700',
+            value: data?.totalUser || 0,
         },
         {
             title: 'Active',
-            value: data?.activeUser || 0,
             color: 'green.700',
+            value: data?.activeUser || 0,
         },
         {
             title: 'Dormant',
-            value: data?.dormantUser || 0,
             color: 'orange.700',
+            value: data?.dormantUser || 0,
         },
         {
             title: 'Inactive',
-            value: data?.inactiveUser || 0,
             color: 'red.700',
+            value: data?.inactiveUser || 0,
         },
     ];
 
     const Departmentlist = React.useMemo(
         () =>
-            data?.departmentCount.map(item => ({
-                ...item,
-                title: item.departmentName,
-                value: item.userCount,
-            })),
+            Utils.sortStringAscending(
+                data?.departmentCount.map(item => ({
+                    ...item,
+                    value: item.userCount,
+                    title: item.departmentName,
+                })),
+                'title'
+            ),
         [data]
     );
+
+    useCustomBackNavigation({ targetRoute: 'More' });
 
     return (
         <ErrorBoundary>
@@ -72,19 +79,18 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     isLoading || isFetching ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <Stack key={index} ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
-                            <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-                                {item.name}
-                            </Heading>
+                        <Stack key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} px={2}>
                             <Text
-                                ml="12"
                                 flexWrap="wrap"
                                 fontWeight="400"
                                 _dark={{ color: 'gray.400' }}
                                 _light={{ color: 'gray.600' }}
                             >
-                                {item.value}
+                                {item.name}
                             </Text>
+                            <Heading ml={4} size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
+                                {item.value}
+                            </Heading>
                         </Stack>
                     )
                 )}
@@ -93,18 +99,19 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     <FlatListSkeleton count={1} />
                 ) : (
                     <Stack
-                        flexDirection="row"
-                        alignItems="center"
-                        padding={4}
                         my={6}
-                        justifyItems="center"
-                        justifyContent="space-between"
+                        mx={2}
+                        padding={4}
                         borderWidth={1}
                         borderRadius={8}
-                        _dark={{ borderColor: 'gray.200' }}
+                        flexDirection="row"
+                        alignItems="center"
+                        justifyItems="center"
+                        justifyContent="space-between"
+                        _dark={{ borderColor: 'gray.600' }}
                         _light={{ borderColor: 'gray.200' }}
                     >
-                        {summeryList.map((item, index) => (
+                        {summaryList.map((item, index) => (
                             <Stack key={index} flexDirection="column" alignItems="center" justifyItems="center" my={2}>
                                 <Heading
                                     size="xs"
@@ -123,17 +130,17 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 )}
 
                 <Center>
-                    <Stack py={3} flexDirection="row" flex={1} flexWrap="wrap">
+                    <Stack py={3} mb={4} flexDirection="row" flex={1} flexWrap="wrap">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (
                             <>
                                 {Departmentlist?.map((item, index) => (
                                     <SmallCardComponent
-                                        onPress={() => handlePress(item)}
                                         key={index}
                                         label={item.title}
                                         value={item.value}
+                                        onPress={() => handlePress(item)}
                                     />
                                 ))}
                             </>

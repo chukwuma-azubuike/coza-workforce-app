@@ -1,7 +1,7 @@
 import React from 'react';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ParamListBase, useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
 import { Campus, MyTeam } from './list';
 import { SceneMap } from 'react-native-tab-view';
@@ -9,8 +9,9 @@ import TabComponent from '../../../components/composite/tabs';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import ErrorBoundary from '../../../components/composite/error-boundary';
-import { IcampusUserData } from '../../../store/types';
+import { ICampusUserData } from '../../../store/types';
 import useScreenFocus from '../../../hooks/focus';
+import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const ROUTES = [
     { key: 'team', title: 'Team' },
@@ -18,7 +19,7 @@ const ROUTES = [
 ];
 
 const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const campusUsersData = route?.params as IcampusUserData['departmentCount'][0];
+    const campusUsersData = route?.params as ICampusUserData['departmentCount'][0];
     const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin } = useRole();
 
     const { setOptions } = navigation;
@@ -90,6 +91,7 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     }, []);
 
     const [index, setIndex] = React.useState(0);
+    useCustomBackNavigation({ targetRoute: 'More' });
 
     return (
         <ErrorBoundary>

@@ -458,7 +458,7 @@ export interface IDepartmentReportResponse {
     incidentReport: unknown[];
 }
 
-export interface IcampusUserData {
+export interface ICampusUserData {
     campusId: string;
     campusName: string;
     departments: number;

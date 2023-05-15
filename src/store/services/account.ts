@@ -11,8 +11,7 @@ import {
     IDefaultQueryParams,
     IEditProfilePayload,
     ICreateUserPayload,
-    IcampusUserData,
-    IAttendanceStatus,
+    ICampusUserData,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -232,14 +231,14 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
-        getCampusSummaryByCampusId: endpoint.query<IcampusUserData, string>({
+        getCampusSummaryByCampusId: endpoint.query<ICampusUserData, string>({
             query: campusId => ({
                 url: `/${USER_SERVICE_URL}/campus`,
                 method: REST_API_VERBS.GET,
                 params: { campusId },
             }),
 
-            transformResponse: (response: IDefaultResponse<IcampusUserData>) => response.data,
+            transformResponse: (response: IDefaultResponse<ICampusUserData>) => response.data,
         }),
 
         getUsers: endpoint.query<IUser[], IDefaultQueryParams>({
@@ -258,7 +257,6 @@ export const accountServiceSlice = createApi({
 export const {
     useSendOTPQuery,
     useGetUsersQuery,
-    useGetCampusSummaryByCampusIdQuery,
     useLoginMutation,
     useRegisterMutation,
     useGetUserByIdQuery,
@@ -268,6 +266,7 @@ export const {
     useValidateEmailOTPMutation,
     useSendForgotPasswordOTPQuery,
     useGetUsersByDepartmentIdQuery,
+    useGetCampusSummaryByCampusIdQuery,
     useValidateForgotPasswordOTPMutation,
     useUploadUserMutation,
 } = accountServiceSlice;
