@@ -1,4 +1,4 @@
-import { ParamListBase, useFocusEffect, useIsFocused, useNavigation } from '@react-navigation/native';
+import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
@@ -11,21 +11,19 @@ import { DateTimePickerComponent } from '../../../components/composite/date-pick
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
-import useRole from '../../../hooks/role';
-import { useCreateServiceMutation, useUpdateServiceMutation } from '../../../store/services/services';
-import { CREATE_SERVICE_ENUM, IAllService, ICreateServicePayload } from '../../../store/types';
+import { useCreateServiceMutation } from '../../../store/services/services';
+import { CREATE_SERVICE_ENUM, ICreateServicePayload } from '../../../store/types';
 import Utils from '../../../utils';
 import { CreateServiceSchema } from '../../../utils/schemas';
-import useScreenFocus from '../../../hooks/focus';
 
 const tags: any = [
-    { id: 'cozasunday', value: 'COZASunday' },
-    { id: 'cozawednesday', value: 'COZAWednesday' },
-    { id: 'dpe', value: 'DPE' },
-    { id: 'home-training', value: 'Home Training' },
-    { id: 'leaders-meeting', value: 'Leaders Meeting' },
-    { id: '12dg', value: '12DG' },
-    { id: '7dg', value: '7DG' },
+    { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },
+    { id: 'COZA_WEDNESDAYS', value: 'COZA Wednesdays' },
+    { id: 'DPE', value: 'DPE' },
+    { id: 'HOME_TRAINING', value: 'Home Training' },
+    { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
+    { id: '12DG', value: '12DG' },
+    { id: '7DG', value: '7DG' },
 ];
 
 const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
@@ -59,6 +57,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
             rangeToClockIn,
             serviceEndTime,
             serviceTime,
+            tag: [values.serviceTag],
             workersLateStartTime,
         });
 
@@ -91,8 +90,6 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         serviceType: '',
         serviceName: '',
     } as ICreateServicePayload;
-
-    useScreenFocus({ onFocus: () => setOptions({ title: 'Create Service' }) });
 
     return (
         <ViewWrapper scroll noPadding>
@@ -155,10 +152,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                     </FormControl.ErrorMessage>
                                 </FormControl>
                                 <FormControl isRequired isInvalid={!!errors?.serviceTag && touched.serviceTag}>
-                                    <FormControl.Label>Service Tags</FormControl.Label>
+                                    <FormControl.Label>Service Tag</FormControl.Label>
                                     <SelectComponent
-                                        selectedValue={values.serviceTag}
                                         placeholder="Service Tags"
+                                        selectedValue={values.serviceTag}
                                         onValueChange={handleChange('serviceTag')}
                                     >
                                         {tags?.map((tag: any, index: any) => (

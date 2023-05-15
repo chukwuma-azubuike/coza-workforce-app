@@ -291,11 +291,14 @@ class Utils {
 
     static concatDateTimeToEpoc = (date: string | Date, time: string | Date) => {
         const concatedTime = `${moment(date).format('YYYY-MM-DD')}T${moment(time).format('HH:mm:ss')}.000Z`;
-        const convertedDateTime = moment(concatedTime).unix();
-        const convertedDate = moment(date).unix();
-        const convertedTime = moment(time).unix();
 
-        return date && !time ? convertedDate : time && !date ? convertedTime : time && date ? convertedDateTime : null;
+        return date && !time
+            ? moment(date).subtract(1, 'hour').unix()
+            : time && !date
+            ? moment(time).subtract(1, 'hour').unix()
+            : time && date
+            ? moment(concatedTime).subtract(1, 'hour').unix()
+            : null;
     };
 }
 

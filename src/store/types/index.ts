@@ -386,11 +386,13 @@ export interface IService {
     };
 }
 export interface ICreateService {
+    _id?: string;
     name: string;
     coordinates: {
         long: number;
         lat: number;
     };
+    tag: string[];
     serviceTime: number | null;
     clockInStartTime: number | null;
     workersLateStartTime: number | null;
