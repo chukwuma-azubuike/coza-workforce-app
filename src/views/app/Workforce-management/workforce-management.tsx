@@ -13,12 +13,12 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const campusUsersData = route?.params as ICampusUserData['departmentCount'][0] & { campusId: string };
-    const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin, isInternshipHOD, isQcHOD } = useRole();
+    const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin, isInternshipHOD, isQcHOD, user } = useRole();
 
     const { setOptions } = navigation;
 
     useScreenFocus({
-        onFocus: () => setOptions({ title: `${campusUsersData.departmentName || 'Workforce Management'}` }),
+        onFocus: () => setOptions({ title: `${campusUsersData?.departmentName || 'Workforce Management'}` }),
     });
 
     const gotoCreateWorker = () => {
@@ -66,12 +66,17 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
         return [allButtons[0]];
     }, []);
 
-    useCustomBackNavigation({ targetRoute: 'Campus workforce', params: { _id: campusUsersData.campusId } });
+    {
+        useCustomBackNavigation({
+            targetRoute: isCampusPastor || isQC || isGlobalPastor ? 'Campus workforce' : 'More',
+            params: { _id: campusUsersData?.campusId },
+        });
+    }
 
     return (
         <ErrorBoundary>
             <ViewWrapper>
-                <Department departmentId={campusUsersData.departmentId} />
+                <Department departmentId={campusUsersData?.departmentId || user?.department?._id} />
                 <If condition={isCampusPastor || isQC || isGlobalPastor || isSuperAdmin}>
                     <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
                 </If>
