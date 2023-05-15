@@ -15,7 +15,6 @@ import { IIconTypes } from '../utils/types';
 import More from '../views/app/more';
 import Tickets from '../views/app/tickets';
 import IssueTicket from '../views/app/tickets/issue-ticket';
-import { IIconTypes } from '../utils/types';
 import RequestPermission from '../views/app/permissions/request-permission';
 import Register from '../views/auth/register';
 import TicketDetails from '../views/app/tickets/ticket-details';
@@ -24,7 +23,6 @@ import CreateUser from '../views/app/workforce-management/create-user';
 import UserDetails from '../views/app/workforce-management/user-details';
 import ManualClockin from '../views/app/manual-clockin';
 import PermissionDetails from '../views/app/permissions/permission-details';
-import RequestPermission from '../views/app/permissions/request-permission';
 import EditProfile from '../views/app/profile/edit-profile';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
 import AttendanceReport from '../views/app/reports/forms/attendance-report';
@@ -35,16 +33,9 @@ import SecurityReport from '../views/app/reports/forms/security-report';
 import ServiceReport from '../views/app/reports/forms/service-report';
 import TransferReport from '../views/app/reports/forms/transfer-report';
 import ForgotPassword from '../views/auth/forgot-password';
-import Register from '../views/auth/register';
 import ResetPassword from '../views/auth/reset-password';
-import CampusReport from '../views/app/reports/campus-report/reportDetails';
-import WorkforceManagement from '../views/app/Workforce-management';
-import UserDetails from '../views/app/Workforce-management/user-details';
-import CreateUser from '../views/app/Workforce-management/create-user';
 import ServiceManagement from '../views/app/service-management';
 import CreateServiceManagement from '../views/app/service-management/create-service';
-import UserReport from '../views/app/Workforce-management/user-reports';
-import UserReportDetailsPage from '../views/app/Workforce-management/user-reports/UserReportDetailsPage';
 import VerifyEmail from '../views/auth/welcome';
 import Welcome from '../views/auth/welcome/welcome';
 import WorkforceManagement from '../views/app/workforce-management/workforce-management';
@@ -280,8 +271,6 @@ const AppRoutes: IAppRoute[] = [
         icon: { name: 'church', type: 'material-community' },
     },
     {
-        name: 'Workforce management',
-        component: WorkforceManagement,
         name: 'Workforce summary',
         component: WorkforceSummary,
         options: { title: 'Workforce management' },
