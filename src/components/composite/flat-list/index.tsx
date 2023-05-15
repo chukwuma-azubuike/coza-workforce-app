@@ -19,13 +19,13 @@ export interface IFlatListColumn {
 export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     data: any[];
     columns: any[];
-    padding?: boolean;
     refreshing?: boolean;
     onRefresh?: () => void;
     isLoading?: boolean;
     emptyMessage?: string;
     navLink?: string;
     showHeader?: boolean;
+    padding?: boolean | number;
     fetchMoreData?: () => void;
     emptySize?: number | string;
     showEmpty?: boolean;
