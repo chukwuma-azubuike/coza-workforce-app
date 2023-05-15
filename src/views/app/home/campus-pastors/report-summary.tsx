@@ -5,13 +5,13 @@ import { THEME_CONFIG } from '../../../../config/appConfig';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
 import StatusTag from '../../../../components/atoms/status-tag';
-import ButtonComponent from '../../../../components/atoms/button';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableNativeFeedback, TouchableOpacity } from 'react-native';
+import { Platform, TouchableNativeFeedback, TouchableOpacity } from 'react-native';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import Utils from '../../../../utils';
 import useScreenFocus from '../../../../hooks/focus';
 import useRole from '../../../../hooks/role';
+const isAndroid = Platform.OS === 'android';
 
 interface ReportSummaryListRowProps {
     '0'?: string;
@@ -160,7 +160,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, c
                 <Divider />
             </VStack>
             <FlatListComponent
-                padding
+                padding={isAndroid ? 3 : true}
                 emptySize={160}
                 data={groupedData}
                 showHeader={false}

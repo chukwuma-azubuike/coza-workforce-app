@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../../components/composite/tabs';
@@ -19,6 +20,7 @@ import Loading from '../../../../components/atoms/loading';
 import useScreenFocus from '../../../../hooks/focus';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
+const isAndroid = Platform.OS === 'android';
 
 // const UserPermissionsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
 //     const permissionsColumns: IFlatListColumn[] = [
@@ -132,7 +134,7 @@ const UserAttendanceList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ use
     return (
         <ErrorBoundary>
             <FlatListComponent
-                padding
+                padding={isAndroid ? 3 : true}
                 fetchMoreData={fetchMoreData}
                 columns={myAttendanceColumns}
                 data={moreData as IAttendance[]}

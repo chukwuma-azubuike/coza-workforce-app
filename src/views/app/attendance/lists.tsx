@@ -17,6 +17,9 @@ import useFetchMoreData from '../../../hooks/fetch-more-data';
 import Utils from '../../../utils';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
 import { Box } from 'native-base';
+import { Platform } from 'react-native';
+
+const isAndroid = Platform.OS === 'android';
 
 export const MyAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
@@ -44,7 +47,7 @@ export const MyAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <FlatListComponent
-                padding
+                padding={isAndroid ? 3 : true}
                 fetchMoreData={fetchMoreData}
                 columns={myAttendanceColumns}
                 data={moreData as IAttendance[]}
@@ -160,7 +163,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding
+                padding={isAndroid ? 3 : true}
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
@@ -295,7 +298,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding
+                padding={isAndroid ? 3 : true}
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
@@ -377,10 +380,10 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding
                 onRefresh={handleRefetch}
                 columns={campusColumns_1}
                 data={data as IAttendance[]}
+                padding={isAndroid ? 3 : true}
                 // fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
