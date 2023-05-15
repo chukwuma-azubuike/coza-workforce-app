@@ -1,5 +1,6 @@
 import React from 'react';
-import { Center, Skeleton, VStack } from 'native-base';
+import { Center, HStack, Skeleton, Stack, VStack } from 'native-base';
+import ViewWrapper from './viewWrapper';
 
 export const HomeSkeleton: React.FC = () => {
     return (
@@ -68,5 +69,95 @@ export const FlatListSkeleton: React.FC<{
                 />
             ))}
         </Center>
+    );
+};
+
+export const ProfileSkeleton: React.FC<{
+    count?: number;
+}> = ({ count = 6 }) => {
+    return (
+        <Center w="full" p={0}>
+            <Skeleton
+                h={24}
+                w={24}
+                mb={3}
+                rounded="full"
+                _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+            />
+            {Array.from(Array(count).keys()).map((elm, idx) => (
+                <Skeleton
+                    h="8"
+                    my={3}
+                    w="90%"
+                    rounded="md"
+                    overflow="hidden"
+                    key={`elm-${idx}`}
+                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                />
+            ))}
+        </Center>
+    );
+};
+
+export const ProfileSkeletonMini: React.FC<{
+    count?: number;
+}> = ({ count = 4 }) => {
+    return (
+        <HStack w="full" p={0} space={4} alignItems="center">
+            <Skeleton
+                h={32}
+                w={32}
+                mb={3}
+                rounded="full"
+                _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+            />
+            <VStack flex={1}>
+                {Array.from(Array(count).keys()).map((elm, idx) => (
+                    <Skeleton
+                        h="6"
+                        w="50%"
+                        my={1.5}
+                        rounded="md"
+                        overflow="hidden"
+                        key={`elm-${idx}`}
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                ))}
+            </VStack>
+        </HStack>
+    );
+};
+
+export const FlexListSkeleton: React.FC<{
+    count?: number;
+}> = ({ count = 1 }) => {
+    return (
+        <ViewWrapper>
+            {Array.from(Array(count).keys()).map((elm, idx) => (
+                <Stack key={idx} flexDirection="row" alignItems="center" justifyItems="center" my={1}>
+                    <Skeleton
+                        h="2"
+                        flex={1}
+                        rounded="md"
+                        overflow="hidden"
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                    <Skeleton
+                        h="2"
+                        ml="12"
+                        flex={1}
+                        rounded="md"
+                        overflow="hidden"
+                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
+                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
+                    />
+                </Stack>
+            ))}
+        </ViewWrapper>
     );
 };

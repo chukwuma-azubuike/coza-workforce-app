@@ -113,6 +113,12 @@ export const CreateIndividualTicketSchema = Yup.object().shape({
     ticketSummary: Yup.string().required('You are required to input a ticket description.'),
 });
 
+export const CreateServiceSchema = Yup.object().shape({
+    serviceTag: Yup.string().required('You are required to select the service tag.'),
+    serviceType: Yup.string().required('You are required to select the service type.'),
+    serviceName: Yup.string().required('Service name is required.'),
+});
+
 export const CreateDepartmentalTicketSchema = Yup.object().shape({
     categoryId: Yup.string().required('You are required to select a category.'),
     departmentId: Yup.string().required('You are required to select a department'),
@@ -162,4 +168,12 @@ export const ResetPasswordSchema = Yup.object().shape({
 
 export const GSPReportSchema = Yup.object().shape({
     campusCoordinatorComment: Yup.string().required('Please provide a comment'),
+});
+
+export const CreateUserSchema = Yup.object().shape({
+    firstName: Yup.string().required('First name is required.'),
+    lastName: Yup.string().required('Last name is required.'),
+    email: Yup.string().required('email is required.'),
+    departmentId: Yup.string().required('Department is required.'),
+    roleId: Yup.string().required('Role is required.'),
 });

@@ -1,4 +1,5 @@
 import { IReportFormProps } from '../../views/app/reports/forms/types';
+import store from '..';
 
 // General types
 export interface ILog {
@@ -7,6 +8,21 @@ export interface ILog {
     dateUpdated?: string;
     updatedAt?: string;
 }
+
+export enum CREATE_SERVICE_ENUM {
+    LONG = 7.505862981744857,
+    LAT = 9.005452823370131,
+    RANGE_TO_CLOCKIN = 100,
+}
+
+export enum IAttendanceStatus {
+    LATE = 'LATE',
+    ABSENT = 'ABSENT',
+    PRESENT = 'PRESENT',
+    ABSENT_WITH_PERMISSION = 'ABSENT_WITH_PERMISSION',
+}
+
+export type IUserReportType = IAttendanceStatus;
 
 export enum REST_API_VERBS {
     GET = 'GET',
@@ -98,6 +114,7 @@ export interface IUser {
     qrCodeUrl: string;
     placeOfWork: string;
     role: IRole;
+    roleId: IRole['_id'];
     department: IDepartment;
     campus: ICampus;
     status: IUserStatus;
@@ -126,7 +143,20 @@ export type IEditProfilePayload = Pick<
     | 'phoneNumber'
 >;
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
+export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
+
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD';
+
+export interface ICreateUserPayload {
+    firstName: string;
+    lastName: string;
+    email: string;
+    campusId: string;
+    departmentId: string | undefined;
+    roleId: string | undefined;
+    registeredBy: string;
+    isRegistered: boolean;
+}
 
 // Attendance
 export interface IAttendance extends ILog {
@@ -145,6 +175,7 @@ export interface IAttendance extends ILog {
     updatedAt: string;
     user: IUser;
     service: IService;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface ICampusAttendanceSummary {
@@ -170,6 +201,7 @@ export interface ITicket extends ILog {
     category: ITicketCategory;
     departmentName: string;
     contestReplyComment: string;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface ITicketUpdatePayload {
@@ -203,6 +235,18 @@ export interface ICreateTicketPayload {
     ticketSummary: string;
     status?: ITicketStatus;
     issuedBy: IUser['_id'];
+}
+
+export interface ICreateServicePayload {
+    serviceType: string;
+    serviceName: string;
+    serviceTag: string;
+    startTime: string | Date;
+    startDate: string | Date;
+    endTime: string | Date;
+    clockinTime: string | Date;
+    leaderLateTime: string | Date;
+    workerLateTime: string | Date;
 }
 
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
@@ -341,6 +385,22 @@ export interface IService {
         updatedAt: string;
     };
 }
+export interface ICreateService {
+    _id?: string;
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    tag: string[];
+    serviceTime: number | null;
+    clockInStartTime: number | null;
+    workersLateStartTime: number | null;
+    leadersLateStartTime: number | null;
+    serviceEndTime: number | null;
+    rangeToClockIn: number;
+    isGlobalService: boolean;
+}
 
 // Score
 
@@ -415,7 +475,7 @@ export interface IServiceReportPayload extends IReportFormProps {
     imageUrl: string | null;
 }
 
-export interface IIncidentReportPayload extends Omit<IReportFormProps, '_id'> {
+export interface IIncidentReportPayload extends IReportFormProps {
     details: string;
     imageUrl: string;
     incident: string;
@@ -431,4 +491,37 @@ export interface IDepartmentReportResponse {
         };
     };
     incidentReport: unknown[];
+}
+
+export interface IAllService {
+    tag: [];
+    _id: string;
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    serviceTime: string;
+    workersLateStartTime: string;
+    leadersLateStartTime: string;
+    serviceEndTime: string;
+    clockInStartTime: string;
+    clockInEndTime: string;
+    rangeToClockIn: number;
+    isGlobalService: boolean;
+    createdAt: string;
+}
+export interface ICampusUserData {
+    campusId: string;
+    campusName: string;
+    departments: number;
+    totalUser: number;
+    activeUser: number;
+    dormantUser: number;
+    inactiveUser: number;
+    departmentCount: {
+        departmentId: string;
+        departmentName: string;
+        userCount: number;
+    }[];
 }

@@ -18,7 +18,7 @@ const StatusTag: React.FC<IStatusTag> = props => {
     const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
     const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED';
     const red = status === 'DECLINED' || status === 'INACTIVE' || status === 'REJECTED' || status === 'CONTESTED';
-    const blue = status === 'SUBMITTED';
+    const blue = status === 'SUBMITTED' || 'HOD' || 'AHOD';
 
     return (
         <Tag

@@ -9,7 +9,6 @@ import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Dimensions } from 'react-native';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
-import { HomeContext } from '..';
 import {
     useGetDepartmentAttendanceReportQuery,
     useGetLeadersAttendanceReportQuery,
@@ -20,7 +19,6 @@ import Loading from '../../../../components/atoms/loading';
 import { useGetLatestServiceQuery } from '../../../../store/services/services';
 import useScreenFocus from '../../../../hooks/focus';
 import { useGetCampusTicketReportQuery } from '../../../../store/services/tickets';
-import { useGetCampusByIdQuery } from '../../../../store/services/campus';
 import ErrorBoundary from '../../../../components/composite/error-boundary';
 
 interface IClockerProps {
@@ -87,12 +85,6 @@ const Clocker: React.FC<IClockerProps> = ({
             attendanceReportRefetch();
         },
     });
-
-    const {
-        latestService: { data },
-    } = React.useContext(HomeContext);
-
-    const { data: campusData } = useGetCampusByIdQuery(campus?._id);
 
     useScreenFocus({
         onFocus: refreshLocation,

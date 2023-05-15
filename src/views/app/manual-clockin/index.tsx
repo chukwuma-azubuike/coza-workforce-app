@@ -9,7 +9,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useScreenFocus from '../../../hooks/focus';
 import useGeoLocation from '../../../hooks/geo-location';
 import useRole from '../../../hooks/role';
-import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
+import { useGetUsersQuery } from '../../../store/services/account';
 import { ICampusCoordinates, IClockInPayload } from '../../../store/services/attendance';
 import { useGetCampusByIdQuery, useGetCampusesQuery } from '../../../store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
@@ -38,7 +38,7 @@ const ManualClockin: React.FC = () => {
         data: departments,
         isLoading: departmentsLoading,
         isFetching: departmentIsFetching,
-    } = useGetDepartmentsByCampusIdQuery(campusId, {
+    } = useGetDepartmentsByCampusIdQuery(campusId as string, {
         skip: !campusId,
     });
 
@@ -46,9 +46,12 @@ const ManualClockin: React.FC = () => {
         data: users,
         isLoading: usersLoading,
         isFetching: usersIsFetching,
-    } = useGetUsersByDepartmentIdQuery(departmentId as string, {
-        skip: !departmentId,
-    });
+    } = useGetUsersQuery(
+        { departmentId },
+        {
+            skip: !departmentId,
+        }
+    );
 
     const {
         user: { campus },
@@ -91,11 +94,7 @@ const ManualClockin: React.FC = () => {
                     initialValues={{} as IClockInPayload}
                     validationSchema={WorkforceClockinSchema}
                 >
-                    {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
-                        const handleDate = (fieldName: string, value: any) => {
-                            setFieldValue(fieldName, value);
-                        };
-
+                    {({ errors, values, handleChange }) => {
                         const onCampusChange = (value: string) => {
                             refresh();
                             setCampusId(value);
@@ -245,7 +244,7 @@ const ManualClockin: React.FC = () => {
                                         deviceCoordinates={deviceCoordinates}
                                         departmentId={departmentId as string}
                                         userId={thirdPartyUser?._id as string}
-                                        roleId={thirdPartyUser?.role?._id as string}
+                                        roleId={thirdPartyUser?.roleId as string}
                                         campusCoordinates={campusCoordinates as ICampusCoordinates}
                                     />
                                 </Center>

@@ -10,7 +10,9 @@ export class fetchUtils {
         prepareHeaders: async (headers, { getState }) => {
             const token = (getState() as IStore).account;
 
-            if (token) headers.set('authorization', `Bearer ${token}`);
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
 
             return headers;
         },

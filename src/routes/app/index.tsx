@@ -7,7 +7,7 @@ import { IconButton } from 'native-base';
 import { Icon } from '@rneui/themed';
 import useAppColorMode from '../../hooks/theme/colorMode';
 import { THEME_CONFIG } from '../../config/appConfig';
-import { useNavigation } from '@react-navigation/native';
+import { Route, useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 const AppStack = createNativeStackNavigator();
@@ -85,7 +85,11 @@ const TabRoutes: React.FC = () => {
 
 const AppRoute: React.FC = () => (
     <AppStack.Navigator screenOptions={{ headerShown: false }}>
-        <AppStack.Screen name="TabRoutes" component={TabRoutes} />
+        <AppStack.Screen
+            name="TabRoutes"
+            component={TabRoutes}
+            options={({ route }: { route: Route<string, any> }) => ({ title: route?.params?.headerTitle })}
+        />
     </AppStack.Navigator>
 );
 

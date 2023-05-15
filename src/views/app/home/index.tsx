@@ -19,7 +19,7 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '../../../hooks/focus';
 import useGeoLocation from '../../../hooks/geo-location';
-import { useGetCampusByIdQuery, useGetCampusesQuery } from '../../../store/services/campus';
+import { useGetCampusByIdQuery } from '../../../store/services/campus';
 
 interface IInitialHomeState {
     latestService: {
@@ -87,7 +87,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         },
     };
 
-    const { data: services, refetch: refetchServices, isSuccess: servicesIsSuccess } = useGetServicesQuery();
+    const { data: services, refetch: refetchServices, isSuccess: servicesIsSuccess } = useGetServicesQuery({});
 
     const { data: campusData } = useGetCampusByIdQuery(user?.campus?._id);
 

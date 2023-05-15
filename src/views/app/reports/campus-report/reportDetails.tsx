@@ -7,6 +7,7 @@ import { VStack, Text, HStack, Divider, FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '../../../../components/atoms/button';
 import TextAreaComponent from '../../../../components/atoms/text-area';
+import If from '../../../../components/composite/if-container';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../../config/appConfig';
 import useScreenFocus from '../../../../hooks/focus';
@@ -29,13 +30,13 @@ import {
 } from '../../../../store/types';
 import Utils from '../../../../utils';
 import { GSPReportSchema } from '../../../../utils/schemas';
-import HorizontalTable from './horizontal-table';
-import VerticalTable from './vertical-table';
+import HorizontalTable from '../../../../components/composite/tables/horizontal-table';
+import VerticalTable from '../../../../components/composite/tables/vertical-table';
 
 const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as ICampusReport;
+    const params = props.route.params as ICampusReport & { campusName: string };
     const { serviceId, campusId } = params;
-    const { user } = useRole();
+    const { user, isCampusPastor, isGlobalPastor } = useRole();
 
     const { data, refetch, isLoading, isFetching, isSuccess, isError } = useGetCampusReportSummaryQuery(
         {
@@ -243,7 +244,10 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         () => submittedReports?.map(report => report?.report?._id),
         [submittedReports]
     );
-    const incidentReportIds = React.useMemo(() => data?.incidentReport.map(report => report), [data]);
+    const incidentReportIds = React.useMemo(
+        () => data?.incidentReport.map(report => report?.incidentReport?._id),
+        [data]
+    );
 
     const INITIAL_VALUES = {
         campusId,
@@ -281,6 +285,11 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ViewWrapper py={10} scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+            {isGlobalPastor && (
+                <Text bold fontSize="3xl" mb={4} ml={4}>
+                    {params?.campusName}
+                </Text>
+            )}
             <VStack px={4} space={10}>
                 <Divider />
                 <VerticalTable
@@ -331,49 +340,65 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <Divider />
                 <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
                 <Divider />
-                <Formik<IGSPReportPayload>
-                    onSubmit={onSubmit}
-                    validationSchema={GSPReportSchema}
-                    initialValues={INITIAL_VALUES as unknown as IGSPReportPayload}
-                >
-                    {({ errors, handleChange, handleSubmit, isValid }) => {
-                        return (
-                            <VStack space={2}>
-                                <FormControl isRequired minHeight={210} isInvalid={!!errors?.campusCoordinatorComment}>
-                                    <FormControl.Label>For the GSP's attention</FormControl.Label>
-                                    <TextAreaComponent
-                                        minHeight={150}
-                                        placeholder="Comment"
-                                        onChangeText={handleChange('campusCoordinatorComment')}
-                                    />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
+                <If condition={isGlobalPastor}>
+                    {data?.campusCoordinatorComment && (
+                        <VStack pb={10} w="full" space={2}>
+                            <Text alignSelf="flex-start" bold>
+                                For the GSP's attention
+                            </Text>
+                            <Text flexWrap="wrap">{data?.campusCoordinatorComment}</Text>
+                        </VStack>
+                    )}
+                </If>
+                <If condition={isCampusPastor}>
+                    <Formik<IGSPReportPayload>
+                        onSubmit={onSubmit}
+                        validationSchema={GSPReportSchema}
+                        initialValues={INITIAL_VALUES as unknown as IGSPReportPayload}
+                    >
+                        {({ errors, handleChange, handleSubmit, isValid }) => {
+                            return (
+                                <VStack space={2}>
+                                    <FormControl
+                                        isRequired
+                                        minHeight={210}
+                                        isInvalid={!!errors?.campusCoordinatorComment}
                                     >
-                                        {errors?.campusCoordinatorComment}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl minHeight={180}>
-                                    <ButtonComponent
-                                        isDisabled={!isValid}
-                                        isLoading={isSubmitLoading}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
-                                        Submit to GSP
-                                    </ButtonComponent>
-                                </FormControl>
-                            </VStack>
-                        );
-                    }}
-                </Formik>
+                                        <FormControl.Label>For the GSP's attention</FormControl.Label>
+                                        <TextAreaComponent
+                                            minHeight={150}
+                                            placeholder="Comment"
+                                            onChangeText={handleChange('campusCoordinatorComment')}
+                                        />
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors?.campusCoordinatorComment}
+                                        </FormControl.ErrorMessage>
+                                    </FormControl>
+                                    <FormControl minHeight={180}>
+                                        <ButtonComponent
+                                            isDisabled={!isValid}
+                                            isLoading={isSubmitLoading}
+                                            onPress={handleSubmit as (event: any) => void}
+                                        >
+                                            Submit to GSP
+                                        </ButtonComponent>
+                                    </FormControl>
+                                </VStack>
+                            );
+                        }}
+                    </Formik>
+                </If>
             </VStack>
         </ViewWrapper>
     );

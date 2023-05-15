@@ -9,16 +9,16 @@ interface ILoadingProps extends ICenterProps {
     bootUp?: boolean;
 }
 
-const Loading: React.FC<ILoadingProps> = ({ bootUp, color = 'primary.500', ...props }) => {
+const Loading: React.FC<ILoadingProps> = ({ bootUp, color = 'gray.600', ...props }) => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <Center justifyContent="center" h={!bootUp ? 10 : 'full'} w={!bootUp ? 10 : 'full'} {...props}>
+        <Center justifyContent="center" h="full" w="full" {...props}>
             <VStack justifyContent="center">
                 {bootUp ? (
                     <Image alt="startuplogo" source={isLightMode ? logoBlack : logoWhite} />
                 ) : (
-                    <Spinner color={color as ColorValue} fontSize="6xl" boxSize="xl" size="lg" />
+                    <Spinner color={color as ColorValue} size="lg" />
                 )}
             </VStack>
         </Center>
