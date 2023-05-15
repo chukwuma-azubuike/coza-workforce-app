@@ -508,7 +508,7 @@ export interface IAllService {
     rangeToClockIn: number;
     isGlobalService: boolean;
     createdAt: string;
-
+}
 export interface ICampusUserData {
     campusId: string;
     campusName: string;
