@@ -22,6 +22,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     };
 
     const {
+        isGlobalPastor,
         user: { campus },
     } = useRole();
 
@@ -75,7 +76,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         [data]
     );
 
-    useCustomBackNavigation({ targetRoute: 'More' });
+    useCustomBackNavigation({ targetRoute: isGlobalPastor ? 'Global workforce' : 'More' });
 
     return (
         <ErrorBoundary>

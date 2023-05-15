@@ -13,7 +13,7 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const campusUsersData = route?.params as ICampusUserData['departmentCount'][0] & { campusId: string };
-    const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin } = useRole();
+    const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin, isInternshipHOD, isQcHOD } = useRole();
 
     const { setOptions } = navigation;
 
@@ -59,7 +59,7 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
             return allButtons;
         }
 
-        if (isCampusPastor || isQC) {
+        if (isCampusPastor || isInternshipHOD || isQcHOD) {
             return [allButtons[0], allButtons[1]];
         }
 

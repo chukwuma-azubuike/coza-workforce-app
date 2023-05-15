@@ -49,11 +49,11 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             color: 'orange.700',
             value: data?.blacklistedUsers || 0,
         },
-        {
-            title: 'Inactive',
-            color: 'red.700',
-            value: data?.inactiveUser || 0,
-        },
+        // {
+        //     title: 'Inactive',
+        //     color: 'red.700',
+        //     value: data?.inactiveUser || 0,
+        // },
         {
             title: 'Unregistered',
             color: 'gray.400',
@@ -84,9 +84,10 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     <FlatListSkeleton count={1} />
                 ) : (
                     <Stack
-                        my={6}
+                        my={2}
                         mx={2}
                         padding={4}
+                        flexWrap="wrap"
                         borderWidth={1}
                         borderRadius={8}
                         flexDirection="row"

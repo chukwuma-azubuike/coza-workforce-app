@@ -9,7 +9,7 @@ export enum ROLES {
     AHOD = 'AHOD',
     admin = 'Admin',
     worker = 'Worker',
-    superAdmin = 'Super  Admins',
+    superAdmin = 'Super Admin',
     campusPastor = 'Campus Pastor',
     globalPastor = 'Global Pastor',
     campusCoordinator = 'Campus Coordinator',
@@ -70,9 +70,9 @@ const useRole = () => {
         isWorker: roleName === ROLES.worker,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,
-        isQcHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC,
         isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,
         isCampusPastor: roleName === ROLES.campusPastor || roleName === ROLES.campusCoordinator,
+        isQcHOD: roleName === ROLES.HOD && (departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME),
 
         // Departments
         isCTS: departmentName === DEPARTMENTS.CTS,

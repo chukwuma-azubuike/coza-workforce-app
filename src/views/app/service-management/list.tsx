@@ -48,7 +48,7 @@ const ServiceListRow: React.FC<IService> = service => {
 };
 
 const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListItem }) => {
-    const teamColumns: IFlatListColumn[] = [
+    const serviceColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
             render: (_: IService, key) => <ServiceListRow {..._} key={key} />,
@@ -63,31 +63,33 @@ const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListI
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
-    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+    // const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
+    // const fetchMoreData = () => {
+    //     if (!isFetching && !isLoading) {
+    //         if (data?.length) {
+    //             setPage(prev => prev + 1);
+    //         } else {
+    //             setPage(prev => prev - 1);
+    //         }
+    //     }
+    // };
 
     const groupedData = React.useMemo(
-        () => Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['createdAt', updatedListItem?._id]),
-        [updatedListItem?._id, moreData]
+        () => Utils.replaceArrayItemByNestedKey(data || [], updatedListItem, ['createdAt', updatedListItem?._id]),
+        [updatedListItem?._id, data]
     );
+
+    const sortedData = React.useMemo(() => Utils.sortByDate(groupedData, 'serviceTime'), [groupedData]);
 
     useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            data={groupedData}
+            data={sortedData}
             refreshing={isFetching}
-            fetchMoreData={fetchMoreData}
-            columns={teamColumns}
+            columns={serviceColumns}
+            // fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
         />
     );
