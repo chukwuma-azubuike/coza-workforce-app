@@ -41,6 +41,7 @@ import GlobalWorkforceSummary from '../views/app/workforce-management/global-wor
 import WorkforceSummary from '../views/app/workforce-management';
 import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
 import UserReport from '../views/app/workforce-management/user-reports';
+import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
 
 export interface IAppRoute {
     name: string;
@@ -292,6 +293,15 @@ const AppRoutes: IAppRoute[] = [
             {
                 name: 'User Report',
                 component: UserReport,
+                options: { title: 'User report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'User Report Details',
+                component: UserReportDetailsPage,
                 options: { title: 'User report' },
                 submenus: [],
                 users: [],
