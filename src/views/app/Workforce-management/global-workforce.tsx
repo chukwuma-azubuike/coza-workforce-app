@@ -99,6 +99,7 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 ) : (
                     <Stack
                         my={6}
+                        mx={2}
                         padding={4}
                         borderWidth={1}
                         borderRadius={8}
@@ -106,7 +107,7 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                         alignItems="center"
                         justifyItems="center"
                         justifyContent="space-between"
-                        _dark={{ borderColor: 'gray.200' }}
+                        _dark={{ borderColor: 'gray.600' }}
                         _light={{ borderColor: 'gray.200' }}
                     >
                         {summaryList.map((item, index) => (

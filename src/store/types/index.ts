@@ -138,7 +138,7 @@ export type IEditProfilePayload = Pick<
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD';
 
 export interface ICreateUserPayload {
     firstName: string;

@@ -7,7 +7,6 @@ import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetUsersQuery } from '../../../store/services/account';
@@ -60,6 +59,7 @@ interface CampusUserList {
 
 const CampusListRow: React.FC<CampusUserList> = user => {
     const navigation = useNavigation();
+    const { leaderRoleIds } = useRole();
     const { isLightMode } = useAppColorMode();
 
     return (
@@ -68,6 +68,9 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                 const handlePress = () => {
                     navigation.navigate('User Profile' as never, user as never);
                 };
+
+                const isHOD = leaderRoleIds && user.roleId === leaderRoleIds[1];
+                const isAHOD = leaderRoleIds && user.roleId === leaderRoleIds[0];
 
                 return (
                     <TouchableNativeFeedback
@@ -96,7 +99,7 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                                     </Text>
                                 </VStack>
                             </HStack>
-                            <StatusTag>{user?.status || 'ACTIVE'}</StatusTag>
+                            <StatusTag>{isHOD ? 'HOD' : isAHOD ? 'AHOD' : user?.status || 'ACTIVE'}</StatusTag>
                         </HStack>
                     </TouchableNativeFeedback>
                 );
@@ -118,34 +121,24 @@ const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     } = useRole();
 
     const isScreenFocused = useIsFocused();
-    const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, isFetching } = useGetUsersQuery(
-        { departmentId: department._id, limit: 10, page },
+    const { data, isLoading, isFetching } = useGetUsersQuery(
+        { departmentId: department._id },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            setPage(prev => prev + 1);
-        }
-    };
-
     return (
         <FlatListComponent
-            data={moreData || []}
+            data={data || []}
             columns={teamColumns}
             refreshing={isFetching}
-            fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
         />
     );
 });
 
-const Campus: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
-    const campusColumns: IFlatListColumn[] = [
+const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
+    const departmentColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
             render: (_: IUser, key) => <CampusListRow {..._} key={key} />,
@@ -157,38 +150,26 @@ const Campus: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     } = useRole();
 
     const isScreenFocused = useIsFocused();
-    const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, isFetching } = useGetUsersQuery(
-        { campusId: campus._id, limit: 10, page, departmentId },
+    const { data, isLoading, isFetching } = useGetUsersQuery(
+        { campusId: campus._id, departmentId },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
 
     const sortedGroupedData = React.useMemo(
-        () => moreData && Utils.groupListByKey(Utils.sortStringAscending(moreData, 'departmentName'), 'departmentName'),
-        [moreData]
+        () => data && Utils.groupListByKey(Utils.sortStringAscending(data, 'firstName'), 'departmentName'),
+        [data]
     );
 
     return (
         <FlatListComponent
-            columns={campusColumns}
+            showHeader={false}
             refreshing={isFetching}
-            fetchMoreData={fetchMoreData}
+            columns={departmentColumns}
             data={sortedGroupedData || []}
             isLoading={isLoading || isFetching}
         />
     );
 });
 
-export { MyTeam, Campus };
+export { MyTeam, Department };

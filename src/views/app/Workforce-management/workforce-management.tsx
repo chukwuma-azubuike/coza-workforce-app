@@ -3,20 +3,13 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import useRole from '../../../hooks/role';
-import { Campus, MyTeam } from './list';
-import { SceneMap } from 'react-native-tab-view';
-import TabComponent from '../../../components/composite/tabs';
+import { Department } from './list';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { ICampusUserData } from '../../../store/types';
 import useScreenFocus from '../../../hooks/focus';
 import { useCustomBackNavigation } from '../../../hooks/navigation';
-
-const ROUTES = [
-    { key: 'team', title: 'Team' },
-    { key: 'campus', title: 'Campus' },
-];
 
 const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const campusUsersData = route?.params as ICampusUserData['departmentCount'][0];
@@ -39,23 +32,6 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     const gotoCreateDepartment = () => {
         // navigation.navigate('Create Department');
     };
-
-    const renderScene = SceneMap({
-        team: () => <MyTeam departmentId={campusUsersData.departmentId} />,
-        campus: () => <Campus departmentId={campusUsersData.departmentId} />,
-    });
-
-    const allRoutes = React.useMemo(() => {
-        if (isGlobalPastor || isCampusPastor) {
-            return [ROUTES[1]];
-        }
-
-        if (isQC || isSuperAdmin) {
-            return ROUTES;
-        }
-
-        return [ROUTES[0]];
-    }, []);
 
     const allButtons = [
         {
@@ -90,18 +66,12 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
         return [allButtons[0]];
     }, []);
 
-    const [index, setIndex] = React.useState(0);
-    useCustomBackNavigation({ targetRoute: 'More' });
+    useCustomBackNavigation({ targetRoute: 'Campus workforce' });
 
     return (
         <ErrorBoundary>
             <ViewWrapper>
-                <TabComponent
-                    onIndexChange={setIndex}
-                    renderScene={renderScene}
-                    tabBarScroll={allRoutes.length > 2}
-                    navigationState={{ index, routes: allRoutes }}
-                />
+                <Department departmentId={campusUsersData.departmentId} />
                 <If condition={isCampusPastor || isQC || isGlobalPastor || isSuperAdmin}>
                     <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
                 </If>
