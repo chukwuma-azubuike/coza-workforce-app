@@ -34,9 +34,10 @@ import EditProfile from '../views/app/profile/edit-profile';
 import ForgotPassword from '../views/auth/forgot-password';
 import ResetPassword from '../views/auth/reset-password';
 import CampusReport from '../views/app/reports/campus-report/reportDetails';
-import WorkforceManagement from '../views/app/workforce-management';
-import UserDetails from '../views/app/workforce-management/user-details';
-import CreateUser from '../views/app/workforce-management/create-user';
+import WorkforceManagement from '../views/app/Workforce-management';
+import UserDetails from '../views/app/Workforce-management/user-details';
+import CreateUser from '../views/app/Workforce-management/create-user';
+import Export from '../views/app/export';
 
 export interface IAppRoute {
     name: string;
@@ -317,6 +318,15 @@ const AppRoutes: IAppRoute[] = [
     //     inMenuBar: false,
     //     icon: { name: 'settings-outline', type: 'ionicon' },
     // },
+    {
+        name: 'Export Data',
+        component: Export,
+        options: { title: 'Export Data' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        inMenuBar: false,
+        icon: { name: 'download-outline', type: 'ionicon' },
+    },
     {
         name: 'More',
         component: More,

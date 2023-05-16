@@ -205,6 +205,8 @@ dependencies {
 
     implementation project(':react-native-splash-screen')
 
+    implementation project(':rn-fetch-blob')
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
     }
