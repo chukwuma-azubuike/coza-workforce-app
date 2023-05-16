@@ -443,3 +443,10 @@ export interface IDepartmentReportResponse {
     };
     incidentReport: unknown[];
 }
+
+export interface IExportFilters {
+    campusId: string;
+    departmentId: string | undefined;
+    serviceId: string | undefined;
+    data: string;
+}

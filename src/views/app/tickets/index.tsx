@@ -6,7 +6,6 @@ import useRole from '../../../hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
-import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { ITicket } from '../../../store/types';
 
@@ -33,6 +32,10 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         navigation.navigate('Issue Ticket', { type: 'CAMPUS' });
     };
 
+    const goToExport = () => {
+        navigation.navigate('Export Data', { type: 'TICKETS' });
+    };
+
     const renderScene = SceneMap({
         myTickets: () => <MyTicketsList updatedListItem={updatedListItem} />,
         teamTickets: () => <MyTeamTicketsList updatedListItem={updatedListItem} />,
@@ -40,6 +43,8 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     });
 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
+
+    const isQCHOD = isQC && isHOD;
 
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
@@ -51,6 +56,42 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
 
     const [index, setIndex] = React.useState(0);
 
+    const allButtons = [
+        {
+            color: 'blue.400',
+            iconType: 'ionicon',
+            iconName: 'person-outline',
+            handleClick: gotoIndividual,
+        },
+        {
+            color: 'blue.600',
+            iconType: 'ionicon',
+            iconName: 'people-outline',
+            handleClick: goToDepartmental,
+        },
+        {
+            color: 'blue.800',
+            iconName: 'church',
+            handleClick: goToCampus,
+            iconType: 'material-community',
+        },
+        {
+            color: 'green.600',
+            iconName: 'download-outline',
+            handleClick: goToExport,
+            iconType: 'ionicon',
+        },
+    ];
+
+    const filteredButtons = React.useMemo(() => {
+        if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
+        if (isQCHOD) return [...allButtons];
+        if (isQC) return [allButtons[0], allButtons[1], allButtons[2]];
+
+        // return [allButtons[0]];
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
         <ViewWrapper>
             <TabComponent
@@ -59,30 +100,8 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
                 tabBarScroll={allRoutes.length > 2}
                 navigationState={{ index, routes: allRoutes }}
             />
-            <If condition={isQC}>
-                <StaggerButtonComponent
-                    buttons={[
-                        {
-                            color: 'blue.400',
-                            iconType: 'ionicon',
-                            iconName: 'person-outline',
-                            handleClick: gotoIndividual,
-                        },
-                        {
-                            color: 'blue.600',
-                            iconType: 'ionicon',
-                            iconName: 'people-outline',
-                            handleClick: goToDepartmental,
-                        },
-                        {
-                            color: 'blue.800',
-                            iconName: 'church',
-                            handleClick: goToCampus,
-                            iconType: 'material-community',
-                        },
-                    ]}
-                />
-            </If>
+
+            <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
         </ViewWrapper>
     );
 };

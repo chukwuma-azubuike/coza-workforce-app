@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { IDefaultQueryParams, IDefaultResponse, IService, REST_API_VERBS } from '../types';
+import { ICampus, IDefaultQueryParams, IDefaultResponse, IService, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'service';
@@ -49,6 +49,12 @@ export const servicesServiceSlice = createApi({
             query: id => `/${SERVICE_URL}/${id}`,
         }),
 
+        getServicesByCampusId: endpoint.query<IService[], ICampus['_id'] | undefined>({
+            query: campusId => `/${SERVICE_URL}/getServices/${campusId}`,
+
+            transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -60,4 +66,5 @@ export const {
     useGetLatestServiceQuery,
     useGetServiceByIdQuery,
     useGetServicesQuery,
+    useGetServicesByCampusIdQuery,
 } = servicesServiceSlice;
