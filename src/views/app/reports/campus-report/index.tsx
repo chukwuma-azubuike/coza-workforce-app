@@ -26,7 +26,6 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
             activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}

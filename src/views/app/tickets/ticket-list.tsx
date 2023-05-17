@@ -40,7 +40,6 @@ export const TicketListRow: React.FC<TicketListRowProps> = props => {
                         activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">

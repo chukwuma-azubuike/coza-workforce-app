@@ -54,13 +54,12 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
 
                 return (
                     <TouchableOpacity
+                        key={index}
                         disabled={false}
                         delayPressIn={0}
                         activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        key={index}
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack
                             p={2}

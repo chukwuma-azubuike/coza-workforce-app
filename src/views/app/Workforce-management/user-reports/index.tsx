@@ -55,12 +55,11 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                         activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center">
+                            <HStack space={3} alignItems="center" w="65%">
                                 <AvatarComponent imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <Text bold>
+                                <Text bold ellipsizeMode="tail" flexWrap="wrap" numberOfLines={1} width="65%">
                                     {Utils.capitalizeFirstChar(elm?.user?.firstName)}{' '}
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
