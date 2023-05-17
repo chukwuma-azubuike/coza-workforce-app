@@ -13,12 +13,7 @@ import Utils from '../../../utils';
 
 const ServiceListRow: React.FC<IService> = service => {
     return (
-        <TouchableOpacity
-            disabled={false}
-            delayPressIn={0}
-            activeOpacity={0.6}
-            accessibilityRole="button"
-        >
+        <TouchableOpacity disabled={false} delayPressIn={0} activeOpacity={0.6} accessibilityRole="button">
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
                     <VStack justifyContent="space-between">
