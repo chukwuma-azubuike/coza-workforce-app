@@ -24,7 +24,6 @@ const UserListRow: React.FC<IUser> = user => {
             activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
@@ -71,7 +70,6 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                         activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">

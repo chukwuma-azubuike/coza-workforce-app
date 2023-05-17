@@ -209,7 +209,6 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                 delayPressIn={0}
                 activeOpacity={0.6}
                 accessibilityRole="button"
-                style={{ paddingHorizontal: 20 }}
                 onPress={item?.onPress || navigateTo}
             >
                 <Box

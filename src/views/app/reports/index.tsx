@@ -47,7 +47,7 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
             activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            style={{ paddingHorizontal: 20 }}
+            
         >
             <HStack
                 p={2}
@@ -87,7 +87,6 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
             activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}

@@ -42,7 +42,6 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
             activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}

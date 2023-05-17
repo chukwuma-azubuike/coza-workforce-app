@@ -18,7 +18,6 @@ const ServiceListRow: React.FC<IService> = service => {
             delayPressIn={0}
             activeOpacity={0.6}
             accessibilityRole="button"
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
