@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-base';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import useModal from '../../../../hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '../../../../components/composite/modal-alert';
@@ -238,11 +238,11 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                         canClockIn ? 'primary.600' : canClockOut ? 'rose.400' : disabled ? 'gray.400' : 'gray.400'
                     }
                 >
-                    <TouchableNativeFeedback
+                    <TouchableOpacity
                         disabled={disabled}
+                        activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple('#000000BF', true, 120)}
                     >
                         <Center>
                             <If condition={isLoading || clockOutLoading}>
@@ -257,7 +257,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                                 </VStack>
                             </If>
                         </Center>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 </Button>
             </Box>
         </Pressable>

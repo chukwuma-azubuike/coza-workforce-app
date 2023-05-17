@@ -2,32 +2,23 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../config/appConfig';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetServicesQuery } from '../../../store/services/services';
 import { IService } from '../../../store/types';
 import Utils from '../../../utils';
 
 const ServiceListRow: React.FC<IService> = service => {
-    const navigation = useNavigation();
-    const { isLightMode, isDarkMode } = useAppColorMode();
 
     return (
-        <TouchableNativeFeedback
+        <TouchableOpacity
             disabled={false}
             delayPressIn={0}
-            // onPress={handlePress}
+            activeOpacity={0.6}
             accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
             style={{ paddingHorizontal: 20 }}
         >
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
@@ -43,7 +34,7 @@ const ServiceListRow: React.FC<IService> = service => {
                 </HStack>
                 <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 
