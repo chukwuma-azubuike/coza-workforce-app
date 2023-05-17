@@ -6,12 +6,7 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 
 const WorkforceSummary: React.FC = () => {
     const { isHOD, isAHOD, isSuperAdmin, isCampusPastor, isGlobalPastor, isQC } = useRole();
-
-    const { navigate, getState } = useNavigation();
-
-    const history = getState().history as any[];
-    const rerouteList = ['Campus workforce', 'Global workforce'];
-    const lastRoute = history ? history[history?.length - 1].key.split('-')[0] : 'More';
+    const { navigate } = useNavigation();
 
     const handleReroute = () => {
         if (isHOD || isAHOD) {
