@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, HStack, Text, VStack } from 'native-base';
 import If from '../if-container';
 import Utils from '../../../utils';
-import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableNativeFeedback } from 'react-native';
+import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableOpacity } from 'react-native';
 import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
 import moment from 'moment';
@@ -204,17 +204,12 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
         };
 
         return (
-            <TouchableNativeFeedback
+            <TouchableOpacity
                 disabled={false}
                 delayPressIn={0}
+                activeOpacity={0.6}
                 accessibilityRole="button"
-                style={{ paddingHorizontal: 20 }}
                 onPress={item?.onPress || navigateTo}
-                background={TouchableNativeFeedback.Ripple(
-                    isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                    false,
-                    220
-                )}
             >
                 <Box
                     borderBottomWidth={0.2}
@@ -249,7 +244,7 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                         })}
                     </HStack>
                 </Box>
-            </TouchableNativeFeedback>
+            </TouchableOpacity>
         );
     }
 );

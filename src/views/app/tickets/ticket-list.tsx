@@ -1,11 +1,10 @@
 import React, { memo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useRole from '../../../hooks/role';
@@ -35,18 +34,12 @@ export const TicketListRow: React.FC<TicketListRowProps> = props => {
                 const { status, category, isIndividual, isDepartment, user, departmentName } = elm;
 
                 return (
-                    <TouchableNativeFeedback
-                        disabled={false}
+                    <TouchableOpacity
+                        key={index}
                         delayPressIn={0}
+                        activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                            false,
-                            220
-                        )}
-                        key={index}
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
@@ -134,7 +127,7 @@ export const TicketListRow: React.FC<TicketListRowProps> = props => {
                             </HStack>
                             <StatusTag>{status}</StatusTag>
                         </HStack>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 );
             })}
         </>

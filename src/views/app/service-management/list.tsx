@@ -2,34 +2,18 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../config/appConfig';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetServicesQuery } from '../../../store/services/services';
 import { IService } from '../../../store/types';
 import Utils from '../../../utils';
 
 const ServiceListRow: React.FC<IService> = service => {
-    const navigation = useNavigation();
-    const { isLightMode, isDarkMode } = useAppColorMode();
-
     return (
-        <TouchableNativeFeedback
-            disabled={false}
-            delayPressIn={0}
-            // onPress={handlePress}
-            accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
-            style={{ paddingHorizontal: 20 }}
-        >
+        <TouchableOpacity disabled={false} delayPressIn={0} activeOpacity={0.6} accessibilityRole="button">
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
                     <VStack justifyContent="space-between">
@@ -37,13 +21,13 @@ const ServiceListRow: React.FC<IService> = service => {
                         <Text fontSize="sm" color="gray.400">
                             {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(service?.serviceTime)
                                 .zone('+00:00')
-                                .format('hh:mm a')}`}
+                                .format('LT')}`}
                         </Text>
                     </VStack>
                 </HStack>
                 <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 

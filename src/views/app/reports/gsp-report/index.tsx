@@ -2,12 +2,11 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
 import { GlobalReportContext } from './context';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
 import StatusTag from '../../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../../config/appConfig';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '../../../../store/services/reports';
 import { useGetServicesQuery } from '../../../../store/services/services';
@@ -37,17 +36,12 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
     };
 
     return (
-        <TouchableNativeFeedback
+        <TouchableOpacity
             disabled={false}
             delayPressIn={0}
+            activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}
@@ -65,7 +59,7 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 

@@ -1,39 +1,25 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../config/appConfig';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useRole from '../../../hooks/role';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetUsersQuery } from '../../../store/services/account';
 import { IUser } from '../../../store/types';
 import Utils from '../../../utils';
 
 const UserListRow: React.FC<IUser> = user => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
 
     const handlePress = () => {
         navigation.navigate('User Profile' as never, user as never);
     };
 
     return (
-        <TouchableNativeFeedback
-            disabled={false}
-            delayPressIn={0}
-            onPress={handlePress}
-            accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
-            style={{ paddingHorizontal: 20 }}
-        >
+        <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
                     <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
@@ -48,7 +34,7 @@ const UserListRow: React.FC<IUser> = user => {
                 </HStack>
                 <StatusTag>{user?.status || 'ACTIVE'}</StatusTag>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 
@@ -60,7 +46,6 @@ interface CampusUserList {
 const CampusListRow: React.FC<CampusUserList> = user => {
     const navigation = useNavigation();
     const { leaderRoleIds } = useRole();
-    const { isLightMode } = useAppColorMode();
 
     return (
         <>
@@ -73,18 +58,13 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                 const isAHOD = leaderRoleIds && user.roleId === leaderRoleIds[0];
 
                 return (
-                    <TouchableNativeFeedback
+                    <TouchableOpacity
+                        key={index}
                         disabled={false}
                         delayPressIn={0}
+                        activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                            false,
-                            220
-                        )}
-                        key={index}
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                             <HStack space={3} alignItems="center">
@@ -101,7 +81,7 @@ const CampusListRow: React.FC<CampusUserList> = user => {
                             </HStack>
                             <StatusTag>{isHOD ? 'HOD' : isAHOD ? 'AHOD' : user?.status || 'ACTIVE'}</StatusTag>
                         </HStack>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 );
             })}
         </>

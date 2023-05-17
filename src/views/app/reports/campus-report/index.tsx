@@ -2,11 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
 import { HStack, Text } from 'native-base';
 import React from 'react';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import StatusTag from '../../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../../config/appConfig';
 import useFetchMoreData from '../../../../hooks/fetch-more-data';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { ICampusReport, useGetCampusReportListQuery } from '../../../../store/services/reports';
@@ -21,17 +20,12 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
     };
 
     return (
-        <TouchableNativeFeedback
+        <TouchableOpacity
             disabled={false}
             delayPressIn={0}
+            activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}
@@ -52,7 +46,7 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 interface ICampusReportPayload {
