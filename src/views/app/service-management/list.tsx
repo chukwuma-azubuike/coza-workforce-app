@@ -12,7 +12,6 @@ import { IService } from '../../../store/types';
 import Utils from '../../../utils';
 
 const ServiceListRow: React.FC<IService> = service => {
-
     return (
         <TouchableOpacity
             disabled={false}
