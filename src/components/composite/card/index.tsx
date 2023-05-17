@@ -2,11 +2,10 @@ import React from 'react';
 import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading, Center } from 'native-base';
 import { IIconTypes } from '../../../utils/types';
 import { Icon } from '@rneui/themed';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;

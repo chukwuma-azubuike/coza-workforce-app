@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import uniqBy from 'lodash/uniqBy';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '../../../components/atoms/avatar';
 import StatusTag from '../../../components/atoms/status-tag';
 import ErrorBoundary from '../../../components/composite/error-boundary';
