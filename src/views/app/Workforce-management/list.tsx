@@ -19,12 +19,7 @@ const UserListRow: React.FC<IUser> = user => {
     };
 
     return (
-        <TouchableOpacity
-            delayPressIn={0}
-            activeOpacity={0.6}
-            onPress={handlePress}
-            accessibilityRole="button"
-        >
+        <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
             <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
                 <HStack space={3} alignItems="center">
                     <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />

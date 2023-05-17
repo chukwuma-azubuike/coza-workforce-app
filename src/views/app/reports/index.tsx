@@ -47,7 +47,6 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
             activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            
         >
             <HStack
                 p={2}
