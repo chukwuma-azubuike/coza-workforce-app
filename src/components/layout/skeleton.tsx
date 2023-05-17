@@ -109,7 +109,6 @@ export const ProfileSkeletonMini: React.FC<{
             <Skeleton
                 h={32}
                 w={32}
-                mb={3}
                 rounded="full"
                 _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
                 _light={{ bg: 'gray.100', startColor: 'gray.200' }}
@@ -117,9 +116,8 @@ export const ProfileSkeletonMini: React.FC<{
             <VStack flex={1}>
                 {Array.from(Array(count).keys()).map((elm, idx) => (
                     <Skeleton
-                        h="6"
-                        w="50%"
-                        my={1.5}
+                        h="4"
+                        mb={2}
                         rounded="md"
                         overflow="hidden"
                         key={`elm-${idx}`}

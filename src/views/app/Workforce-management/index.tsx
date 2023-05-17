@@ -9,11 +9,12 @@ const WorkforceSummary: React.FC = () => {
     const { navigate } = useNavigation();
 
     const handleReroute = () => {
-        if (isHOD || isAHOD) {
-            return navigate('Workforce management' as never);
-        }
+        // QC condition comes first as QC can also be HOD or AHOD
         if (isCampusPastor || isQC) {
             return navigate('Campus workforce' as never);
+        }
+        if (isHOD || isAHOD) {
+            return navigate('Workforce management' as never);
         }
         if (isGlobalPastor || isSuperAdmin) {
             return navigate('Global workforce' as never);
