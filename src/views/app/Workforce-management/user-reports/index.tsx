@@ -6,7 +6,6 @@ import { UserReportContext, UserReportProvider } from './context';
 import { TouchableOpacity } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
-import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { IAttendance, ICampus, IService, IUserReportType } from '../../../../store/types';
 import moment from 'moment';
 import Utils from '../../../../utils';
@@ -37,8 +36,7 @@ export interface IUserReportListRowProps {
 const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
     const navigation = useNavigation();
     const { isMobile } = useMediaQuery();
-    const { isLightMode } = useAppColorMode();
-    const { setUserId, userId } = React.useContext(UserReportContext);
+    const { setUserId } = React.useContext(UserReportContext);
 
     return (
         <>
@@ -63,11 +61,11 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                             <HStack space={3} alignItems="center">
                                 <AvatarComponent imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 <Text bold>
-                                    {Utils.capitalizeFirstChar(elm?.user?.firstName)}
+                                    {Utils.capitalizeFirstChar(elm?.user?.firstName)}{' '}
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            {elm?.clockIn && <Text>{moment(elm?.clockIn).format('HH:MM A')}</Text>}
+                            {elm?.clockIn && <Text>{moment(elm?.clockIn).format('LT')}</Text>}
                         </HStack>
                     </TouchableOpacity>
                 );
@@ -92,7 +90,7 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const isTicket = service === 'ticket';
     const isAttendance = service === 'attendance';
 
-    const { data: campuses, isLoading: campusesLoading } = useGetCampusesQuery();
+    const { data: campuses } = useGetCampusesQuery();
 
     const sortedcampuses = React.useMemo<ICampus[] | undefined>(
         () =>
@@ -108,21 +106,11 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         data: attendanceReport,
         isLoading: attendanceIsLoading,
         isFetching: attendanceIsFetching,
-        isUninitialized: attendanceIsUninitialized,
     } = useGetAttendanceQuery({ ...attendanceParams }, { refetchOnMountOrArgChange: true, skip: !isAttendance });
 
-    const attendanceReportWithCampusName = React.useMemo(() => {
-        return attendanceReport?.map(report => {
-            return {
-                ...report,
-                campusName: report?.campus?.campusName,
-            };
-        });
-    }, [attendanceReport]);
-
     const groupedAttendanceReport = React.useMemo(
-        () => Utils.groupListByKey(attendanceReportWithCampusName, isGlobal ? 'campusName' : 'departmentName'),
-        [attendanceReportWithCampusName]
+        () => Utils.groupListByKey(attendanceReport, isGlobal ? 'campusName' : 'departmentName'),
+        [attendanceReport]
     );
 
     const ticketParams = isGlobal ? { serviceId } : { campusId: campusIdUpdate, serviceId };
@@ -130,7 +118,6 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         data: ticketsReport,
         isLoading: ticketIsLoading,
         isFetching: ticketIsFetching,
-        isUninitialized: ticketIsUninitialized,
     } = useGetTicketsQuery(ticketParams, { refetchOnMountOrArgChange: true, skip: !isTicket });
 
     const ticketReportWithCampusName = React.useMemo(() => {

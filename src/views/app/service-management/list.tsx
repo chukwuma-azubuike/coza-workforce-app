@@ -27,7 +27,7 @@ const ServiceListRow: React.FC<IService> = service => {
                         <Text fontSize="sm" color="gray.400">
                             {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(service?.serviceTime)
                                 .zone('+00:00')
-                                .format('hh:mm a')}`}
+                                .format('LT')}`}
                         </Text>
                     </VStack>
                 </HStack>
