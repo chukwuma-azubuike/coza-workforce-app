@@ -10,12 +10,53 @@ export enum ROLES {
     admin = 'Admin',
     worker = 'Worker',
     superAdmin = 'Super Admin',
+    globalAdmin = 'Global Admin',
     campusPastor = 'Campus Pastor',
     globalPastor = 'Global Pastor',
     campusCoordinator = 'Campus Coordinator',
 }
 
-enum DEPARTMENTS {
+export const roles = {
+    HOD: 'HOD',
+    AHOD: 'AHOD',
+    Admin: 'admin',
+    Worker: 'worker',
+    'Super Admin': 'superAdmin',
+    'Global Admin': 'globalAdmin',
+    'Campus Pastor': 'campusPastor',
+    'Global Pastor': 'globalPastor',
+    'Campus Coordinator': 'campusCoordinator',
+};
+
+export const departments = {
+    PCU: 'PCU',
+    'Quality Control': 'QC',
+    'Ushery Board': 'ushery',
+    'Witty Inventions': 'witty',
+    'COZA Transfer Service': 'CTS',
+    'Monitoring & Evaluation': 'ME',
+    'Children Ministry': 'childcare',
+    'Programme Coordination': 'programs',
+    'Public Relations Unit (PRU)': 'PRU',
+    'Traffic & Security': 'security',
+    'COZA Internship': 'internship',
+};
+
+export enum ROLE_HEIRARCHY {
+    'worker' = 1,
+    'AHOD' = 2,
+    'HOD' = 3,
+    'internshipHOD' = 3, // Frontend generated
+    'qcHOD' = 4, // Frontend generated
+    'campusCoordinator' = 5,
+    'campusPastor' = 5,
+    'admin' = 6,
+    'globalAdmin' = 7,
+    'globalPastor' = 8,
+    'superAdmin' = 9,
+}
+
+export enum DEPARTMENTS {
     PCU = 'PCU',
     QC = 'Quality Control',
     ushery = 'Ushery Board',
@@ -43,6 +84,31 @@ const useRole = () => {
 
     const roleName = currentUser?.role?.name;
     const departmentName = currentUser?.department?.departmentName;
+
+    const roleHeirarchy = (roleName: keyof typeof roles, departmentName: keyof typeof departments) => {
+        const roleKey = roles[roleName] as keyof typeof ROLE_HEIRARCHY;
+
+        if (!roleKey) return -1;
+        if (!ROLE_HEIRARCHY[roleKey]) return -1;
+
+        if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC) {
+            return ROLE_HEIRARCHY.qcHOD;
+        }
+
+        if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship) {
+            return ROLE_HEIRARCHY.internshipHOD;
+        }
+
+        return ROLE_HEIRARCHY[roleKey];
+    };
+
+    const rolesPermittedToCreate = () => {
+        return roleObjects?.filter(
+            roleObject =>
+                roleHeirarchy(roleName as keyof typeof roles, departmentName as keyof typeof departments) >
+                ROLE_HEIRARCHY[roles[roleObject.name as keyof typeof roles] as keyof typeof ROLE_HEIRARCHY]
+        );
+    };
 
     const { logOut } = useAuth();
 
@@ -83,6 +149,9 @@ const useRole = () => {
         isSecurity: departmentName === DEPARTMENTS.security,
         isChildcare: departmentName === DEPARTMENTS.childcare,
         isQC: departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME,
+
+        // Role Creation
+        rolesPermittedToCreate,
     };
 };
 
