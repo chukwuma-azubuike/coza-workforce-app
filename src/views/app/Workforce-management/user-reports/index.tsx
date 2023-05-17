@@ -3,11 +3,9 @@ import ViewWrapper from '../../../../components/layout/viewWrapper';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
 import { UserReportContext, UserReportProvider } from './context';
-import { TouchableNativeFeedback } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../../config/appConfig';
-import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { IAttendance, ICampus, IService, IUserReportType } from '../../../../store/types';
 import moment from 'moment';
 import Utils from '../../../../utils';
@@ -21,204 +19,6 @@ import { useGetAttendanceQuery } from '../../../../store/services/attendance';
 import { useGetTicketsQuery } from '../../../../store/services/tickets';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '../../../../hooks/focus';
-
-// interface IPermissionListRowProps extends IUserReportContext {
-//     type: 'own' | 'team' | 'campus';
-//     '0'?: string;
-//     '1'?: IUserReport[];
-// }
-
-// const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
-//     const navigation = useNavigation();
-
-//     const { type } = props;
-
-//     const { isLightMode } = useAppColorMode();
-
-//     return (
-//         <ErrorBoundary>
-//             {props[1]?.map((elm, index) => {
-//                 const handlePress = () => {
-//                     navigation.navigate('Permission Details' as never, elm as never);
-//                 };
-
-//                 const { _id, firstName, lastName, department, pictureUrl } = elm;
-
-//                 return (
-//                     <TouchableNativeFeedback
-//                         disabled={false}
-//                         delayPressIn={0}
-//                         onPress={handlePress}
-//                         accessibilityRole="button"
-//                         background={TouchableNativeFeedback.Ripple(
-//                             isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-//                             false,
-//                             220
-//                         )}
-//                         key={index}
-//                         style={{ paddingHorizontal: 20 }}
-//                     >
-//                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-//                             <HStack space={3} alignItems="center">
-//                                 <AvatarComponent imageUrl={pictureUrl || AVATAR_FALLBACK_URL} />
-//                                 <VStack justifyContent="space-between">
-//                                     {type === 'own' && (
-//                                         <>
-//                                             <Text bold fontSize="sm" color="gray.400">
-//                                                 {`${firstName} ${lastName}`}
-//                                             </Text>
-//                                             <Text fontSize="sm" color="gray.400">
-//                                                 {department?.departmentName}
-//                                             </Text>
-//                                         </>
-//                                     )}
-//                                 </VStack>
-//                             </HStack>
-//                             <Text fontSize="sm" color="gray.400">
-//                                 {moment().format('HH:MM')}
-//                             </Text>
-//                         </HStack>
-//                     </TouchableNativeFeedback>
-//                 );
-//             })}
-//         </ErrorBoundary>
-//     );
-// };
-
-// const attendanceColumns: IFlatListColumn[] = [
-//     {
-//         title: 'Date',
-//         dataIndex: 'date',
-//         render: (elm: IAttendance, key) => {
-//             return (
-//                 <Box
-//                     pb={1}
-//                     size="52px"
-//                     borderWidth={0.2}
-//                     key={`date-${key}`}
-//                     borderColor={isLightMode ? 'gray.700' : 'gray.500'}
-//                 >
-//                     <Center pt={0}>
-//                         <Text bold fontSize={14} color={isLightMode ? 'gray.700' : 'gray.300'}>
-//                             {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
-//                         </Text>
-//                         <Text bold color={isLightMode ? 'gray.700' : 'gray.300'} fontSize={10}>
-//                             {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
-//                         </Text>
-//                         <Text bold color={isLightMode ? 'gray.700' : 'gray.300'} fontSize={10}>
-//                             {moment(elm.createdAt).format('MMMM').substring(0, 3)} /{' '}
-//                             {moment(elm.createdAt).format('YY')}
-//                         </Text>
-//                     </Center>
-//                 </Box>
-//             );
-//         },
-//     },
-//     {
-//         title: 'Clock In',
-//         dataIndex: 'clockIn',
-//         render: (elm: IAttendance, key) => (
-//             <HStack key={`clockin-${key}`} alignItems="center" minWidth={88}>
-//                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-//                 <Text
-//                     _dark={{
-//                         color: elm.clockIn ? 'green.300' : 'red.300',
-//                     }}
-//                     color={elm.clockIn ? 'green.500' : 'red.500'}
-//                 >
-//                     {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
-//                 </Text>
-//             </HStack>
-//         ),
-//     },
-//     {
-//         title: 'Clock Out',
-//         dataIndex: 'clockOut',
-//         render: (elm: IAttendance, key) => (
-//             <HStack key={`clockout-${key}`} alignItems="center" minWidth={88}>
-//                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-//                 <Text
-//                     color="gray.500"
-//                     _dark={{
-//                         color: 'warmGray.200',
-//                     }}
-//                 >
-//                     {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
-//                 </Text>
-//             </HStack>
-//         ),
-//     },
-//     {
-//         title: 'Service hrs',
-//         dataIndex: 'hours',
-//         render: (elm: IAttendance, key) => (
-//             <Text
-//                 key={`hours-${key}`}
-//                 _dark={{
-//                     color: 'warmGray.50',
-//                 }}
-//                 color="gray.500"
-//                 textAlign="center"
-//             >
-//                 {elm?.clockOut ? Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins : '--:--'}
-//             </Text>
-//         ),
-//     },
-// ];
-
-// interface TicketListRowProps extends ITicket {
-//     '0'?: string;
-//     '1'?: ITicket[];
-// }
-
-// export const TicketListRow: React.FC<TicketListRowProps> = props => {
-//     const { isLightMode } = useAppColorMode();
-
-//     return (
-//         <>
-//             {props[1]?.map((elm, index) => {
-//                 const handlePress = () => {
-//                     // Open Modal
-//                 };
-
-//                 const { status, category, user, departmentName } = elm;
-
-//                 return (
-//                     <TouchableNativeFeedback
-//                         disabled={false}
-//                         delayPressIn={0}
-//                         onPress={handlePress}
-//                         accessibilityRole="button"
-//                         background={TouchableNativeFeedback.Ripple(
-//                             isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-//                             false,
-//                             220
-//                         )}
-//                         key={index}
-//                         style={{ paddingHorizontal: 20 }}
-//                     >
-//                         <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-//                             <HStack space={3} alignItems="center">
-//                                 <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-//                                 <VStack justifyContent="space-between">
-//                                     <Text fontSize="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.600' }}>
-//                                         {Utils.capitalizeFirstChar(category?.categoryName)}
-//                                     </Text>
-//                                     <Text fontSize="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.600' }}>
-//                                         {Utils.truncateString(departmentName)}
-//                                     </Text>
-//                                 </VStack>
-//                             </HStack>
-//                             <StatusTag>{status}</StatusTag>
-//                         </HStack>
-//                     </TouchableNativeFeedback>
-//                 );
-//             })}
-//         </>
-//     );
-// };
-
-// interface IUserReportListRowProps extends IUserReport {}
 
 const userReportColumns: IFlatListColumn[] = [
     {
@@ -236,8 +36,7 @@ export interface IUserReportListRowProps {
 const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
     const navigation = useNavigation();
     const { isMobile } = useMediaQuery();
-    const { isLightMode } = useAppColorMode();
-    const { setUserId, userId } = React.useContext(UserReportContext);
+    const { setUserId } = React.useContext(UserReportContext);
 
     return (
         <>
@@ -250,30 +49,24 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                 };
 
                 return (
-                    <TouchableNativeFeedback
+                    <TouchableOpacity
                         key={index}
-                        disabled={false}
                         delayPressIn={0}
+                        activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                            false,
-                            220
-                        )}
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center">
+                            <HStack space={3} alignItems="center" w="65%">
                                 <AvatarComponent imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <Text bold>
+                                <Text bold ellipsizeMode="tail" flexWrap="wrap" numberOfLines={1} width="65%">
                                     {Utils.capitalizeFirstChar(elm?.user?.firstName)}{' '}
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            {elm?.clockIn && <Text>{moment(elm?.clockIn).format('HH:MM A')}</Text>}
+                            {elm?.clockIn && <Text>{moment(elm?.clockIn).format('LT')}</Text>}
                         </HStack>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 );
             })}
         </>
@@ -296,7 +89,7 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const isTicket = service === 'ticket';
     const isAttendance = service === 'attendance';
 
-    const { data: campuses, isLoading: campusesLoading } = useGetCampusesQuery();
+    const { data: campuses } = useGetCampusesQuery();
 
     const sortedcampuses = React.useMemo<ICampus[] | undefined>(
         () =>
@@ -307,39 +100,24 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [campusIdUpdate, setCampusId] = React.useState<ICampus['_id']>(campusId as string);
     const isGlobal = campusIdUpdate === 'global';
 
+    const attendanceParams = isGlobal ? { serviceId, status } : { campusId: campusIdUpdate, serviceId, status };
     const {
         data: attendanceReport,
         isLoading: attendanceIsLoading,
         isFetching: attendanceIsFetching,
-        isUninitialized: attendanceIsUninitialized,
-    } = useGetAttendanceQuery(
-        { campusId: isGlobal ? undefined : campusIdUpdate, serviceId, status },
-        { refetchOnMountOrArgChange: true, skip: !isAttendance }
-    );
-
-    const attendanceReportWithCampusName = React.useMemo(() => {
-        return attendanceReport?.map(report => {
-            return {
-                ...report,
-                campusName: report?.campus?.campusName,
-            };
-        });
-    }, [attendanceReport]);
+    } = useGetAttendanceQuery({ ...attendanceParams }, { refetchOnMountOrArgChange: true, skip: !isAttendance });
 
     const groupedAttendanceReport = React.useMemo(
-        () => Utils.groupListByKey(attendanceReportWithCampusName, isGlobal ? 'campusName' : 'departmentName'),
-        [attendanceReportWithCampusName]
+        () => Utils.groupListByKey(attendanceReport, isGlobal ? 'campusName' : 'departmentName'),
+        [attendanceReport]
     );
 
+    const ticketParams = isGlobal ? { serviceId } : { campusId: campusIdUpdate, serviceId };
     const {
         data: ticketsReport,
         isLoading: ticketIsLoading,
         isFetching: ticketIsFetching,
-        isUninitialized: ticketIsUninitialized,
-    } = useGetTicketsQuery(
-        { campusId: isGlobal ? undefined : campusIdUpdate, serviceId },
-        { refetchOnMountOrArgChange: true, skip: !isTicket }
-    );
+    } = useGetTicketsQuery(ticketParams, { refetchOnMountOrArgChange: true, skip: !isTicket });
 
     const ticketReportWithCampusName = React.useMemo(() => {
         return ticketsReport?.map(report => {

@@ -17,8 +17,7 @@ import useScreenFocus from '../../../hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
 import { HStack, Text } from 'native-base';
 import ErrorBoundary from '../../../components/composite/error-boundary';
-import { TouchableNativeFeedback } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { TouchableOpacity } from 'react-native';
 import StatusTag from '../../../components/atoms/status-tag';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
@@ -42,17 +41,12 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
     };
 
     return (
-        <TouchableNativeFeedback
+        <TouchableOpacity
             disabled={false}
             delayPressIn={0}
+            activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}
@@ -73,7 +67,7 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 
@@ -86,17 +80,12 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
     };
 
     return (
-        <TouchableNativeFeedback
+        <TouchableOpacity
             disabled={false}
             delayPressIn={0}
+            activeOpacity={0.6}
             onPress={handlePress}
             accessibilityRole="button"
-            background={TouchableNativeFeedback.Ripple(
-                isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                false,
-                220
-            )}
-            style={{ paddingHorizontal: 20 }}
         >
             <HStack
                 p={2}
@@ -119,7 +108,7 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
                     {Utils.truncateString(props.details, 10)}
                 </Text>
             </HStack>
-        </TouchableNativeFeedback>
+        </TouchableOpacity>
     );
 };
 

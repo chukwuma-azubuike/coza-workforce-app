@@ -3,7 +3,7 @@ import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-ba
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
-import { Alert, TouchableNativeFeedback } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import useModal from '../../../hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '../../../components/composite/modal-alert';
@@ -255,11 +255,11 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
                         canClockIn ? 'primary.600' : canClockOut ? 'rose.400' : disabled ? 'gray.400' : 'gray.400'
                     }
                 >
-                    <TouchableNativeFeedback
+                    <TouchableOpacity
                         disabled={disabled}
+                        activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple('#000000BF', true, 120)}
                     >
                         <Center>
                             <If condition={isLoading || clockOutLoading}>
@@ -274,7 +274,7 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
                                 </VStack>
                             </If>
                         </Center>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 </Button>
             </Box>
         </Pressable>

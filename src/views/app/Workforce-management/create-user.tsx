@@ -15,7 +15,6 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InputComponent } from '../../../components/atoms/input';
-import { useGetRolesQuery } from '../../../store/services/role';
 import Utils from '../../../utils';
 
 const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
@@ -24,6 +23,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const {
         user: { campus, userId },
+        rolesPermittedToCreate,
     } = useRole();
 
     const { setModalState } = useModal();
@@ -34,13 +34,6 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
     } = useGetDepartmentsByCampusIdQuery(campus._id);
-
-    const {
-        data: allRoles,
-        refetch: refetchRoles,
-        isFetching: isFetchingRoles,
-        isLoading: rolesIsLoading,
-    } = useGetRolesQuery();
 
     const [uploadUser, { isLoading, error }] = useUploadUserMutation();
 
@@ -80,7 +73,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const refresh = () => {
         refetchDepartments();
-        refetchRoles();
+        // refetchRoles();
     };
 
     const INITIAL_VALUES = {
@@ -100,7 +93,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 
     return (
-        <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={isFetchingDepartments || isFetchingRoles}>
+        <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={isFetchingDepartments}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateUserPayload>
@@ -150,12 +143,11 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         placeholder="Choose role"
                                         onValueChange={handleChange('roleId')}
                                     >
-                                        {allRoles?.map((role, index) => (
+                                        {rolesPermittedToCreate()?.map((role, index) => (
                                             <SelectItemComponent
                                                 value={role._id}
                                                 key={`role-${index}`}
                                                 label={role.name}
-                                                isLoading={rolesIsLoading}
                                             />
                                         ))}
                                     </SelectComponent>

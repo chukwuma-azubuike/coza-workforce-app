@@ -6,7 +6,7 @@ import FlatListComponent, { IFlatListColumn } from '../../../../components/compo
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
 import StatusTag from '../../../../components/atoms/status-tag';
 import { useNavigation } from '@react-navigation/native';
-import { Platform, TouchableNativeFeedback, TouchableOpacity } from 'react-native';
+import { Platform, TouchableOpacity } from 'react-native';
 import useAppColorMode from '../../../../hooks/theme/colorMode';
 import Utils from '../../../../utils';
 import useScreenFocus from '../../../../hooks/focus';
@@ -54,18 +54,13 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                 };
 
                 return (
-                    <TouchableNativeFeedback
+                    <TouchableOpacity
+                        key={index}
                         disabled={false}
                         delayPressIn={0}
+                        activeOpacity={0.6}
                         onPress={handlePress}
                         accessibilityRole="button"
-                        background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.veryLightGray : THEME_CONFIG.darkGray,
-                            false,
-                            220
-                        )}
-                        key={index}
-                        style={{ paddingHorizontal: 20 }}
                     >
                         <HStack
                             p={2}
@@ -83,7 +78,7 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                             </Text>
                             <StatusTag>{elm?.report.status as any}</StatusTag>
                         </HStack>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 );
             })}
         </>
