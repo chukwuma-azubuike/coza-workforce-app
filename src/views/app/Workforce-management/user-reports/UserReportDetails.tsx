@@ -15,6 +15,8 @@ import { UserReportContext } from './context';
 import UserProfileBrief from './UserProfile';
 import Loading from '../../../../components/atoms/loading';
 import useScreenFocus from '../../../../hooks/focus';
+import { Platform } from 'react-native';
+const isAndroid = Platform.OS === 'android';
 
 const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
     const ticketColumns: IFlatListColumn[] = [
@@ -88,7 +90,7 @@ const UserAttendanceList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ use
     return (
         <ErrorBoundary>
             <FlatListComponent
-                padding
+                padding={isAndroid ? 3 : true}
                 fetchMoreData={fetchMoreData}
                 columns={myAttendanceColumns}
                 data={moreData as IAttendance[]}

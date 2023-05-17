@@ -1,5 +1,6 @@
 import { Heading, HStack, VStack } from 'native-base';
 import React from 'react';
+import { Platform } from 'react-native';
 import AvatarComponent from '../../../../components/atoms/avatar';
 import If from '../../../../components/composite/if-container';
 import { ProfileSkeletonMini } from '../../../../components/layout/skeleton';
@@ -7,6 +8,7 @@ import { AVATAR_FALLBACK_URL } from '../../../../constants';
 import { useGetUserByIdQuery } from '../../../../store/services/account';
 import { IUser } from '../../../../store/types';
 import Utils from '../../../../utils';
+const isAndroid = Platform.OS === 'android';
 
 const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean }> = ({
     userId,
@@ -15,7 +17,7 @@ const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean 
     const { data: user, isLoading, isFetching } = useGetUserByIdQuery(userId);
 
     return (
-        <HStack pb={8} mb={4}>
+        <HStack pb={8} mb={4} px={isAndroid ? 4 : undefined}>
             <If condition={isLoading || isFetching}>
                 <ProfileSkeletonMini />
             </If>
