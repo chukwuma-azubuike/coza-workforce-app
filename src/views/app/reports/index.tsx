@@ -19,7 +19,6 @@ import { HStack, Text } from 'native-base';
 import ErrorBoundary from '../../../components/composite/error-boundary';
 import { TouchableOpacity } from 'react-native';
 import StatusTag from '../../../components/atoms/status-tag';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
 import moment from 'moment';
 import { IReportFormProps } from './forms/types';
@@ -28,9 +27,10 @@ import Utils from '../../../utils';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
 
-export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'status'>> = props => {
+export const DepartmentReportListRow: React.FC<
+    Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>
+> = props => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
 
     const {
         user: { department },
@@ -46,13 +46,13 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
             delayPressIn={0}
             activeOpacity={0.6}
             onPress={handlePress}
+            style={{ width: '100%' }}
             accessibilityRole="button"
         >
             <HStack
                 p={2}
                 px={4}
                 my={1.5}
-                w="full"
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
@@ -60,7 +60,7 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.updatedAt).format('DD/MM/YYYY')}
+                    {moment(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}
                 </Text>
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
                     Departmental
@@ -73,7 +73,6 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
 
 const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' | 'details'>> = props => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
 
     const handlePress = () => {
         navigation.navigate('Incident Report' as never, props as never);
@@ -85,13 +84,13 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
             delayPressIn={0}
             activeOpacity={0.6}
             onPress={handlePress}
+            style={{ width: '100%' }}
             accessibilityRole="button"
         >
             <HStack
                 p={2}
                 px={4}
                 my={1.5}
-                w="full"
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}

@@ -103,7 +103,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             navigate.navigate('Permissions', {
                 ...permissionParams,
                 ...approveData,
-                requestor: permissionParams.requestor,
+                requestor: permissionParams?.requestor,
             });
         }
         if (approveIsError) {
@@ -127,7 +127,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             navigate.navigate('Permissions', {
                 ...permissionParams,
                 ...declineData,
-                requestor: permissionParams.requestor,
+                requestor: permissionParams?.requestor,
             });
         }
         if (declineIsError) {
@@ -218,13 +218,45 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         <Text alignSelf="flex-start" bold>
                             Date Requested
                         </Text>
-                        <Text>{moment(permission?.createdAt).format('Do MMM, YYYY')}</Text>
+                        <Text>{moment(permission?.createdAt).format('DD/MM/YYYY - LT')}</Text>
                     </HStack>
 
+                    {permission?.dateApproved ? (
+                        <HStack
+                            pb={2}
+                            w="full"
+                            space={2}
+                            borderColor="gray.300"
+                            borderBottomWidth={0.2}
+                            justifyContent="space-between"
+                        >
+                            <Text alignSelf="flex-start" bold>
+                                Date Approved
+                            </Text>
+                            <Text>{moment(permission?.dateApproved).format('DD/MM/YYYY - LT')}</Text>
+                        </HStack>
+                    ) : null}
+
+                    {permission?.rejectedOn ? (
+                        <HStack
+                            pb={2}
+                            w="full"
+                            space={2}
+                            borderColor="gray.300"
+                            borderBottomWidth={0.2}
+                            justifyContent="space-between"
+                        >
+                            <Text alignSelf="flex-start" bold>
+                                Date Rejected
+                            </Text>
+                            <Text>{moment(permission?.rejectedOn).format('DD/MM/YYYY - LT')}</Text>
+                        </HStack>
+                    ) : null}
+
                     <HStack
-                        space={2}
                         pb={2}
                         w="full"
+                        space={2}
                         justifyContent="space-between"
                         borderBottomWidth={0.2}
                         borderColor="gray.300"
