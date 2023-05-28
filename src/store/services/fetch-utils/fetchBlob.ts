@@ -53,7 +53,6 @@ export const downloadFile = (params: DownloadTicketsProps) => {
         .fetch('GET', FILE_URL)
         .then(res => {
             // Alert after successful downloading
-            console.log('res -> ', JSON.stringify(res));
             Alert.alert('File Downloaded Successfully.');
         });
 };

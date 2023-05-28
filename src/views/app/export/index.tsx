@@ -110,7 +110,6 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         campusId: values.campusId,
                         departmentId: values.departmentId,
                     });
-                    // console.log('Storage Permission Granted.');
                     setIsLoading(false);
                     setModalState({
                         message: 'File downloading',
@@ -131,7 +130,6 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 }
             } catch (err) {
                 // To handle permission related exception
-                // console.log('++++' + err);
                 setIsLoading(false);
                 setModalState({
                     message: 'Oops, an error occured',
