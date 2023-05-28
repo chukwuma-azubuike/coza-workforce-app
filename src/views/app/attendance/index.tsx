@@ -8,10 +8,14 @@ import useMediaQuery from '../../../hooks/media-query';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '../../../hooks/focus';
+// import If from '../../../components/composite/if-container';
+// import StaggerButtonComponent from '../../../components/composite/stagger';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
+    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
     const { isMobile } = useMediaQuery();
+    const navigation = props.navigation;
+
     const params = props.route.params as { role: ROLES; route: string };
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
@@ -30,6 +34,10 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         campusAttendance: CampusAttendance,
         leadersAttendance: LeadersAttendance,
     });
+
+    // const goToExport = () => {
+    //     navigation.navigate('Export Data', { type: 'ATTENDANCE' });
+    // };
 
     const [index, setIndex] = React.useState(0);
 
@@ -69,6 +77,19 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 navigationState={{ index, routes: allRoutes }}
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
+            {/* TODO: Uncomment one resolved with IOS */}
+            {/* <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                <StaggerButtonComponent
+                    buttons={[
+                        {
+                            color: 'green.600',
+                            iconName: 'download-outline',
+                            handleClick: goToExport,
+                            iconType: 'ionicon',
+                        },
+                    ]}
+                />
+            </If> */}
         </ViewWrapper>
     );
 };

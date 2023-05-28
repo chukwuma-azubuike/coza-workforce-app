@@ -526,3 +526,9 @@ export interface ICampusUserData {
         userCount: number;
     }[];
 }
+export interface IExportFilters {
+    campusId: string;
+    departmentId: string | undefined;
+    serviceId: string | undefined;
+    data: string;
+}
