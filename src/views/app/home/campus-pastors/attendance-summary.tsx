@@ -16,34 +16,41 @@ interface ITeamAttendanceSummary {
 
 const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
     const { departmentUsers, attendance, isLoading } = props;
+    const navigation = useNavigation();
+
+    const handlePress = () => {
+        navigation.navigate('Attendance' as never, { route: 'teamAttendance' } as never);
+    };
 
     return (
         <Center>
             {isLoading ? (
-                <Loading />
+                <Loading h={20} w={20} />
             ) : (
-                <HStack alignItems="baseline">
-                    <Flex alignItems="center" flexDirection="row">
-                        <Icon color={THEME_CONFIG.primaryLight} name="people-outline" type="ionicon" size={18} />
-                        <Text ml={2} fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                            Members clocked in:
-                        </Text>
-                    </Flex>
+                <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
+                    <HStack alignItems="baseline">
+                        <Flex alignItems="center" flexDirection="row">
+                            <Icon color={THEME_CONFIG.primaryLight} name="people-outline" type="ionicon" size={18} />
+                            <Text ml={2} fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
+                                Members clocked in:
+                            </Text>
+                        </Flex>
 
-                    <Flex alignItems="baseline" flexDirection="row">
-                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
-                            <CountUp isCounting duration={2} end={attendance || 0} />
-                        </Text>
-                        <Text
-                            fontSize="md"
-                            fontWeight="semibold"
-                            _dark={{ color: 'gray.400' }}
-                            _light={{ color: 'gray.600' }}
-                        >
-                            /<CountUp isCounting duration={2} end={departmentUsers || 0} />
-                        </Text>
-                    </Flex>
-                </HStack>
+                        <Flex alignItems="baseline" flexDirection="row">
+                            <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                <CountUp isCounting duration={2} end={attendance || 0} />
+                            </Text>
+                            <Text
+                                fontSize="md"
+                                fontWeight="semibold"
+                                _dark={{ color: 'gray.400' }}
+                                _light={{ color: 'gray.600' }}
+                            >
+                                /<CountUp isCounting duration={2} end={departmentUsers || 0} />
+                            </Text>
+                        </Flex>
+                    </HStack>
+                </TouchableOpacity>
             )}
         </Center>
     );

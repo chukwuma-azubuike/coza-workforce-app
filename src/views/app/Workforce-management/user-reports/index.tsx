@@ -54,17 +54,18 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                         delayPressIn={0}
                         activeOpacity={0.6}
                         onPress={handlePress}
+                        style={{ width: '100%' }}
                         accessibilityRole="button"
                     >
-                        <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center" w="65%">
+                        <HStack p={2} alignItems="center" justifyContent="space-between">
+                            <HStack space={3} alignItems="center" w="85%">
                                 <AvatarComponent imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <Text bold ellipsizeMode="tail" flexWrap="wrap" numberOfLines={1} width="65%">
+                                <Text bold ellipsizeMode="tail" numberOfLines={1} w="72%">
                                     {Utils.capitalizeFirstChar(elm?.user?.firstName)}{' '}
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            {elm?.clockIn && <Text>{moment(elm?.clockIn).format('LT')}</Text>}
+                            {elm?.clockIn ? <Text>{moment(elm?.clockIn).format('LT')}</Text> : null}
                         </HStack>
                     </TouchableOpacity>
                 );
@@ -155,7 +156,7 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         <UserReportProvider>
             <ViewWrapper py={0} px={2} noPadding refreshing={isLoadingAttendance || isLoadingTickets}>
                 <HStack flex={1}>
-                    <VStack w={isMobile ? '100%' : '33%'} flex={1} space={3} pt={4}>
+                    <VStack w={isMobile ? '100%' : '40%'} flex={1} space={3} pt={4}>
                         <FormControl isRequired>
                             <SelectComponent
                                 placeholder="Select Campus"
@@ -180,7 +181,7 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     </VStack>
                     <If condition={isTablet}>
                         <Divider orientation="vertical" height="100%" m={4} />
-                        <Box w="67%">
+                        <Box w="60%">
                             <UserReportDetails userId={userId} />
                         </Box>
                     </If>

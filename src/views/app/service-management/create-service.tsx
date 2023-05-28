@@ -1,7 +1,8 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
+import moment from 'moment';
 import { Box, FormControl, HStack, VStack } from 'native-base';
 import React from 'react';
 import ButtonComponent from '../../../components/atoms/button';
@@ -28,11 +29,10 @@ const tags: any = [
 
 const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { navigate } = navigation;
-    const { setOptions } = useNavigation();
 
     const { setModalState } = useModal();
 
-    const [createService, { isError, isLoading, isSuccess, error, data, reset }] = useCreateServiceMutation();
+    const [createService, { isLoading, error, data, reset }] = useCreateServiceMutation();
 
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.clockinTime);
@@ -196,7 +196,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         mode="time"
                                         fieldName="startTime"
                                         onSelectDate={setFieldValue}
-                                        value={values.startDate}
+                                        value={values.startTime}
                                     />
                                 </HStack>
 
