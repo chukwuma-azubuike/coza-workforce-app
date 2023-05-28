@@ -190,6 +190,7 @@ export interface ITicket extends ILog {
     _id: string;
     user: IUser;
     remarks: string;
+    issuedBy?: string;
     createdAt: string;
     isRetracted: boolean;
     ticketSummary: string;
