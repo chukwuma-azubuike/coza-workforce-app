@@ -44,6 +44,7 @@ import WorkforceSummary from '../views/app/workforce-management';
 import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
 import UserReport from '../views/app/workforce-management/user-reports';
 import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
+import Export from '../views/app/export';
 
 export interface IAppRoute {
     name: string;
@@ -361,6 +362,15 @@ const AppRoutes: IAppRoute[] = [
     //     inMenuBar: false,
     //     icon: { name: 'settings-outline', type: 'ionicon' },
     // },
+    {
+        name: 'Export Data',
+        component: Export,
+        options: { title: 'Export Data' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        inMenuBar: false,
+        icon: { name: 'download-outline', type: 'ionicon' },
+    },
     {
         name: 'More',
         component: More,
