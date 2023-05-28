@@ -26,7 +26,6 @@ const ROUTES = [
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { isMobile } = useMediaQuery();
-    const handlePress = () => {}
     const gotoRequestPermission = () => {
         navigation.navigate('Request permission');
     };
@@ -71,8 +70,9 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     ];
 
     const filteredButtons = React.useMemo(() => {
-        if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
-        if (isQCHOD) return [...allButtons];
+        // TODO: Uncomment one resolved with IOS
+        // if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
+        // if (isQCHOD) return [...allButtons];
 
         return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps

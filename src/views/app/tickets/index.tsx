@@ -6,7 +6,7 @@ import useRole from '../../../hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
-import StaggerButtonComponent from '../../../components/composite/stagger';
+// import StaggerButtonComponent from '../../../components/composite/stagger';
 import { ITicket } from '../../../store/types';
 import useMediaQuery from '../../../hooks/media-query';
 
@@ -104,8 +104,8 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
                 navigationState={{ index, routes: allRoutes }}
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
-
-            <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
+            {/* TODO: Uncomment one resolved with IOS */}
+            {/* <StaggerButtonComponent buttons={filteredButtons as unknown as any} /> */}
         </ViewWrapper>
     );
 };
