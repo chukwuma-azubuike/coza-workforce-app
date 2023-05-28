@@ -10,7 +10,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '../../../hooks/focus';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
+    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
     const { isMobile } = useMediaQuery();
     const params = props.route.params as { role: ROLES };
 
@@ -30,6 +30,10 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         campusAttendance: CampusAttendance,
         leadersAttendance: LeadersAttendance,
     });
+
+    const goToExport = () => {
+        navigation.navigate('Export Data', { type: 'ATTENDANCE' });
+    };
 
     const [index, setIndex] = React.useState(0);
 
@@ -66,6 +70,18 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 navigationState={{ index, routes: allRoutes }}
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
+            <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                <StaggerButtonComponent
+                    buttons={[
+                        {
+                            color: 'green.600',
+                            iconName: 'download-outline',
+                            handleClick: goToExport,
+                            iconType: 'ionicon',
+                        },
+                    ]}
+                />
+            </If>
         </ViewWrapper>
     );
 };
