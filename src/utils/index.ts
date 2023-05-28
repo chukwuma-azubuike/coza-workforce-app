@@ -222,7 +222,7 @@ class Utils {
         }
 
         for (let i = 0; i < array.length; i++) {
-            if (typeof array[i] === 'undefined') continue;
+            if (typeof array[i] === 'undefined' || !array[i]) continue;
             let keyInMap = array[i][key];
 
             if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
@@ -251,13 +251,13 @@ class Utils {
         const originalList = array;
         const index = findIndex(originalList, keyValue);
 
+        // Push if index doesn't exist
+        if (index === -1) {
+            return [newObject, ...originalList];
+        }
+
         // Replace item at index
         originalList[index] = newObject;
-
-        // Push if index doesn't exist
-        if (!index) {
-            originalList.push(newObject);
-        }
 
         return originalList;
     };

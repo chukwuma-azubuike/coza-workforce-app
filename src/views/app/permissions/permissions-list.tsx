@@ -10,7 +10,6 @@ import FlatListComponent, { IFlatListColumn } from '../../../components/composit
 import { AVATAR_FALLBACK_URL } from '../../../constants';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useRole from '../../../hooks/role';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetPermissionsQuery } from '../../../store/services/permissions';
 import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
@@ -30,6 +29,8 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     return (
         <ErrorBoundary>
             {props[1]?.map((elm, index) => {
+                if (!elm) return;
+
                 const handlePress = () => {
                     navigation.navigate('Permission Details' as never, elm as never);
                 };
@@ -124,7 +125,14 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ up
     };
 
     const memoizedData = useMemo(
-        () => Utils.groupListByKey(uniqBy([updatedListItem, ...(moreData || [])], '_id'), 'createdAt'),
+        () =>
+            Utils.groupListByKey(
+                uniqBy(
+                    [updatedListItem?.requestor?._id === userId ? updatedListItem : null, ...(moreData || [])],
+                    '_id'
+                ),
+                'createdAt'
+            ),
         [moreData]
     );
 
@@ -180,7 +188,10 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo((
     const memoizedData = useMemo(
         () =>
             Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                Utils.sortByDate(
+                    Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                    'createdAt'
+                ),
                 'createdAt'
             ),
         [updatedListItem?._id, moreData]

@@ -7,7 +7,6 @@ import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
 import moment from 'moment';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useNavigation } from '@react-navigation/native';
 
 export interface IFlatListColumn {
@@ -79,7 +78,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                         refresh={onRefresh}
                                     />
                                 }
-                                keyExtractor={item => item._id}
+                                keyExtractor={item => item?._id}
                                 renderItem={({ item }) => (
                                     <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />
                                 )}
@@ -116,7 +115,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 onEndReached={handleMore}
                                 onEndReachedThreshold={0.1}
                                 onScrollEndDrag={handleMore}
-                                keyExtractor={item => item._id}
+                                keyExtractor={item => item?._id}
                                 ListHeaderComponent={() =>
                                     titles[0] ? (
                                         <Box bg="transparent" py={3} flex={1} textAlign="left" w="full">
@@ -195,7 +194,6 @@ const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }
 
 const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }> = React.memo(
     ({ item, padding, columns, navLink }) => {
-        const { isLightMode } = useAppColorMode();
         const { navigate } = useNavigation();
 
         const navigateTo = () => {
@@ -219,12 +217,12 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                     _light={{
                         borderColor: 'gray.300',
                     }}
-                    pl={padding ? ['0', '4'] : 0}
-                    pr={padding ? ['0', '5'] : 0}
+                    pl={padding ? ['0', '2'] : 0}
+                    pr={padding ? ['0', '3'] : 0}
                     flex={1}
                     py={2}
                 >
-                    <HStack justifyContent="space-between" px={padding ? 3 : 0} alignItems="center" space={[2, 3]}>
+                    <HStack justifyContent="space-between" alignItems="center" space={[2, 3]}>
                         {columns?.map((column, idx) => {
                             if (column.render) return column.render(item, idx);
                             return (

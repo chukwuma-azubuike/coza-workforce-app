@@ -9,11 +9,13 @@ import StatusTag from '../../../components/atoms/status-tag';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import CardComponent from '../../../components/composite/card';
 import If from '../../../components/composite/if-container';
+import { FlatListSkeleton } from '../../../components/layout/skeleton';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
 import useScreenFocus from '../../../hooks/focus';
 import useModal from '../../../hooks/modal/useModal';
 import useRole from '../../../hooks/role';
+import { useGetUserByIdQuery } from '../../../store/services/account';
 import {
     useContestTicketMutation,
     useGetTicketByIdQuery,
@@ -29,10 +31,16 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const {
         isQC,
+        isCampusPastor,
+        isGlobalPastor,
         user: { userId, department },
     } = useRole();
 
     const { data: ticket, isFetching, isLoading, refetch } = useGetTicketByIdQuery(ticketParams?._id);
+    const { data: issuer, isLoading: issuerIsLoading } = useGetUserByIdQuery(ticket?.issuedBy as string, {
+        skip: !ticket?.issuedBy,
+    });
+
     const [
         contestTicket,
         {
@@ -251,17 +259,32 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         borderColor="gray.300"
                     >
                         <Text alignSelf="flex-start" bold>
-                            Date
+                            Date issued
                         </Text>
-                        <Text>{moment(ticket?.createdAt).format('Do MMMM YYYY')}</Text>
+                        <Text>{moment(ticket?.createdAt).format('DD/MM/YYYY - LT')}</Text>
                     </HStack>
+                    {ticket?.updatedAt ? (
+                        <HStack
+                            pb={2}
+                            w="full"
+                            space={2}
+                            borderColor="gray.300"
+                            borderBottomWidth={0.2}
+                            justifyContent="space-between"
+                        >
+                            <Text alignSelf="flex-start" bold>
+                                Last updated
+                            </Text>
+                            <Text>{moment(ticket?.updatedAt).format('DD/MM/YYYY - LT')}</Text>
+                        </HStack>
+                    ) : null}
                     <HStack
-                        space={2}
                         pb={2}
                         w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
+                        space={2}
                         borderColor="gray.300"
+                        borderBottomWidth={0.2}
+                        justifyContent="space-between"
                     >
                         <Text alignSelf="flex-start" bold>
                             Department
@@ -269,12 +292,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text>{ticket?.department?.departmentName}</Text>
                     </HStack>
                     <HStack
-                        space={2}
                         pb={2}
                         w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
+                        space={2}
                         borderColor="gray.300"
+                        borderBottomWidth={0.2}
+                        justifyContent="space-between"
                     >
                         <Text alignSelf="flex-start" bold>
                             Ticket type
@@ -282,13 +305,33 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         <Text>{ticket?.isDepartment ? 'Departmental' : 'Individual'}</Text>
                     </HStack>
 
+                    <If condition={isQC || isCampusPastor || isGlobalPastor}>
+                        {issuerIsLoading ? (
+                            <FlatListSkeleton count={1} />
+                        ) : issuer ? (
+                            <HStack
+                                pb={2}
+                                w="full"
+                                space={2}
+                                borderColor="gray.300"
+                                borderBottomWidth={0.2}
+                                justifyContent="space-between"
+                            >
+                                <Text alignSelf="flex-start" bold>
+                                    Issued by
+                                </Text>
+                                <Text>{`${issuer?.firstName} ${issuer?.lastName}`}</Text>
+                            </HStack>
+                        ) : null}
+                    </If>
+
                     <HStack
-                        space={2}
                         pb={2}
                         w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
+                        space={2}
                         borderColor="gray.300"
+                        borderBottomWidth={0.2}
+                        justifyContent="space-between"
                     >
                         <Text alignSelf="flex-start" bold>
                             Status

@@ -24,22 +24,17 @@ const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean 
             <If condition={!!user && !isLoading && !isFetching}>
                 <HStack space={6} alignItems="center">
                     <AvatarComponent mt={4} size="2xl" shadow={9} imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                    <VStack mt="4" space={2}>
-                        <HStack space={2} flexWrap="wrap">
+                    <VStack mt="4" width="80%" space={2}>
+                        <HStack space={2}>
                             <Heading
                                 flexWrap="wrap"
+                                numberOfLines={1}
+                                ellipsizeMode="tail"
                                 _dark={{ color: 'gray.300' }}
                                 _light={{ color: 'gray.700' }}
-                                size={isMobileView ? 'md' : 'xl'}
+                                size={isMobileView ? 'md' : 'lg'}
                             >
-                                {user && Utils.capitalizeFirstChar(user?.firstName)}
-                            </Heading>
-                            <Heading
-                                flexWrap="wrap"
-                                _dark={{ color: 'gray.300' }}
-                                _light={{ color: 'gray.700' }}
-                                size={isMobileView ? 'md' : 'xl'}
-                            >
+                                {user && Utils.capitalizeFirstChar(user?.firstName)}{' '}
                                 {user && Utils.capitalizeFirstChar(user?.lastName)}
                             </Heading>
                         </HStack>

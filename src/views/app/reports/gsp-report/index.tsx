@@ -7,7 +7,6 @@ import { SelectComponent, SelectItemComponent } from '../../../../components/ato
 import StatusTag from '../../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
-import useAppColorMode from '../../../../hooks/theme/colorMode';
 import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '../../../../store/services/reports';
 import { useGetServicesQuery } from '../../../../store/services/services';
 import { IService } from '../../../../store/types';
@@ -19,7 +18,6 @@ import CampusReportDetails from './campusReportDetails';
 
 export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
     const { isMobile } = useMediaQuery();
     const { serviceId, setCampusId, setCampusName } = React.useContext(GlobalReportContext);
 
@@ -41,13 +39,13 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
             delayPressIn={0}
             activeOpacity={0.6}
             onPress={handlePress}
+            style={{ width: '100%' }}
             accessibilityRole="button"
         >
             <HStack
                 p={2}
                 px={4}
                 my={1.5}
-                w="full"
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}

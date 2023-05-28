@@ -92,6 +92,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
     const {
         isLoading,
         isFetching,
+        refetch: refetchAttendance,
         data: membersClockedIn,
     } = useGetAttendanceQuery({
         serviceId: serviceId,
@@ -99,20 +100,6 @@ export const TeamAttendance: React.FC = React.memo(() => {
     });
 
     const { data: members, refetch: usersRefetch } = useGetUsersByDepartmentIdQuery(user?.department._id);
-
-    // const allMembers =
-    //     members?.map(member => {
-    //         return {
-    //             ...member,
-    //             userId: member._id,
-    //         };
-    //     }) || [];
-    // const membersClockedInValid = membersClockedIn?.map(member => {
-    //     return {
-    //         ...member,
-    //         userId: member.user._id,
-    //     };
-    // }) || [];
 
     const allMembers = React.useMemo(() => {
         if (!members?.length) return [];
@@ -146,6 +133,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
     const handleRefetch = () => {
         usersRefetch();
         refetchServices();
+        refetchAttendance();
     };
 
     return (
@@ -163,7 +151,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding={isAndroid ? 3 : true}
+                padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
