@@ -1,11 +1,11 @@
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import StatusTag from '../../../components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
+// import useFetchMoreData from '../../../hooks/fetch-more-data';
 import useScreenFocus from '../../../hooks/focus';
 import { useGetServicesQuery } from '../../../store/services/services';
 import { IService } from '../../../store/types';
@@ -19,9 +19,9 @@ const ServiceListRow: React.FC<IService> = service => {
                     <VStack justifyContent="space-between">
                         <Text bold>{service?.name}</Text>
                         <Text fontSize="sm" color="gray.400">
-                            {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(service?.serviceTime)
-                                .zone('+00:00')
-                                .format('LT')}`}
+                            {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(
+                                service?.serviceTime
+                            ).format('LT')}`}
                         </Text>
                     </VStack>
                 </HStack>
