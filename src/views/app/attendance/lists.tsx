@@ -151,7 +151,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding={isAndroid ? 3 : true}
+                padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 columns={teamAttendanceDataColumns}
