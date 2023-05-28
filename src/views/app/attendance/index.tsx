@@ -35,9 +35,9 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         leadersAttendance: LeadersAttendance,
     });
 
-    const goToExport = () => {
-        navigation.navigate('Export Data', { type: 'ATTENDANCE' });
-    };
+    // const goToExport = () => {
+    //     navigation.navigate('Export Data', { type: 'ATTENDANCE' });
+    // };
 
     const [index, setIndex] = React.useState(0);
 
