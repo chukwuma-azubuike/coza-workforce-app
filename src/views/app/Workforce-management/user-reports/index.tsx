@@ -54,17 +54,18 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                         delayPressIn={0}
                         activeOpacity={0.6}
                         onPress={handlePress}
+                        style={{ width: '100%' }}
                         accessibilityRole="button"
                     >
-                        <HStack p={2} width="100%" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center">
+                        <HStack p={2} alignItems="center" justifyContent="space-between">
+                            <HStack space={3} alignItems="center" w="85%">
                                 <AvatarComponent imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <Text bold ellipsizeMode="tail" width="70%" bgColor="red.300" numberOfLines={1}>
+                                <Text bold ellipsizeMode="tail" numberOfLines={1} w="72%">
                                     {Utils.capitalizeFirstChar(elm?.user?.firstName)}{' '}
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            {elm?.clockIn && <Text width="35%">{moment(elm?.clockIn).format('LT')}</Text>}
+                            {elm?.clockIn ? <Text>{moment(elm?.clockIn).format('LT')}</Text> : null}
                         </HStack>
                     </TouchableOpacity>
                 );

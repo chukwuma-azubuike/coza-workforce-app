@@ -25,13 +25,13 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
             delayPressIn={0}
             activeOpacity={0.6}
             onPress={handlePress}
+            style={{ width: '100%' }}
             accessibilityRole="button"
         >
             <HStack
                 p={2}
                 px={4}
                 my={1.5}
-                w="full"
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
