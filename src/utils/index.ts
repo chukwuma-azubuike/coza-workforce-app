@@ -225,7 +225,7 @@ class Utils {
             if (typeof array[i] === 'undefined' || !array[i]) continue;
             let keyInMap = array[i][key];
 
-            if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt') {
+            if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt' || key === 'sortDateKey') {
                 keyInMap = moment(array[i][key]).format('MMMM Do, YYYY');
             }
 
