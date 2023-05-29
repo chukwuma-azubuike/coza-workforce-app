@@ -227,12 +227,24 @@ const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ update
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(moreData || [], 'createdAt'), [moreData]);
+    const preparedForSortData = React.useMemo(
+        () =>
+            moreData?.map((ticket: ITicket) => {
+                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+            }),
+        [moreData]
+    );
+
+    const sortedData = React.useMemo(
+        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+        [preparedForSortData]
+    );
+
     const groupedData = React.useMemo(
         () =>
             Utils.groupListByKey(
                 Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'createdAt'
+                'sortDateKey'
             ),
         [updatedListItem?._id, sortedData]
     );
@@ -317,12 +329,24 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
 
     // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(data || [], 'createdAt'), [data]);
+    const preparedForSortData = React.useMemo(
+        () =>
+            data?.map((ticket: ITicket) => {
+                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+            }),
+        [data]
+    );
+
+    const sortedData = React.useMemo(
+        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+        [preparedForSortData]
+    );
+
     const groupedData = React.useMemo(
         () =>
             Utils.groupListByKey(
                 Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'createdAt'
+                'sortDateKey'
             ),
         [updatedListItem?._id, sortedData]
     );
@@ -381,12 +405,24 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(moreData || [], 'createdAt'), [moreData]);
+    const preparedForSortData = React.useMemo(
+        () =>
+            moreData?.map((data: ITicket) => {
+                return { ...data, sortDateKey: data?.updatedAt || data?.createdAt };
+            }),
+        [moreData]
+    );
+
+    const sortedData = React.useMemo(
+        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+        [preparedForSortData]
+    );
+
     const groupedData = React.useMemo(
         () =>
             Utils.groupListByKey(
                 Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'createdAt'
+                'sortDateKey'
             ),
         [updatedListItem?._id, sortedData]
     );

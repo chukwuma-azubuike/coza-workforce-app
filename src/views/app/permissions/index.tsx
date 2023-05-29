@@ -61,16 +61,17 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
             iconName: 'create-outline',
             handleClick: gotoRequestPermission,
         },
-        {
-            color: 'green.600',
-            iconType: 'ionicon',
-            iconName: 'download-outline',
-            handleClick: goToExport,
-        },
+        // TODO: Uncomment once resolved with IOS
+        // {
+        //     color: 'green.600',
+        //     iconType: 'ionicon',
+        //     iconName: 'download-outline',
+        //     handleClick: goToExport,
+        // },
     ];
 
     const filteredButtons = React.useMemo(() => {
-        // TODO: Uncomment one resolved with IOS
+        // TODO: Uncomment once resolved with IOS
         // if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
         // if (isQCHOD) return [...allButtons];
 
