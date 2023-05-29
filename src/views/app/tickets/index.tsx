@@ -6,9 +6,10 @@ import useRole from '../../../hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
-// import StaggerButtonComponent from '../../../components/composite/stagger';
+import StaggerButtonComponent from '../../../components/composite/stagger';
 import { ITicket } from '../../../store/types';
 import useMediaQuery from '../../../hooks/media-query';
+import If from '../../../components/composite/if-container';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -46,9 +47,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         leadersTickets: () => <LeadersTicketsList updatedListItem={updatedListItem} />,
     });
 
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
-
-    const isQCHOD = isQC && isHOD;
+    const { isQC, isQcHOD, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
 
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
@@ -79,17 +78,18 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
             handleClick: goToCampus,
             iconType: 'material-community',
         },
-        {
-            color: 'green.600',
-            iconName: 'download-outline',
-            handleClick: goToExport,
-            iconType: 'ionicon',
-        },
+        // {
+        //     color: 'green.600',
+        //     iconName: 'download-outline',
+        //     handleClick: goToExport,
+        //     iconType: 'ionicon',
+        // },
     ];
 
     const filteredButtons = React.useMemo(() => {
-        if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
-        if (isQCHOD) return [...allButtons];
+        // TODO: Uncomment once resolved with IOS
+        // if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
+        // if (isQcHOD) return [...allButtons];
         if (isQC) return [allButtons[0], allButtons[1], allButtons[2]];
 
         // return [allButtons[0]];
@@ -104,8 +104,10 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
                 navigationState={{ index, routes: allRoutes }}
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
-            {/* TODO: Uncomment one resolved with IOS */}
-            {/* <StaggerButtonComponent buttons={filteredButtons as unknown as any} /> */}
+            {/* TODO: Uncomment once reports is resolved with IOS */}
+            <If condition={isQC}>
+                <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
+            </If>
         </ViewWrapper>
     );
 };
