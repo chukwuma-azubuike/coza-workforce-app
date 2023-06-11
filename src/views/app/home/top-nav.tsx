@@ -9,6 +9,7 @@ import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 import { Linking } from 'react-native';
+import { AVATAR_FALLBACK_URL } from '../../../constants';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     // API implementation
@@ -42,7 +43,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
                         shadow={4}
                         firstName={user?.firstName}
                         lastName={user?.lastName}
-                        imageUrl={user?.pictureUrl ? user.pictureUrl : 'https://i.ibb.co/P6k4dWF/Group-3.png'}
+                        imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                     />
                 }
                 p={0}
