@@ -109,9 +109,9 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const handleRefresh = () => {
         refresh();
+        refetchServices();
         if (!isGlobalPastor) {
             refetch();
-            refetchServices();
             latestAttendanceRefetch();
         }
     };

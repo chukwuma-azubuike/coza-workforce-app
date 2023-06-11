@@ -265,5 +265,3 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
 };
 
 export default ClockButton;
-
-// TODO: Update ENV to production before deployment
