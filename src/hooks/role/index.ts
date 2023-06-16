@@ -45,9 +45,9 @@ export const departments = {
 export enum ROLE_HEIRARCHY {
     'worker' = 1,
     'AHOD' = 2,
-    'HOD' = 3,
-    'internshipHOD' = 3, // Frontend generated
-    'qcHOD' = 4, // Frontend generated
+    'HOD' = 2,
+    'internshipHOD' = 2, // Frontend generated
+    // 'qcHOD' = 1, // Frontend generated
     'campusCoordinator' = 5,
     'campusPastor' = 5,
     'admin' = 6,
@@ -91,9 +91,9 @@ const useRole = () => {
         if (!roleKey) return -1;
         if (!ROLE_HEIRARCHY[roleKey]) return -1;
 
-        if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC) {
-            return ROLE_HEIRARCHY.qcHOD;
-        }
+        // if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC) {
+        //     return ROLE_HEIRARCHY.qcHOD;
+        // }
 
         if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship) {
             return ROLE_HEIRARCHY.internshipHOD;

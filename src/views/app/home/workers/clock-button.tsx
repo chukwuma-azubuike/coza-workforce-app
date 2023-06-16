@@ -198,13 +198,13 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         if (canClockOut && latestAttendanceData) {
             Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
                 {
+                    text: 'No',
+                    style: 'destructive',
+                },
+                {
                     text: 'Yes',
                     style: 'default',
                     onPress: handleClockout,
-                },
-                {
-                    text: 'No',
-                    style: 'destructive',
                 },
             ]);
             return;
