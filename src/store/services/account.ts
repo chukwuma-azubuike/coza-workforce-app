@@ -201,6 +201,13 @@ export const accountServiceSlice = createApi({
             }),
         }),
 
+        deleteUser: endpoint.mutation<IUser, string>({
+            query: email => ({
+                url: `/${SERVICE_URL}/delete/${email}`,
+                method: REST_API_VERBS.DELETE,
+            }),
+        }),
+
         sendForgotPasswordOTP: endpoint.query<ISendOTPResponse, string>({
             query: email => `/${SERVICE_URL}/forget-password/otp/${email}`,
         }),
@@ -285,6 +292,7 @@ export const {
     useGetUserByIdQuery,
     useCreateUserMutation,
     useUpdateUserMutation,
+    useDeleteUserMutation,
     useResetPasswordMutation,
     useValidateEmailOTPMutation,
     useSendForgotPasswordOTPQuery,

@@ -125,23 +125,7 @@ export interface IUser {
     };
 }
 
-export type IEditProfilePayload = Pick<
-    IUser,
-    | '_id'
-    | 'gender'
-    | 'address'
-    | 'birthDay'
-    | 'firstName'
-    | 'lastName'
-    | 'socialMedia'
-    | 'maritalStatus'
-    | 'nextOfKin'
-    | 'nextOfKinPhoneNo'
-    | 'occupation'
-    | 'pictureUrl'
-    | 'placeOfWork'
-    | 'phoneNumber'
->;
+export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
@@ -156,6 +140,13 @@ export interface ICreateUserPayload {
     roleId: string | undefined;
     registeredBy: string;
     isRegistered: boolean;
+}
+
+export interface IReAssignUserPayload {
+    _id: IUser['_id'];
+    roleId: IUser['roleId'];
+    campusId: IUser['campus']['_id'];
+    departmentId: IUser['campus']['_id'];
 }
 
 // Attendance
