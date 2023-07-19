@@ -1,4 +1,4 @@
-import { Box, FormControl, Icon, VStack } from 'native-base';
+import { Box, FormControl, VStack } from 'native-base';
 import React, { useState } from 'react';
 import useRole from '../../../hooks/role';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -8,7 +8,7 @@ import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/depart
 import { useGetCampusesQuery } from '../../../store/services/campus';
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { Formik, FormikConfig } from 'formik';
-import { useGetServicesByCampusIdQuery } from '../../../store/services/services';
+import { useGetServicesQuery } from '../../../store/services/services';
 import { IExportFilters } from '../../../store/types';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
 import { THEME_CONFIG } from '../../../config/appConfig';
@@ -17,6 +17,7 @@ import moment from 'moment';
 import { Platform } from 'react-native';
 import { PermissionsAndroid } from 'react-native';
 import { downloadFile } from '../../../store/services/fetch-utils/fetchBlob';
+import { Icon } from '@rneui/themed';
 
 export type IExportType = 'ATTENDANCE' | 'TICKETS' | 'PERMISSIONS';
 
@@ -65,7 +66,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         data: services,
         refetch: refetchServices,
         isLoading: servicesLoading,
-    } = useGetServicesByCampusIdQuery(campusIdForServiceQuery);
+    } = useGetServicesQuery({ campusId: campusIdForServiceQuery });
 
     const refresh = () => {
         refetchDepartments();
