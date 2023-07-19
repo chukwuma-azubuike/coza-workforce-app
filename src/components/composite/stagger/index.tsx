@@ -4,7 +4,7 @@ import { ColorType } from 'native-base/lib/typescript/components/types';
 import React from 'react';
 import { IIconTypes } from '../../../utils/types';
 
-interface IStaggerButtonComponentProps extends IBoxProps {
+export interface IStaggerButtonComponentProps extends IBoxProps {
     buttons: {
         iconName: string;
         color: ColorType;

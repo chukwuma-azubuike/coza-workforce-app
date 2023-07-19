@@ -14,6 +14,7 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '../../../../hooks/role';
 import If from '../../../../components/composite/if-container';
+import { ServiceReportSchema } from '../../../../utils/schemas';
 
 const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IServiceReportPayload;
@@ -77,6 +78,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             validateOnChange
             enableReinitialize
             onSubmit={onSubmit}
+            validationSchema={ServiceReportSchema}
             initialValues={INITIAL_VALUES as unknown as IServiceReportPayload}
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
@@ -93,6 +95,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     fieldName="serviceStartTime"
                                     onSelectDate={setFieldValue}
                                     value={values?.serviceStartTime}
+                                    formControlProps={{ isRequired: true, isInvalid: !!errors?.serviceStartTime }}
                                 />
                                 <DateTimePickerComponent
                                     mode="time"
@@ -100,6 +103,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     fieldName="serviceEndTime"
                                     onSelectDate={setFieldValue}
                                     value={values?.serviceEndTime}
+                                    formControlProps={{ isRequired: true, isInvalid: !!errors?.serviceEndTime }}
                                 />
                             </HStack>
                             <FormControl isRequired>
