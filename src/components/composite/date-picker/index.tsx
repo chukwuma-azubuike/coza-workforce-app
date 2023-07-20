@@ -9,6 +9,7 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import { Platform } from 'react-native';
 import If from '../if-container';
 import useAppColorMode from '../../../hooks/theme/colorMode';
+import { InterfaceFormControlProps } from 'native-base/lib/typescript/components/composites/FormControl/types';
 
 const MonthPicker = ({ today }: { today?: boolean }) => {
     const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
@@ -58,7 +59,9 @@ interface IDateTimePickerProps {
     minimumDate?: Date;
     maximumDate?: Date;
     fieldName?: string;
+    isInvalid?: boolean;
     value?: string | Date;
+    formControlProps?: InterfaceFormControlProps;
     onSelectDate?: (fieldName: string, value: any) => void;
     dateFormat?: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
 }
@@ -67,10 +70,12 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     mode,
     label,
     value,
+    isInvalid,
     fieldName,
     minimumDate,
     maximumDate,
     onSelectDate,
+    formControlProps,
     dateFormat = 'day month year',
 }: IDateTimePickerProps) => {
     const isIOS = Platform.OS === 'ios';
@@ -94,36 +99,40 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     };
 
     return (
-        <VStack w={160} alignItems="flex-start">
-            <FormControl.Label isRequired>{label}</FormControl.Label>
-            <If condition={!isIOS}>
-                <InputComponent
-                    leftIcon={{
-                        name: mode === 'time' ? 'clockcircleo' : 'calendar',
-                        type: 'antdesign',
-                    }}
-                    onPressIn={handlePress}
-                    showSoftInputOnFocus={false}
-                    value={moment(date).format(mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy')}
-                    placeholder={moment().format(
-                        mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
-                    )}
-                />
-            </If>
-            {show && (
-                <DateTimePicker
-                    value={value ? new Date(value) : date}
-                    mode={mode as any}
-                    onChange={onChange}
-                    accentColor={THEME_CONFIG.primary}
-                    minimumDate={minimumDate}
-                    maximumDate={maximumDate}
-                    style={{ width: isIOS ? 90 : 'initial' }}
-                    onTouchCancel={handleTouchCancel}
-                    dateFormat={dateFormat}
-                />
-            )}
-        </VStack>
+        <FormControl {...formControlProps}>
+            <VStack w={160} alignItems="flex-start">
+                <FormControl.Label>{label}</FormControl.Label>
+                <If condition={!isIOS}>
+                    <InputComponent
+                        leftIcon={{
+                            name: mode === 'time' ? 'clockcircleo' : 'calendar',
+                            type: 'antdesign',
+                        }}
+                        onPressIn={handlePress}
+                        showSoftInputOnFocus={false}
+                        value={moment(date).format(
+                            mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
+                        )}
+                        placeholder={moment().format(
+                            mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
+                        )}
+                    />
+                </If>
+                {show && (
+                    <DateTimePicker
+                        value={value ? new Date(value) : date}
+                        mode={mode as any}
+                        onChange={onChange}
+                        accentColor={THEME_CONFIG.primary}
+                        minimumDate={minimumDate}
+                        maximumDate={maximumDate}
+                        style={{ width: isIOS ? 90 : 'initial' }}
+                        onTouchCancel={handleTouchCancel}
+                        dateFormat={dateFormat}
+                    />
+                )}
+            </VStack>
+        </FormControl>
     );
 };
 
