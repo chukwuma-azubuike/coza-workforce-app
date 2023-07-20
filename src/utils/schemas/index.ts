@@ -166,8 +166,15 @@ export const ResetPasswordSchema = Yup.object().shape({
         .required('Confirming you password is required.'),
 });
 
+// Report forms
 export const GSPReportSchema = Yup.object().shape({
     campusCoordinatorComment: Yup.string().required('Please provide a comment'),
+});
+
+export const ServiceReportSchema = Yup.object().shape({
+    serviceStartTime: Yup.string().required('Please provide service start time'),
+    serviceEndTime: Yup.string().required('Please provide service end time'),
+    serviceReportLink: Yup.string().required('Please provide report link'),
 });
 
 export const CreateUserSchema = Yup.object().shape({

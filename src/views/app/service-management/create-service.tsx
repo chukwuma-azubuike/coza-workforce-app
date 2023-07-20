@@ -19,6 +19,7 @@ import { CreateServiceSchema } from '../../../utils/schemas';
 
 const tags: any = [
     { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },
+    { id: 'COZA_TUESDAYS', value: 'COZA Tuesdays' },
     { id: 'COZA_WEDNESDAYS', value: 'COZA Wednesdays' },
     { id: 'DPE', value: 'DPE' },
     { id: 'HOME_TRAINING', value: 'Home Training' },

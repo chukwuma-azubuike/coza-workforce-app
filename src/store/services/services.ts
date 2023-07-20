@@ -53,12 +53,6 @@ export const servicesServiceSlice = createApi({
             query: id => `/${SERVICE_URL}/${id}`,
         }),
 
-        getServicesByCampusId: endpoint.query<IService[], ICampus['_id'] | undefined>({
-            query: campusId => `/${SERVICE_URL}/getServices/${campusId}`,
-
-            transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
-        }),
-
         // Add your endpoints here
     }),
 });
@@ -70,5 +64,4 @@ export const {
     useGetLatestServiceQuery,
     useGetServiceByIdQuery,
     useGetServicesQuery,
-    useGetServicesByCampusIdQuery,
 } = servicesServiceSlice;
