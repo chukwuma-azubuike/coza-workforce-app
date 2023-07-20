@@ -6,7 +6,7 @@ import useRole from '../../../hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '../../../components/composite/tabs';
-import StaggerButtonComponent from '../../../components/composite/stagger';
+import StaggerButtonComponent, { IStaggerButtonComponentProps } from '../../../components/composite/stagger';
 import { ITicket } from '../../../store/types';
 import useMediaQuery from '../../../hooks/media-query';
 import If from '../../../components/composite/if-container';
@@ -78,23 +78,23 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
             handleClick: goToCampus,
             iconType: 'material-community',
         },
-        // {
-        //     color: 'green.600',
-        //     iconName: 'download-outline',
-        //     handleClick: goToExport,
-        //     iconType: 'ionicon',
-        // },
+        {
+            color: 'green.600',
+            iconName: 'download-outline',
+            handleClick: goToExport,
+            iconType: 'ionicon',
+        },
     ];
 
     const filteredButtons = React.useMemo(() => {
         // TODO: Uncomment once resolved with IOS
-        // if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
-        // if (isQcHOD) return [...allButtons];
+        if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
+        if (isQcHOD) return [...allButtons];
         if (isQC) return [allButtons[0], allButtons[1], allButtons[2]];
 
-        // return [allButtons[0]];
+        return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, []) as IStaggerButtonComponentProps['buttons'];
 
     return (
         <ViewWrapper>
@@ -105,8 +105,8 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
             {/* TODO: Uncomment once reports is resolved with IOS */}
-            <If condition={isQC}>
-                <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
+            <If condition={isQcHOD || isGlobalPastor || isCampusPastor}>
+                <StaggerButtonComponent buttons={filteredButtons} />
             </If>
         </ViewWrapper>
     );
