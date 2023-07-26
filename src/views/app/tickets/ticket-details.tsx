@@ -86,13 +86,13 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         },
     ] = useUpdateTicketMutation();
 
-    const [comment, setComment] = React.useState<string>();
+    const [contestComment, setContestComment] = React.useState<string>();
     const [contestReplyComment, setContestReplyComment] = React.useState<string | undefined>(
         ticket?.contestReplyComment as string
     );
 
     const handleChange = (value: string) => {
-        setComment(value);
+        setContestComment(value);
     };
     const handleReplyChange = (value: string) => {
         setContestReplyComment(value);
@@ -102,7 +102,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         contestTicket({
             userId,
             _id: ticketParams?._id,
-            comment: comment as string,
+            comment: contestComment as string,
         });
     };
 
@@ -433,7 +433,12 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 width="1/2"
                                 onPress={handleSubmit}
                                 isLoading={contestLoading}
-                                isDisabled={!comment && ticket?.status === 'ISSUED'}
+                                isDisabled={
+                                    (!contestComment || !!ticket?.contestComment) &&
+                                    (ticket?.status === 'ISSUED' ||
+                                        ticket?.status === 'ACKNOWLEGDED' ||
+                                        ticket?.status === 'CONTESTED')
+                                }
                             >
                                 Contest ticket
                             </ButtonComponent>
