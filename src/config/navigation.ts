@@ -41,6 +41,8 @@ import WorkforceSummary from '../views/app/workforce-management';
 import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
 import UserReport from '../views/app/workforce-management/user-reports';
 import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
+import CampusGroupHeads from '../views/app/group-head-role';
+import CreateGroupHead from '../views/app/group-head-role/create-group-head';
 // import Export from '../views/app/export';
 
 export interface IAppRoute {
@@ -258,6 +260,25 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Create service',
                 component: CreateServiceManagement,
                 options: { title: 'Create service' },
+                submenus: [],
+                users: ['QC', 'programs'],
+                inMenuBar: false,
+                icon: { name: 'church', type: 'material-community' },
+            },
+        ],
+        users: ['QC', 'programs'],
+        inMenuBar: false,
+        icon: { name: 'church', type: 'material-community' },
+    },
+    {
+        name: 'Campus group heads',
+        component: CampusGroupHeads,
+        options: { title: 'Campus group heads' },
+        submenus: [
+            {
+                name: 'Create group head',
+                component: CreateGroupHead,
+                options: { title: 'Create group head' },
                 submenus: [],
                 users: ['QC', 'programs'],
                 inMenuBar: false,
