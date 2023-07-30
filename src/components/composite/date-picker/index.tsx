@@ -99,8 +99,8 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     };
 
     return (
-        <FormControl {...formControlProps}>
-            <VStack w={160} alignItems="flex-start">
+        <FormControl {...formControlProps} w="auto">
+            <VStack w='auto' alignItems="flex-start">
                 <FormControl.Label>{label}</FormControl.Label>
                 <If condition={!isIOS}>
                     <InputComponent
