@@ -12,6 +12,7 @@ import {
     IEditProfilePayload,
     ICreateUserPayload,
     ICampusUserData,
+    IAssignSecondaryRole,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -280,6 +281,16 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<IGlobalWorkforceSummary>) => response.data,
         }),
+
+        assignSecondaryRoles: endpoint.mutation<any, IAssignSecondaryRole>({
+            query: body => ({
+                url: `${USER_SERVICE_URL}/addSecondaryDepartment/${body.userId}`,
+                method: REST_API_VERBS.PATCH,
+                body: {
+                    departments: body.departments,
+                },
+            }),
+        }),
     }),
 });
 
@@ -301,4 +312,5 @@ export const {
     useGetCampusSummaryByCampusIdQuery,
     useValidateForgotPasswordOTPMutation,
     useUploadUserMutation,
+    useAssignSecondaryRolesMutation,
 } = accountServiceSlice;

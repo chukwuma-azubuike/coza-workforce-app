@@ -241,6 +241,11 @@ export interface ICreateServicePayload {
     workerLateTime: string | Date;
 }
 
+export interface IAssignGroupHead {
+    worker: string;
+    role: string;
+}
+
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
 
 // Permissions
@@ -331,6 +336,15 @@ export interface IRole {
     description: string;
     createdAt: string;
     __v: number;
+}
+
+export interface IAssignSecondaryRole {
+    departments: {
+        campusId: string;
+        departmentId: string;
+    }[];
+    email?: string;
+    userId: string;
 }
 
 // Department
