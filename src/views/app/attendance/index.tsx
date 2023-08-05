@@ -77,7 +77,6 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 navigationState={{ index, routes: allRoutes }}
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
-            {/* TODO: Uncomment one resolved with IOS */}
             <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
                 <StaggerButtonComponent
                     buttons={[
