@@ -20,7 +20,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     const roleFilterArray = [
         { role: isQC, routes: ['Service management'] },
         { role: isCampusPastor, routes: ['Service management'] },
-        { role: isAHOD || isHOD, routes: ['Manual clock in', 'Service management'] },
+        { role: isAHOD || isHOD, routes: ['Manual clock in', 'Service management', 'Export Data'] },
         { role: isGlobalPastor, routes: ['Manual clock in', 'Service management'] },
         { role: (isHOD && !isQC) || (isAHOD && !isQC), routes: ['Manual clock in', 'Service management'] },
     ];

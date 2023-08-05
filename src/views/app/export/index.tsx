@@ -28,9 +28,8 @@ export const dataValues = {
 };
 
 const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    // const { navigation } = props;
-    // const { goBack } = navigation;
-    const { type } = props.route.params as { type: IExportType };
+    const params = props.route.params as { type: IExportType };
+    const type = params?.type;
 
     const {
         user: { campus: userCampus },
@@ -320,8 +319,8 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
                                 <FormControl>
                                     <ButtonComponent
-                                        type="submit"
                                         mt={4}
+                                        type="submit"
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
