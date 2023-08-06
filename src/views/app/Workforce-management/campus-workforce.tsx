@@ -216,7 +216,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     </Stack>
                 </Center>
             </ViewWrapper>
-            <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin}>
+            <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin || isInternshipHOD}>
                 <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
             </If>
         </ErrorBoundary>
