@@ -1,21 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICampus, IDefaultResponse, REST_API_VERBS } from '../types';
+import { ICampus, ICreateCampusPayload, IDefaultResponse, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'campus';
-
-export interface ICreateCampusPayload {
-    campusName: string;
-    description: string;
-    address: string;
-    LGA: string;
-    state: string;
-    country: string;
-    location: {
-        coordinates: {};
-    };
-    dateOfBirth: string;
-}
 
 export const campusServiceSlice = createApi({
     reducerPath: SERVICE_URL,

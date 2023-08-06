@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICampus, IDefaultResponse, IDepartment, IRequestDepartmentPayload, REST_API_VERBS } from '../types';
+import { ICampus, ICreateDepartmentPayload, IDefaultResponse, IDepartment, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'department';
@@ -10,7 +10,7 @@ export const departmentServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        createDepartment: endpoint.mutation<IDepartment, IRequestDepartmentPayload>({
+        createDepartment: endpoint.mutation<IDepartment, ICreateDepartmentPayload>({
             query: body => ({
                 url: `${SERVICE_URL}/createDepartment`,
                 method: REST_API_VERBS.POST,

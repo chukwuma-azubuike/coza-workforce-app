@@ -41,6 +41,8 @@ import WorkforceSummary from '../views/app/workforce-management';
 import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
 import UserReport from '../views/app/workforce-management/user-reports';
 import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
+import CreateDepartment from '../views/app/workforce-management/create-department';
+import CreateCampus from '../views/app/workforce-management/create-campus';
 // import Export from '../views/app/export';
 
 export interface IAppRoute {
@@ -313,6 +315,24 @@ const AppRoutes: IAppRoute[] = [
                 name: 'Create User',
                 component: CreateUser,
                 options: { title: 'Create user' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Create Department',
+                component: CreateDepartment,
+                options: { title: 'Create department' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Create Campus',
+                component: CreateCampus,
+                options: { title: 'Create campus' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,

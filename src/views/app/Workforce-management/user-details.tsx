@@ -47,7 +47,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetch: refetchDepartments,
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
-    } = useGetDepartmentsByCampusIdQuery(campusId as string, { skip: !campusId, refetchOnMountOrArgChange: true });
+    } = useGetDepartmentsByCampusIdQuery(campusId || (data?.campus._id as string), { refetchOnMountOrArgChange: true });
 
     const [updateUser, updateResults] = useUpdateUserMutation();
     const [deleteUser, deleteUserResults] = useDeleteUserMutation();
@@ -179,6 +179,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             px={6}
                                             size="xs"
                                             width="auto"
+                                            bgColor="info.500"
                                             startIcon={
                                                 <Icon
                                                     size={18}
@@ -197,6 +198,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             px={6}
                                             size="xs"
                                             width="auto"
+                                            bgColor="danger.600"
                                             startIcon={
                                                 <Icon size={18} color="white" name={'delete'} type="material-icon" />
                                             }
