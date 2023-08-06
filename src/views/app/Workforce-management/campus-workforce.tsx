@@ -1,4 +1,4 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
@@ -12,15 +12,18 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 import useRole from '../../../hooks/role';
 import { useGetCampusSummaryByCampusIdQuery } from '../../../store/services/account';
 import Utils from '../../../utils';
+import useScreenFocus from '../../../hooks/focus';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { _id?: string };
     const campusId = params?._id;
 
-    const { navigate } = useNavigation();
+    const {
+        navigation: { navigate },
+    } = props;
 
     const handlePress = (elm: any) => {
-        navigate('Workforce management' as never, { ...elm, campusId } as never);
+        navigate('Workforce management', { ...elm, campusId });
     };
 
     const {
@@ -32,7 +35,12 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         user: { campus },
     } = useRole();
 
-    const { data, isLoading, isSuccess, isFetching } = useGetCampusSummaryByCampusIdQuery(campusId || campus._id);
+    const {
+        data,
+        isLoading,
+        isFetching,
+        refetch: campusSummaryRefetch,
+    } = useGetCampusSummaryByCampusIdQuery(campusId || campus._id);
 
     const campusInfo = [
         {
@@ -83,15 +91,15 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     );
 
     const gotoCreateWorker = () => {
-        navigate('Create User' as never);
+        navigate('Create User');
     };
 
     const gotoCreateCampus = () => {
-        // navigation.navigate('Create User');
+        navigate('Create Campus');
     };
 
     const gotoCreateDepartment = () => {
-        // navigation.navigate('Create Department');
+        navigate('Create Department');
     };
 
     const allButtons = [
@@ -128,6 +136,9 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     }, []);
 
     useCustomBackNavigation({ targetRoute: isGlobalPastor || isSuperAdmin ? 'Global workforce' : 'More' });
+    useScreenFocus({
+        onFocus: campusSummaryRefetch,
+    });
 
     return (
         <ErrorBoundary>

@@ -142,6 +142,12 @@ export interface ICreateUserPayload {
     isRegistered: boolean;
 }
 
+export interface ICreateDepartmentPayload {
+    name: string;
+    campusId: string;
+    description: string;
+}
+
 export interface IReAssignUserPayload {
     _id: IUser['_id'];
     roleId: IUser['roleId'];
@@ -298,13 +304,13 @@ export interface IRequestPermissionPayload {
 }
 
 // Department
-
-export interface IRequestDepartmentPayload {
+export interface IDepartment {
     _id: string;
-    campusId: string;
-    createdAt: string;
-    description: string;
     departmentName: string;
+    campusId: string;
+    description: string;
+    createdAt: string;
+    __v: number;
 }
 
 // Campus
@@ -324,20 +330,24 @@ export interface ICampus extends ILog {
     createdAt: string;
 }
 
+export interface ICreateCampusPayload {
+    campusName: string;
+    description: string;
+    address: string;
+    LGA: string;
+    state: string;
+    country: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    dateOfBirth: string;
+}
+
 //Role
 export interface IRole {
     _id: string;
     name: string;
-    description: string;
-    createdAt: string;
-    __v: number;
-}
-
-// Department
-export interface IDepartment {
-    _id: string;
-    departmentName: string;
-    campusId: string;
     description: string;
     createdAt: string;
     __v: number;
