@@ -62,18 +62,18 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
             handleClick: gotoRequestPermission,
         },
         // TODO: Uncomment once resolved with IOS
-        // {
-        //     color: 'green.600',
-        //     iconType: 'ionicon',
-        //     iconName: 'download-outline',
-        //     handleClick: goToExport,
-        // },
+        {
+            color: 'green.600',
+            iconType: 'ionicon',
+            iconName: 'download-outline',
+            handleClick: goToExport,
+        },
     ];
 
     const filteredButtons = React.useMemo(() => {
         // TODO: Uncomment once resolved with IOS
-        // if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
-        // if (isQCHOD) return [...allButtons];
+        if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
+        if (isQCHOD) return [...allButtons];
 
         return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps
