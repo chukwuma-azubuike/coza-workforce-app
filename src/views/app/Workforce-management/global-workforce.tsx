@@ -1,4 +1,4 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
@@ -12,17 +12,16 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 import useRole from '../../../hooks/role';
 import { useGetGlobalWorkForceSummaryQuery } from '../../../store/services/account';
 import Utils from '../../../utils';
+import useScreenFocus from '../../../hooks/focus';
 
-const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { navigate } = useNavigation();
-
+const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation: { navigate } }) => {
     const handlePress = (elm: any) => {
-        navigate('Campus workforce' as never, elm as never);
+        navigate('Campus workforce', elm);
     };
 
     const { isQcHOD, isSuperAdmin, isGlobalPastor, isInternshipHOD, isCampusPastor } = useRole();
 
-    const { data, isLoading, isFetching } = useGetGlobalWorkForceSummaryQuery();
+    const { data, isLoading, isFetching, refetch: globalSummaryRefetch } = useGetGlobalWorkForceSummaryQuery();
 
     const summaryList = [
         {
@@ -67,15 +66,15 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     );
 
     const gotoCreateWorker = () => {
-        navigate('Create User' as never);
+        navigate('Create User');
     };
 
     const gotoCreateCampus = () => {
-        // navigation.navigate('Create User');
+        navigate('Create Campus');
     };
 
     const gotoCreateDepartment = () => {
-        // navigation.navigate('Create Department');
+        navigate('Create Department');
     };
 
     const allButtons = [
@@ -112,6 +111,9 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     }, []);
 
     useCustomBackNavigation({ targetRoute: 'More' });
+    useScreenFocus({
+        onFocus: globalSummaryRefetch,
+    });
 
     return (
         <ErrorBoundary>
