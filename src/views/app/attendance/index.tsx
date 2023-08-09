@@ -10,6 +10,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '../../../hooks/focus';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
+import { IReportTypes } from '../export';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
@@ -36,7 +37,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     });
 
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: 'ATTENDANCE' });
+        navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
     };
 
     const [index, setIndex] = React.useState(0);

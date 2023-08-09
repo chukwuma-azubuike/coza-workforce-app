@@ -3,7 +3,8 @@ import { Button, IButtonProps } from 'native-base';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
-
+import { PermissionsAndroid } from 'react-native';
+import { generateExcelFile } from '../../../utils/generateFile';
 interface IButtonComponent extends IButtonProps {
     size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;
@@ -61,6 +62,72 @@ export const AddButtonComponent: React.FC<IButtonComponent> = props => {
             size="md"
         >
             <Icon name="plus" type="entypo" size={36} color="white" />
+        </ButtonComponent>
+    );
+};
+
+interface IDownloadButton extends IButtonComponent {
+    type: 'excel' | 'pdf' | 'csv';
+    fileName: string;
+    data: any[];
+}
+
+export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName, ...props }) => {
+    const handleDownload = async () => {
+        try {
+            // Check for Permission (check if permission is already given or not)
+            let isPermitedExternalStorage = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+            );
+
+            if (!isPermitedExternalStorage) {
+                // Ask for permission
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+                    {
+                        buttonPositive: 'OK',
+                        buttonNegative: 'Cancel',
+                        buttonNeutral: 'Ask Me Later',
+                        title: 'Storage permission needed',
+                        message: 'We need access to store data on your local drive.',
+                    }
+                );
+
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    // Permission Granted (calling our exportDataToExcel function)
+                    generateExcelFile(data, fileName);
+                    console.log('Permission granted');
+                } else {
+                    // Permission denied
+                    console.log('Permission denied');
+                }
+            } else {
+                // Already have Permission (calling our exportDataToExcel function)
+                generateExcelFile(data, fileName);
+            }
+        } catch (e) {
+            console.log('Error while checking permission');
+            console.log(e);
+            return;
+        }
+    };
+
+    return (
+        <ButtonComponent
+            size="md"
+            right={6}
+            bottom={6}
+            shadow={6}
+            width={60}
+            height={60}
+            borderRadius="full"
+            position="absolute"
+            alignItems="center"
+            justifyContent="center"
+            {...props}
+            onPress={handleDownload}
+        >
+            <Icon name="download-outline" type="ionicon" size={36} color="white" />
         </ButtonComponent>
     );
 };

@@ -16,6 +16,7 @@ import useMediaQuery from '../../../hooks/media-query';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import If from '../../../components/composite/if-container';
+import { IReportTypes } from '../export';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -31,7 +32,7 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     };
 
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: 'PERMISSIONS' });
+        navigation.navigate('Export Data', { type: IReportTypes.PERMISSIONS });
     };
 
     const updatedListItem = route?.params as IPermission;

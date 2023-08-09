@@ -10,6 +10,7 @@ import StaggerButtonComponent, { IStaggerButtonComponentProps } from '../../../c
 import { ITicket } from '../../../store/types';
 import useMediaQuery from '../../../hooks/media-query';
 import If from '../../../components/composite/if-container';
+import { IReportTypes } from '../export';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -37,7 +38,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     };
 
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: 'TICKETS' });
+        navigation.navigate('Export Data', { type: IReportTypes.TICKETS });
     };
 
     const renderScene = SceneMap({

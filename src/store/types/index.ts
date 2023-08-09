@@ -533,3 +533,9 @@ export interface IExportFilters {
     serviceId: string | undefined;
     data: string;
 }
+
+export interface IReportDownloadPayload {
+    campusId?: string;
+    serviceId?: string;
+    departmentId?: string;
+}

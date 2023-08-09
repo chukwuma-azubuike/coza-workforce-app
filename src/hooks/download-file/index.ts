@@ -1,5 +1,5 @@
 import RNFetchBlob from 'rn-fetch-blob';
-import APP_ENV from '../../../config/envConfig';
+import APP_ENV from '../../config/envConfig';
 import { Alert } from 'react-native';
 import React from 'react';
 import RNFS from 'react-native-fs';
@@ -19,10 +19,12 @@ const getFileExtention = (fileUrl: string) => {
     return /[.]/.exec(fileUrl) ? /[^.]+$/.exec(fileUrl) : undefined;
 };
 
-export const downloadFile = (params: DownloadTicketsProps) => {
+export const useDownloadFile = (params: DownloadTicketsProps, skip: boolean) => {
     const { type, campusId, state, serviceId, departmentId } = params;
 
-    const [isDownloading, setIsDownloading] = state;
+    const [isDownloading, setIsDownloading] = React.useState<boolean>(false);
+
+    if (skip) return { isDownloading };
 
     let route = '';
     if (type === 'ticket' || type === 'permissions') {
@@ -42,17 +44,16 @@ export const downloadFile = (params: DownloadTicketsProps) => {
         // File URL which we want to download
         let FILE_URL = url;
         // Function to get extention of the file url
-        let file_ext = '.xsls' || getFileExtention(FILE_URL);
+        let file_ext = getFileExtention(FILE_URL);
 
         // config: To get response by passing the downloading related options
         // fs: Root directory path to download
-        const { config } = RNFetchBlob;
-        let RootDir = RNFS.DownloadDirectoryPath;
-        const path = RootDir + '/file_' + Math.floor(date.getTime() + date.getSeconds() / 2) + file_ext;
+        const { config, fs } = RNFetchBlob;
+        let RootDir = fs.dirs.PictureDir;
         let options = {
             fileCache: true,
             addAndroidDownloads: {
-                path,
+                path: RootDir + '/file_' + Math.floor(date.getTime() + date.getSeconds() / 2) + file_ext,
                 description: 'downloading file...',
                 notification: true,
                 // useDownloadManager works with Android only
@@ -65,10 +66,11 @@ export const downloadFile = (params: DownloadTicketsProps) => {
                 // Save the file using RNFS
                 const fileData = (await response.blob('blob', 1)) as any;
                 const downloadDir = RNFS.DownloadDirectoryPath;
-                await RNFS.writeFile(downloadDir, fileData, 'ascii');
+                const filePath = `${downloadDir}/example.xlsx`;
+                await RNFS.writeFile(filePath, fileData, 'ascii');
 
                 // Open the downloaded file with the default app for its type
-                await Share.open({ url: `file://${path}`, title: 'Open Excel File' });
+                await Share.open({ url: `file://${filePath}`, title: 'Open Excel File' });
                 // Alert after successful downloading
                 Alert.alert('File Downloaded Successfully.');
             });
