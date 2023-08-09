@@ -14,11 +14,12 @@ interface IViewWrapper
     scroll?: boolean;
     noPadding?: boolean;
     refreshing?: boolean;
+    ref?: React.Ref<unknown>;
     onRefresh?: (args?: any) => void;
 }
 
-const ViewWrapper = (props: IViewWrapper) => {
-    const { scroll, onRefresh, refreshing, noPadding } = props;
+const ViewWrapper: React.FC<IViewWrapper> = props => {
+    const { ref, scroll, onRefresh, refreshing, noPadding } = props;
     const ActiveView = scroll ? ScrollView : View;
 
     const height = useHeaderHeight();
@@ -30,6 +31,7 @@ const ViewWrapper = (props: IViewWrapper) => {
             behavior={Platform.OS === 'ios' ? 'height' : undefined}
         >
             <ActiveView
+                ref={ref}
                 _dark={{ background: 'black' }}
                 _light={{ background: 'white' }}
                 style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16, paddingBottom: 0 }}

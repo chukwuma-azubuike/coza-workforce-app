@@ -28,9 +28,10 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
     const { setModalState } = useModal();
     const { goBack } = useNavigation();
-    const { isSuperAdmin, isGlobalPastor, isCampusPastor, rolesPermittedToCreate } = useRole();
+    const { isSuperAdmin, isGlobalPastor, isCampusPastor, isInternshipHOD, rolesPermittedToCreate } = useRole();
 
-    const canEdit = isSuperAdmin || isGlobalPastor || isCampusPastor;
+    const canEdit = isSuperAdmin || isGlobalPastor || isCampusPastor || isInternshipHOD;
+    const canDelete = isSuperAdmin || isGlobalPastor || isCampusPastor;
 
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
     const handleEditMode = () => {
@@ -46,7 +47,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetch: refetchDepartments,
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
-    } = useGetDepartmentsByCampusIdQuery(campusId as string, { skip: !campusId, refetchOnMountOrArgChange: true });
+    } = useGetDepartmentsByCampusIdQuery(campusId || (data?.campus._id as string), { refetchOnMountOrArgChange: true });
 
     const [updateUser, updateResults] = useUpdateUserMutation();
     const [deleteUser, deleteUserResults] = useDeleteUserMutation();
@@ -173,10 +174,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <AvatarComponent size="2xl" imageUrl={data?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 </Center>
                                 <If condition={canEdit}>
-                                    <HStack justifyContent="space-between">
+                                    <HStack my={3} justifyContent="space-between">
                                         <ButtonComponent
+                                            px={6}
                                             size="xs"
-                                            width={160}
+                                            width="auto"
+                                            bgColor="info.500"
                                             startIcon={
                                                 <Icon
                                                     size={18}
@@ -192,12 +195,15 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {isEditMode ? 'Done' : 'Reassign'}
                                         </ButtonComponent>
                                         <ButtonComponent
+                                            px={6}
                                             size="xs"
-                                            width={160}
+                                            width="auto"
+                                            bgColor="danger.600"
                                             startIcon={
                                                 <Icon size={18} color="white" name={'delete'} type="material-icon" />
                                             }
                                             onPress={handleDelete}
+                                            isDisabled={!canDelete}
                                             isLoading={deleteUserResults.isLoading}
                                         >
                                             Delete
@@ -353,6 +359,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 defaultValue={data?.campus._id}
                                                 selectedValue={values.campusId}
                                                 onValueChange={handleCampusIdChange}
+                                                isDisabled={isInternshipHOD || isCampusPastor}
                                             >
                                                 {sortedCampuses?.map((campus, index) => (
                                                     <SelectItemComponent

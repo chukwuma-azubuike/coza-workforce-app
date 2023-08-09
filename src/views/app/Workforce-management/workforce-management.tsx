@@ -26,11 +26,11 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     };
 
     const gotoCreateCampus = () => {
-        // navigation.navigate('Create User');
+        navigation.navigate('Create Campus');
     };
 
     const gotoCreateDepartment = () => {
-        // navigation.navigate('Create Department');
+        navigation.navigate('Create Department');
     };
 
     const allButtons = [
