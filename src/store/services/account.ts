@@ -280,6 +280,16 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<IGlobalWorkforceSummary>) => response.data,
         }),
+
+        addDeviceToken: endpoint.mutation<any, { email: string; deviceId: string; fcmToken: string }>({
+            query: body => ({
+                url: `/${SERVICE_URL}/addDeviceToken`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+
+            transformResponse: (response: IDefaultResponse<any>) => response.data,
+        }),
     }),
 });
 
@@ -301,4 +311,5 @@ export const {
     useGetCampusSummaryByCampusIdQuery,
     useValidateForgotPasswordOTPMutation,
     useUploadUserMutation,
+    useAddDeviceTokenMutation,
 } = accountServiceSlice;
