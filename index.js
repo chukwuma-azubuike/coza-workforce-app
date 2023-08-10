@@ -24,8 +24,8 @@ messaging().setBackgroundMessageHandler(async remoteMessage => {
     notifee.displayNotification({
         title,
         body,
-        data: JSON.stringify(data)
-    })
+        data: JSON.stringify(data),
+    });
 
     //handle background event for when the notification is displayed in the background
     notifee.onBackgroundEvent(async ({ type, detail }) => {
