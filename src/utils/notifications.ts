@@ -5,6 +5,7 @@ import messaging from '@react-native-firebase/messaging';
 
 // Get the FCM token
 export const getFCMToken = async () => {
+    await messaging().registerDeviceForRemoteMessages();
     return await messaging().getToken();
 };
 
