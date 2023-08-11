@@ -32,7 +32,12 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
 
     const [campusId, setCampusId] = React.useState<string>();
 
-    const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
+    const {
+        data: campuses,
+        refetch: refetchCampuses,
+        isLoading: campusLoading,
+        isFetching: campusIsFetching,
+    } = useGetCampusesQuery();
     const [createDepartment, { isLoading, error }] = useCreateDepartmentMutation();
 
     const submitForm: FormikConfig<ICreateDepartmentPayload>['onSubmit'] = async (values, { resetForm }) => {
@@ -79,8 +84,12 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
         setCampusId(value);
     };
 
+    const refresh = () => {
+        refetchCampuses();
+    };
+
     return (
-        <ViewWrapper scroll noPadding>
+        <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={campusIsFetching}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateDepartmentPayload>
