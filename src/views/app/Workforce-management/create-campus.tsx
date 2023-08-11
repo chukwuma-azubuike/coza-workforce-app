@@ -14,6 +14,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InputComponent } from '../../../components/atoms/input';
 import TextAreaComponent from '../../../components/atoms/text-area';
 import { DateTimePickerComponent } from '../../../components/composite/date-picker';
+import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
+import { useAddress } from '../../../hooks/address';
 
 const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
@@ -24,7 +26,10 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const submitForm: FormikConfig<ICreateCampusPayload>['onSubmit'] = async (values, { resetForm }) => {
         try {
-            const result = await createCampus(values);
+            const result = await createCampus({
+                ...values,
+                coordinates: { lat: +values.coordinates.lat, long: +values.coordinates.long },
+            });
 
             if ('data' in result) {
                 setModalState({
@@ -62,13 +67,15 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         address: '',
         LGA: '',
         state: '',
-        country: '',
+        country: 'Nigeria',
         dateOfBirth: '',
         coordinates: {
             long: 0,
             lat: 0,
         },
     };
+
+    const { lgas, states, setStateId, countries } = useAddress();
 
     return (
         <ViewWrapper scroll noPadding>
@@ -82,6 +89,12 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         validationSchema={CreateCampusSchema}
                     >
                         {({ errors, values, handleChange, setFieldValue, handleSubmit }) => {
+                            const handleStateSelect = (value: any) => {
+                                const stateId = states.findIndex(state => state.name === value) + 1;
+                                setFieldValue('state', value);
+                                setStateId(stateId);
+                            };
+
                             return (
                                 <VStack w="100%" space={1}>
                                     <FormControl isRequired isInvalid={!!errors?.campusName}>
@@ -126,6 +139,100 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {errors?.description}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
+
+                                    <FormControl isRequired isInvalid={!!errors?.country}>
+                                        <FormControl.Label>Country</FormControl.Label>
+                                        <SelectComponent
+                                            isDisabled
+                                            placeholder="Choose Country"
+                                            selectedValue={values.country}
+                                            onValueChange={handleChange('country')}
+                                        >
+                                            {countries?.map((country, index) => (
+                                                <SelectItemComponent
+                                                    value={country.name}
+                                                    label={country.name}
+                                                    key={`${country}-${index}`}
+                                                />
+                                            ))}
+                                        </SelectComponent>
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors?.country}
+                                        </FormControl.ErrorMessage>
+                                    </FormControl>
+
+                                    <FormControl isRequired isInvalid={!!errors?.state}>
+                                        <FormControl.Label>State</FormControl.Label>
+                                        <SelectComponent
+                                            placeholder="Choose State"
+                                            selectedValue={values.state}
+                                            onValueChange={handleStateSelect as any}
+                                        >
+                                            {states?.map((state, index) => (
+                                                <SelectItemComponent
+                                                    value={state.name}
+                                                    label={state.name}
+                                                    key={`${state}-${index}`}
+                                                />
+                                            ))}
+                                        </SelectComponent>
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors?.state}
+                                        </FormControl.ErrorMessage>
+                                    </FormControl>
+                                    <FormControl isRequired isInvalid={!!errors?.LGA}>
+                                        <FormControl.Label>LGA</FormControl.Label>
+                                        <SelectComponent
+                                            placeholder="Choose LGA"
+                                            selectedValue={values.LGA}
+                                            onValueChange={handleChange('LGA')}
+                                        >
+                                            {lgas?.map((lga, index) => (
+                                                <SelectItemComponent
+                                                    value={lga.name}
+                                                    label={lga.name}
+                                                    key={`${lga}-${index}`}
+                                                />
+                                            ))}
+                                        </SelectComponent>
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors?.LGA}
+                                        </FormControl.ErrorMessage>
+                                    </FormControl>
+
                                     <FormControl isRequired isInvalid={!!errors?.address}>
                                         <FormControl.Label>Address</FormControl.Label>
                                         <TextAreaComponent
@@ -145,60 +252,6 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.address}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.LGA}>
-                                        <FormControl.Label>LGA</FormControl.Label>
-                                        <InputComponent value={values.LGA} onChangeText={handleChange('LGA')} />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.LGA}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.state}>
-                                        <FormControl.Label>State</FormControl.Label>
-                                        <InputComponent value={values.state} onChangeText={handleChange('state')} />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.state}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.country}>
-                                        <FormControl.Label>Country</FormControl.Label>
-                                        <InputComponent value={values.country} onChangeText={handleChange('country')} />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.country}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                     <FormControl isRequired isInvalid={!!errors?.dateOfBirth}>
@@ -225,31 +278,10 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl>
 
                                     <HStack justifyContent="space-between">
-                                        <FormControl width={160} isRequired isInvalid={!!errors?.coordinates?.long}>
-                                            <FormControl.Label>Longitude</FormControl.Label>
-                                            <InputComponent
-                                                value={`${values?.coordinates?.long}`}
-                                                onChangeText={handleChange('coordinates.long')}
-                                            />
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.coordinates?.long}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
                                         <FormControl width={160} isRequired isInvalid={!!errors?.coordinates?.lat}>
                                             <FormControl.Label>Latitude</FormControl.Label>
                                             <InputComponent
-                                                value={`${values?.coordinates?.lat}`}
+                                                value={values?.coordinates?.lat as unknown as string}
                                                 onChangeText={handleChange('coordinates.lat')}
                                             />
                                             <FormControl.ErrorMessage
@@ -265,6 +297,28 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 }
                                             >
                                                 {errors?.coordinates?.lat}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+
+                                        <FormControl width={160} isRequired isInvalid={!!errors?.coordinates?.long}>
+                                            <FormControl.Label>Longitude</FormControl.Label>
+                                            <InputComponent
+                                                value={values?.coordinates?.long as unknown as string}
+                                                onChangeText={handleChange('coordinates.long')}
+                                            />
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.coordinates?.long}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
                                     </HStack>
