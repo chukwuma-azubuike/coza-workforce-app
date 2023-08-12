@@ -16,6 +16,7 @@ import useMediaQuery from '../../../hooks/media-query';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import If from '../../../components/composite/if-container';
+import { IReportTypes } from '../export';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -31,7 +32,7 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     };
 
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: 'PERMISSIONS' });
+        navigation.navigate('Export Data', { type: IReportTypes.PERMISSIONS });
     };
 
     const updatedListItem = route?.params as IPermission;
@@ -62,18 +63,18 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
             handleClick: gotoRequestPermission,
         },
         // TODO: Uncomment once resolved with IOS
-        // {
-        //     color: 'green.600',
-        //     iconType: 'ionicon',
-        //     iconName: 'download-outline',
-        //     handleClick: goToExport,
-        // },
+        {
+            color: 'green.600',
+            iconType: 'ionicon',
+            iconName: 'download-outline',
+            handleClick: goToExport,
+        },
     ];
 
     const filteredButtons = React.useMemo(() => {
         // TODO: Uncomment once resolved with IOS
-        // if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
-        // if (isQCHOD) return [...allButtons];
+        if (isCampusPastor || isGlobalPastor) return [allButtons[1]];
+        if (isQCHOD) return [...allButtons];
 
         return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -16,3 +16,17 @@ export interface IModalState {
 }
 
 export type RemoteMessage = Parameters<Parameters<ReturnType<typeof messaging>['onMessage']>[0]>[0];
+export interface INGState {
+    state: {
+        name: string;
+        id: number;
+        locals: [{ name: string; id: number }];
+    };
+}
+
+export interface ICountry {
+    arcs: number[][];
+    type: string;
+    properties: { name: string; 'Alpha-2': string };
+    id: string;
+}

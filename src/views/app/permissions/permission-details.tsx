@@ -26,7 +26,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     const permissionParams = props.route.params as IPermission;
 
     const {
-        requestor: { firstName, lastName, pictureUrl, department, _id: requestorId },
+        requestor: { _id: requestorId },
         _id,
     } = permissionParams;
 
@@ -40,8 +40,6 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         data: permission,
         isLoading: permissionLoading,
         isFetching: permissionIsFetching,
-        isError: permissionIsError,
-        isSuccess: permissionIsSuccess,
     } = useGetPermissionByIdQuery(_id);
 
     const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(

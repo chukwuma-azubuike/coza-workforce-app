@@ -5,6 +5,7 @@ import {
     ICampus,
     IDefaultQueryParams,
     IDefaultResponse,
+    IReportDownloadPayload,
     IUser,
     IUserReportType,
     REST_API_VERBS,
@@ -157,6 +158,16 @@ export const attendanceServiceSlice = createApi({
             ) => res.data,
         }),
 
+        getAttendanceReportForDownload: endpoint.query<any, IReportDownloadPayload>({
+            query: params => ({
+                url: `${SERVICE_URL}/downloadServiceAttendance`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -171,4 +182,5 @@ export const {
     useGetWorkersAttendanceReportQuery,
     useGetLeadersAttendanceReportQuery,
     useGetDepartmentAttendanceReportQuery,
+    useGetAttendanceReportForDownloadQuery,
 } = attendanceServiceSlice;
