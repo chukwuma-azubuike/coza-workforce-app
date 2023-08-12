@@ -1,4 +1,4 @@
-import { Box, FormControl, VStack } from 'native-base';
+import { Box, FormControl, HStack, VStack } from 'native-base';
 import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -15,6 +15,9 @@ import { useGetPermissionsReportForDownloadQuery } from '../../../store/services
 import { useGetTicketsReportForDownloadQuery } from '../../../store/services/tickets';
 import { Alert } from 'react-native';
 import { Icon } from '@rneui/themed';
+import If from '../../../components/composite/if-container';
+import { DateTimePickerComponent } from '../../../components/composite/date-picker';
+import useRole from '../../../hooks/role';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -25,14 +28,19 @@ export enum IReportTypes {
 }
 
 const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as { type: IExportType };
+    const params = props?.route?.params as { type: IExportType };
     const type = params?.type;
 
-    const [campusId, setCampusId] = React.useState<string>('');
+    const { isCampusPastor, isQC, user } = useRole();
+    const cannotSwitchCampus = isCampusPastor || isQC;
+
+    const [campusId, setCampusId] = React.useState<string>(cannotSwitchCampus ? user?.campus?._id : '');
     const [departmentId, setDepartmentId] = React.useState<string>();
     const [serviceId, setServiceId] = React.useState<string>();
     const downloadState = React.useState<boolean>(false);
     const [dataType, setDataType] = React.useState<IExportType>(type);
+    const [startDate, setStartDate] = React.useState<number>();
+    const [endDate, setEndDate] = React.useState<number>();
 
     const {
         data: campusDepartments,
@@ -50,42 +58,52 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const { data: services, refetch: refetchServices, isLoading: servicesLoading } = useGetServicesQuery({});
 
+    const pastServices = React.useMemo(
+        () => services?.filter(service => moment(service.clockInStartTime).unix() < moment().unix()),
+        [services]
+    );
+
     const queryParamsReady = !!campusId || !!serviceId || !!departmentId;
 
     const {
         data: attendance,
         isSuccess: attendanceIsSuccess,
         isLoading: attendanceIsLoading,
+        isFetching: attendanceIsFetching,
     } = useGetAttendanceReportForDownloadQuery(
         {
             campusId,
             serviceId,
             departmentId,
         },
-        { skip: !queryParamsReady && dataType !== 'attendance' && !queryParamsReady, refetchOnMountOrArgChange: true }
+        { skip: !queryParamsReady && dataType !== 'attendance', refetchOnMountOrArgChange: true }
     );
     const {
         data: permissions,
         isSuccess: permissionsIsSuccess,
         isLoading: permissionsIsLoading,
+        isFetching: permissionIsFetching,
     } = useGetPermissionsReportForDownloadQuery(
         {
+            endDate,
             campusId,
+            startDate,
             departmentId,
         },
-        { skip: !queryParamsReady && dataType !== 'permissions' && !queryParamsReady, refetchOnMountOrArgChange: true }
+        { skip: !queryParamsReady && dataType !== 'permissions', refetchOnMountOrArgChange: true }
     );
     const {
         data: tickets,
         isSuccess: ticketsIsSuccess,
         isLoading: ticketsIsLoading,
+        isFetching: ticketsIsFetching,
     } = useGetTicketsReportForDownloadQuery(
         {
             campusId,
             serviceId,
             departmentId,
         },
-        { skip: !queryParamsReady && dataType !== 'tickets' && !queryParamsReady, refetchOnMountOrArgChange: true }
+        { skip: !queryParamsReady && dataType !== 'tickets', refetchOnMountOrArgChange: true }
     );
 
     const handleDataType = (value: IExportType) => {
@@ -124,7 +142,13 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         attendance,
     };
 
-    const isLoading = attendanceIsLoading || ticketsIsLoading || permissionsIsLoading;
+    const isLoading =
+        ticketsIsLoading ||
+        ticketsIsFetching ||
+        attendanceIsLoading ||
+        attendanceIsFetching ||
+        permissionsIsLoading ||
+        permissionIsFetching;
 
     const dataTypes = [
         {
@@ -141,7 +165,16 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     ];
 
-    const readyForDownload = !downloadState[0] && (attendanceIsSuccess || ticketsIsSuccess || permissionsIsSuccess);
+    const readyForDownload = attendanceIsSuccess || ticketsIsSuccess || permissionsIsSuccess;
+    const isPermission = dataType === 'permissions';
+
+    const handleStartDate = (fieldName: string, value: number) => {
+        setStartDate(moment(value).valueOf() / 1000);
+    };
+
+    const handleEndDate = (fieldName: string, value: number) => {
+        setEndDate(moment(value).valueOf() / 1000);
+    };
 
     return (
         <ViewWrapper scroll noPadding>
@@ -166,6 +199,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 selectedValue={campusId}
                                 placeholder="Choose campus"
                                 onValueChange={handleCampus}
+                                isDisabled={cannotSwitchCampus}
                             >
                                 {allCampuses?.map((campus, index) => (
                                     <SelectItemComponent
@@ -177,26 +211,47 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 ))}
                             </SelectComponent>
                         </FormControl>
-
-                        <FormControl isRequired>
-                            <FormControl.Label>Service</FormControl.Label>
-                            <SelectComponent
-                                placeholder="Choose service"
-                                selectedValue={serviceId}
-                                onValueChange={handleService}
-                            >
-                                {services?.map((service, index) => (
-                                    <SelectItemComponent
-                                        value={service._id}
-                                        key={`service-${index}`}
-                                        label={`${service.name} - ${
-                                            service.serviceTime ? moment(service.serviceTime).format('DD-MM-YYYY') : ''
-                                        }`}
-                                        isLoading={servicesLoading}
+                        <If condition={!isPermission}>
+                            <FormControl isRequired>
+                                <FormControl.Label>Service</FormControl.Label>
+                                <SelectComponent
+                                    placeholder="Choose service"
+                                    selectedValue={serviceId}
+                                    onValueChange={handleService}
+                                >
+                                    {pastServices?.map((service, index) => (
+                                        <SelectItemComponent
+                                            value={service._id}
+                                            key={`service-${index}`}
+                                            label={`${service.name} - ${
+                                                service.serviceTime
+                                                    ? moment(service.serviceTime).format('DD-MM-YYYY')
+                                                    : ''
+                                            }`}
+                                            isLoading={servicesLoading}
+                                        />
+                                    ))}
+                                </SelectComponent>
+                            </FormControl>
+                        </If>
+                        <If condition={isPermission}>
+                            <HStack justifyContent="space-between">
+                                <FormControl w="1/2">
+                                    <DateTimePickerComponent
+                                        label="Start date"
+                                        fieldName="startDate"
+                                        onSelectDate={handleStartDate}
                                     />
-                                ))}
-                            </SelectComponent>
-                        </FormControl>
+                                </FormControl>
+                                <FormControl w="1/2">
+                                    <DateTimePickerComponent
+                                        label="End date"
+                                        fieldName="endDate"
+                                        onSelectDate={handleEndDate}
+                                    />
+                                </FormControl>
+                            </HStack>
+                        </If>
                         <FormControl isRequired>
                             <FormControl.Label>Department</FormControl.Label>
                             <SelectComponent
@@ -204,6 +259,8 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 placeholder="Choose department"
                                 onValueChange={handleDepartment}
                             >
+                                {/* TODO: Restore on crash fix */}
+                                {/* <SelectItemComponent label="No department" value={undefined as unknown as string} /> */}
                                 {campusDepartments?.map((department, index) => (
                                     <SelectItemComponent
                                         value={department._id}
