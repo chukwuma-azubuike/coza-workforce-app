@@ -43,7 +43,7 @@ import UserReport from '../views/app/workforce-management/user-reports';
 import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
 import CreateDepartment from '../views/app/workforce-management/create-department';
 import CreateCampus from '../views/app/workforce-management/create-campus';
-// import Export from '../views/app/export';
+import Export from '../views/app/export';
 
 export interface IAppRoute {
     name: string;
@@ -380,15 +380,15 @@ const AppRoutes: IAppRoute[] = [
     //     icon: { name: 'settings-outline', type: 'ionicon' },
     // },
     // TODO: Uncomment one resolved with IOS
-    // {
-    //     name: 'Export Data',
-    //     component: Export,
-    //     options: { title: 'Export Data' },
-    //     submenus: [],
-    //     users: ['admin', 'HOD', 'AHOD', 'QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'download-outline', type: 'ionicon' },
-    // },
+    {
+        name: 'Export Data',
+        component: Export,
+        options: { title: 'Export Data' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        inMenuBar: false,
+        icon: { name: 'download-outline', type: 'ionicon' },
+    },
     {
         name: 'More',
         component: More,

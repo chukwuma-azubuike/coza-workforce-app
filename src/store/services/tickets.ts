@@ -6,6 +6,7 @@ import {
     IDefaultQueryParams,
     IDefaultResponse,
     IDepartment,
+    IReportDownloadPayload,
     ITicket,
     ITicketCategory,
     ITicketUpdatePayload,
@@ -151,6 +152,16 @@ export const ticketServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<ITicketCategory[]>) => response.data,
         }),
+
+        getTicketsReportForDownload: endpoint.query<any[], IReportDownloadPayload>({
+            query: params => ({
+                url: `${SERVICE_URL}/download`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
+        }),
     }),
 });
 
@@ -170,4 +181,5 @@ export const {
     useReplyContestTicketMutation,
     useGetCampusTicketReportQuery,
     useLazyGetDepartmentTicketsQuery,
+    useGetTicketsReportForDownloadQuery,
 } = ticketServiceSlice;

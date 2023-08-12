@@ -8,8 +8,9 @@ import useMediaQuery from '../../../hooks/media-query';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '../../../hooks/focus';
-// import If from '../../../components/composite/if-container';
-// import StaggerButtonComponent from '../../../components/composite/stagger';
+import If from '../../../components/composite/if-container';
+import StaggerButtonComponent from '../../../components/composite/stagger';
+import { IReportTypes } from '../export';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
@@ -35,9 +36,9 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         leadersAttendance: LeadersAttendance,
     });
 
-    // const goToExport = () => {
-    //     navigation.navigate('Export Data', { type: 'ATTENDANCE' });
-    // };
+    const goToExport = () => {
+        navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
+    };
 
     const [index, setIndex] = React.useState(0);
 
@@ -77,8 +78,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 navigationState={{ index, routes: allRoutes }}
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
-            {/* TODO: Uncomment one resolved with IOS */}
-            {/* <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+            <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
                 <StaggerButtonComponent
                     buttons={[
                         {
@@ -89,7 +89,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         },
                     ]}
                 />
-            </If> */}
+            </If>
         </ViewWrapper>
     );
 };
