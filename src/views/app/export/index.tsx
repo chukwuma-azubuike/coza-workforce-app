@@ -37,7 +37,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [campusId, setCampusId] = React.useState<string>(cannotSwitchCampus ? user?.campus?._id : '');
     const [departmentId, setDepartmentId] = React.useState<string>();
     const [serviceId, setServiceId] = React.useState<string>();
-    const downloadState = React.useState<boolean>(false);
+    const [triggerFetch, setTriggerFetch] = React.useState<boolean>(false);
     const [dataType, setDataType] = React.useState<IExportType>(type);
     const [startDate, setStartDate] = React.useState<number>();
     const [endDate, setEndDate] = React.useState<number>();
@@ -76,7 +76,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             serviceId,
             departmentId,
         },
-        { skip: !queryParamsReady && dataType !== 'attendance', refetchOnMountOrArgChange: true }
+        { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
     const {
         data: permissions,
@@ -90,7 +90,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             startDate,
             departmentId,
         },
-        { skip: !queryParamsReady && dataType !== 'permissions', refetchOnMountOrArgChange: true }
+        { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
     const {
         data: tickets,
@@ -103,7 +103,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             serviceId,
             departmentId,
         },
-        { skip: !queryParamsReady && dataType !== 'tickets', refetchOnMountOrArgChange: true }
+        { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
 
     const handleDataType = (value: IExportType) => {
@@ -122,7 +122,18 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         setServiceId(value);
     };
 
+    const handlePress = () => {
+        if (!triggerFetch) {
+            return setTriggerFetch(true);
+        }
+        if (readyForDownload && triggerFetch) {
+            handleDownload();
+        }
+    };
+
     const handleDownload = async () => {
+        setTriggerFetch(false);
+
         if (reportData[dataType]?.length) {
             return downloadFile(
                 reportData[dataType],
@@ -276,11 +287,17 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             mt={4}
                             type="submit"
                             isLoading={isLoading}
-                            onPress={handleDownload}
-                            isDisabled={!readyForDownload}
-                            startIcon={<Icon name="download-outline" type="ionicon" size={28} color="white" />}
+                            onPress={handlePress}
+                            startIcon={
+                                <Icon
+                                    size={28}
+                                    color="white"
+                                    type={!triggerFetch ? 'evilicon' : 'ionicon'}
+                                    name={!triggerFetch ? 'refresh' : 'download-outline'}
+                                />
+                            }
                         >
-                            Download
+                            {!triggerFetch ? 'Fetch report' : 'Download'}
                         </ButtonComponent>
                     </VStack>
                 </Box>

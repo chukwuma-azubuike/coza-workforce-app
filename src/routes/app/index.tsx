@@ -8,6 +8,7 @@ import { Icon } from '@rneui/themed';
 import useAppColorMode from '../../hooks/theme/colorMode';
 import { THEME_CONFIG } from '../../config/appConfig';
 import { Route, useNavigation } from '@react-navigation/native';
+import { useDeepLinkNavigation } from '../../hooks/navigation';
 
 const Tab = createBottomTabNavigator();
 const AppStack = createNativeStackNavigator();
@@ -83,14 +84,18 @@ const TabRoutes: React.FC = () => {
     );
 };
 
-const AppRoute: React.FC = () => (
-    <AppStack.Navigator screenOptions={{ headerShown: false }}>
-        <AppStack.Screen
-            name="TabRoutes"
-            component={TabRoutes}
-            options={({ route }: { route: Route<string, any> }) => ({ title: route?.params?.headerTitle })}
-        />
-    </AppStack.Navigator>
-);
+const AppRoute: React.FC = () => {
+    const { initialRoute } = useDeepLinkNavigation();
+
+    return (
+        <AppStack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
+            <AppStack.Screen
+                name="TabRoutes"
+                component={TabRoutes}
+                options={({ route }: { route: Route<string, any> }) => ({ title: route?.params?.headerTitle })}
+            />
+        </AppStack.Navigator>
+    );
+};
 
 export default AppRoute;
