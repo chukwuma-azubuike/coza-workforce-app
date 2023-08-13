@@ -133,7 +133,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const handleDownload = async () => {
         setTriggerFetch(false);
-        
+
         if (reportData[dataType]?.length) {
             return downloadFile(
                 reportData[dataType],
