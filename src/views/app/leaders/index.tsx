@@ -5,10 +5,10 @@ import ViewWrapper from '../../../components/layout/viewWrapper';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import { IService } from '../../../store/types';
 
-const CampusGroupHeads: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+const Leaders: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const updatedListItem = route.params as IService;
     const gotoService = () => {
-        navigation.navigate('Create group head');
+        navigation.navigate('Assign role');
     };
 
     return (
@@ -18,4 +18,4 @@ const CampusGroupHeads: React.FC<NativeStackScreenProps<ParamListBase>> = ({ nav
     );
 };
 
-export default CampusGroupHeads;
+export default Leaders;

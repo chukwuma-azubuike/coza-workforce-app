@@ -288,6 +288,7 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.PATCH,
                 body: {
                     departments: body.departments,
+                    roleId: body.roleId,
                 },
             }),
         }),

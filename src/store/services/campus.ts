@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICampus, IDefaultResponse, REST_API_VERBS } from '../types';
+import { ICampus, IDefaultResponse, IGHCampus, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'campus';
@@ -55,10 +55,21 @@ export const campusServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<ICampus>) => response.data,
         }),
 
+        getGHCampusById: endpoint.query<IGHCampus, ICampus['_id']>({
+            query: id => `/users/ghCampuses/${id}`,
+
+            transformResponse: (response: IDefaultResponse<IGHCampus>) => response.data,
+        }),
+
         // Add your endpoints here
     }),
 });
 
 // Use exported hook in relevant components
-export const { useGetCampusesQuery, useGetCampusByIdQuery, useUpdateCampusMutation, useCreateCampusMutation } =
-    campusServiceSlice;
+export const {
+    useGetCampusesQuery,
+    useGetCampusByIdQuery,
+    useGetGHCampusByIdQuery,
+    useUpdateCampusMutation,
+    useCreateCampusMutation,
+} = campusServiceSlice;

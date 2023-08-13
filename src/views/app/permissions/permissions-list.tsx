@@ -16,6 +16,7 @@ import Utils from '../../../utils';
 // import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
+    screen?: { name: string; value: string } | undefined;
     type: 'own' | 'team' | 'campus';
     '0'?: string;
     '1'?: IPermission[];
@@ -24,15 +25,17 @@ interface IPermissionListRowProps extends IPermission {
 export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const navigation = useNavigation();
 
-    const { type } = props;
+    const { type, screen } = props;
 
     return (
         <ErrorBoundary>
             {props[1]?.map((elm, index) => {
-                if (!elm) return;
+                if (!elm) {
+                    return;
+                }
 
                 const handlePress = () => {
-                    navigation.navigate('Permission Details' as never, elm as never);
+                    navigation.navigate('Permission Details' as never, { ...elm, screen } as never);
                 };
 
                 const { requestor, departmentName, categoryName, description, category, status } = elm;

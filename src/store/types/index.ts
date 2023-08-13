@@ -194,6 +194,7 @@ export interface ITicket extends ILog {
     departmentName: string;
     contestReplyComment: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
+    // screen: { name: string; value: string } | undefined;
 }
 
 export interface ITicketUpdatePayload {
@@ -242,6 +243,8 @@ export interface ICreateServicePayload {
 }
 
 export interface IAssignGroupHead {
+    department: string;
+    campus: string;
     worker: string;
     role: string;
 }
@@ -329,6 +332,16 @@ export interface ICampus extends ILog {
     createdAt: string;
 }
 
+export interface IGHCampus extends ILog {
+    userId: string;
+    email: string;
+    campuses: {
+        id: string;
+        campusName: string;
+        departmentCount: number;
+    }[];
+}
+
 //Role
 export interface IRole {
     _id: string;
@@ -345,6 +358,7 @@ export interface IAssignSecondaryRole {
     }[];
     email?: string;
     userId: string;
+    roleId: string;
 }
 
 // Department
@@ -355,6 +369,18 @@ export interface IDepartment {
     description: string;
     createdAt: string;
     __v: number;
+}
+
+export interface IGHDepartment {
+    userId: string;
+    email: string;
+    campusId: string;
+    campusName: string;
+    campuses: {
+        id: string;
+        departmentName: string;
+        userCount: number;
+    }[];
 }
 
 // Services
