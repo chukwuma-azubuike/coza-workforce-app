@@ -141,7 +141,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             setPermissionComment('');
             declineReset();
 
-            if (screen?.name) {
+            if (!!screen?.name) {
                 navigate.navigate('Group head department activies', {
                     permissions: { ...permissionParams, ...declineData, requestor: permissionParams?.requestor },
                     screenName: screen.name,

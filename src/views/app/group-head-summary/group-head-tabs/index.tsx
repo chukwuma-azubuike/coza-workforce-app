@@ -9,6 +9,7 @@ import useScreenFocus from '../../../../hooks/focus';
 import ViewWrapper from '../../../../components/layout/viewWrapper';
 import TabComponent from '../../../../components/composite/tabs';
 import { IPermission, ITicket } from '../../../../store/types';
+import GroupHeadReports from './reports';
 
 const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { isMobile } = useMediaQuery();
@@ -25,20 +26,23 @@ const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase
         _id: string;
         campusId: string;
         tab: number;
+        title: string;
     };
 
     const ROUTES = [
         { key: 'teamAttendance', title: 'Team Attendance' },
         { key: 'teamPermissions', title: 'Team Permissions' },
         { key: 'teamTickets', title: 'Team Tickets' },
+        { key: 'teamReports', title: 'Team Reports' },
     ];
 
     const groupData = { departmentId: params._id, screenName: params.screenName };
-
+    const reportData = { departmentId: params._id, departmentName: params.title, screenName: params.screenName };
     const renderScene = SceneMap({
         teamAttendance: () => <GroupHeadTeamAttendance departmentId={params._id} />,
         teamPermissions: () => <GroupHeadTeamPermissionsList updatedListItem={params.permissions} params={groupData} />,
         teamTickets: () => <GroupHeadTeamTicketsList updatedListItem={params.tickets} departmentId={params._id} />,
+        teamReports: () => <GroupHeadReports params={reportData} />,
     });
 
     const [index, setIndex] = React.useState(0);
@@ -52,7 +56,7 @@ const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase
     });
 
     React.useEffect(() => {
-        if (params.tab) {
+        if (params?.tab) {
             setIndex(params.tab);
         }
     }, []);
