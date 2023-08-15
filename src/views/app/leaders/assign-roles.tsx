@@ -93,7 +93,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
         }
         const payload = { departments, userId: values.worker, roleId: values.role };
 
-        console.log(payload);
         const result = await assignRole(payload);
 
         // console.log(result);
@@ -104,7 +103,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                 status: 'success',
             });
             reset();
-            navigate('Campus group heads', data);
+            navigate('More');
             resetForm(INITIAL_VALUES as any);
             setCampusDept([]);
             setIsOpen(false);
