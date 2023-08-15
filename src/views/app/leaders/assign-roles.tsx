@@ -9,7 +9,6 @@ import { SelectComponent, SelectItemComponent } from '../../../components/atoms/
 import ViewWrapper from '../../../components/layout/viewWrapper';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import useModal from '../../../hooks/modal/useModal';
-import useRole from '../../../hooks/role';
 import { useAssignSecondaryRolesMutation, useGetUsersQuery } from '../../../store/services/account';
 import { useGetCampusesQuery } from '../../../store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
@@ -25,10 +24,6 @@ interface IGroupHead {
 }
 const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { navigate } = navigation;
-
-    const {
-        user: { department },
-    } = useRole();
 
     const INITIAL_ADDCAMPUS = {
         campus: '',
@@ -53,9 +48,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
     const { data: alldepartments } = useGetDepartmentsByCampusIdQuery(addCampusDept.campus);
     const { data: finddepartments } = useGetDepartmentsByCampusIdQuery(findCampusDept.campus);
 
-    // console.log(findCampusDept);
-    // console.log(users?.find(i => i.firstName === 'David'));
-    // console.log(roles);
     const handleAddCampusDept = () => {
         const items = campusDept.find(
             item => item.campus === addCampusDept.campus && item.department === addCampusDept.department
@@ -94,8 +86,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
         const payload = { departments, userId: values.worker, roleId: values.role };
 
         const result = await assignRole(payload);
-
-        // console.log(result);
 
         if ('data' in result) {
             setModalState({
