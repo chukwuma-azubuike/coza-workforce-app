@@ -17,13 +17,19 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
 
     const { navigate, setOptions } = useNavigation();
 
-    useScreenFocus({
-        onFocus: () => setOptions({ title: params.title }),
-    });
-
     const { user } = useRole();
 
-    const { data, isLoading, isFetching, isSuccess } = useGetGHDepartmentByIdQuery({ _id: user.userId, campusId });
+    const { data, refetch, isLoading, isFetching, isSuccess } = useGetGHDepartmentByIdQuery({
+        _id: user.userId,
+        campusId,
+    });
+
+    useScreenFocus({
+        onFocus: () => {
+            setOptions({ title: params.title });
+            refetch();
+        },
+    });
 
     const handlePress = (elm: any) => {
         const screenName = `${data?.campusName} - ${elm.title}`;

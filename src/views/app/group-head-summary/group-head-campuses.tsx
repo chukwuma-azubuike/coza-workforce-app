@@ -10,6 +10,7 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 import useRole from '../../../hooks/role';
 import { useGetGHCampusByIdQuery } from '../../../store/services/campus';
 import Utils from '../../../utils';
+import useScreenFocus from '../../../hooks/focus';
 
 const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = useNavigation();
@@ -20,7 +21,13 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
 
     const { user } = useRole();
 
-    const { data, isLoading, isFetching, isSuccess } = useGetGHCampusByIdQuery(user.userId);
+    const { refetch, data, isLoading, isFetching, isSuccess } = useGetGHCampusByIdQuery(user.userId);
+
+    useScreenFocus({
+        onFocus: () => {
+            refetch();
+        },
+    });
 
     const Departmentlist = React.useMemo(
         () =>

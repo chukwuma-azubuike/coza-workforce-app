@@ -131,7 +131,7 @@ const GroupHeadReports: React.FC<{ params: { departmentId: string; departmentNam
         isLoading: reportsIsLoading,
         isFetching: reportsIsFetching,
         data: departmentAndIncidentReport,
-    } = useGetDepartmentReportsListQuery(params.id);
+    } = useGetDepartmentReportsListQuery(params.departmentId);
 
     useScreenFocus({
         onFocus: () => {
