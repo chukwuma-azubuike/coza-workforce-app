@@ -85,13 +85,14 @@ const TabRoutes: React.FC = () => {
 };
 
 const AppRoute: React.FC = () => {
-    const { initialRoute } = useDeepLinkNavigation();
+    const { initialRoute, tabKey } = useDeepLinkNavigation();
 
     return (
         <AppStack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
             <AppStack.Screen
                 name="TabRoutes"
                 component={TabRoutes}
+                initialParams={{ tabKey }}
                 options={({ route }: { route: Route<string, any> }) => ({ title: route?.params?.headerTitle })}
             />
         </AppStack.Navigator>
