@@ -11,6 +11,7 @@ import { ITicket } from '../../../store/types';
 import useMediaQuery from '../../../hooks/media-query';
 import If from '../../../components/composite/if-container';
 import { IReportTypes } from '../export';
+import useScreenFocus from '../../../hooks/focus';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -22,6 +23,8 @@ const ROUTES = [
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
 const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+    const params = route.params as { tabKey: string };
+
     const { isMobile } = useMediaQuery();
     const updatedListItem = route?.params as ITicket;
 
@@ -96,6 +99,16 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []) as IStaggerButtonComponentProps['buttons'];
+
+    const routeFocus = () => {
+        if (params?.tabKey) {
+            setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
+        }
+    };
+
+    useScreenFocus({
+        onFocus: routeFocus,
+    });
 
     return (
         <ViewWrapper>
