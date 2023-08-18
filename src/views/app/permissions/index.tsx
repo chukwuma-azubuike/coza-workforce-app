@@ -17,6 +17,7 @@ import StaggerButtonComponent from '../../../components/composite/stagger';
 import { AddButtonComponent } from '../../../components/atoms/button';
 import If from '../../../components/composite/if-container';
 import { IReportTypes } from '../export';
+import useScreenFocus from '../../../hooks/focus';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -26,6 +27,8 @@ const ROUTES = [
 ];
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+    const params = route.params as { tabKey: string };
+
     const { isMobile } = useMediaQuery();
     const gotoRequestPermission = () => {
         navigation.navigate('Request permission');
@@ -81,6 +84,16 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     }, []);
 
     const [index, setIndex] = React.useState(0);
+
+    const routeFocus = () => {
+        if (params?.tabKey) {
+            setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
+        }
+    };
+
+    useScreenFocus({
+        onFocus: routeFocus,
+    });
 
     return (
         <ViewWrapper>

@@ -11,13 +11,14 @@ import useScreenFocus from '../../../hooks/focus';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { IReportTypes } from '../export';
+import { Alert } from 'react-native';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
     const { isMobile } = useMediaQuery();
     const navigation = props.navigation;
 
-    const params = props.route.params as { role: ROLES; route: string };
+    const params = props.route.params as { role: ROLES; route: string; tabKey: string };
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
     const isWorker = params?.role === ROLES.worker;
@@ -57,8 +58,8 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         if (isWorker) {
             setIndex(allRoutes.findIndex(route => route.key === 'campusAttendance'));
         }
-        if (params?.route) {
-            setIndex(allRoutes.findIndex(route => route.key === params?.route));
+        if (params?.route || params?.tabKey) {
+            setIndex(allRoutes.findIndex(route => route.key === (params?.route || params?.tabKey)));
         }
     };
 
