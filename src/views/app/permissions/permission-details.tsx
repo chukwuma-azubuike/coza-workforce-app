@@ -45,8 +45,6 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         data: permission,
         isLoading: permissionLoading,
         isFetching: permissionIsFetching,
-        isError: permissionIsError,
-        isSuccess: permissionIsSuccess,
     } = useGetPermissionByIdQuery(_id);
 
     const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(

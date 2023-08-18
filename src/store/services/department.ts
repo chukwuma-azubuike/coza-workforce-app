@@ -5,6 +5,7 @@ import {
     IDepartment,
     IGHDepartment,
     IRequestDepartmentPayload,
+    ICreateDepartmentPayload,
     REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -17,7 +18,7 @@ export const departmentServiceSlice = createApi({
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({
-        createDepartment: endpoint.mutation<IDepartment, IRequestDepartmentPayload>({
+        createDepartment: endpoint.mutation<IDepartment, ICreateDepartmentPayload>({
             query: body => ({
                 url: `${SERVICE_URL}/createDepartment`,
                 method: REST_API_VERBS.POST,

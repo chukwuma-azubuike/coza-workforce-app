@@ -189,3 +189,23 @@ export const CreateUserSchema = Yup.object().shape({
     departmentId: Yup.string().required('Department is required.'),
     roleId: Yup.string().required('Role is required.'),
 });
+
+export const CreateDepartmentSchema = Yup.object().shape({
+    name: Yup.string().required('Name is required'),
+    description: Yup.string(),
+    campusId: Yup.string(),
+});
+
+export const CreateCampusSchema = Yup.object().shape({
+    campusName: Yup.string().required('Campus name is required'),
+    description: Yup.string(),
+    address: Yup.string().required('Address is required'),
+    LGA: Yup.string().required('LGA is required'),
+    state: Yup.string().required('State is required'),
+    country: Yup.string().required('Country is required'),
+    dateOfBirth: Yup.string().required('DOB is required'),
+    coordinates: Yup.object().shape({
+        long: Yup.number().required('Longitude is required').notOneOf([0], 'Please input a valid longitude'),
+        lat: Yup.number().required('Latitude is required').notOneOf([0], 'Please input a valid latitude'),
+    }),
+});

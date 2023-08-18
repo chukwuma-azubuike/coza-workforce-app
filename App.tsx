@@ -21,7 +21,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 Sentry.init({
     dsn: SENTRY_DNS,
     enableNative: false,
-    tracesSampleRate: 1.0,
+    tracesSampleRate: 0.1,
     attachScreenshot: true,
     enableNativeCrashHandling: true,
 });
@@ -44,7 +44,6 @@ const App: React.FC<JSX.Element> = () => {
     };
 
     const { setModalState } = useRootModal(modalInitialState.modalState);
-
     const { isLoggedIn, setIsLoggedIn } = useUserSession();
 
     return (

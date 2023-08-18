@@ -292,6 +292,16 @@ export const accountServiceSlice = createApi({
                 },
             }),
         }),
+
+        addDeviceToken: endpoint.mutation<any, { email: string; deviceId: string; fcmToken: string }>({
+            query: body => ({
+                url: `/${SERVICE_URL}/addDeviceToken`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+
+            transformResponse: (response: IDefaultResponse<any>) => response.data,
+        }),
     }),
 });
 
@@ -314,4 +324,5 @@ export const {
     useValidateForgotPasswordOTPMutation,
     useUploadUserMutation,
     useAssignSecondaryRolesMutation,
+    useAddDeviceTokenMutation,
 } = accountServiceSlice;

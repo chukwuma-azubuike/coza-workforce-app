@@ -41,13 +41,17 @@ const Clocker: React.FC<IClockerProps> = ({
         user: { department, campus, userId },
     } = useRole();
 
-    const { data: latestService, refetch: refetchService } = useGetLatestServiceQuery(campus?._id as string);
+    const {
+        data: latestService,
+        refetch: refetchService,
+        isUninitialized: serviceIsUninitialized,
+    } = useGetLatestServiceQuery(campus?._id as string);
 
     const {
         data: attendanceReport,
         isLoading: attendanceReportLoading,
         refetch: attendanceReportRefetch,
-        error: attendanceReportError,
+        isUninitialized: attendanceReportIsUninitialized,
     } = useGetDepartmentAttendanceReportQuery({
         serviceId: latestService?._id as string,
         departmentId: department?._id,
@@ -56,33 +60,46 @@ const Clocker: React.FC<IClockerProps> = ({
     const {
         data: leadersAttendance,
         refetch: refetchLeaders,
-        isLoading: leadersLoading,
-    } = useGetLeadersAttendanceReportQuery({
-        serviceId: latestService?._id as string,
-        campusId: campus?._id,
-    });
+        isUninitialized: leadersIsUninitialized,
+    } = useGetLeadersAttendanceReportQuery(
+        {
+            serviceId: latestService?._id as string,
+            campusId: campus?._id,
+        },
+        { skip: !latestService?._id }
+    );
 
     const {
         data: workersAttendance,
         refetch: refetchWorkers,
-        isLoading: workersLoading,
-    } = useGetWorkersAttendanceReportQuery({
-        serviceId: latestService?._id as string,
-        campusId: campus?._id,
-    });
+        isUninitialized: workersIsUninitialized,
+    } = useGetWorkersAttendanceReportQuery(
+        {
+            serviceId: latestService?._id as string,
+            campusId: campus?._id,
+        },
+        { skip: !latestService?._id }
+    );
 
-    const { data: tickets, refetch: refetchTickets } = useGetCampusTicketReportQuery({
-        serviceId: latestService?._id as string,
-        campusId: campus?._id,
-    });
+    const {
+        data: tickets,
+        refetch: refetchTickets,
+        isUninitialized: ticketsIsUninitialized,
+    } = useGetCampusTicketReportQuery(
+        {
+            serviceId: latestService?._id as string,
+            campusId: campus?._id,
+        },
+        { skip: !latestService?._id }
+    );
 
     useScreenFocus({
         onFocus: () => {
-            refetchService();
-            refetchLeaders();
-            refetchWorkers();
-            refetchTickets();
-            attendanceReportRefetch();
+            !serviceIsUninitialized && refetchService();
+            !leadersIsUninitialized && refetchLeaders();
+            !workersIsUninitialized && refetchWorkers();
+            !ticketsIsUninitialized && refetchTickets();
+            !attendanceReportIsUninitialized && attendanceReportRefetch();
         },
     });
 

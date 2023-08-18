@@ -47,6 +47,9 @@ import Leaders from '../views/app/leaders';
 import GroupHeadCampuses from '../views/app/group-head-summary/group-head-campuses';
 import GroupHeadDepartments from '../views/app/group-head-summary/group-head-departments';
 import GroupHeadDepartmentActivies from '../views/app/group-head-summary/group-head-tabs';
+import Export from '../views/app/export';
+import CreateCampus from '../views/app/workforce-management/create-campus';
+import CreateDepartment from '../views/app/workforce-management/create-department';
 // import Export from '../views/app/export';
 
 export interface IAppRoute {
@@ -381,6 +384,24 @@ const AppRoutes: IAppRoute[] = [
                 icon: { name: 'person', type: 'octicon' },
             },
             {
+                name: 'Create Department',
+                component: CreateDepartment,
+                options: { title: 'Create department' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Create Campus',
+                component: CreateCampus,
+                options: { title: 'Create campus' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
                 name: 'Campus workforce',
                 component: CampusWorkforceSummary,
                 options: { title: 'Campus workforce' },
@@ -422,15 +443,15 @@ const AppRoutes: IAppRoute[] = [
     //     icon: { name: 'settings-outline', type: 'ionicon' },
     // },
     // TODO: Uncomment one resolved with IOS
-    // {
-    //     name: 'Export Data',
-    //     component: Export,
-    //     options: { title: 'Export Data' },
-    //     submenus: [],
-    //     users: ['admin', 'HOD', 'AHOD', 'QC'],
-    //     inMenuBar: false,
-    //     icon: { name: 'download-outline', type: 'ionicon' },
-    // },
+    {
+        name: 'Export Data',
+        component: Export,
+        options: { title: 'Export Data' },
+        submenus: [],
+        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        inMenuBar: false,
+        icon: { name: 'download-outline', type: 'ionicon' },
+    },
     {
         name: 'More',
         component: More,

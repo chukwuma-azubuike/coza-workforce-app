@@ -4,8 +4,8 @@ import {
     IDefaultResponse,
     IPermission,
     IPermissionCategory,
+    IReportDownloadPayload,
     IRequestPermissionPayload,
-    IUpdatePermissionPayload,
     IUser,
     REST_API_VERBS,
 } from '../types';
@@ -22,6 +22,11 @@ interface IApprovePermission {
     permissionId: IPermission['_id'];
     approverId: IUser['userId'];
     comment: string;
+}
+
+interface IPermissionReportPayload extends IReportDownloadPayload {
+    startDate?: number;
+    endDate?: number;
 }
 
 export const permissionsServiceSlice = createApi({
@@ -84,6 +89,16 @@ export const permissionsServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IPermissionCategory[]>) => response.data,
         }),
 
+        getPermissionsReportForDownload: endpoint.query<any[], IPermissionReportPayload>({
+            query: params => ({
+                url: `${SERVICE_URL}/download`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -96,4 +111,5 @@ export const {
     useApprovePermissionMutation,
     useDeclinePermissionMutation,
     useGetPermissionCategoriesQuery,
+    useGetPermissionsReportForDownloadQuery,
 } = permissionsServiceSlice;
