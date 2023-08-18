@@ -52,6 +52,11 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         onFocus: refetch,
     });
 
+    const reportsNotApproved = React.useMemo(
+        () => data?.departmentalReport?.find((report: any) => report.status !== 'APPROVED'),
+        [data?.departmentalReport]
+    );
+
     const serviceAttendance = React.useMemo(() => {
         const rawData = data?.departmentalReport.find(elm => elm.departmentName === 'Ushery Board')
             ?.report as unknown as IAttendanceReportPayload;
@@ -264,6 +269,12 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { goBack } = useNavigation();
 
     const onSubmit = async (values: IGSPReportPayload) => {
+        if (!!reportsNotApproved) {
+            return setModalState({
+                message: 'All reports need to be approved before submitting',
+                status: 'info',
+            });
+        }
         const result = await submitGSPReport(values);
 
         if ('data' in result) {
@@ -356,7 +367,7 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         validationSchema={GSPReportSchema}
                         initialValues={INITIAL_VALUES as unknown as IGSPReportPayload}
                     >
-                        {({ errors, handleChange, handleSubmit, isValid }) => {
+                        {({ errors, handleChange, handleSubmit }) => {
                             return (
                                 <VStack space={2}>
                                     <FormControl
@@ -387,7 +398,6 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl>
                                     <FormControl minHeight={180}>
                                         <ButtonComponent
-                                            isDisabled={!isValid}
                                             isLoading={isSubmitLoading}
                                             onPress={handleSubmit as (event: any) => void}
                                         >

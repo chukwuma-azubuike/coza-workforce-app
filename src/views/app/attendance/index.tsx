@@ -69,7 +69,6 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     React.useEffect(() => {
         routeFocus();
-        Alert.alert('Hello')
     }, []);
 
     return (
