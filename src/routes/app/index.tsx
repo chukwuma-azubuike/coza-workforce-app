@@ -29,11 +29,19 @@ const flattenNestedRoutes = (routes: IAppRoute[]) => {
 
 const TabRoutes: React.FC = () => {
     const { isDarkMode } = useAppColorMode();
-    const { goBack } = useNavigation();
+    const { goBack, navigate } = useNavigation();
 
     const handleGoBack = () => {
         goBack();
     };
+
+    const { initialRoute, tabKey } = useDeepLinkNavigation();
+
+    React.useEffect(() => {
+        if (!!initialRoute) {
+            navigate(initialRoute as unknown as never, { tabKey } as any);
+        }
+    }, [initialRoute, tabKey]);
 
     return (
         <Tab.Navigator
@@ -85,14 +93,11 @@ const TabRoutes: React.FC = () => {
 };
 
 const AppRoute: React.FC = () => {
-    const { initialRoute, tabKey } = useDeepLinkNavigation();
-
     return (
-        <AppStack.Navigator screenOptions={{ headerShown: false }} initialRouteName={initialRoute}>
+        <AppStack.Navigator screenOptions={{ headerShown: false }}>
             <AppStack.Screen
                 name="TabRoutes"
                 component={TabRoutes}
-                initialParams={{ tabKey }}
                 options={({ route }: { route: Route<string, any> }) => ({ title: route?.params?.headerTitle })}
             />
         </AppStack.Navigator>

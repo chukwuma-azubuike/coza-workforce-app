@@ -27,7 +27,7 @@ const ROUTES = [
 ];
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { tabKey: string };
+    const params = route.params as { tabKey: string; reload: boolean };
 
     const { isMobile } = useMediaQuery();
     const gotoRequestPermission = () => {
@@ -39,11 +39,12 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     };
 
     const updatedListItem = route?.params as IPermission;
+    const reload = params?.reload;
 
     const renderScene = SceneMap({
-        myPermissions: () => <MyPermissionsList updatedListItem={updatedListItem} />,
-        teamPermissions: () => <MyTeamPermissionsList updatedListItem={updatedListItem} />,
-        campusPermissions: () => <CampusPermissions updatedListItem={updatedListItem} />,
+        myPermissions: () => <MyPermissionsList reload={reload} updatedListItem={updatedListItem} />,
+        teamPermissions: () => <MyTeamPermissionsList reload={reload} updatedListItem={updatedListItem} />,
+        campusPermissions: () => <CampusPermissions reload={reload} updatedListItem={updatedListItem} />,
         leadersPermissions: () => <LeadersPermissionsList updatedListItem={updatedListItem} />,
     });
 
@@ -88,6 +89,8 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     const routeFocus = () => {
         if (params?.tabKey) {
             setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
+        }
+        if (params?.reload) {
         }
     };
 
