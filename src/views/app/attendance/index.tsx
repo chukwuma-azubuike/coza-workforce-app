@@ -11,7 +11,6 @@ import useScreenFocus from '../../../hooks/focus';
 import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { IReportTypes } from '../export';
-import { Alert } from 'react-native';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
