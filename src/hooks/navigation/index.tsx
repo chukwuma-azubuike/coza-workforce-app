@@ -67,12 +67,14 @@ const useDeepLinkNavigation = () => {
     };
 
     const [initialRoute, setInitialRoute] = React.useState<string>('Home');
+    const [tabKey, setTabKey] = React.useState<string>();
 
     // Background Notifications handler
     React.useEffect(() => {
         messaging().onNotificationOpenedApp(remoteMessage => {
-            const { deepLink } = extractIncomingNotifications(remoteMessage);
+            const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
 
+            setTabKey(tabKey);
             handleNavigation(deepLink as unknown as IDeepLink);
         });
 
@@ -81,7 +83,8 @@ const useDeepLinkNavigation = () => {
             .getInitialNotification()
             .then(remoteMessage => {
                 if (remoteMessage) {
-                    const { deepLink } = extractIncomingNotifications(remoteMessage);
+                    const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
+                    setTabKey(tabKey);
                     setInitialRoute(deepLink as unknown as string);
                 }
             });
@@ -90,7 +93,7 @@ const useDeepLinkNavigation = () => {
     // Foreground Notifications handler
     React.useEffect(() => {
         const unsubscribe = messaging().onMessage(async remoteMessage => {
-            const { title, body, deepLink } = extractIncomingNotifications(remoteMessage);
+            const { title, body, deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
 
             Alert.alert(
                 title as string,
@@ -98,7 +101,13 @@ const useDeepLinkNavigation = () => {
                 !!deepLink
                     ? [
                           { text: 'Cancel', style: 'cancel' },
-                          { text: 'View', onPress: () => handleNavigation(deepLink as unknown as IDeepLink) },
+                          {
+                              text: 'View',
+                              onPress: () => {
+                                  setTabKey(tabKey);
+                                  handleNavigation(deepLink as unknown as IDeepLink);
+                              },
+                          },
                       ]
                     : undefined
             );
@@ -107,7 +116,7 @@ const useDeepLinkNavigation = () => {
         return unsubscribe;
     }, []);
 
-    return { initialRoute };
+    return { tabKey, initialRoute };
 };
 
 export { usePreventGoBack, useCustomBackNavigation, useDeepLinkNavigation };
