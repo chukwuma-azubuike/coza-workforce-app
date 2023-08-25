@@ -286,7 +286,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     </VStack>
                                     {isGroupHead && (
                                         <Box>
-                                            <ButtonComponent variant='outline' size="sm" onPress={AddNewDept}>
+                                            <ButtonComponent variant="outline" size="sm" onPress={AddNewDept}>
                                                 {isOpen ? 'Done' : '+ Add a Campus Department'}
                                             </ButtonComponent>
                                         </Box>
