@@ -281,17 +281,7 @@ const AppRoutes: IAppRoute[] = [
         name: 'Assign group head',
         component: AssignRole,
         options: { title: 'Assign group head' },
-        submenus: [
-            // {
-            //     name: 'Assign role',
-            //     component: AssignRole,
-            //     options: { title: 'Assign role' },
-            //     submenus: [],
-            //     users: ['QC', 'programs'],
-            //     inMenuBar: false,
-            //     icon: { name: 'church', type: 'material-community' },
-            // },
-        ],
+        submenus: [],
         users: ['admin', 'campus-pastor', 'global-pastor'],
         inMenuBar: false,
         icon: { name: 'account-group-outline', type: 'material-community' },

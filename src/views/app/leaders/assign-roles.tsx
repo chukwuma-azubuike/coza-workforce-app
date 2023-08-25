@@ -2,7 +2,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, FormControl, HStack, Text, VStack } from 'native-base';
+import { Box, CloseIcon, FormControl, HStack, Text, VStack } from 'native-base';
 import React, { useState } from 'react';
 import ButtonComponent from '../../../components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
@@ -15,6 +15,7 @@ import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/depart
 import { useGetRolesQuery } from '../../../store/services/role';
 import { IAssignGroupHead } from '../../../store/types';
 import { AssignGroupHeadSchema } from '../../../utils/schemas';
+import { TouchableOpacity } from 'react-native';
 
 interface IGroupHead {
     campus: string;
@@ -261,12 +262,12 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                         {campusDept?.map((item, key) => (
                                             <Box
                                                 key={key}
+                                                _dark={{ bgColor: 'gray.800', borderColor: 'gray.600' }}
+                                                _light={{ bgColor: 'gray.100', borderColor: 'gray.600' }}
                                                 borderColor={THEME_CONFIG.veryLightGray}
-                                                background={THEME_CONFIG.veryVeryLightGray}
-                                                borderStyle={'solid'}
                                                 borderRadius={6}
-                                                py={1}
-                                                px={2}
+                                                py={2}
+                                                px={3}
                                                 mb="2"
                                                 borderWidth={1}
                                                 flexDirection="row"
@@ -277,13 +278,17 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                     <Text>Campus: {item.campusName}</Text>
                                                     <Text>Department: {item.departmentName}</Text>
                                                 </Box>
-                                                <Text onPress={() => handleRemoveCampusDept(item)}>x</Text>
+                                                <TouchableOpacity onPress={() => handleRemoveCampusDept(item)}>
+                                                    <CloseIcon />
+                                                </TouchableOpacity>
                                             </Box>
                                         ))}
                                     </VStack>
                                     {isGroupHead && (
                                         <Box>
-                                            <Text onPress={AddNewDept}>+ Add a Campus Department</Text>
+                                            <ButtonComponent variant='outline' size="sm" onPress={AddNewDept}>
+                                                {isOpen ? 'Done' : '+ Add a Campus Department'}
+                                            </ButtonComponent>
                                         </Box>
                                     )}
 
@@ -295,7 +300,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                     selectedValue={addCampusDept.campus}
                                                     placeholder="Campus"
                                                     onValueChange={(value: any) => handleInputChange('campus', value)}
-                                                    id="campus"
                                                 >
                                                     {campus?.map((item, key) => (
                                                         <SelectItemComponent
@@ -314,7 +318,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                     onValueChange={(value: any) =>
                                                         handleInputChange('department', value)
                                                     }
-                                                    id="department"
                                                     isDisabled={!addCampusDept.campus}
                                                 >
                                                     {alldepartments?.map((item, key) => (

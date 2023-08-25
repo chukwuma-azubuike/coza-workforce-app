@@ -12,17 +12,26 @@ import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
-
-    const { isGlobalPastor, isHOD, isAHOD, isQC, isSuperAdmin, isCampusPastor } = useRole();
+    const { isGlobalPastor, isHOD, isAHOD, isQC, isGroupHead, isSuperAdmin, isCampusPastor } = useRole();
 
     const routeFilters = ['Profile', 'Notifications'];
-
     const roleFilterArray = [
-        { role: isQC, routes: ['Service management'] },
-        { role: isCampusPastor, routes: ['Service management'] },
-        { role: isAHOD || isHOD, routes: ['Manual clock in', 'Service management', 'Export Data'] },
-        { role: isGlobalPastor, routes: ['Manual clock in', 'Service management'] },
-        { role: (isHOD && !isQC) || (isAHOD && !isQC), routes: ['Manual clock in', 'Service management'] },
+        { role: isSuperAdmin, routes: ['Group head campus'] },
+        { role: isQC, routes: ['Service management', 'Group head campus', 'Assign group head'] },
+        {
+            role: isGroupHead,
+            routes: ['Manual clock in', 'Service management', 'Export Data', 'Assign group head'],
+        },
+        { role: isCampusPastor, routes: ['Service management', 'Group head campus', 'Assign group head'] },
+        {
+            role: isAHOD || isHOD,
+            routes: ['Manual clock in', 'Service management', 'Export Data', 'Group head campus', 'Assign group head'],
+        },
+        { role: isGlobalPastor, routes: ['Manual clock in', 'Service management', 'Group head campus'] },
+        {
+            role: (isHOD && !isQC) || (isAHOD && !isQC),
+            routes: ['Manual clock in', 'Service management', 'Group head campus', 'Assign group head'],
+        },
     ];
 
     const assertFilterRole = React.useMemo(() => roleFilterArray.find(filter => filter.role), [roleFilterArray]);
