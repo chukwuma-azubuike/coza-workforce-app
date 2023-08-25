@@ -62,8 +62,8 @@ export interface IDeepLink {
 const useDeepLinkNavigation = () => {
     const { navigate } = useNavigation();
 
-    const handleNavigation = (deepLink: IDeepLink) => {
-        navigate(deepLink.route as never, deepLink.data as never);
+    const handleNavigation = (deepLink: IDeepLink, tabKey: string) => {
+        navigate(deepLink as never, { tabKey });
     };
 
     const [initialRoute, setInitialRoute] = React.useState<string>('Home');
@@ -75,7 +75,7 @@ const useDeepLinkNavigation = () => {
             const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
 
             setTabKey(tabKey);
-            handleNavigation(deepLink as unknown as IDeepLink);
+            handleNavigation(deepLink as unknown as IDeepLink, tabKey as any);
         });
 
         // Check whether an initial notification is available
@@ -105,7 +105,7 @@ const useDeepLinkNavigation = () => {
                               text: 'View',
                               onPress: () => {
                                   setTabKey(tabKey);
-                                  handleNavigation(deepLink as unknown as IDeepLink);
+                                  handleNavigation(deepLink as unknown as IDeepLink, tabKey as any);
                               },
                           },
                       ]

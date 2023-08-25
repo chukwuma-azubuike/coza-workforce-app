@@ -12,6 +12,7 @@ import useAppColorMode from '../../../hooks/theme/colorMode';
 import { useGetTicketsQuery } from '../../../store/services/tickets';
 import { ITicket } from '../../../store/types';
 import Utils from '../../../utils';
+import useScreenFocus from '../../../hooks/focus';
 
 export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus';
@@ -134,7 +135,7 @@ export const TicketListRow: React.FC<TicketListRowProps> = props => {
     );
 };
 
-const MyTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
+const MyTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(({ updatedListItem, reload }) => {
     const myTicketsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
@@ -149,7 +150,7 @@ const MyTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
     } = useRole();
 
     const [page, setPage] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching } = useGetTicketsQuery(
+    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
         { userId, limit: 20, page },
         { refetchOnMountOrArgChange: true }
     );
@@ -175,6 +176,12 @@ const MyTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
         [updatedListItem?._id, sortedData]
     );
 
+    useScreenFocus({
+        onFocus: () => {
+            if (reload && !isUninitialized) refetch();
+        },
+    });
+
     return (
         <FlatListComponent
             data={groupedData}
@@ -191,79 +198,87 @@ const MyTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
     );
 });
 
-const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
-    const teamTicketsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
-        },
-    ];
+const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const teamTicketsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'createdAt',
+                render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
+            },
+        ];
 
-    const {
-        user: { department },
-        isCampusPastor,
-        isGlobalPastor,
-    } = useRole();
+        const {
+            user: { department },
+            isCampusPastor,
+            isGlobalPastor,
+        } = useRole();
 
-    const [page, setPage] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching } = useGetTicketsQuery(
-        {
-            departmentId: department._id,
-            limit: 20,
-            page,
-        },
-        { refetchOnMountOrArgChange: true }
-    );
+        const [page, setPage] = React.useState<number>(1);
+        const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
+            {
+                departmentId: department._id,
+                limit: 20,
+                page,
+            },
+            { refetchOnMountOrArgChange: true }
+        );
 
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
             }
-        }
-    };
+        };
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+        const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
-    const preparedForSortData = React.useMemo(
-        () =>
-            moreData?.map((ticket: ITicket) => {
-                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
-            }),
-        [moreData]
-    );
+        const preparedForSortData = React.useMemo(
+            () =>
+                moreData?.map((ticket: ITicket) => {
+                    return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+                }),
+            [moreData]
+        );
 
-    const sortedData = React.useMemo(
-        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-        [preparedForSortData]
-    );
+        const sortedData = React.useMemo(
+            () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+            [preparedForSortData]
+        );
 
-    const groupedData = React.useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'sortDateKey'
-            ),
-        [updatedListItem?._id, sortedData]
-    );
+        const groupedData = React.useMemo(
+            () =>
+                Utils.groupListByKey(
+                    Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                    'sortDateKey'
+                ),
+            [updatedListItem?._id, sortedData]
+        );
 
-    return (
-        <FlatListComponent
-            data={groupedData}
-            columns={teamTicketsColumns}
-            fetchMoreData={fetchMoreData}
-            isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
-            emptyMessage={
-                isCampusPastor || isGlobalPastor
-                    ? 'There are no tickets issued'
-                    : "Nothing here, let's keep it that way 😇"
-            }
-        />
-    );
-});
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
+
+        return (
+            <FlatListComponent
+                data={groupedData}
+                columns={teamTicketsColumns}
+                fetchMoreData={fetchMoreData}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+                emptyMessage={
+                    isCampusPastor || isGlobalPastor
+                        ? 'There are no tickets issued'
+                        : "Nothing here, let's keep it that way 😇"
+                }
+            />
+        );
+    }
+);
 
 const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
     const leadersTicketsColumns: IFlatListColumn[] = [
@@ -369,7 +384,7 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
     );
 });
 
-const CampusTickets: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
+const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(({ updatedListItem, reload }) => {
     const teamTicketsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
@@ -384,7 +399,7 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, isSuccess, isFetching } = useGetTicketsQuery(
+    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
         {
             campusId: campus._id,
             limit: 20,
@@ -426,6 +441,12 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedLis
             ),
         [updatedListItem?._id, sortedData]
     );
+
+    useScreenFocus({
+        onFocus: () => {
+            if (reload && !isUninitialized) refetch();
+        },
+    });
 
     return (
         <FlatListComponent
