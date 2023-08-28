@@ -26,7 +26,6 @@ export const writeToStorage = async (generatedFile: any, fileName: string) => {
     RNFS.writeFile(filePath, generatedFile, 'ascii')
         .then((r: any) => {})
         .catch((e: any) => {
-            console.log(e);
             Alert.alert('Unable to generate file', e);
         });
     return { filePath };

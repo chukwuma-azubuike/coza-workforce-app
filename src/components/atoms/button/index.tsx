@@ -96,18 +96,14 @@ export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     // Permission Granted (calling our exportDataToExcel function)
                     generateExcelFile(data, fileName);
-                    console.log('Permission granted');
                 } else {
                     // Permission denied
-                    console.log('Permission denied');
                 }
             } else {
                 // Already have Permission (calling our exportDataToExcel function)
                 generateExcelFile(data, fileName);
             }
         } catch (e) {
-            console.log('Error while checking permission');
-            console.log(e);
             return;
         }
     };

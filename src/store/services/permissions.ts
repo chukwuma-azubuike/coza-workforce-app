@@ -24,6 +24,11 @@ interface IApprovePermission {
     comment: string;
 }
 
+interface IPermissionReportPayload extends IReportDownloadPayload {
+    startDate?: number;
+    endDate?: number;
+}
+
 export const permissionsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
@@ -84,7 +89,7 @@ export const permissionsServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IPermissionCategory[]>) => response.data,
         }),
 
-        getPermissionsReportForDownload: endpoint.query<any[], IReportDownloadPayload>({
+        getPermissionsReportForDownload: endpoint.query<any[], IPermissionReportPayload>({
             query: params => ({
                 url: `${SERVICE_URL}/download`,
                 method: REST_API_VERBS.GET,

@@ -200,7 +200,7 @@ export const CreateCampusSchema = Yup.object().shape({
     country: Yup.string().required('Country is required'),
     dateOfBirth: Yup.string().required('DOB is required'),
     coordinates: Yup.object().shape({
-        long: Yup.string().required('Longitude is required'),
-        lat: Yup.string().required('Latitude is required'),
+        long: Yup.number().required('Longitude is required').notOneOf([0], 'Please input a valid longitude'),
+        lat: Yup.number().required('Latitude is required').notOneOf([0], 'Please input a valid latitude'),
     }),
 });
