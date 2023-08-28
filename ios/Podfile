@@ -38,6 +38,8 @@ end
 
 target 'CozaGlobalWorkforceApp' do
   config = use_native_modules!
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
 
   # Flags change depending on the env values.
   flags = get_default_flags()
@@ -53,15 +55,17 @@ target 'CozaGlobalWorkforceApp' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => flipper_config,
+    # :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
-  
+
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'GoogleUtilities', :modular_headers => true
+
   pod 'RNSVG', :path => '../node_modules/react-native-svg'
-
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-
   pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
 
 
@@ -88,7 +92,7 @@ target 'CozaGlobalWorkforceApp' do
 
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '11.0'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
         config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = "arm64"
       end
     end
