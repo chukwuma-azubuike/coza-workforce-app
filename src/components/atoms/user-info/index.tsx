@@ -28,7 +28,7 @@ const UserInfo = ({ heading, value, name, isEditable = true }: IUserInfo) => {
     };
 
     return (
-        <Pressable onPress={handleEdit}>
+        <Pressable disabled={!isEditable} onPress={handleEdit}>
             <HStack alignItems="center" justifyContent="space-between" paddingRight={2}>
                 <Stack ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
                     <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
