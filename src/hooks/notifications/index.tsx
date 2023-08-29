@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAddDeviceTokenMutation } from '../../store/services/account';
-import { getFCMToken } from '../../utils/notifications';
-import { getUniqueId } from 'react-native-device-info';
+// import { getFCMToken } from '../../utils/notifications';
+// import { getUniqueId } from 'react-native-device-info';
 import { IUser } from '../../store/types';
 import { Permission, PermissionsAndroid, Platform } from 'react-native';
 import { PERMISSIONS } from 'react-native-permissions';
@@ -21,18 +21,16 @@ export const useNotifications = (user: IUser) => {
     const [addDeviceToken] = useAddDeviceTokenMutation();
 
     React.useEffect(() => {
-        const sendFCMToken = async () => {
-            const deviceId = await getUniqueId();
-            const fcmToken = await getFCMToken();
-
-            if (!!fcmToken && !!deviceId)
-                addDeviceToken({
-                    email,
-                    fcmToken,
-                    deviceId,
-                });
-        };
-
-        sendFCMToken();
+        // const sendFCMToken = async () => {
+        //     const deviceId = await getUniqueId();
+        //     const fcmToken = await getFCMToken();
+        //     if (!!fcmToken && !!deviceId)
+        //         addDeviceToken({
+        //             email,
+        //             fcmToken,
+        //             deviceId,
+        //         });
+        // };
+        // sendFCMToken();
     }, []);
 };
