@@ -34,13 +34,14 @@ const TabRoutes: React.FC = () => {
         goBack();
     };
 
-    const { initialRoute, tabKey } = useDeepLinkNavigation();
+    // TODO: Restore when IOS notification is fixed
+    // const { initialRoute, tabKey } = useDeepLinkNavigation();
 
-    React.useEffect(() => {
-        if (!!initialRoute) {
-            navigate(initialRoute as unknown as never, { tabKey } as any);
-        }
-    }, [initialRoute, tabKey]);
+    // React.useEffect(() => {
+    //     if (!!initialRoute) {
+    //         navigate(initialRoute as unknown as never, { tabKey } as any);
+    //     }
+    // }, [initialRoute, tabKey]);
 
     return (
         <Tab.Navigator
