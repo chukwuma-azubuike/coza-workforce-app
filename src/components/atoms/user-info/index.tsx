@@ -10,11 +10,12 @@ interface IUserInfo {
     heading?: string;
     value: string;
     name: string;
+    isEditable?: boolean;
 }
 
 const NON_EDITABLE = ['email'];
 
-const UserInfo = ({ heading, value, name }: IUserInfo) => {
+const UserInfo = ({ heading, value, name, isEditable = true }: IUserInfo) => {
     const { navigate } = useNavigation();
 
     const handleEdit = () => {
@@ -43,7 +44,7 @@ const UserInfo = ({ heading, value, name }: IUserInfo) => {
                         {value && Utils.truncateString(value, 40)}
                     </Text>
                 </Stack>
-                <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
+                {isEditable && <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />}
             </HStack>
         </Pressable>
     );

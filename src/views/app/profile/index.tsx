@@ -182,8 +182,9 @@ const Profile: React.FC = () => {
                     </Box>
                 </Stack>
                 <Box mx={2}>
+                    <UserInfo heading="Role" isEditable={false} name="role" value={user?.roleName} />
                     <UserInfo heading="Address" name="address" value={user?.address} />
-                    <UserInfo heading="Email" name="email" value={user?.email} />
+                    <UserInfo heading="Email" isEditable={false} name="email" value={user?.email} />
                     <UserInfo heading="Phone" name="phoneNumber" value={user?.phoneNumber} />
                     <UserInfo heading="Next of kin" name="nextOfKin" value={user?.nextOfKin} />
                     <UserInfo heading="Occupation" name="occupation" value={user?.occupation} />
