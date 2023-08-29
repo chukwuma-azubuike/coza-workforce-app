@@ -121,6 +121,7 @@ const useRole = () => {
     return {
         // User Object
         user: {
+            roleName,
             ...currentUser,
             _id: currentUser.userId || currentUser._id,
             userId: currentUser.userId || currentUser._id,
