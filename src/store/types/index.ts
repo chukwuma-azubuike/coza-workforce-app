@@ -200,6 +200,7 @@ export interface ITicket extends ILog {
     departmentName: string;
     contestReplyComment: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
+    // screen: { name: string; value: string } | undefined;
 }
 
 export interface ITicketUpdatePayload {
@@ -245,6 +246,13 @@ export interface ICreateServicePayload {
     clockinTime: string | Date;
     leaderLateTime: string | Date;
     workerLateTime: string | Date;
+}
+
+export interface IAssignGroupHead {
+    department: string;
+    campus: string;
+    worker: string;
+    role: string;
 }
 
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
@@ -344,6 +352,16 @@ export interface ICreateCampusPayload {
     dateOfBirth: string;
 }
 
+export interface IGHCampus extends ILog {
+    userId: string;
+    email: string;
+    campuses: {
+        id: string;
+        campusName: string;
+        departmentCount: number;
+    }[];
+}
+
 //Role
 export interface IRole {
     _id: string;
@@ -351,6 +369,38 @@ export interface IRole {
     description: string;
     createdAt: string;
     __v: number;
+}
+
+export interface IAssignSecondaryRole {
+    departments: {
+        campusId: string;
+        departmentId: string;
+    }[];
+    email?: string;
+    userId: string;
+    roleId: string;
+}
+
+// Department
+export interface IDepartment {
+    _id: string;
+    departmentName: string;
+    campusId: string;
+    description: string;
+    createdAt: string;
+    __v: number;
+}
+
+export interface IGHDepartment {
+    userId: string;
+    email: string;
+    campusId: string;
+    campusName: string;
+    campuses: {
+        id: string;
+        departmentName: string;
+        userCount: number;
+    }[];
 }
 
 // Services

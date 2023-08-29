@@ -41,9 +41,16 @@ import WorkforceSummary from '../views/app/workforce-management';
 import CampusWorkforceSummary from '../views/app/workforce-management/campus-workforce';
 import UserReport from '../views/app/workforce-management/user-reports';
 import UserReportDetailsPage from '../views/app/workforce-management/user-reports/UserReportDetailsPage';
-import CreateDepartment from '../views/app/workforce-management/create-department';
-import CreateCampus from '../views/app/workforce-management/create-campus';
+import CampusGroupHeads from '../views/app/group-head-summary';
+import AssignRole from '../views/app/leaders/assign-roles';
+import Leaders from '../views/app/leaders';
+import GroupHeadCampuses from '../views/app/group-head-summary/group-head-campuses';
+import GroupHeadDepartments from '../views/app/group-head-summary/group-head-departments';
+import GroupHeadDepartmentActivies from '../views/app/group-head-summary/group-head-tabs';
 import Export from '../views/app/export';
+import CreateCampus from '../views/app/workforce-management/create-campus';
+import CreateDepartment from '../views/app/workforce-management/create-department';
+// import Export from '../views/app/export';
 
 export interface IAppRoute {
     name: string;
@@ -269,6 +276,52 @@ const AppRoutes: IAppRoute[] = [
         users: ['QC', 'programs'],
         inMenuBar: false,
         icon: { name: 'church', type: 'material-community' },
+    },
+    {
+        name: 'Assign group head',
+        component: AssignRole,
+        options: { title: 'Assign group head' },
+        submenus: [],
+        users: ['admin', 'campus-pastor', 'global-pastor'],
+        inMenuBar: false,
+        icon: { name: 'account-group-outline', type: 'material-community' },
+    },
+    {
+        name: 'Group head campus',
+        component: CampusGroupHeads,
+        options: { title: 'Group head campus' },
+        submenus: [
+            {
+                name: 'Group head campuses',
+                component: GroupHeadCampuses,
+                options: { title: 'Group head campuses' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Group head departments',
+                component: GroupHeadDepartments,
+                options: { title: 'Group head departments' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+            {
+                name: 'Group head department activies',
+                component: GroupHeadDepartmentActivies,
+                options: { title: 'Group head department activies' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+        ],
+        users: ['Group head'],
+        inMenuBar: false,
+        icon: { name: 'home-group', type: 'material-community' },
     },
     {
         name: 'Workforce summary',

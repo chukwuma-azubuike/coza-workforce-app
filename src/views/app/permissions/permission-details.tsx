@@ -22,12 +22,17 @@ import {
 } from '../../../store/services/permissions';
 import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
 
+interface PermissionDetailsParamsProps extends IPermission {
+    screen: { name: string; value: string } | undefined;
+}
+
 const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const permissionParams = props.route.params as IPermission;
+    const permissionParams = props.route.params as PermissionDetailsParamsProps;
 
     const {
         requestor: { _id: requestorId },
         _id,
+        screen,
     } = permissionParams;
 
     const navigate = props.navigation;
@@ -73,7 +78,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     useScreenFocus({
         onFocus: () => {
             refetch();
-            if (!permission?.comment) setPermissionComment('');
+            if (!permission?.comment) {
+                setPermissionComment('');
+            }
         },
     });
 
@@ -98,11 +105,20 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             approveReset();
-            navigate.navigate('Permissions', {
-                ...permissionParams,
-                ...approveData,
-                requestor: permissionParams?.requestor,
-            });
+            if (screen?.name) {
+                navigate.navigate('Group head department activies', {
+                    permissions: { ...permissionParams, ...approveData, requestor: permissionParams?.requestor },
+                    screenName: screen.name,
+                    _id: screen.value,
+                    tab: 1,
+                });
+            } else {
+                navigate.navigate('Permissions', {
+                    ...permissionParams,
+                    ...approveData,
+                    requestor: permissionParams?.requestor,
+                });
+            }
         }
         if (approveIsError) {
             setModalState({
@@ -122,11 +138,21 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             declineReset();
-            navigate.navigate('Permissions', {
-                ...permissionParams,
-                ...declineData,
-                requestor: permissionParams?.requestor,
-            });
+
+            if (!!screen?.name) {
+                navigate.navigate('Group head department activies', {
+                    permissions: { ...permissionParams, ...declineData, requestor: permissionParams?.requestor },
+                    screenName: screen.name,
+                    _id: screen.value,
+                    tab: 1,
+                });
+            } else {
+                navigate.navigate('Permissions', {
+                    ...permissionParams,
+                    ...declineData,
+                    requestor: permissionParams?.requestor,
+                });
+            }
         }
         if (declineIsError) {
             setModalState({
@@ -138,9 +164,15 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     }, [declineIsSuccess, declineIsError]);
 
     const takePermissionAction = React.useMemo(() => {
-        if (requestorId === user._id) return false;
-        if (isQC && permission?.department._id !== user.department._id) return false;
-        if (permission?.status !== 'PENDING') return false;
+        if (requestorId === user._id) {
+            return false;
+        }
+        if (isQC && permission?.department._id !== user.department._id) {
+            return false;
+        }
+        if (permission?.status !== 'PENDING') {
+            return false;
+        }
 
         return true;
     }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);

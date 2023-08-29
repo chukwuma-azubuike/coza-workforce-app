@@ -13,9 +13,11 @@ import useRole from '../../../hooks/role';
 import { useGetPermissionsQuery } from '../../../store/services/permissions';
 import { IPermission } from '../../../store/types';
 import Utils from '../../../utils';
+import useScreenFocus from '../../../hooks/focus';
 // import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
+    screen?: { name: string; value: string } | undefined;
     type: 'own' | 'team' | 'campus';
     '0'?: string;
     '1'?: IPermission[];
@@ -24,15 +26,17 @@ interface IPermissionListRowProps extends IPermission {
 export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const navigation = useNavigation();
 
-    const { type } = props;
+    const { type, screen } = props;
 
     return (
         <ErrorBoundary>
             {props[1]?.map((elm, index) => {
-                if (!elm) return;
+                if (!elm) {
+                    return;
+                }
 
                 const handlePress = () => {
-                    navigation.navigate('Permission Details' as never, elm as never);
+                    navigation.navigate('Permission Details' as never, { ...elm, screen } as never);
                 };
 
                 const { requestor, departmentName, categoryName, description, category, status } = elm;
@@ -91,125 +95,144 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     );
 };
 
-const MyPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
-    const myPermissionsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => <PermissionListRow type="own" {..._} key={key} />,
-        },
-    ];
+const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const myPermissionsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'dateCreated',
+                render: (_: IPermission, key) => <PermissionListRow type="own" {..._} key={key} />,
+            },
+        ];
 
-    const {
-        user: { userId },
-    } = useRole();
+        const {
+            user: { userId },
+        } = useRole();
 
-    const [page, setPage] = React.useState<number>(1);
+        const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
-        { requestor: userId, limit: 20, page },
-        {
-            refetchOnMountOrArgChange: true,
-        }
-    );
-
-    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
+        const { data, isLoading, isFetching, isSuccess, refetch, isUninitialized } = useGetPermissionsQuery(
+            { requestor: userId, limit: 20, page },
+            {
+                refetchOnMountOrArgChange: true,
             }
-        }
-    };
+        );
 
-    const memoizedData = useMemo(
-        () =>
-            Utils.groupListByKey(
-                uniqBy(
-                    [updatedListItem?.requestor?._id === userId ? updatedListItem : null, ...(moreData || [])],
-                    '_id'
-                ),
-                'createdAt'
-            ),
-        [moreData]
-    );
+        const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
-    return (
-        <ErrorBoundary>
-            {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
-            <FlatListComponent
-                data={memoizedData}
-                refreshing={isFetching}
-                fetchMoreData={fetchMoreData}
-                columns={myPermissionsColumns}
-                isLoading={isLoading || isFetching}
-            />
-        </ErrorBoundary>
-    );
-});
-
-const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
-    const teamPermissionsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => <PermissionListRow type="team" {..._} key={key} />,
-        },
-    ];
-
-    const {
-        user: {
-            department: { _id },
-        },
-    } = useRole();
-
-    const [page, setPage] = React.useState<number>(1);
-
-    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
-        { departmentId: _id, limit: 20, page },
-        {
-            refetchOnMountOrArgChange: true,
-        }
-    );
-
-    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
             }
-        }
-    };
+        };
 
-    const memoizedData = useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.sortByDate(
-                    Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['_id', updatedListItem?._id]),
+        const memoizedData = useMemo(
+            () =>
+                Utils.groupListByKey(
+                    uniqBy(
+                        [updatedListItem?.requestor?._id === userId ? updatedListItem : null, ...(moreData || [])],
+                        '_id'
+                    ),
                     'createdAt'
                 ),
-                'createdAt'
-            ),
-        [updatedListItem?._id, moreData]
-    );
+            [moreData]
+        );
 
-    return (
-        <ErrorBoundary>
-            {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
-            <FlatListComponent
-                data={memoizedData}
-                refreshing={isFetching}
-                fetchMoreData={fetchMoreData}
-                columns={teamPermissionsColumns}
-                isLoading={isLoading || isFetching}
-            />
-        </ErrorBoundary>
-    );
-});
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
+
+        return (
+            <ErrorBoundary>
+                {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
+                <FlatListComponent
+                    data={memoizedData}
+                    refreshing={isFetching}
+                    fetchMoreData={fetchMoreData}
+                    columns={myPermissionsColumns}
+                    isLoading={isLoading || isFetching}
+                />
+            </ErrorBoundary>
+        );
+    }
+);
+
+const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const teamPermissionsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'dateCreated',
+                render: (_: IPermission, key) => <PermissionListRow type="team" {..._} key={key} />,
+            },
+        ];
+
+        const {
+            user: {
+                department: { _id },
+            },
+        } = useRole();
+
+        const [page, setPage] = React.useState<number>(1);
+
+        const { data, isLoading, isFetching, isSuccess, refetch, isUninitialized } = useGetPermissionsQuery(
+            { departmentId: _id, limit: 20, page },
+            {
+                refetchOnMountOrArgChange: true,
+            }
+        );
+
+        const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
+            }
+        };
+
+        const memoizedData = useMemo(
+            () =>
+                Utils.groupListByKey(
+                    Utils.sortByDate(
+                        Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, [
+                            '_id',
+                            updatedListItem?._id,
+                        ]),
+                        'createdAt'
+                    ),
+                    'createdAt'
+                ),
+            [updatedListItem?._id, moreData]
+        );
+
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
+
+        return (
+            <ErrorBoundary>
+                {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
+                <FlatListComponent
+                    data={memoizedData}
+                    refreshing={isFetching}
+                    fetchMoreData={fetchMoreData}
+                    columns={teamPermissionsColumns}
+                    isLoading={isLoading || isFetching}
+                />
+            </ErrorBoundary>
+        );
+    }
+);
 
 const LeadersPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
     const LeadersPermissionsColumns: IFlatListColumn[] = [
@@ -304,58 +327,67 @@ const LeadersPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(
     );
 });
 
-const CampusPermissions: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
-    const teamPermissionsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => <PermissionListRow type="campus" {..._} key={key} />,
-        },
-    ];
+const CampusPermissions: React.FC<{ updatedListItem: IPermission; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const teamPermissionsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'dateCreated',
+                render: (_: IPermission, key) => <PermissionListRow type="campus" {..._} key={key} />,
+            },
+        ];
 
-    const {
-        user: {
-            campus: { _id },
-        },
-    } = useRole();
+        const {
+            user: {
+                campus: { _id },
+            },
+        } = useRole();
 
-    const [page, setPage] = React.useState<number>(1);
+        const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
-        {
-            campusId: _id,
-            limit: 20,
-            page,
-        },
-        {
-            refetchOnMountOrArgChange: true,
-        }
-    );
-
-    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
-
-    const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'createdAt'), [moreData]);
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
+        const { data, isLoading, isFetching, isSuccess, refetch, isUninitialized } = useGetPermissionsQuery(
+            {
+                campusId: _id,
+                limit: 20,
+                page,
+            },
+            {
+                refetchOnMountOrArgChange: true,
             }
-        }
-    };
-    return (
-        <ErrorBoundary>
-            {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
-            <FlatListComponent
-                data={memoizedData}
-                refreshing={isFetching}
-                fetchMoreData={fetchMoreData}
-                columns={teamPermissionsColumns}
-                isLoading={isLoading || isFetching}
-            />
-        </ErrorBoundary>
-    );
-});
+        );
+
+        const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+
+        const memoizedData = useMemo(() => Utils.groupListByKey(moreData, 'createdAt'), [moreData]);
+
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
+            }
+        };
+
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
+
+        return (
+            <ErrorBoundary>
+                {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
+                <FlatListComponent
+                    data={memoizedData}
+                    refreshing={isFetching}
+                    fetchMoreData={fetchMoreData}
+                    columns={teamPermissionsColumns}
+                    isLoading={isLoading || isFetching}
+                />
+            </ErrorBoundary>
+        );
+    }
+);
 
 export { MyPermissionsList, MyTeamPermissionsList, LeadersPermissionsList, CampusPermissions };

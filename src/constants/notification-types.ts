@@ -32,13 +32,13 @@ export const NOTIFICATION_TYPES_ROUTING: INotificationTypesRoute = {
     CLOCK_IN_SUMMARY: { routeName: 'Attendance', tabKey: '', data: {} },
     CLOCK_OUT_SUMMARY: { routeName: 'Attendance', tabKey: '', data: {} },
     PERMISSION_STATUS: { routeName: 'Permissions', tabKey: '', data: {} },
-    PERMISSION_CREATED: { routeName: 'Permissions', tabKey: '', data: {} },
+    PERMISSION_CREATED: { routeName: 'Permissions', tabKey: 'teamPermissions', data: {} },
     PERMISSION_SUBMITTED: { routeName: 'Permissions', tabKey: '', data: {} },
     RETRACT_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
     NOTIFY_QC_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
     INDIVIDUAL_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
     DEPARTMENT_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'teamTickets', data: {} },
-    NOTIFY_PASTOR_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
+    NOTIFY_PASTOR_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'campusTickets', data: {} },
     NOTIFY_QC_RETRACTED_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'campusTickets', data: {} },
 };
 

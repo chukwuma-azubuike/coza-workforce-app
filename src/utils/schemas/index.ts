@@ -119,6 +119,11 @@ export const CreateServiceSchema = Yup.object().shape({
     serviceName: Yup.string().required('Service name is required.'),
 });
 
+export const AssignGroupHeadSchema = Yup.object().shape({
+    worker: Yup.string().required('You are required to select a worker.'),
+    role: Yup.string().required('You are required to select a role.'),
+});
+
 export const CreateDepartmentalTicketSchema = Yup.object().shape({
     categoryId: Yup.string().required('You are required to select a category.'),
     departmentId: Yup.string().required('You are required to select a department'),

@@ -23,7 +23,7 @@ const ROUTES = [
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
 const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { tabKey: string };
+    const params = route.params as { tabKey: string; reload: boolean };
 
     const { isMobile } = useMediaQuery();
     const updatedListItem = route?.params as ITicket;
@@ -44,10 +44,12 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         navigation.navigate('Export Data', { type: IReportTypes.TICKETS });
     };
 
+    const reload = params?.reload;
+
     const renderScene = SceneMap({
-        myTickets: () => <MyTicketsList updatedListItem={updatedListItem} />,
-        teamTickets: () => <MyTeamTicketsList updatedListItem={updatedListItem} />,
-        campusTickets: () => <CampusTickets updatedListItem={updatedListItem} />,
+        myTickets: () => <MyTicketsList reload={reload} updatedListItem={updatedListItem} />,
+        teamTickets: () => <MyTeamTicketsList reload={reload} updatedListItem={updatedListItem} />,
+        campusTickets: () => <CampusTickets reload={reload} updatedListItem={updatedListItem} />,
         leadersTickets: () => <LeadersTicketsList updatedListItem={updatedListItem} />,
     });
 
