@@ -7,53 +7,44 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '../../../config/appConfig';
-import useRole from '../../../hooks/role';
+import useRole, { DEPARTMENTS, ROLES } from '../../../hooks/role';
 import { useCustomBackNavigation } from '../../../hooks/navigation';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
-    const { isGlobalPastor, isHOD, isAHOD, isQC, isGroupHead, isSuperAdmin, isCampusPastor } = useRole();
-
-    const routeFilters = ['Profile', 'Notifications'];
-    const roleFilterArray = [
-        { role: isSuperAdmin, routes: ['Group head campus'] },
-        { role: isQC, routes: ['Service management', 'Group head campus', 'Assign group head'] },
-        {
-            role: isGroupHead,
-            routes: ['Manual clock in', 'Service management', 'Export Data', 'Assign group head'],
+    const {
+        user: {
+            role: { name: roleName },
+            department: { departmentName },
         },
-        { role: isCampusPastor, routes: ['Service management', 'Group head campus', 'Assign group head'] },
-        {
-            role: isAHOD || isHOD,
-            routes: ['Manual clock in', 'Service management', 'Export Data', 'Group head campus', 'Assign group head'],
-        },
-        { role: isGlobalPastor, routes: ['Manual clock in', 'Service management', 'Group head campus'] },
-        {
-            role: (isHOD && !isQC) || (isAHOD && !isQC),
-            routes: ['Manual clock in', 'Service management', 'Group head campus', 'Assign group head'],
-        },
-    ];
-
-    const assertFilterRole = React.useMemo(() => roleFilterArray.find(filter => filter.role), [roleFilterArray]);
+    } = useRole();
 
     const filteredRoutes = React.useMemo(
         () =>
-            AppRoutes.filter(
-                route =>
-                    !route.inMenuBar &&
-                    !routeFilters.includes(route.name) &&
-                    !(assertFilterRole?.role && assertFilterRole.routes.includes(route.name))
-            ),
-        [AppRoutes]
+            AppRoutes.filter(route => {
+                if (!route.inMore) {
+                    return;
+                }
+
+                const rolesAndDepartments = route.users;
+
+                if (
+                    rolesAndDepartments.includes(roleName as ROLES) ||
+                    rolesAndDepartments.includes(departmentName as DEPARTMENTS)
+                ) {
+                    return route;
+                }
+            }),
+        []
     );
 
     useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper>
+        <ViewWrapper scroll>
             <VStack>
                 <List mx={4} borderWidth={0}>
-                    {filteredRoutes.map((route, idx) => (
+                    {filteredRoutes?.map((route, idx) => (
                         <List.Item
                             mb={2}
                             py={4}

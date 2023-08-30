@@ -50,6 +50,7 @@ import GroupHeadDepartmentActivies from '../views/app/group-head-summary/group-h
 import Export from '../views/app/export';
 import CreateCampus from '../views/app/workforce-management/create-campus';
 import CreateDepartment from '../views/app/workforce-management/create-department';
+import { DEPARTMENTS, ROLES } from '../hooks/role';
 // import Export from '../views/app/export';
 
 export interface IAppRoute {
@@ -57,8 +58,9 @@ export interface IAppRoute {
     component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>> | React.FC<any>;
     options: any;
     submenus: IAppRoute[] | [];
-    users: string[] | [];
+    users: (ROLES | DEPARTMENTS)[];
     inMenuBar: boolean;
+    inMore: boolean;
     icon: { name: string; type: IIconTypes };
 }
 
@@ -70,6 +72,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        inMore: false,
         icon: { name: 'home', type: 'antdesign' },
     },
     {
@@ -79,6 +82,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        inMore: false,
         icon: { name: 'checklist', type: 'octicon' },
     },
     {
@@ -93,6 +97,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'hand-left-outline', type: 'ionicon' },
             },
             {
@@ -104,11 +109,13 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'hand-left-outline', type: 'ionicon' },
             },
         ],
         users: [],
         inMenuBar: true,
+        inMore: false,
         icon: { name: 'hand-left-outline', type: 'ionicon' },
     },
     {
@@ -123,6 +130,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: {
                     name: 'ticket-confirmation-outline',
                     type: 'material-community',
@@ -135,6 +143,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: {
                     name: 'ticket-confirmation-outline',
                     type: 'material-community',
@@ -143,6 +152,7 @@ const AppRoutes: IAppRoute[] = [
         ],
         users: [],
         inMenuBar: true,
+        inMore: false,
         icon: {
             name: 'ticket-confirmation-outline',
             type: 'material-community',
@@ -155,6 +165,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: false,
+        inMore: false,
         icon: { name: 'notifications-outline', type: 'ionicon' },
     },
     {
@@ -169,11 +180,13 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person-outline', type: 'ionicon' },
             },
         ],
         users: [],
         inMenuBar: false,
+        inMore: false,
         icon: { name: 'person-outline', type: 'ionicon' },
     },
     {
@@ -188,6 +201,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -197,6 +211,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -206,6 +221,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -215,6 +231,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -224,6 +241,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -233,6 +251,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -242,6 +261,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
             {
@@ -251,11 +271,20 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
             },
         ],
-        users: ['admin', 'HOD', 'AHOD', 'QC', 'campus-pastor', 'global-pastor'],
+        users: [
+            ROLES.HOD,
+            ROLES.AHOD,
+            ROLES.groupHead,
+            ROLES.campusPastor,
+            ROLES.globalPastor,
+            ROLES.campusCoordinator,
+        ],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'graph', type: 'octicon' },
     },
     {
@@ -268,13 +297,15 @@ const AppRoutes: IAppRoute[] = [
                 component: CreateServiceManagement,
                 options: { title: 'Create service' },
                 submenus: [],
-                users: ['QC', 'programs'],
+                users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'church', type: 'material-community' },
             },
         ],
-        users: ['QC', 'programs'],
+        users: [ROLES.superAdmin],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'church', type: 'material-community' },
     },
     {
@@ -282,8 +313,9 @@ const AppRoutes: IAppRoute[] = [
         component: AssignRole,
         options: { title: 'Assign group head' },
         submenus: [],
-        users: ['admin', 'campus-pastor', 'global-pastor'],
+        users: [ROLES.superAdmin, ROLES.globalPastor],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'account-group-outline', type: 'material-community' },
     },
     {
@@ -298,6 +330,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -307,6 +340,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -316,11 +350,13 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
         ],
-        users: ['Group head'],
+        users: [ROLES.groupHead],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'home-group', type: 'material-community' },
     },
     {
@@ -335,6 +371,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -344,6 +381,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -353,6 +391,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -362,6 +401,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -371,6 +411,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -380,6 +421,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -389,6 +431,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -398,6 +441,7 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
             {
@@ -407,11 +451,22 @@ const AppRoutes: IAppRoute[] = [
                 submenus: [],
                 users: [],
                 inMenuBar: false,
+                inMore: false,
                 icon: { name: 'person', type: 'octicon' },
             },
         ],
-        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        users: [
+            ROLES.HOD,
+            ROLES.AHOD,
+            ROLES.groupHead,
+            ROLES.superAdmin,
+            ROLES.globalAdmin,
+            ROLES.campusPastor,
+            ROLES.globalPastor,
+            ROLES.campusCoordinator,
+        ],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'database-cog-outline', type: 'material-community' },
     },
     {
@@ -419,8 +474,9 @@ const AppRoutes: IAppRoute[] = [
         component: ManualClockin,
         options: { title: 'Manual clock in' },
         submenus: [],
-        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        users: [ROLES.superAdmin, ROLES.campusPastor, DEPARTMENTS.QC, DEPARTMENTS.ME, ROLES.campusCoordinator],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'timer-outline', type: 'material-community' },
     },
     // {
@@ -438,8 +494,18 @@ const AppRoutes: IAppRoute[] = [
         component: Export,
         options: { title: 'Export Data' },
         submenus: [],
-        users: ['admin', 'HOD', 'AHOD', 'QC'],
+        users: [
+            DEPARTMENTS.QC,
+            DEPARTMENTS.ME,
+            ROLES.groupHead,
+            ROLES.superAdmin,
+            ROLES.globalAdmin,
+            ROLES.campusPastor,
+            ROLES.globalPastor,
+            ROLES.campusCoordinator,
+        ],
         inMenuBar: false,
+        inMore: true,
         icon: { name: 'download-outline', type: 'ionicon' },
     },
     {
@@ -449,6 +515,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        inMore: false,
         icon: { name: 'menu-outline', type: 'ionicon' },
     },
 ];
@@ -460,6 +527,7 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         options: { title: 'Welcome' },
         submenus: [],
         users: [],
+        inMore: false,
         inMenuBar: false,
     },
     {
@@ -468,6 +536,7 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         options: { title: 'Verify Email' },
         submenus: [],
         users: [],
+        inMore: false,
         inMenuBar: false,
     },
     {
@@ -476,6 +545,7 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         options: { title: 'Login' },
         submenus: [],
         users: [],
+        inMore: false,
         inMenuBar: false,
     },
     {
@@ -484,6 +554,7 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         options: { title: 'Register' },
         submenus: [],
         users: [],
+        inMore: false,
         inMenuBar: false,
     },
     {
@@ -492,6 +563,7 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         options: { title: 'Forgot Password' },
         submenus: [],
         users: [],
+        inMore: false,
         inMenuBar: false,
     },
     {
@@ -500,6 +572,7 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
         options: { title: 'Reset Password' },
         submenus: [],
         users: [],
+        inMore: false,
         inMenuBar: false,
     },
 ];
