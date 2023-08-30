@@ -5,11 +5,10 @@ import { SENTRY_DNS } from '@env';
 
 import { NativeBaseProvider } from 'native-base';
 import Views from './src/views';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView, initialWindowMetrics } from 'react-native-safe-area-context';
 import { extendedTheme } from './src/config/appConfig';
 import { Provider } from 'react-redux';
 import store, { persistor } from './src/store';
-import { SafeAreaView } from 'react-native';
 import { IModalProps } from './types/app';
 import useRootModal from './src/hooks/modal/useRootModal';
 import ModalProvider from './src/providers/modal-provider';
@@ -48,37 +47,37 @@ const App: React.FC<JSX.Element> = () => {
 
     return (
         <Sentry.TouchEventBoundary>
-            <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }}>
-                <Provider store={store}>
-                    <NativeBaseProvider theme={extendedTheme}>
-                        <PersistGate loading={<Loading bootUp />} persistor={persistor}>
-                            <AppStateContext.Provider
-                                value={
-                                    {
-                                        isLoggedIn,
-                                        setIsLoggedIn,
-                                    } as IAppStateContext
-                                }
-                            >
-                                <ModalProvider
-                                    initialModalState={{
-                                        ...modalInitialState.modalState,
-                                        ...setModalState,
-                                    }}
+            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+                <SafeAreaView style={{ flex: 1 }} edges={['right', 'bottom', 'left']}>
+                    <Provider store={store}>
+                        <NativeBaseProvider theme={extendedTheme}>
+                            <PersistGate loading={<Loading bootUp />} persistor={persistor}>
+                                <AppStateContext.Provider
+                                    value={
+                                        {
+                                            isLoggedIn,
+                                            setIsLoggedIn,
+                                        } as IAppStateContext
+                                    }
                                 >
-                                    <SafeAreaProvider>
+                                    <ModalProvider
+                                        initialModalState={{
+                                            ...modalInitialState.modalState,
+                                            ...setModalState,
+                                        }}
+                                    >
                                         {isLoggedIn !== undefined ? (
                                             <Views isLoggedIn={isLoggedIn} />
                                         ) : (
                                             <Loading bootUp />
                                         )}
-                                    </SafeAreaProvider>
-                                </ModalProvider>
-                            </AppStateContext.Provider>
-                        </PersistGate>
-                    </NativeBaseProvider>
-                </Provider>
-            </SafeAreaView>
+                                    </ModalProvider>
+                                </AppStateContext.Provider>
+                            </PersistGate>
+                        </NativeBaseProvider>
+                    </Provider>
+                </SafeAreaView>
+            </SafeAreaProvider>
         </Sentry.TouchEventBoundary>
     );
 };

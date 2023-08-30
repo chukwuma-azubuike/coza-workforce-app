@@ -27,7 +27,7 @@ const tags: any = [
     { id: '7DG', value: '7DG' },
 ];
 
-const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { navigate } = navigation;
 
     const { setModalState } = useModal();
@@ -240,7 +240,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
-                                        Create service
+                                        Create CGWC 🚀
                                     </ButtonComponent>
                                 </FormControl>
                             </VStack>
@@ -252,4 +252,4 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
     );
 };
 
-export default CreateServiceManagement;
+export default CreateCGWC;

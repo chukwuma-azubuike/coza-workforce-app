@@ -9,6 +9,7 @@ import { departmentServiceSlice } from '../department';
 import { ticketServiceSlice } from '../tickets';
 import { campusServiceSlice } from './../campus';
 import { roleServiceSlice } from '../role';
+import { cgwcServiceSlice } from '../cgwc';
 
 const middlewaresSlices = [
     accountServiceSlice.middleware,
@@ -22,6 +23,7 @@ const middlewaresSlices = [
     campusServiceSlice.middleware,
     scoreServiceSlice.middleware,
     roleServiceSlice.middleware,
+    cgwcServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;

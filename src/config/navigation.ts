@@ -51,6 +51,9 @@ import Export from '../views/app/export';
 import CreateCampus from '../views/app/workforce-management/create-campus';
 import CreateDepartment from '../views/app/workforce-management/create-department';
 import { DEPARTMENTS, ROLES } from '../hooks/role';
+import CGWC from '../views/app/cgwc';
+import CGWCDetails from '../views/app/cgwc/cgwc-details';
+import CreateCGWC from '../views/app/cgwc/create-cgwc';
 // import Export from '../views/app/export';
 
 export interface IAppRoute {
@@ -507,6 +510,36 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'download-outline', type: 'ionicon' },
+    },
+    {
+        name: 'CGWC',
+        component: CGWC,
+        options: { title: 'CGWC' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+        inMore: true,
+        icon: { name: 'crown', type: 'foundation' },
+    },
+    {
+        name: 'Create CGWC',
+        component: CreateCGWC,
+        options: { title: 'Create CGWC' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+        inMore: false,
+        icon: { name: 'crown', type: 'foundation' },
+    },
+    {
+        name: 'CGWC Details',
+        component: CGWCDetails,
+        options: { title: 'CGWC Details' },
+        submenus: [],
+        users: [],
+        inMenuBar: false,
+        inMore: false,
+        icon: { name: 'crown', type: 'foundation' },
     },
     {
         name: 'More',

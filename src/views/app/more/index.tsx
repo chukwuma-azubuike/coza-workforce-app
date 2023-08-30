@@ -25,9 +25,10 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                 if (!route.inMore) {
                     return;
                 }
-
+                if (!route.users?.length) {
+                    return route;
+                }
                 const rolesAndDepartments = route.users;
-
                 if (
                     rolesAndDepartments.includes(roleName as ROLES) ||
                     rolesAndDepartments.includes(departmentName as DEPARTMENTS)

@@ -437,6 +437,10 @@ export interface IService {
         updatedAt: string;
     };
 }
+
+export interface ICGWC {
+    _id: string;
+}
 export interface ICreateService {
     _id?: string;
     name: string;

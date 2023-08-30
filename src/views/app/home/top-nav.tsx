@@ -22,16 +22,17 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     const handlePress = () => navigation.navigate('Profile');
 
-    const {
-        latestService: { data, isError, isLoading },
-    } = React.useContext(HomeContext);
+    const { latestService } = React.useContext(HomeContext);
+    const data = latestService?.data;
+    const isError = latestService?.isError;
+    const isLoading = latestService?.isLoading;
 
     const { user } = useRole();
 
     const { isLightMode } = useAppColorMode();
 
     return (
-        <HStack justifyContent="space-between" alignItems="center" zIndex={20} w="full" pr={4} pl={3}>
+        <HStack justifyContent="space-between" alignItems="center" zIndex={20} w="full" pr={4} pl={3} pt={10}>
             <IconButton
                 onPress={handlePress}
                 icon={

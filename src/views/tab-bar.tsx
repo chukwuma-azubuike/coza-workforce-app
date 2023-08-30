@@ -8,13 +8,17 @@ import { AppRoutes } from '../config/navigation';
 import useRole from '../hooks/role';
 import useAppColorMode from '../hooks/theme/colorMode';
 
-const inMenuBarNames = AppRoutes.map(route => {
-    if (route.inMenuBar) return route.name;
-});
-
 const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) => {
     const { isWorker, isQC } = useRole();
     const { isLightMode } = useAppColorMode();
+
+    const inMenuBarNames = React.useMemo(
+        () =>
+            AppRoutes.map(route => {
+                if (route.inMenuBar || (isWorker && route.name === 'CGWC')) return route.name;
+            }),
+        [AppRoutes]
+    );
 
     return (
         <HStack
@@ -87,6 +91,9 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
                         iconName = 'menu-outline';
                         iconType = 'ionicon';
                         break;
+                    case 'CGWC':
+                        iconName = 'crown';
+                        iconType = 'foundation';
                     default:
                         break;
                 }

@@ -41,8 +41,13 @@ const ConnectionStatusBar: React.FC = () => {
                 opacity,
             }}
         >
-            <Box bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'} w="full">
-                <Text textAlign="center" w="full" color="white">{`${
+            <Box
+                w="full"
+                height={57}
+                justifyContent="flex-end"
+                bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'}
+            >
+                <Text textAlign="center" w="full" fontSize="xs" color="white">{`${
                     netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
                 }`}</Text>
             </Box>

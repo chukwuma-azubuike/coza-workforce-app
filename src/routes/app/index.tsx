@@ -34,6 +34,8 @@ const TabRoutes: React.FC = () => {
         goBack();
     };
 
+    const hiddenHeaders = ['Home', 'CGWC Details'];
+
     // TODO: Restore when IOS notification is fixed
     // const { initialRoute, tabKey } = useDeepLinkNavigation();
 
@@ -48,7 +50,7 @@ const TabRoutes: React.FC = () => {
             tabBar={props => <TabBar {...props} />}
             screenOptions={{
                 headerTitleAlign: 'center',
-                headerStyle: { height: 80 },
+                headerStyle: { height: 90 },
             }}
             backBehavior="history"
         >
@@ -59,21 +61,22 @@ const TabRoutes: React.FC = () => {
                     name={route.name}
                     component={route.component}
                     options={{
-                        headerShown: route.name !== 'Home',
+                        headerShown: !hiddenHeaders.includes(route.name),
                         headerBackgroundContainerStyle: {
                             justifyContent: 'center',
                             alignContent: 'center',
                         },
                         headerLeft: () => (
                             <IconButton
-                                ml={2}
-                                fontSize="lg"
+                                ml={3}
+                                fontSize="md"
                                 _light={{
                                     _pressed: { backgroundColor: 'gray.200' },
                                 }}
                                 _dark={{
                                     _pressed: { backgroundColor: 'gray.800' },
                                 }}
+                                p={1}
                                 onPress={handleGoBack}
                                 icon={
                                     <Icon
