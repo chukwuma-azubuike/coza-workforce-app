@@ -209,3 +209,11 @@ export const CreateCampusSchema = Yup.object().shape({
         lat: Yup.number().required('Latitude is required').notOneOf([0], 'Please input a valid latitude'),
     }),
 });
+
+// CGWC forms
+
+export const CreateCGWCSchema = Yup.object().shape({
+    name: Yup.string().required('You are required to enter a name'),
+    startDate: Yup.string().required('A start date is required'),
+    endDate: Yup.string().required('An end date is required'),
+});

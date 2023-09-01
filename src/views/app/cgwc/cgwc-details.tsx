@@ -34,6 +34,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         const handlePress = () => {
             Alert.alert('Pressed');
         };
+
         return (
             <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
                 <View key={index} style={styles.itemContainer}>
@@ -56,19 +57,22 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { width } = Dimensions.get('window');
     const scrollOffsetY = React.useRef<Animated.Value>(new Animated.Value(0)).current;
 
-    const { data: cgwc, isLoading, isSuccess } = useGetCGWCByIdQuery(cgwcId);
-
-    console.log(cgwc);
+    const {
+        data: cgwc,
+        isLoading,
+        isFetching,
+        isSuccess,
+    } = useGetCGWCByIdQuery(cgwcId, { refetchOnMountOrArgChange: true });
 
     return (
         <SafeAreaView
             edges={['bottom', 'left', 'right']}
             style={{ flex: 1, flexDirection: 'column', paddingBottom: 100 }}
         >
-            <If condition={isLoading}>
+            <If condition={isLoading || isFetching}>
                 <Loading />
             </If>
-            <If condition={!isLoading}>
+            <If condition={(!isLoading || !isFetching) && !!cgwc}>
                 <CGWCHeader
                     navigation={navigation}
                     scrollOffsetY={scrollOffsetY}

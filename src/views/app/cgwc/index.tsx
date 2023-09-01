@@ -14,19 +14,20 @@ const CGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, rou
     const { navigate } = useNavigation();
     const updatedListItem = route.params as ICGWC;
 
-    const handleReroute = () => {
-        // if (!isSuperAdmin) {
-        return navigate('CGWC Details' as never);
-        // }
-    };
+    //TODO: To be determined by product team discuss
+    // const handleReroute = () => {
+    //     if (!isSuperAdmin) {
+    //     return navigate('CGWC Details' as never);
+    //     }
+    // };
 
-    useScreenFocus({
-        onFocus: handleReroute,
-    });
+    // useScreenFocus({
+    //     onFocus: handleReroute,
+    // });
 
-    React.useEffect(() => {
-        handleReroute();
-    }, []);
+    // React.useEffect(() => {
+    //     handleReroute();
+    // }, []);
 
     const gotoCreateCGWC = () => {
         navigation.navigate('Create CGWC');

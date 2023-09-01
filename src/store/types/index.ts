@@ -449,6 +449,30 @@ export interface ICGWC {
     endDate: string;
     createdAt: string;
 }
+
+export interface ICGWCPayload {
+    name: string;
+    endDate: number;
+    startDate: number;
+}
+
+export interface ICGWCInstantMessage {
+    _id: string;
+    title: string;
+    cgwcId: string;
+    message: string;
+    status: IStatus;
+    createdAt: string;
+    messageLink: string;
+}
+
+export interface ICGWCInstantMessagePayload {
+    title: string;
+    cgwcId: string;
+    message: string;
+    status: IStatus;
+    messageLink: string;
+}
 export interface ICreateService {
     _id?: string;
     name: string;

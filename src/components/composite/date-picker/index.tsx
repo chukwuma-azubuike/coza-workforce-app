@@ -126,7 +126,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                         accentColor={THEME_CONFIG.primary}
                         minimumDate={minimumDate}
                         maximumDate={maximumDate}
-                        style={{ width: isIOS ? 90 : 'initial' }}
+                        style={{ width: isIOS ? 140 : 'initial' }}
                         onTouchCancel={handleTouchCancel}
                         dateFormat={dateFormat}
                     />

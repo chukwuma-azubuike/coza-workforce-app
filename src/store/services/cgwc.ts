@@ -1,5 +1,14 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICreateService, IDefaultQueryParams, IDefaultResponse, ICGWC, REST_API_VERBS } from '../types';
+import {
+    ICreateService,
+    IDefaultQueryParams,
+    IDefaultResponse,
+    ICGWC,
+    REST_API_VERBS,
+    ICGWCInstantMessage,
+    ICGWCInstantMessagePayload,
+    ICGWCPayload,
+} from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'cgwc';
@@ -13,7 +22,7 @@ export const cgwcServiceSlice = createApi({
 
     refetchOnReconnect: true,
     endpoints: endpoint => ({
-        createCGWC: endpoint.mutation<ICGWC, ICreateService>({
+        createCGWC: endpoint.mutation<ICGWC, ICGWCPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/createCGWC`,
                 method: REST_API_VERBS.POST,
@@ -38,14 +47,34 @@ export const cgwcServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<ICGWC>) => response.data,
         }),
 
-        getCGWCs: endpoint.query<ICGWC[], IDefaultQueryParams>({
+        getCGWCs: endpoint.query<ICGWC[], Partial<IDefaultQueryParams>>({
             query: params => ({
-                url: `/${SERVICE_URL}/getCGWC`,
+                url: `/${SERVICE_URL}/getAllCGWC`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
 
             transformResponse: (response: IDefaultResponse<ICGWC[]>) => response.data,
+        }),
+
+        getCGWCInstantMessages: endpoint.query<ICGWCInstantMessage[], Partial<IDefaultQueryParams>>({
+            query: params => ({
+                url: `/${SERVICE_URL}/getInstantMessage`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (response: IDefaultResponse<ICGWCInstantMessage[]>) => response.data,
+        }),
+
+        createCGWCInstantMessages: endpoint.mutation<ICGWCInstantMessage, ICGWCInstantMessagePayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/createInstantMessage`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+
+            transformResponse: (response: IDefaultResponse<ICGWCInstantMessage>) => response.data,
         }),
 
         // Add your endpoints here
