@@ -20,96 +20,55 @@ import { Box, HStack, Text } from 'native-base';
 import { Platform, StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { Icon } from '@rneui/themed';
-import ListTable from '../../../components/composite/list/list-table';
 
 const isAndroid = Platform.OS === 'android';
 
-interface ICGWCAttendance extends Partial<IAttendance> {}
+export const MyAttendance: React.FC = React.memo(() => {
+    const { user } = useRole();
 
-const DATA = [
-    {
-        id: 1,
-        title: 'Day 1 - Morning',
-    },
-    {
-        id: 2,
-        title: 'Day 1 - Evening',
-    },
-    {
-        id: 3,
-        title: 'Day 2 - Morning',
-    },
-    {
-        id: 4,
-        title: 'Day 2 - Evening',
-    },
-    {
-        id: 5,
-        title: 'Day 3 - Morning',
-    },
-    {
-        id: 6,
-        title: 'Day 3 - Evening',
-    },
-    {
-        id: 7,
-        title: 'Day 4 - Morning',
-    },
-    {
-        id: 8,
-        title: 'Day 4 - Evening',
-    },
-    {
-        id: 9,
-        title: 'Day 5 - Morning',
-    },
-    {
-        id: 10,
-        title: 'Day 5 - Evening',
-    },
-    {
-        id: 11,
-        title: 'Day 6 - Morning',
-    },
-    {
-        id: 12,
-        title: 'Day 6 - Evening',
-    },
-];
+    const [page, setPage] = React.useState<number>(1);
 
-export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcId, userId }) => {
-    const {
-        data,
-        isLoading,
-        isFetching,
-        refetch: refetchAttendance,
-    } = useGetAttendanceQuery({
-        cgwcId,
-        userId,
+    const { data, isLoading, isFetching, isSuccess } = useGetAttendanceQuery({
+        userId: user?._id,
+        limit: 10,
+        page,
     });
+
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
+
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) {
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
+            }
+        }
+    };
 
     return (
         <ErrorBoundary>
-            <AttendanceContainer title="My Attendance" score={15}>
-                <ListTable
-                    data={DATA}
-                    Header={AttendanceHeader}
-                    Column={AttendanceListRow}
-                    headerProps={{ titles: ['Session', 'Clock in', 'Clock out'] }}
-                />
-            </AttendanceContainer>
+            <FlatListComponent
+                padding={isAndroid ? 3 : true}
+                fetchMoreData={fetchMoreData}
+                columns={myAttendanceColumns}
+                data={moreData as IAttendance[]}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
+            />
         </ErrorBoundary>
     );
 });
 
-export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcId }) => {
+export const TeamAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
 
     const {
-        data: sessions,
-        refetch: refetchSessions,
-        isLoading: sessionsIsLoading,
-        isSuccess: sessionsIsSuccess,
+        data: services,
+        refetch: refetchServices,
+        isLoading: serviceIsLoading,
+        isSuccess: servicesIsSuccess,
     } = useGetServicesQuery({});
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
@@ -118,9 +77,19 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
         setServiceId(value);
     };
 
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
+    );
+
     React.useEffect(() => {
-        !!sessions?.length && setServiceId(sessions[0]._id);
-    }, [sessionsIsLoading]);
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
 
     const {
         isLoading,
@@ -128,7 +97,6 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
         refetch: refetchAttendance,
         data: membersClockedIn,
     } = useGetAttendanceQuery({
-        cgwcId,
         serviceId: serviceId,
         departmentId: user?.department?._id,
     });
@@ -166,47 +134,38 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
 
     const handleRefetch = () => {
         usersRefetch();
-        refetchSessions();
+        refetchServices();
         refetchAttendance();
     };
 
-    const eligible = React.useMemo(() => Math.round(Math.random() * 10), []);
-
     return (
         <ErrorBoundary>
-            <AttendanceContainer title="Team Attendance" score={3}>
-                <HStack justifyContent="space-between" alignItems="baseline">
-                    <SelectComponent placeholder="Select Session" selectedValue={serviceId} onValueChange={setService}>
-                        {sessions?.map((session, index) => (
-                            <SelectItemComponent
-                                value={session._id}
-                                key={`session-${index}`}
-                                isLoading={sessionsIsLoading}
-                                label={`${session.name} - ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
-                            />
-                        ))}
-                    </SelectComponent>
-                    <HStack justifyContent="space-between" alignItems="baseline">
-                        <Text bold size="sm">
-                            Eligible:{' '}
-                        </Text>
-                        <Text bold _dark={{ color: 'gray.400' }} _light={{ color: 'gray.800' }}>
-                            {eligible}
-                        </Text>
-                    </HStack>
-                </HStack>
-                <ListTable
-                    Header={AttendanceHeader}
-                    Column={AttendanceListRow}
-                    data={mergedAttendanceWithMemberList}
-                    headerProps={{ titles: ['Session', 'Clock in', 'Clock out'] }}
-                />
-            </AttendanceContainer>
+            <Box mb={2} px={2}>
+                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                    {sortedServices?.map((service, index) => (
+                        <SelectItemComponent
+                            value={service._id}
+                            key={`service-${index}`}
+                            isLoading={serviceIsLoading}
+                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                        />
+                    ))}
+                </SelectComponent>
+            </Box>
+            <FlatListComponent
+                padding={isAndroid ? 3 : 1}
+                onRefresh={handleRefetch}
+                isLoading={isLoading || isFetching}
+                columns={teamAttendanceDataColumns}
+                refreshing={isLoading || isFetching}
+                data={mergedAttendanceWithMemberList}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
+            />
         </ErrorBoundary>
     );
 });
 
-export const LeadersCGWCAttendance: React.FC = React.memo(() => {
+export const LeadersAttendance: React.FC = React.memo(() => {
     const { leaderRoleIds, user } = useRole();
 
     const {
@@ -341,7 +300,7 @@ export const LeadersCGWCAttendance: React.FC = React.memo(() => {
     );
 });
 
-export const CampusCGWCAttendance: React.FC = React.memo(() => {
+export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
     const [page, setPage] = React.useState<number>(1);
 
@@ -426,7 +385,7 @@ export const CampusCGWCAttendance: React.FC = React.memo(() => {
 
 interface IAttendanceContainerProps {
     title: string;
-    score?: number;
+    score: number;
 }
 
 export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ children, title, score }) => {
@@ -438,9 +397,9 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ child
                 </Text>
                 {!!score && (
                     <Text
-                        bold
                         pb={4}
                         pt={3}
+                        bold
                         fontSize="lg"
                         textAlign="center"
                         color={score < 31 ? 'red.600' : score > 69 ? 'green.600' : 'yellow.400'}

@@ -4,7 +4,7 @@ import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'cgwc';
 
-type IGetLatestServiceResponse = IDefaultResponse<ICGWC>;
+type IGetLatestSessionResponse = IDefaultResponse<ICGWC>;
 
 export const cgwcServiceSlice = createApi({
     reducerPath: SERVICE_URL,
@@ -15,7 +15,7 @@ export const cgwcServiceSlice = createApi({
     endpoints: endpoint => ({
         createCGWC: endpoint.mutation<ICGWC, ICreateService>({
             query: body => ({
-                url: `${SERVICE_URL}/createCGWC`,
+                url: `/${SERVICE_URL}/createCGWC`,
                 method: REST_API_VERBS.POST,
                 body,
             }),
@@ -23,16 +23,19 @@ export const cgwcServiceSlice = createApi({
 
         updateCGWC: endpoint.mutation<void, ICreateService>({
             query: args => ({
-                url: `${SERVICE_URL}/updateCGWC${args._id}`,
+                url: `/${SERVICE_URL}/updateCGWC${args._id}`,
                 method: REST_API_VERBS.PUT,
                 body: args,
             }),
         }),
 
         getCGWCById: endpoint.query<ICGWC, string>({
-            query: campusId => `/${SERVICE_URL}/getCGWC/${campusId}`,
+            query: id => ({
+                url: `/${SERVICE_URL}/getCGWCByID/${id}`,
+                method: REST_API_VERBS.GET,
+            }),
 
-            transformResponse: (response: IGetLatestServiceResponse) => response.data,
+            transformResponse: (response: IDefaultResponse<ICGWC>) => response.data,
         }),
 
         getCGWCs: endpoint.query<ICGWC[], IDefaultQueryParams>({

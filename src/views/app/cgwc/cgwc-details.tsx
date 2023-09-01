@@ -1,5 +1,4 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
 import useRole from '../../../hooks/role';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -7,14 +6,25 @@ import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
-import { Alert, Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Box, Divider, Text } from 'native-base';
-import TopNav from '../home/top-nav';
-import { MyAttendance } from './attendance';
+import { MyCGWCAttendance } from './attendance';
+import CGWCHeader from './components/header';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import ScrollContainer from '../../../components/composite/scroll-container';
+import { useGetCGWCByIdQuery } from '../../../store/services/cgwc';
+import Loading from '../../../components/atoms/loading';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
+    const {
+        isCampusPastor,
+        isGlobalPastor,
+        isQcHOD,
+        user: { _id: userId },
+    } = useRole();
     const navigation = props.navigation;
+    const params = props.route.params as { cgwcId: string };
+    const cgwcId = params?.cgwcId;
 
     const goToExport = () => {
         navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
@@ -42,44 +52,60 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         { title: 'Item 4' },
         { title: 'Item 5' },
     ];
-    const { width } = Dimensions.get('window'); // Get the screen width
+
+    const { width } = Dimensions.get('window');
+    const scrollOffsetY = React.useRef<Animated.Value>(new Animated.Value(0)).current;
+
+    const { data: cgwc, isLoading, isSuccess } = useGetCGWCByIdQuery(cgwcId);
+
+    console.log(cgwc);
 
     return (
-        <ViewWrapper scroll noPadding>
-            <TopNav {...navigation} />
-            <Text textAlign="center" fontSize="2xl" bold pt={3} pb={4}>
-                CGWC - September 2023
-            </Text>
-            <Carousel
-                data={data}
-                loop={true}
-                autoplay={true}
-                sliderWidth={width}
-                itemWidth={width - 120}
-                autoplayInterval={3000}
-                renderItem={CarouselItem}
-                inactiveSlideOpacity={0.6}
-            />
-            <Box px={1}>
-                <Divider my={5} />
-                <Box px={2}>
-                    <MyAttendance />
-                </Box>
-                {/* <Box height={300} width="100%" bg="gray.500"></Box> */}
-            </Box>
-            <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                <StaggerButtonComponent
-                    buttons={[
-                        {
-                            color: 'green.600',
-                            iconName: 'download-outline',
-                            handleClick: goToExport,
-                            iconType: 'ionicon',
-                        },
-                    ]}
-                />
+        <SafeAreaView
+            edges={['bottom', 'left', 'right']}
+            style={{ flex: 1, flexDirection: 'column', paddingBottom: 100 }}
+        >
+            <If condition={isLoading}>
+                <Loading />
             </If>
-        </ViewWrapper>
+            <If condition={!isLoading}>
+                <CGWCHeader
+                    navigation={navigation}
+                    scrollOffsetY={scrollOffsetY}
+                    title={cgwc?.name || 'CGWC October 2023'}
+                />
+                <ScrollContainer scrollOffsetY={scrollOffsetY}>
+                    <Box mt={2}>
+                        <Carousel
+                            data={data}
+                            loop={true}
+                            autoplay={true}
+                            sliderWidth={width}
+                            itemWidth={width - 120}
+                            autoplayInterval={3000}
+                            renderItem={CarouselItem}
+                            inactiveSlideOpacity={0.6}
+                        />
+                    </Box>
+                    <Box px={1}>
+                        <Divider mt={6} mb={1} />
+                        <MyCGWCAttendance cgwcId={cgwcId} userId={userId} />
+                    </Box>
+                    <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                        <StaggerButtonComponent
+                            buttons={[
+                                {
+                                    color: 'green.600',
+                                    iconName: 'download-outline',
+                                    handleClick: goToExport,
+                                    iconType: 'ionicon',
+                                },
+                            ]}
+                        />
+                    </If>
+                </ScrollContainer>
+            </If>
+        </SafeAreaView>
     );
 };
 
@@ -91,14 +117,12 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    itemContainer: {
-        // marginHorizontal: 10,
-    },
+    itemContainer: {},
     item: {
         backgroundColor: 'gray',
         borderRadius: 4,
         height: 200,
-        elevation: 5, // Add shadow for a modern effect
+        elevation: 5,
         padding: 20,
         alignItems: 'center',
         justifyContent: 'center',
@@ -106,6 +130,6 @@ const styles = StyleSheet.create({
     itemText: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: '#333', // Customize text color
+        color: '#333',
     },
 });
