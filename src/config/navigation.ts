@@ -54,6 +54,9 @@ import { DEPARTMENTS, ROLES } from '../hooks/role';
 import CGWC from '../views/app/cgwc';
 import CGWCDetails from '../views/app/cgwc/cgwc-details';
 import CreateCGWC from '../views/app/cgwc/create-cgwc';
+import CreateCGWGSession from '../views/app/service-management/create-cgwc-session';
+import CreateCGWCInstantMessage from '../views/app/cgwc/create-instant-message';
+import CGWCGroupAttendance from '../views/app/cgwc/group-attendance';
 // import Export from '../views/app/export';
 
 export interface IAppRoute {
@@ -305,6 +308,16 @@ const AppRoutes: IAppRoute[] = [
                 inMore: false,
                 icon: { name: 'church', type: 'material-community' },
             },
+            {
+                name: 'Create CGWC session',
+                component: CreateCGWGSession,
+                options: { title: 'Create CGWC Session' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'church', type: 'material-community' },
+            },
         ],
         users: [ROLES.superAdmin],
         inMenuBar: false,
@@ -515,32 +528,55 @@ const AppRoutes: IAppRoute[] = [
         name: 'CGWC',
         component: CGWC,
         options: { title: 'CGWC' },
-        submenus: [],
+        submenus: [
+            {
+                name: 'Create CGWC',
+                component: CreateCGWC,
+                options: { title: 'Create CGWC' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'crown', type: 'foundation' },
+            },
+            {
+                name: 'CGWC Details',
+                component: CGWCDetails,
+                options: { title: 'CGWC Details' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'crown', type: 'foundation' },
+            },
+            {
+                name: 'Create Instant Message',
+                component: CreateCGWCInstantMessage,
+                options: { title: 'Create Instant Message' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'new-message', type: 'entypo' },
+            },
+
+            {
+                name: 'CGWC Group Attendance',
+                component: CGWCGroupAttendance,
+                options: { title: 'CGWC Group Attendance' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'person', type: 'ionicon' },
+            },
+        ],
         users: [],
         inMenuBar: false,
         inMore: true,
         icon: { name: 'crown', type: 'foundation' },
     },
-    {
-        name: 'Create CGWC',
-        component: CreateCGWC,
-        options: { title: 'Create CGWC' },
-        submenus: [],
-        users: [],
-        inMenuBar: false,
-        inMore: false,
-        icon: { name: 'crown', type: 'foundation' },
-    },
-    {
-        name: 'CGWC Details',
-        component: CGWCDetails,
-        options: { title: 'CGWC Details' },
-        submenus: [],
-        users: [],
-        inMenuBar: false,
-        inMore: false,
-        icon: { name: 'crown', type: 'foundation' },
-    },
+
     {
         name: 'More',
         component: More,

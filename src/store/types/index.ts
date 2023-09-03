@@ -246,6 +246,8 @@ export interface ICreateServicePayload {
     startTime: string | Date;
     startDate: string | Date;
     endTime: string | Date;
+    isCGWC?: boolean;
+    CGWCId?: string;
     clockinTime: string | Date;
     leaderLateTime: string | Date;
     workerLateTime: string | Date;
@@ -425,6 +427,8 @@ export interface IService {
     serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
+    CGWCId?: string;
+    isCGWC?: boolean;
     isGlobalService: boolean;
     __v: number;
     campus: {
@@ -440,6 +444,11 @@ export interface IService {
         state: string;
         updatedAt: string;
     };
+}
+
+export interface ICGWCParams {
+    isCGWC: boolean;
+    CGWCId: string;
 }
 
 export interface ICGWC {
@@ -480,6 +489,8 @@ export interface ICreateService {
         long: number;
         lat: number;
     };
+    CGWCId?: string;
+    isCGWC?: boolean;
     tag: string[];
     serviceTime: number | null;
     clockInStartTime: number | null;

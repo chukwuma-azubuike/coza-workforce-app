@@ -35,7 +35,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
     }, [isSuccess, isError, data]);
 
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll pt={10}>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" pt={20} px={4}>
                     <Heading textAlign="left">Register</Heading>

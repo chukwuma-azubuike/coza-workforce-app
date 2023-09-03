@@ -22,7 +22,6 @@ export interface TicketListRowProps extends ITicket {
 
 export const TicketListRow: React.FC<TicketListRowProps> = props => {
     const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
     const { type } = props;
 
     return (
@@ -251,7 +250,12 @@ const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }>
         const groupedData = React.useMemo(
             () =>
                 Utils.groupListByKey(
-                    Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                    !!updatedListItem?._id
+                        ? Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, [
+                              '_id',
+                              updatedListItem?._id,
+                          ])
+                        : sortedData,
                     'sortDateKey'
                 ),
             [updatedListItem?._id, sortedData]

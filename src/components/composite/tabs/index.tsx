@@ -7,44 +7,53 @@ import useAppColorMode from '../../../hooks/theme/colorMode';
 
 interface ITabComponentProps extends TabViewProps<any> {
     tabBarScroll?: boolean;
+    hideTabBar?: boolean;
 }
 
-const renderTabBar: React.FC<TabBarProps<any>> = props => {
+const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = props => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <TabBar
-            gap={4}
-            {...props}
-            style={Style.base}
-            activeColor="white"
-            tabStyle={Style.tab}
-            indicatorStyle={Style.indicator}
-            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
-            pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-            labelStyle={{ color: THEME_CONFIG.primary }}
-            renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
-        />
+        <>
+            {props.hideTabBar ? null : (
+                <TabBar
+                    gap={4}
+                    {...props}
+                    style={Style.base}
+                    activeColor="white"
+                    tabStyle={Style.tab}
+                    indicatorStyle={Style.indicator}
+                    inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
+                    pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
+                    labelStyle={{ color: THEME_CONFIG.primary }}
+                    renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
+                />
+            )}
+        </>
     );
 };
 
-const renderTabBarScroll: React.FC<TabBarProps<any>> = props => {
+const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = props => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <TabBar
-            gap={4}
-            {...props}
-            scrollEnabled
-            style={Style.base}
-            activeColor="white"
-            tabStyle={Style.tab}
-            indicatorStyle={Style.indicatorScroll}
-            labelStyle={{ color: THEME_CONFIG.primary }}
-            inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
-            pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-            renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
-        />
+        <>
+            {props.hideTabBar ? null : (
+                <TabBar
+                    gap={4}
+                    {...props}
+                    scrollEnabled
+                    style={Style.base}
+                    activeColor="white"
+                    tabStyle={Style.tab}
+                    indicatorStyle={Style.indicatorScroll}
+                    labelStyle={{ color: THEME_CONFIG.primary }}
+                    inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
+                    pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
+                    renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
+                />
+            )}
+        </>
     );
 };
 

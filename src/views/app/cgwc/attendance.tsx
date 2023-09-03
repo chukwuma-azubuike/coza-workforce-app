@@ -329,8 +329,8 @@ export const LeadersCGWCAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding={isAndroid ? 3 : true}
                 onRefresh={handleRefetch}
+                padding={isAndroid ? 3 : true}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 data={mergedAttendanceWithLeaderList}
@@ -426,12 +426,12 @@ export const CampusCGWCAttendance: React.FC = React.memo(() => {
 
 interface IAttendanceContainerProps {
     title: string;
-    score?: number;
+    score?: number | string;
 }
 
 export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ children, title, score }) => {
     return (
-        <>
+        <Box flexDirection="column" w={['100%', '46%']}>
             <HStack px={2} justifyContent="space-between" alignItems="baseline">
                 <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
                     {title}
@@ -443,14 +443,14 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ child
                         pt={3}
                         fontSize="lg"
                         textAlign="center"
-                        color={score < 31 ? 'red.600' : score > 69 ? 'green.600' : 'yellow.400'}
+                        color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
                     >
-                        {score}%
+                        {score || 0}
                     </Text>
                 )}
             </HStack>
             {children}
-        </>
+        </Box>
     );
 };
 
@@ -510,7 +510,6 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     listRowItem: {
-        color: THEME_CONFIG.lightGray,
         width: '33%',
         flexWrap: 'wrap',
     },

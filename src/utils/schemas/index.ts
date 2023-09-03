@@ -217,3 +217,9 @@ export const CreateCGWCSchema = Yup.object().shape({
     startDate: Yup.string().required('A start date is required'),
     endDate: Yup.string().required('An end date is required'),
 });
+
+export const CreateCGWCInstantMessageSchema = Yup.object().shape({
+    title: Yup.string().required('You are required to enter a title'),
+    message: Yup.string().required('You are required to enter a message'),
+    messageLink: Yup.string(),
+});

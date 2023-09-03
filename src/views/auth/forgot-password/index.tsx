@@ -38,7 +38,7 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
 
     return (
         <>
-            <ViewWrapper>
+            <ViewWrapper pt={10}>
                 <Box w="100%" h="full" justifyContent="space-between" pb={4}>
                     <TouchableRipple
                         style={{ paddingHorizontal: 6, borderRadius: 10 }}

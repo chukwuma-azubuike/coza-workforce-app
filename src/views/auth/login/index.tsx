@@ -63,7 +63,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     return (
         <ViewWrapper>
             <Box w="100%" h="full" justifyContent="space-between" pb={4}>
-                <VStack space="lg" pt={10} px={4}>
+                <VStack space="lg" pt={20} px={4}>
                     <Center>
                         <Logo />
                         <Heading mt={4}>Welcome back</Heading>

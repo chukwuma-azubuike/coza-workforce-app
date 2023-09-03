@@ -82,4 +82,11 @@ export const cgwcServiceSlice = createApi({
 });
 
 // Use exported hook in relevant components
-export const { useGetCGWCsQuery, useGetCGWCByIdQuery, useCreateCGWCMutation, useUpdateCGWCMutation } = cgwcServiceSlice;
+export const {
+    useGetCGWCsQuery,
+    useGetCGWCByIdQuery,
+    useCreateCGWCMutation,
+    useUpdateCGWCMutation,
+    useGetCGWCInstantMessagesQuery,
+    useCreateCGWCInstantMessagesMutation,
+} = cgwcServiceSlice;

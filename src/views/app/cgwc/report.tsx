@@ -6,7 +6,12 @@ import {
     myAttendanceColumns,
     teamAttendanceDataColumns,
 } from '../attendance/flatListConfig';
-import { useGetAttendanceQuery } from '../../../store/services/attendance';
+import {
+    useGetAttendanceQuery,
+    useGetDepartmentAttendanceReportQuery,
+    useGetLeadersAttendanceReportQuery,
+    useGetWorkersAttendanceReportQuery,
+} from '../../../store/services/attendance';
 import useRole from '../../../hooks/role';
 import { IAttendance, IService } from '../../../store/types';
 import { useGetServicesQuery } from '../../../store/services/services';
@@ -16,10 +21,16 @@ import ErrorBoundary from '../../../components/composite/error-boundary';
 import useFetchMoreData from '../../../hooks/fetch-more-data';
 import Utils from '../../../utils';
 import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import { Box, HStack, Text } from 'native-base';
+import { Box, Center, Flex, HStack, Text, VStack } from 'native-base';
 import { Platform, StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '../../../config/appConfig';
 import { Icon } from '@rneui/themed';
+import Loading from '../../../components/atoms/loading';
+import { TouchableOpacity } from 'react-native';
+import { CountUp } from 'use-count-up';
+import { useNavigation } from '@react-navigation/native';
+import useScreenFocus from '../../../hooks/focus';
+import If from '../../../components/composite/if-container';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -165,15 +176,18 @@ export const TeamAttendance: React.FC = React.memo(() => {
     );
 });
 
-export const LeadersAttendance: React.FC = React.memo(() => {
-    const { leaderRoleIds, user } = useRole();
-
+export const CGWCReportSummary: React.FC<{
+    latestService?: IService;
+    title: string;
+    sessions: IService[];
+    cgwcId: string;
+}> = React.memo(({ latestService, title, sessions, cgwcId }) => {
     const {
-        data: services,
-        refetch: refetchServices,
-        isLoading: serviceIsLoading,
-        isSuccess: servicesIsSuccess,
-    } = useGetServicesQuery({});
+        isHOD,
+        isAHOD,
+        isCampusPastor,
+        user: { department, campus },
+    } = useRole();
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
@@ -181,122 +195,271 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         setServiceId(value);
     };
 
-    const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
-        [services, servicesIsSuccess]
-    );
-
-    const sortedServices = React.useMemo<IService[] | undefined>(
-        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
-        [filteredServices]
-    );
-
-    React.useEffect(() => {
-        sortedServices && setServiceId(sortedServices[0]._id);
-    }, [sortedServices]);
-
     const {
-        data: HODs,
-        refetch: refetchHods,
-        isLoading: hodLoading,
-        isFetching: hodFetching,
-    } = useGetAttendanceQuery(
+        data: attendanceReport,
+        isLoading: attendanceReportLoading,
+        refetch: attendanceReportRefetch,
+        isUninitialized: attendanceReportIsUninitialized,
+    } = useGetDepartmentAttendanceReportQuery(
         {
-            serviceId: serviceId,
-            campusId: user?.campus?._id,
-            roleId: leaderRoleIds && (leaderRoleIds[0] as string),
+            isCGWC: true,
+            CGWCId: cgwcId,
+            departmentId: department?._id,
+            serviceId: latestService?._id as string,
         },
-        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
+        { skip: !latestService?._id && isCampusPastor }
     );
 
     const {
-        data: AHODs,
-        refetch: refetchAHods,
-        isLoading: ahodLoading,
-        isFetching: ahodFetching,
-    } = useGetAttendanceQuery(
+        data: leadersAttendance,
+        refetch: refetchLeaders,
+        isLoading: leadersReportLoading,
+        isUninitialized: leadersIsUninitialized,
+    } = useGetLeadersAttendanceReportQuery(
         {
-            serviceId: serviceId,
-            campusId: user?.campus?._id,
-            roleId: leaderRoleIds && (leaderRoleIds[1] as string),
+            isCGWC: true,
+            CGWCId: cgwcId,
+            serviceId: latestService?._id as string,
+            campusId: campus?._id,
         },
-        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
+        { skip: !latestService?._id && !isCampusPastor }
     );
 
-    const isLoading = hodLoading || ahodLoading;
-    const isFetching = hodFetching || ahodFetching;
-
-    const { data: HODProfiles } = useGetUsersQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id },
-        { skip: !leaderRoleIds?.length }
-    );
-    const { data: AHODProfiles } = useGetUsersQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id },
-        { skip: !leaderRoleIds?.length }
-    );
-
-    const leadersClockedIn = AHODs && HODs ? [...AHODs, ...HODs] : [];
-    const allLeadersRaw = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
-
-    const allLeaders = React.useMemo(() => {
-        if (!allLeadersRaw.length) return [];
-
-        return allLeadersRaw?.map(leader => {
-            return {
-                ...leader,
-                userId: leader._id,
-            };
-        });
-    }, [allLeadersRaw]);
-
-    const leadersClockedInValid = React.useMemo(() => {
-        if (!leadersClockedIn?.length) return [];
-
-        return leadersClockedIn?.map(leader => {
-            return {
-                ...leader,
-                userId: leader.user._id,
-            };
-        });
-    }, [leadersClockedIn]);
-
-    const mergedLeaders = [...leadersClockedInValid, ...allLeaders] as any;
-
-    const mergedAttendanceWithLeaderList = React.useMemo(
-        () => Utils.mergeDuplicatesByKey(mergedLeaders, 'userId'),
-        [leadersClockedIn, mergedLeaders]
+    const {
+        data: workersAttendance,
+        refetch: refetchWorkers,
+        isUninitialized: workersIsUninitialized,
+    } = useGetWorkersAttendanceReportQuery(
+        {
+            isCGWC: true,
+            CGWCId: cgwcId,
+            serviceId: latestService?._id as string,
+            campusId: campus?._id,
+        },
+        { skip: !latestService?._id }
     );
 
-    const handleRefetch = () => {
-        refetchHods();
-        refetchAHods();
-        refetchServices();
+    const navigation = useNavigation();
+
+    const goToAttendance = () => {
+        navigation.navigate('CGWC Group Attendance' as never, { tabKey: 'teamAttendance' } as never);
     };
 
+    const goToTickets = () => {
+        navigation.navigate('Tickets' as never, { tabKey: 'teamTickets' } as never);
+    };
+
+    useScreenFocus({
+        onFocus: () => {
+            !!sessions && setServiceId(sessions[0]?._id);
+        },
+    });
+
     return (
-        <ErrorBoundary>
-            <Box mb={2} px={2}>
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
-                    {sortedServices?.map((service, index) => (
+        <Box flexDirection="column" w={['100%', '46%']}>
+            <HStack px={2} pt={[6, 0]} justifyContent="space-between" alignItems="baseline">
+                <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
+                    {title}
+                </Text>
+                <SelectComponent
+                    w={180}
+                    placeholder="Select Service"
+                    selectedValue={serviceId}
+                    onValueChange={setService}
+                >
+                    {sessions?.map((session, index) => (
                         <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            value={session._id}
+                            key={`session-${index}`}
+                            isLoading={!sessions?.length}
+                            label={`${session.name} - ${moment(session.serviceTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
-            </Box>
-            <FlatListComponent
-                padding={isAndroid ? 3 : true}
-                onRefresh={handleRefetch}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-                data={mergedAttendanceWithLeaderList}
-                columns={leadersAttendanceDataColumns}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
-            />
-        </ErrorBoundary>
+            </HStack>
+            <Center py={10}>
+                {attendanceReportLoading || leadersReportLoading ? (
+                    <Loading h={20} w={20} />
+                ) : (
+                    <Flex
+                        px={0}
+                        wrap="wrap"
+                        alignItems="center"
+                        flexDirection="row"
+                        style={{ columnGap: 0, rowGap: 20 }}
+                    >
+                        <If condition={isCampusPastor}>
+                            <TouchableOpacity
+                                delayPressIn={0}
+                                activeOpacity={0.6}
+                                onPress={goToAttendance}
+                                style={{ width: '50%' }}
+                                accessibilityRole="button"
+                            >
+                                <Center width="100%">
+                                    <HStack alignItems="baseline" flexDirection="row">
+                                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                            <CountUp isCounting duration={2} end={leadersAttendance?.attendance || 0} />
+                                        </Text>
+                                        <Text
+                                            fontSize="md"
+                                            fontWeight="semibold"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            /
+                                            <CountUp
+                                                isCounting
+                                                duration={2}
+                                                end={leadersAttendance?.leaderUsers || 0}
+                                            />
+                                        </Text>
+                                    </HStack>
+                                    <HStack alignItems="center" flexDirection="row">
+                                        <Icon
+                                            color={THEME_CONFIG.primaryLight}
+                                            name="people-outline"
+                                            type="ionicon"
+                                            size={18}
+                                        />
+                                        <Text
+                                            ml={2}
+                                            fontSize="md"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            Leaders
+                                        </Text>
+                                    </HStack>
+                                </Center>
+                            </TouchableOpacity>
+                        </If>
+                        <If condition={isCampusPastor}>
+                            <TouchableOpacity
+                                delayPressIn={0}
+                                activeOpacity={0.6}
+                                style={{ width: '50%' }}
+                                onPress={goToAttendance}
+                                accessibilityRole="button"
+                            >
+                                <Center width="100%">
+                                    <HStack alignItems="baseline" flexDirection="row">
+                                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                            <CountUp isCounting duration={2} end={workersAttendance?.attendance || 0} />
+                                        </Text>
+                                        <Text
+                                            fontSize="md"
+                                            fontWeight="semibold"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            /
+                                            <CountUp
+                                                isCounting
+                                                duration={2}
+                                                end={workersAttendance?.workerUsers || 0}
+                                            />
+                                        </Text>
+                                    </HStack>
+                                    <HStack alignItems="center" flexDirection="row">
+                                        <Icon
+                                            color={THEME_CONFIG.primaryLight}
+                                            name="people-outline"
+                                            type="ionicon"
+                                            size={18}
+                                        />
+                                        <Text
+                                            ml={2}
+                                            fontSize="md"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            Workers
+                                        </Text>
+                                    </HStack>
+                                </Center>
+                            </TouchableOpacity>
+                        </If>
+                        <If condition={isAHOD || isAHOD}>
+                            <TouchableOpacity
+                                delayPressIn={0}
+                                activeOpacity={0.6}
+                                style={{ width: '50%' }}
+                                onPress={goToAttendance}
+                                accessibilityRole="button"
+                            >
+                                <Center width="100%">
+                                    <HStack alignItems="baseline" flexDirection="row">
+                                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                            <CountUp isCounting duration={2} end={attendanceReport?.attendance || 0} />
+                                        </Text>
+                                        <Text
+                                            fontSize="md"
+                                            fontWeight="semibold"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            /
+                                            <CountUp
+                                                isCounting
+                                                duration={2}
+                                                end={attendanceReport?.departmentUsers || 0}
+                                            />
+                                        </Text>
+                                    </HStack>
+                                    <HStack alignItems="center" flexDirection="row">
+                                        <Icon
+                                            color={THEME_CONFIG.primaryLight}
+                                            name="people-outline"
+                                            type="ionicon"
+                                            size={18}
+                                        />
+                                        <Text
+                                            ml={2}
+                                            fontSize="md"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            Members clocked in
+                                        </Text>
+                                    </HStack>
+                                </Center>
+                            </TouchableOpacity>
+                        </If>
+                        <Box width={isCampusPastor ? '100%' : 'auto'}>
+                            <TouchableOpacity
+                                delayPressIn={0}
+                                activeOpacity={0.6}
+                                onPress={goToTickets}
+                                accessibilityRole="button"
+                            >
+                                <Center width={180} mx="auto">
+                                    <Text fontWeight="semibold" color="gray.400" fontSize="4xl" ml={1}>
+                                        <CountUp isCounting duration={2} end={attendanceReport?.attendance || 0} />
+                                    </Text>
+                                    <HStack alignItems="center" flexDirection="row">
+                                        <Icon
+                                            name="ticket-confirmation-outline"
+                                            color={THEME_CONFIG.rose}
+                                            type="material-community"
+                                            size={18}
+                                        />
+                                        <Text
+                                            ml={2}
+                                            fontSize="md"
+                                            _dark={{ color: 'gray.400' }}
+                                            _light={{ color: 'gray.600' }}
+                                        >
+                                            Tickets
+                                        </Text>
+                                    </HStack>
+                                </Center>
+                            </TouchableOpacity>
+                        </Box>
+                    </Flex>
+                )}
+            </Center>
+        </Box>
     );
 });
 
