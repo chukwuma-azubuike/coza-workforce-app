@@ -9,7 +9,8 @@ import { HomeContext } from '.';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, TouchableOpacity } from 'react-native';
-import { AVATAR_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import { ScreenWidth } from '@rneui/base';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     const handleNotificationPress = () => {
@@ -32,7 +33,14 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     const { isLightMode } = useAppColorMode();
 
     return (
-        <HStack justifyContent="space-between" alignItems="center" zIndex={20} w="full" pr={4} pl={3} pt={10}>
+        <HStack
+            px={4}
+            pt={10}
+            zIndex={20}
+            w={ScreenWidth}
+            alignItems="center"
+            justifyContent="space-between"
+        >
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge

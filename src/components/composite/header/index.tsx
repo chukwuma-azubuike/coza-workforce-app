@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, Animated } from 'react-native';
+import { StyleSheet, Animated, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import useAppColorMode from '@hooks/theme/colorMode';
 
-const MIN_HEADER_HEIGHT = 100;
+const MIN_HEADER_HEIGHT = 116;
 const MAX_HEADER_HEIGHT = 140;
 const SCROLL_DISTANCE = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 
@@ -35,7 +35,7 @@ const DynamicHeader: React.FC<IDynamicHeader> = ({ animHeaderValue, title, child
 
     const animateHeaderTextPosition = animHeaderValue.interpolate({
         extrapolate: 'clamp',
-        outputRange: [10, 22],
+        outputRange: [10, 38],
         inputRange: [0, MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT],
     });
 
@@ -49,21 +49,23 @@ const DynamicHeader: React.FC<IDynamicHeader> = ({ animHeaderValue, title, child
                 },
             ]}
         >
-            {children}
-            {title && (
-                <Animated.Text
-                    style={[
-                        styles.headerText,
-                        {
-                            fontSize: animateHeaderTextsize,
-                            bottom: animateHeaderTextPosition,
-                            color: isDarkMode ? '#fff' : '#000',
-                        },
-                    ]}
-                >
-                    {title}
-                </Animated.Text>
-            )}
+            <View>
+                {children}
+                {title && (
+                    <Animated.Text
+                        style={[
+                            styles.headerText,
+                            {
+                                fontSize: animateHeaderTextsize,
+                                bottom: animateHeaderTextPosition,
+                                color: isDarkMode ? '#fff' : '#000',
+                            },
+                        ]}
+                    >
+                        {title}
+                    </Animated.Text>
+                )}
+            </View>
         </Animated.View>
     );
 };
@@ -73,7 +75,8 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         paddingTop: 50,
-        paddingBottom: 10,
+        paddingBottom: 8,
+        marginBottom: 20,
         paddingHorizontal: 4,
         alignItems: 'center',
         justifyContent: 'center',
