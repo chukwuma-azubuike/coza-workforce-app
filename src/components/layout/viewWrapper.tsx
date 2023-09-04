@@ -33,7 +33,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                 ref={ref}
                 _dark={{ background: 'black' }}
                 _light={{ background: 'white' }}
-                style={{ flex: 1, padding: noPadding ? 0 : 6, paddingBottom: 100 }}
+                style={{ flex: 1, paddingHorizontal: noPadding ? 0 : 6 }}
                 refreshControl={
                     onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                 }

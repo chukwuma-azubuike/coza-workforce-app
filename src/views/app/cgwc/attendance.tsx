@@ -90,7 +90,7 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcId,
 
     return (
         <ErrorBoundary>
-            <AttendanceContainer title="My Attendance" score={15}>
+            <AttendanceContainer title="My Attendance" score={15} scoreType="percent">
                 <ListTable
                     data={DATA}
                     Header={AttendanceHeader}
@@ -174,7 +174,7 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
 
     return (
         <ErrorBoundary>
-            <AttendanceContainer title="Team Attendance" score={3}>
+            <AttendanceContainer title="Team Attendance" score={3} scoreType="count">
                 <HStack justifyContent="space-between" alignItems="baseline">
                     <SelectComponent placeholder="Select Session" selectedValue={serviceId} onValueChange={setService}>
                         {sessions?.map((session, index) => (
@@ -427,9 +427,10 @@ export const CampusCGWCAttendance: React.FC = React.memo(() => {
 interface IAttendanceContainerProps {
     title: string;
     score?: number | string;
+    scoreType: 'percent' | 'count';
 }
 
-export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ children, title, score }) => {
+export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ children, title, score, scoreType }) => {
     return (
         <Box flexDirection="column" w={['100%', '46%']}>
             <HStack px={2} justifyContent="space-between" alignItems="baseline">
@@ -446,6 +447,7 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ child
                         color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
                     >
                         {score || 0}
+                        {scoreType === 'percent' && '%'}
                     </Text>
                 )}
             </HStack>

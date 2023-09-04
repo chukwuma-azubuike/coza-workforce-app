@@ -77,7 +77,7 @@ const Style = StyleSheet.create({
         shadowColor: 'transparent',
         borderWidth: 0,
         marginHorizontal: 6,
-        marginBottom: 25,
+        marginVertical: 10,
     },
     indicator: {
         backgroundColor: THEME_CONFIG.primary,

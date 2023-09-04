@@ -1,5 +1,5 @@
 import React from 'react';
-import { HStack, IconButton, Text } from 'native-base';
+import { HStack, Text } from 'native-base';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import AvatarComponent from '../../../components/atoms/avatar';
@@ -8,16 +8,16 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import { HomeContext } from '.';
 import useRole from '../../../hooks/role';
 import useAppColorMode from '../../../hooks/theme/colorMode';
-import { Linking } from 'react-native';
+import { Linking, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '../../../constants';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
-    // API implementation
-
     const handleNotificationPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        navigation.navigate('Notifications');
+    };
 
-        // navigation.navigate('Notifications');
+    const handleSupportPress = () => {
+        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
     };
 
     const handlePress = () => navigation.navigate('Profile');
@@ -33,70 +33,43 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     return (
         <HStack justifyContent="space-between" alignItems="center" zIndex={20} w="full" pr={4} pl={3} pt={10}>
-            <IconButton
-                onPress={handlePress}
-                icon={
-                    <AvatarComponent
-                        badge
-                        _light={{ bg: 'gray.100' }}
-                        _dark={{ bg: 'gray.900' }}
-                        size="sm"
-                        shadow={4}
-                        firstName={user?.firstName}
-                        lastName={user?.lastName}
-                        imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
-                    />
-                }
-                p={0}
-                h={10}
-                w={10}
-                borderRadius="full"
-            />
+            <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
+                <AvatarComponent
+                    badge
+                    size="sm"
+                    shadow={4}
+                    _dark={{ bg: 'gray.900' }}
+                    _light={{ bg: 'gray.100' }}
+                    firstName={user?.firstName}
+                    lastName={user?.lastName}
+                    imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
+                />
+            </TouchableOpacity>
             <Text fontSize="lg" fontWeight="light" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
-            {/* <IconButton
-                icon={
-                    <Icon
-                        color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
-                        iconStyle={{ fontSize: 21 }}
-                        name="notifications-outline"
-                        underlayColor="white"
-                        raised={isLightMode}
-                        borderRadius={10}
-                        type="ionicon"
-                        size={16}
-                    />
-                }
-                p={1}
-                h={10}
-                w={10}
-                _light={{ bg: 'gray.100' }}
-                _dark={{ bg: 'gray.900' }}
-                onPress={handleNotificationPress}
-                borderRadius="full"
-            /> */}
-            <IconButton
-                icon={
-                    <Icon
-                        color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
-                        iconStyle={{ fontSize: 26 }}
-                        name="help"
-                        underlayColor="white"
-                        raised={isLightMode}
-                        borderRadius={10}
-                        type="Entypo"
-                        size={16}
-                    />
-                }
-                p={1}
-                h={10}
-                w={10}
-                _light={{ bg: 'gray.100' }}
-                _dark={{ bg: 'gray.900' }}
-                onPress={handleNotificationPress}
-                borderRadius="full"
-            />
+            {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>
+                <Icon
+                    size={16}
+                    type="ionicon"
+                    borderRadius={10}
+                    name="notifications"
+                    underlayColor="white"
+                    iconStyle={{ fontSize: 35 }}
+                    color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
+                />
+            </TouchableOpacity> */}
+            <TouchableOpacity onPress={handleSupportPress} activeOpacity={0.6}>
+                <Icon
+                    size={16}
+                    name="help"
+                    type="Entypo"
+                    borderRadius={10}
+                    underlayColor="white"
+                    iconStyle={{ fontSize: 35 }}
+                    color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
+                />
+            </TouchableOpacity>
         </HStack>
     );
 };

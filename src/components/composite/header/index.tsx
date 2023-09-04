@@ -4,7 +4,7 @@ import { THEME_CONFIG } from '../../../config/appConfig';
 import useAppColorMode from '../../../hooks/theme/colorMode';
 
 const MIN_HEADER_HEIGHT = 100;
-const MAX_HEADER_HEIGHT = 160;
+const MAX_HEADER_HEIGHT = 140;
 const SCROLL_DISTANCE = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 
 interface IDynamicHeader {
@@ -35,7 +35,7 @@ const DynamicHeader: React.FC<IDynamicHeader> = ({ animHeaderValue, title, child
 
     const animateHeaderTextPosition = animHeaderValue.interpolate({
         extrapolate: 'clamp',
-        outputRange: [10, 44],
+        outputRange: [10, 22],
         inputRange: [0, MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT],
     });
 
@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         right: 0,
         paddingTop: 50,
         paddingBottom: 10,
+        paddingHorizontal: 4,
         alignItems: 'center',
         justifyContent: 'center',
     },

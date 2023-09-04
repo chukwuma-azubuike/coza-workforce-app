@@ -185,6 +185,7 @@ export const CGWCReportSummary: React.FC<{
     const {
         isHOD,
         isAHOD,
+        isSuperAdmin,
         isCampusPastor,
         user: { department, campus },
     } = useRole();
@@ -288,7 +289,7 @@ export const CGWCReportSummary: React.FC<{
                         flexDirection="row"
                         style={{ columnGap: 0, rowGap: 20 }}
                     >
-                        <If condition={isCampusPastor}>
+                        <If condition={isCampusPastor || isSuperAdmin}>
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
@@ -334,7 +335,7 @@ export const CGWCReportSummary: React.FC<{
                                 </Center>
                             </TouchableOpacity>
                         </If>
-                        <If condition={isCampusPastor}>
+                        <If condition={isCampusPastor || isSuperAdmin}>
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
@@ -380,7 +381,7 @@ export const CGWCReportSummary: React.FC<{
                                 </Center>
                             </TouchableOpacity>
                         </If>
-                        <If condition={isAHOD || isAHOD}>
+                        <If condition={isHOD || isAHOD}>
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
@@ -426,7 +427,7 @@ export const CGWCReportSummary: React.FC<{
                                 </Center>
                             </TouchableOpacity>
                         </If>
-                        <Box width={isCampusPastor ? '100%' : 'auto'}>
+                        <Box width={isCampusPastor || isSuperAdmin ? '100%' : 'auto'}>
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}

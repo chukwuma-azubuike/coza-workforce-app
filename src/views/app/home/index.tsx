@@ -138,7 +138,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
+            <ViewWrapper scroll={!isCampusPastor} pt={6} refreshing={isLoading} onRefresh={handleRefresh}>
                 <If condition={!!user}>
                     <TopNav {...navigation} />
                     <If condition={!isGlobalPastor}>

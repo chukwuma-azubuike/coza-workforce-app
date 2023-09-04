@@ -6,7 +6,7 @@ import If from '../../../components/composite/if-container';
 import StaggerButtonComponent from '../../../components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
-import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Box, Divider, Stack, Text } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
@@ -43,7 +43,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const CarouselItem: React.FC<{ item: any; index: number }> = ({ item, index }) => {
         const handlePress = () => {
-            Alert.alert('Pressed');
+            Linking.openURL(item?.messageLink);
         };
 
         return (
@@ -83,11 +83,31 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     } = useGetCGWCInstantMessagesQuery({ cgwcId });
 
     const data = [
-        { title: 'Welcome to CGWC October 2023', imageUrl: 'https://i.ibb.co/7Jgmgvt/COZA-96.webp' },
-        { title: 'Recharge your spirit man', imageUrl: 'https://i.ibb.co/ScJtBCZ/MG-0793.webp' },
-        { title: 'Iterinary', imageUrl: 'https://i.ibb.co/P9Z8JDh/MG-0778.webp' },
-        { title: 'Uniform Chart', imageUrl: 'https://i.ibb.co/FDBSDGP/COZA-84.webp' },
-        { title: 'Resources', imageUrl: 'https://i.ibb.co/02mHVgp/COZA-20.webp' },
+        {
+            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            title: 'Welcome to CGWC October 2023',
+            imageUrl: 'https://i.ibb.co/7Jgmgvt/COZA-96.webp',
+        },
+        {
+            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            title: 'Recharge your spirit man',
+            imageUrl: 'https://i.ibb.co/ScJtBCZ/MG-0793.webp',
+        },
+        {
+            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            title: 'Iterinary',
+            imageUrl: 'https://i.ibb.co/P9Z8JDh/MG-0778.webp',
+        },
+        {
+            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            title: 'Uniform Chart',
+            imageUrl: 'https://i.ibb.co/FDBSDGP/COZA-84.webp',
+        },
+        {
+            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            title: 'Resources',
+            imageUrl: 'https://i.ibb.co/02mHVgp/COZA-20.webp',
+        },
     ];
 
     const sessions = [
@@ -141,7 +161,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 itemWidth={ScreenWidth * 0.8}
                             />
                         </Box>
-                        <Box px={1}>
+                        <Box px={1} mb={20}>
                             <Divider mt={6} mb={1} />
                             <Stack flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
                                 <MyCGWCAttendance cgwcId={cgwcId} userId={userId} />
