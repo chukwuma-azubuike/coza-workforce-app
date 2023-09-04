@@ -33,14 +33,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     const { isLightMode } = useAppColorMode();
 
     return (
-        <HStack
-            px={4}
-            pt={10}
-            zIndex={20}
-            w={ScreenWidth}
-            alignItems="center"
-            justifyContent="space-between"
-        >
+        <HStack px={4} pt={10} zIndex={20} w={ScreenWidth} alignItems="center" justifyContent="space-between">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
