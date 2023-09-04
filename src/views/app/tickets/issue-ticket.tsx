@@ -1,30 +1,30 @@
 import React from 'react';
 import { Box, FormControl, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import useModal from '../../../hooks/modal/useModal';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import TextAreaComponent from '@components/atoms/text-area';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import useModal from '@hooks/modal/useModal';
 import { ParamListBase, useFocusEffect, useIsFocused } from '@react-navigation/native';
-import useRole from '../../../hooks/role';
-import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
-import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
-import { ICampus, ICreateTicketPayload, IDepartment } from '../../../store/types';
-import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '../../../store/services/tickets';
+import useRole from '@hooks/role';
+import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
+import { useGetUsersByDepartmentIdQuery } from '@store/services/account';
+import { ICampus, ICreateTicketPayload, IDepartment } from '@store/types';
+import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '@store/services/tickets';
 import { Formik, FormikConfig } from 'formik';
 import {
     CreateCampusTicketSchema,
     CreateDepartmentalTicketSchema,
     CreateIndividualTicketSchema,
-} from '../../../utils/schemas';
+} from '@utils/schemas';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Utils from '../../../utils';
-import If from '../../../components/composite/if-container';
+import Utils from '@utils';
+import If from '@components/composite/if-container';
 import { ITicketType } from '.';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
-import { useGetCampusesQuery } from '../../../store/services/campus';
+import { useGetLatestServiceQuery } from '@store/services/services';
+import { useGetCampusesQuery } from '@store/services/campus';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };

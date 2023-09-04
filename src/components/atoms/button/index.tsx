@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button, IButtonProps } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
 import { PermissionsAndroid } from 'react-native';
-import { generateExcelFile } from '../../../utils/generateFile';
+import { generateExcelFile } from '@utils/generateFile';
 interface IButtonComponent extends IButtonProps {
     size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;

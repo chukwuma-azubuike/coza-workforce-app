@@ -2,13 +2,13 @@ import React from 'react';
 import { Box, Center, HStack, Text, VStack } from 'native-base';
 import moment from 'moment';
 import { Icon } from '@rneui/base';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import { IFlatListColumn } from '../../../components/composite/flat-list';
-import { IAttendance } from '../../../store/types';
-import Utils from '../../../utils';
+import { THEME_CONFIG } from '@config/appConfig';
+import { IFlatListColumn } from '@components/composite/flat-list';
+import { IAttendance } from '@store/types';
+import Utils from '@utils/index';
 import { Appearance } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
+import AvatarComponent from '@components/atoms/avatar';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 
 const colorScheme = Appearance.getColorScheme();
 

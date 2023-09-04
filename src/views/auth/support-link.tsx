@@ -2,8 +2,8 @@ import { Linking } from 'react-native';
 import React from 'react';
 import { Icon } from '@rneui/themed';
 import { HStack, Text } from 'native-base';
-import useAppColorMode from '../../hooks/theme/colorMode';
-import { THEME_CONFIG } from '../../config/appConfig';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { THEME_CONFIG } from '@config/appConfig';
 
 const SupportLink = () => {
     const handleNotificationPress = () => {

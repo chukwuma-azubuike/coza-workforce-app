@@ -2,14 +2,14 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
-import { SmallCardComponent } from '../../../components/composite/card';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import { FlatListSkeleton, FlexListSkeleton } from '../../../components/layout/skeleton';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import useRole from '../../../hooks/role';
-import Utils from '../../../utils';
-import { useGetGHDepartmentByIdQuery } from '../../../store/services/department';
-import useScreenFocus from '../../../hooks/focus';
+import { SmallCardComponent } from '@components/composite/card';
+import ErrorBoundary from '@components/composite/error-boundary';
+import { FlatListSkeleton, FlexListSkeleton } from '@components/layout/skeleton';
+import ViewWrapper from '@components/layout/viewWrapper';
+import useRole from '@hooks/role';
+import Utils from '@utils/index';
+import { useGetGHDepartmentByIdQuery } from '@store/services/department';
+import useScreenFocus from '@hooks/focus';
 
 const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { _id?: string; title: string };

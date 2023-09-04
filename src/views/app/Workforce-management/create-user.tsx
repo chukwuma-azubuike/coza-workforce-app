@@ -1,21 +1,21 @@
 import React from 'react';
 import { Box, FormControl, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import useModal from '../../../hooks/modal/useModal';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import useModal from '@hooks/modal/useModal';
 import { ParamListBase } from '@react-navigation/native';
-import useRole from '../../../hooks/role';
-import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
-import { useUploadUserMutation } from '../../../store/services/account';
-import { ICreateUserPayload } from '../../../store/types';
+import useRole from '@hooks/role';
+import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
+import { useUploadUserMutation } from '@store/services/account';
+import { ICreateUserPayload } from '@store/types';
 import { Formik, FormikConfig } from 'formik';
-import { CreateUserSchema } from '../../../utils/schemas';
+import { CreateUserSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '../../../components/atoms/input';
-import Utils from '../../../utils';
+import { InputComponent } from '@components/atoms/input';
+import Utils from '@utils';
 
 const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;

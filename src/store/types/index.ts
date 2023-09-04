@@ -1,4 +1,4 @@
-import { IReportFormProps } from '../../views/app/reports/forms/types';
+import { IReportFormProps } from '@views/app/reports/forms/types';
 import store from '..';
 
 // General types

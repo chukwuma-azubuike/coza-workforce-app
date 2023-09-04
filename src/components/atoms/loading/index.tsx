@@ -1,9 +1,9 @@
 import React from 'react';
 import { Center, ICenterProps, Image, Spinner, VStack } from 'native-base';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import useAppColorMode from '@hooks/theme/colorMode';
 import { ColorValue } from 'react-native';
-const logoWhite = require('../../../assets/images/COZA-Logo-white.png');
-const logoBlack = require('../../../assets/images/COZA-Logo-black.png');
+const logoWhite = require('@assets/images/COZA-Logo-white.png');
+const logoBlack = require('@assets/images/COZA-Logo-black.png');
 
 interface ILoadingProps extends ICenterProps {
     bootUp?: boolean;

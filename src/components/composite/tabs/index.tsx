@@ -1,9 +1,9 @@
 import React from 'react';
 import { Text } from 'native-base';
 import { TabBar, TabBarProps, TabView, TabViewProps } from 'react-native-tab-view';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { StyleSheet, useWindowDimensions } from 'react-native';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import useAppColorMode from '@hooks/theme/colorMode';
 
 interface ITabComponentProps extends TabViewProps<any> {
     tabBarScroll?: boolean;

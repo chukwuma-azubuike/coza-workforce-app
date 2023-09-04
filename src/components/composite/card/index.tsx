@@ -1,9 +1,9 @@
 import React from 'react';
 import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading, Center } from 'native-base';
-import { IIconTypes } from '../../../utils/types';
+import { IIconTypes } from '@utils/types';
 import { Icon } from '@rneui/themed';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
 

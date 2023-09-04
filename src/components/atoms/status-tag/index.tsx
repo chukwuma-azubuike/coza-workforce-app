@@ -1,7 +1,7 @@
 import { ITagProps, Tag } from 'native-base';
 import React from 'react';
-import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '../../../store/types';
-import Utils from '../../../utils';
+import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '@store/types';
+import Utils from '@utils';
 
 interface IStatusTag extends ITagProps {
     children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;

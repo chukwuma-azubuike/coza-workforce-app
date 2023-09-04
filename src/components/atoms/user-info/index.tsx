@@ -1,10 +1,10 @@
 import React from 'react';
 import { Heading, HStack, Stack, Text } from 'native-base';
-import Utils from '../../../utils';
+import Utils from '@utils/index';
 import { Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 
 interface IUserInfo {
     heading?: string;

@@ -1,18 +1,18 @@
 import React from 'react';
 import { Box, Center, FormControl, Heading, HStack, Stack, VStack, WarningOutlineIcon } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import { InputComponent } from '@components/atoms/input';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { IRegistrationPageStep } from './types';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Field, Formik } from 'formik';
-import { IRegisterPayload } from '../../../store/types';
-import { RegisterSchema_2 } from '../../../utils/schemas';
+import { IRegisterPayload } from '@store/types';
+import { RegisterSchema_2 } from '@utils/schemas';
 import { RegisterFormContext } from '.';
-import PhoneNumberInput from '../../../components/atoms/phone-input';
-import Utils from '../../../utils';
+import PhoneNumberInput from '@components/atoms/phone-input';
+import Utils from '@utils';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const handleBackPress = () => onStepPress(0);

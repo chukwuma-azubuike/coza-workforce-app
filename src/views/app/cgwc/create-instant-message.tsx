@@ -4,15 +4,15 @@ import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import { Box, FormControl, VStack } from 'native-base';
 import React from 'react';
-import ButtonComponent from '../../../components/atoms/button';
-import { InputComponent } from '../../../components/atoms/input';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useModal from '../../../hooks/modal/useModal';
-import { ICGWCInstantMessage } from '../../../store/types';
-import { CreateCGWCInstantMessageSchema } from '../../../utils/schemas';
-import { useCreateCGWCInstantMessagesMutation } from '../../../store/services/cgwc';
-import TextAreaComponent from '../../../components/atoms/text-area';
+import ButtonComponent from '@components/atoms/button';
+import { InputComponent } from '@components/atoms/input';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useModal from '@hooks/modal/useModal';
+import { ICGWCInstantMessage } from '@store/types';
+import { CreateCGWCInstantMessageSchema } from '@utils/schemas';
+import { useCreateCGWCInstantMessagesMutation } from '@store/services/cgwc';
+import TextAreaComponent from '@components/atoms/text-area';
 
 const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { navigate } = navigation;

@@ -3,9 +3,9 @@ import moment from 'moment';
 import { HStack, VStack, Text } from 'native-base';
 import React from 'react';
 import { HomeContext } from '..';
-import { THEME_CONFIG } from '../../../../config/appConfig';
-import Utils from '../../../../utils';
-import { IIconTypes } from '../../../../utils/types';
+import { THEME_CONFIG } from '@config/appConfig';
+import Utils from '@utils';
+import { IIconTypes } from '@utils/types';
 
 interface IStatProps {
     time?: string;

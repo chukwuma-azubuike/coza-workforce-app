@@ -1,13 +1,13 @@
 import React from 'react';
-import useRole from '../../../hooks/role';
+import useRole from '@hooks/role';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
-import useScreenFocus from '../../../hooks/focus';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import useScreenFocus from '@hooks/focus';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { CGWCList } from './list';
-import { ICGWC } from '../../../store/types';
+import { ICGWC } from '@store/types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { AddButtonComponent } from '../../../components/atoms/button';
-import If from '../../../components/composite/if-container';
+import { AddButtonComponent } from '@components/atoms/button';
+import If from '@components/composite/if-container';
 
 const CGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { isSuperAdmin } = useRole();

@@ -2,10 +2,10 @@ import React from 'react';
 import { Box, Heading, Text, VStack } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { APP_NAME, APP_SLOGAN } from '@env';
-import Logo from '../../../components/atoms/logo';
+import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
 
 const Welcome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {

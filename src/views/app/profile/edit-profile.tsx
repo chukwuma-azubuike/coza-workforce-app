@@ -1,23 +1,23 @@
 import React from 'react';
 import { FormControl, HStack, Text, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import { DateTimePickerComponent } from '../../../components/composite/date-picker';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { DateTimePickerComponent } from '@components/composite/date-picker';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useModal from '../../../hooks/modal/useModal';
+import { THEME_CONFIG } from '@config/appConfig';
+import useModal from '@hooks/modal/useModal';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
-import { IEditProfilePayload } from '../../../store/types';
-import ErrorBoundary from '../../../components/composite/error-boundary';
+import { IEditProfilePayload } from '@store/types';
+import ErrorBoundary from '@components/composite/error-boundary';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '../../../components/atoms/input';
-import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../store/services/account';
-import If from '../../../components/composite/if-container';
-import useRole from '../../../hooks/role';
-import { useAppDispatch } from '../../../store/hooks';
-import { userActionTypes } from '../../../store/services/users';
+import { InputComponent } from '@components/atoms/input';
+import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
+import If from '@components/composite/if-container';
+import useRole from '@hooks/role';
+import { useAppDispatch } from '@store/hooks';
+import { userActionTypes } from '@store/services/users';
 import moment from 'moment';
 
 const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {

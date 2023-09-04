@@ -2,17 +2,17 @@ import React, { memo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
 import { TouchableOpacity } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
-import StatusTag from '../../../components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
-import useRole from '../../../hooks/role';
-import useAppColorMode from '../../../hooks/theme/colorMode';
-import { useGetTicketsQuery } from '../../../store/services/tickets';
-import { ITicket } from '../../../store/types';
-import Utils from '../../../utils';
-import useScreenFocus from '../../../hooks/focus';
+import AvatarComponent from '@components/atoms/avatar';
+import StatusTag from '@components/atoms/status-tag';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants';
+import useFetchMoreData from '@hooks/fetch-more-data';
+import useRole from '@hooks/role';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { useGetTicketsQuery } from '@store/services/tickets';
+import { ITicket } from '@store/types';
+import Utils from '@utils';
+import useScreenFocus from '@hooks/focus';
 
 export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus';

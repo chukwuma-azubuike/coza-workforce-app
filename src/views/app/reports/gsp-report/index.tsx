@@ -3,17 +3,17 @@ import { useNavigation } from '@react-navigation/native';
 import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
 import { GlobalReportContext } from './context';
 import { TouchableOpacity } from 'react-native';
-import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
-import StatusTag from '../../../../components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '../../../../store/services/reports';
-import { useGetServicesQuery } from '../../../../store/services/services';
-import { IService } from '../../../../store/types';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import StatusTag from '@components/atoms/status-tag';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '@store/services/reports';
+import { useGetServicesQuery } from '@store/services/services';
+import { IService } from '@store/types';
 import moment from 'moment';
-import Utils from '../../../../utils';
-import useMediaQuery from '../../../../hooks/media-query';
-import If from '../../../../components/composite/if-container';
+import Utils from '@utils/index';
+import useMediaQuery from '@hooks/media-query';
+import If from '@components/composite/if-container';
 import CampusReportDetails from './campusReportDetails';
 
 export const GlobalReportListRow: React.FC<IGlobalReport> = props => {

@@ -3,7 +3,7 @@ import { Animated } from 'react-native';
 import TopNav from '../../home/top-nav';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import { DynamicHeader } from '../../../../components/composite/header';
+import { DynamicHeader } from '@components/composite/header';
 
 interface ICGWCHeaderProps {
     title: string;

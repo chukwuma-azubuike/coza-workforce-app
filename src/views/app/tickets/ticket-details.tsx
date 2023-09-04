@@ -3,27 +3,27 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
-import AvatarComponent from '../../../components/atoms/avatar';
-import ButtonComponent from '../../../components/atoms/button';
-import StatusTag from '../../../components/atoms/status-tag';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import CardComponent from '../../../components/composite/card';
-import If from '../../../components/composite/if-container';
-import { FlatListSkeleton } from '../../../components/layout/skeleton';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '../../../constants';
-import useScreenFocus from '../../../hooks/focus';
-import useModal from '../../../hooks/modal/useModal';
-import useRole from '../../../hooks/role';
-import { useGetUserByIdQuery } from '../../../store/services/account';
+import AvatarComponent from '@components/atoms/avatar';
+import ButtonComponent from '@components/atoms/button';
+import StatusTag from '@components/atoms/status-tag';
+import TextAreaComponent from '@components/atoms/text-area';
+import CardComponent from '@components/composite/card';
+import If from '@components/composite/if-container';
+import { FlatListSkeleton } from '@components/layout/skeleton';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants';
+import useScreenFocus from '@hooks/focus';
+import useModal from '@hooks/modal/useModal';
+import useRole from '@hooks/role';
+import { useGetUserByIdQuery } from '@store/services/account';
 import {
     useContestTicketMutation,
     useGetTicketByIdQuery,
     useReplyContestTicketMutation,
     useRetractTicketMutation,
     useUpdateTicketMutation,
-} from '../../../store/services/tickets';
-import { ICreateTicketPayload, ITicket } from '../../../store/types';
+} from '@store/services/tickets';
+import { ICreateTicketPayload, ITicket } from '@store/types';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = props.navigation;

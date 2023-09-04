@@ -3,10 +3,10 @@ import { Icon } from '@rneui/themed';
 import { Center, HStack } from 'native-base';
 import React from 'react';
 import { Text, TouchableNativeFeedback } from 'react-native';
-import { THEME_CONFIG } from '../config/appConfig';
-import { AppRoutes } from '../config/navigation';
-import useRole from '../hooks/role';
-import useAppColorMode from '../hooks/theme/colorMode';
+import { THEME_CONFIG } from '@config/appConfig';
+import { AppRoutes } from '@config/navigation';
+import useRole from '@hooks/role';
+import useAppColorMode from '@hooks/theme/colorMode';
 
 const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) => {
     const { isWorker, isQC } = useRole();

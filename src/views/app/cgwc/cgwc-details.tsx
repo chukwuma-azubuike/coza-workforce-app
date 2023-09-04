@@ -1,9 +1,9 @@
 import React from 'react';
-import useRole from '../../../hooks/role';
+import useRole from '@hooks/role';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import If from '../../../components/composite/if-container';
-import StaggerButtonComponent from '../../../components/composite/stagger';
+import If from '@components/composite/if-container';
+import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
 import { Alert, Animated, Dimensions, Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -11,14 +11,14 @@ import { Box, Divider, Stack, Text } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ScrollContainer from '../../../components/composite/scroll-container';
-import { useGetCGWCByIdQuery, useGetCGWCInstantMessagesQuery } from '../../../store/services/cgwc';
-import Loading from '../../../components/atoms/loading';
+import ScrollContainer from '@components/composite/scroll-container';
+import { useGetCGWCByIdQuery, useGetCGWCInstantMessagesQuery } from '@store/services/cgwc';
+import Loading from '@components/atoms/loading';
 import { CGWCReportSummary } from './report';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
+import { useGetLatestServiceQuery } from '@store/services/services';
 import { ScreenHeight, ScreenWidth } from '@rneui/base';
-import useMediaQuery from '../../../hooks/media-query';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import useMediaQuery from '@hooks/media-query';
+import ViewWrapper from '@components/layout/viewWrapper';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {

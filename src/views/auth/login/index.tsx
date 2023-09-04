@@ -1,22 +1,22 @@
 import React from 'react';
 import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
+import { InputComponent } from '@components/atoms/input';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { useLoginMutation } from '../../../store/services/account';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { useLoginMutation } from '@store/services/account';
 import { Formik } from 'formik';
-import { LoginSchema } from '../../../utils/schemas';
-import { ILoginPayload } from '../../../store/types';
-import useModal from '../../../hooks/modal/useModal';
+import { LoginSchema } from '@utils/schemas';
+import { ILoginPayload } from '@store/types';
+import useModal from '@hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
-import Utils from '../../../utils';
-import { userActionTypes } from '../../../store/services/users';
-import { versionActiontypes } from '../../../store/services/version';
-import { useAppDispatch } from '../../../store/hooks';
-import Logo from '../../../components/atoms/logo';
+import Utils from '@utils/index';
+import { userActionTypes } from '@store/services/users';
+import { versionActiontypes } from '@store/services/version';
+import { useAppDispatch } from '@store/hooks';
+import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {

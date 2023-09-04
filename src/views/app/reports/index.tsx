@@ -1,29 +1,29 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import If from '../../../components/composite/if-container';
-import useRole from '../../../hooks/role';
-import StaggerButtonComponent from '../../../components/composite/stagger';
+import ViewWrapper from '@components/layout/viewWrapper';
+import If from '@components/composite/if-container';
+import useRole from '@hooks/role';
+import StaggerButtonComponent from '@components/composite/stagger';
 import { useNavigation } from '@react-navigation/native';
-import useModal from '../../../hooks/modal/useModal';
+import useModal from '@hooks/modal/useModal';
 import CampusReport from './campus-report';
 import {
     IDepartmentReportListById,
     useGetDepartmentalReportQuery,
     useGetDepartmentReportsListQuery,
-} from '../../../store/services/reports';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
-import { FlatListSkeleton } from '../../../components/layout/skeleton';
-import useScreenFocus from '../../../hooks/focus';
-import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
+} from '@store/services/reports';
+import { useGetLatestServiceQuery } from '@store/services/services';
+import { FlatListSkeleton } from '@components/layout/skeleton';
+import useScreenFocus from '@hooks/focus';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import { HStack, Text } from 'native-base';
-import ErrorBoundary from '../../../components/composite/error-boundary';
+import ErrorBoundary from '@components/composite/error-boundary';
 import { TouchableOpacity } from 'react-native';
-import StatusTag from '../../../components/atoms/status-tag';
+import StatusTag from '@components/atoms/status-tag';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
 import moment from 'moment';
 import { IReportFormProps } from './forms/types';
-import { IIncidentReportPayload } from '../../../store/types';
-import Utils from '../../../utils';
+import { IIncidentReportPayload } from '@store/types';
+import Utils from '@utils';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
 

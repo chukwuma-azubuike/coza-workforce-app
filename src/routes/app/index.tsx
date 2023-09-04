@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AppRoutes, IAppRoute } from '../../config/navigation';
-import TabBar from '../../views/tab-bar';
+import { AppRoutes, IAppRoute } from '@config/navigation';
+import TabBar from '@views/tab-bar';
 import { IconButton } from 'native-base';
 import { Icon } from '@rneui/themed';
-import useAppColorMode from '../../hooks/theme/colorMode';
-import { THEME_CONFIG } from '../../config/appConfig';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Route, useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();

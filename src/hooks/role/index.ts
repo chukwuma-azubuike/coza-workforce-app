@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAppSelector } from '../../store/hooks';
-import { useGetRolesQuery } from '../../store/services/role';
-import { selectCurrentUser } from '../../store/services/users';
+import { useAppSelector } from '@store/hooks';
+import { useGetRolesQuery } from '@store/services/role';
+import { selectCurrentUser } from '@store/services/users';
 import { useAuth } from '../auth';
 
 export enum ROLES {

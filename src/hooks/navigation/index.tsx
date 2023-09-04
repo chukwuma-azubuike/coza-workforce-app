@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import useAppColorMode from '../theme/colorMode';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { IconButton } from 'native-base';
 
 const usePreventGoBack = () => {

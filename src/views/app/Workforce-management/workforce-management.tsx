@@ -1,15 +1,15 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import useRole from '../../../hooks/role';
+import useRole from '@hooks/role';
 import { Department } from './list';
-import If from '../../../components/composite/if-container';
-import StaggerButtonComponent from '../../../components/composite/stagger';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import { ICampusUserData } from '../../../store/types';
-import useScreenFocus from '../../../hooks/focus';
-import { useCustomBackNavigation } from '../../../hooks/navigation';
+import If from '@components/composite/if-container';
+import StaggerButtonComponent from '@components/composite/stagger';
+import ErrorBoundary from '@components/composite/error-boundary';
+import { ICampusUserData } from '@store/types';
+import useScreenFocus from '@hooks/focus';
+import { useCustomBackNavigation } from '@hooks/navigation';
 
 const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const campusUsersData = route?.params as ICampusUserData['departmentCount'][0] & { campusId: string };

@@ -3,20 +3,20 @@ import { Box, FormControl, Heading, HStack, Modal, Text, VStack } from 'native-b
 import { Platform } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { InputComponent } from '../../../components/atoms/input';
-import ModalAlertComponent from '../../../components/composite/modal-alert';
-import OTPInput from '../../../components/atoms/otp-input';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { InputComponent } from '@components/atoms/input';
+import ModalAlertComponent from '@components/composite/modal-alert';
+import OTPInput from '@components/atoms/otp-input';
 import { Formik } from 'formik';
-import { EmailSchema } from '../../../utils/schemas';
+import { EmailSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import If from '../../../components/composite/if-container';
+import { THEME_CONFIG } from '@config/appConfig';
+import If from '@components/composite/if-container';
 import { APP_NAME, APP_SLOGAN } from '@env';
 import { TouchableRipple } from 'react-native-paper';
 import useWelcome from './hooks';
-import Logo from '../../../components/atoms/logo';
+import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
 
 const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {

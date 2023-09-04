@@ -1,14 +1,14 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { Box, HStack, List, Text, VStack } from 'native-base';
-import { AppRoutes, IAppRoute } from '../../../config/navigation';
+import { AppRoutes, IAppRoute } from '@config/navigation';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useRole, { DEPARTMENTS, ROLES } from '../../../hooks/role';
-import { useCustomBackNavigation } from '../../../hooks/navigation';
+import { THEME_CONFIG } from '@config/appConfig';
+import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
+import { useCustomBackNavigation } from '@hooks/navigation';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);

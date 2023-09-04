@@ -6,8 +6,8 @@ import {
     IReportStatus,
     IService,
     IUser,
-} from '../../../../store/types';
-import { IStatus } from './../../../../store/types/index';
+} from '@store/types';
+import { IStatus } from '@store/types';
 
 export type IReportFormProps = Pick<IDepartmentReportResponse['departmentalReport']['report'], '_id'> &
     ILog & {

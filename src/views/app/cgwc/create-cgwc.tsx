@@ -4,16 +4,16 @@ import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import { Box, FormControl, HStack, VStack } from 'native-base';
 import React from 'react';
-import ButtonComponent from '../../../components/atoms/button';
-import { InputComponent } from '../../../components/atoms/input';
-import { DateTimePickerComponent } from '../../../components/composite/date-picker';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useModal from '../../../hooks/modal/useModal';
-import { ICGWCPayload } from '../../../store/types';
-import { CreateCGWCSchema } from '../../../utils/schemas';
+import ButtonComponent from '@components/atoms/button';
+import { InputComponent } from '@components/atoms/input';
+import { DateTimePickerComponent } from '@components/composite/date-picker';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useModal from '@hooks/modal/useModal';
+import { ICGWCPayload } from '@store/types';
+import { CreateCGWCSchema } from '@utils/schemas';
 import moment from 'moment';
-import { useCreateCGWCMutation } from '../../../store/services/cgwc';
+import { useCreateCGWCMutation } from '@store/services/cgwc';
 import { ScreenWidth } from '@rneui/base';
 
 const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {

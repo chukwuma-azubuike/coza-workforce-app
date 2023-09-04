@@ -4,17 +4,17 @@ import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import { Box, FormControl, HStack, VStack } from 'native-base';
 import React from 'react';
-import ButtonComponent from '../../../components/atoms/button';
-import { InputComponent } from '../../../components/atoms/input';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import { DateTimePickerComponent } from '../../../components/composite/date-picker';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useModal from '../../../hooks/modal/useModal';
-import { useCreateServiceMutation } from '../../../store/services/services';
-import { CREATE_SERVICE_ENUM, ICreateServicePayload } from '../../../store/types';
-import Utils from '../../../utils';
-import { CreateServiceSchema } from '../../../utils/schemas';
+import ButtonComponent from '@components/atoms/button';
+import { InputComponent } from '@components/atoms/input';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { DateTimePickerComponent } from '@components/composite/date-picker';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useModal from '@hooks/modal/useModal';
+import { useCreateServiceMutation } from '@store/services/services';
+import { CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
+import Utils from '@utils';
+import { CreateServiceSchema } from '@utils/schemas';
 
 const tags: any = [
     { id: 'CGWC_MORNING_SESSION', value: 'Morning Session' },

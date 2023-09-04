@@ -2,7 +2,7 @@ import { Icon } from '@rneui/base';
 import { Center, Flex, Text } from 'native-base';
 import React from 'react';
 import { HomeContext } from '..';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 
 const CampusLocation = () => {
     const {

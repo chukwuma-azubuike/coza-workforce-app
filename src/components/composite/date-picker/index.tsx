@@ -3,12 +3,12 @@ import { FormControl, HStack, Text, VStack } from 'native-base';
 import { Swipeable } from 'react-native-gesture-handler';
 import moment from 'moment';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { InputComponent } from '../../atoms/input';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import If from '../if-container';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import useAppColorMode from '@hooks/theme/colorMode';
 import { InterfaceFormControlProps } from 'native-base/lib/typescript/components/composites/FormControl/types';
 
 const MonthPicker = ({ today }: { today?: boolean }) => {

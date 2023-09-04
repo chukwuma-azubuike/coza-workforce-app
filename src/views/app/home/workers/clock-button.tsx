@@ -3,15 +3,15 @@ import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-ba
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableOpacity } from 'react-native';
-import useModal from '../../../../hooks/modal/useModal';
+import useModal from '@hooks/modal/useModal';
 import moment from 'moment';
-import ModalAlertComponent from '../../../../components/composite/modal-alert';
+import ModalAlertComponent from '@components/composite/modal-alert';
 import { HomeContext } from '..';
-import { useClockInMutation, useClockOutMutation } from '../../../../store/services/attendance';
-import useRole from '../../../../hooks/role';
+import { useClockInMutation, useClockOutMutation } from '@store/services/attendance';
+import useRole from '@hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import If from '../../../../components/composite/if-container';
-import Utils from '../../../../utils';
+import If from '@components/composite/if-container';
+import Utils from '@utils';
 import { Alert } from 'react-native';
 
 interface IClockButtonProps {
@@ -215,7 +215,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         <Pressable>
             {canClockIn && (
                 <LottieView
-                    source={require('../../../../assets/json/clock-button-animation.json')}
+                    source={require('@assets/json/clock-button-animation.json')}
                     resizeMode="cover"
                     style={{
                         left: Utils.IOS16 ? -13 : -20,

@@ -1,22 +1,22 @@
 import React from 'react';
 import { Box, FormControl, HStack, Text, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import { DateTimePickerComponent } from '../../../components/composite/date-picker';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import TextAreaComponent from '@components/atoms/text-area';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { DateTimePickerComponent } from '@components/composite/date-picker';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useModal from '../../../hooks/modal/useModal';
+import { THEME_CONFIG } from '@config/appConfig';
+import useModal from '@hooks/modal/useModal';
 import { ParamListBase } from '@react-navigation/native';
-import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '../../../store/services/permissions';
+import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '@store/services/permissions';
 import { Formik, FormikConfig } from 'formik';
-import { IRequestPermissionPayload } from '../../../store/types';
-import useRole from '../../../hooks/role';
-import { RequestPermissionSchema } from '../../../utils/schemas';
-import useScreenFocus from '../../../hooks/focus';
+import { IRequestPermissionPayload } from '@store/types';
+import useRole from '@hooks/role';
+import { RequestPermissionSchema } from '@utils/schemas';
+import useScreenFocus from '@hooks/focus';
 import moment from 'moment';
-import ErrorBoundary from '../../../components/composite/error-boundary';
+import ErrorBoundary from '@components/composite/error-boundary';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {

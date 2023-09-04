@@ -1,19 +1,19 @@
 import React from 'react';
 import { Box, FormControl, Heading, HStack, Stack, Text, VStack } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import { InputComponent } from '@components/atoms/input';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Formik } from 'formik';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ResetPasswordSchema } from '../../../utils/schemas';
+import { ResetPasswordSchema } from '@utils/schemas';
 import { TouchableRipple } from 'react-native-paper';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import SupportLink from '../support-link';
 import { IRegisterFormProps } from '../register/types';
-import { IResetPasswordPayload, useResetPasswordMutation } from '../../../store/services/account';
-import useModal from '../../../hooks/modal/useModal';
+import { IResetPasswordPayload, useResetPasswordMutation } from '@store/services/account';
+import useModal from '@hooks/modal/useModal';
 
 const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);

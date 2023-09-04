@@ -1,11 +1,11 @@
 import React from 'react';
 import { Icon } from '@rneui/base';
 import { Center, Flex, HStack, Text, VStack } from 'native-base';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
-import Loading from '../../../../components/atoms/loading';
+import Loading from '@components/atoms/loading';
 import { TouchableOpacity } from 'react-native';
-import { ROLES } from '../../../../hooks/role';
+import { ROLES } from '@hooks/role';
 import { useNavigation } from '@react-navigation/native';
 
 export interface ITeamAttendanceSummary {

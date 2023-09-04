@@ -1,26 +1,26 @@
 import React from 'react';
-import FlatListComponent from '../../../components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns_1,
     leadersAttendanceDataColumns,
     myAttendanceColumns,
     teamAttendanceDataColumns,
 } from '../attendance/flatListConfig';
-import { useGetAttendanceQuery } from '../../../store/services/attendance';
-import useRole from '../../../hooks/role';
-import { IAttendance, IService } from '../../../store/types';
-import { useGetServicesQuery } from '../../../store/services/services';
-import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '../../../store/services/account';
+import { useGetAttendanceQuery } from '@store/services/attendance';
+import useRole from '@hooks/role';
+import { IAttendance, IService } from '@store/types';
+import { useGetServicesQuery } from '@store/services/services';
+import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import moment from 'moment';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
-import Utils from '../../../utils';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
+import ErrorBoundary from '@components/composite/error-boundary';
+import useFetchMoreData from '@hooks/fetch-more-data';
+import Utils from '@utils/index';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box, HStack, Text } from 'native-base';
 import { Platform, StyleSheet } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
-import ListTable from '../../../components/composite/list/list-table';
+import ListTable from '@components/composite/list/list-table';
 
 const isAndroid = Platform.OS === 'android';
 

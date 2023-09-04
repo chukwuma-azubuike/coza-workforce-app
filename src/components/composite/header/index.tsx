@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Animated } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import { THEME_CONFIG } from '@config/appConfig';
+import useAppColorMode from '@hooks/theme/colorMode';
 
 const MIN_HEADER_HEIGHT = 100;
 const MAX_HEADER_HEIGHT = 140;

@@ -1,13 +1,13 @@
 import { Heading, HStack, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
-import AvatarComponent from '../../../../components/atoms/avatar';
-import If from '../../../../components/composite/if-container';
-import { ProfileSkeletonMini } from '../../../../components/layout/skeleton';
-import { AVATAR_FALLBACK_URL } from '../../../../constants';
-import { useGetUserByIdQuery } from '../../../../store/services/account';
-import { IUser } from '../../../../store/types';
-import Utils from '../../../../utils';
+import AvatarComponent from '@components/atoms/avatar';
+import If from '@components/composite/if-container';
+import { ProfileSkeletonMini } from '@components/layout/skeleton';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import { useGetUserByIdQuery } from '@store/services/account';
+import { IUser } from '@store/types';
+import Utils from '@utils/index';
 const isAndroid = Platform.OS === 'android';
 
 const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean }> = ({
