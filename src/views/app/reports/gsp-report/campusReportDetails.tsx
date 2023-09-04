@@ -12,11 +12,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
-import {
-    IGSPReportPayload,
-    useGetCampusReportSummaryQuery,
-    useSubmitGSPReportMutation,
-} from '@store/services/reports';
+import { IGSPReportPayload, useGetCampusReportSummaryQuery, useSubmitGSPReportMutation } from '@store/services/reports';
 import {
     IAttendanceReportPayload,
     IChildCareReportPayload,

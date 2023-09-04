@@ -12,11 +12,7 @@ import { useGetUsersByDepartmentIdQuery } from '@store/services/account';
 import { ICampus, ICreateTicketPayload, IDepartment } from '@store/types';
 import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '@store/services/tickets';
 import { Formik, FormikConfig } from 'formik';
-import {
-    CreateCampusTicketSchema,
-    CreateDepartmentalTicketSchema,
-    CreateIndividualTicketSchema,
-} from '@utils/schemas';
+import { CreateCampusTicketSchema, CreateDepartmentalTicketSchema, CreateIndividualTicketSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
