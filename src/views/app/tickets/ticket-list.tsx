@@ -5,13 +5,12 @@ import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants/index';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import useRole from '@hooks/role';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { ITicket } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
 
 export interface TicketListRowProps extends ITicket {

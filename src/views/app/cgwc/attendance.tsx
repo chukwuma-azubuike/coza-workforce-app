@@ -1,10 +1,6 @@
 import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
-import {
-    campusColumns_1,
-    leadersAttendanceDataColumns,
-    teamAttendanceDataColumns_1,
-} from '../attendance/flatListConfig';
+import { campusColumns_1, teamAttendanceDataColumns_1 } from '../attendance/flatListConfig';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -60,10 +56,13 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId,
 
     const TOTAL_ATTAINABLE_SCORE = (sessions?.length || 0) * 25;
 
-    const cumulativeAttendance = React.useMemo(
-        () => data?.map(data => data.score).reduce((a, b) => a + b) || 0,
-        [data]
-    );
+    const cumulativeAttendance = React.useMemo(() => {
+        if (!!data?.length) {
+            return data?.map(data => data.score)?.reduce((a, b) => a + b);
+        }
+        return 0;
+    }, [data]);
+
     const totalAttendance = (cumulativeAttendance / TOTAL_ATTAINABLE_SCORE) * 100;
 
     useScreenFocus({
@@ -88,14 +87,14 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId,
 export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId }) => {
     const { user } = useRole();
 
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
     const {
         data: sessions,
         refetch: refetchSessions,
         isLoading: sessionsIsLoading,
         isSuccess: sessionsIsSuccess,
-    } = useGetServicesQuery({});
-
-    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+    } = useGetServicesQuery({ CGWCId }, { refetchOnMountOrArgChange: true });
 
     const setService = (value: IService['_id']) => {
         setServiceId(value);
@@ -114,8 +113,16 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
         data: membersClockedIn,
     } = useGetAttendanceQuery({
         CGWCId,
-        serviceId: serviceId,
+        serviceId,
         departmentId: user?.department?._id,
+    });
+
+    useScreenFocus({
+        onFocus: () => {
+            if (!!sessions?.length) {
+                setServiceId(sessions[0]._id);
+            }
+        },
     });
 
     const { data: members, refetch: usersRefetch } = useGetUsersByDepartmentIdQuery(user?.department._id);
@@ -200,35 +207,34 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
     );
 });
 
-export const LeadersCGWCAttendance: React.FC = React.memo(() => {
+export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId }) => {
     const { leaderRoleIds, user } = useRole();
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
     const {
-        data: services,
+        data: sessions,
         refetch: refetchServices,
         isLoading: serviceIsLoading,
         isSuccess: servicesIsSuccess,
-    } = useGetServicesQuery({});
-
-    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+    } = useGetServicesQuery({ CGWCId }, { refetchOnMountOrArgChange: true });
 
     const setService = (value: IService['_id']) => {
         setServiceId(value);
     };
 
-    const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
-        [services, servicesIsSuccess]
-    );
-
-    const sortedServices = React.useMemo<IService[] | undefined>(
-        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
-        [filteredServices]
-    );
+    useScreenFocus({
+        onFocus: () => {
+            if (!!sessions?.length) {
+                setServiceId(sessions[0]._id);
+            }
+        },
+    });
 
     React.useEffect(() => {
-        sortedServices && setServiceId(sortedServices[0]._id);
-    }, [sortedServices]);
+        if (!!sessions?.length) {
+            setServiceId(sessions[0]._id);
+        }
+    }, [sessions]);
 
     const {
         data: HODs,
@@ -237,7 +243,8 @@ export const LeadersCGWCAttendance: React.FC = React.memo(() => {
         isFetching: hodFetching,
     } = useGetAttendanceQuery(
         {
-            serviceId: serviceId,
+            CGWCId,
+            serviceId,
             campusId: user?.campus?._id,
             roleId: leaderRoleIds && (leaderRoleIds[0] as string),
         },
@@ -251,7 +258,8 @@ export const LeadersCGWCAttendance: React.FC = React.memo(() => {
         isFetching: ahodFetching,
     } = useGetAttendanceQuery(
         {
-            serviceId: serviceId,
+            CGWCId,
+            serviceId,
             campusId: user?.campus?._id,
             roleId: leaderRoleIds && (leaderRoleIds[1] as string),
         },
@@ -310,61 +318,83 @@ export const LeadersCGWCAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
-                    {sortedServices?.map((service, index) => (
+            <HStack mt={4} px={2} w="full" justifyContent="space-between">
+                <SelectComponent
+                    w={ScreenWidth / 1.8}
+                    selectedValue={serviceId}
+                    onValueChange={setService}
+                    placeholder="Select Session"
+                >
+                    {sessions?.map((session, index) => (
                         <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
+                            value={session._id}
+                            key={`session-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} - ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+                <HStack justifyContent="space-between" alignItems="baseline" px={4}>
+                    <Text fontSize="lg" bold>
+                        Eligible:
+                    </Text>
+                    <Text ml={4} bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
+                        0
+                    </Text>
+                </HStack>
+            </HStack>
             <FlatListComponent
                 onRefresh={handleRefetch}
-                padding={isAndroid ? 3 : true}
+                padding={isAndroid ? 3 : 10}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 data={mergedAttendanceWithLeaderList}
-                columns={leadersAttendanceDataColumns}
+                columns={teamAttendanceDataColumns_1}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
     );
 });
 
-export const CampusCGWCAttendance: React.FC = React.memo(() => {
+export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId }) => {
     const { user } = useRole();
     const [page, setPage] = React.useState<number>(1);
-
-    const { data: services, isLoading: serviceIsLoading, isSuccess: servicesIsSuccess } = useGetServicesQuery({});
-
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
+    const {
+        data: sessions,
+        isLoading: sessionsIsLoading,
+        isSuccess: sessionsIsSuccess,
+    } = useGetServicesQuery(
+        { CGWCId },
+        {
+            refetchOnMountOrArgChange: true,
+        }
+    );
 
     const setService = (value: IService['_id']) => {
         setServiceId(value);
     };
 
-    const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
-        [services, servicesIsSuccess]
-    );
-
-    const sortedServices = React.useMemo<IService[] | undefined>(
-        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
-        [filteredServices]
-    );
+    useScreenFocus({
+        onFocus: () => {
+            if (!!sessions?.length) {
+                setServiceId(sessions[0]._id);
+            }
+        },
+    });
 
     React.useEffect(() => {
-        sortedServices && setServiceId(sortedServices[0]._id);
-    }, [sortedServices]);
+        if (!!sessions?.length) {
+            setServiceId(sessions[0]._id);
+        }
+    }, [sessions]);
 
     const { data, refetch, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
         {
-            // page,
-            // limit: 20,
+            page,
+            CGWCId,
+            limit: 20,
             serviceId: serviceId,
             campusId: user?.campus._id,
         },
@@ -392,26 +422,39 @@ export const CampusCGWCAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
-                    {sortedServices?.map((service, index) => (
+            <HStack mt={4} px={2} w="full" justifyContent="space-between">
+                <SelectComponent
+                    w={ScreenWidth / 1.8}
+                    placeholder="Select Session"
+                    selectedValue={serviceId}
+                    onValueChange={setService}
+                >
+                    {sessions?.map((session, index) => (
                         <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            value={session._id}
+                            key={`session-${index}`}
+                            isLoading={sessionsIsLoading}
+                            label={`${session.name} - ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+                <HStack justifyContent="space-between" alignItems="baseline" px={4}>
+                    <Text fontSize="lg" bold>
+                        Eligible:
+                    </Text>
+                    <Text ml={4} bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
+                        0
+                    </Text>
+                </HStack>
+            </HStack>
             <FlatListComponent
                 onRefresh={handleRefetch}
-                columns={campusColumns_1}
                 data={data as IAttendance[]}
-                padding={isAndroid ? 3 : true}
+                padding={isAndroid ? 3 : 10}
                 // fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
+                columns={teamAttendanceDataColumns_1}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>

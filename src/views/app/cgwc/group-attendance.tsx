@@ -16,7 +16,7 @@ const CGWCGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
     const { isMobile } = useMediaQuery();
     const { navigate } = navigation;
-    const params = route.params as { role: ROLES; route: string; tabKey: string };
+    const params = route.params as { role: ROLES; route: string; tabKey: string; CGWCId: string };
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
 
@@ -27,9 +27,9 @@ const CGWCGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     ];
 
     const renderScene = SceneMap({
-        teamAttendance: TeamCGWCAttendance,
-        campusAttendance: CampusCGWCAttendance,
-        leadersAttendance: LeadersCGWCAttendance,
+        teamAttendance: () => <TeamCGWCAttendance CGWCId={params.CGWCId} />,
+        campusAttendance: () => <CampusCGWCAttendance CGWCId={params.CGWCId} />,
+        leadersAttendance: () => <LeadersCGWCAttendance CGWCId={params.CGWCId} />,
     });
 
     const goToExport = () => {

@@ -43,7 +43,7 @@ const ConnectionStatusBar: React.FC = () => {
         >
             <Box
                 w="full"
-                height={57}
+                height={66}
                 justifyContent="flex-end"
                 bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'}
             >

@@ -561,9 +561,9 @@ const AppRoutes: IAppRoute[] = [
             },
 
             {
-                name: 'CGWC Group Attendance',
+                name: 'CGWC Attendance',
                 component: CGWCGroupAttendance,
-                options: { title: 'CGWC Group Attendance' },
+                options: { title: 'CGWC Attendance' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
