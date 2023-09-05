@@ -522,7 +522,7 @@ export const AttendanceHeader: React.FC<{ titles: string[] }> = ({ titles }) => 
             justifyContent="space-between"
         >
             {titles?.map((title, index) => (
-                <Box minWidth={[index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5,index === 0 ? '40%':'20%']}>
+                <Box minWidth={[index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5, index === 0 ? '40%' : '20%']}>
                     <Text
                         bold
                         key={index}
