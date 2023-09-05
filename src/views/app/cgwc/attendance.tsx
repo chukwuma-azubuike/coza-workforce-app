@@ -475,19 +475,33 @@ export const AttendanceListRow: React.FC<IAttendance & { name: string; score?: n
                 borderBottomColor="gray.400"
                 justifyContent="space-between"
             >
-                <Text numberOfLines={1} ellipsizeMode="tail" width={ScreenWidth / 3.6} style={styles.listRowItem}>
+                <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={styles.listRowItem}
+                    width={[ScreenWidth / 3.6, '40%']}
+                >
                     {name}
                 </Text>
-                <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]} minWidth={ScreenWidth / 4.5}>
+                <HStack
+                    style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
+                    minWidth={[ScreenWidth / 4.5, '25%']}
+                >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                     <Text style={[{ textAlign: 'right' }]}>{clockIn ? moment(clockIn).format('LT') : '--:--'}</Text>
                 </HStack>
-                <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]} minWidth={ScreenWidth / 4.5}>
+                <HStack
+                    style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
+                    minWidth={[ScreenWidth / 4.5, '25%']}
+                >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                     <Text style={[{ textAlign: 'right' }]}>{!!clockOut ? moment(clockOut).format('LT') : '--:--'}</Text>
                 </HStack>
                 {typeof score === 'number' && (
-                    <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]} minWidth={ScreenWidth / 4.5}>
+                    <HStack
+                        style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
+                        minWidth={[ScreenWidth / 4.5, '10%']}
+                    >
                         <Text style={[{ textAlign: 'right' }]}>{score}</Text>
                     </HStack>
                 )}
@@ -499,6 +513,7 @@ export const AttendanceListRow: React.FC<IAttendance & { name: string; score?: n
 export const AttendanceHeader: React.FC<{ titles: string[] }> = ({ titles }) => {
     return (
         <HStack
+            w={['100%', '50%']}
             alignItems="center"
             borderTopWidth={0.2}
             style={styles.listRow}
@@ -507,7 +522,7 @@ export const AttendanceHeader: React.FC<{ titles: string[] }> = ({ titles }) => 
             justifyContent="space-between"
         >
             {titles?.map((title, index) => (
-                <Box minWidth={index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5}>
+                <Box minWidth={[index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5,index === 0 ? '40%':'20%']}>
                     <Text
                         bold
                         key={index}

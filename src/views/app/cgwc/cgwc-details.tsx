@@ -179,7 +179,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 itemWidth={ScreenWidth * 0.8}
                             />
                         </Box>
-                        <Box px={1} mb={20}>
+                        <Box px={1}>
                             <Divider mt={6} mb={1} />
                             <Stack flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
                                 <MyCGWCAttendance sessions={sessions || []} CGWCId={CGWCId} userId={userId} />
