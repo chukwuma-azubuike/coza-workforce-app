@@ -2,7 +2,6 @@ import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns_1,
-    leadersAttendanceDataColumns,
     myAttendanceColumns,
     teamAttendanceDataColumns,
 } from '../attendance/flatListConfig';
@@ -15,11 +14,11 @@ import {
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
-import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
+import { useGetUsersByDepartmentIdQuery } from '@store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box, Center, Flex, HStack, Text, VStack } from 'native-base';
 import { Platform, StyleSheet } from 'react-native';
@@ -180,8 +179,8 @@ export const CGWCReportSummary: React.FC<{
     latestService?: IService;
     title: string;
     sessions: IService[];
-    cgwcId: string;
-}> = React.memo(({ latestService, title, sessions, cgwcId }) => {
+    CGWCId: string;
+}> = React.memo(({ latestService, title, sessions, CGWCId }) => {
     const {
         isHOD,
         isAHOD,
@@ -204,7 +203,7 @@ export const CGWCReportSummary: React.FC<{
     } = useGetDepartmentAttendanceReportQuery(
         {
             isCGWC: true,
-            CGWCId: cgwcId,
+            CGWCId: CGWCId,
             departmentId: department?._id,
             serviceId: latestService?._id as string,
         },
@@ -219,7 +218,7 @@ export const CGWCReportSummary: React.FC<{
     } = useGetLeadersAttendanceReportQuery(
         {
             isCGWC: true,
-            CGWCId: cgwcId,
+            CGWCId: CGWCId,
             serviceId: latestService?._id as string,
             campusId: campus?._id,
         },
@@ -233,7 +232,7 @@ export const CGWCReportSummary: React.FC<{
     } = useGetWorkersAttendanceReportQuery(
         {
             isCGWC: true,
-            CGWCId: cgwcId,
+            CGWCId: CGWCId,
             serviceId: latestService?._id as string,
             campusId: campus?._id,
         },

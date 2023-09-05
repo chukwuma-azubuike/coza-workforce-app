@@ -40,7 +40,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
-    cgwcId?: string;
+    CGWCId?: string;
     limit?: number;
     page?: number;
 }
@@ -173,8 +173,9 @@ export interface IAttendance extends ILog {
     createdAt: string;
     updatedAt: string;
     user: IUser;
+    score: number;
     service: IService;
-    cgwcId?: string;
+    CGWCId?: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
@@ -192,7 +193,7 @@ export interface ITicket extends ILog {
     remarks: string;
     issuedBy?: string;
     createdAt: string;
-    cgwcId?: string;
+    CGWCId?: string;
     isRetracted: boolean;
     ticketSummary: string;
     status: ITicketStatus;
@@ -266,7 +267,7 @@ export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED
 // Permissions
 export interface IPermission extends ILog {
     _id: string;
-    cgwcId?: string;
+    CGWCId?: string;
     startDate: string;
     endDate: string;
     dateCreated: string;
@@ -469,7 +470,7 @@ export interface ICGWCPayload {
 export interface ICGWCInstantMessage {
     _id: string;
     title: string;
-    cgwcId: string;
+    CGWCId: string;
     message: string;
     status: IStatus;
     createdAt: string;
@@ -478,7 +479,7 @@ export interface ICGWCInstantMessage {
 
 export interface ICGWCInstantMessagePayload {
     title: string;
-    cgwcId: string;
+    CGWCId: string;
     message: string;
     status: IStatus;
     messageLink: string;

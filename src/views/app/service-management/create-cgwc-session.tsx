@@ -13,21 +13,25 @@ import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { useCreateServiceMutation } from '@store/services/services';
 import { CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
 
 const tags: any = [
     { id: 'CGWC_MORNING_SESSION', value: 'Morning Session' },
     { id: 'CGWC_EVENING_SESSION', value: 'Evening Session' },
+    { id: 'CGWC_AFTERNOON_SESSION', value: 'Afternoon Session' },
     { id: 'CGWC_HANGOUT_SESSION', value: 'Hangout Session' },
     { id: 'CGWC_DINNER_SESSION', value: 'Dinner Session' },
+    { id: 'CGWC_LADIES_SESSION', value: 'Ladies Session' },
+    { id: 'CGWC_EVANGELISM_SESSION', value: 'Evangelism Session' },
+    { id: 'CGWC_BREAKOUT_SESSION', value: 'Breakout Session' },
 ];
 
 const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { cgwcId: string };
+    const params = route.params as { CGWCId: string };
     const { navigate } = navigation;
     const { setModalState } = useModal();
-    const cgwcId = params?.cgwcId;
+    const CGWCId = params?.CGWCId;
 
     const [createSession, { isLoading, error, data, reset }] = useCreateServiceMutation();
 
@@ -46,16 +50,16 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
         const workersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.workerLateTime);
 
         const result = await createSession({
+            CGWCId,
+            name,
+            isCGWC: !!CGWCId,
             clockInStartTime,
             coordinates,
             isGlobalService,
-            leadersLateStartTime,
-            name,
-            isCGWC: !!cgwcId,
-            CGWCId: cgwcId,
             rangeToClockIn,
             serviceEndTime,
             serviceTime,
+            leadersLateStartTime,
             tag: [values.serviceTag],
             workersLateStartTime,
         });

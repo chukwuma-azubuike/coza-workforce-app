@@ -14,7 +14,7 @@ import { useGetCGWCsQuery } from '@store/services/cgwc';
 const CGWCListRow: React.FC<ICGWC> = cgwc => {
     const navigation = useNavigation();
     const handlePress = () => {
-        navigation.navigate('CGWC Details', { cgwcId: cgwc._id } as unknown as never);
+        navigation.navigate('CGWC Details', { CGWCId: cgwc._id } as unknown as never);
     };
 
     const status = React.useMemo(

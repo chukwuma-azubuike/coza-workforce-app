@@ -11,13 +11,11 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import { CampusCGWCAttendance, LeadersCGWCAttendance, TeamCGWCAttendance } from './attendance';
-import TopNav from '../home/top-nav';
-import { Box } from 'native-base';
 
 const CGWCGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
     const { isMobile } = useMediaQuery();
-    const { navigate, setOptions } = navigation;
+    const { navigate } = navigation;
     const params = route.params as { role: ROLES; route: string; tabKey: string };
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
@@ -38,9 +36,6 @@ const CGWCGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
         navigate('Export Data', { type: IReportTypes.ATTENDANCE });
     };
 
-    setOptions({
-        headerShown: false,
-    });
     const [index, setIndex] = React.useState(0);
 
     const allRoutes = React.useMemo(() => {
@@ -74,12 +69,8 @@ const CGWCGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     }, []);
 
     return (
-        <ViewWrapper pt={10}>
-            <Box mb={4}>
-                <TopNav {...navigation} />
-            </Box>
+        <ViewWrapper>
             <TabComponent
-                hideTabBar
                 onIndexChange={setIndex}
                 renderScene={renderScene}
                 navigationState={{ index, routes: allRoutes }}

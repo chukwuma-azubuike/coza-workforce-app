@@ -3,8 +3,7 @@ import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns_1,
     leadersAttendanceDataColumns,
-    myAttendanceColumns,
-    teamAttendanceDataColumns,
+    teamAttendanceDataColumns_1,
 } from '../attendance/flatListConfig';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
@@ -21,88 +20,72 @@ import { Platform, StyleSheet } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import ListTable from '@components/composite/list/list-table';
+import { ScreenWidth } from '@rneui/base';
+import If from '@components/composite/if-container';
+import { mergeObjectsByKey } from '@utils/mergeObjectsByKey';
+import useScreenFocus from '@hooks/focus';
 
 const isAndroid = Platform.OS === 'android';
 
-interface ICGWCAttendance extends Partial<IAttendance> {}
+interface ICGWCAttendance extends Partial<IAttendance> {
+    sessions?: IService[];
+}
 
-const DATA = [
-    {
-        id: 1,
-        title: 'Day 1 - Morning',
-    },
-    {
-        id: 2,
-        title: 'Day 1 - Evening',
-    },
-    {
-        id: 3,
-        title: 'Day 2 - Morning',
-    },
-    {
-        id: 4,
-        title: 'Day 2 - Evening',
-    },
-    {
-        id: 5,
-        title: 'Day 3 - Morning',
-    },
-    {
-        id: 6,
-        title: 'Day 3 - Evening',
-    },
-    {
-        id: 7,
-        title: 'Day 4 - Morning',
-    },
-    {
-        id: 8,
-        title: 'Day 4 - Evening',
-    },
-    {
-        id: 9,
-        title: 'Day 5 - Morning',
-    },
-    {
-        id: 10,
-        title: 'Day 5 - Evening',
-    },
-    {
-        id: 11,
-        title: 'Day 6 - Morning',
-    },
-    {
-        id: 12,
-        title: 'Day 6 - Evening',
-    },
-];
-
-export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcId, userId }) => {
+export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId, userId, sessions }) => {
     const {
         data,
+        isSuccess,
         isLoading,
         isFetching,
         refetch: refetchAttendance,
     } = useGetAttendanceQuery({
-        cgwcId,
+        CGWCId,
         userId,
+    });
+
+    const minifiedSessions = React.useMemo(
+        () =>
+            sessions?.map(session => {
+                return { serviceId: session._id, name: session.name };
+            }) || [],
+        [sessions]
+    );
+
+    const mergedSessionsWithAttendance = React.useMemo(() => {
+        if (!!data?.length) {
+            return mergeObjectsByKey(minifiedSessions, data);
+        }
+        return minifiedSessions;
+    }, [minifiedSessions, data]);
+
+    const TOTAL_ATTAINABLE_SCORE = (sessions?.length || 0) * 25;
+
+    const cumulativeAttendance = React.useMemo(
+        () => data?.map(data => data.score).reduce((a, b) => a + b) || 0,
+        [data]
+    );
+    const totalAttendance = (cumulativeAttendance / TOTAL_ATTAINABLE_SCORE) * 100;
+
+    useScreenFocus({
+        onFocus: refetchAttendance,
     });
 
     return (
         <ErrorBoundary>
-            <AttendanceContainer title="My Attendance" score={15} scoreType="percent">
+            <AttendanceContainer title="My Attendance" score={totalAttendance} scoreType="percent">
                 <ListTable
-                    data={DATA}
+                    isLoading={isLoading}
                     Header={AttendanceHeader}
                     Column={AttendanceListRow}
-                    headerProps={{ titles: ['Session', 'Clock in', 'Clock out'] }}
+                    data={mergedSessionsWithAttendance}
+                    headerProps={{ titles: ['Session', 'Clock in', 'Clock out', 'Score'] }}
                 />
             </AttendanceContainer>
         </ErrorBoundary>
     );
 });
 
-export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcId }) => {
+export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId }) => {
     const { user } = useRole();
 
     const {
@@ -119,8 +102,10 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
     };
 
     React.useEffect(() => {
-        !!sessions?.length && setServiceId(sessions[0]._id);
-    }, [sessionsIsLoading]);
+        if (!!sessions?.length) {
+            setServiceId(sessions[0]._id);
+        }
+    }, [sessionsIsSuccess]);
 
     const {
         isLoading,
@@ -128,7 +113,7 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
         refetch: refetchAttendance,
         data: membersClockedIn,
     } = useGetAttendanceQuery({
-        cgwcId,
+        CGWCId,
         serviceId: serviceId,
         departmentId: user?.department?._id,
     });
@@ -170,13 +155,19 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
         refetchAttendance();
     };
 
+    // TODO: Get this value from endpoint
     const eligible = React.useMemo(() => Math.round(Math.random() * 10), []);
 
     return (
         <ErrorBoundary>
-            <AttendanceContainer title="Team Attendance" score={3} scoreType="count">
-                <HStack justifyContent="space-between" alignItems="baseline">
-                    <SelectComponent placeholder="Select Session" selectedValue={serviceId} onValueChange={setService}>
+            <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
+                <HStack mb={3} mx={4} mr={10} w={ScreenWidth - 42} alignItems="baseline" justifyContent="space-between">
+                    <SelectComponent
+                        w={ScreenWidth / 1.8}
+                        selectedValue={serviceId}
+                        onValueChange={setService}
+                        placeholder="Select Session"
+                    >
                         {sessions?.map((session, index) => (
                             <SelectItemComponent
                                 value={session._id}
@@ -187,21 +178,24 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ cgwcI
                         ))}
                     </SelectComponent>
                     <HStack justifyContent="space-between" alignItems="baseline">
-                        <Text bold size="sm">
-                            Eligible:{' '}
+                        <Text fontSize="lg" bold>
+                            Eligible:{'  '}
                         </Text>
-                        <Text bold _dark={{ color: 'gray.400' }} _light={{ color: 'gray.800' }}>
+                        <Text bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
                             {eligible}
                         </Text>
                     </HStack>
                 </HStack>
-                <ListTable
-                    Header={AttendanceHeader}
-                    Column={AttendanceListRow}
-                    data={mergedAttendanceWithMemberList}
-                    headerProps={{ titles: ['Session', 'Clock in', 'Clock out'] }}
-                />
             </AttendanceContainer>
+            <FlatListComponent
+                padding={isAndroid ? 3 : 4}
+                onRefresh={handleRefetch}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+                columns={teamAttendanceDataColumns_1}
+                data={mergedAttendanceWithMemberList}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
+            />
         </ErrorBoundary>
     );
 });
@@ -426,37 +420,52 @@ export const CampusCGWCAttendance: React.FC = React.memo(() => {
 
 interface IAttendanceContainerProps {
     title: string;
+    showTitle?: boolean;
     score?: number | string;
     scoreType: 'percent' | 'count';
 }
 
-export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({ children, title, score, scoreType }) => {
+export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({
+    children,
+    title,
+    score,
+    scoreType,
+    showTitle = true,
+}) => {
     return (
         <Box flexDirection="column" w={['100%', '46%']}>
-            <HStack px={2} justifyContent="space-between" alignItems="baseline">
-                <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
-                    {title}
-                </Text>
-                {!!score && (
-                    <Text
-                        bold
-                        pb={4}
-                        pt={3}
-                        fontSize="lg"
-                        textAlign="center"
-                        color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
-                    >
-                        {score || 0}
-                        {scoreType === 'percent' && '%'}
+            <If condition={showTitle}>
+                <HStack px={2} justifyContent="space-between" alignItems="baseline">
+                    <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
+                        {title}
                     </Text>
-                )}
-            </HStack>
+                    {!!score && (
+                        <Text
+                            bold
+                            pb={4}
+                            pt={3}
+                            fontSize="lg"
+                            textAlign="center"
+                            color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
+                        >
+                            {score || 0}
+                            {scoreType === 'percent' && '%'}
+                        </Text>
+                    )}
+                </HStack>
+            </If>
             {children}
         </Box>
     );
 };
 
-export const AttendanceListRow: React.FC<IAttendance & { title: string }> = ({ clockIn, clockOut, title }) => {
+export const AttendanceListRow: React.FC<IAttendance & { name: string; score?: number }> = ({
+    name,
+    clockIn,
+    clockOut,
+    score = 0,
+    ...props
+}) => {
     return (
         <>
             <HStack
@@ -466,19 +475,22 @@ export const AttendanceListRow: React.FC<IAttendance & { title: string }> = ({ c
                 borderBottomColor="gray.400"
                 justifyContent="space-between"
             >
-                <Text style={styles.listRowItem}>{title}</Text>
-                <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]}>
+                <Text numberOfLines={1} ellipsizeMode="tail" width={ScreenWidth / 3.6} style={styles.listRowItem}>
+                    {name}
+                </Text>
+                <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]} minWidth={ScreenWidth / 4.5}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <Text style={[{ textAlign: 'right' }]}>
-                        {clockIn ? moment(clockIn).format('DD/MM/YYYY') : '--:--'}
-                    </Text>
+                    <Text style={[{ textAlign: 'right' }]}>{clockIn ? moment(clockIn).format('LT') : '--:--'}</Text>
                 </HStack>
-                <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]}>
+                <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]} minWidth={ScreenWidth / 4.5}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <Text style={[{ textAlign: 'right' }]}>
-                        {clockOut ? moment(clockOut).format('DD/MM/YYYY') : '--:--'}
-                    </Text>
+                    <Text style={[{ textAlign: 'right' }]}>{!!clockOut ? moment(clockOut).format('LT') : '--:--'}</Text>
                 </HStack>
+                {typeof score === 'number' && (
+                    <HStack style={[styles.listRowItem, { justifyContent: 'flex-end' }]} minWidth={ScreenWidth / 4.5}>
+                        <Text style={[{ textAlign: 'right' }]}>{score}</Text>
+                    </HStack>
+                )}
             </HStack>
         </>
     );
@@ -486,22 +498,29 @@ export const AttendanceListRow: React.FC<IAttendance & { title: string }> = ({ c
 
 export const AttendanceHeader: React.FC<{ titles: string[] }> = ({ titles }) => {
     return (
-        <>
-            <HStack
-                alignItems="center"
-                borderTopWidth={0.2}
-                style={styles.listRow}
-                borderColor="gray.400"
-                borderBottomWidth={0.2}
-                justifyContent="space-between"
-            >
-                {titles?.map((title, index) => (
-                    <Text key={index} bold style={[styles.listRowItem, { textAlign: index !== 0 ? 'right' : 'left' }]}>
+        <HStack
+            alignItems="center"
+            borderTopWidth={0.2}
+            style={styles.listRow}
+            borderColor="gray.400"
+            borderBottomWidth={0.2}
+            justifyContent="space-between"
+        >
+            {titles?.map((title, index) => (
+                <Box minWidth={index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5}>
+                    <Text
+                        bold
+                        key={index}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        maxWidth={index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5}
+                        style={[styles.listRowItem, { textAlign: index !== 0 ? 'right' : 'left' }]}
+                    >
                         {title}
                     </Text>
-                ))}
-            </HStack>
-        </>
+                </Box>
+            ))}
+        </HStack>
     );
 };
 
@@ -512,7 +531,6 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     listRowItem: {
-        width: '33%',
         flexWrap: 'wrap',
     },
 });

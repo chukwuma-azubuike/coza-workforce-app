@@ -6,7 +6,7 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
-import { Alert, Animated, Dimensions, Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Box, Divider, Stack, Text } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
@@ -15,10 +15,11 @@ import ScrollContainer from '@components/composite/scroll-container';
 import { useGetCGWCByIdQuery, useGetCGWCInstantMessagesQuery } from '@store/services/cgwc';
 import Loading from '@components/atoms/loading';
 import { CGWCReportSummary } from './report';
-import { useGetLatestServiceQuery } from '@store/services/services';
+import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import { ScreenHeight, ScreenWidth } from '@rneui/base';
 import useMediaQuery from '@hooks/media-query';
 import ViewWrapper from '@components/layout/viewWrapper';
+import useScreenFocus from '@hooks/focus';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
@@ -33,8 +34,8 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     } = useRole();
     const { isMobile } = useMediaQuery();
     const navigation = props.navigation;
-    const params = props.route.params as { cgwcId: string };
-    const cgwcId = params?.cgwcId;
+    const params = props.route.params as { CGWCId: string };
+    const CGWCId = params?.CGWCId;
 
     const isLeader = isCampusPastor || isGlobalPastor || isHOD || isAHOD || isSuperAdmin || isGroupHead;
     const goToExport = () => {
@@ -70,17 +71,35 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     });
 
     const {
+        data: sessions,
+        refetch: refetchSessions,
+        isLoading: isLoadingSessions,
+        isFetching: isFetchingSessions,
+    } = useGetServicesQuery(
+        {
+            CGWCId,
+            page: 1,
+            limit: 30,
+        },
+        {
+            refetchOnFocus: true,
+            refetchOnReconnect: true,
+            refetchOnMountOrArgChange: true,
+        }
+    );
+
+    const {
         data: cgwc,
         isLoading,
         isFetching,
         isSuccess,
-    } = useGetCGWCByIdQuery(cgwcId, { refetchOnMountOrArgChange: true });
+    } = useGetCGWCByIdQuery(CGWCId, { refetchOnMountOrArgChange: true });
 
     const {
         data: messages,
         isLoading: messagesIsLoading,
         isFetching: messagesIsFetching,
-    } = useGetCGWCInstantMessagesQuery({ cgwcId });
+    } = useGetCGWCInstantMessagesQuery({ CGWCId });
 
     const data = [
         {
@@ -110,19 +129,12 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     ];
 
-    const sessions = [
-        { _id: 'koo', name: 'Day 1 Morning Session', serviceTime: '2023-09-28T00:00:00.000+00:00' },
-        { _id: 'kow', name: 'Day 1 Evening Session', serviceTime: '2023-09-28T00:00:00.000+00:00' },
-        { _id: 'koe', name: 'Day 2 Morning Session', serviceTime: '2023-09-29T00:00:00.000+00:00' },
-        { _id: 'kof', name: 'Day 2 Evening Session', serviceTime: '2023-09-29T00:00:00.000+00:00' },
-    ] as any;
-
     const gotoCreateInstantMessage = () => {
-        navigation.navigate('Create Instant Message', { cgwcId });
+        navigation.navigate('Create Instant Message', { CGWCId });
     };
 
     const gotoCreateSession = () => {
-        navigation.navigate('Create CGWC session', { cgwcId });
+        navigation.navigate('Create CGWC session', { CGWCId });
     };
 
     const allButtons = [
@@ -139,6 +151,12 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             handleClick: gotoCreateSession,
         },
     ];
+
+    useScreenFocus({
+        onFocus: () => {
+            refetchSessions();
+        },
+    });
 
     return (
         <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1, flexDirection: 'column' }}>
@@ -164,12 +182,12 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <Box px={1} mb={20}>
                             <Divider mt={6} mb={1} />
                             <Stack flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
-                                <MyCGWCAttendance cgwcId={cgwcId} userId={userId} />
+                                <MyCGWCAttendance sessions={sessions || []} CGWCId={CGWCId} userId={userId} />
                                 <If condition={isLeader}>
                                     {!isMobile && <Divider mt={3} mb={2} orientation="vertical" />}
                                     <CGWCReportSummary
-                                        cgwcId={cgwcId}
-                                        sessions={sessions}
+                                        CGWCId={CGWCId}
+                                        sessions={sessions || []}
                                         latestService={latestService}
                                         title={isCampusPastor ? 'Campus Report' : 'Team Report'}
                                     />

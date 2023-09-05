@@ -16,8 +16,8 @@ import TextAreaComponent from '@components/atoms/text-area';
 
 const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { navigate } = navigation;
-    const params = route.params as { cgwcId: string };
-    const cgwcId = params?.cgwcId;
+    const params = route.params as { CGWCId: string };
+    const CGWCId = params?.CGWCId;
     const { setModalState } = useModal();
 
     const [createCGWCInstantMessage, { isLoading, error, data, reset }] = useCreateCGWCInstantMessagesMutation();
@@ -44,7 +44,7 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
     };
 
     const INITIAL_VALUES: ICGWCInstantMessage = {
-        cgwcId,
+        CGWCId,
         title: '',
         message: '',
         messageLink: '',

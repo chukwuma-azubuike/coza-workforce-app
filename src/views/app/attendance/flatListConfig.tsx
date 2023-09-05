@@ -96,6 +96,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
 ];
 
 export interface ITransformUserAttendanceList {
+    score: number;
     userId: string;
     clockIn: string;
     lastName: string;
@@ -160,6 +161,84 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                     }}
                 >
                     {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
+                </Text>
+            </HStack>
+        ),
+    },
+];
+
+const teamAttendanceDataColumns_1: IFlatListColumn[] = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <VStack>
+                <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
+                    <AvatarComponent
+                        mr={4}
+                        size="sm"
+                        badge={!!elm.clockIn}
+                        imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                    />
+                    <VStack justifyContent="center">
+                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                            {Utils.capitalizeFirstChar(elm.firstName)}
+                        </Text>
+                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
+                            {Utils.capitalizeFirstChar(elm.lastName)}
+                        </Text>
+                    </VStack>
+                </HStack>
+            </VStack>
+        ),
+    },
+    {
+        title: 'Clock In',
+        dataIndex: 'clockIn',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStack key={`clockin-${key}`} minWidth={0} justifyContent="center" flex={1} textAlign="left" w="full">
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                <Text
+                    _dark={{
+                        color: elm.clockIn ? 'green.300' : 'red.300',
+                    }}
+                    color={elm.clockIn ? 'green.500' : 'red.500'}
+                    textAlign="center"
+                >
+                    {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
+                </Text>
+            </HStack>
+        ),
+    },
+    {
+        title: 'Clock Out',
+        dataIndex: 'clockOut',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
+                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                <Text
+                    color="gray.500"
+                    _dark={{
+                        color: 'warmGray.200',
+                    }}
+                >
+                    {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
+                </Text>
+            </HStack>
+        ),
+    },
+    {
+        title: 'Score',
+        dataIndex: 'score',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
+                <Text
+                    color="gray.500"
+                    _dark={{
+                        color: 'warmGray.200',
+                    }}
+                >
+                    {!!elm.score ? `${elm.score}%` : `${0}%`}
                 </Text>
             </HStack>
         ),
@@ -403,4 +482,11 @@ const campusColumns_1: IFlatListColumn[] = [
     },
 ];
 
-export { campusColumns, campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns, leadersAttendanceDataColumns };
+export {
+    campusColumns,
+    campusColumns_1,
+    myAttendanceColumns,
+    teamAttendanceDataColumns,
+    teamAttendanceDataColumns_1,
+    leadersAttendanceDataColumns,
+};
