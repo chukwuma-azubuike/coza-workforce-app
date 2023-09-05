@@ -6,7 +6,7 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
-import { Animated, Dimensions, Image, Linking, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Box, Divider, Stack, Text } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
@@ -20,6 +20,7 @@ import { ScreenHeight, ScreenWidth } from '@rneui/base';
 import useMediaQuery from '@hooks/media-query';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
+import { ICGWCInstantMessage } from '@store/types';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
@@ -42,9 +43,9 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
     };
 
-    const CarouselItem: React.FC<{ item: any; index: number }> = ({ item, index }) => {
+    const CarouselItem: React.FC<{ item: ICGWCInstantMessage; index: number }> = ({ item, index }) => {
         const handlePress = () => {
-            Linking.openURL(item?.messageLink);
+            navigation.navigate('CGWC Resources', item);
         };
 
         return (
@@ -103,31 +104,31 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const data = [
         {
-            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            messageLink: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
             title: 'Welcome to CGWC October 2023',
             imageUrl: 'https://i.ibb.co/7Jgmgvt/COZA-96.webp',
         },
         {
-            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            messageLink: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
             title: 'Recharge your spirit man',
             imageUrl: 'https://i.ibb.co/ScJtBCZ/MG-0793.webp',
         },
         {
-            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
-            title: 'Iterinary',
+            messageLink: 'https://research.nhm.org/pdfs/10840/10840.pdf',
+            title: 'Itinerary',
             imageUrl: 'https://i.ibb.co/P9Z8JDh/MG-0778.webp',
         },
         {
-            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            messageLink: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
             title: 'Uniform Chart',
             imageUrl: 'https://i.ibb.co/FDBSDGP/COZA-84.webp',
         },
         {
-            messageLink: 'https://forms.gle/iUFfBgJj4XUuk5AR9',
+            messageLink: 'https://research.nhm.org/pdfs/10840/10840.pdf',
             title: 'Resources',
             imageUrl: 'https://i.ibb.co/02mHVgp/COZA-20.webp',
         },
-    ];
+    ] as ICGWCInstantMessage[];
 
     const gotoCreateInstantMessage = () => {
         navigation.navigate('Create Instant Message', { CGWCId });
@@ -168,7 +169,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     <CGWCHeader title={cgwc?.name || ''} navigation={navigation} scrollOffsetY={scrollOffsetY} />
                     <ScrollContainer scrollOffsetY={scrollOffsetY}>
                         <Box mt={2}>
-                            <Carousel
+                            <Carousel<ICGWCInstantMessage>
                                 data={data}
                                 loop={true}
                                 autoplay={true}

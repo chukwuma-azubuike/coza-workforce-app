@@ -473,6 +473,7 @@ export interface ICGWCInstantMessage {
     CGWCId: string;
     message: string;
     status: IStatus;
+    imageUrl: string;
     createdAt: string;
     messageLink: string;
 }

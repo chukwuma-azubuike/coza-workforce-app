@@ -57,6 +57,7 @@ import CreateCGWC from '@views/app/cgwc/create-cgwc';
 import CreateCGWGSession from '@views/app/service-management/create-cgwc-session';
 import CreateCGWCInstantMessage from '@views/app/cgwc/create-instant-message';
 import CGWCGroupAttendance from '@views/app/cgwc/group-attendance';
+import CGWCResources from '@views/app/cgwc/cgwc-resources';
 // import Export from '@views/app/export';
 
 export interface IAppRoute {
@@ -564,6 +565,16 @@ const AppRoutes: IAppRoute[] = [
                 name: 'CGWC Attendance',
                 component: CGWCGroupAttendance,
                 options: { title: 'CGWC Attendance' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'person', type: 'ionicon' },
+            },
+            {
+                name: 'CGWC Resources',
+                component: CGWCResources,
+                options: { title: 'CGWC Resources' },
                 submenus: [],
                 users: [],
                 inMenuBar: false,
