@@ -45,7 +45,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     usePreventGoBack();
 
-    const { data: currentUserData } = useGetUserByIdQuery(currentUserId);
+    const { data: currentUserData, refetch: refetchCurrentUser } = useGetUserByIdQuery(currentUserId);
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
@@ -109,6 +109,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const handleRefresh = () => {
         refresh();
+        refetchCurrentUser();
         refetchServices();
         if (!isGlobalPastor) {
             refetch();

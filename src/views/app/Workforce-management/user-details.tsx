@@ -5,7 +5,7 @@ import { Formik, FormikConfig } from 'formik';
 import moment from 'moment';
 import { Center, FormControl, HStack, Text, VStack } from 'native-base';
 import React from 'react';
-import { Alert } from 'react-native';
+import { Alert, Switch } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -13,7 +13,7 @@ import StatusTag from '@components/atoms/status-tag';
 import CardComponent from '@components/composite/card';
 import If from '@components/composite/if-container';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { AVATAR_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
@@ -21,17 +21,19 @@ import { useDeleteUserMutation, useGetUserByIdQuery, useUpdateUserMutation } fro
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import compareObjectValueByKey from '@utils/compareObjectValuesByKey';
 
 const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
     const { setModalState } = useModal();
     const { goBack } = useNavigation();
-    const { isSuperAdmin, isGlobalPastor, isCampusPastor, isInternshipHOD, rolesPermittedToCreate } = useRole();
+    const { isHOD, isAHOD, isSuperAdmin, isGlobalPastor, isCampusPastor, isInternshipHOD, rolesPermittedToCreate } =
+        useRole();
 
     const canEdit = isSuperAdmin || isGlobalPastor || isCampusPastor || isInternshipHOD;
     const canDelete = isSuperAdmin || isGlobalPastor || isCampusPastor;
+    const canApproveForCGWC = isHOD || isAHOD || isCampusPastor || isGlobalPastor;
 
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
     const handleEditMode = () => {
@@ -144,9 +146,49 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     };
 
+    const approveForCGWC = async (event: boolean) => {
+        try {
+            const result = await updateUser({ isCGWCApproved: event, _id });
+
+            if ('data' in result) {
+                setModalState({
+                    message: `User ${event ? 'Approved' : 'Unapproved'} for CGWC`,
+                    defaultRender: true,
+                    status: 'success',
+                    duration: 3,
+                });
+            }
+
+            if ('error' in result) {
+                setModalState({
+                    message: `${updateResults?.error?.data?.message}` || 'Oops, something went wrong!',
+                    defaultRender: true,
+                    status: 'error',
+                    duration: 6,
+                });
+            }
+        } catch (error) {
+            setModalState({
+                message: 'Oops, something went wrong!',
+                defaultRender: true,
+                status: 'error',
+                duration: 6,
+            });
+        }
+    };
+
     useScreenFocus({
-        onFocus: () => setIsEditMode(false),
+        onFocus: () => {
+            setIsEditMode(false);
+            setCgwcApproved(!!data?.isCGWCApproved);
+        },
     });
+
+    const [cgwcApproved, setCgwcApproved] = React.useState<boolean>(!!data?.isCGWCApproved);
+    const handleApproveCGWC = async (event: boolean) => {
+        setCgwcApproved(event);
+        await approveForCGWC(event);
+    };
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
@@ -208,6 +250,16 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         >
                                             Delete
                                         </ButtonComponent>
+                                    </HStack>
+                                </If>
+                                <If condition={canApproveForCGWC}>
+                                    <HStack my={2}>
+                                        <FormControl flexDirection="row" justifyContent="space-between">
+                                            <FormControl.Label>
+                                                {cgwcApproved ? 'Approved' : 'Approve'} for CGWC
+                                            </FormControl.Label>
+                                            <Switch value={cgwcApproved} onValueChange={handleApproveCGWC} />
+                                        </FormControl>
                                     </HStack>
                                 </If>
                                 <HStack

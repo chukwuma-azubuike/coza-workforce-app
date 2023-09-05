@@ -108,6 +108,7 @@ export interface IUser {
     lastName: string;
     maritalStatus: string;
     nextOfKin: string;
+    isCGWCApproved?: boolean;
     nextOfKinPhoneNo: string;
     occupation: string;
     phoneNumber: string;
