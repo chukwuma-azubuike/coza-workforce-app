@@ -1,10 +1,6 @@
 import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
-import {
-    campusColumns_1,
-    myAttendanceColumns,
-    teamAttendanceDataColumns,
-} from '../attendance/flatListConfig';
+import { campusColumns_1, myAttendanceColumns, teamAttendanceDataColumns } from '../attendance/flatListConfig';
 import {
     useGetAttendanceQuery,
     useGetDepartmentAttendanceReportQuery,
