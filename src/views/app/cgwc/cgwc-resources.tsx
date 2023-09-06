@@ -1,9 +1,9 @@
+import React from 'react';
 import Loading from '@components/atoms/loading';
 import useScreenFocus from '@hooks/focus';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ICGWCInstantMessage } from '@store/types';
-import React from 'react';
 import { View } from 'react-native';
 import PDFView from 'react-native-view-pdf';
 

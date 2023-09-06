@@ -21,6 +21,7 @@ import useMediaQuery from '@hooks/media-query';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
 import { ICGWCInstantMessage } from '@store/types';
+import CGWCFeedback from './feedback';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
@@ -159,6 +160,10 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     });
 
+    const handleFeedbackPress = () => {
+        navigation.navigate('CGWC Feedback');
+    };
+
     return (
         <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1, flexDirection: 'column' }}>
             <ViewWrapper noPadding>
@@ -208,6 +213,14 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 ]}
                             />
                         </If>
+                        <Box px={3} mt={6}>
+                            <Text bold fontSize="lg">
+                                Give Feedback
+                            </Text>
+                            <TouchableOpacity onPress={handleFeedbackPress}>
+                                <CGWCFeedback />
+                            </TouchableOpacity>
+                        </Box>
                     </ScrollContainer>
                     <If condition={isSuperAdmin}>
                         <StaggerButtonComponent buttons={allButtons as unknown as any} />
