@@ -132,6 +132,9 @@ const useRole = () => {
             userId: currentUser.userId || currentUser._id,
         },
 
+        //Status
+        isCGWCApproved: currentUser.isCGWCApproved,
+
         //Role IDs
         leaderRoleIds,
 

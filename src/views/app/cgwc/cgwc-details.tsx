@@ -6,7 +6,7 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
-import { Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { Box, Divider, Stack, Text } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
@@ -21,7 +21,8 @@ import useMediaQuery from '@hooks/media-query';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
 import { ICGWCInstantMessage } from '@store/types';
-import CGWCFeedback from './feedback';
+import RatingComponent from '@components/composite/rating';
+import assertCGWCActive from '@utils/assertCGWCActive';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
@@ -160,8 +161,13 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     });
 
-    const handleFeedbackPress = () => {
-        navigation.navigate('CGWC Feedback');
+    const handleFeedbackPress = (rating: number) => {
+        if (!!cgwc) {
+            if (!assertCGWCActive(cgwc)) {
+                return navigation.navigate('CGWC Feedback', { CGWCId, rating });
+            }
+            Alert.alert('CGWC Feedback', 'You will be able to give your feedback on the last day of CGWC');
+        }
     };
 
     return (
@@ -213,13 +219,13 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 ]}
                             />
                         </If>
-                        <Box px={3} mt={6}>
-                            <Text bold fontSize="lg">
+                        <Box mt={6}>
+                            <Text bold px={3} fontSize="lg">
                                 Give Feedback
                             </Text>
-                            <TouchableOpacity onPress={handleFeedbackPress}>
-                                <CGWCFeedback />
-                            </TouchableOpacity>
+                            <View style={{ marginBottom: 80, width: '100%' }}>
+                                <RatingComponent onFinishRating={handleFeedbackPress} />
+                            </View>
                         </Box>
                     </ScrollContainer>
                     <If condition={isSuperAdmin}>

@@ -223,3 +223,10 @@ export const CreateCGWCInstantMessageSchema = Yup.object().shape({
     message: Yup.string().required('You are required to enter a message'),
     messageLink: Yup.string(),
 });
+
+export const SubmitCGWCFeedbackSchema = Yup.object().shape({
+    comment: Yup.string().required('You are required to enter a comment'),
+    rating: Yup.number()
+        .required('You are required to give a rating')
+        .notOneOf([0], 'You are required to give a rating'),
+});

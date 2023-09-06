@@ -478,6 +478,15 @@ export interface ICGWCInstantMessage {
     messageLink: string;
 }
 
+export interface ICGWCFeedbackPayload {
+    CGWCId: string;
+    rating: number;
+    comment: string;
+}
+export interface ICGWCFeedback extends ICGWCFeedbackPayload {
+    _id: string;
+}
+
 export interface ICGWCInstantMessagePayload {
     title: string;
     CGWCId: string;

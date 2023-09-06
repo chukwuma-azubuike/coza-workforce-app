@@ -8,6 +8,8 @@ import {
     ICGWCInstantMessage,
     ICGWCInstantMessagePayload,
     ICGWCPayload,
+    ICGWCFeedback,
+    ICGWCFeedbackPayload,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 
@@ -77,6 +79,16 @@ export const cgwcServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<ICGWCInstantMessage>) => response.data,
         }),
 
+        submitCGWCFeedback: endpoint.mutation<ICGWCFeedback, ICGWCFeedbackPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/submitFeedback`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+
+            transformResponse: (response: IDefaultResponse<ICGWCFeedback>) => response.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -87,6 +99,7 @@ export const {
     useGetCGWCByIdQuery,
     useCreateCGWCMutation,
     useUpdateCGWCMutation,
+    useSubmitCGWCFeedbackMutation,
     useGetCGWCInstantMessagesQuery,
     useCreateCGWCInstantMessagesMutation,
 } = cgwcServiceSlice;

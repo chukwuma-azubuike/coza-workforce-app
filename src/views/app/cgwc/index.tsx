@@ -1,7 +1,7 @@
 import React from 'react';
 import useRole from '@hooks/role';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
-import useScreenFocus from '@hooks/focus';
+// import useScreenFocus from '@hooks/focus';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { CGWCList } from './list';
 import { ICGWC } from '@store/types';

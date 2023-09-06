@@ -10,6 +10,7 @@ import useScreenFocus from '@hooks/focus';
 import { ICGWC, IUserStatus } from '@store/types';
 // import Utils from '@utils';
 import { useGetCGWCsQuery } from '@store/services/cgwc';
+import assertCGWCActive from '@utils/assertCGWCActive';
 
 const CGWCListRow: React.FC<ICGWC> = cgwc => {
     const navigation = useNavigation();
@@ -17,10 +18,7 @@ const CGWCListRow: React.FC<ICGWC> = cgwc => {
         navigation.navigate('CGWC Details', { CGWCId: cgwc._id } as unknown as never);
     };
 
-    const status = React.useMemo(
-        () => (moment().diff(moment(cgwc?.endDate)) > 0 ? 'INACTIVE' : 'ACTIVE'),
-        []
-    ) as IUserStatus;
+    const status = React.useMemo(() => (assertCGWCActive(cgwc) ? 'ACTIVE' : 'INACTIVE'), []) as IUserStatus;
 
     return (
         <TouchableOpacity
