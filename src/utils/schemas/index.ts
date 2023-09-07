@@ -117,6 +117,7 @@ export const CreateServiceSchema = Yup.object().shape({
     serviceTag: Yup.string().required('You are required to select the service tag.'),
     serviceType: Yup.string().required('You are required to select the service type.'),
     serviceName: Yup.string().required('Service name is required.'),
+    serviceDate: Yup.string().required('Service date is required.'),
 });
 
 export const AssignGroupHeadSchema = Yup.object().shape({

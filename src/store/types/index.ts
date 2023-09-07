@@ -250,8 +250,8 @@ export interface ICreateServicePayload {
     serviceType: string;
     serviceName: string;
     serviceTag: string;
-    startTime: string | Date;
-    startDate: string | Date;
+    serviceTime: string | Date;
+    serviceDate: string | Date;
     endTime: string | Date;
     isCGWC?: boolean;
     CGWCId?: string;
