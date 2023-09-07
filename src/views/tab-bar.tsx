@@ -17,7 +17,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
             AppRoutes.map(route => {
                 if (route.inMenuBar || (isWorker && route.name === 'CGWC' && isCGWCApproved)) return route.name;
             }),
-        [AppRoutes]
+        [AppRoutes, isCGWCApproved, isWorker]
     );
 
     return (

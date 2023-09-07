@@ -15,8 +15,6 @@ import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'cgwc';
 
-type IGetLatestSessionResponse = IDefaultResponse<ICGWC>;
-
 export const cgwcServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 

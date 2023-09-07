@@ -9,6 +9,11 @@ export interface ILog {
     updatedAt?: string;
 }
 
+export interface IDefaultErrorResponse {
+    status: number;
+    data: { data: null; isError: boolean; isSuccessful: boolean; message: string; status: number };
+}
+
 export enum CREATE_SERVICE_ENUM {
     LONG = 7.505862981744857,
     LAT = 9.005452823370131,

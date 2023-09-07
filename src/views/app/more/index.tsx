@@ -18,6 +18,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             department: { departmentName },
         },
         isSuperAdmin,
+        isCampusPastor,
         isCGWCApproved,
     } = useRole();
 
@@ -27,7 +28,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                 if (!route.inMore) {
                     return;
                 }
-                if (!isCGWCApproved && route.name === 'CGWC' && !isSuperAdmin) {
+                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGWC') {
                     return;
                 }
                 if (!route.users?.length) {

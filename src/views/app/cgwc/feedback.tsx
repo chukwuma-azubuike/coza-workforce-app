@@ -37,13 +37,13 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
             });
             reset();
             resetForm(INITIAL_VALUES as any);
-            navigate('CGWC Details', { rating: values.rating });
+            navigate('CGWC Details', { rating: values.rating, CGWCId });
         }
 
         if ('error' in result) {
             setModalState({
-                message: 'Oops something went wrong',
-                status: 'error',
+                message: result?.error?.data?.message || 'Oops something went wrong',
+                status: 'info',
             });
         }
     };

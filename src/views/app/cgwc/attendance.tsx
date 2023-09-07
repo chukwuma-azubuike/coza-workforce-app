@@ -30,9 +30,7 @@ interface ICGWCAttendance extends Partial<IAttendance> {
 export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId, userId, sessions }) => {
     const {
         data,
-        isSuccess,
         isLoading,
-        isFetching,
         refetch: refetchAttendance,
     } = useGetAttendanceQuery({
         CGWCId,

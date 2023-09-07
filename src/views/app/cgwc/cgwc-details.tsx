@@ -37,7 +37,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     } = useRole();
     const { isMobile } = useMediaQuery();
     const navigation = props.navigation;
-    const params = props.route.params as { CGWCId: string };
+    const params = props.route.params as { CGWCId: string; rating: number };
     const CGWCId = params?.CGWCId;
 
     const isLeader = isCampusPastor || isGlobalPastor || isHOD || isAHOD || isSuperAdmin || isGroupHead;
@@ -82,8 +82,6 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             limit: 30,
         },
         {
-            refetchOnFocus: true,
-            refetchOnReconnect: true,
             refetchOnMountOrArgChange: true,
         }
     );
@@ -186,7 +184,10 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 Give Feedback
                             </Text>
                             <View style={{ marginBottom: 80, width: '100%' }}>
-                                <RatingComponent onFinishRating={handleFeedbackPress} />
+                                <RatingComponent
+                                    defaultRating={params?.rating || 0}
+                                    onFinishRating={handleFeedbackPress}
+                                />
                             </View>
                         </Box>
                     </ScrollContainer>
