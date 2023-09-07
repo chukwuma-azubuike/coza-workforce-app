@@ -479,6 +479,7 @@ export interface ICGWCInstantMessage {
 }
 
 export interface ICGWCFeedbackPayload {
+    userId: string;
     CGWCId: string;
     rating: number;
     comment: string;

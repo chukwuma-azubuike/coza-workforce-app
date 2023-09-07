@@ -23,7 +23,7 @@ export const CGWCReportSummary: React.FC<{
     title: string;
     sessions: IService[];
     CGWCId: string;
-}> = React.memo(({ latestService, title, sessions, CGWCId }) => {
+}> = React.memo(({ title, sessions, CGWCId }) => {
     const {
         isHOD,
         isAHOD,
@@ -38,48 +38,34 @@ export const CGWCReportSummary: React.FC<{
         setServiceId(value);
     };
 
-    const {
-        data: attendanceReport,
-        isLoading: attendanceReportLoading,
-        refetch: attendanceReportRefetch,
-        isUninitialized: attendanceReportIsUninitialized,
-    } = useGetDepartmentAttendanceReportQuery(
+    const { data: attendanceReport, isLoading: attendanceReportLoading } = useGetDepartmentAttendanceReportQuery(
         {
             CGWCId,
             isCGWC: true,
             departmentId: department?._id,
             serviceId: serviceId as string,
         },
-        { skip: !serviceId }
+        { skip: !serviceId, refetchOnMountOrArgChange: true }
     );
 
-    const {
-        data: leadersAttendance,
-        refetch: refetchLeaders,
-        isLoading: leadersReportLoading,
-        isUninitialized: leadersIsUninitialized,
-    } = useGetLeadersAttendanceReportQuery(
+    const { data: leadersAttendance, isLoading: leadersReportLoading } = useGetLeadersAttendanceReportQuery(
         {
             CGWCId,
             isCGWC: true,
             campusId: campus?._id,
             serviceId: serviceId as string,
         },
-        { skip: !serviceId }
+        { skip: !serviceId, refetchOnMountOrArgChange: true }
     );
 
-    const {
-        data: workersAttendance,
-        refetch: refetchWorkers,
-        isUninitialized: workersIsUninitialized,
-    } = useGetWorkersAttendanceReportQuery(
+    const { data: workersAttendance } = useGetWorkersAttendanceReportQuery(
         {
             CGWCId,
             isCGWC: true,
             campusId: campus?._id,
             serviceId: serviceId as string,
         },
-        { skip: !serviceId }
+        { skip: !serviceId, refetchOnMountOrArgChange: true }
     );
 
     const navigation = useNavigation();

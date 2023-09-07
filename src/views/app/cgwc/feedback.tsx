@@ -14,19 +14,21 @@ import { SubmitCGWCFeedbackSchema } from '@utils/schemas';
 import { useSubmitCGWCFeedbackMutation } from '@store/services/cgwc';
 import TextAreaComponent from '@components/atoms/text-area';
 import RatingComponent from '@components/composite/rating';
+import useRole from '@hooks/role';
 
 const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { navigate } = navigation;
     const params = route.params as { CGWCId: string; rating: number };
     const CGWCId = params?.CGWCId;
     const { setModalState } = useModal();
+    const {
+        user: { userId },
+    } = useRole();
 
     const [submitFeedback, { isLoading, error, data, reset }] = useSubmitCGWCFeedbackMutation();
 
     const onSubmit: FormikConfig<ICGWCFeedbackPayload>['onSubmit'] = async (values, { resetForm }) => {
         const result = await submitFeedback(values);
-
-        console.log(values);
 
         if ('data' in result) {
             setModalState({
@@ -47,6 +49,7 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
     };
 
     const INITIAL_VALUES: ICGWCFeedbackPayload = {
+        userId,
         CGWCId,
         comment: '',
         rating: params?.rating,

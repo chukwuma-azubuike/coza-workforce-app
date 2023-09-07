@@ -45,6 +45,8 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
     };
 
+    const carouselHeight = isMobile ? ScreenHeight / 4 : ScreenHeight / 3;
+
     const CarouselItem: React.FC<{ item: ICGWCInstantMessage; index: number }> = ({ item, index }) => {
         const handlePress = () => {
             navigation.navigate('CGWC Resources', item);
@@ -53,7 +55,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         return (
             <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
                 <View key={index} style={styles.itemContainer}>
-                    <View style={[styles.item, { height: isMobile ? ScreenHeight / 4 : ScreenHeight / 3 }]}>
+                    <View style={[styles.item, { height: carouselHeight }]}>
                         <Image resizeMode="cover" style={styles.backgroundImage} source={{ uri: item.imageUrl }} />
                         <View style={styles.imageOverlay} />
                         <View style={styles.itemTextContainer}>
@@ -68,17 +70,12 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { width } = Dimensions.get('window');
     const scrollOffsetY = React.useRef<Animated.Value>(new Animated.Value(0)).current;
 
-    const { data: latestService, isLoading: latestServiceIsLoading } = useGetLatestServiceQuery(campus?._id as string, {
+    const { data: latestService } = useGetLatestServiceQuery(campus?._id as string, {
         skip: !userId,
         refetchOnMountOrArgChange: true,
     });
 
-    const {
-        data: sessions,
-        refetch: refetchSessions,
-        isLoading: isLoadingSessions,
-        isFetching: isFetchingSessions,
-    } = useGetServicesQuery(
+    const { data: sessions, refetch: refetchSessions } = useGetServicesQuery(
         {
             CGWCId,
             page: 1,
@@ -91,46 +88,9 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     );
 
-    const {
-        data: cgwc,
-        isLoading,
-        isFetching,
-        isSuccess,
-    } = useGetCGWCByIdQuery(CGWCId, { refetchOnMountOrArgChange: true });
+    const { data: cgwc, isLoading, isFetching } = useGetCGWCByIdQuery(CGWCId, { refetchOnMountOrArgChange: true });
 
-    const {
-        data: messages,
-        isLoading: messagesIsLoading,
-        isFetching: messagesIsFetching,
-    } = useGetCGWCInstantMessagesQuery({ CGWCId });
-
-    const data = [
-        {
-            messageLink: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            title: 'Welcome to CGWC October 2023',
-            imageUrl: 'https://i.ibb.co/7Jgmgvt/COZA-96.webp',
-        },
-        {
-            messageLink: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            title: 'Recharge your spirit man',
-            imageUrl: 'https://i.ibb.co/ScJtBCZ/MG-0793.webp',
-        },
-        {
-            messageLink: 'https://research.nhm.org/pdfs/10840/10840.pdf',
-            title: 'Itinerary',
-            imageUrl: 'https://i.ibb.co/P9Z8JDh/MG-0778.webp',
-        },
-        {
-            messageLink: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-            title: 'Uniform Chart',
-            imageUrl: 'https://i.ibb.co/FDBSDGP/COZA-84.webp',
-        },
-        {
-            messageLink: 'https://research.nhm.org/pdfs/10840/10840.pdf',
-            title: 'Resources',
-            imageUrl: 'https://i.ibb.co/02mHVgp/COZA-20.webp',
-        },
-    ] as ICGWCInstantMessage[];
+    const { data: messages, refetch: refetchMessages } = useGetCGWCInstantMessagesQuery({ CGWCId });
 
     const gotoCreateInstantMessage = () => {
         navigation.navigate('Create Instant Message', { CGWCId });
@@ -158,6 +118,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     useScreenFocus({
         onFocus: () => {
             refetchSessions();
+            refetchMessages();
         },
     });
 
@@ -181,14 +142,15 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     <ScrollContainer scrollOffsetY={scrollOffsetY}>
                         <Box mt={2}>
                             <Carousel<ICGWCInstantMessage>
-                                data={data}
                                 loop={true}
                                 autoplay={true}
                                 sliderWidth={width}
+                                data={messages || []}
                                 autoplayInterval={3000}
                                 renderItem={CarouselItem}
                                 inactiveSlideOpacity={0.6}
                                 itemWidth={ScreenWidth * 0.8}
+                                style={{ minHeight: carouselHeight }}
                             />
                         </Box>
                         <Box px={1}>

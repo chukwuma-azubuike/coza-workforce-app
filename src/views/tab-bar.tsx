@@ -9,13 +9,13 @@ import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 
 const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) => {
-    const { isWorker, isQC } = useRole();
+    const { isWorker, isQC, isCGWCApproved } = useRole();
     const { isLightMode } = useAppColorMode();
 
     const inMenuBarNames = React.useMemo(
         () =>
             AppRoutes.map(route => {
-                if (route.inMenuBar || (isWorker && route.name === 'CGWC')) return route.name;
+                if (route.inMenuBar || (isWorker && route.name === 'CGWC' && isCGWCApproved)) return route.name;
             }),
         [AppRoutes]
     );

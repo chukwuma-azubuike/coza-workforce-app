@@ -17,12 +17,17 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             role: { name: roleName },
             department: { departmentName },
         },
+        isSuperAdmin,
+        isCGWCApproved,
     } = useRole();
 
     const filteredRoutes = React.useMemo(
         () =>
             AppRoutes.filter(route => {
                 if (!route.inMore) {
+                    return;
+                }
+                if (!isCGWCApproved && route.name === 'CGWC' && !isSuperAdmin) {
                     return;
                 }
                 if (!route.users?.length) {

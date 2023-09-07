@@ -24,7 +24,10 @@ const DynamicHeader: React.FC<IDynamicHeader> = ({ animHeaderValue, title, child
     const animateHeaderBackgroundColor = animHeaderValue.interpolate({
         extrapolate: 'clamp',
         inputRange: [0, MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT],
-        outputRange: [isDarkMode ? '#000' : '#fff', isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray],
+        outputRange: [
+            isDarkMode ? '#000' : '#fff',
+            isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
+        ],
     });
 
     const animateHeaderTextsize = animHeaderValue.interpolate({

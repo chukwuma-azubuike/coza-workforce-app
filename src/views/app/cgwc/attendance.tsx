@@ -1,6 +1,6 @@
 import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
-import { campusColumns_1, teamAttendanceDataColumns_1 } from '../attendance/flatListConfig';
+import { teamAttendanceDataColumns_1 } from '../attendance/flatListConfig';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -8,7 +8,7 @@ import { useGetServicesQuery } from '@store/services/services';
 import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '@components/composite/error-boundary';
-import useFetchMoreData from '@hooks/fetch-more-data';
+// import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box, HStack, Text } from 'native-base';
@@ -63,7 +63,7 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId,
         return 0;
     }, [data]);
 
-    const totalAttendance = (cumulativeAttendance / TOTAL_ATTAINABLE_SCORE) * 100;
+    const totalAttendance = Math.round((cumulativeAttendance / TOTAL_ATTAINABLE_SCORE) * 100);
 
     useScreenFocus({
         onFocus: refetchAttendance,

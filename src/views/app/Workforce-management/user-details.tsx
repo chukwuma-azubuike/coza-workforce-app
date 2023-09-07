@@ -258,7 +258,11 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             <FormControl.Label>
                                                 {cgwcApproved ? 'Approved' : 'Approve'} for CGWC
                                             </FormControl.Label>
-                                            <Switch value={cgwcApproved} onValueChange={handleApproveCGWC} />
+                                            <Switch
+                                                value={cgwcApproved}
+                                                onValueChange={handleApproveCGWC}
+                                                disabled={updateResults?.isLoading}
+                                            />
                                         </FormControl>
                                     </HStack>
                                 </If>

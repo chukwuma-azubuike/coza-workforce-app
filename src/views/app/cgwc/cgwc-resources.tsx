@@ -25,13 +25,13 @@ const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route,
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
     const reloadPDF = async () => {
+        setIsLoading(true);
         if (!pdfRef.current) {
             return;
         }
 
         try {
-            const response = await pdfRef.current.reload();
-            console.log(response);
+            await pdfRef.current.reload();
         } catch (err) {}
     };
 
