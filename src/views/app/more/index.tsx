@@ -48,7 +48,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll pt={4} >
             <VStack>
                 <List mx={4} borderWidth={0}>
                     {filteredRoutes?.map((route, idx) => (

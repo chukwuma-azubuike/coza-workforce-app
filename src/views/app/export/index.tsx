@@ -18,6 +18,8 @@ import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
 import useRole from '@hooks/role';
+import { generateCummulativeAttendanceReport } from '@utils/generateCummulativeAttendanceReport';
+import { generateReportName } from '@utils/generateReportName';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -36,7 +38,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const [campusId, setCampusId] = React.useState<string>(cannotSwitchCampus ? user?.campus?._id : '');
     const [departmentId, setDepartmentId] = React.useState<string>();
-    const [serviceId, setServiceId] = React.useState<string>();
+    const [serviceId, setServiceId] = React.useState<string>('all-services');
     const [triggerFetch, setTriggerFetch] = React.useState<boolean>(false);
     const [dataType, setDataType] = React.useState<IExportType>(type);
     const [startDate, setStartDate] = React.useState<number>();
@@ -62,8 +64,6 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         () => services?.filter(service => moment(service.clockInStartTime).unix() < moment().unix()),
         [services]
     );
-
-    const queryParamsReady = !!campusId || !!serviceId || !!departmentId;
 
     const {
         data: attendance,
@@ -136,12 +136,18 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
         if (reportData[dataType]?.length) {
             return downloadFile(
-                reportData[dataType],
-                `${services?.find(service => service._id === serviceId)?.name}_${
-                    allCampuses?.find(campus => campus._id === campusId)?.campusName
-                }_${
-                    campusDepartments?.find(department => department._id === departmentId)?.departmentName
-                }_${dataType}_report`
+                dataType === 'attendance'
+                    ? generateCummulativeAttendanceReport(reportData[dataType])
+                    : reportData[dataType],
+                generateReportName({
+                    campusId,
+                    dataType,
+                    services,
+                    serviceId,
+                    departmentId,
+                    campusDepartments,
+                    campuses: allCampuses,
+                })
             );
         }
         Alert.alert('Empty report', 'No records to download.');
@@ -188,7 +194,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     };
 
     return (
-        <ViewWrapper scroll noPadding>
+        <ViewWrapper scroll noPadding pt={4}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                 <Box alignItems="center" w="100%">
                     <VStack w="100%" space={1}>
@@ -212,6 +218,11 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 onValueChange={handleCampus}
                                 isDisabled={cannotSwitchCampus}
                             >
+                                <SelectItemComponent
+                                    key="all-campuses"
+                                    label="All Campuses"
+                                    value={undefined as unknown as string}
+                                />
                                 {allCampuses?.map((campus, index) => (
                                     <SelectItemComponent
                                         value={campus._id}
@@ -230,6 +241,11 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     selectedValue={serviceId}
                                     onValueChange={handleService}
                                 >
+                                    <SelectItemComponent
+                                        key="all-services"
+                                        label="All Services"
+                                        value={undefined as unknown as string}
+                                    />
                                     {pastServices?.map((service, index) => (
                                         <SelectItemComponent
                                             value={service._id}
@@ -271,7 +287,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 onValueChange={handleDepartment}
                             >
                                 {/* TODO: Restore on crash fix */}
-                                {/* <SelectItemComponent label="No department" value={undefined as unknown as string} /> */}
+                                {/* <SelectItemComponent key="all-departments" label="All Departments" value="undefined" /> */}
                                 {campusDepartments?.map((department, index) => (
                                     <SelectItemComponent
                                         value={department._id}
