@@ -95,8 +95,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     const filteredButtons = React.useMemo(() => {
         // TODO: Uncomment once resolved with IOS
         if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
-        if (isQcHOD) return [...allButtons];
-        if (isQC) return [allButtons[0], allButtons[1], allButtons[2]];
+        if (isQC) return [...allButtons];
 
         return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,7 +120,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
             {/* TODO: Uncomment once reports is resolved with IOS */}
-            <If condition={isQcHOD || isGlobalPastor || isCampusPastor}>
+            <If condition={isQC}>
                 <StaggerButtonComponent buttons={filteredButtons} />
             </If>
         </ViewWrapper>
