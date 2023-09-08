@@ -11,7 +11,7 @@ import { useClockInMutation, useClockOutMutation } from '@store/services/attenda
 import useRole from '@hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import If from '@components/composite/if-container';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import { Alert } from 'react-native';
 
 interface IClockButtonProps {
@@ -118,12 +118,11 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         }
     }, [isClockOutErr]);
 
-    const clockedIn = latestAttendanceData?.length && latestAttendanceData[0].clockIn ? true : false;
-
-    const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut;
-
-    const canClockIn = isInRange && latestServiceData && !clockedIn;
-
+    const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut || latestAttendanceIsLoading;
+    const clockedIn = !!latestAttendanceData?.length
+        ? !!latestAttendanceData[0].clockIn && isLatestServiceSuccess
+        : false && isLatestServiceSuccess; // Truthiness should only be resolved from latest Attendance clock in record
+    const canClockIn = isInRange && !!latestServiceData && !clockedIn;
     const canClockOut =
         latestAttendanceData?.length &&
         latestAttendanceData[0].clockIn &&
@@ -213,7 +212,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
 
     return (
         <Pressable>
-            {canClockIn && (
+            {canClockIn && !disabled && (
                 <LottieView
                     source={require('@assets/json/clock-button-animation.json')}
                     resizeMode="cover"
@@ -235,7 +234,13 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                     borderRadius="full"
                     _isDisabled={disabled}
                     backgroundColor={
-                        canClockIn ? 'primary.600' : canClockOut ? 'rose.400' : disabled ? 'gray.400' : 'gray.400'
+                        canClockIn && !disabled
+                            ? 'primary.600'
+                            : canClockOut
+                            ? 'rose.400'
+                            : disabled
+                            ? 'gray.400'
+                            : 'gray.400'
                     }
                 >
                     <TouchableOpacity

@@ -4,7 +4,7 @@ import { HStack, VStack, Text } from 'native-base';
 import React from 'react';
 import { HomeContext } from '..';
 import { THEME_CONFIG } from '@config/appConfig';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import { IIconTypes } from '@utils/types';
 
 interface IStatProps {
