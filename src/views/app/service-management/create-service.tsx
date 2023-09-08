@@ -68,109 +68,134 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
 
     const setDefaultTimes = (
         tag: string,
-        setFieldValue: FormikProps<ICreateServicePayload>['setFieldValue'],
-        validateForm: FormikProps<ICreateServicePayload>['validateForm']
+        validateField: FormikProps<ICreateServicePayload>['validateField'],
+        resetForm: FormikProps<ICreateServicePayload>['resetForm']
     ) => {
         switch (tag) {
             case 'COZA_SUNDAYS':
-                setFieldValue('serviceTime', '2023-09-07T08:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T01:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T22:59:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T06:30:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T07:00:00.000Z');
-                setFieldValue('serviceName', 'COZA Sunday');
-                setFieldValue('serviceType', 'local').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T08:00:00.000Z',
+                        clockinTime: '2023-09-07T01:00:00.000Z',
+                        endTime: '2023-09-07T22:59:00.000Z',
+                        leaderLateTime: '2023-09-07T06:30:00.000Z',
+                        workerLateTime: '2023-09-07T07:00:00.000Z',
+                        serviceName: 'COZA Sunday',
+                        serviceTag: 'COZA_SUNDAYS',
+                        serviceType: 'local',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case 'COZA_TUESDAYS':
-                setFieldValue('serviceTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T14:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T22:59:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('serviceName', 'COZA Tuesday');
-                setFieldValue('serviceType', 'global').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T17:00:00.000Z',
+                        clockinTime: '2023-09-07T14:00:00.000Z',
+                        endTime: '2023-09-07T22:59:00.000Z',
+                        leaderLateTime: '2023-09-07T16:30:00.000Z',
+                        workerLateTime: '2023-09-07T17:00:00.000Z',
+                        serviceName: 'COZA Tuesday',
+                        serviceTag: 'COZA_TUESDAYS',
+                        serviceType: 'global',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case 'COZA_WEDNESDAYS':
-                setFieldValue('serviceTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T14:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T22:59:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('serviceName', 'COZA Wednesday');
-                setFieldValue('serviceType', 'local').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T17:00:00.000Z',
+                        clockinTime: '2023-09-07T14:00:00.000Z',
+                        endTime: '2023-09-07T22:59:00.000Z',
+                        leaderLateTime: '2023-09-07T16:30:00.000Z',
+                        workerLateTime: '2023-09-07T17:00:00.000Z',
+                        serviceName: 'COZA Wednesday',
+                        serviceTag: 'COZA_WEDNESDAYS',
+                        serviceType: 'local',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case 'DPE':
-                setFieldValue('serviceTime', '2023-09-07T05:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T02:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T010:50:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T05:00:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T05:00:00.000Z');
-                setFieldValue('serviceName', 'DPE');
-                setFieldValue('serviceType', 'global').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T05:00:00.000Z',
+                        clockinTime: '2023-09-07T02:00:00.000Z',
+                        endTime: '2023-09-07T010:50:00.000Z',
+                        leaderLateTime: '2023-09-07T05:00:00.000Z',
+                        workerLateTime: '2023-09-07T05:00:00.000Z',
+                        serviceName: 'DPE',
+                        serviceTag: 'DPE',
+                        serviceType: 'global',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case 'HOME_TRAINING':
-                setFieldValue('serviceTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T12:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T22:59:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T17:30:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T17:30:00.000Z');
-                setFieldValue('serviceName', 'Home Training');
-                setFieldValue('serviceType', 'global').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T17:00:00.000Z',
+                        clockinTime: '2023-09-07T12:00:00.000Z',
+                        endTime: '2023-09-07T22:59:00.000Z',
+                        leaderLateTime: '2023-09-07T17:30:00.000Z',
+                        workerLateTime: '2023-09-07T17:30:00.000Z',
+                        serviceName: 'Home Training',
+                        serviceTag: 'HOME_TRAINING',
+                        serviceType: 'global',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case 'LEADERS_MEETING':
-                setFieldValue('serviceTime', '2023-09-09T17:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-09T15:00:00.000Z');
-                setFieldValue('endTime', '2023-09-02T22:00:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-02T17:00:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-09T15:00:00.000Z');
-                setFieldValue('serviceName', 'Leaders Meeting');
-                setFieldValue('serviceType', 'global').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-09T17:00:00.000Z',
+                        clockinTime: '2023-09-09T15:00:00.000Z',
+                        endTime: '2023-09-02T22:00:00.000Z',
+                        leaderLateTime: '2023-09-02T17:00:00.000Z',
+                        workerLateTime: '2023-09-09T15:00:00.000Z',
+                        serviceName: 'Leaders Meeting',
+                        serviceTag: 'LEADERS_MEETING',
+                        serviceType: 'global',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case '12DG':
-                setFieldValue('serviceTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T14:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T22:59:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('serviceName', '12DG');
-                setFieldValue('serviceType', 'local').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T17:00:00.000Z',
+                        clockinTime: '2023-09-07T14:00:00.000Z',
+                        endTime: '2023-09-07T22:59:00.000Z',
+                        leaderLateTime: '2023-09-07T16:30:00.000Z',
+                        workerLateTime: '2023-09-07T17:00:00.000Z',
+                        serviceName: '12DG',
+                        serviceTag: '12DG',
+                        serviceType: 'local',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             case '7DG':
-                setFieldValue('serviceTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('clockinTime', '2023-09-07T14:00:00.000Z');
-                setFieldValue('endTime', '2023-09-07T22:59:00.000Z');
-                setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
-                setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
-                setFieldValue('serviceName', '7DG');
-                setFieldValue('serviceType', 'local').then(() => {
-                    validateForm();
+                resetForm({
+                    values: {
+                        serviceTime: '2023-09-07T17:00:00.000Z',
+                        clockinTime: '2023-09-07T14:00:00.000Z',
+                        endTime: '2023-09-07T22:59:00.000Z',
+                        leaderLateTime: '2023-09-07T16:30:00.000Z',
+                        workerLateTime: '2023-09-07T17:00:00.000Z',
+                        serviceName: '7DG',
+                        serviceTag: '7DG',
+                        serviceType: 'local',
+                    } as ICreateServicePayload,
                 });
 
                 break;
             default:
                 break;
         }
+        validateField('serviceDate');
     };
 
     const INITIAL_VALUES: ICreateServicePayload = {
@@ -196,10 +221,19 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateServiceSchema}
                     >
-                        {({ errors, values, handleChange, handleSubmit, touched, setFieldValue, validateForm }) => {
+                        {({
+                            errors,
+                            values,
+                            handleChange,
+                            handleSubmit,
+                            touched,
+                            setFieldValue,
+                            resetForm,
+                            validateField,
+                        }) => {
                             const handleServiceTag = (serviceTag: string) => {
                                 setFieldValue('serviceTag', serviceTag);
-                                setDefaultTimes(serviceTag, setFieldValue, validateForm);
+                                setDefaultTimes(serviceTag, validateField, resetForm);
                             };
 
                             return (
@@ -292,7 +326,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             minimumDate={new Date()}
                                             errorMessage={errors?.serviceDate}
                                             formControlProps={{
-                                                isInvalid: !!errors?.serviceDate && touched.serviceDate,
+                                                isInvalid: !!errors?.serviceDate,
                                             }}
                                         />
                                         <DateTimePickerComponent
