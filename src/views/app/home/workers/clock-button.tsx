@@ -36,25 +36,28 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
 
     const [clockedOut, setClockedOut] = React.useState<boolean>(false);
 
-    const [clockIn, { isError, error, isSuccess, isLoading, reset: clockInReset }] = useClockInMutation();
+    const [clockIn, { data: clockinData, error, isLoading }] = useClockInMutation();
 
-    const [
-        clockOut,
-        {
-            isError: isClockOutErr,
-            isSuccess: clockOutSuccess,
-            isLoading: clockOutLoading,
-            data: clockOutData,
-            reset: clockOutReset,
-            error: clockOutError,
-        },
-    ] = useClockOutMutation();
+    const [clockOut, { isLoading: clockOutLoading, error: clockOutError }] = useClockOutMutation();
 
     const { setModalState } = useModal();
 
-    React.useEffect(() => {
-        let cleanUp = true;
-        if (isSuccess && cleanUp) {
+    const handleClockin = async () => {
+        const result = await clockIn({
+            userId: user?.userId as string,
+            clockIn: `${moment().unix()}`,
+            clockOut: null,
+            serviceId: latestServiceData?._id as string,
+            coordinates: {
+                lat: `${deviceCoordinates.latitude}`,
+                long: `${deviceCoordinates.longitude}`,
+            },
+            campusId: user?.campus._id,
+            departmentId: user?.department._id,
+            roleId: user?.role._id,
+        });
+
+        if ('data' in result) {
             setModalState({
                 duration: 3,
                 render: (
@@ -66,61 +69,48 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                     />
                 ),
             });
-            clockInReset();
         }
 
-        return () => {
-            cleanUp = false;
-        };
-    }, [isSuccess]);
-
-    React.useEffect(() => {
-        let cleanUp = true;
-
-        if (clockOutSuccess && cleanUp) {
-            setModalState({
-                render: (
-                    <ModalAlertComponent
-                        description={`You clocked out at ${moment().format('LT')}`}
-                        status={isInRange ? 'success' : 'warning'}
-                        iconType={'material-community'}
-                        iconName={'timer-outline'}
-                    />
-                ),
-            });
-            clockOutReset();
-        }
-
-        return () => {
-            cleanUp = false;
-        };
-    }, [clockOutSuccess]);
-
-    React.useEffect(() => {
-        if (isError) {
+        if ('error' in result) {
             setModalState({
                 defaultRender: true,
                 status: 'warning',
                 message: error?.data?.message || 'Oops something went wrong',
             });
-            clockInReset();
         }
-    }, [isError]);
+    };
 
-    React.useEffect(() => {
-        if (isClockOutErr) {
-            setModalState({
-                defaultRender: true,
-                status: 'warning',
-                message: clockOutError?.data?.message || 'Oops something went wrong',
-            });
-            clockOutReset();
+    const handleClockOut = async () => {
+        if (!!latestAttendanceData?.length) {
+            const result = await clockOut(latestAttendanceData[0]._id as string);
+
+            if ('data' in result) {
+                setClockedOut(true);
+                setModalState({
+                    render: (
+                        <ModalAlertComponent
+                            description={`You clocked out at ${moment().format('LT')}`}
+                            status={isInRange ? 'success' : 'warning'}
+                            iconType={'material-community'}
+                            iconName={'timer-outline'}
+                        />
+                    ),
+                });
+            }
+
+            if ('error' in result) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'warning',
+                    message: clockOutError?.data?.message || 'Oops something went wrong',
+                });
+            }
         }
-    }, [isClockOutErr]);
+    };
 
     const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut || latestAttendanceIsLoading;
     const clockedIn = !!latestAttendanceData?.length
-        ? !!latestAttendanceData[0].clockIn && isLatestServiceSuccess
+        ? (!!clockinData?.clockIn || !!latestAttendanceData[0].clockIn) && isLatestServiceSuccess
         : false && isLatestServiceSuccess; // Truthiness should only be resolved from latest Attendance clock in record
     const canClockIn = isInRange && !!latestServiceData && !clockedIn;
     const canClockOut =
@@ -135,13 +125,10 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         }
     }, [latestAttendanceData]);
 
-    const handleClockout = () => {
+    const handleVerifyBeforeClockout = () => {
         if (canClockOut) {
             verifyRangeBeforeAction(
-                () =>
-                    clockOut(latestAttendanceData[0]._id as string).then(res => {
-                        if (res) setClockedOut(true);
-                    }),
+                () => handleClockOut(),
                 () =>
                     setModalState({
                         duration: 6,
@@ -178,20 +165,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         }
 
         if (canClockIn) {
-            clockIn({
-                userId: user?.userId as string,
-                clockIn: `${moment().unix()}`,
-                clockOut: null,
-                serviceId: latestServiceData?._id as string,
-                coordinates: {
-                    lat: `${deviceCoordinates.latitude}`,
-                    long: `${deviceCoordinates.longitude}`,
-                },
-                campusId: user?.campus._id,
-                departmentId: user?.department._id,
-                roleId: user?.role._id,
-            });
-            return;
+            return handleClockin();
         }
 
         if (canClockOut && latestAttendanceData) {
@@ -203,7 +177,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                 {
                     text: 'Yes',
                     style: 'default',
-                    onPress: handleClockout,
+                    onPress: handleVerifyBeforeClockout,
                 },
             ]);
             return;
