@@ -1,5 +1,4 @@
 import { IReportFormProps } from '@views/app/reports/forms/types';
-import store from '..';
 
 // General types
 export interface ILog {
@@ -9,16 +8,22 @@ export interface ILog {
     updatedAt?: string;
 }
 
-export interface IDefaultErrorResponse {
-    status: number;
-    data: { data: null; isError: boolean; isSuccessful: boolean; message: string; status: number };
-}
-
 export enum CREATE_SERVICE_ENUM {
     LONG = 7.505862981744857,
     LAT = 9.005452823370131,
     RANGE_TO_CLOCKIN = 100,
 }
+
+export const SERVICE_TAGS = [
+    { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },
+    { id: 'COZA_TUESDAYS', value: 'COZA Tuesdays' },
+    { id: 'COZA_WEDNESDAYS', value: 'COZA Wednesdays' },
+    { id: 'DPE', value: 'DPE' },
+    { id: 'HOME_TRAINING', value: 'Home Training' },
+    { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
+    { id: '12DG', value: '12DG' },
+    { id: '7DG', value: '7DG' },
+];
 
 export enum IAttendanceStatus {
     LATE = 'LATE',

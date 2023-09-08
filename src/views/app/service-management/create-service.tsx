@@ -12,27 +12,14 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { useCreateServiceMutation } from '@store/services/services';
-import { CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
+import { CREATE_SERVICE_ENUM, ICreateServicePayload, SERVICE_TAGS } from '@store/types';
 import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
 
-const tags = [
-    { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },
-    { id: 'COZA_TUESDAYS', value: 'COZA Tuesdays' },
-    { id: 'COZA_WEDNESDAYS', value: 'COZA Wednesdays' },
-    { id: 'DPE', value: 'DPE' },
-    { id: 'HOME_TRAINING', value: 'Home Training' },
-    { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
-    { id: '12DG', value: '12DG' },
-    { id: '7DG', value: '7DG' },
-];
-
 const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { navigate } = navigation;
-
     const { setModalState } = useModal();
-
-    const [createService, { isLoading, error, data, reset }] = useCreateServiceMutation();
+    const [createService, { isLoading, data, reset }] = useCreateServiceMutation();
 
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.clockinTime);
@@ -224,7 +211,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             selectedValue={values.serviceTag}
                                             onValueChange={handleServiceTag}
                                         >
-                                            {tags?.map((tag: any, index: any) => (
+                                            {SERVICE_TAGS?.map((tag: any, index: any) => (
                                                 <SelectItemComponent
                                                     value={tag.id}
                                                     key={`campus-${index}`}
