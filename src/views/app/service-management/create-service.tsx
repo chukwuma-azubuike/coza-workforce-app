@@ -79,7 +79,11 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
         }
     };
 
-    const setDefaultTimes = (tag: string, setFieldValue: FormikProps<ICreateServicePayload>['setFieldValue']) => {
+    const setDefaultTimes = (
+        tag: string,
+        setFieldValue: FormikProps<ICreateServicePayload>['setFieldValue'],
+        validateForm: FormikProps<ICreateServicePayload>['validateForm']
+    ) => {
         switch (tag) {
             case 'COZA_SUNDAYS':
                 setFieldValue('serviceTime', '2023-09-07T08:00:00.000Z');
@@ -88,7 +92,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T06:30:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T07:00:00.000Z');
                 setFieldValue('serviceName', 'COZA Sunday');
-                setFieldValue('serviceType', 'local');
+                setFieldValue('serviceType', 'local').then(() => {
+                    validateForm();
+                });
 
                 break;
             case 'COZA_TUESDAYS':
@@ -98,7 +104,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
                 setFieldValue('serviceName', 'COZA Tuesday');
-                setFieldValue('serviceType', 'global');
+                setFieldValue('serviceType', 'global').then(() => {
+                    validateForm();
+                });
 
                 break;
             case 'COZA_WEDNESDAYS':
@@ -108,7 +116,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
                 setFieldValue('serviceName', 'COZA Wednesday');
-                setFieldValue('serviceType', 'local');
+                setFieldValue('serviceType', 'local').then(() => {
+                    validateForm();
+                });
 
                 break;
             case 'DPE':
@@ -118,7 +128,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T05:00:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T05:00:00.000Z');
                 setFieldValue('serviceName', 'DPE');
-                setFieldValue('serviceType', 'global');
+                setFieldValue('serviceType', 'global').then(() => {
+                    validateForm();
+                });
 
                 break;
             case 'HOME_TRAINING':
@@ -128,7 +140,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T17:30:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T17:30:00.000Z');
                 setFieldValue('serviceName', 'Home Training');
-                setFieldValue('serviceType', 'global');
+                setFieldValue('serviceType', 'global').then(() => {
+                    validateForm();
+                });
 
                 break;
             case 'LEADERS_MEETING':
@@ -138,7 +152,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-02T17:00:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-09T15:00:00.000Z');
                 setFieldValue('serviceName', 'Leaders Meeting');
-                setFieldValue('serviceType', 'global');
+                setFieldValue('serviceType', 'global').then(() => {
+                    validateForm();
+                });
 
                 break;
             case '12DG':
@@ -148,7 +164,9 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
                 setFieldValue('serviceName', '12DG');
-                setFieldValue('serviceType', 'local');
+                setFieldValue('serviceType', 'local').then(() => {
+                    validateForm();
+                });
 
                 break;
             case '7DG':
@@ -158,22 +176,23 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 setFieldValue('leaderLateTime', '2023-09-07T16:30:00.000Z');
                 setFieldValue('workerLateTime', '2023-09-07T17:00:00.000Z');
                 setFieldValue('serviceName', '7DG');
-                setFieldValue('serviceType', 'local');
+                setFieldValue('serviceType', 'local').then(() => {
+                    validateForm();
+                });
 
                 break;
             default:
                 break;
         }
-        setFieldValue('serviceDate', undefined);
     };
 
     const INITIAL_VALUES: ICreateServicePayload = {
-        serviceTime: new Date(),
-        serviceDate: new Date(),
-        clockinTime: new Date(),
-        endTime: new Date(),
-        leaderLateTime: new Date(),
-        workerLateTime: new Date(),
+        serviceTime: undefined as unknown as Date,
+        serviceDate: undefined as unknown as Date,
+        clockinTime: undefined as unknown as Date,
+        endTime: undefined as unknown as Date,
+        leaderLateTime: undefined as unknown as Date,
+        workerLateTime: undefined as unknown as Date,
         serviceTag: '',
         serviceType: '',
         serviceName: '',
@@ -190,10 +209,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateServiceSchema}
                     >
-                        {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => {
+                        {({ errors, values, handleChange, handleSubmit, touched, setFieldValue, validateForm }) => {
                             const handleServiceTag = (serviceTag: string) => {
                                 setFieldValue('serviceTag', serviceTag);
-                                setDefaultTimes(serviceTag, setFieldValue);
+                                setDefaultTimes(serviceTag, setFieldValue, validateForm);
                             };
 
                             return (
@@ -277,40 +296,28 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                     <HStack justifyContent="space-between">
-                                        <FormControl
-                                            w="50%"
-                                            isRequired
-                                            isInvalid={!!errors?.serviceDate && touched.serviceDate}
-                                        >
-                                            <DateTimePickerComponent
-                                                label="Date"
-                                                mode="date"
-                                                fieldName="serviceDate"
-                                                onSelectDate={setFieldValue}
-                                                value={values.serviceDate}
-                                                minimumDate={new Date()}
-                                            />
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.serviceDate}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
+                                        <DateTimePickerComponent
+                                            label="Date"
+                                            mode="date"
+                                            fieldName="serviceDate"
+                                            onSelectDate={setFieldValue}
+                                            value={values.serviceDate}
+                                            minimumDate={new Date()}
+                                            errorMessage={errors?.serviceDate}
+                                            formControlProps={{
+                                                isInvalid: !!errors?.serviceDate && touched.serviceDate,
+                                            }}
+                                        />
                                         <DateTimePickerComponent
                                             label="Service Start Time"
                                             mode="time"
                                             fieldName="serviceTime"
                                             onSelectDate={setFieldValue}
                                             value={values.serviceTime}
+                                            errorMessage={errors?.serviceTime}
+                                            formControlProps={{
+                                                isInvalid: !!errors?.serviceTime && touched.serviceTime,
+                                            }}
                                         />
                                     </HStack>
 
@@ -321,6 +328,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             fieldName="clockinTime"
                                             onSelectDate={setFieldValue}
                                             value={values.clockinTime}
+                                            errorMessage={errors?.clockinTime}
+                                            formControlProps={{
+                                                isInvalid: !!errors?.clockinTime && touched.clockinTime,
+                                            }}
                                         />
                                         <DateTimePickerComponent
                                             label="Leaders Late Time"
@@ -328,6 +339,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             fieldName="leaderLateTime"
                                             onSelectDate={setFieldValue}
                                             value={values.leaderLateTime}
+                                            errorMessage={errors?.leaderLateTime}
+                                            formControlProps={{
+                                                isInvalid: !!errors?.leaderLateTime && touched.leaderLateTime,
+                                            }}
                                         />
                                     </HStack>
 
@@ -338,6 +353,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             fieldName="workerLateTime"
                                             onSelectDate={setFieldValue}
                                             value={values.workerLateTime}
+                                            errorMessage={errors?.workerLateTime}
+                                            formControlProps={{
+                                                isInvalid: !!errors?.workerLateTime && touched.workerLateTime,
+                                            }}
                                         />
                                         <DateTimePickerComponent
                                             label="Service End Time"
@@ -345,6 +364,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             fieldName="endTime"
                                             onSelectDate={setFieldValue}
                                             value={values.endTime}
+                                            errorMessage={errors?.endTime}
+                                            formControlProps={{
+                                                isInvalid: !!errors?.endTime && touched.endTime,
+                                            }}
                                         />
                                     </HStack>
 
@@ -352,6 +375,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         <ButtonComponent
                                             mt={4}
                                             isLoading={isLoading}
+                                            isLoadingText="Creating Service..."
                                             onPress={handleSubmit as (event: any) => void}
                                         >
                                             Create service

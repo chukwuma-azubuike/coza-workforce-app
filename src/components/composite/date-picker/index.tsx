@@ -61,6 +61,7 @@ interface IDateTimePickerProps {
     fieldName?: string;
     isInvalid?: boolean;
     value?: string | Date;
+    errorMessage?: string;
     formControlProps?: InterfaceFormControlProps;
     onSelectDate?: (fieldName: string, value: any) => void;
     dateFormat?: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
@@ -75,6 +76,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     minimumDate,
     maximumDate,
     onSelectDate,
+    errorMessage,
     formControlProps,
     dateFormat = 'day month year',
 }: IDateTimePickerProps) => {
@@ -99,7 +101,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     };
 
     return (
-        <FormControl {...formControlProps} minW={150} w="auto">
+        <FormControl isInvalid={formControlProps?.isInvalid} {...formControlProps} minW={150} w="auto">
             <VStack w="auto" alignItems="flex-start" minW={150}>
                 <FormControl.Label>{label}</FormControl.Label>
                 <If condition={!isIOS}>
@@ -131,6 +133,15 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                         dateFormat={dateFormat}
                     />
                 )}
+                <If condition={!!errorMessage}>
+                    <FormControl.ErrorMessage
+                        mt={3}
+                        fontSize="2xl"
+                        leftIcon={<Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />}
+                    >
+                        {errorMessage}
+                    </FormControl.ErrorMessage>
+                </If>
             </VStack>
         </FormControl>
     );
