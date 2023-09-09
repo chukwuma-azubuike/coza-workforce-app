@@ -3,12 +3,12 @@ import { FormControl, HStack, Text, VStack } from 'native-base';
 import { Swipeable } from 'react-native-gesture-handler';
 import moment from 'moment';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { InputComponent } from '../../atoms/input';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import If from '../if-container';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import useAppColorMode from '@hooks/theme/colorMode';
 import { InterfaceFormControlProps } from 'native-base/lib/typescript/components/composites/FormControl/types';
 
 const MonthPicker = ({ today }: { today?: boolean }) => {
@@ -61,6 +61,7 @@ interface IDateTimePickerProps {
     fieldName?: string;
     isInvalid?: boolean;
     value?: string | Date;
+    errorMessage?: string;
     formControlProps?: InterfaceFormControlProps;
     onSelectDate?: (fieldName: string, value: any) => void;
     dateFormat?: 'dayofweek day month' | 'day month year' | 'longdate' | 'shortdate';
@@ -75,6 +76,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     minimumDate,
     maximumDate,
     onSelectDate,
+    errorMessage,
     formControlProps,
     dateFormat = 'day month year',
 }: IDateTimePickerProps) => {
@@ -99,7 +101,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     };
 
     return (
-        <FormControl {...formControlProps} minW={150} w="auto">
+        <FormControl isInvalid={formControlProps?.isInvalid} {...formControlProps} minW={150} w="auto">
             <VStack w="auto" alignItems="flex-start" minW={150}>
                 <FormControl.Label>{label}</FormControl.Label>
                 <If condition={!isIOS}>
@@ -126,11 +128,20 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
                         accentColor={THEME_CONFIG.primary}
                         minimumDate={minimumDate}
                         maximumDate={maximumDate}
-                        style={{ width: isIOS ? 90 : 'initial' }}
+                        style={{ width: isIOS ? 140 : 'initial' }}
                         onTouchCancel={handleTouchCancel}
                         dateFormat={dateFormat}
                     />
                 )}
+                <If condition={!!errorMessage}>
+                    <FormControl.ErrorMessage
+                        mt={3}
+                        fontSize="2xl"
+                        leftIcon={<Icon size={16} name="warning" type="antdesign" color={THEME_CONFIG.error} />}
+                    >
+                        {errorMessage}
+                    </FormControl.ErrorMessage>
+                </If>
             </VStack>
         </FormControl>
     );

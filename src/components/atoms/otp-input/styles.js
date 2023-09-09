@@ -1,5 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 
 export const CELL_SIZE = 40;
 export const CELL_BORDER_RADIUS = 8;

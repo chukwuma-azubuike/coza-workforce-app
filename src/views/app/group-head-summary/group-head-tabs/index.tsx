@@ -3,12 +3,12 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { SceneMap } from 'react-native-tab-view';
 import { GroupHeadTeamAttendance, GroupHeadTeamPermissionsList, GroupHeadTeamTicketsList } from './lists';
-import useMediaQuery from '../../../../hooks/media-query';
-import { ROLES } from '../../../../hooks/role';
-import useScreenFocus from '../../../../hooks/focus';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
-import TabComponent from '../../../../components/composite/tabs';
-import { IPermission, ITicket } from '../../../../store/types';
+import useMediaQuery from '@hooks/media-query';
+import { ROLES } from '@hooks/role';
+import useScreenFocus from '@hooks/focus';
+import ViewWrapper from '@components/layout/viewWrapper';
+import TabComponent from '@components/composite/tabs';
+import { IPermission, ITicket } from '@store/types';
 import GroupHeadReports from './reports';
 
 const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase>> = props => {

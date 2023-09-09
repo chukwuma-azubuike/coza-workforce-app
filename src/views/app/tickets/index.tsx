@@ -1,17 +1,17 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import useRole from '../../../hooks/role';
+import useRole from '@hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
-import TabComponent from '../../../components/composite/tabs';
-import StaggerButtonComponent, { IStaggerButtonComponentProps } from '../../../components/composite/stagger';
-import { ITicket } from '../../../store/types';
-import useMediaQuery from '../../../hooks/media-query';
-import If from '../../../components/composite/if-container';
+import TabComponent from '@components/composite/tabs';
+import StaggerButtonComponent, { IStaggerButtonComponentProps } from '@components/composite/stagger';
+import { ITicket } from '@store/types';
+import useMediaQuery from '@hooks/media-query';
+import If from '@components/composite/if-container';
 import { IReportTypes } from '../export';
-import useScreenFocus from '../../../hooks/focus';
+import useScreenFocus from '@hooks/focus';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -95,8 +95,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     const filteredButtons = React.useMemo(() => {
         // TODO: Uncomment once resolved with IOS
         if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
-        if (isQcHOD) return [...allButtons];
-        if (isQC) return [allButtons[0], allButtons[1], allButtons[2]];
+        if (isQC) return [...allButtons];
 
         return [allButtons[0]];
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,7 +120,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
             {/* TODO: Uncomment once reports is resolved with IOS */}
-            <If condition={isQcHOD || isGlobalPastor || isCampusPastor}>
+            <If condition={isQC}>
                 <StaggerButtonComponent buttons={filteredButtons} />
             </If>
         </ViewWrapper>

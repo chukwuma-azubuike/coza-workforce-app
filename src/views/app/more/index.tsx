@@ -1,23 +1,34 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { Box, HStack, List, Text, VStack } from 'native-base';
-import { AppRoutes, IAppRoute } from '../../../config/navigation';
+import { AppRoutes, IAppRoute } from '@config/navigation';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useRole, { DEPARTMENTS, ROLES } from '../../../hooks/role';
-import { useCustomBackNavigation } from '../../../hooks/navigation';
+import { THEME_CONFIG } from '@config/appConfig';
+import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
+import { useCustomBackNavigation } from '@hooks/navigation';
+import { useGetUserByIdQuery } from '@store/services/account';
+import useScreenFocus from '@hooks/focus';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
     const {
         user: {
+            userId,
             role: { name: roleName },
             department: { departmentName },
         },
+        isSuperAdmin,
+        isCampusPastor,
+        isCGWCApproved,
     } = useRole();
+
+    const { refetch, isLoading } = useGetUserByIdQuery(userId);
+    useScreenFocus({
+        onFocus: refetch,
+    });
 
     const filteredRoutes = React.useMemo(
         () =>
@@ -25,9 +36,13 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                 if (!route.inMore) {
                     return;
                 }
-
+                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGWC') {
+                    return;
+                }
+                if (!route.users?.length) {
+                    return route;
+                }
                 const rolesAndDepartments = route.users;
-
                 if (
                     rolesAndDepartments.includes(roleName as ROLES) ||
                     rolesAndDepartments.includes(departmentName as DEPARTMENTS)
@@ -35,13 +50,13 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                     return route;
                 }
             }),
-        []
+        [AppRoutes, isCGWCApproved, isSuperAdmin, roleName, departmentName]
     );
 
     useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll pt={4} refreshing={isLoading} onRefresh={refetch}>
             <VStack>
                 <List mx={4} borderWidth={0}>
                     {filteredRoutes?.map((route, idx) => (

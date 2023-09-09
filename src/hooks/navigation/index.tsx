@@ -1,9 +1,6 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import useAppColorMode from '../theme/colorMode';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../config/appConfig';
-import { IconButton } from 'native-base';
+import { NavigationBackButton } from '@components/atoms/button';
 
 const usePreventGoBack = () => {
     const navigation = useNavigation().addListener;
@@ -21,31 +18,10 @@ const useCustomBackNavigation = ({ targetRoute, params }: { targetRoute: string;
     const handleGoBack = () => {
         navigation.navigate(targetRoute as never, params as never);
     };
-    const { isDarkMode } = useAppColorMode();
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft: () => (
-                <IconButton
-                    ml={2}
-                    fontSize="lg"
-                    _light={{
-                        _pressed: { backgroundColor: 'gray.200' },
-                    }}
-                    _dark={{
-                        _pressed: { backgroundColor: 'gray.800' },
-                    }}
-                    onPress={handleGoBack}
-                    icon={
-                        <Icon
-                            size={24}
-                            name="keyboard-backspace"
-                            type="material-community"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : 'black'}
-                        />
-                    }
-                />
-            ),
+            headerLeft: () => <NavigationBackButton onPress={handleGoBack} />,
         });
     }, [navigation, params, targetRoute]);
 };

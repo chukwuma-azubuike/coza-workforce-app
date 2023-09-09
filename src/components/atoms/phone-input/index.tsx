@@ -5,7 +5,7 @@ import { getCountryCallingCode, CountryCode } from 'libphonenumber-js';
 import { Box, FormControl } from 'native-base';
 import React from 'react';
 import CountryPicker, { Country } from 'react-native-country-picker-modal';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { InputComponent } from '../input';
 
 const deviceLanguage =

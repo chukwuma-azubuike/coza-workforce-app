@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useSendOTPQuery, useValidateEmailOTPMutation } from '../../../store/services/account';
-import { CELL_COUNT } from '../../../components/atoms/otp-input';
-import Utils from '../../../utils';
+import { useSendOTPQuery, useValidateEmailOTPMutation } from '@store/services/account';
+import { CELL_COUNT } from '@components/atoms/otp-input';
+import Utils from '@utils/index';
 
 const useWelcome = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);

@@ -4,21 +4,21 @@ import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { Alert, TouchableOpacity } from 'react-native';
-import useModal from '../../../hooks/modal/useModal';
+import useModal from '@hooks/modal/useModal';
 import moment from 'moment';
-import ModalAlertComponent from '../../../components/composite/modal-alert';
+import ModalAlertComponent from '@components/composite/modal-alert';
 import {
     ICampusCoordinates,
     useClockInMutation,
     useClockOutMutation,
     useGetAttendanceQuery,
-} from '../../../store/services/attendance';
-import useRole from '../../../hooks/role';
-import If from '../../../components/composite/if-container';
-import Utils from '../../../utils';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
+} from '@store/services/attendance';
+import useRole from '@hooks/role';
+import If from '@components/composite/if-container';
+import Utils from '@utils/index';
+import { useGetLatestServiceQuery } from '@store/services/services';
 import { IThirdPartyUserDetails } from '.';
-import useGeoLocation from '../../../hooks/geo-location';
+import useGeoLocation from '@hooks/geo-location';
 
 interface ThirdPartyClockButton extends IThirdPartyUserDetails {
     isInRangeProp: boolean;
@@ -232,7 +232,7 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
         <Pressable>
             {canClockIn && (
                 <LottieView
-                    source={require('../../../assets/json/clock-button-animation.json')}
+                    source={require('@assets/json/clock-button-animation.json')}
                     resizeMode="cover"
                     style={{
                         left: Utils.IOS16 ? -13 : -20,

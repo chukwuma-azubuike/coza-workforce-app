@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import {
     IAttendance,
+    ICGWCParams,
     ICampus,
     IDefaultQueryParams,
     IDefaultResponse,
@@ -100,13 +101,14 @@ export const attendanceServiceSlice = createApi({
 
         getDepartmentAttendanceReport: endpoint.query<
             {
+                tickets?: number;
                 attendance: number;
                 departmentUsers: number;
             },
-            { serviceId: string; departmentId: string }
+            { serviceId: string; departmentId: string } & Partial<ICGWCParams>
         >({
-            query: ({ serviceId, departmentId }) => ({
-                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}`,
+            query: ({ serviceId, departmentId, isCGWC, CGWCId }) => ({
+                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}/${isCGWC}/${CGWCId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -123,10 +125,10 @@ export const attendanceServiceSlice = createApi({
                 attendance: number;
                 leaderUsers: number;
             },
-            { serviceId: string; campusId: string }
+            { serviceId: string; campusId: string } & Partial<ICGWCParams>
         >({
-            query: ({ serviceId, campusId }) => ({
-                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId}`,
+            query: ({ serviceId, campusId, isCGWC, CGWCId }) => ({
+                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId}/${isCGWC}/${CGWCId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -143,10 +145,10 @@ export const attendanceServiceSlice = createApi({
                 attendance: number;
                 workerUsers: number;
             },
-            { serviceId: string; campusId: string }
+            { serviceId: string; campusId: string } & Partial<ICGWCParams>
         >({
-            query: ({ serviceId, campusId }) => ({
-                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}`,
+            query: ({ serviceId, campusId, isCGWC, CGWCId }) => ({
+                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}/${isCGWC}/${CGWCId}`,
                 method: REST_API_VERBS.GET,
             }),
 

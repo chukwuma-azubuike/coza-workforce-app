@@ -1,5 +1,5 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
@@ -9,15 +9,15 @@ import {
     MyTeamPermissionsList,
 } from './permissions-list';
 import { SceneMap } from 'react-native-tab-view';
-import TabComponent from '../../../components/composite/tabs';
-import useRole from '../../../hooks/role';
-import { IPermission } from '../../../store/types';
-import useMediaQuery from '../../../hooks/media-query';
-import StaggerButtonComponent from '../../../components/composite/stagger';
-import { AddButtonComponent } from '../../../components/atoms/button';
-import If from '../../../components/composite/if-container';
+import TabComponent from '@components/composite/tabs';
+import useRole from '@hooks/role';
+import { IPermission } from '@store/types';
+import useMediaQuery from '@hooks/media-query';
+import StaggerButtonComponent from '@components/composite/stagger';
+import { AddButtonComponent } from '@components/atoms/button';
+import If from '@components/composite/if-container';
 import { IReportTypes } from '../export';
-import useScreenFocus from '../../../hooks/focus';
+import useScreenFocus from '@hooks/focus';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },

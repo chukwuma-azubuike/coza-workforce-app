@@ -1,9 +1,9 @@
 import React from 'react';
 import { ISelectItemProps, ISelectProps, Select } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
-import { IIconTypes } from '../../../utils/types';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import { IIconTypes } from '@utils/types';
+import useAppColorMode from '@hooks/theme/colorMode';
 import Loading from '../loading';
 
 interface ISelectComponent extends ISelectProps {}

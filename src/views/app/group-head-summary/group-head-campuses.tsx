@@ -2,15 +2,15 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Center, Stack } from 'native-base';
 import React from 'react';
-import { SmallCardComponent } from '../../../components/composite/card';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import { FlatListSkeleton } from '../../../components/layout/skeleton';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { useCustomBackNavigation } from '../../../hooks/navigation';
-import useRole from '../../../hooks/role';
-import { useGetGHCampusByIdQuery } from '../../../store/services/campus';
-import Utils from '../../../utils';
-import useScreenFocus from '../../../hooks/focus';
+import { SmallCardComponent } from '@components/composite/card';
+import ErrorBoundary from '@components/composite/error-boundary';
+import { FlatListSkeleton } from '@components/layout/skeleton';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { useCustomBackNavigation } from '@hooks/navigation';
+import useRole from '@hooks/role';
+import { useGetGHCampusByIdQuery } from '@store/services/campus';
+import Utils from '@utils';
+import useScreenFocus from '@hooks/focus';
 
 const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = useNavigation();

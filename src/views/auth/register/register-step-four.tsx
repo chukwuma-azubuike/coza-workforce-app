@@ -1,23 +1,23 @@
 import React from 'react';
 import { Box, Center, FormControl, Heading, HStack, Stack, VStack } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import { InputComponent } from '@components/atoms/input';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { IRegistrationPageStep } from './types';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Formik } from 'formik';
-import { ILoginPayload, IRegisterPayload } from '../../../store/types';
+import { ILoginPayload, IRegisterPayload } from '@store/types';
 import { RegisterFormContext } from '.';
-import { RegisterSchema_4 } from '../../../utils/schemas';
-import { useLoginMutation, useRegisterMutation } from '../../../store/services/account';
-import { useAppDispatch } from '../../../store/hooks';
+import { RegisterSchema_4 } from '@utils/schemas';
+import { useLoginMutation, useRegisterMutation } from '@store/services/account';
+import { useAppDispatch } from '@store/hooks';
 import { AppStateContext } from '../../../../App';
-import useModal from '../../../hooks/modal/useModal';
-import { versionActiontypes } from '../../../store/services/version';
-import Utils from '../../../utils';
+import useModal from '@hooks/modal/useModal';
+import { versionActiontypes } from '@store/services/version';
+import Utils from '@utils/index';
 import { useNavigation } from '@react-navigation/native';
-import { userActionTypes } from '../../../store/services/users';
+import { userActionTypes } from '@store/services/users';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -111,7 +111,7 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     }, [loginIsError, loginIsSuccess]);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper pt={10}>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Create a password</Heading>

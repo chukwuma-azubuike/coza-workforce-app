@@ -1,7 +1,7 @@
 import React from 'react';
 import { Icon } from '@rneui/base';
 import { Flex, HStack, Text } from 'native-base';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 

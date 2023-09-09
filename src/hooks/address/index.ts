@@ -1,5 +1,5 @@
 import React from 'react';
-import { extractCountries, extractLGAs, extractStates } from '../../utils/handleStateAndLGA';
+import { extractCountries, extractLGAs, extractStates } from '@utils/handleStateAndLGA';
 
 export const useAddress = () => {
     const [stateId, setStateId] = React.useState<number>(1);

@@ -2,8 +2,8 @@ import React from 'react';
 import { Input, INumberInputProps, NumberInput, Pressable } from 'native-base';
 import { IInputProps } from 'native-base/lib/typescript/components/primitives/Input/types';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import { IIconTypes } from '../../../utils/types';
+import { THEME_CONFIG } from '@config/appConfig';
+import { IIconTypes } from '@utils/types';
 import { StyleSheet } from 'react-native';
 export interface IInputComponentProps extends IInputProps {
     leftIcon?: { name: string; type?: IIconTypes };

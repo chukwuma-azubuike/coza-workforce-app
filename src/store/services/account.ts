@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import Utils from '../../utils';
+import Utils from '@utils/index';
 import {
     IRegisterPayload,
     IDefaultResponse,

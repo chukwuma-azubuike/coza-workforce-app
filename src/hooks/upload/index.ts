@@ -1,9 +1,9 @@
 import React from 'react';
-import { REST_API_VERBS } from '../../store/types';
+import { REST_API_VERBS } from '@store/types';
 import { UPLOAD_API_KEY, UPLOAD_URL } from '@env';
 
 import { launchImageLibrary } from 'react-native-image-picker';
-import { IImbbAlbumId } from '../../config/uploadConfig';
+import { IImbbAlbumId } from '@config/uploadConfig';
 
 export interface IUploadResponseImgBB {
     data: {

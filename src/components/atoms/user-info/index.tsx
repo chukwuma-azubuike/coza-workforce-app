@@ -1,10 +1,10 @@
 import React from 'react';
 import { Heading, HStack, Stack, Text } from 'native-base';
-import Utils from '../../../utils';
 import { Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
+import { ScreenWidth } from '@rneui/base';
 
 interface IUserInfo {
     heading?: string;
@@ -12,7 +12,7 @@ interface IUserInfo {
     name: string;
 }
 
-const NON_EDITABLE = ['email'];
+const NON_EDITABLE = ['email', 'role'];
 
 const UserInfo = ({ heading, value, name }: IUserInfo) => {
     const { navigate } = useNavigation();
@@ -28,22 +28,26 @@ const UserInfo = ({ heading, value, name }: IUserInfo) => {
 
     return (
         <Pressable onPress={handleEdit}>
-            <HStack alignItems="center" justifyContent="space-between" paddingRight={2}>
-                <Stack ml={4} flexDirection="row" alignItems="center" justifyItems="center" my={2}>
+            <HStack alignItems="center" justifyContent="space-between" paddingRight={4}>
+                <Text ml={3} my={2} flexDirection="row" width={ScreenWidth / 1.25}>
                     <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-                        {heading}:
+                        {heading}:{' '}
                     </Heading>
                     <Text
-                        ml="2"
                         flexWrap="wrap"
                         fontWeight="400"
+                        ellipsizeMode="tail"
+                        numberOfLines={1}
+                        width={ScreenWidth / 1.85}
                         _dark={{ color: 'gray.400' }}
                         _light={{ color: 'gray.600' }}
                     >
-                        {value && Utils.truncateString(value, 40)}
+                        {value}
                     </Text>
-                </Stack>
-                <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
+                </Text>
+                {!NON_EDITABLE.includes(name) && (
+                    <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
+                )}
             </HStack>
         </Pressable>
     );

@@ -3,11 +3,11 @@ import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Appearance } from 'react-native';
-import AvatarComponent from '../../../../components/atoms/avatar';
-import { IFlatListColumn } from '../../../../components/composite/flat-list';
-import { THEME_CONFIG } from '../../../../config/appConfig';
-import { AVATAR_FALLBACK_URL } from '../../../../constants';
-import Utils from '../../../../utils';
+import AvatarComponent from '@components/atoms/avatar';
+import { IFlatListColumn } from '@components/composite/flat-list';
+import { THEME_CONFIG } from '@config/appConfig';
+import { AVATAR_FALLBACK_URL } from '@constants';
+import Utils from '@utils';
 
 const colorScheme = Appearance.getColorScheme();
 

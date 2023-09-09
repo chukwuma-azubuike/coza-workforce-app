@@ -16,6 +16,7 @@ import { ticketServiceSlice } from '../services/tickets';
 import { campusServiceSlice } from './../services/campus';
 import { scoreServiceSlice } from '../services/score';
 import { roleServiceSlice } from '../services/role';
+import { cgwcServiceSlice } from '../services/cgwc';
 
 const userPersistConfig: PersistConfig<IUser> = {
     key: 'users',
@@ -47,6 +48,7 @@ const rootReducer = combineReducers({
     version: persistedVersionReducer,
     score: scoreServiceSlice.reducer,
     role: roleServiceSlice.reducer,
+    cgwc: cgwcServiceSlice.reducer,
 });
 
 export default rootReducer;

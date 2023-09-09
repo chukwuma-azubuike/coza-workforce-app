@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAppSelector } from '../../store/hooks';
-import { useGetRolesQuery } from '../../store/services/role';
-import { selectCurrentUser } from '../../store/services/users';
+import { useAppSelector } from '@store/hooks';
+import { useGetRolesQuery } from '@store/services/role';
+import { selectCurrentUser } from '@store/services/users';
 import { useAuth } from '../auth';
 
 export enum ROLES {
@@ -131,6 +131,9 @@ const useRole = () => {
             _id: currentUser.userId || currentUser._id,
             userId: currentUser.userId || currentUser._id,
         },
+
+        //Status
+        isCGWCApproved: currentUser.isCGWCApproved,
 
         //Role IDs
         leaderRoleIds,

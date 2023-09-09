@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppStateContext } from '../../../App';
-import Utils from '../../utils';
+import Utils from '@utils/index';
 
 export const useAuth = () => {
     const { setIsLoggedIn } = React.useContext(AppStateContext);

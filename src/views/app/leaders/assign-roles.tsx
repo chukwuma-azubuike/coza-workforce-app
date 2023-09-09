@@ -4,17 +4,17 @@ import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import { Box, CloseIcon, FormControl, HStack, Text, VStack } from 'native-base';
 import React, { useState } from 'react';
-import ButtonComponent from '../../../components/atoms/button';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useModal from '../../../hooks/modal/useModal';
-import { useAssignSecondaryRolesMutation, useGetUsersQuery } from '../../../store/services/account';
-import { useGetCampusesQuery } from '../../../store/services/campus';
-import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
-import { useGetRolesQuery } from '../../../store/services/role';
-import { IAssignGroupHead } from '../../../store/types';
-import { AssignGroupHeadSchema } from '../../../utils/schemas';
+import ButtonComponent from '@components/atoms/button';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useModal from '@hooks/modal/useModal';
+import { useAssignSecondaryRolesMutation, useGetUsersQuery } from '@store/services/account';
+import { useGetCampusesQuery } from '@store/services/campus';
+import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
+import { useGetRolesQuery } from '@store/services/role';
+import { IAssignGroupHead } from '@store/types';
+import { AssignGroupHeadSchema } from '@utils/schemas';
 import { TouchableOpacity } from 'react-native';
 
 interface IGroupHead {
@@ -95,7 +95,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
             });
             reset();
             navigate('More');
-            resetForm(INITIAL_VALUES as any);
+            resetForm({ values: INITIAL_VALUES });
             setCampusDept([]);
             setIsOpen(false);
         }
@@ -126,7 +126,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                 <Box alignItems="center" w="100%">
                     <Formik<IAssignGroupHead>
                         validateOnChange
-                        enableReinitialize
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={AssignGroupHeadSchema}

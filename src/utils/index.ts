@@ -234,7 +234,7 @@ class Utils {
     /************** Arrays ***************/
 
     // This functions groups a list (Array of objects) by a common key;
-    static groupListByKey = (array: any[] = [], key: string) => {
+    static groupListByKey = (array: any[] = [], key: string, returnType: 'entries' | 'values' = 'entries') => {
         const map: any = {};
 
         if (!array?.length || !array) {
@@ -255,7 +255,7 @@ class Utils {
                 map[keyInMap] = [array[i]];
             }
         }
-        return Object.entries(map);
+        return Object[returnType](map);
     };
 
     /**

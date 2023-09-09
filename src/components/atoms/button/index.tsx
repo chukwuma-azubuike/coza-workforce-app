@@ -1,10 +1,12 @@
 import React from 'react';
 import { Button, IButtonProps } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
-import { PermissionsAndroid } from 'react-native';
-import { generateExcelFile } from '../../../utils/generateFile';
+import { PermissionsAndroid, TouchableOpacityProps } from 'react-native';
+import { generateExcelFile } from '@utils/generateFile';
+import { TouchableOpacity } from 'react-native';
+import useAppColorMode from '@hooks/theme/colorMode';
 interface IButtonComponent extends IButtonProps {
     size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;
@@ -125,6 +127,21 @@ export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName
         >
             <Icon name="download-outline" type="ionicon" size={36} color="white" />
         </ButtonComponent>
+    );
+};
+
+export const NavigationBackButton: React.FC<TouchableOpacityProps> = props => {
+    const { isDarkMode } = useAppColorMode();
+
+    return (
+        <TouchableOpacity style={{ marginLeft: 6, padding: 6 }} activeOpacity={0.6} {...props}>
+            <Icon
+                size={24}
+                name="keyboard-backspace"
+                type="material-community"
+                color={isDarkMode ? THEME_CONFIG.lightGray : 'black'}
+            />
+        </TouchableOpacity>
     );
 };
 

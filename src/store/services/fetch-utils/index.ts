@@ -1,5 +1,5 @@
 import { IStore } from '../..';
-import APP_ENV from '../../../config/envConfig';
+import APP_ENV from '@config/envConfig';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 const { API_BASE_URL } = APP_ENV();

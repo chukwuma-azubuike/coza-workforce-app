@@ -5,20 +5,20 @@ import { Formik } from 'formik';
 import moment from 'moment';
 import { VStack, Text, HStack, Divider, FormControl } from 'native-base';
 import React from 'react';
-import ButtonComponent from '../../../../components/atoms/button';
-import TextAreaComponent from '../../../../components/atoms/text-area';
-import If from '../../../../components/composite/if-container';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../../config/appConfig';
-import useScreenFocus from '../../../../hooks/focus';
-import useModal from '../../../../hooks/modal/useModal';
-import useRole from '../../../../hooks/role';
+import ButtonComponent from '@components/atoms/button';
+import TextAreaComponent from '@components/atoms/text-area';
+import If from '@components/composite/if-container';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useScreenFocus from '@hooks/focus';
+import useModal from '@hooks/modal/useModal';
+import useRole from '@hooks/role';
 import {
     ICampusReport,
     IGSPReportPayload,
     useGetCampusReportSummaryQuery,
     useSubmitGSPReportMutation,
-} from '../../../../store/services/reports';
+} from '@store/services/reports';
 import {
     IAttendanceReportPayload,
     IChildCareReportPayload,
@@ -27,11 +27,11 @@ import {
     ISecurityReportPayload,
     IServiceReportPayload,
     ITransferReportPayload,
-} from '../../../../store/types';
-import Utils from '../../../../utils';
-import { GSPReportSchema } from '../../../../utils/schemas';
-import HorizontalTable from '../../../../components/composite/tables/horizontal-table';
-import VerticalTable from '../../../../components/composite/tables/vertical-table';
+} from '@store/types';
+import Utils from '@utils';
+import { GSPReportSchema } from '@utils/schemas';
+import HorizontalTable from '@components/composite/tables/horizontal-table';
+import VerticalTable from '@components/composite/tables/vertical-table';
 
 const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ICampusReport & { campusName: string };

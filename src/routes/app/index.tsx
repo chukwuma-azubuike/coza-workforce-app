@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AppRoutes, IAppRoute } from '../../config/navigation';
-import TabBar from '../../views/tab-bar';
-import { IconButton } from 'native-base';
-import { Icon } from '@rneui/themed';
-import useAppColorMode from '../../hooks/theme/colorMode';
-import { THEME_CONFIG } from '../../config/appConfig';
+import { AppRoutes, IAppRoute } from '@config/navigation';
+import TabBar from '@views/tab-bar';
+import useAppColorMode from '@hooks/theme/colorMode';
 import { Route, useNavigation } from '@react-navigation/native';
+import { NavigationBackButton } from '@components/atoms/button';
 
 const Tab = createBottomTabNavigator();
 const AppStack = createNativeStackNavigator();
@@ -34,6 +32,8 @@ const TabRoutes: React.FC = () => {
         goBack();
     };
 
+    const hiddenHeaders = ['Home', 'CGWC Details'];
+
     // TODO: Restore when IOS notification is fixed
     // const { initialRoute, tabKey } = useDeepLinkNavigation();
 
@@ -48,7 +48,7 @@ const TabRoutes: React.FC = () => {
             tabBar={props => <TabBar {...props} />}
             screenOptions={{
                 headerTitleAlign: 'center',
-                headerStyle: { height: 80 },
+                headerStyle: {},
             }}
             backBehavior="history"
         >
@@ -59,32 +59,12 @@ const TabRoutes: React.FC = () => {
                     name={route.name}
                     component={route.component}
                     options={{
-                        headerShown: route.name !== 'Home',
+                        headerShown: !hiddenHeaders.includes(route.name),
                         headerBackgroundContainerStyle: {
                             justifyContent: 'center',
                             alignContent: 'center',
                         },
-                        headerLeft: () => (
-                            <IconButton
-                                ml={2}
-                                fontSize="lg"
-                                _light={{
-                                    _pressed: { backgroundColor: 'gray.200' },
-                                }}
-                                _dark={{
-                                    _pressed: { backgroundColor: 'gray.800' },
-                                }}
-                                onPress={handleGoBack}
-                                icon={
-                                    <Icon
-                                        size={24}
-                                        name="keyboard-backspace"
-                                        type="material-community"
-                                        color={isDarkMode ? THEME_CONFIG.lightGray : 'black'}
-                                    />
-                                }
-                            />
-                        ),
+                        headerLeft: () => <NavigationBackButton onPress={handleGoBack} />,
                     }}
                 />
             ))}
