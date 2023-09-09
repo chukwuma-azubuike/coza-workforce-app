@@ -81,12 +81,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const isIOS = Platform.OS === 'ios';
 
     return (
-        <Formik<ISecurityReportPayload>
-            validateOnChange
-            
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
+        <Formik<ISecurityReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>

@@ -95,7 +95,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
             });
             reset();
             navigate('More');
-            resetForm({values:INITIAL_VALUES});
+            resetForm({ values: INITIAL_VALUES });
             setCampusDept([]);
             setIsOpen(false);
         }
@@ -126,7 +126,6 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                 <Box alignItems="center" w="100%">
                     <Formik<IAssignGroupHead>
                         validateOnChange
-                        
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={AssignGroupHeadSchema}

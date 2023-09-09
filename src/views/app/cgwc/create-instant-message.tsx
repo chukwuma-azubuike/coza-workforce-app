@@ -57,7 +57,6 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
                 <Box alignItems="center" w="100%">
                     <Formik<ICGWCInstantMessage>
                         validateOnChange
-                        
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateCGWCInstantMessageSchema}

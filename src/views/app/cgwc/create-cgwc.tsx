@@ -41,7 +41,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
             });
             reset();
             navigate('CGWC', data);
-            resetForm({values:INITIAL_VALUES});
+            resetForm({ values: INITIAL_VALUES });
         }
 
         if ('error' in result) {
@@ -64,7 +64,6 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                 <Box alignItems="center" w="100%">
                     <Formik<ICGWCPayload>
                         validateOnChange
-                        
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateCGWCSchema}

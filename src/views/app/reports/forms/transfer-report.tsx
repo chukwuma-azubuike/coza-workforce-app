@@ -81,12 +81,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const isIOS = Platform.OS === 'ios';
 
     return (
-        <Formik<ITransferReportPayload>
-            validateOnChange
-            
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
+        <Formik<ITransferReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>

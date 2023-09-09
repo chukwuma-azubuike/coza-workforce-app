@@ -96,12 +96,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     };
 
     return (
-        <Formik<IChildCareReportPayload>
-            validateOnChange
-            
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
+        <Formik<IChildCareReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
             {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>

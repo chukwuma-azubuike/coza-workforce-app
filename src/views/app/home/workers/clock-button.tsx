@@ -38,7 +38,6 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
     const [clockIn, { data: clockinData, error, isLoading }] = useClockInMutation();
     const [clockOut, { isLoading: clockOutLoading, error: clockOutError }] = useClockOutMutation();
 
-
     const handleClockin = async () => {
         const result = await clockIn({
             userId: user?.userId as string,
