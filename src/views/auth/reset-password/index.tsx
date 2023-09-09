@@ -64,7 +64,6 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                     <Box alignItems="center" w="100%">
                         <Formik<{ email: string; password: string }>
                             validateOnChange
-                            enableReinitialize
                             onSubmit={onSubmit}
                             validationSchema={ResetPasswordSchema}
                             initialValues={initialValues as unknown as IResetPasswordPayload}

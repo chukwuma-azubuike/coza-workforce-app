@@ -33,14 +33,11 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
     } = React.useContext(HomeContext);
 
     const { user } = useRole();
-
+    const { setModalState } = useModal();
     const [clockedOut, setClockedOut] = React.useState<boolean>(false);
-
     const [clockIn, { data: clockinData, error, isLoading }] = useClockInMutation();
-
     const [clockOut, { isLoading: clockOutLoading, error: clockOutError }] = useClockOutMutation();
 
-    const { setModalState } = useModal();
 
     const handleClockin = async () => {
         const result = await clockIn({
@@ -108,11 +105,12 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
         }
     };
 
+    const assertClockinStartTime = !!latestServiceData && moment().diff(moment(latestServiceData.clockInStartTime)) > 0;
     const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut || latestAttendanceIsLoading;
     const clockedIn = !!latestAttendanceData?.length
         ? (!!clockinData?.clockIn || !!latestAttendanceData[0].clockIn) && isLatestServiceSuccess
         : false && isLatestServiceSuccess; // Truthiness should only be resolved from latest Attendance clock in record
-    const canClockIn = isInRange && !!latestServiceData && !clockedIn;
+    const canClockIn = isInRange && assertClockinStartTime && !clockedIn;
     const canClockOut =
         latestAttendanceData?.length &&
         latestAttendanceData[0].clockIn &&
@@ -147,6 +145,14 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
     };
 
     const handlePress = async () => {
+        if (!assertClockinStartTime) {
+            return Alert.alert(
+                `${!!latestServiceData?.CGWCId ? 'Session' : 'Service'} Not Started`,
+                `Clock in for this ${
+                    !!latestServiceData?.CGWCId ? 'session' : 'service'
+                } has not yet started, kindly try again by ${moment(latestServiceData?.clockInStartTime).format('LT')}.`
+            );
+        }
         refreshLocation();
 
         if (!isInRange) {

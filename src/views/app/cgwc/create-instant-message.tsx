@@ -31,8 +31,8 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
                 status: 'success',
             });
             reset();
+            resetForm({ values: INITIAL_VALUES });
             navigate('CGWC Details', data);
-            resetForm(INITIAL_VALUES as any);
         }
 
         if ('error' in result) {
@@ -57,7 +57,7 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
                 <Box alignItems="center" w="100%">
                     <Formik<ICGWCInstantMessage>
                         validateOnChange
-                        enableReinitialize
+                        
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateCGWCInstantMessageSchema}

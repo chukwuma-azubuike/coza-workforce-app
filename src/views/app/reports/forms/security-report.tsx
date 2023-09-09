@@ -83,7 +83,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     return (
         <Formik<ISecurityReportPayload>
             validateOnChange
-            enableReinitialize
+            
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >

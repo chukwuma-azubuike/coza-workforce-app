@@ -167,18 +167,6 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             </Stack>
                             <Divider mt={6} mb={1} />
                         </Box>
-                        <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                            <StaggerButtonComponent
-                                buttons={[
-                                    {
-                                        color: 'green.600',
-                                        iconType: 'ionicon',
-                                        handleClick: goToExport,
-                                        iconName: 'download-outline',
-                                    },
-                                ]}
-                            />
-                        </If>
                         <Box mt={6}>
                             <Text bold px={3} fontSize="lg">
                                 Give Feedback
@@ -193,6 +181,18 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     </ScrollContainer>
                     <If condition={isSuperAdmin}>
                         <StaggerButtonComponent buttons={allButtons as unknown as any} />
+                    </If>
+                    <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                        <StaggerButtonComponent
+                            buttons={[
+                                {
+                                    color: 'green.600',
+                                    iconType: 'ionicon',
+                                    handleClick: goToExport,
+                                    iconName: 'download-outline',
+                                },
+                            ]}
+                        />
                     </If>
                 </If>
             </ViewWrapper>

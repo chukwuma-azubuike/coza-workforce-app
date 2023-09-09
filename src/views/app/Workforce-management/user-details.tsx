@@ -33,7 +33,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const canEdit = isSuperAdmin || isGlobalPastor || isCampusPastor || isInternshipHOD;
     const canDelete = isSuperAdmin || isGlobalPastor || isCampusPastor;
-    const canApproveForCGWC = isHOD || isAHOD || isCampusPastor || isGlobalPastor;
+    const canApproveForCGWC = isHOD || isAHOD || isCampusPastor || isGlobalPastor || isSuperAdmin;
 
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
     const handleEditMode = () => {
@@ -187,18 +187,17 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [cgwcApproved, setCgwcApproved] = React.useState<boolean>(!!data?.isCGWCApproved);
     const handleApproveCGWC = async (event: boolean) => {
         setCgwcApproved(event);
-        await approveForCGWC(event);
+        await approveForCGWC(event)
+            .then(() => {
+                refetch();
+            })
+            .catch(() => {});
     };
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
             <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
-                <Formik<IReAssignUserPayload>
-                    validateOnChange
-                    enableReinitialize
-                    onSubmit={submitForm}
-                    initialValues={INITIAL_VALUES}
-                >
+                <Formik<IReAssignUserPayload> validateOnChange onSubmit={submitForm} initialValues={INITIAL_VALUES}>
                     {({ values, handleChange, handleSubmit }) => {
                         const handleCampusIdChange = (value: string) => {
                             handleChange('campusId')(value);
@@ -266,6 +265,19 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl>
                                     </HStack>
                                 </If>
+                                <HStack
+                                    space={2}
+                                    pb={2}
+                                    w="full"
+                                    justifyContent="space-between"
+                                    borderBottomWidth={0.2}
+                                    borderColor="gray.300"
+                                >
+                                    <Text alignSelf="flex-start" bold>
+                                        Role
+                                    </Text>
+                                    <Text>{data?.role.name}</Text>
+                                </HStack>
                                 <HStack
                                     space={2}
                                     pb={2}

@@ -51,7 +51,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     return (
         <Formik<IIncidentReportPayload>
             validateOnChange
-            enableReinitialize
+            
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >

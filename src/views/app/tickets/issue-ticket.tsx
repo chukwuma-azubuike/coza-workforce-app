@@ -80,7 +80,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     duration: 3,
                 });
                 navigate('Tickets', data);
-                resetForm(INITIAL_VALUES);
+                resetForm({ values: INITIAL_VALUES });
                 setDepartmentId('');
                 reset();
             }

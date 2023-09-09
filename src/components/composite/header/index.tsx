@@ -3,8 +3,8 @@ import { StyleSheet, Animated, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import useAppColorMode from '@hooks/theme/colorMode';
 
-const MIN_HEADER_HEIGHT = 116;
-const MAX_HEADER_HEIGHT = 140;
+const MIN_HEADER_HEIGHT = 90;
+const MAX_HEADER_HEIGHT = 120;
 const SCROLL_DISTANCE = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 
 interface IDynamicHeader {
@@ -77,8 +77,8 @@ const styles = StyleSheet.create({
     header: {
         left: 0,
         right: 0,
-        paddingTop: 50,
-        paddingBottom: 8,
+        paddingTop: 40,
+        paddingBottom: 0,
         paddingHorizontal: 4,
         alignItems: 'center',
         justifyContent: 'center',

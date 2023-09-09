@@ -36,7 +36,7 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
                 status: 'success',
             });
             reset();
-            resetForm(INITIAL_VALUES as any);
+            resetForm({values:INITIAL_VALUES});
             navigate('CGWC Details', { rating: values.rating, CGWCId });
         }
 
@@ -61,7 +61,7 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
                 <Box alignItems="center" w="100%">
                     <Formik<ICGWCFeedbackPayload>
                         validateOnChange
-                        enableReinitialize
+                        
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={SubmitCGWCFeedbackSchema}

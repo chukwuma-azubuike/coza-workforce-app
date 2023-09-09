@@ -45,7 +45,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                 categoryName: categories?.find(category => category._id === values.categoryId)?.name,
                 requestor: user,
             });
-            resetForm(INITIAL_VALUES);
+            resetForm({ values: INITIAL_VALUES });
         }
 
         if ('error' in result) {
@@ -102,7 +102,6 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Box alignItems="center" w="100%">
                         <Formik<IRequestPermissionPayload>
-                            enableReinitialize
                             onSubmit={handleSubmit}
                             initialValues={INITIAL_VALUES}
                             validationSchema={RequestPermissionSchema}

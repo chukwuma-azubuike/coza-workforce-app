@@ -38,7 +38,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     status: 'success',
                     duration: 3,
                 });
-                resetForm(INITIAL_VALUES as any);
+                resetForm({values:INITIAL_VALUES});
                 goBack();
             }
 
@@ -83,7 +83,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateCampusPayload>
                         validateOnChange
-                        enableReinitialize
+                        
                         onSubmit={submitForm}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateCampusSchema}

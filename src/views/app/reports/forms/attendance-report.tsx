@@ -78,7 +78,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
     return (
         <Formik<IAttendanceReportPayload>
             validateOnChange
-            enableReinitialize
+            
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
         >

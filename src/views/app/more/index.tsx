@@ -9,11 +9,14 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
 import { useCustomBackNavigation } from '@hooks/navigation';
+import { useGetUserByIdQuery } from '@store/services/account';
+import useScreenFocus from '@hooks/focus';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
     const {
         user: {
+            userId,
             role: { name: roleName },
             department: { departmentName },
         },
@@ -21,6 +24,11 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isCampusPastor,
         isCGWCApproved,
     } = useRole();
+
+    const { refetch, isLoading } = useGetUserByIdQuery(userId);
+    useScreenFocus({
+        onFocus: refetch,
+    });
 
     const filteredRoutes = React.useMemo(
         () =>
@@ -42,13 +50,13 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                     return route;
                 }
             }),
-        []
+        [AppRoutes, isCGWCApproved, isSuperAdmin, roleName, departmentName]
     );
 
     useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper scroll pt={4}>
+        <ViewWrapper scroll pt={4} refreshing={isLoading} onRefresh={refetch}>
             <VStack>
                 <List mx={4} borderWidth={0}>
                     {filteredRoutes?.map((route, idx) => (

@@ -71,7 +71,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                     <Box alignItems="center" w="100%" mb={3}>
                         <Formik<ILoginPayload>
                             validateOnChange
-                            enableReinitialize
+                            
                             onSubmit={onSubmit}
                             initialValues={INITIAL_VALUES}
                             validationSchema={LoginSchema}

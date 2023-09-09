@@ -12,20 +12,9 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { useCreateServiceMutation } from '@store/services/services';
-import { CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
+import { CGWC_SESSION_TAGS, CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
 import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
-
-const tags: any = [
-    { id: 'CGWC_MORNING_SESSION', value: 'Morning Session' },
-    { id: 'CGWC_EVENING_SESSION', value: 'Evening Session' },
-    { id: 'CGWC_AFTERNOON_SESSION', value: 'Afternoon Session' },
-    { id: 'CGWC_HANGOUT_SESSION', value: 'Hangout Session' },
-    { id: 'CGWC_DINNER_SESSION', value: 'Dinner Session' },
-    { id: 'CGWC_LADIES_SESSION', value: 'Ladies Session' },
-    { id: 'CGWC_EVANGELISM_SESSION', value: 'Evangelism Session' },
-    { id: 'CGWC_BREAKOUT_SESSION', value: 'Breakout Session' },
-];
 
 const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const params = route.params as { CGWCId: string };
@@ -36,18 +25,18 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     const [createSession, { isLoading, error, data, reset }] = useCreateServiceMutation();
 
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
-        const clockInStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.clockinTime);
+        const clockInStartTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.clockinTime);
         const coordinates = {
             long: CREATE_SERVICE_ENUM.LONG,
             lat: CREATE_SERVICE_ENUM.LAT,
         };
         const name = values.serviceName;
         const isGlobalService = values.serviceType === 'global';
-        const leadersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.leaderLateTime);
+        const leadersLateStartTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.leaderLateTime);
         const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN;
-        const serviceEndTime = Utils.concatDateTimeToEpoc(values.startDate, values.endTime);
-        const serviceTime = Utils.concatDateTimeToEpoc(values.startDate, values.startTime);
-        const workersLateStartTime = Utils.concatDateTimeToEpoc(values.startDate, values.workerLateTime);
+        const serviceEndTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.endTime);
+        const serviceTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.serviceTime);
+        const workersLateStartTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.workerLateTime);
 
         const result = await createSession({
             CGWCId,
@@ -71,7 +60,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
             });
             reset();
             navigate('Service management', data);
-            resetForm(INITIAL_VALUES as any);
+            resetForm({ values: INITIAL_VALUES });
         }
 
         if ('error' in result) {
@@ -83,12 +72,12 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     };
 
     const INITIAL_VALUES: ICreateServicePayload = {
-        startTime: new Date(),
-        startDate: new Date(),
-        clockinTime: new Date(),
-        endTime: new Date(),
-        leaderLateTime: new Date(),
-        workerLateTime: new Date(),
+        serviceTime: undefined as unknown as Date,
+        serviceDate: undefined as unknown as Date,
+        clockinTime: undefined as unknown as Date,
+        endTime: undefined as unknown as Date,
+        leaderLateTime: undefined as unknown as Date,
+        workerLateTime: undefined as unknown as Date,
         serviceTag: '',
         serviceType: '',
         serviceName: '',
@@ -100,7 +89,6 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateServicePayload>
                         validateOnChange
-                        enableReinitialize
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateServiceSchema}
@@ -161,7 +149,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         selectedValue={values.serviceTag}
                                         onValueChange={handleChange('serviceTag')}
                                     >
-                                        {tags?.map((tag: any, index: any) => (
+                                        {CGWC_SESSION_TAGS?.map((tag: any, index: any) => (
                                             <SelectItemComponent
                                                 value={tag.id}
                                                 key={`campus-${index}`}
@@ -189,17 +177,17 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                     <DateTimePickerComponent
                                         label="Date"
                                         mode="date"
-                                        fieldName="startDate"
+                                        fieldName="serviceDate"
                                         onSelectDate={setFieldValue}
-                                        value={values.startDate}
+                                        value={values.serviceDate}
                                         minimumDate={new Date()}
                                     />
                                     <DateTimePickerComponent
                                         label="Session Start Time"
                                         mode="time"
-                                        fieldName="startTime"
+                                        fieldName="serviceTime"
                                         onSelectDate={setFieldValue}
-                                        value={values.startTime}
+                                        value={values.serviceTime}
                                     />
                                 </HStack>
 

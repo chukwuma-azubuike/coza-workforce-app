@@ -54,8 +54,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 status: 'success',
             });
             reset();
+            resetForm({ values: INITIAL_VALUES });
             navigate('Service management', data);
-            resetForm(INITIAL_VALUES as any);
         }
 
         if ('error' in result) {
@@ -216,7 +216,6 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateServicePayload>
                         validateOnChange
-                        enableReinitialize
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateServiceSchema}

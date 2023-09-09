@@ -98,7 +98,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     return (
         <Formik<IChildCareReportPayload>
             validateOnChange
-            enableReinitialize
+            
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >

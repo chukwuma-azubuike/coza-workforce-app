@@ -51,7 +51,7 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                     status: 'success',
                     duration: 3,
                 });
-                resetForm(INITIAL_VALUES as any);
+                resetForm({values:INITIAL_VALUES});
                 goBack();
             }
 
@@ -94,7 +94,7 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateDepartmentPayload>
                         validateOnChange
-                        enableReinitialize
+                        
                         onSubmit={submitForm}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateDepartmentSchema}

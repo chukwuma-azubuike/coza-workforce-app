@@ -83,7 +83,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     return (
         <Formik<ITransferReportPayload>
             validateOnChange
-            enableReinitialize
+            
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >

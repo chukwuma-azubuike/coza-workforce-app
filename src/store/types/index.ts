@@ -25,6 +25,17 @@ export const SERVICE_TAGS = [
     { id: '7DG', value: '7DG' },
 ];
 
+export const CGWC_SESSION_TAGS = [
+    { id: 'CGWC_MORNING_SESSION', value: 'Morning Session' },
+    { id: 'CGWC_EVENING_SESSION', value: 'Evening Session' },
+    { id: 'CGWC_AFTERNOON_SESSION', value: 'Afternoon Session' },
+    { id: 'CGWC_HANGOUT_SESSION', value: 'Hangout Session' },
+    { id: 'CGWC_DINNER_SESSION', value: 'Dinner Session' },
+    { id: 'CGWC_LADIES_SESSION', value: 'Ladies Session' },
+    { id: 'CGWC_EVANGELISM_SESSION', value: 'Evangelism Session' },
+    { id: 'CGWC_BREAKOUT_SESSION', value: 'Breakout Session' },
+];
+
 export enum IAttendanceStatus {
     LATE = 'LATE',
     ABSENT = 'ABSENT',
@@ -141,7 +152,7 @@ export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD' | 'UNAPPROVED';
 
 export interface ICreateUserPayload {
     firstName: string;

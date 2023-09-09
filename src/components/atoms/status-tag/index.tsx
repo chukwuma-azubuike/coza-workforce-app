@@ -1,7 +1,7 @@
 import { ITagProps, Tag } from 'native-base';
 import React from 'react';
 import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 
 interface IStatusTag extends ITagProps {
     children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;
@@ -17,7 +17,12 @@ const StatusTag: React.FC<IStatusTag> = props => {
         status === IReportStatus.GSP_SUBMITTED;
     const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
     const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED';
-    const red = status === 'DECLINED' || status === 'INACTIVE' || status === 'REJECTED' || status === 'CONTESTED';
+    const red =
+        status === 'DECLINED' ||
+        status === 'INACTIVE' ||
+        status === 'REJECTED' ||
+        status === 'CONTESTED' ||
+        status === 'UNAPPROVED';
     const blue = status === 'SUBMITTED' || 'HOD' || 'AHOD';
 
     return (
