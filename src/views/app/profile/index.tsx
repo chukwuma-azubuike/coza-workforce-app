@@ -3,23 +3,24 @@ import moment from 'moment';
 import { Box, Heading, HStack, Stack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Image, Pressable, TouchableOpacity } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
-import UserInfo from '../../../components/atoms/user-info';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useRole from '../../../hooks/role';
-import Utils from '../../../utils';
+import AvatarComponent from '@components/atoms/avatar';
+import UserInfo from '@components/atoms/user-info';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useRole from '@hooks/role';
+import Utils from '@utils/index';
 import DeviceInfo from 'react-native-device-info';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
-import { useAuth } from '../../../hooks/auth';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import { useAuth } from '@hooks/auth';
 import { useNavigation } from '@react-navigation/native';
-import { IEditProfilePayload } from '../../../store/types';
-import useUpload from '../../../hooks/upload';
-import { IMGBB_ALBUM_ID } from '../../../config/uploadConfig';
-import { useGetUserByIdQuery, useUpdateUserMutation } from '../../../store/services/account';
-import { useAppDispatch } from '../../../store/hooks';
-import { userActionTypes } from '../../../store/services/users';
-import { useGetUserScoreQuery } from '../../../store/services/score';
+import { IEditProfilePayload } from '@store/types';
+import useUpload from '@hooks/upload';
+import { IMGBB_ALBUM_ID } from '@config/uploadConfig';
+import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
+import { useAppDispatch } from '@store/hooks';
+import { userActionTypes } from '@store/services/users';
+import { useGetUserScoreQuery } from '@store/services/score';
+import StatusTag from '@components/atoms/status-tag';
 
 const Profile: React.FC = () => {
     const { user, isGlobalPastor } = useRole();
@@ -96,7 +97,7 @@ const Profile: React.FC = () => {
     }, [newUserData]);
 
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll refreshing={newUserDataLoading} onRefresh={refetchUser} pt={4}>
             <VStack pb={8}>
                 <VStack pb={4} flexDirection="column" alignItems="center">
                     <Pressable
@@ -182,7 +183,13 @@ const Profile: React.FC = () => {
                     </Box>
                 </Stack>
                 <Box mx={2}>
-                    <UserInfo heading="Role" isEditable={false} name="role" value={user?.roleName} />
+                    <HStack alignItems="center" justifyContent="space-between" pr={4} pl={3} my={2}>
+                        <Text bold fontSize="md">
+                            CGWC Status
+                        </Text>
+                        <StatusTag w={24}>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
+                    </HStack>
+                    <UserInfo heading="Role" name="role" value={user?.role.name} />
                     <UserInfo heading="Address" name="address" value={user?.address} />
                     <UserInfo heading="Email" isEditable={false} name="email" value={user?.email} />
                     <UserInfo heading="Phone" name="phoneNumber" value={user?.phoneNumber} />
@@ -197,16 +204,6 @@ const Profile: React.FC = () => {
                     />
                     <UserInfo heading="Birthday" name="birthDay" value={moment(user?.birthDay).format('DD MMM')} />
                 </Box>
-                {score && score?.accruedPoint >= score?.cutOffPoint && (
-                    <Box h={240} p={2} w={240} mx="auto" my={4}>
-                        <Image
-                            style={{ height: '100%', width: '100%' }}
-                            source={{
-                                uri: user?.qrCodeUrl,
-                            }}
-                        />
-                    </Box>
-                )}
                 <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
                     <Stack
                         my={3}

@@ -1,20 +1,21 @@
 import React from 'react';
 import { Icon } from '@rneui/base';
 import { Center, Flex, HStack, Text, VStack } from 'native-base';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
-import Loading from '../../../../components/atoms/loading';
+import Loading from '@components/atoms/loading';
 import { TouchableOpacity } from 'react-native';
-import { ROLES } from '../../../../hooks/role';
+import { ROLES } from '@hooks/role';
 import { useNavigation } from '@react-navigation/native';
 
-interface ITeamAttendanceSummary {
+export interface ITeamAttendanceSummary {
     departmentUsers?: number;
     attendance?: number;
+    tickets?: number;
     isLoading?: boolean;
 }
 
-const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
+export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
     const { departmentUsers, attendance, isLoading } = props;
     const navigation = useNavigation();
 
@@ -56,7 +57,7 @@ const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
     );
 };
 
-interface ITeamAttendanceSummary {
+export interface ITeamAttendanceSummary {
     leadersAttendance?: number;
     workersAttendance?: number;
     workerUsers?: number;
@@ -64,7 +65,7 @@ interface ITeamAttendanceSummary {
     isLoading?: boolean;
 }
 
-const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
+export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
     const { leaderUsers, leadersAttendance, workerUsers, workersAttendance } = props;
     const { navigate } = useNavigation<any>();
 
@@ -121,5 +122,3 @@ const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
         </Center>
     );
 };
-
-export { TeamAttendanceSummary, CampusAttendanceSummary };

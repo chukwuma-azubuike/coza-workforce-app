@@ -2,8 +2,8 @@ import React from 'react';
 import ButtonComponent from '../button';
 import { Icon } from '@rneui/themed';
 import { Center, IButtonProps, Text } from 'native-base';
-import { IUploadResponseImgBB } from '../../../hooks/upload';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { IUploadResponseImgBB } from '@hooks/upload';
+import { THEME_CONFIG } from '@config/appConfig';
 
 interface IUploadButton extends IButtonProps {
     error: string;

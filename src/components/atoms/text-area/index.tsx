@@ -1,6 +1,6 @@
 import React from 'react';
 import { ITextAreaProps, TextArea } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 
 interface ITextAreaComponent extends ITextAreaProps {}
 

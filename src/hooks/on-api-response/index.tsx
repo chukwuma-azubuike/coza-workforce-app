@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { QueryStatus } from '@reduxjs/toolkit/dist/query';
 import React from 'react';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch } from '@store/hooks';
 import useModal from '../modal/useModal';
 
 export interface IOnApiResponseProps {

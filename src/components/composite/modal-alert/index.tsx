@@ -1,8 +1,8 @@
 import React from 'react';
 import { Alert, VStack, Text } from 'native-base';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import { IIconTypes } from '../../../utils/types';
+import { THEME_CONFIG } from '@config/appConfig';
+import { IIconTypes } from '@utils/types';
 
 interface IModalAlertComponentProps {
     status: 'info' | 'warning' | 'success' | 'error';

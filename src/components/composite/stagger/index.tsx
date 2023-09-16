@@ -2,7 +2,7 @@ import { Icon } from '@rneui/themed';
 import { Box, HStack, IBoxProps, IconButton, Stagger, useDisclose } from 'native-base';
 import { ColorType } from 'native-base/lib/typescript/components/types';
 import React from 'react';
-import { IIconTypes } from '../../../utils/types';
+import { IIconTypes } from '@utils/types';
 
 export interface IStaggerButtonComponentProps extends IBoxProps {
     buttons: {

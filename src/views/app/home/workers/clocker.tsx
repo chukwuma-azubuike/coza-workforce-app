@@ -7,19 +7,19 @@ import ClockStatistics from './clock-statistics';
 import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Dimensions } from 'react-native';
-import useRole from '../../../../hooks/role';
-import If from '../../../../components/composite/if-container';
+import useRole from '@hooks/role';
+import If from '@components/composite/if-container';
 import {
     useGetDepartmentAttendanceReportQuery,
     useGetLeadersAttendanceReportQuery,
     useGetWorkersAttendanceReportQuery,
-} from '../../../../store/services/attendance';
+} from '@store/services/attendance';
 import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
-import Loading from '../../../../components/atoms/loading';
-import { useGetLatestServiceQuery } from '../../../../store/services/services';
-import useScreenFocus from '../../../../hooks/focus';
-import { useGetCampusTicketReportQuery } from '../../../../store/services/tickets';
-import ErrorBoundary from '../../../../components/composite/error-boundary';
+import Loading from '@components/atoms/loading';
+import { useGetLatestServiceQuery } from '@store/services/services';
+import useScreenFocus from '@hooks/focus';
+import { useGetCampusTicketReportQuery } from '@store/services/tickets';
+import ErrorBoundary from '@components/composite/error-boundary';
 
 interface IClockerProps {
     isInRange: boolean;

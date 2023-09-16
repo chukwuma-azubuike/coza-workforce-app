@@ -4,7 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import StepIndicator from 'react-native-step-indicator';
 import { StepIndicatorStyles } from 'react-native-step-indicator/lib/typescript/src/types';
 import Swiper from 'react-native-swiper';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 

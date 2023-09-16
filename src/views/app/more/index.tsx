@@ -1,50 +1,65 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { Box, HStack, List, Text, VStack } from 'native-base';
-import { AppRoutes, IAppRoute } from '../../../config/navigation';
+import { AppRoutes, IAppRoute } from '@config/navigation';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TouchableOpacity } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
-import useRole from '../../../hooks/role';
-import { useCustomBackNavigation } from '../../../hooks/navigation';
+import { THEME_CONFIG } from '@config/appConfig';
+import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
+import { useCustomBackNavigation } from '@hooks/navigation';
+import { useGetUserByIdQuery } from '@store/services/account';
+import useScreenFocus from '@hooks/focus';
 
 const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
+    const {
+        user: {
+            userId,
+            role: { name: roleName },
+            department: { departmentName },
+        },
+        isSuperAdmin,
+        isCampusPastor,
+        isCGWCApproved,
+    } = useRole();
 
-    const { isGlobalPastor, isHOD, isAHOD, isQC, isSuperAdmin, isCampusPastor } = useRole();
-
-    const routeFilters = ['Profile', 'Notifications'];
-
-    const roleFilterArray = [
-        { role: isQC, routes: ['Service management'] },
-        { role: isCampusPastor, routes: ['Service management'] },
-        { role: isAHOD || isHOD, routes: ['Manual clock in', 'Service management', 'Export Data'] },
-        { role: isGlobalPastor, routes: ['Manual clock in', 'Service management'] },
-        { role: (isHOD && !isQC) || (isAHOD && !isQC), routes: ['Manual clock in', 'Service management'] },
-    ];
-
-    const assertFilterRole = React.useMemo(() => roleFilterArray.find(filter => filter.role), [roleFilterArray]);
+    const { refetch, isLoading } = useGetUserByIdQuery(userId);
+    useScreenFocus({
+        onFocus: refetch,
+    });
 
     const filteredRoutes = React.useMemo(
         () =>
-            AppRoutes.filter(
-                route =>
-                    !route.inMenuBar &&
-                    !routeFilters.includes(route.name) &&
-                    !(assertFilterRole?.role && assertFilterRole.routes.includes(route.name))
-            ),
-        [AppRoutes]
+            AppRoutes.filter(route => {
+                if (!route.inMore) {
+                    return;
+                }
+                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGWC') {
+                    return;
+                }
+                if (!route.users?.length) {
+                    return route;
+                }
+                const rolesAndDepartments = route.users;
+                if (
+                    rolesAndDepartments.includes(roleName as ROLES) ||
+                    rolesAndDepartments.includes(departmentName as DEPARTMENTS)
+                ) {
+                    return route;
+                }
+            }),
+        [AppRoutes, isCGWCApproved, isSuperAdmin, roleName, departmentName]
     );
 
     useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper>
+        <ViewWrapper scroll pt={4} refreshing={isLoading} onRefresh={refetch}>
             <VStack>
                 <List mx={4} borderWidth={0}>
-                    {filteredRoutes.map((route, idx) => (
+                    {filteredRoutes?.map((route, idx) => (
                         <List.Item
                             mb={2}
                             py={4}

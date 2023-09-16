@@ -16,16 +16,12 @@ import {
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'ticket';
-
 type ITicketResponse = IDefaultResponse<ITicket>;
-
 type ITicketListResponse = IDefaultResponse<ITicket[]>;
 
 export const ticketServiceSlice = createApi({
     reducerPath: SERVICE_URL,
-
     baseQuery: fetchUtils.baseQuery,
-
     refetchOnReconnect: true,
 
     endpoints: endpoint => ({

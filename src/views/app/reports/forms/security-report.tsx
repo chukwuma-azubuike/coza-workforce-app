@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
-import useModal from '../../../../hooks/modal/useModal';
-import { ISecurityReportPayload } from '../../../../store/types';
-import { useCreateSecurityReportMutation } from '../../../../store/services/reports';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
+import useModal from '@hooks/modal/useModal';
+import { ISecurityReportPayload } from '@store/types';
+import { useCreateSecurityReportMutation } from '@store/services/reports';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack, HStack, Text, Divider, WarningOutlineIcon } from 'native-base';
-import ButtonComponent from '../../../../components/atoms/button';
+import ButtonComponent from '@components/atoms/button';
 import moment from 'moment';
-import TextAreaComponent from '../../../../components/atoms/text-area';
-import { InputComponent } from '../../../../components/atoms/input';
+import TextAreaComponent from '@components/atoms/text-area';
+import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import If from '../../../../components/composite/if-container';
-import useRole from '../../../../hooks/role';
+import If from '@components/composite/if-container';
+import useRole from '@hooks/role';
 import { Platform } from 'react-native';
 
 const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
@@ -81,12 +81,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const isIOS = Platform.OS === 'ios';
 
     return (
-        <Formik<ISecurityReportPayload>
-            validateOnChange
-            enableReinitialize
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
+        <Formik<ISecurityReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10} mt={4} px={4}>

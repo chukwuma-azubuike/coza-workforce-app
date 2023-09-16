@@ -1,5 +1,5 @@
 import React from 'react';
-import Utils from '../../utils';
+import Utils from '@utils/index';
 
 const useUserSession = () => {
     const [isLoggedIn, setIsLoggedIn] = React.useState<boolean>();

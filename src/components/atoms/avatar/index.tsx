@@ -19,6 +19,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
             <Avatar
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.100' }}
+                _text={{ _light: { color: 'gray.700' } }}
                 source={{
                     uri: isLoading ? undefined : imageUrl,
                 }}

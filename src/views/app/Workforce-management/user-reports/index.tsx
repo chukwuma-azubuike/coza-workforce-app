@@ -1,24 +1,24 @@
 import React from 'react';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
 import { UserReportContext, UserReportProvider } from './context';
 import { TouchableOpacity } from 'react-native';
-import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
-import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
-import { IAttendance, ICampus, IService, IUserReportType } from '../../../../store/types';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import { IAttendance, ICampus, IService, IUserReportType } from '@store/types';
 import moment from 'moment';
-import Utils from '../../../../utils';
-import useMediaQuery from '../../../../hooks/media-query';
-import If from '../../../../components/composite/if-container';
-import AvatarComponent from '../../../../components/atoms/avatar';
-import { AVATAR_FALLBACK_URL } from '../../../../constants';
-import { useGetCampusesQuery } from '../../../../store/services/campus';
+import Utils from '@utils/index';
+import useMediaQuery from '@hooks/media-query';
+import If from '@components/composite/if-container';
+import AvatarComponent from '@components/atoms/avatar';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import { useGetCampusesQuery } from '@store/services/campus';
 import UserReportDetails from './UserReportDetails';
-import { useGetAttendanceQuery } from '../../../../store/services/attendance';
-import { useGetTicketsQuery } from '../../../../store/services/tickets';
+import { useGetAttendanceQuery } from '@store/services/attendance';
+import { useGetTicketsQuery } from '@store/services/tickets';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useScreenFocus from '../../../../hooks/focus';
+import useScreenFocus from '@hooks/focus';
 
 const userReportColumns: IFlatListColumn[] = [
     {

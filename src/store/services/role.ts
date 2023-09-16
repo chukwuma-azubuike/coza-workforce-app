@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { IRole, IDefaultResponse } from '../types';
+import { IRole, IDefaultResponse, IAssignSecondaryRole, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'role';

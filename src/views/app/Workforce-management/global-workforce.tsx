@@ -2,17 +2,17 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Center, Heading, Stack, Text } from 'native-base';
 import React from 'react';
-import { SmallCardComponent } from '../../../components/composite/card';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import If from '../../../components/composite/if-container';
-import StaggerButtonComponent from '../../../components/composite/stagger';
-import { FlatListSkeleton } from '../../../components/layout/skeleton';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { useCustomBackNavigation } from '../../../hooks/navigation';
-import useRole from '../../../hooks/role';
-import { useGetGlobalWorkForceSummaryQuery } from '../../../store/services/account';
-import Utils from '../../../utils';
-import useScreenFocus from '../../../hooks/focus';
+import { SmallCardComponent } from '@components/composite/card';
+import ErrorBoundary from '@components/composite/error-boundary';
+import If from '@components/composite/if-container';
+import StaggerButtonComponent from '@components/composite/stagger';
+import { FlatListSkeleton } from '@components/layout/skeleton';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { useCustomBackNavigation } from '@hooks/navigation';
+import useRole from '@hooks/role';
+import { useGetGlobalWorkForceSummaryQuery } from '@store/services/account';
+import Utils from '@utils';
+import useScreenFocus from '@hooks/focus';
 
 const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation: { navigate } }) => {
     const handlePress = (elm: any) => {
