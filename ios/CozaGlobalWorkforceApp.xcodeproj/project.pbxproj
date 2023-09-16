@@ -13,8 +13,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		663CCE2FFFA5CD6DA42F217D /* Pods_CozaGlobalWorkforceApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90ECFE3BA24979F153486143 /* Pods_CozaGlobalWorkforceApp.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		CD254ED42AADE2120055CE9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD254ED32AADE2120055CE9B /* GoogleService-Info.plist */; };
-		CD254ED52AADE2120055CE9B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD254ED32AADE2120055CE9B /* GoogleService-Info.plist */; };
+		CD762C402AB6362400383935 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD762C3F2AB6362400383935 /* GoogleService-Info.plist */; };
+		CD762C412AB6362400383935 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CD762C3F2AB6362400383935 /* GoogleService-Info.plist */; };
 		F8983105686524179508C035 /* Pods_CozaGlobalWorkforceApp_CozaGlobalWorkforceAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52195C7F03FB0B9B48379261 /* Pods_CozaGlobalWorkforceApp_CozaGlobalWorkforceAppTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -44,7 +44,8 @@
 		5CD125AE283D87E39C75E8F4 /* Pods-CozaGlobalWorkforceApp-CozaGlobalWorkforceAppTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CozaGlobalWorkforceApp-CozaGlobalWorkforceAppTests.debug.xcconfig"; path = "Target Support Files/Pods-CozaGlobalWorkforceApp-CozaGlobalWorkforceAppTests/Pods-CozaGlobalWorkforceApp-CozaGlobalWorkforceAppTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = CozaGlobalWorkforceApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		90ECFE3BA24979F153486143 /* Pods_CozaGlobalWorkforceApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CozaGlobalWorkforceApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CD254ED32AADE2120055CE9B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CD762C3E2AB6320300383935 /* CozaGlobalWorkforceApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = CozaGlobalWorkforceApp.entitlements; path = CozaGlobalWorkforceApp/CozaGlobalWorkforceApp.entitlements; sourceTree = "<group>"; };
+		CD762C3F2AB6362400383935 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CDD3E1E02AB4BCB800C7735D /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Lottie.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDD3E1E22AB4C34600C7735D /* Lottie.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Lottie.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CDD3E1E62AB4C4A600C7735D /* lottie_react_native.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = lottie_react_native.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -95,6 +96,7 @@
 		13B07FAE1A68108700A75B9A /* CozaGlobalWorkforceApp */ = {
 			isa = PBXGroup;
 			children = (
+				CD762C3E2AB6320300383935 /* CozaGlobalWorkforceApp.entitlements */,
 				FD39E3542AB61491002C4D39 /* CozaGlobalWorkforceAppDebug.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -131,7 +133,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				CD254ED32AADE2120055CE9B /* GoogleService-Info.plist */,
+				CD762C3F2AB6362400383935 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* CozaGlobalWorkforceApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* CozaGlobalWorkforceAppTests */,
@@ -253,7 +255,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD254ED52AADE2120055CE9B /* GoogleService-Info.plist in Resources */,
+				CD762C412AB6362400383935 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,7 +265,7 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				CD254ED42AADE2120055CE9B /* GoogleService-Info.plist in Resources */,
+				CD762C402AB6362400383935 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,6 +584,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = CozaGlobalWorkforceApp/CozaGlobalWorkforceApp.entitlements;
 				CURRENT_PROJECT_VERSION = 25;
 				DEVELOPMENT_TEAM = 499THBRLGD;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
