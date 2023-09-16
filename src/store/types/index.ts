@@ -1,5 +1,4 @@
-import { IReportFormProps } from '../../views/app/reports/forms/types';
-import store from '..';
+import { IReportFormProps } from '@views/app/reports/forms/types';
 
 // General types
 export interface ILog {
@@ -14,6 +13,28 @@ export enum CREATE_SERVICE_ENUM {
     LAT = 9.005452823370131,
     RANGE_TO_CLOCKIN = 100,
 }
+
+export const SERVICE_TAGS = [
+    { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },
+    { id: 'COZA_TUESDAYS', value: 'COZA Tuesdays' },
+    { id: 'COZA_WEDNESDAYS', value: 'COZA Wednesdays' },
+    { id: 'DPE', value: 'DPE' },
+    { id: 'HOME_TRAINING', value: 'Home Training' },
+    { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
+    { id: '12DG', value: '12DG' },
+    { id: '7DG', value: '7DG' },
+];
+
+export const CGWC_SESSION_TAGS = [
+    { id: 'CGWC_MORNING_SESSION', value: 'Morning Session' },
+    { id: 'CGWC_EVENING_SESSION', value: 'Evening Session' },
+    { id: 'CGWC_AFTERNOON_SESSION', value: 'Afternoon Session' },
+    { id: 'CGWC_HANGOUT_SESSION', value: 'Hangout Session' },
+    { id: 'CGWC_DINNER_SESSION', value: 'Dinner Session' },
+    { id: 'CGWC_LADIES_SESSION', value: 'Ladies Session' },
+    { id: 'CGWC_EVANGELISM_SESSION', value: 'Evangelism Session' },
+    { id: 'CGWC_BREAKOUT_SESSION', value: 'Breakout Session' },
+];
 
 export enum IAttendanceStatus {
     LATE = 'LATE',
@@ -40,6 +61,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
+    CGWCId?: string;
     limit?: number;
     page?: number;
 }
@@ -107,6 +129,7 @@ export interface IUser {
     lastName: string;
     maritalStatus: string;
     nextOfKin: string;
+    isCGWCApproved?: boolean;
     nextOfKinPhoneNo: string;
     occupation: string;
     phoneNumber: string;
@@ -129,7 +152,7 @@ export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD' | 'UNAPPROVED';
 
 export interface ICreateUserPayload {
     firstName: string;
@@ -171,7 +194,9 @@ export interface IAttendance extends ILog {
     createdAt: string;
     updatedAt: string;
     user: IUser;
+    score: number;
     service: IService;
+    CGWCId?: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
@@ -189,6 +214,7 @@ export interface ITicket extends ILog {
     remarks: string;
     issuedBy?: string;
     createdAt: string;
+    CGWCId?: string;
     isRetracted: boolean;
     ticketSummary: string;
     status: ITicketStatus;
@@ -200,6 +226,7 @@ export interface ITicket extends ILog {
     departmentName: string;
     contestReplyComment: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
+    // screen: { name: string; value: string } | undefined;
 }
 
 export interface ITicketUpdatePayload {
@@ -239,12 +266,21 @@ export interface ICreateServicePayload {
     serviceType: string;
     serviceName: string;
     serviceTag: string;
-    startTime: string | Date;
-    startDate: string | Date;
+    serviceTime: string | Date;
+    serviceDate: string | Date;
     endTime: string | Date;
+    isCGWC?: boolean;
+    CGWCId?: string;
     clockinTime: string | Date;
     leaderLateTime: string | Date;
     workerLateTime: string | Date;
+}
+
+export interface IAssignGroupHead {
+    department: string;
+    campus: string;
+    worker: string;
+    role: string;
 }
 
 export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED';
@@ -252,6 +288,7 @@ export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED
 // Permissions
 export interface IPermission extends ILog {
     _id: string;
+    CGWCId?: string;
     startDate: string;
     endDate: string;
     dateCreated: string;
@@ -344,6 +381,16 @@ export interface ICreateCampusPayload {
     dateOfBirth: string;
 }
 
+export interface IGHCampus extends ILog {
+    userId: string;
+    email: string;
+    campuses: {
+        id: string;
+        campusName: string;
+        departmentCount: number;
+    }[];
+}
+
 //Role
 export interface IRole {
     _id: string;
@@ -351,6 +398,38 @@ export interface IRole {
     description: string;
     createdAt: string;
     __v: number;
+}
+
+export interface IAssignSecondaryRole {
+    departments: {
+        campusId: string;
+        departmentId: string;
+    }[];
+    email?: string;
+    userId: string;
+    roleId: string;
+}
+
+// Department
+export interface IDepartment {
+    _id: string;
+    departmentName: string;
+    campusId: string;
+    description: string;
+    createdAt: string;
+    __v: number;
+}
+
+export interface IGHDepartment {
+    userId: string;
+    email: string;
+    campusId: string;
+    campusName: string;
+    campuses: {
+        id: string;
+        departmentName: string;
+        userCount: number;
+    }[];
 }
 
 // Services
@@ -371,6 +450,8 @@ export interface IService {
     serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
+    CGWCId?: string;
+    isCGWC?: boolean;
     isGlobalService: boolean;
     __v: number;
     campus: {
@@ -387,6 +468,54 @@ export interface IService {
         updatedAt: string;
     };
 }
+
+export interface ICGWCParams {
+    isCGWC: boolean;
+    CGWCId: string;
+}
+
+export interface ICGWC {
+    _id: string;
+    name: string;
+    startDate: string;
+    endDate: string;
+    createdAt: string;
+}
+
+export interface ICGWCPayload {
+    name: string;
+    endDate: number;
+    startDate: number;
+}
+
+export interface ICGWCInstantMessage {
+    _id: string;
+    title: string;
+    CGWCId: string;
+    message: string;
+    status: IStatus;
+    imageUrl: string;
+    createdAt: string;
+    messageLink: string;
+}
+
+export interface ICGWCFeedbackPayload {
+    userId: string;
+    CGWCId: string;
+    rating: number;
+    comment: string;
+}
+export interface ICGWCFeedback extends ICGWCFeedbackPayload {
+    _id: string;
+}
+
+export interface ICGWCInstantMessagePayload {
+    title: string;
+    CGWCId: string;
+    message: string;
+    status: IStatus;
+    messageLink: string;
+}
 export interface ICreateService {
     _id?: string;
     name: string;
@@ -394,6 +523,8 @@ export interface ICreateService {
         long: number;
         lat: number;
     };
+    CGWCId?: string;
+    isCGWC?: boolean;
     tag: string[];
     serviceTime: number | null;
     clockInStartTime: number | null;

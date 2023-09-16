@@ -2,14 +2,14 @@ import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
-import StatusTag from '../../../components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
-import useRole from '../../../hooks/role';
-import { useGetUsersQuery } from '../../../store/services/account';
-import { IUser } from '../../../store/types';
-import Utils from '../../../utils';
+import AvatarComponent from '@components/atoms/avatar';
+import StatusTag from '@components/atoms/status-tag';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import { AVATAR_FALLBACK_URL } from '@constants';
+import useRole from '@hooks/role';
+import { useGetUsersQuery } from '@store/services/account';
+import { IUser } from '@store/types';
+import Utils from '@utils';
 
 const UserListRow: React.FC<IUser> = user => {
     const navigation = useNavigation();

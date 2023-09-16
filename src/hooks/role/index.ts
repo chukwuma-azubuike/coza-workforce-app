@@ -1,7 +1,7 @@
 import React from 'react';
-import { useAppSelector } from '../../store/hooks';
-import { useGetRolesQuery } from '../../store/services/role';
-import { selectCurrentUser } from '../../store/services/users';
+import { useAppSelector } from '@store/hooks';
+import { useGetRolesQuery } from '@store/services/role';
+import { selectCurrentUser } from '@store/services/users';
 import { useAuth } from '../auth';
 
 export enum ROLES {
@@ -9,6 +9,7 @@ export enum ROLES {
     AHOD = 'AHOD',
     admin = 'Admin',
     worker = 'Worker',
+    groupHead = 'Group Head',
     superAdmin = 'Super Admin',
     globalAdmin = 'Global Admin',
     campusPastor = 'Campus Pastor',
@@ -21,6 +22,7 @@ export const roles = {
     AHOD: 'AHOD',
     Admin: 'admin',
     Worker: 'worker',
+    'Group Head': 'groupHead',
     'Super Admin': 'superAdmin',
     'Global Admin': 'globalAdmin',
     'Campus Pastor': 'campusPastor',
@@ -88,8 +90,12 @@ const useRole = () => {
     const roleHeirarchy = (roleName: keyof typeof roles, departmentName: keyof typeof departments) => {
         const roleKey = roles[roleName] as keyof typeof ROLE_HEIRARCHY;
 
-        if (!roleKey) return -1;
-        if (!ROLE_HEIRARCHY[roleKey]) return -1;
+        if (!roleKey) {
+            return -1;
+        }
+        if (!ROLE_HEIRARCHY[roleKey]) {
+            return -1;
+        }
 
         // if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC) {
         //     return ROLE_HEIRARCHY.qcHOD;
@@ -127,6 +133,9 @@ const useRole = () => {
             userId: currentUser.userId || currentUser._id,
         },
 
+        //Status
+        isCGWCApproved: currentUser.isCGWCApproved,
+
         //Role IDs
         leaderRoleIds,
 
@@ -135,6 +144,7 @@ const useRole = () => {
         isAHOD: roleName === ROLES.HOD,
         isAdmin: roleName === ROLES.admin,
         isWorker: roleName === ROLES.worker,
+        isGroupHead: roleName === ROLES.groupHead,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,
         isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,

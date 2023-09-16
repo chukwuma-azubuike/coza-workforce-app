@@ -1,6 +1,6 @@
 import { VStack } from 'native-base';
 import React from 'react';
-import { IService } from '../../../../store/types';
+import { IService } from '@store/types';
 import WorkForceSummary from './workforce-summary';
 
 interface GSPViewProps {

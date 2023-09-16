@@ -1,30 +1,27 @@
 import React from 'react';
 import { Box, FormControl, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import useModal from '../../../hooks/modal/useModal';
-import { ParamListBase, useFocusEffect, useIsFocused } from '@react-navigation/native';
-import useRole from '../../../hooks/role';
-import { useGetDepartmentsByCampusIdQuery } from '../../../store/services/department';
-import { useGetUsersByDepartmentIdQuery } from '../../../store/services/account';
-import { ICampus, ICreateTicketPayload, IDepartment } from '../../../store/types';
-import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '../../../store/services/tickets';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import TextAreaComponent from '@components/atoms/text-area';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import useModal from '@hooks/modal/useModal';
+import { ParamListBase } from '@react-navigation/native';
+import useRole from '@hooks/role';
+import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
+import { useGetUsersByDepartmentIdQuery } from '@store/services/account';
+import { ICampus, ICreateTicketPayload, IDepartment } from '@store/types';
+import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '@store/services/tickets';
 import { Formik, FormikConfig } from 'formik';
-import {
-    CreateCampusTicketSchema,
-    CreateDepartmentalTicketSchema,
-    CreateIndividualTicketSchema,
-} from '../../../utils/schemas';
+import { CreateCampusTicketSchema, CreateDepartmentalTicketSchema, CreateIndividualTicketSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import Utils from '../../../utils';
-import If from '../../../components/composite/if-container';
+import Utils from '@utils/index';
+import If from '@components/composite/if-container';
 import { ITicketType } from '.';
-import { useGetLatestServiceQuery } from '../../../store/services/services';
-import { useGetCampusesQuery } from '../../../store/services/campus';
+import { useGetLatestServiceQuery } from '@store/services/services';
+import { useGetCampusesQuery } from '@store/services/campus';
+import useScreenFocus from '@hooks/focus';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };
@@ -58,10 +55,13 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { data: latestService } = useGetLatestServiceQuery(campus?._id as string, {
         refetchOnMountOrArgChange: true,
     });
-
     const { data: ticketCategories } = useGetTicketCategoriesQuery();
-
     const [issueTicket, { data, isLoading, error, reset }] = useCreateTicketMutation();
+
+    const sortedCampusDepartments = React.useMemo(
+        () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
+        [campusDepartmentsLoading, campusDepartmentsIsFetching]
+    );
 
     const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = async (values, { resetForm }) => {
         if (latestService) {
@@ -80,7 +80,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     duration: 3,
                 });
                 navigate('Tickets', data);
-                resetForm(INITIAL_VALUES);
+                resetForm({ values: INITIAL_VALUES });
                 setDepartmentId('');
                 reset();
             }
@@ -128,23 +128,19 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         issuedBy: '',
     } as ICreateTicketPayload;
 
-    const isScreenFocused = useIsFocused();
-
-    useFocusEffect(
-        React.useCallback(() => {
+    useScreenFocus({
+        onFocus: () => {
             setOptions({ title: `${Utils.capitalizeFirstChar(type)} Ticket` });
             setDepartmentId('');
-            return () => {};
-        }, [isScreenFocused])
-    );
+        },
+    });
 
     return (
-        <ViewWrapper scroll noPadding>
+        <ViewWrapper scroll noPadding mt={4}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateTicketPayload>
                         validateOnChange
-                        enableReinitialize
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
                         validationSchema={
@@ -196,18 +192,14 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             placeholder="Choose department"
                                             onValueChange={handleDepartment}
                                         >
-                                            {Utils.sortStringAscending(campusDepartments, 'departmentName')?.map(
-                                                (department, index) => (
-                                                    <SelectItemComponent
-                                                        value={department._id}
-                                                        key={`department-${index}`}
-                                                        label={department.departmentName}
-                                                        isLoading={
-                                                            campusDepartmentsLoading || campusDepartmentsIsFetching
-                                                        }
-                                                    />
-                                                )
-                                            )}
+                                            {sortedCampusDepartments?.map((department, index) => (
+                                                <SelectItemComponent
+                                                    value={department._id}
+                                                    key={`department-${index}`}
+                                                    label={department.departmentName}
+                                                    isLoading={campusDepartmentsLoading || campusDepartmentsIsFetching}
+                                                />
+                                            ))}
                                         </SelectComponent>
                                         <FormControl.ErrorMessage
                                             fontSize="2xl"

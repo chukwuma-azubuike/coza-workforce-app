@@ -5,8 +5,8 @@ import RegisterStepThree from './register-step-three';
 import RegisterStepTwo from './register-step-two';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import Stepper, { IRegisterPagesProps } from '../../../components/composite/stepper';
-import { IRegisterPayload } from '../../../store/types';
+import Stepper, { IRegisterPagesProps } from '@components/composite/stepper';
+import { IRegisterPayload } from '@store/types';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },

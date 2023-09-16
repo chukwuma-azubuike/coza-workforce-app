@@ -117,6 +117,17 @@ export const CreateServiceSchema = Yup.object().shape({
     serviceTag: Yup.string().required('You are required to select the service tag.'),
     serviceType: Yup.string().required('You are required to select the service type.'),
     serviceName: Yup.string().required('Service name is required.'),
+    serviceDate: Yup.date().required('Field required.'),
+    serviceTime: Yup.date().required('Field required'),
+    clockinTime: Yup.date().required('Field required'),
+    endTime: Yup.date().required('Field required'),
+    leaderLateTime: Yup.date().required('Field required'),
+    workerLateTime: Yup.date().required('Field required'),
+});
+
+export const AssignGroupHeadSchema = Yup.object().shape({
+    worker: Yup.string().required('You are required to select a worker.'),
+    role: Yup.string().required('You are required to select a role.'),
 });
 
 export const CreateDepartmentalTicketSchema = Yup.object().shape({
@@ -203,4 +214,25 @@ export const CreateCampusSchema = Yup.object().shape({
         long: Yup.number().required('Longitude is required').notOneOf([0], 'Please input a valid longitude'),
         lat: Yup.number().required('Latitude is required').notOneOf([0], 'Please input a valid latitude'),
     }),
+});
+
+// CGWC forms
+
+export const CreateCGWCSchema = Yup.object().shape({
+    name: Yup.string().required('You are required to enter a name'),
+    startDate: Yup.string().required('A start date is required'),
+    endDate: Yup.string().required('An end date is required'),
+});
+
+export const CreateCGWCInstantMessageSchema = Yup.object().shape({
+    title: Yup.string().required('You are required to enter a title'),
+    message: Yup.string().required('You are required to enter a message'),
+    messageLink: Yup.string(),
+});
+
+export const SubmitCGWCFeedbackSchema = Yup.object().shape({
+    comment: Yup.string().required('You are required to enter a comment'),
+    rating: Yup.number()
+        .required('You are required to give a rating')
+        .notOneOf([0], 'You are required to give a rating'),
 });

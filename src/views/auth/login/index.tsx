@@ -1,22 +1,22 @@
 import React from 'react';
 import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
+import { InputComponent } from '@components/atoms/input';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { useLoginMutation } from '../../../store/services/account';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { useLoginMutation } from '@store/services/account';
 import { Formik } from 'formik';
-import { LoginSchema } from '../../../utils/schemas';
-import { ILoginPayload } from '../../../store/types';
-import useModal from '../../../hooks/modal/useModal';
+import { LoginSchema } from '@utils/schemas';
+import { ILoginPayload } from '@store/types';
+import useModal from '@hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
-import Utils from '../../../utils';
-import { userActionTypes } from '../../../store/services/users';
-import { versionActiontypes } from '../../../store/services/version';
-import { useAppDispatch } from '../../../store/hooks';
-import Logo from '../../../components/atoms/logo';
+import Utils from '@utils/index';
+import { userActionTypes } from '@store/services/users';
+import { versionActiontypes } from '@store/services/version';
+import { useAppDispatch } from '@store/hooks';
+import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
@@ -63,7 +63,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     return (
         <ViewWrapper>
             <Box w="100%" h="full" justifyContent="space-between" pb={4}>
-                <VStack space="lg" pt={10} px={4}>
+                <VStack space="lg" pt={20} px={4}>
                     <Center>
                         <Logo />
                         <Heading mt={4}>Welcome back</Heading>
@@ -71,7 +71,6 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                     <Box alignItems="center" w="100%" mb={3}>
                         <Formik<ILoginPayload>
                             validateOnChange
-                            enableReinitialize
                             onSubmit={onSubmit}
                             initialValues={INITIAL_VALUES}
                             validationSchema={LoginSchema}

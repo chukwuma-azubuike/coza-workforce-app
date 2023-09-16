@@ -3,8 +3,8 @@ import { Center, Text } from 'native-base';
 const LottieView = require('lottie-react-native');
 import If from '../../composite/if-container';
 import ButtonComponent from '../button';
-import useRole from '../../../hooks/role';
-import useAppColorMode from '../../../hooks/theme/colorMode';
+import useRole from '@hooks/role';
+import useAppColorMode from '@hooks/theme/colorMode';
 
 const Empty: React.FC<{
     message?: string;
@@ -26,9 +26,7 @@ const Empty: React.FC<{
 
     const { isDarkMode } = useAppColorMode();
 
-    const lottieFile = isDarkMode
-        ? require('../../../assets/json/empty-dark.json')
-        : require('../../../assets/json/empty.json');
+    const lottieFile = isDarkMode ? require('@assets/json/empty-dark.json') : require('@assets/json/empty.json');
 
     return (
         <Center>

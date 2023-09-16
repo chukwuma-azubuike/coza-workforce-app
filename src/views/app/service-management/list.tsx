@@ -3,13 +3,13 @@ import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
-import StatusTag from '../../../components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-// import useFetchMoreData from '../../../hooks/fetch-more-data';
-import useScreenFocus from '../../../hooks/focus';
-import { useGetServicesQuery } from '../../../store/services/services';
-import { IService } from '../../../store/types';
-import Utils from '../../../utils';
+import StatusTag from '@components/atoms/status-tag';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+// import useFetchMoreData from '@hooks/fetch-more-data';
+import useScreenFocus from '@hooks/focus';
+import { useGetServicesQuery } from '@store/services/services';
+import { IService } from '@store/types';
+import Utils from '@utils/index';
 
 const ServiceListRow: React.FC<IService> = service => {
     return (

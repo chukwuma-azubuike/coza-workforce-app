@@ -1,7 +1,7 @@
 import React from 'react';
-import { ICampusCoordinates } from '../../store/services/attendance';
-import { useGetCampusesQuery } from '../../store/services/campus';
-import CampusTree from '../../utils/campusTree';
+import { ICampusCoordinates } from '@store/services/attendance';
+import { useGetCampusesQuery } from '@store/services/campus';
+import CampusTree from '@utils/campusTree';
 
 const useClosestCampus = (deviceCoordinates: ICampusCoordinates) => {
     const { data } = useGetCampusesQuery();

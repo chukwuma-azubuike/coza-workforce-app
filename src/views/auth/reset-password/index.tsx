@@ -1,19 +1,19 @@
 import React from 'react';
 import { Box, FormControl, Heading, HStack, Stack, Text, VStack } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import { InputComponent } from '@components/atoms/input';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Formik } from 'formik';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ResetPasswordSchema } from '../../../utils/schemas';
+import { ResetPasswordSchema } from '@utils/schemas';
 import { TouchableRipple } from 'react-native-paper';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import SupportLink from '../support-link';
 import { IRegisterFormProps } from '../register/types';
-import { IResetPasswordPayload, useResetPasswordMutation } from '../../../store/services/account';
-import useModal from '../../../hooks/modal/useModal';
+import { IResetPasswordPayload, useResetPasswordMutation } from '@store/services/account';
+import useModal from '@hooks/modal/useModal';
 
 const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -58,13 +58,12 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     return (
         <ViewWrapper>
             <Box w="100%" h="full" justifyContent="space-between" pb={4}>
-                <VStack space={6} pb={5} px={4} pt={10} alignItems="center" justifyContent="space-around">
+                <VStack space={6} pb={5} px={4} pt={20} alignItems="center" justifyContent="space-around">
                     {/* <Logo /> */}
                     <Heading>Reset password</Heading>
                     <Box alignItems="center" w="100%">
                         <Formik<{ email: string; password: string }>
                             validateOnChange
-                            enableReinitialize
                             onSubmit={onSubmit}
                             validationSchema={ResetPasswordSchema}
                             initialValues={initialValues as unknown as IResetPasswordPayload}

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { AuthRoutes } from '../../config/navigation';
+import { AuthRoutes } from '@config/navigation';
 const AuthStack = createNativeStackNavigator();
 
 const AuthRoute: React.FC = () => {
