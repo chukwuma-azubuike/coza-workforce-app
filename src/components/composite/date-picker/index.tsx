@@ -1,6 +1,5 @@
 import React from 'react';
-import { FormControl, HStack, Text, VStack } from 'native-base';
-import { Swipeable } from 'react-native-gesture-handler';
+import { FormControl, VStack } from 'native-base';
 import moment from 'moment';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -8,51 +7,7 @@ import { InputComponent } from '../../atoms/input';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Platform } from 'react-native';
 import If from '../if-container';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { InterfaceFormControlProps } from 'native-base/lib/typescript/components/composites/FormControl/types';
-
-const MonthPicker = ({ today }: { today?: boolean }) => {
-    const handleSwipe = (direction: 'left' | 'right', swipeable: Swipeable) => {
-        switch (direction) {
-            case 'left':
-                break;
-            case 'right':
-            default:
-                break;
-        }
-    };
-
-    const { isDarkMode } = useAppColorMode();
-
-    return (
-        <Swipeable
-            onSwipeableOpen={handleSwipe}
-            containerStyle={{
-                padding: 20,
-                alignContent: 'center',
-                justifyContent: 'center',
-                borderColor: THEME_CONFIG.veryLightGray,
-            }}
-        >
-            <HStack justifyContent="space-around" alignItems="center">
-                {/* <Icon color={THEME_CONFIG.lightGray} name="chevron-small-left" type="entypo" size={26} /> */}
-                <HStack w="full" space={2} justifyContent="center" alignItems="center">
-                    <Icon
-                        size={20}
-                        name="calendar"
-                        type="antdesign"
-                        color={isDarkMode ? THEME_CONFIG.primaryLight : THEME_CONFIG.primary}
-                    />
-                    <Text bold fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.600' }}>
-                        {today ? moment().format('Do MMMM, y') : moment().format('MMMM y')}
-                    </Text>
-                </HStack>
-                {/* <Icon color={THEME_CONFIG.lightGray} name="chevron-small-right" type="entypo" size={26} /> */}
-            </HStack>
-        </Swipeable>
-    );
-};
-
 interface IDateTimePickerProps {
     mode?: 'date' | 'time' | 'dateTime' | 'countdown' | 'dayMonth';
     label?: string;
@@ -147,4 +102,4 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = ({
     );
 };
 
-export { MonthPicker, DateTimePickerComponent };
+export { DateTimePickerComponent };

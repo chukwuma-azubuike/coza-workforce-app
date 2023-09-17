@@ -49,7 +49,6 @@ const TabRoutes: React.FC = () => {
             tabBar={props => <TabBar {...props} />}
             screenOptions={{
                 headerTitleAlign: 'center',
-                headerStyle: {},
             }}
             backBehavior="history"
         >

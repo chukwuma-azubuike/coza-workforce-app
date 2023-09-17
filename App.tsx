@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import * as Sentry from '@sentry/react-native';
-import { SENTRY_DNS } from '@env';
+// import * as Sentry from '@sentry/react-native';
+// import { SENTRY_DNS } from '@env';
 
 import { NativeBaseProvider } from 'native-base';
 import Views from './src/views';
@@ -18,13 +18,13 @@ import Loading from './src/components/atoms/loading';
 import { PersistGate } from 'redux-persist/integration/react';
 import { requestUserPermission } from '@utils/notificationPermission';
 
-Sentry.init({
-    dsn: SENTRY_DNS,
-    enableNative: false,
-    tracesSampleRate: 0.1,
-    attachScreenshot: true,
-    enableNativeCrashHandling: true,
-});
+// Sentry.init({
+//     dsn: SENTRY_DNS,
+//     enableNative: false,
+//     tracesSampleRate: 0.1,
+//     attachScreenshot: true,
+//     enableNativeCrashHandling: true,
+// });
 
 export interface IAppStateContext {
     isLoggedIn: boolean;
@@ -48,40 +48,36 @@ const App: React.FC<JSX.Element> = () => {
     requestUserPermission();
 
     return (
-        <Sentry.TouchEventBoundary>
-            <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-                <SafeAreaView style={{ flex: 1 }} edges={['right', 'bottom', 'left']}>
-                    <Provider store={store}>
-                        <NativeBaseProvider theme={extendedTheme}>
-                            <PersistGate loading={<Loading bootUp />} persistor={persistor}>
-                                <AppStateContext.Provider
-                                    value={
-                                        {
-                                            isLoggedIn,
-                                            setIsLoggedIn,
-                                        } as IAppStateContext
-                                    }
+        // <Sentry.TouchEventBoundary>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <SafeAreaView style={{ flex: 1 }} edges={['right', 'bottom', 'left']}>
+                <Provider store={store}>
+                    <NativeBaseProvider theme={extendedTheme}>
+                        <PersistGate loading={<Loading bootUp />} persistor={persistor}>
+                            <AppStateContext.Provider
+                                value={
+                                    {
+                                        isLoggedIn,
+                                        setIsLoggedIn,
+                                    } as IAppStateContext
+                                }
+                            >
+                                <ModalProvider
+                                    initialModalState={{
+                                        ...modalInitialState.modalState,
+                                        ...setModalState,
+                                    }}
                                 >
-                                    <ModalProvider
-                                        initialModalState={{
-                                            ...modalInitialState.modalState,
-                                            ...setModalState,
-                                        }}
-                                    >
-                                        {isLoggedIn !== undefined ? (
-                                            <Views isLoggedIn={isLoggedIn} />
-                                        ) : (
-                                            <Loading bootUp />
-                                        )}
-                                    </ModalProvider>
-                                </AppStateContext.Provider>
-                            </PersistGate>
-                        </NativeBaseProvider>
-                    </Provider>
-                </SafeAreaView>
-            </SafeAreaProvider>
-        </Sentry.TouchEventBoundary>
+                                    {isLoggedIn !== undefined ? <Views isLoggedIn={isLoggedIn} /> : <Loading bootUp />}
+                                </ModalProvider>
+                            </AppStateContext.Provider>
+                        </PersistGate>
+                    </NativeBaseProvider>
+                </Provider>
+            </SafeAreaView>
+        </SafeAreaProvider>
+        // </Sentry.TouchEventBoundary>
     );
 };
 
-export default Sentry.wrap(App);
+export default App;

@@ -415,7 +415,7 @@ PODS:
     - RNFBApp
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.12.1):
+  - RNGestureHandler (2.8.0):
     - React-Core
   - RNNotifee (5.7.0):
     - React-Core
@@ -753,7 +753,7 @@ SPEC CHECKSUMS:
   RNFBApp: a0bc818210d2c452461842f7a0a4e456c11ed831
   RNFBMessaging: 57ff90f2a60184838da1da7904dfee6b1ce99a20
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
+  RNGestureHandler: 62232ba8f562f7dea5ba1b3383494eb5bf97a4d3
   RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNPDF: 8526c7210ff375c29d2461c51945e2f5480f7b60
   RNPermissions: b7fa7b57aabdf1a67ebfa2acb41772d6cf0b9fcb

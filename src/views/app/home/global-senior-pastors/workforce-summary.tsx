@@ -127,7 +127,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                     </SelectComponent>
                 </FormControl>
             </HStack>
-            <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
+            <ViewWrapper mt={4} scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
                 <ListItem.Accordion
                     content={
                         <>
