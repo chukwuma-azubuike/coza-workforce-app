@@ -20,6 +20,7 @@ import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import { useGetCampusByIdQuery } from '@store/services/campus';
+import { Platform } from 'react-native';
 
 interface IInitialHomeState {
     latestService: {
@@ -137,9 +138,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         },
     });
 
+    const isIOS = Platform.OS === 'ios';
+
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            <ViewWrapper scroll={!isCampusPastor} pt={10} refreshing={isLoading} onRefresh={handleRefresh}>
+            <ViewWrapper scroll={!isCampusPastor} pt={isIOS ? 10 : 4} refreshing={isLoading} onRefresh={handleRefresh}>
                 <If condition={!!user}>
                     <TopNav {...navigation} />
                     <If condition={!isGlobalPastor}>

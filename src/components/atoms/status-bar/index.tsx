@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated } from 'react-native';
+import { Animated, Platform } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Box, Text } from 'native-base';
 
@@ -32,6 +32,8 @@ const ConnectionStatusBar: React.FC = () => {
         }
     }, [netInfo.isInternetReachable]);
 
+    const isIOS = Platform.OS === 'ios';
+
     return (
         <Animated.View
             style={{
@@ -43,7 +45,8 @@ const ConnectionStatusBar: React.FC = () => {
         >
             <Box
                 w="full"
-                height={66}
+                height={isIOS ? 66 : 6}
+                pb={isIOS ? undefined : 1}
                 justifyContent="flex-end"
                 bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'}
             >
