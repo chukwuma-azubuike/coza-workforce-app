@@ -88,7 +88,11 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const { data: cgwc, isLoading, isFetching } = useGetCGWCByIdQuery(CGWCId, { refetchOnMountOrArgChange: true });
 
-    const { data: messages, refetch: refetchMessages } = useGetCGWCInstantMessagesQuery({ CGWCId });
+    const {
+        data: messages,
+        refetch: refetchMessages,
+        isLoading: messagesIsLoading,
+    } = useGetCGWCInstantMessagesQuery({ CGWCId });
 
     const gotoCreateInstantMessage = () => {
         navigation.navigate('Create Instant Message', { CGWCId });
@@ -132,7 +136,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     return (
         <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1, flexDirection: 'column' }}>
             <ViewWrapper noPadding>
-                <If condition={isLoading || isFetching}>
+                <If condition={isLoading || isFetching || messagesIsLoading}>
                     <Loading />
                 </If>
                 <If condition={!isLoading && !isFetching && !!cgwc}>
