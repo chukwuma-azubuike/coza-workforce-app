@@ -120,12 +120,12 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     });
 
-    const handleFeedbackPress = (rating: number) => {
+    const handleFeedbackPress = () => {
         if (!!cgwc) {
             if (!assertCGWCActive(cgwc)) {
-                return navigation.navigate('CGWC Feedback', { CGWCId, rating });
+                return navigation.navigate('CGWC Feedback', { CGWCId });
             }
-            Alert.alert('CGWC Feedback', 'You will be able to give your feedback on the last day of CGWC');
+            Alert.alert('CGWC Feedback', 'You will only be able to give your feedback on the last day of CGWC');
         }
     };
 
@@ -171,11 +171,10 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <Text bold px={3} fontSize="lg">
                                 Give Feedback
                             </Text>
-                            <View style={{ marginBottom: 80, width: '100%' }}>
-                                <RatingComponent
-                                    defaultRating={params?.rating || 0}
-                                    onFinishRating={handleFeedbackPress}
-                                />
+                            <View style={{ marginBottom: 220, width: '100%' }}>
+                                <TouchableOpacity onPress={handleFeedbackPress} activeOpacity={0.9}>
+                                    <RatingComponent isDisabled defaultRating={params?.rating || 0} />
+                                </TouchableOpacity>
                             </View>
                         </Box>
                     </ScrollContainer>

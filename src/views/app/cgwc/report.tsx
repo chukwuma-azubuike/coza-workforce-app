@@ -114,7 +114,7 @@ export const CGWCReportSummary: React.FC<{
                     ))}
                 </SelectComponent>
             </HStack>
-            <Center py={10}>
+            <Center py={6}>
                 {attendanceReportLoading || leadersReportLoading ? (
                     <Loading h={20} w={20} />
                 ) : (
