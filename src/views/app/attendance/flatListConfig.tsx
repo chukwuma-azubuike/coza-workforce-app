@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { IFlatListColumn } from '@components/composite/flat-list';
-import { IAttendance } from '@store/types';
+import { IAttendance, IUser } from '@store/types';
 import Utils from '@utils/index';
 import { Appearance } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -171,21 +171,21 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
     {
         title: 'Name',
         dataIndex: 'name',
-        render: (elm: ITransformUserAttendanceList, key) => (
+        render: (elm: IAttendance & IUser, key) => (
             <VStack>
                 <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
                     <AvatarComponent
                         mr={4}
                         size="sm"
                         badge={!!elm.clockIn}
-                        imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                        imageUrl={elm?.user?.pictureUrl || elm?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
                     <VStack justifyContent="center">
                         <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                            {Utils.capitalizeFirstChar(elm.firstName)}
+                            {Utils.capitalizeFirstChar(elm?.user?.firstName || elm?.firstName)}
                         </Text>
                         <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                            {Utils.capitalizeFirstChar(elm.lastName)}
+                            {Utils.capitalizeFirstChar(elm?.user?.lastName || elm?.lastName)}
                         </Text>
                     </VStack>
                 </HStack>
@@ -238,7 +238,7 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
                         color: 'warmGray.200',
                     }}
                 >
-                    {!!elm.score ? `${elm.score}%` : `${0}%`}
+                    {!!elm.score ? `${elm.score}` : `${0}`}
                 </Text>
             </HStack>
         ),
