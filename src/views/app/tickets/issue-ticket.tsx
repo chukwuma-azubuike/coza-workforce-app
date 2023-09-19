@@ -80,7 +80,21 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     duration: 3,
                 });
                 reset();
-                resetForm({ values: initialValues });
+                resetForm({
+                    values: {
+                        departmentId,
+                        campusId,
+                        userId: '',
+                        categoryId: '',
+                        isDepartment,
+                        isIndividual,
+                        isCampus,
+                        isRetracted: false,
+                        serviceId: '',
+                        ticketSummary: '',
+                        issuedBy: '',
+                    } as ICreateTicketPayload,
+                });
                 navigate('Tickets', data);
             }
 
@@ -92,6 +106,21 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     duration: 3,
                 });
                 reset();
+                resetForm({
+                    values: {
+                        departmentId,
+                        campusId,
+                        userId: '',
+                        categoryId: '',
+                        isDepartment,
+                        isIndividual,
+                        isCampus,
+                        isRetracted: false,
+                        serviceId: '',
+                        ticketSummary: '',
+                        issuedBy: '',
+                    } as ICreateTicketPayload,
+                });
             }
         } else {
             setModalState({
@@ -107,7 +136,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const [initialValues, setInitialValues] = React.useState<ICreateTicketPayload>({
         departmentId,
-        campusId: campusId,
+        campusId,
         userId: '',
         categoryId: '',
         isDepartment,
@@ -124,7 +153,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             setOptions({ title: `${Utils.capitalizeFirstChar(type)} Ticket` });
             setInitialValues({
                 departmentId,
-                campusId: campusId,
+                campusId,
                 userId: '',
                 categoryId: '',
                 isDepartment,
