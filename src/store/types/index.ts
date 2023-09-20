@@ -8,6 +8,10 @@ export interface ILog {
     updatedAt?: string;
 }
 
+export enum ERROR {
+    NETWORK_CONNECTION_ERROR = 'TypeError: Network request failed',
+}
+
 export enum CREATE_SERVICE_ENUM {
     LONG = 7.505862981744857,
     LAT = 9.005452823370131,
