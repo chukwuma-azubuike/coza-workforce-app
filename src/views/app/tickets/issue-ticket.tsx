@@ -79,10 +79,23 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     status: 'success',
                     duration: 3,
                 });
-                navigate('Tickets', data);
-                resetForm({ values: INITIAL_VALUES });
-                setDepartmentId('');
                 reset();
+                resetForm({
+                    values: {
+                        departmentId,
+                        campusId,
+                        userId: '',
+                        categoryId: '',
+                        isDepartment,
+                        isIndividual,
+                        isCampus,
+                        isRetracted: false,
+                        serviceId: '',
+                        ticketSummary: '',
+                        issuedBy: '',
+                    } as ICreateTicketPayload,
+                });
+                navigate('Tickets', data);
             }
 
             if ('error' in result) {
@@ -93,6 +106,21 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     duration: 3,
                 });
                 reset();
+                resetForm({
+                    values: {
+                        departmentId,
+                        campusId,
+                        userId: '',
+                        categoryId: '',
+                        isDepartment,
+                        isIndividual,
+                        isCampus,
+                        isRetracted: false,
+                        serviceId: '',
+                        ticketSummary: '',
+                        issuedBy: '',
+                    } as ICreateTicketPayload,
+                });
             }
         } else {
             setModalState({
@@ -102,36 +130,40 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     };
 
-    const handleCampus = (value: ICampus['_id']) => {
-        setCampusId(value);
-    };
-
-    const handleDepartment = (value: IDepartment['_id']) => {
-        setDepartmentId(value);
-    };
-
-    const isDepartmental = type === 'DEPARTMENTAL';
+    const isDepartment = type === 'DEPARTMENTAL';
     const isIndividual = type === 'INDIVIDUAL';
     const isCampus = type === 'CAMPUS';
 
-    const INITIAL_VALUES: ICreateTicketPayload = {
-        departmentId: departmentId,
-        campusId: campusId,
+    const [initialValues, setInitialValues] = React.useState<ICreateTicketPayload>({
+        departmentId,
+        campusId,
         userId: '',
         categoryId: '',
-        isDepartment: isDepartmental,
-        isIndividual: isIndividual,
-        isCampus: isCampus,
+        isDepartment,
+        isIndividual,
+        isCampus,
         isRetracted: false,
         serviceId: '',
         ticketSummary: '',
         issuedBy: '',
-    } as ICreateTicketPayload;
+    } as ICreateTicketPayload);
 
     useScreenFocus({
         onFocus: () => {
             setOptions({ title: `${Utils.capitalizeFirstChar(type)} Ticket` });
-            setDepartmentId('');
+            setInitialValues({
+                departmentId,
+                campusId,
+                userId: '',
+                categoryId: '',
+                isDepartment,
+                isIndividual,
+                isCampus,
+                isRetracted: false,
+                serviceId: '',
+                ticketSummary: '',
+                issuedBy: '',
+            } as ICreateTicketPayload);
         },
     });
 
@@ -142,62 +174,41 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     <Formik<ICreateTicketPayload>
                         validateOnChange
                         onSubmit={onSubmit}
-                        initialValues={INITIAL_VALUES}
+                        initialValues={initialValues}
                         validationSchema={
-                            isDepartmental
+                            isDepartment
                                 ? CreateDepartmentalTicketSchema
                                 : isCampus
                                 ? CreateCampusTicketSchema
                                 : CreateIndividualTicketSchema
                         }
                     >
-                        {({ errors, values, handleChange, handleSubmit, touched }) => (
-                            <VStack w="100%" space={1}>
-                                <FormControl isRequired isInvalid={!!errors?.campusId && touched.campusId}>
-                                    <FormControl.Label>Campus</FormControl.Label>
-                                    <SelectComponent
-                                        selectedValue={campusId}
-                                        placeholder="Choose campus"
-                                        onValueChange={handleCampus}
-                                    >
-                                        {campuses?.map((campus, index) => (
-                                            <SelectItemComponent
-                                                value={campus._id}
-                                                key={`campus-${index}`}
-                                                label={campus.campusName}
-                                                isLoading={campusesIsLoading || campusesIsFetching}
-                                            />
-                                        ))}
-                                    </SelectComponent>
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.campusId}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <If condition={!isCampus}>
-                                    <FormControl isRequired isInvalid={!!errors?.departmentId && touched.departmentId}>
-                                        <FormControl.Label>Department</FormControl.Label>
+                        {({ errors, values, handleChange, setFieldValue, handleSubmit, touched }) => {
+                            const handleDepartment = (value: IDepartment['_id']) => {
+                                setDepartmentId(value);
+                                setFieldValue('departmentId', value);
+                            };
+
+                            const handleCampus = (value: ICampus['_id']) => {
+                                setCampusId(value);
+                                setFieldValue('campusId', value);
+                            };
+
+                            return (
+                                <VStack w="100%" space={1}>
+                                    <FormControl isRequired isInvalid={!!errors?.campusId && touched.campusId}>
+                                        <FormControl.Label>Campus</FormControl.Label>
                                         <SelectComponent
-                                            selectedValue={departmentId}
-                                            placeholder="Choose department"
-                                            onValueChange={handleDepartment}
+                                            selectedValue={campusId}
+                                            placeholder="Choose campus"
+                                            onValueChange={handleCampus}
                                         >
-                                            {sortedCampusDepartments?.map((department, index) => (
+                                            {campuses?.map((campus, index) => (
                                                 <SelectItemComponent
-                                                    value={department._id}
-                                                    key={`department-${index}`}
-                                                    label={department.departmentName}
-                                                    isLoading={campusDepartmentsLoading || campusDepartmentsIsFetching}
+                                                    value={campus._id}
+                                                    key={`campus-${index}`}
+                                                    label={campus.campusName}
+                                                    isLoading={campusesIsLoading || campusesIsFetching}
                                                 />
                                             ))}
                                         </SelectComponent>
@@ -213,25 +224,95 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 />
                                             }
                                         >
-                                            {errors?.departmentId}
+                                            {errors?.campusId}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-                                </If>
-                                <If condition={isIndividual}>
-                                    <FormControl isRequired isInvalid={!!errors?.userId && touched.userId}>
-                                        <FormControl.Label>Worker</FormControl.Label>
-                                        <SelectComponent
-                                            isDisabled={!departmentId}
-                                            placeholder="Choose Worker"
-                                            onValueChange={handleChange('userId')}
-                                            selectedValue={values.userId}
+                                    <If condition={!isCampus}>
+                                        <FormControl
+                                            isRequired
+                                            isInvalid={!!errors?.departmentId && touched.departmentId}
                                         >
-                                            {workers?.map((worker, index) => (
+                                            <FormControl.Label>Department</FormControl.Label>
+                                            <SelectComponent
+                                                selectedValue={departmentId}
+                                                placeholder="Choose department"
+                                                onValueChange={handleDepartment}
+                                            >
+                                                {sortedCampusDepartments?.map((department, index) => (
+                                                    <SelectItemComponent
+                                                        value={department._id}
+                                                        key={`department-${index}`}
+                                                        label={department.departmentName}
+                                                        isLoading={
+                                                            campusDepartmentsLoading || campusDepartmentsIsFetching
+                                                        }
+                                                    />
+                                                ))}
+                                            </SelectComponent>
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.departmentId}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                    </If>
+                                    <If condition={isIndividual}>
+                                        <FormControl isRequired isInvalid={!!errors?.userId && touched.userId}>
+                                            <FormControl.Label>Worker</FormControl.Label>
+                                            <SelectComponent
+                                                isDisabled={!departmentId}
+                                                placeholder="Choose Worker"
+                                                onValueChange={handleChange('userId')}
+                                                selectedValue={values.userId}
+                                            >
+                                                {workers?.map((worker, index) => (
+                                                    <SelectItemComponent
+                                                        value={worker._id}
+                                                        key={`worker-${index}`}
+                                                        isLoading={workersLoading || workersIsFetching}
+                                                        label={`${worker.firstName} ${worker.lastName}`}
+                                                    />
+                                                ))}
+                                            </SelectComponent>
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.userId}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                    </If>
+                                    <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
+                                        <FormControl.Label>Category</FormControl.Label>
+                                        <SelectComponent
+                                            placeholder="Choose Category"
+                                            isDisabled={!ticketCategories}
+                                            onValueChange={handleChange('categoryId')}
+                                            selectedValue={values.categoryId}
+                                        >
+                                            {ticketCategories?.map((categories, index) => (
                                                 <SelectItemComponent
-                                                    value={worker._id}
-                                                    key={`worker-${index}`}
-                                                    isLoading={workersLoading || workersIsFetching}
-                                                    label={`${worker.firstName} ${worker.lastName}`}
+                                                    value={categories._id}
+                                                    key={`category-${index}`}
+                                                    isLoading={workersLoading}
+                                                    label={categories.categoryName}
                                                 />
                                             ))}
                                         </SelectComponent>
@@ -247,77 +328,48 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 />
                                             }
                                         >
-                                            {errors?.userId}
+                                            {errors?.categoryId}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-                                </If>
-                                <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
-                                    <FormControl.Label>Category</FormControl.Label>
-                                    <SelectComponent
-                                        placeholder="Choose Category"
-                                        isDisabled={!ticketCategories}
-                                        onValueChange={handleChange('categoryId')}
-                                        selectedValue={values.categoryId}
-                                    >
-                                        {ticketCategories?.map((categories, index) => (
-                                            <SelectItemComponent
-                                                value={categories._id}
-                                                key={`category-${index}`}
-                                                isLoading={workersLoading}
-                                                label={categories.categoryName}
-                                            />
-                                        ))}
-                                    </SelectComponent>
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.categoryId}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={!!errors?.ticketSummary && touched.ticketSummary}>
-                                    <FormControl.Label>Description</FormControl.Label>
-                                    <TextAreaComponent
+                                    <FormControl
                                         isRequired
-                                        returnKeyType="done"
-                                        placeholder="Details"
-                                        value={values.ticketSummary}
-                                        onChangeText={handleChange('ticketSummary')}
-                                    />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
+                                        isInvalid={!!errors?.ticketSummary && touched.ticketSummary}
                                     >
-                                        {errors?.ticketSummary}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl>
-                                    <ButtonComponent
-                                        mt={4}
-                                        isLoading={isLoading}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
-                                        Submit
-                                    </ButtonComponent>
-                                </FormControl>
-                            </VStack>
-                        )}
+                                        <FormControl.Label>Description</FormControl.Label>
+                                        <TextAreaComponent
+                                            isRequired
+                                            returnKeyType="done"
+                                            placeholder="Details"
+                                            value={values.ticketSummary}
+                                            onChangeText={handleChange('ticketSummary')}
+                                        />
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors?.ticketSummary}
+                                        </FormControl.ErrorMessage>
+                                    </FormControl>
+                                    <FormControl>
+                                        <ButtonComponent
+                                            mt={4}
+                                            isLoading={isLoading}
+                                            onPress={handleSubmit as (event: any) => void}
+                                        >
+                                            Submit
+                                        </ButtonComponent>
+                                    </FormControl>
+                                </VStack>
+                            );
+                        }}
                     </Formik>
                 </Box>
             </VStack>

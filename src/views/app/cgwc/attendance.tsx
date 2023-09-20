@@ -168,9 +168,6 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
         refetchAttendance();
     };
 
-    // TODO: Get this value from endpoint
-    const eligible = React.useMemo(() => Math.round(Math.random() * 10), []);
-
     return (
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
@@ -195,7 +192,7 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
                             Eligible:{'  '}
                         </Text>
                         <Text bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
-                            {eligible}
+                            {0}
                         </Text>
                     </HStack>
                 </HStack>
