@@ -282,7 +282,7 @@ class Utils {
         return originalList;
     };
 
-    static mergeDuplicatesByKey = (array: any[], key: string = '_id') => {
+    static mergeDuplicatesByKey = <T>(array: any[], key: keyof T = '_id' as keyof T) => {
         const grouped = groupBy(array, key);
 
         const merged: any[] = [];

@@ -184,7 +184,7 @@ export interface IAttendance extends ILog {
     userId: string;
     clockIn: string;
     clockOut: string;
-    serviceId: string;
+    serviceId?: string;
     coordinates: {
         latitude: string;
         longitude: string;

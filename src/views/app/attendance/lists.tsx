@@ -126,7 +126,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
     const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
 
     const mergedAttendanceWithMemberList = React.useMemo(
-        () => Utils.mergeDuplicatesByKey(mergedUsers, 'userId'),
+        () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
         [membersClockedIn, mergedUsers]
     );
 
