@@ -72,6 +72,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isError: latestAttendanceIsError,
         isSuccess: latestAttendanceIsSuccess,
         isLoading: latestAttendanceIsLoading,
+        isUninitialized: latestAttendanceisUninitialized,
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
         {
@@ -120,7 +121,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         refetchServices();
         if (!isGlobalPastor) {
             refetch();
-            latestAttendanceRefetch();
+            !latestAttendanceisUninitialized && latestAttendanceRefetch();
         }
     };
 
