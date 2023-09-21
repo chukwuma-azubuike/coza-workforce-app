@@ -37,6 +37,14 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId,
         userId,
     });
 
+    const minifiedAttendance = React.useMemo(
+        () =>
+            data?.map(attendance => {
+                return { ...attendance, serviceId: attendance.service._id };
+            }) || [],
+        [data]
+    );
+
     const minifiedSessions = React.useMemo(
         () =>
             sessions?.map(session => {
@@ -46,11 +54,11 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId,
     );
 
     const mergedSessionsWithAttendance = React.useMemo(() => {
-        if (!!data?.length) {
-            return mergeObjectsByKey(minifiedSessions, data);
+        if (!!minifiedAttendance?.length) {
+            return Utils.mergeDuplicatesByKey<IAttendance>([...minifiedSessions, ...minifiedAttendance], 'serviceId');
         }
-        return minifiedSessions;
-    }, [minifiedSessions, data]);
+        return Utils.mergeDuplicatesByKey<IAttendance>(minifiedSessions, 'serviceId');
+    }, [minifiedSessions, minifiedAttendance]);
 
     const TOTAL_ATTAINABLE_SCORE = (sessions?.length || 0) * 25;
 

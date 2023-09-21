@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-    useGetDepartmentAttendanceReportQuery,
-    useGetLeadersAttendanceReportQuery,
-    useGetWorkersAttendanceReportQuery,
+    useGetDepartmentCGWCAttendanceReportQuery,
+    useGetLeadersCGWCAttendanceReportQuery,
+    useGetWorkersCGWCAttendanceReportQuery,
 } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IService } from '@store/types';
@@ -38,7 +38,7 @@ export const CGWCReportSummary: React.FC<{
         setServiceId(value);
     };
 
-    const { data: attendanceReport, isLoading: attendanceReportLoading } = useGetDepartmentAttendanceReportQuery(
+    const { data: attendanceReport, isLoading: attendanceReportLoading } = useGetDepartmentCGWCAttendanceReportQuery(
         {
             CGWCId,
             isCGWC: true,
@@ -48,7 +48,7 @@ export const CGWCReportSummary: React.FC<{
         { skip: !serviceId, refetchOnMountOrArgChange: true }
     );
 
-    const { data: leadersAttendance, isLoading: leadersReportLoading } = useGetLeadersAttendanceReportQuery(
+    const { data: leadersAttendance, isLoading: leadersReportLoading } = useGetLeadersCGWCAttendanceReportQuery(
         {
             CGWCId,
             isCGWC: true,
@@ -58,7 +58,7 @@ export const CGWCReportSummary: React.FC<{
         { skip: !serviceId, refetchOnMountOrArgChange: true }
     );
 
-    const { data: workersAttendance } = useGetWorkersAttendanceReportQuery(
+    const { data: workersAttendance } = useGetWorkersCGWCAttendanceReportQuery(
         {
             CGWCId,
             isCGWC: true,
