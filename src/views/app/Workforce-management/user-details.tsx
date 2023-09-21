@@ -23,6 +23,7 @@ import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser } from '@store/types';
 import Utils from '@utils/index';
 import compareObjectValueByKey from '@utils/compareObjectValuesByKey';
+import Loading from '@components/atoms/loading';
 
 const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
@@ -180,13 +181,10 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     useScreenFocus({
         onFocus: () => {
             setIsEditMode(false);
-            setCgwcApproved(!!data?.isCGWCApproved);
         },
     });
 
-    const [cgwcApproved, setCgwcApproved] = React.useState<boolean>(!!data?.isCGWCApproved);
     const handleApproveCGWC = async (event: boolean) => {
-        setCgwcApproved(event);
         await approveForCGWC(event)
             .then(() => {
                 refetch();
@@ -255,13 +253,18 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <HStack my={2}>
                                         <FormControl flexDirection="row" justifyContent="space-between">
                                             <FormControl.Label>
-                                                {cgwcApproved ? 'Approved' : 'Approve'} for CGWC
+                                                {data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC
                                             </FormControl.Label>
-                                            <Switch
-                                                value={cgwcApproved}
-                                                onValueChange={handleApproveCGWC}
-                                                disabled={updateResults?.isLoading}
-                                            />
+
+                                            {updateResults?.isLoading ? (
+                                                <Loading w={7} h={7} />
+                                            ) : (
+                                                <Switch
+                                                    value={data?.isCGWCApproved}
+                                                    onValueChange={handleApproveCGWC}
+                                                    disabled={updateResults?.isLoading}
+                                                />
+                                            )}
                                         </FormControl>
                                     </HStack>
                                 </If>
