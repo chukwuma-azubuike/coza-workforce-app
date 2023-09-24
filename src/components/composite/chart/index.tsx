@@ -53,9 +53,10 @@ export const BarChart: FC<BarChartProps> = ({
     const tickFormat = React.useMemo(() => data?.flatMap(item => item[entityKey]), [data, entityKey]);
     const tickValues = React.useMemo(() => data?.flatMap(item => item[valueKey]), [data, valueKey]);
     const { isDarkMode } = useAppColorMode();
+    const { isMobile } = useMediaQuery();
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, isMobile && { width: '100%' }]}>
             <Text
                 style={{
                     fontWeight: 'bold',
@@ -73,9 +74,9 @@ export const BarChart: FC<BarChartProps> = ({
                         duration: 2000,
                         onLoad: { duration: 1000 },
                     }}
-                    width={ScreenWidth / 2 - 20}
                     horizontal={horizontal}
                     containerComponent={<VictoryVoronoiContainer />}
+                    width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2 - 20}
                 >
                     <VictoryBar
                         data={data}
@@ -97,15 +98,14 @@ export const BarChart: FC<BarChartProps> = ({
                         label={xAxisLabel}
                         style={{
                             axisLabel: {
-                                fontSize: 16,
-                                padding: 30,
+                                fontSize: 14,
                             },
                             tickLabels: {
-                                fontSize: 12,
-                                angle: -45,
+                                fontSize: 14,
+                                angle: -60,
                                 textAnchor: 'end',
+                                padding: 10,
                             },
-                            axis: {},
                         }}
                         tickValues={tickValues}
                         tickFormat={tickFormat}
@@ -197,14 +197,13 @@ export const StackedHistogram: FC<StackedHistogramProps> = ({
                         label={xAxisLabel}
                         style={{
                             axisLabel: {
-                                fontSize: 18,
-                                padding: 30,
+                                fontSize: 16,
                             },
                             tickLabels: {
-                                fontSize: 20,
-                                angle: -45,
+                                fontSize: 16,
+                                angle: -20,
                                 textAnchor: 'end',
-                                height: 100,
+                                padding: 2,
                             },
                             axis: { height: 700 },
                         }}
@@ -216,11 +215,11 @@ export const StackedHistogram: FC<StackedHistogramProps> = ({
                         label={yAxisLabel}
                         style={{
                             axisLabel: {
-                                fontSize: 18,
+                                fontSize: 16,
                                 padding: 40,
                             },
                             tickLabels: {
-                                fontSize: 20,
+                                fontSize: 16,
                                 padding: 20,
                                 textAnchor: 'end', // Anchor labels at the end
                             },

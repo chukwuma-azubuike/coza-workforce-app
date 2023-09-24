@@ -4,9 +4,10 @@ import { BarChart, PieChart, StackedHistogram } from '@components/composite/char
 import { ResponsiveGrid } from '@components/layout/responsive-grid';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
+import useMediaQuery from '@hooks/media-query';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Icon, ScreenHeight } from '@rneui/base';
+import { Icon, ScreenHeight, ScreenWidth } from '@rneui/base';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetServicesQuery } from '@store/services/services';
 import moment from 'moment';
@@ -109,13 +110,15 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
         { key: 'LEADERS', label: 'Leaders' },
     ];
 
+    const { isMobile } = useMediaQuery();
+
     return (
         <ViewWrapper pt={6} pb={40} scroll>
-            <HStack w="100%" space={4} px={3} mb={4} >
+            <ResponsiveGrid>
                 <SelectComponent
-                    w={300}
                     selectedValue={userCategory}
                     onValueChange={handleUserCategory}
+                    w={isMobile ? ScreenWidth - 36 : 300}
                     dropdownIcon={
                         <HStack mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
@@ -132,9 +135,9 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                     ))}
                 </SelectComponent>
                 <SelectComponent
-                    w={300}
-                    onValueChange={handleCampusChange}
                     selectedValue={campusId}
+                    onValueChange={handleCampusChange}
+                    w={isMobile ? ScreenWidth - 36 : 300}
                     dropdownIcon={
                         <HStack mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
@@ -152,10 +155,10 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                     ))}
                 </SelectComponent>
                 <SelectComponent
-                    w={300}
-                    placeholder="Choose session"
                     selectedValue={serviceId}
+                    placeholder="Choose session"
                     onValueChange={handleService}
+                    w={isMobile ? ScreenWidth - 36 : 300}
                 >
                     <SelectItemComponent
                         key="all-sessions"
@@ -173,7 +176,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                         />
                     ))}
                 </SelectComponent>
-            </HStack>
+            </ResponsiveGrid>
             <ResponsiveGrid rowCount={2}>
                 <Center height={ScreenHeight / 2}>
                     <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
@@ -231,7 +234,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                             isLoading={false}
                             value={25}
                             bold
-                            width={['100%', '50%']}
+                            width={['96%', '50%']}
                             marginActive={false}
                         />
                     </Stack>
