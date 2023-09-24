@@ -57,6 +57,7 @@ interface IStatCardComponentProps {
     value?: number | string;
     flex?: number;
     label?: string;
+    bold?: boolean;
     prefix?: string;
     suffix?: string;
     percent?: boolean;
@@ -65,18 +66,27 @@ interface IStatCardComponentProps {
     isLoading?: boolean;
     onPress?: () => void;
     iconType?: IIconTypes;
-    width?: string | string[];
+    marginActive?: boolean;
+    width?: string | string[] | number | number[];
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45%', '20%'] } = props;
+    const {
+        iconColor = THEME_CONFIG.success,
+        percent,
+        isLoading,
+        onPress,
+        bold,
+        width = ['45%', '20%'],
+        marginActive = true,
+    } = props;
 
     return (
-        <CardComponent width={width} m={2} h={135}>
+        <CardComponent width={width} m={marginActive ? 2 : 0} h={135}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (
-                <TouchableOpacity onPress={props.onPress} style={{ margin: 4 }} activeOpacity={0.6}>
+                <TouchableOpacity onPress={props.onPress} style={{ margin: marginActive ? 4 : 0 }} activeOpacity={0.6}>
                     <HStack justifyContent="space-between" borderWidth={0} w="100%">
                         <VStack w="100%" justifyContent="space-between" h={110}>
                             <HStack justifyContent="space-between" w="100%" alignItems="center">
@@ -93,7 +103,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
                                 </Text>
                             </HStack>
                             <HStack alignItems="center" justifyContent="space-between" w="full">
-                                <Text fontWeight="light" color="gray.400" fontSize="lg">
+                                <Text fontWeight={bold ? 'bold' : 'light'} color="gray.400" fontSize="lg">
                                     {props.label}
                                 </Text>
                                 {props.iconName && (
