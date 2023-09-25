@@ -1,7 +1,7 @@
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { StatCardComponent } from '@components/composite/card';
 import { BarChart, PieChart, StackedHistogram } from '@components/composite/chart';
-import { ResponsiveGrid } from '@components/layout/responsive-grid';
+import { GridItem, ResponsiveGrid } from '@components/layout/responsive-grid';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useMediaQuery from '@hooks/media-query';
@@ -9,12 +9,16 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon, ScreenHeight, ScreenWidth } from '@rneui/base';
 import { useGetCampusesQuery } from '@store/services/campus';
+import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
 import moment from 'moment';
 import { Center, HStack, Stack } from 'native-base';
 import React from 'react';
 
-const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
+const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
+    const params = route.params as { CGWCId: string };
+    const CGWCId = params?.CGWCId;
+
     const DATA = [
         // Present
         [
@@ -90,6 +94,17 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
     const { data: services, refetch: refetchServices, isLoading: servicesLoading } = useGetServicesQuery({});
 
+    const { data: attendanceReport, isLoading: attendanceReportLoading } = useGetGraphAttendanceReportsQuery({
+        CGWCId,
+        serviceId,
+    });
+    const transformedAttendanceReport = React.useMemo(() => {
+        if (!!attendanceReport) {
+            return Object.values(attendanceReport);
+        }
+        return [];
+    }, [attendanceReport]);
+
     const pastServices = React.useMemo(
         () => services?.filter(service => moment(service.clockInStartTime).unix() < moment().unix()),
         [services]
@@ -113,8 +128,8 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     const { isMobile } = useMediaQuery();
 
     return (
-        <ViewWrapper pt={6} pb={40} scroll>
-            <ResponsiveGrid>
+        <ViewWrapper pt={6} scroll>
+            <ResponsiveGrid rowCount={3}>
                 <SelectComponent
                     selectedValue={userCategory}
                     onValueChange={handleUserCategory}
@@ -177,75 +192,80 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
                     ))}
                 </SelectComponent>
             </ResponsiveGrid>
-            <ResponsiveGrid rowCount={2}>
-                <Center height={ScreenHeight / 2}>
-                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-                        <StatCardComponent
-                            label="Present"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={false}
-                            value={200}
-                            bold
-                            width="48%"
-                            iconColor={THEME_CONFIG.primary}
-                            marginActive={false}
-                        />
-                        <StatCardComponent
-                            label="Late"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={false}
-                            value={25}
-                            bold
-                            width="48%"
-                            iconColor="orange"
-                            marginActive={false}
-                        />
-                    </Stack>
-                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-                        <StatCardComponent
-                            label="Early"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={false}
-                            value={150}
-                            width="48%"
-                            bold
-                            marginActive={false}
-                        />
-                        <StatCardComponent
-                            label="Absent"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={false}
-                            value={25}
-                            bold
-                            width="48%"
-                            iconColor={THEME_CONFIG.rose}
-                            marginActive={false}
-                        />
-                    </Stack>
-                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-                        <StatCardComponent
-                            label="Number of Tickets"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={false}
-                            value={25}
-                            bold
-                            width={['96%', '50%']}
-                            marginActive={false}
-                        />
-                    </Stack>
-                </Center>
-                <StackedHistogram
-                    stackColors={[THEME_CONFIG.primary, 'orange', THEME_CONFIG.rose]}
-                    entityKey="campusName"
-                    title="Attendance"
-                    valueKey="value"
-                    data={DATA}
-                />
+            <ResponsiveGrid>
+                <GridItem flexBasis="35%">
+                    <Center height={ScreenHeight / 2}>
+                        <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                            <StatCardComponent
+                                label="Present"
+                                iconName="groups"
+                                iconType="material"
+                                isLoading={attendanceReportLoading}
+                                value={200}
+                                bold
+                                width="48%"
+                                iconColor={THEME_CONFIG.primary}
+                                marginActive={false}
+                            />
+                            <StatCardComponent
+                                label="Late"
+                                iconName="groups"
+                                iconType="material"
+                                isLoading={attendanceReportLoading}
+                                value={25}
+                                bold
+                                width="48%"
+                                iconColor="orange"
+                                marginActive={false}
+                            />
+                        </Stack>
+                        <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                            <StatCardComponent
+                                label="Early"
+                                iconName="groups"
+                                iconType="material"
+                                isLoading={attendanceReportLoading}
+                                value={150}
+                                width="48%"
+                                bold
+                                marginActive={false}
+                            />
+                            <StatCardComponent
+                                label="Absent"
+                                iconName="groups"
+                                iconType="material"
+                                isLoading={attendanceReportLoading}
+                                value={25}
+                                bold
+                                width="48%"
+                                iconColor={THEME_CONFIG.rose}
+                                marginActive={false}
+                            />
+                        </Stack>
+                        <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                            <StatCardComponent
+                                label="Number of Tickets"
+                                iconType="material-community"
+                                iconName="ticket-confirmation-outline"
+                                iconColor={THEME_CONFIG.rose}
+                                isLoading={attendanceReportLoading}
+                                value={25}
+                                bold
+                                width={['96%', '50%']}
+                                marginActive={false}
+                            />
+                        </Stack>
+                    </Center>
+                </GridItem>
+                <GridItem flexBasis="65%">
+                    <StackedHistogram
+                        stackColors={[THEME_CONFIG.primary, 'orange', THEME_CONFIG.rose]}
+                        entityKey="campusName"
+                        title="Attendance"
+                        valueKey="value"
+                        data={DATA || transformedAttendanceReport}
+                    />
+                </GridItem>
             </ResponsiveGrid>
             <ResponsiveGrid rowCount={2}>
                 <BarChart
@@ -263,71 +283,3 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
 };
 
 export default CGWCReport;
-
-interface GSPCGWCAttendanceReport {
-    present: [
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number }
-    ];
-    late: [
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number }
-    ];
-    absent: [
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number },
-        { campusName: string; value: number }
-    ];
-}
-
-type GSPCGWCTicketReport = [
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number },
-    { campusName: string; value: number }
-];
-
-type GSPCGWCTicketCategoryReport = [
-    { category: string; value: number },
-    { category: string; value: number },
-    { category: string; value: number },
-    { category: string; value: number },
-    { category: string; value: number }
-];

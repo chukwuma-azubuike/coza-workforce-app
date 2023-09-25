@@ -1,4 +1,4 @@
-import { ICampus, IDefaultQueryParams, IStatus, IUser } from './../types/index';
+import { ICampus, IDefaultQueryParams, IGraphAttendanceReports, IStatus, IUser } from './../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
@@ -325,6 +325,16 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IGlobalReportList>) => res?.data,
         }),
 
+        getGraphAttendanceReports: endpoint.query<IGraphAttendanceReports, IDefaultQueryParams>({
+            query: params => ({
+                url: `/${SERVICE_URL}/getReportByGraphs`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<IGraphAttendanceReports>) => res?.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -349,5 +359,6 @@ export const {
     useGetDepartmentReportsListQuery,
     useCreateAttendanceReportMutation,
     useGetGlobalWorkforceSummaryQuery,
+    useGetGraphAttendanceReportsQuery,
     useGetServiceAttendanceSummaryQuery,
 } = reportsServiceSlice;
