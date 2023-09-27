@@ -21,6 +21,8 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
 
     return (
         <Box
+            _dark={{ backgroundColor: 'gray.900' }}
+            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
             {...props}
             py={2}
             flex={[0, 1]}
@@ -28,8 +30,6 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
             borderWidth={0.2}
             minWidth={[160, 200]}
             style={style.shadowProp}
-            _dark={{ backgroundColor: 'gray.900' }}
-            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
         >
             {isLoading ? (
                 <ProfileSkeleton count={9} />
@@ -67,6 +67,7 @@ interface IStatCardComponentProps {
     onPress?: () => void;
     iconType?: IIconTypes;
     marginActive?: boolean;
+    cardProps?: IBoxProps;
     width?: string | string[] | number | number[];
 }
 
@@ -79,10 +80,11 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
         bold,
         width = ['45%', '20%'],
         marginActive = true,
+        cardProps,
     } = props;
 
     return (
-        <CardComponent width={width} m={marginActive ? 2 : 0} h={135}>
+        <CardComponent width={width} m={marginActive ? 2 : 0} h={135} {...cardProps}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (

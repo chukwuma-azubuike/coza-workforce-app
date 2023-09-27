@@ -1,6 +1,6 @@
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { StatCardComponent } from '@components/composite/card';
-import { BarChart, PieChart, StackedHistogram } from '@components/composite/chart';
+import { BarChart, IStackedHistogramData, PieChart, StackedHistogram } from '@components/composite/chart';
 import { GridItem, ResponsiveGrid } from '@components/layout/responsive-grid';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -11,6 +11,7 @@ import { Icon, ScreenHeight, ScreenWidth } from '@rneui/base';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
+import flattenedObject from '@utils/flattenObject';
 import moment from 'moment';
 import { Center, HStack, Stack } from 'native-base';
 import React from 'react';
@@ -19,96 +20,84 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
     const params = route.params as { CGWCId: string };
     const CGWCId = params?.CGWCId;
 
-    const DATA = [
-        // Present
-        [
-            { campusName: 'guzape', value: 130 },
-            { campusName: 'lagos', value: 142 },
-            { campusName: 'mararaba', value: 165 },
-            { campusName: 'gwarimpa', value: 190 },
-            { campusName: 'maitama', value: 130 },
-            { campusName: 'ilorin', value: 142 },
-            { campusName: 'portHarcourt', value: 165 },
-            { campusName: 'karu', value: 190 },
-            { campusName: 'lugbe', value: 130 },
-            { campusName: 'wuse', value: 142 },
-            { campusName: 'gwagwalada', value: 165 },
-            { campusName: 'kubwa', value: 190 },
-        ],
-        //Late
-        [
-            { campusName: 'guzape', value: 130 },
-            { campusName: 'lagos', value: 172 },
-            { campusName: 'mararaba', value: 195 },
-            { campusName: 'gwarimpa', value: 120 },
-            { campusName: 'maitama', value: 100 },
-            { campusName: 'ilorin', value: 152 },
-            { campusName: 'portHarcourt', value: 115 },
-            { campusName: 'karu', value: 90 },
-            { campusName: 'lugbe', value: 50 },
-            { campusName: 'wuse', value: 42 },
-            { campusName: 'gwagwalada', value: 95 },
-            { campusName: 'kubwa', value: 90 },
-        ],
-        // Absent
-        [
-            { campusName: 'guzape', value: 130 },
-            { campusName: 'lagos', value: 142 },
-            { campusName: 'mararaba', value: 165 },
-            { campusName: 'gwarimpa', value: 190 },
-            { campusName: 'maitama', value: 130 },
-            { campusName: 'ilorin', value: 142 },
-            { campusName: 'portHarcourt', value: 165 },
-            { campusName: 'karu', value: 190 },
-            { campusName: 'lugbe', value: 130 },
-            { campusName: 'wuse', value: 142 },
-            { campusName: 'gwagwalada', value: 165 },
-            { campusName: 'kubwa', value: 190 },
-        ],
-    ] as any;
-
-    const tickets = [
-        { campusName: 'guzape', value: 10 },
-        { campusName: 'lagos', value: 12 },
-        { campusName: 'mararaba', value: 15 },
-        { campusName: 'gwarimpa', value: 10 },
-        { campusName: 'maitama', value: 10 },
-        { campusName: 'ilorin', value: 12 },
-        { campusName: 'portHarcourt', value: 15 },
-        { campusName: 'karu', value: 10 },
-        { campusName: 'lugbe', value: 10 },
-        { campusName: 'wuse', value: 12 },
-        { campusName: 'gwagwalada', value: 15 },
-        { campusName: 'kubwa', value: 10 },
-    ];
-
-    const ticketCategories = [
-        { x: 1, y: 4, label: 'Sleeping' },
-        { x: 2, y: 5, label: 'Talking' },
-        { x: 3, y: 7, label: 'Use of Phone' },
-    ];
-
     const [campusId, setCampusId] = React.useState<string>();
     const [serviceId, setServiceId] = React.useState<string>();
     const [userCategory, setUserCategory] = React.useState<string>('WORKERS');
     const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
     const { data: services, refetch: refetchServices, isLoading: servicesLoading } = useGetServicesQuery({});
 
-    const { data: attendanceReport, isLoading: attendanceReportLoading } = useGetGraphAttendanceReportsQuery({
-        CGWCId,
+    const {
+        data: attendanceReport,
+        isLoading: attendanceReportLoading,
+        isFetching: attendanceReportFetching,
+    } = useGetGraphAttendanceReportsQuery({
+        // CGWCId, //TODO: Restore after test
         serviceId,
+        campusId,
     });
+    const isLoadingOrFetching = attendanceReportLoading || attendanceReportFetching;
     const transformedAttendanceReport = React.useMemo(() => {
         if (!!attendanceReport) {
-            return Object.values(attendanceReport);
+            const transformedReport = {
+                present: attendanceReport.present,
+                late: attendanceReport.late,
+                absent: attendanceReport.absent,
+            };
+            return Object.values(transformedReport);
         }
         return [];
     }, [attendanceReport]);
+
+    const totalPresent = React.useMemo(
+        () =>
+            attendanceReport?.present
+                ?.map(present => {
+                    return present.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.present]
+    );
 
     const pastServices = React.useMemo(
         () => services?.filter(service => moment(service.clockInStartTime).unix() < moment().unix()),
         [services]
     );
+
+    const validCategories = React.useMemo(
+        () => attendanceReport?.ticketCategory.find(campusTicketCategories => !!campusTicketCategories.value?.length),
+        [attendanceReport?.ticketCategory]
+    );
+
+    const categoryTemplate = React.useMemo(() => {
+        if (!!validCategories) {
+            return validCategories.value.map(category => {
+                return {
+                    [category.name]: 0,
+                };
+            });
+        }
+        return [];
+    }, [validCategories]);
+
+    const ticketCategories = React.useMemo(() => flattenedObject(categoryTemplate), [categoryTemplate]);
+
+    const allTicketsCategorized = React.useMemo(() => {
+        const ticketDump = ticketCategories;
+
+        attendanceReport?.ticketCategory.forEach(campusTickets => {
+            campusTickets.value.forEach(ticketValue => {
+                ticketDump[ticketValue.name] = ticketDump[ticketValue.name] + ticketValue.campusTicketCount;
+            });
+        });
+
+        return Object.entries(ticketDump).map((category, index) => {
+            return {
+                x: index + 1,
+                y: category[1],
+                label: category[0],
+            };
+        });
+    }, [ticketCategories, attendanceReport]);
 
     const handleCampusChange = (value: string) => {
         setCampusId(value);
@@ -200,23 +189,29 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 label="Present"
                                 iconName="groups"
                                 iconType="material"
-                                isLoading={attendanceReportLoading}
-                                value={200}
+                                isLoading={isLoadingOrFetching}
+                                value={totalPresent}
                                 bold
                                 width="48%"
                                 iconColor={THEME_CONFIG.primary}
                                 marginActive={false}
+                                cardProps={{
+                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                                }}
                             />
                             <StatCardComponent
                                 label="Late"
                                 iconName="groups"
                                 iconType="material"
-                                isLoading={attendanceReportLoading}
+                                isLoading={isLoadingOrFetching}
                                 value={25}
                                 bold
                                 width="48%"
                                 iconColor="orange"
                                 marginActive={false}
+                                cardProps={{
+                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                                }}
                             />
                         </Stack>
                         <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
@@ -224,22 +219,28 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 label="Early"
                                 iconName="groups"
                                 iconType="material"
-                                isLoading={attendanceReportLoading}
+                                isLoading={isLoadingOrFetching}
                                 value={150}
                                 width="48%"
                                 bold
                                 marginActive={false}
+                                cardProps={{
+                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                                }}
                             />
                             <StatCardComponent
                                 label="Absent"
                                 iconName="groups"
                                 iconType="material"
-                                isLoading={attendanceReportLoading}
+                                isLoading={isLoadingOrFetching}
                                 value={25}
                                 bold
                                 width="48%"
                                 iconColor={THEME_CONFIG.rose}
                                 marginActive={false}
+                                cardProps={{
+                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                                }}
                             />
                         </Stack>
                         <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
@@ -248,11 +249,14 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 iconType="material-community"
                                 iconName="ticket-confirmation-outline"
                                 iconColor={THEME_CONFIG.rose}
-                                isLoading={attendanceReportLoading}
+                                isLoading={isLoadingOrFetching}
                                 value={25}
                                 bold
                                 width={['96%', '50%']}
                                 marginActive={false}
+                                cardProps={{
+                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                                }}
                             />
                         </Stack>
                     </Center>
@@ -263,7 +267,8 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                         entityKey="campusName"
                         title="Attendance"
                         valueKey="value"
-                        data={DATA || transformedAttendanceReport}
+                        isLoading={isLoadingOrFetching}
+                        data={transformedAttendanceReport as unknown as IStackedHistogramData}
                     />
                 </GridItem>
             </ResponsiveGrid>
@@ -272,11 +277,16 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                     horizontal
                     barColor={THEME_CONFIG.rose}
                     entityKey="campusName"
-                    title="Non-Compliance"
+                    title="Campus Non-Compliance"
                     valueKey="value"
-                    data={tickets}
+                    isLoading={isLoadingOrFetching}
+                    data={attendanceReport?.ticket || []}
                 />
-                <PieChart data={ticketCategories} title="Non-Compliance Categories" />
+                <PieChart
+                    data={allTicketsCategorized}
+                    title="Non-Compliance Categories"
+                    isLoading={isLoadingOrFetching}
+                />
             </ResponsiveGrid>
         </ViewWrapper>
     );

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICreateService, IDefaultQueryParams, IDefaultResponse, IService, REST_API_VERBS, ICampus } from '../types';
+import { ICreateService, IDefaultQueryParams, IDefaultResponse, IService, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'service';

@@ -641,6 +641,15 @@ export interface IGraphAttendanceReports {
     late: IGraphAttendanceReportItem;
     absent: IGraphAttendanceReportItem;
     total: IGraphAttendanceReportItem;
+    ticket: IGraphAttendanceReportItem;
+    ticketCategory: {
+        campusName: string;
+        value: {
+            name: string;
+            campusTicketCount: number;
+        }[];
+        status: string;
+    }[];
 }
 
 export interface IAllService {

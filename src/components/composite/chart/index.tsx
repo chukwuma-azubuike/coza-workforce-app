@@ -11,10 +11,10 @@ import {
     VictoryBar,
     VictoryAxis,
     VictoryStack,
-    VictoryLabel,
     VictoryVoronoiContainer,
     VictoryPie,
     VictoryLegend,
+    VictoryTooltip,
 } from 'victory-native';
 
 export type IStackedHistogramData = {
@@ -78,14 +78,10 @@ export const BarChart: FC<BarChartProps> = ({
             ) : (
                 <ScrollView horizontal={true}>
                     <VictoryChart
-                        height={600}
-                        animate={{
-                            duration: 2000,
-                            onLoad: { duration: 1000 },
-                        }}
+                        height={ScreenHeight / 1.2}
                         horizontal={horizontal}
                         containerComponent={<VictoryVoronoiContainer />}
-                        width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2 - 20}
+                        width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2.2}
                     >
                         <VictoryBar
                             data={data}
@@ -95,12 +91,18 @@ export const BarChart: FC<BarChartProps> = ({
                             labels={({ datum }) => datum[valueKey]}
                             style={{ data: { fill: barColor }, labels: { fill: 'white', angle: -90 } }}
                             labelComponent={
-                                <VictoryLabel
-                                    dy={-80}
-                                    dx={-2}
-                                    textAnchor="middle"
-                                    verticalAnchor="middle"
-                                    style={{ fill: 'white', fontSize: 20 }}
+                                <VictoryTooltip
+                                    cornerRadius={6}
+                                    pointerLength={10}
+                                    dx={-20}
+                                    flyoutStyle={{
+                                        stroke: 'grey',
+                                        fill: 'rgba(200, 200, 200, 0.8)',
+                                        padding: 12,
+                                        borderRadius: 4,
+                                    }}
+                                    style={{ fontSize: 22 }}
+                                    text={({ datum }) => `${datum[valueKey]} Tickets`}
                                 />
                             }
                         />
@@ -114,9 +116,10 @@ export const BarChart: FC<BarChartProps> = ({
                                     fontSize: 14,
                                     angle: -60,
                                     textAnchor: 'end',
-                                    padding: 10,
+                                    padding: 6,
                                     fill: isDarkMode ? 'white' : 'black',
                                 },
+                                axis: { height: 700 },
                             }}
                             tickValues={tickValues}
                             tickFormat={tickFormat}
@@ -155,7 +158,7 @@ export const StackedHistogram: FC<StackedHistogramProps> = ({
     stackColors,
     title,
     isLoading,
-    height = ScreenHeight / 2,
+    height = ScreenHeight / 1.8,
 }) => {
     const tickFormat = React.useMemo(() => data?.flatMap(item => item.map(key => key[entityKey])), [data, entityKey]);
     const tickValues = React.useMemo(() => data?.flatMap(item => item.map(key => key[valueKey])), [data, valueKey]);
@@ -180,11 +183,7 @@ export const StackedHistogram: FC<StackedHistogramProps> = ({
                 <ScrollView horizontal={true}>
                     <VictoryChart
                         height={height - 46}
-                        width={isMobile ? ScreenWidth * 1.8 : ScreenWidth - 500}
-                        animate={{
-                            duration: 2000,
-                            onLoad: { duration: 1000 },
-                        }}
+                        width={isMobile ? ScreenWidth * 1.9 : ScreenWidth - 200}
                         containerComponent={<VictoryVoronoiContainer />}
                     >
                         <VictoryStack>
@@ -202,12 +201,18 @@ export const StackedHistogram: FC<StackedHistogramProps> = ({
                                         data: { fill: stackColors[index] },
                                     }}
                                     labelComponent={
-                                        <VictoryLabel
-                                            dy={0}
-                                            dx={-30}
-                                            style={{ fill: 'white', fontSize: 20 }}
-                                            verticalAnchor="middle"
-                                            textAnchor="middle"
+                                        <VictoryTooltip
+                                            cornerRadius={6}
+                                            pointerLength={10}
+                                            flyoutStyle={{
+                                                stroke: 'grey',
+                                                fill: 'rgba(200, 200, 200, 0.8)',
+                                                padding: 12,
+                                                borderRadius: 4,
+                                            }}
+                                            data={series}
+                                            style={{ fontSize: 22 }}
+                                            text={({ datum }) => `${datum[valueKey]} (${datum['status']})`}
                                         />
                                     }
                                 />
@@ -276,10 +281,12 @@ export const PieChart: React.FC<IPieChartProps> = props => {
     const { isMobile } = useMediaQuery();
     const { isDarkMode } = useAppColorMode();
 
-    const totalData = React.useMemo(
-        () => props.data?.map((datum: { y: number }) => datum.y).reduce((a, b) => a + b),
-        [props.data]
-    );
+    const totalData = React.useMemo(() => {
+        if (!!props.data?.length) {
+            return props.data?.map((datum: { y: number }) => datum.y)?.reduce((a, b) => a + b);
+        }
+        return 0;
+    }, [props.data]);
 
     return (
         <View style={[styles.container]}>
@@ -298,14 +305,24 @@ export const PieChart: React.FC<IPieChartProps> = props => {
             ) : (
                 <VictoryPie
                     {...props}
-                    height={600}
                     data={props.data}
+                    height={ScreenHeight / 2}
                     style={{ labels: { fill: 'white', fontSize: 18 } }}
-                    width={isMobile ? ScreenWidth : ScreenWidth / 2}
+                    width={isMobile ? ScreenWidth : ScreenWidth / 2.2}
                     labelRadius={isMobile ? ScreenWidth / 10 : ScreenWidth / 20}
-                    radius={({ datum }) => (isMobile ? ScreenWidth / 6 : ScreenWidth / 12) + datum.y * 20}
                     labelComponent={
-                        <VictoryLabel text={({ datum }) => `${datum.label} \n (${(datum.y / totalData) * 100})%   `} />
+                        <VictoryTooltip
+                            cornerRadius={6}
+                            pointerLength={10}
+                            flyoutStyle={{
+                                stroke: 'grey',
+                                fill: 'rgba(200, 200, 200, 0.8)',
+                                padding: 12,
+                                borderRadius: 4,
+                            }}
+                            style={{ fontSize: 22 }}
+                            text={({ datum }) => `${datum.label} \n (${Math.round((datum.y / totalData) * 100)})%   `}
+                        />
                     }
                     colorScale={[
                         THEME_CONFIG.primary,
@@ -314,6 +331,13 @@ export const PieChart: React.FC<IPieChartProps> = props => {
                         THEME_CONFIG.primaryLight,
                         THEME_CONFIG.gray,
                         THEME_CONFIG.lightGray,
+                        THEME_CONFIG.info,
+                        THEME_CONFIG.lightRose,
+                        THEME_CONFIG.success,
+                        THEME_CONFIG.warning,
+                        THEME_CONFIG.error,
+                        THEME_CONFIG.lightGray,
+                        THEME_CONFIG.darkGray,
                     ]}
                     labelPlacement="parallel"
                 />
