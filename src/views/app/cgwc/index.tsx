@@ -1,6 +1,6 @@
 import React from 'react';
 import useRole from '@hooks/role';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 // import useScreenFocus from '@hooks/focus';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { CGWCList } from './list';
@@ -11,7 +11,6 @@ import If from '@components/composite/if-container';
 
 const CGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const { isSuperAdmin } = useRole();
-    const { navigate } = useNavigation();
     const updatedListItem = route.params as ICGWC;
 
     //TODO: To be determined by product team discuss

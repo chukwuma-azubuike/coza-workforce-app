@@ -58,6 +58,7 @@ import CreateCGWCInstantMessage from '@views/app/cgwc/create-instant-message';
 import CGWCGroupAttendance from '@views/app/cgwc/group-attendance';
 import CGWCResources from '@views/app/cgwc/cgwc-resources';
 import CGWCFeedback from '@views/app/cgwc/feedback';
+import CGWCReport from '@views/app/cgwc/cgwc-report';
 
 export interface IAppRoute {
     name: string;
@@ -550,7 +551,16 @@ const AppRoutes: IAppRoute[] = [
                 inMore: false,
                 icon: { name: 'new-message', type: 'entypo' },
             },
-
+            {
+                name: 'CGWC Report',
+                component: CGWCReport,
+                options: { title: 'CGWC Report' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'crown', type: 'foundation' },
+            },
             {
                 name: 'CGWC Attendance',
                 component: CGWCGroupAttendance,

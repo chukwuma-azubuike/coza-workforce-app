@@ -630,6 +630,28 @@ export interface IDepartmentReportResponse {
     incidentReport: unknown[];
 }
 
+type IGraphAttendanceReportItem = Array<{
+    campusName: string;
+    value: number;
+    status: string;
+}>;
+
+export interface IGraphAttendanceReports {
+    present: IGraphAttendanceReportItem;
+    late: IGraphAttendanceReportItem;
+    absent: IGraphAttendanceReportItem;
+    total: IGraphAttendanceReportItem;
+    ticket: IGraphAttendanceReportItem;
+    ticketCategory: {
+        campusName: string;
+        value: {
+            name: string;
+            campusTicketCount: number;
+        }[];
+        status: string;
+    }[];
+}
+
 export interface IAllService {
     tag: [];
     _id: string;

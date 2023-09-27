@@ -64,8 +64,8 @@ class Utils {
      * @returns Sorted Array
      */
 
-    static sortByDate = (arrObject: any[], key: string) => {
-        return [...arrObject].sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
+    static sortByDate = (arrObject: any[] | [], key: string) => {
+        return [...arrObject]?.sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
     };
 
     /*************** Filters ****************/
