@@ -24,14 +24,14 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
     const [serviceId, setServiceId] = React.useState<string>();
     const [userCategory, setUserCategory] = React.useState<string>('WORKERS');
     const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
-    const { data: services, refetch: refetchServices, isLoading: servicesLoading } = useGetServicesQuery({});
+    const { data: services, isLoading: servicesLoading } = useGetServicesQuery({ CGWCId }, { skip: !CGWCId });
 
     const {
         data: attendanceReport,
         isLoading: attendanceReportLoading,
         isFetching: attendanceReportFetching,
     } = useGetGraphAttendanceReportsQuery({
-        // CGWCId, //TODO: Restore after test
+        CGWCId, //TODO: Restore after test
         serviceId,
         campusId,
     });
@@ -48,7 +48,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
         return [];
     }, [attendanceReport]);
 
-    const totalPresent = React.useMemo(
+    const totalEarly = React.useMemo(
         () =>
             attendanceReport?.present
                 ?.map(present => {
@@ -56,6 +56,38 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                 })
                 .reduce((a, b) => a + b),
         [attendanceReport?.present]
+    );
+
+    const totalLate = React.useMemo(
+        () =>
+            attendanceReport?.late
+                ?.map(late => {
+                    return late.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.late]
+    );
+
+    const totalAbsent = React.useMemo(
+        () =>
+            attendanceReport?.absent
+                ?.map(absent => {
+                    return absent.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.absent]
+    );
+
+    const totalPresent = (totalLate || 0) + (totalEarly || 0);
+
+    const totalTickets = React.useMemo(
+        () =>
+            attendanceReport?.ticket
+                ?.map(ticket => {
+                    return ticket.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.ticket]
     );
 
     const pastServices = React.useMemo(
@@ -167,9 +199,10 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                     <SelectItemComponent
                         key="all-sessions"
                         label="All Sessions"
+                        isLoading={servicesLoading}
                         value={undefined as unknown as string}
                     />
-                    {pastServices?.map((service, index) => (
+                    {(pastServices || [])?.map((service, index) => (
                         <SelectItemComponent
                             value={service._id}
                             key={`service-${index}`}
@@ -204,7 +237,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 iconName="groups"
                                 iconType="material"
                                 isLoading={isLoadingOrFetching}
-                                value={25}
+                                value={totalLate}
                                 bold
                                 width="48%"
                                 iconColor="orange"
@@ -220,7 +253,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 iconName="groups"
                                 iconType="material"
                                 isLoading={isLoadingOrFetching}
-                                value={150}
+                                value={totalEarly}
                                 width="48%"
                                 bold
                                 marginActive={false}
@@ -233,7 +266,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 iconName="groups"
                                 iconType="material"
                                 isLoading={isLoadingOrFetching}
-                                value={25}
+                                value={totalAbsent}
                                 bold
                                 width="48%"
                                 iconColor={THEME_CONFIG.rose}
@@ -250,7 +283,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 iconName="ticket-confirmation-outline"
                                 iconColor={THEME_CONFIG.rose}
                                 isLoading={isLoadingOrFetching}
-                                value={25}
+                                value={totalTickets}
                                 bold
                                 width={['96%', '50%']}
                                 marginActive={false}
