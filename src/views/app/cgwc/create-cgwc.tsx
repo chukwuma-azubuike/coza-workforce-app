@@ -21,12 +21,12 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
 
     const { setModalState } = useModal();
 
-    const [createCGWC, { isLoading, error, data, reset }] = useCreateCGWCMutation();
+    const [createCGWC, { isLoading, data, reset }] = useCreateCGWCMutation();
 
     const onSubmit: FormikConfig<ICGWCPayload>['onSubmit'] = async (values, { resetForm }) => {
         const name = values.name;
-        const endDate = moment(values.startDate).unix();
-        const startDate = moment(values.endDate).unix();
+        const endDate = moment(values.endDate).unix();
+        const startDate = moment(values.startDate).unix();
 
         const result = await createCGWC({
             name,

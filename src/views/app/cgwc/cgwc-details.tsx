@@ -49,7 +49,9 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const CarouselItem: React.FC<{ item: ICGWCInstantMessage; index: number }> = ({ item, index }) => {
         const handlePress = () => {
-            navigation.navigate('CGWC Resources', item);
+            if (!!item?.messageLink) {
+                navigation.navigate('CGWC Resources', item);
+            }
         };
 
         return (
@@ -60,6 +62,9 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <View style={styles.imageOverlay} />
                         <View style={styles.itemTextContainer}>
                             <Text style={styles.itemText}>{item.title}</Text>
+                            <Text italic style={styles.itemTextMessage}>
+                                {item.message}
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -119,6 +124,9 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     useScreenFocus({
         onFocus: () => {
+            if (isGlobalPastor || isSuperAdmin) {
+                return navigation.navigate('CGWC Report', { CGWCId });
+            }
             refetchSessions();
             refetchMessages();
         },
@@ -238,6 +246,16 @@ const styles = StyleSheet.create({
         textAlign: 'left',
         flexWrap: 'wrap',
         fontWeight: '500',
+        color: '#fff',
+    },
+    itemTextMessage: {
+        left: 20,
+        opacity: 1,
+        zIndex: 10,
+        fontSize: 14,
+        textAlign: 'left',
+        flexWrap: 'wrap',
+        fontWeight: '300',
         color: '#fff',
     },
     backgroundImage: {

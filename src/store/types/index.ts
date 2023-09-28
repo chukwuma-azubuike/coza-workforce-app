@@ -630,6 +630,28 @@ export interface IDepartmentReportResponse {
     incidentReport: unknown[];
 }
 
+type IGraphAttendanceReportItem = Array<{
+    campusName: string;
+    value: number;
+    status: string;
+}>;
+
+export interface IGraphAttendanceReports {
+    present: IGraphAttendanceReportItem;
+    late: IGraphAttendanceReportItem;
+    absent: IGraphAttendanceReportItem;
+    total: IGraphAttendanceReportItem;
+    ticket: IGraphAttendanceReportItem;
+    ticketCategory: {
+        campusName: string;
+        value: {
+            name: string;
+            campusTicketCount: number;
+        }[];
+        status: string;
+    }[];
+}
+
 export interface IAllService {
     tag: [];
     _id: string;
@@ -673,4 +695,19 @@ export interface IReportDownloadPayload {
     campusId?: string;
     serviceId?: string;
     departmentId?: string;
+}
+
+// Score Mapping
+
+export interface IScoreMapping {
+    userId: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    pictureUrl: string;
+    isEligible: boolean;
+    isCGWCApproved: boolean;
+    totalMaxPoints: boolean;
+    totalScore: number;
+    cummulativeScore: number;
 }

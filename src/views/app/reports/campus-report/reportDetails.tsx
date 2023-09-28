@@ -28,7 +28,7 @@ import {
     IServiceReportPayload,
     ITransferReportPayload,
 } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import { GSPReportSchema } from '@utils/schemas';
 import HorizontalTable from '@components/composite/tables/horizontal-table';
 import VerticalTable from '@components/composite/tables/vertical-table';
@@ -53,7 +53,11 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     });
 
     const reportsNotApproved = React.useMemo(
-        () => data?.departmentalReport?.find((report: any) => report.status !== 'APPROVED'),
+        () =>
+            data?.departmentalReport?.find(
+                (report: any) =>
+                    report.status === IReportStatus.PENDING || report.status === IReportStatus.REVIEW_REQUESTED
+            ),
         [data?.departmentalReport]
     );
 

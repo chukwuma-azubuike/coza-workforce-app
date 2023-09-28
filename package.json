@@ -89,6 +89,7 @@
         "rn-fetch-blob": "^0.12.0",
         "sp-react-native-in-app-updates": "^1.2.0",
         "use-count-up": "^3.0.1",
+        "victory-native": "36.6.11",
         "xlsx": "0.18.5",
         "yup": "^0.32.11",
         "yup-phone-lite": "^1.1.2"
