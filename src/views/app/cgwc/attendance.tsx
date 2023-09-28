@@ -1,11 +1,10 @@
 import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
-import { teamAttendanceDataColumns_1 } from '../attendance/flatListConfig';
+import { scoreMappingColumn } from '../attendance/flatListConfig';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
-import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '@components/composite/error-boundary';
 // import useFetchMoreData from '@hooks/fetch-more-data';
@@ -18,8 +17,8 @@ import { Icon } from '@rneui/themed';
 import ListTable from '@components/composite/list/list-table';
 import { ScreenWidth } from '@rneui/base';
 import If from '@components/composite/if-container';
-import { mergeObjectsByKey } from '@utils/mergeObjectsByKey';
 import useScreenFocus from '@hooks/focus';
+import { useGetCummulativeScoresQuery } from '@store/services/score-mapping';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -113,8 +112,8 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
     }, [sessionsIsSuccess]);
 
     const {
-        isLoading,
-        isFetching,
+        isLoading: attendanceLoading,
+        isFetching: attendanceFetching,
         refetch: refetchAttendance,
         data: membersClockedIn,
     } = useGetAttendanceQuery({
@@ -122,6 +121,20 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
         serviceId,
         departmentId: user?.department?._id,
     });
+
+    const {
+        isLoading: scoreMappingLoading,
+        isFetching: scoreMappingFetching,
+        refetch,
+        data: scoreMappingAttendance,
+    } = useGetCummulativeScoresQuery({
+        CGWCId,
+        serviceId,
+        departmentId: user?.department?._id,
+    });
+
+    const isLoading = attendanceLoading || scoreMappingLoading;
+    const isFetching = attendanceFetching || scoreMappingFetching;
 
     useScreenFocus({
         onFocus: () => {
@@ -131,31 +144,19 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
         },
     });
 
-    const { data: members, refetch: usersRefetch } = useGetUsersByDepartmentIdQuery(user?.department._id);
-
+    const membersClockedInValid = !membersClockedIn?.length ? [] : membersClockedIn;
+    const scoreMappingAttendanceValid = !scoreMappingAttendance?.length ? [] : scoreMappingAttendance;
     const allMembers = React.useMemo(() => {
-        if (!members?.length) return [];
+        if (!membersClockedInValid?.length) return [];
 
-        return members?.map(member => {
-            return {
-                ...member,
-                userId: member._id,
-            };
-        });
-    }, [members]);
-
-    const membersClockedInValid = React.useMemo(() => {
-        if (!membersClockedIn?.length) return [];
-
-        return membersClockedIn?.map(member => {
+        return membersClockedInValid?.map(member => {
             return {
                 ...member,
                 userId: member.user._id,
             };
         });
-    }, [membersClockedIn]);
-
-    const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
+    }, [membersClockedInValid]);
+    const mergedUsers = [...scoreMappingAttendanceValid, ...allMembers] as any;
 
     const mergedAttendanceWithMemberList = React.useMemo(
         () => Utils.mergeDuplicatesByKey(mergedUsers, 'userId'),
@@ -163,10 +164,14 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
     );
 
     const handleRefetch = () => {
-        usersRefetch();
         refetchSessions();
-        refetchAttendance();
+        refetch();
     };
+
+    const eligible = React.useMemo(
+        () => scoreMappingAttendance?.filter(scoreMap => scoreMap.isEligible)?.length,
+        [scoreMappingAttendance]
+    );
 
     return (
         <ErrorBoundary>
@@ -192,7 +197,7 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
                             Eligible:{'  '}
                         </Text>
                         <Text bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
-                            {0}
+                            {eligible || 0}
                         </Text>
                     </HStack>
                 </HStack>
@@ -202,8 +207,8 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
-                columns={teamAttendanceDataColumns_1}
-                data={mergedAttendanceWithMemberList}
+                columns={scoreMappingColumn}
+                data={mergedAttendanceWithMemberList || []}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
@@ -272,28 +277,18 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
     const isLoading = hodLoading || ahodLoading;
     const isFetching = hodFetching || ahodFetching;
 
-    const { data: HODProfiles } = useGetUsersQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id },
+    const { data: HODProfiles } = useGetCummulativeScoresQuery(
+        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id, CGWCId, serviceId },
         { skip: !leaderRoleIds?.length }
     );
-    const { data: AHODProfiles } = useGetUsersQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id },
+    const { data: AHODProfiles } = useGetCummulativeScoresQuery(
+        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id, CGWCId, serviceId },
         { skip: !leaderRoleIds?.length }
     );
 
     const leadersClockedIn = AHODs && HODs ? [...AHODs, ...HODs] : [];
     const allLeadersRaw = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
-
-    const allLeaders = React.useMemo(() => {
-        if (!allLeadersRaw.length) return [];
-
-        return allLeadersRaw?.map(leader => {
-            return {
-                ...leader,
-                userId: leader._id,
-            };
-        });
-    }, [allLeadersRaw]);
+    const allLeaders = !!allLeadersRaw.length ? allLeadersRaw : [];
 
     const leadersClockedInValid = React.useMemo(() => {
         if (!leadersClockedIn?.length) return [];
@@ -319,6 +314,8 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
         refetchServices();
     };
 
+    const eligible = React.useMemo(() => allLeaders?.filter(leader => leader.isEligible)?.length, [allLeaders]);
+
     return (
         <ErrorBoundary>
             <HStack mt={4} px={2} w="full" justifyContent="space-between">
@@ -342,7 +339,7 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
                         Eligible:
                     </Text>
                     <Text ml={4} bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
-                        0
+                        {eligible || 0}
                     </Text>
                 </HStack>
             </HStack>
@@ -352,7 +349,7 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 data={mergedAttendanceWithLeaderList}
-                columns={teamAttendanceDataColumns_1}
+                columns={scoreMappingColumn}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
@@ -393,18 +390,54 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
         }
     }, [sessions]);
 
-    const { data, refetch, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
+    const { data: campusAttendance, isLoading: campusIsLoading } = useGetAttendanceQuery({
+        page,
+        CGWCId,
+        serviceId,
+        campusId: user?.campus._id,
+    });
+
+    const {
+        data: scoreMappingAttendance,
+        refetch,
+        isLoading,
+        isSuccess,
+        isFetching,
+    } = useGetCummulativeScoresQuery(
         {
-            page,
             CGWCId,
-            limit: 20,
-            serviceId: serviceId,
+            serviceId,
             campusId: user?.campus._id,
         },
         {
             skip: !serviceId,
             refetchOnMountOrArgChange: true,
         }
+    );
+
+    const scoreMappingAttendanceValid = !!scoreMappingAttendance?.length ? scoreMappingAttendance : [];
+
+    const allMembersClockedInValid = React.useMemo(() => {
+        if (!campusAttendance?.length) return [];
+
+        return campusAttendance?.map(attendance => {
+            return {
+                ...attendance,
+                userId: attendance.user._id,
+            };
+        });
+    }, [campusAttendance]);
+
+    const mergedAttendance = [...allMembersClockedInValid, ...scoreMappingAttendanceValid] as any;
+
+    const mergedAttendanceWithLeaderList = React.useMemo(
+        () => Utils.mergeDuplicatesByKey(mergedAttendance, 'userId'),
+        [scoreMappingAttendanceValid, mergedAttendance]
+    );
+
+    const eligible = React.useMemo(
+        () => scoreMappingAttendance?.filter(member => member.isEligible)?.length,
+        [scoreMappingAttendance]
     );
 
     // const fetchMoreData = () => {
@@ -446,18 +479,18 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
                         Eligible:
                     </Text>
                     <Text ml={4} bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
-                        0
+                        {eligible || 0}
                     </Text>
                 </HStack>
             </HStack>
             <FlatListComponent
                 onRefresh={handleRefetch}
-                data={data as IAttendance[]}
+                data={mergedAttendanceWithLeaderList || []}
                 padding={isAndroid ? 3 : 10}
                 // fetchMoreData={fetchMoreData}
-                isLoading={isLoading || isFetching}
+                isLoading={isLoading || isFetching || sessionsIsLoading}
                 refreshing={isLoading || isFetching}
-                columns={teamAttendanceDataColumns_1}
+                columns={scoreMappingColumn}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>

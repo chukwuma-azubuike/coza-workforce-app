@@ -10,6 +10,7 @@ import { ticketServiceSlice } from '../tickets';
 import { campusServiceSlice } from './../campus';
 import { roleServiceSlice } from '../role';
 import { cgwcServiceSlice } from '../cgwc';
+import { scoreMappingServiceSlice } from '../score-mapping';
 
 const middlewaresSlices = [
     accountServiceSlice.middleware,
@@ -24,6 +25,7 @@ const middlewaresSlices = [
     scoreServiceSlice.middleware,
     roleServiceSlice.middleware,
     cgwcServiceSlice.middleware,
+    scoreMappingServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;

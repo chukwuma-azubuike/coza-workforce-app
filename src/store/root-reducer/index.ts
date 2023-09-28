@@ -1,3 +1,4 @@
+import { scoreMappingServiceSlice } from './../services/score-mapping';
 import { combineReducers } from '@reduxjs/toolkit';
 import { attendanceServiceSlice } from '../services/attendance';
 import { accountServiceSlice } from '../services/account';
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
     score: scoreServiceSlice.reducer,
     role: roleServiceSlice.reducer,
     cgwc: cgwcServiceSlice.reducer,
+    scoreMapping: scoreMappingServiceSlice.reducer,
 });
 
 export default rootReducer;
