@@ -696,3 +696,18 @@ export interface IReportDownloadPayload {
     serviceId?: string;
     departmentId?: string;
 }
+
+// Score Mapping
+
+export interface IScoreMapping {
+    userId: string;
+    lastName: string;
+    firstName: string;
+    email: string;
+    pictureUrl: string;
+    isEligible: boolean;
+    isCGWCApproved: boolean;
+    totalMaxPoints: boolean;
+    totalScore: number;
+    cummulativeScore: number;
+}
