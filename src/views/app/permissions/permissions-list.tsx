@@ -7,12 +7,12 @@ import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import { AVATAR_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import useRole from '@hooks/role';
 import { useGetPermissionsQuery } from '@store/services/permissions';
 import { IPermission } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
 // import PermissionStats from './permission-stats';
 
@@ -127,7 +127,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolea
                     setPage(prev => prev - 1);
                 }
             }
-        };
+        };        
 
         const memoizedData = useMemo(
             () =>
@@ -140,7 +140,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolea
                 ),
             [moreData]
         );
-
+        
         useScreenFocus({
             onFocus: () => {
                 if (reload && !isUninitialized) refetch();
@@ -206,7 +206,7 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission; reload: bo
                             '_id',
                             updatedListItem?._id,
                         ]),
-                        'createdAt'
+'createdAt'
                     ),
                     'createdAt'
                 ),

@@ -5,7 +5,7 @@ export const cummulativeAttendanceReport = (data: any[]) => {
     const flatAttendance = data?.map(attendance => {
         return {
             ...attendance,
-            [attendance.clockIn.split('T')[0]]: attendance.clockIn,
+            [attendance.clockIn?.split('T')[0]]: attendance?.clockIn,
             userId: `${attendance.firstName}-${attendance.lastName}`,
         };
     });

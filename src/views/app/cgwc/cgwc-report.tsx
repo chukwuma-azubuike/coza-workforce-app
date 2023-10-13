@@ -4,6 +4,7 @@ import { BarChart, IStackedHistogramData, PieChart, StackedHistogram } from '@co
 import { GridItem, ResponsiveGrid } from '@components/layout/responsive-grid';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
+import useScreenFocus from '@hooks/focus';
 import useMediaQuery from '@hooks/media-query';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -24,11 +25,17 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
     const [serviceId, setServiceId] = React.useState<string>();
     const [userCategory, setUserCategory] = React.useState<string>('WORKERS');
     const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
-    const { data: services, isLoading: servicesLoading } = useGetServicesQuery({ CGWCId }, { skip: !CGWCId });
+    const {
+        data: services,
+        isLoading: servicesLoading,
+        refetch: refetchServices,
+        isUninitialized: servicesIsUninitialized,
+    } = useGetServicesQuery({ CGWCId }, { skip: !CGWCId });
 
     const {
         data: attendanceReport,
         isLoading: attendanceReportLoading,
+        refetch: attendanceReportRefetch,
         isFetching: attendanceReportFetching,
     } = useGetGraphAttendanceReportsQuery({
         CGWCId, //TODO: Restore after test
@@ -148,13 +155,22 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
 
     const { isMobile } = useMediaQuery();
 
+    const handleRefresh = () => {
+        attendanceReportRefetch();
+        !servicesIsUninitialized && refetchServices();
+    };
+
+    useScreenFocus({
+        onFocus: handleRefresh,
+    });
+
     return (
-        <ViewWrapper pt={6} scroll>
+        <ViewWrapper pt={6} scroll onRefresh={handleRefresh} refreshing={false}>
             <ResponsiveGrid rowCount={3}>
                 <SelectComponent
                     selectedValue={userCategory}
                     onValueChange={handleUserCategory}
-                    w={isMobile ? ScreenWidth - 36 : 300}
+                    w={isMobile ? ScreenWidth : 300}
                     dropdownIcon={
                         <HStack mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
@@ -215,7 +231,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                 </SelectComponent>
             </ResponsiveGrid>
             <ResponsiveGrid>
-                <GridItem flexBasis="35%">
+                <GridItem flexBasis="40%">
                     <Center height={ScreenHeight / 2}>
                         <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
                             <StatCardComponent
@@ -294,7 +310,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                         </Stack>
                     </Center>
                 </GridItem>
-                <GridItem flexBasis="65%">
+                <GridItem flexBasis="60%">
                     <StackedHistogram
                         stackColors={[THEME_CONFIG.primary, 'orange', THEME_CONFIG.rose]}
                         entityKey="campusName"

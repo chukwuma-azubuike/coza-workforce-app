@@ -135,20 +135,24 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         setTriggerFetch(false);
 
         if (reportData[dataType]?.length) {
-            return downloadFile(
-                dataType === 'attendance'
-                    ? generateCummulativeAttendanceReport(reportData[dataType])
-                    : reportData[dataType],
-                generateReportName({
-                    campusId,
-                    dataType,
-                    services,
-                    serviceId,
-                    departmentId,
-                    campusDepartments,
-                    campuses: allCampuses,
-                })
-            );
+            try {
+                return downloadFile(
+                    dataType === 'attendance'
+                        ? generateCummulativeAttendanceReport(reportData[dataType])
+                        : reportData[dataType],
+                    generateReportName({
+                        campusId,
+                        dataType,
+                        services,
+                        serviceId,
+                        departmentId,
+                        campusDepartments,
+                        campuses: allCampuses,
+                    })
+                );
+            } catch (err) {
+                Alert.alert(JSON.stringify(err));
+            }
         }
         Alert.alert('Empty report', 'No records to download.');
     };
