@@ -72,12 +72,6 @@ PODS:
     - nanopb/encode (= 2.30909.0)
   - nanopb/decode (2.30909.0)
   - nanopb/encode (2.30909.0)
-  - Permission-LocationAccuracy (3.9.1):
-    - RNPermissions
-  - Permission-LocationWhenInUse (3.9.1):
-    - RNPermissions
-  - Permission-Notifications (3.9.1):
-    - RNPermissions
   - PromisesObjC (2.3.1)
   - RCT-Folly (2021.07.22.00):
     - boost
@@ -479,9 +473,6 @@ DEPENDENCIES:
   - hermes-engine (from `../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)
   - libevent (~> 2.1.12)
   - lottie-react-native (from `../node_modules/lottie-react-native`)
-  - Permission-LocationAccuracy (from `../node_modules/react-native-permissions/ios/LocationAccuracy`)
-  - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse`)
-  - Permission-Notifications (from `../node_modules/react-native-permissions/ios/Notifications`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -571,12 +562,6 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
   lottie-react-native:
     :path: "../node_modules/lottie-react-native"
-  Permission-LocationAccuracy:
-    :path: "../node_modules/react-native-permissions/ios/LocationAccuracy"
-  Permission-LocationWhenInUse:
-    :path: "../node_modules/react-native-permissions/ios/LocationWhenInUse"
-  Permission-Notifications:
-    :path: "../node_modules/react-native-permissions/ios/Notifications"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -706,9 +691,6 @@ SPEC CHECKSUMS:
   lottie-ios: 8f97d3271e155c2d688875c29cd3c74908aef5f8
   lottie-react-native: 8f9d4be452e23f6e5ca0fdc11669dc99ab52be81
   nanopb: b552cce312b6c8484180ef47159bc0f65a1f0431
-  Permission-LocationAccuracy: 035ef222690c79a581869660a2ac18862c46ec01
-  Permission-LocationWhenInUse: fed71d84d4c5ef7fa59efe706010b69f4468aa00
-  Permission-Notifications: 0dffe20d07c8c18e32f0794e673eea43e7ad7d48
   PromisesObjC: c50d2056b5253dadbd6c2bea79b0674bd5a52fa4
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
   RCTRequired: fd4d923b964658aa0c4091a32c8b2004c6d9e3a6
@@ -756,7 +738,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 38aa38413896620338948fbb5c90579a7b1c3fde
   RNNotifee: 5155e0a5e0a97d0c839030d8192783cd63053999
   RNPDF: 8526c7210ff375c29d2461c51945e2f5480f7b60
-  RNPermissions: b7fa7b57aabdf1a67ebfa2acb41772d6cf0b9fcb
+  RNPermissions: c59770f1f8b0d58820106770c93c599da7d94963
   RNReanimated: cc5e3aa479cb9170bcccf8204291a6950a3be128
   RNScreens: 85d3880b52d34db7b8eeebe2f1a0e807c05e69fa
   RNSentry: bf01c99057573813a9b965d213801bac4c6a661b
@@ -767,6 +749,6 @@ SPEC CHECKSUMS:
   SentryPrivate: 2909bcc7b19a827b49e9bde0e56116b08d40dfdf
   Yoga: 921eb014669cf9c718ada68b08d362517d564e0c
 
-PODFILE CHECKSUM: 338770b4d5bcc8fa6314a486977a1c2ebacb166a
+PODFILE CHECKSUM: 9dfa3f25c56dac21a871b2483e8b6e8bada068be
 
 COCOAPODS: 1.11.3
