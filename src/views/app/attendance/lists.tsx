@@ -118,7 +118,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
         return membersClockedIn?.map(member => {
             return {
                 ...member,
-                userId: member.user._id,
+                userId: member?.user?._id,
             };
         });
     }, [membersClockedIn]);
