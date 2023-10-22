@@ -127,7 +127,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolea
                     setPage(prev => prev - 1);
                 }
             }
-        };        
+        };
 
         const memoizedData = useMemo(
             () =>
@@ -140,7 +140,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolea
                 ),
             [moreData]
         );
-        
+
         useScreenFocus({
             onFocus: () => {
                 if (reload && !isUninitialized) refetch();
@@ -206,7 +206,7 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission; reload: bo
                             '_id',
                             updatedListItem?._id,
                         ]),
-'createdAt'
+                        'createdAt'
                     ),
                     'createdAt'
                 ),
