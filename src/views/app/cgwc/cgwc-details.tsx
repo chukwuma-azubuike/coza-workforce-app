@@ -124,7 +124,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     useScreenFocus({
         onFocus: () => {
-            if (isGlobalPastor || isSuperAdmin) {
+            if (isGlobalPastor) {
                 return navigation.navigate('CGWC Report', { CGWCId });
             }
             refetchSessions();

@@ -7,12 +7,12 @@ import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import { AVATAR_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import useRole from '@hooks/role';
 import { useGetPermissionsQuery } from '@store/services/permissions';
 import { IPermission } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
 // import PermissionStats from './permission-stats';
 

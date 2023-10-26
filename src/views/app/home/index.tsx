@@ -7,7 +7,7 @@ import TopNav from './top-nav';
 import { usePreventGoBack } from '@hooks/navigation';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import useRole from '@hooks/role';
-import { ERROR, IAttendance, IService } from '@store/types';
+import { IAttendance, IService } from '@store/types';
 import { ICampusCoordinates, useGetAttendanceQuery } from '@store/services/attendance';
 import If from '@components/composite/if-container';
 import GSPView from './global-senior-pastors';
@@ -21,7 +21,6 @@ import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import { useGetCampusByIdQuery } from '@store/services/campus';
 import { Platform } from 'react-native';
-import { useAuth } from '@hooks/auth';
 interface IInitialHomeState {
     latestService: {
         data?: IService;
@@ -138,15 +137,6 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             });
         }
     }, [currentUserData]);
-
-    const { logOut } = useAuth();
-
-    React.useEffect(() => {
-        // Logout if current user is not found
-        if (!currentUserData && (!userLoading || !userFetching) && error?.error !== ERROR.NETWORK_CONNECTION_ERROR) {
-            logOut();
-        }
-    }, [currentUserData, userLoading, error, userFetching]);
 
     useScreenFocus({
         onFocusExit: () => {

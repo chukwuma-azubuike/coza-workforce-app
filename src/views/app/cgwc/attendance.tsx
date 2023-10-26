@@ -39,7 +39,7 @@ export const MyCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCId,
     const minifiedAttendance = React.useMemo(
         () =>
             data?.map(attendance => {
-                return { ...attendance, serviceId: attendance.service._id };
+                return { ...attendance, serviceId: attendance?.service?._id || attendance?.serviceId };
             }) || [],
         [data]
     );

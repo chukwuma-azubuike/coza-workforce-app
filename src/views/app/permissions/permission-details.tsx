@@ -11,7 +11,7 @@ import TextAreaComponent from '@components/atoms/text-area';
 import CardComponent from '@components/composite/card';
 import If from '@components/composite/if-container';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { AVATAR_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
