@@ -4,30 +4,35 @@ import moment from 'moment';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Platform } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
-import ButtonComponent from '../../../components/atoms/button';
-import StatusTag from '../../../components/atoms/status-tag';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import CardComponent from '../../../components/composite/card';
-import If from '../../../components/composite/if-container';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
-import useScreenFocus from '../../../hooks/focus';
-import useModal from '../../../hooks/modal/useModal';
-import useRole from '../../../hooks/role';
+import AvatarComponent from '@components/atoms/avatar';
+import ButtonComponent from '@components/atoms/button';
+import StatusTag from '@components/atoms/status-tag';
+import TextAreaComponent from '@components/atoms/text-area';
+import CardComponent from '@components/composite/card';
+import If from '@components/composite/if-container';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import useScreenFocus from '@hooks/focus';
+import useModal from '@hooks/modal/useModal';
+import useRole from '@hooks/role';
 import {
     useApprovePermissionMutation,
     useDeclinePermissionMutation,
     useGetPermissionByIdQuery,
-} from '../../../store/services/permissions';
-import { IPermission, IUpdatePermissionPayload } from '../../../store/types';
+} from '@store/services/permissions';
+import { IPermission, IUpdatePermissionPayload } from '@store/types';
+
+interface PermissionDetailsParamsProps extends IPermission {
+    screen: { name: string; value: string } | undefined;
+}
 
 const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const permissionParams = props.route.params as IPermission;
+    const permissionParams = props.route.params as PermissionDetailsParamsProps;
 
     const {
         requestor: { _id: requestorId },
         _id,
+        screen,
     } = permissionParams;
 
     const navigate = props.navigation;
@@ -73,7 +78,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     useScreenFocus({
         onFocus: () => {
             refetch();
-            if (!permission?.comment) setPermissionComment('');
+            if (!permission?.comment) {
+                setPermissionComment('');
+            }
         },
     });
 
@@ -98,11 +105,20 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             approveReset();
-            navigate.navigate('Permissions', {
-                ...permissionParams,
-                ...approveData,
-                requestor: permissionParams?.requestor,
-            });
+            if (screen?.name) {
+                navigate.navigate('Group head department activies', {
+                    permissions: { ...permissionParams, ...approveData, requestor: permissionParams?.requestor },
+                    screenName: screen.name,
+                    _id: screen.value,
+                    tab: 1,
+                });
+            } else {
+                navigate.navigate('Permissions', {
+                    ...permissionParams,
+                    ...approveData,
+                    requestor: permissionParams?.requestor,
+                });
+            }
         }
         if (approveIsError) {
             setModalState({
@@ -122,11 +138,21 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             });
             setPermissionComment('');
             declineReset();
-            navigate.navigate('Permissions', {
-                ...permissionParams,
-                ...declineData,
-                requestor: permissionParams?.requestor,
-            });
+
+            if (!!screen?.name) {
+                navigate.navigate('Group head department activies', {
+                    permissions: { ...permissionParams, ...declineData, requestor: permissionParams?.requestor },
+                    screenName: screen.name,
+                    _id: screen.value,
+                    tab: 1,
+                });
+            } else {
+                navigate.navigate('Permissions', {
+                    ...permissionParams,
+                    ...declineData,
+                    requestor: permissionParams?.requestor,
+                });
+            }
         }
         if (declineIsError) {
             setModalState({
@@ -138,9 +164,15 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     }, [declineIsSuccess, declineIsError]);
 
     const takePermissionAction = React.useMemo(() => {
-        if (requestorId === user._id) return false;
-        if (isQC && permission?.department._id !== user.department._id) return false;
-        if (permission?.status !== 'PENDING') return false;
+        if (requestorId === user._id) {
+            return false;
+        }
+        if (isQC && permission?.department._id !== user.department._id) {
+            return false;
+        }
+        if (permission?.status !== 'PENDING') {
+            return false;
+        }
 
         return true;
     }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);

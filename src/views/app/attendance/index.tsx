@@ -1,15 +1,15 @@
 import React from 'react';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { CampusAttendance, LeadersAttendance, MyAttendance, TeamAttendance } from './lists';
-import TabComponent from '../../../components/composite/tabs';
+import TabComponent from '@components/composite/tabs';
 import { SceneMap } from 'react-native-tab-view';
-import useRole, { ROLES } from '../../../hooks/role';
-import useMediaQuery from '../../../hooks/media-query';
+import useRole, { ROLES } from '@hooks/role';
+import useMediaQuery from '@hooks/media-query';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useScreenFocus from '../../../hooks/focus';
-import If from '../../../components/composite/if-container';
-import StaggerButtonComponent from '../../../components/composite/stagger';
+import useScreenFocus from '@hooks/focus';
+import If from '@components/composite/if-container';
+import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {

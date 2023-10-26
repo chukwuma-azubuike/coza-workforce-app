@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useSendForgotPasswordOTPQuery, useValidateForgotPasswordOTPMutation } from '../../../store/services/account';
-import { CELL_COUNT } from '../../../components/atoms/otp-input';
-import Utils from '../../../utils';
+import { useSendForgotPasswordOTPQuery, useValidateForgotPasswordOTPMutation } from '@store/services/account';
+import { CELL_COUNT } from '@components/atoms/otp-input';
+import Utils from '@utils/index';
 
 const useForgotPassword = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);

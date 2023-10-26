@@ -1,17 +1,17 @@
 import React from 'react';
 import { Box, Center, FormControl, Heading, Stack, VStack, WarningOutlineIcon } from 'native-base';
-import { InputComponent } from '../../../components/atoms/input';
-import ButtonComponent from '../../../components/atoms/button';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import { InputComponent } from '@components/atoms/input';
+import ButtonComponent from '@components/atoms/button';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { IRegistrationPageStep } from './types';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { RegisterFormContext } from '.';
 import { Field, Formik } from 'formik';
-import { IRegisterPayload } from '../../../store/types';
-import { RegisterSchema_1 } from '../../../utils/schemas';
-import PhoneNumberInput from '../../../components/atoms/phone-input';
-import Utils from '../../../utils';
+import { IRegisterPayload } from '@store/types';
+import { RegisterSchema_1 } from '@utils/schemas';
+import PhoneNumberInput from '@components/atoms/phone-input';
+import Utils from '@utils';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
@@ -19,7 +19,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
     return (
-        <ViewWrapper scroll>
+        <ViewWrapper scroll pt={10}>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>

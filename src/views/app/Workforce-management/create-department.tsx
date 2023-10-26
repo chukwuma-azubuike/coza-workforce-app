@@ -1,22 +1,22 @@
 import React from 'react';
 import { Box, FormControl, HStack, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import useModal from '../../../hooks/modal/useModal';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import useModal from '@hooks/modal/useModal';
 import { ParamListBase } from '@react-navigation/native';
-import useRole from '../../../hooks/role';
-import { useCreateDepartmentMutation } from '../../../store/services/department';
-import { ICreateDepartmentPayload } from '../../../store/types';
+import useRole from '@hooks/role';
+import { useCreateDepartmentMutation } from '@store/services/department';
+import { ICreateDepartmentPayload } from '@store/types';
 import { Formik, FormikConfig } from 'formik';
-import { CreateDepartmentSchema } from '../../../utils/schemas';
+import { CreateDepartmentSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '../../../components/atoms/input';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import { useGetCampusesQuery } from '../../../store/services/campus';
-import If from '../../../components/composite/if-container';
+import { InputComponent } from '@components/atoms/input';
+import TextAreaComponent from '@components/atoms/text-area';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { useGetCampusesQuery } from '@store/services/campus';
+import If from '@components/composite/if-container';
 
 const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
@@ -51,7 +51,7 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                     status: 'success',
                     duration: 3,
                 });
-                resetForm(INITIAL_VALUES as any);
+                resetForm({ values: INITIAL_VALUES });
                 goBack();
             }
 
@@ -94,7 +94,6 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateDepartmentPayload>
                         validateOnChange
-                        enableReinitialize
                         onSubmit={submitForm}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateDepartmentSchema}

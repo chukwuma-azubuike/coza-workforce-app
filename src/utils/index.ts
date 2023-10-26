@@ -64,8 +64,8 @@ class Utils {
      * @returns Sorted Array
      */
 
-    static sortByDate = (arrObject: any[], key: string) => {
-        return [...arrObject].sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
+    static sortByDate = (arrObject: any[] | [], key: string) => {
+        return [...arrObject]?.sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
     };
 
     /*************** Filters ****************/
@@ -234,7 +234,7 @@ class Utils {
     /************** Arrays ***************/
 
     // This functions groups a list (Array of objects) by a common key;
-    static groupListByKey = (array: any[] = [], key: string) => {
+    static groupListByKey = (array: any[] = [], key: string, returnType: 'entries' | 'values' = 'entries') => {
         const map: any = {};
 
         if (!array?.length || !array) {
@@ -255,7 +255,7 @@ class Utils {
                 map[keyInMap] = [array[i]];
             }
         }
-        return Object.entries(map);
+        return Object[returnType](map);
     };
 
     /**
@@ -282,7 +282,7 @@ class Utils {
         return originalList;
     };
 
-    static mergeDuplicatesByKey = (array: any[], key: string = '_id') => {
+    static mergeDuplicatesByKey = <T>(array: any[], key: keyof T = '_id' as keyof T) => {
         const grouped = groupBy(array, key);
 
         const merged: any[] = [];

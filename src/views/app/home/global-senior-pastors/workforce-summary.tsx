@@ -1,18 +1,18 @@
 import { FormControl, HStack, Stack, Text } from 'native-base';
 import React from 'react';
-import { StatCardComponent } from '../../../../components/composite/card';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
+import { StatCardComponent } from '@components/composite/card';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { Icon, ListItem } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../../config/appConfig';
-import { useGetGSPReportQuery } from '../../../../store/services/reports';
-import useAppColorMode from '../../../../hooks/theme/colorMode';
-import { SelectComponent, SelectItemComponent } from '../../../../components/atoms/select';
-import { useGetLatestServiceQuery } from '../../../../store/services/services';
+import { THEME_CONFIG } from '@config/appConfig';
+import { useGetGSPReportQuery } from '@store/services/reports';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { useGetLatestServiceQuery } from '@store/services/services';
 import moment from 'moment';
-import { IAttendanceStatus, ICampus, IService, IUserReportType } from '../../../../store/types';
-import Utils from '../../../../utils';
-import useRole from '../../../../hooks/role';
-import { useGetCampusesQuery } from '../../../../store/services/campus';
+import { IAttendanceStatus, ICampus, IService, IUserReportType } from '@store/types';
+import Utils from '@utils/index';
+import useRole from '@hooks/role';
+import { useGetCampusesQuery } from '@store/services/campus';
 import { useNavigation } from '@react-navigation/native';
 import { IUserReportProps } from '../../workforce-management/user-reports';
 
@@ -127,7 +127,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                     </SelectComponent>
                 </FormControl>
             </HStack>
-            <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
+            <ViewWrapper mt={4} scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
                 <ListItem.Accordion
                     content={
                         <>

@@ -1,16 +1,16 @@
 import React from 'react';
 import { Icon } from '@rneui/base';
 import { Divider, Flex, HStack, Text, VStack } from 'native-base';
-import { THEME_CONFIG } from '../../../../config/appConfig';
-import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
-import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '../../../../store/services/reports';
-import StatusTag from '../../../../components/atoms/status-tag';
+import { THEME_CONFIG } from '@config/appConfig';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '@store/services/reports';
+import StatusTag from '@components/atoms/status-tag';
 import { useNavigation } from '@react-navigation/native';
 import { Platform, TouchableOpacity } from 'react-native';
-import useAppColorMode from '../../../../hooks/theme/colorMode';
-import Utils from '../../../../utils';
-import useScreenFocus from '../../../../hooks/focus';
-import useRole from '../../../../hooks/role';
+import useAppColorMode from '@hooks/theme/colorMode';
+import Utils from '@utils';
+import useScreenFocus from '@hooks/focus';
+import useRole from '@hooks/role';
 const isAndroid = Platform.OS === 'android';
 
 interface ReportSummaryListRowProps {

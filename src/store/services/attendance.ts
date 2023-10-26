@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import {
     IAttendance,
+    ICGWCParams,
     ICampus,
     IDefaultQueryParams,
     IDefaultResponse,
@@ -100,6 +101,7 @@ export const attendanceServiceSlice = createApi({
 
         getDepartmentAttendanceReport: endpoint.query<
             {
+                tickets?: number;
                 attendance: number;
                 departmentUsers: number;
             },
@@ -107,6 +109,27 @@ export const attendanceServiceSlice = createApi({
         >({
             query: ({ serviceId, departmentId }) => ({
                 url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<{
+                    attendance: number;
+                    departmentUsers: number;
+                }>
+            ) => res.data,
+        }),
+
+        getDepartmentCGWCAttendanceReport: endpoint.query<
+            {
+                tickets?: number;
+                attendance: number;
+                departmentUsers: number;
+            },
+            { serviceId: string; departmentId: string } & Partial<ICGWCParams>
+        >({
+            query: ({ serviceId, departmentId, isCGWC, CGWCId }) => ({
+                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}/${isCGWC}/${CGWCId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -138,6 +161,26 @@ export const attendanceServiceSlice = createApi({
             ) => res.data,
         }),
 
+        getLeadersCGWCAttendanceReport: endpoint.query<
+            {
+                attendance: number;
+                leaderUsers: number;
+            },
+            { serviceId: string; campusId: string } & Partial<ICGWCParams>
+        >({
+            query: ({ serviceId, campusId, isCGWC, CGWCId }) => ({
+                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId}/${isCGWC}/${CGWCId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<{
+                    attendance: number;
+                    leaderUsers: number;
+                }>
+            ) => res.data,
+        }),
+
         getWorkersAttendanceReport: endpoint.query<
             {
                 attendance: number;
@@ -147,6 +190,26 @@ export const attendanceServiceSlice = createApi({
         >({
             query: ({ serviceId, campusId }) => ({
                 url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (
+                res: IDefaultResponse<{
+                    attendance: number;
+                    workerUsers: number;
+                }>
+            ) => res.data,
+        }),
+
+        getWorkersCGWCAttendanceReport: endpoint.query<
+            {
+                attendance: number;
+                workerUsers: number;
+            },
+            { serviceId: string; campusId: string } & Partial<ICGWCParams>
+        >({
+            query: ({ serviceId, campusId, isCGWC, CGWCId }) => ({
+                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}/${isCGWC}/${CGWCId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -183,4 +246,7 @@ export const {
     useGetLeadersAttendanceReportQuery,
     useGetDepartmentAttendanceReportQuery,
     useGetAttendanceReportForDownloadQuery,
+    useGetWorkersCGWCAttendanceReportQuery,
+    useGetLeadersCGWCAttendanceReportQuery,
+    useGetDepartmentCGWCAttendanceReportQuery,
 } = attendanceServiceSlice;

@@ -1,8 +1,8 @@
 import React from 'react';
-import useRole from '../../../hooks/role';
+import useRole from '@hooks/role';
 import { useNavigation } from '@react-navigation/native';
-import useScreenFocus from '../../../hooks/focus';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import useScreenFocus from '@hooks/focus';
+import ViewWrapper from '@components/layout/viewWrapper';
 
 const WorkforceSummary: React.FC = () => {
     const { isHOD, isAHOD, isSuperAdmin, isCampusPastor, isGlobalPastor, isQC, isInternshipHOD } = useRole();

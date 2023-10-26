@@ -1,3 +1,4 @@
+import { scoreMappingServiceSlice } from './../services/score-mapping';
 import { combineReducers } from '@reduxjs/toolkit';
 import { attendanceServiceSlice } from '../services/attendance';
 import { accountServiceSlice } from '../services/account';
@@ -16,6 +17,7 @@ import { ticketServiceSlice } from '../services/tickets';
 import { campusServiceSlice } from './../services/campus';
 import { scoreServiceSlice } from '../services/score';
 import { roleServiceSlice } from '../services/role';
+import { cgwcServiceSlice } from '../services/cgwc';
 
 const userPersistConfig: PersistConfig<IUser> = {
     key: 'users',
@@ -47,6 +49,8 @@ const rootReducer = combineReducers({
     version: persistedVersionReducer,
     score: scoreServiceSlice.reducer,
     role: roleServiceSlice.reducer,
+    cgwc: cgwcServiceSlice.reducer,
+    scoreMapping: scoreMappingServiceSlice.reducer,
 });
 
 export default rootReducer;

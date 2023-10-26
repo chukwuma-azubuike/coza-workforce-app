@@ -1,12 +1,12 @@
 import React from 'react';
 import { Box, HStack, Text, VStack } from 'native-base';
 import If from '../if-container';
-import Utils from '../../../utils';
+import Utils from '@utils/index';
 import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableOpacity } from 'react-native';
 import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
 import moment from 'moment';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { useNavigation } from '@react-navigation/native';
 
 export interface IFlatListColumn {

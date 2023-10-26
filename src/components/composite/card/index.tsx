@@ -1,9 +1,9 @@
 import React from 'react';
 import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading, Center } from 'native-base';
-import { IIconTypes } from '../../../utils/types';
+import { IIconTypes } from '@utils/types';
 import { Icon } from '@rneui/themed';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
 
@@ -21,6 +21,8 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
 
     return (
         <Box
+            _dark={{ backgroundColor: 'gray.900' }}
+            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
             {...props}
             py={2}
             flex={[0, 1]}
@@ -28,8 +30,6 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
             borderWidth={0.2}
             minWidth={[160, 200]}
             style={style.shadowProp}
-            _dark={{ backgroundColor: 'gray.900' }}
-            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
         >
             {isLoading ? (
                 <ProfileSkeleton count={9} />
@@ -57,6 +57,7 @@ interface IStatCardComponentProps {
     value?: number | string;
     flex?: number;
     label?: string;
+    bold?: boolean;
     prefix?: string;
     suffix?: string;
     percent?: boolean;
@@ -65,18 +66,29 @@ interface IStatCardComponentProps {
     isLoading?: boolean;
     onPress?: () => void;
     iconType?: IIconTypes;
-    width?: string | string[];
+    marginActive?: boolean;
+    cardProps?: IBoxProps;
+    width?: string | string[] | number | number[];
 }
 
 export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(props => {
-    const { iconColor = THEME_CONFIG.success, percent, isLoading, onPress, width = ['45%', '20%'] } = props;
+    const {
+        iconColor = THEME_CONFIG.success,
+        percent,
+        isLoading,
+        onPress,
+        bold,
+        width = ['45%', '20%'],
+        marginActive = true,
+        cardProps,
+    } = props;
 
     return (
-        <CardComponent width={width} m={2} h={135}>
+        <CardComponent width={width} m={marginActive ? 2 : 0} h={135} {...cardProps}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (
-                <TouchableOpacity onPress={props.onPress} style={{ margin: 4 }} activeOpacity={0.6}>
+                <TouchableOpacity onPress={props.onPress} style={{ margin: marginActive ? 4 : 0 }} activeOpacity={0.6}>
                     <HStack justifyContent="space-between" borderWidth={0} w="100%">
                         <VStack w="100%" justifyContent="space-between" h={110}>
                             <HStack justifyContent="space-between" w="100%" alignItems="center">
@@ -93,7 +105,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
                                 </Text>
                             </HStack>
                             <HStack alignItems="center" justifyContent="space-between" w="full">
-                                <Text fontWeight="light" color="gray.400" fontSize="lg">
+                                <Text fontWeight={bold ? 'bold' : 'light'} color="gray.400" fontSize="lg">
                                     {props.label}
                                 </Text>
                                 {props.iconName && (
