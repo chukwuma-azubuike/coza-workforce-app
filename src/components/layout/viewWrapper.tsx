@@ -1,6 +1,5 @@
 import React, { ReactChildren } from 'react';
 import { KeyboardAvoidingView, Platform, RefreshControl, ViewProps } from 'react-native';
-// import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 import { IScrollViewProps, ScrollView, View } from 'native-base';
@@ -34,7 +33,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                 ref={ref}
                 _dark={{ background: 'black' }}
                 _light={{ background: 'white' }}
-                style={{ flex: 1, padding: noPadding ? 0 : 6, paddingVertical: 16, paddingBottom: 0 }}
+                style={{ flex: 1, paddingHorizontal: noPadding ? 0 : 6 }}
                 refreshControl={
                     onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                 }

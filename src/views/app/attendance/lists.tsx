@@ -1,21 +1,21 @@
 import React from 'react';
-import FlatListComponent from '../../../components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns_1,
     leadersAttendanceDataColumns,
     myAttendanceColumns,
     teamAttendanceDataColumns,
 } from './flatListConfig';
-import { useGetAttendanceQuery } from '../../../store/services/attendance';
-import useRole from '../../../hooks/role';
-import { IAttendance, IService } from '../../../store/types';
-import { useGetServicesQuery } from '../../../store/services/services';
-import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '../../../store/services/account';
+import { useGetAttendanceQuery } from '@store/services/attendance';
+import useRole from '@hooks/role';
+import { IAttendance, IService } from '@store/types';
+import { useGetServicesQuery } from '@store/services/services';
+import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import moment from 'moment';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
-import Utils from '../../../utils';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
+import ErrorBoundary from '@components/composite/error-boundary';
+import useFetchMoreData from '@hooks/fetch-more-data';
+import Utils from '@utils/index';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box } from 'native-base';
 import { Platform } from 'react-native';
 
@@ -118,7 +118,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
         return membersClockedIn?.map(member => {
             return {
                 ...member,
-                userId: member.user._id,
+                userId: member?.user?._id,
             };
         });
     }, [membersClockedIn]);
@@ -126,7 +126,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
     const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
 
     const mergedAttendanceWithMemberList = React.useMemo(
-        () => Utils.mergeDuplicatesByKey(mergedUsers, 'userId'),
+        () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
         [membersClockedIn, mergedUsers]
     );
 

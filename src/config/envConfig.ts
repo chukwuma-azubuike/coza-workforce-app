@@ -1,4 +1,3 @@
-import React from 'react';
 import { API_KEY, PROD_API_BASE_URL, STAGING_API_BASE_URL, ENV } from '@env';
 
 const APP_ENV = () => {
@@ -9,7 +8,6 @@ const APP_ENV = () => {
                 API_BASE_URL: STAGING_API_BASE_URL,
                 API_KEY,
             };
-            break;
 
         case 'production':
             console.log('Running on', ENV, 'server...');
@@ -17,7 +15,12 @@ const APP_ENV = () => {
                 API_BASE_URL: PROD_API_BASE_URL,
                 API_KEY,
             };
-            break;
+        default:
+            console.log('Running on', ENV, 'server...');
+            return {
+                API_BASE_URL: STAGING_API_BASE_URL,
+                API_KEY,
+            };
     }
 };
 

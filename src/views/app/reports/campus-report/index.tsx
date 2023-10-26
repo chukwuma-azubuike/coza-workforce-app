@@ -3,13 +3,13 @@ import moment from 'moment';
 import { HStack, Text } from 'native-base';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import StatusTag from '../../../../components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '../../../../components/composite/flat-list';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
-import useFetchMoreData from '../../../../hooks/fetch-more-data';
-import useAppColorMode from '../../../../hooks/theme/colorMode';
-import { ICampusReport, useGetCampusReportListQuery } from '../../../../store/services/reports';
-import Utils from '../../../../utils';
+import StatusTag from '@components/atoms/status-tag';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import ViewWrapper from '@components/layout/viewWrapper';
+import useFetchMoreData from '@hooks/fetch-more-data';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { ICampusReport, useGetCampusReportListQuery } from '@store/services/reports';
+import Utils from '@utils/index';
 
 export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
     const navigation = useNavigation();

@@ -2,25 +2,25 @@ import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import Clocker from './workers/clocker';
-import ViewWrapper from '../../../components/layout/viewWrapper';
+import ViewWrapper from '@components/layout/viewWrapper';
 import TopNav from './top-nav';
-import { usePreventGoBack } from '../../../hooks/navigation';
-import { useGetLatestServiceQuery, useGetServicesQuery } from '../../../store/services/services';
-import useRole from '../../../hooks/role';
-import { IAttendance, IService } from '../../../store/types';
-import { ICampusCoordinates, useGetAttendanceQuery } from '../../../store/services/attendance';
-import If from '../../../components/composite/if-container';
+import { usePreventGoBack } from '@hooks/navigation';
+import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
+import useRole from '@hooks/role';
+import { IAttendance, IService } from '@store/types';
+import { ICampusCoordinates, useGetAttendanceQuery } from '@store/services/attendance';
+import If from '@components/composite/if-container';
 import GSPView from './global-senior-pastors';
-import Utils from '../../../utils';
+import Utils from '@utils/index';
 import { CampusReportSummary } from './campus-pastors/report-summary';
-import { selectCurrentUser, userActionTypes } from '../../../store/services/users';
-import { useGetUserByIdQuery } from '../../../store/services/account';
-import { useAppDispatch, useAppSelector } from '../../../store/hooks';
+import { selectCurrentUser, userActionTypes } from '@store/services/users';
+import { useGetUserByIdQuery } from '@store/services/account';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import useScreenFocus from '../../../hooks/focus';
-import useGeoLocation from '../../../hooks/geo-location';
-import { useGetCampusByIdQuery } from '../../../store/services/campus';
-
+import useScreenFocus from '@hooks/focus';
+import useGeoLocation from '@hooks/geo-location';
+import { useGetCampusByIdQuery } from '@store/services/campus';
+import { Platform } from 'react-native';
 interface IInitialHomeState {
     latestService: {
         data?: IService;
@@ -45,7 +45,13 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     usePreventGoBack();
 
-    const { data: currentUserData } = useGetUserByIdQuery(currentUserId);
+    const {
+        error,
+        data: currentUserData,
+        refetch: refetchCurrentUser,
+        isLoading: userLoading,
+        isFetching: userFetching,
+    } = useGetUserByIdQuery(currentUserId);
 
     const { user, isGlobalPastor, isCampusPastor } = useRole();
 
@@ -65,6 +71,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isError: latestAttendanceIsError,
         isSuccess: latestAttendanceIsSuccess,
         isLoading: latestAttendanceIsLoading,
+        isUninitialized: latestAttendanceisUninitialized,
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
         {
@@ -109,10 +116,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const handleRefresh = () => {
         refresh();
+        refetchCurrentUser();
         refetchServices();
         if (!isGlobalPastor) {
             refetch();
-            latestAttendanceRefetch();
+            !latestAttendanceisUninitialized && latestAttendanceRefetch();
         }
     };
 
@@ -136,9 +144,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         },
     });
 
+    const isIOS = Platform.OS === 'ios';
+
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            <ViewWrapper scroll={!isCampusPastor} refreshing={isLoading} onRefresh={handleRefresh}>
+            <ViewWrapper scroll={!isCampusPastor} pt={isIOS ? 10 : 4} refreshing={isLoading} onRefresh={handleRefresh}>
                 <If condition={!!user}>
                     <TopNav {...navigation} />
                     <If condition={!isGlobalPastor}>

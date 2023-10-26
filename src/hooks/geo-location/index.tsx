@@ -1,6 +1,6 @@
 import React from 'react';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import { ICampusCoordinates } from '../../store/services/attendance';
+import { ICampusCoordinates } from '@store/services/attendance';
 import useClosestCampus from '../closest-campus';
 
 const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campusCoordinates: ICampusCoordinates) => {

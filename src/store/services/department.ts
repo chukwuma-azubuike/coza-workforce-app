@@ -1,5 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICampus, ICreateDepartmentPayload, IDefaultResponse, IDepartment, REST_API_VERBS } from '../types';
+import {
+    ICampus,
+    IDefaultResponse,
+    IDepartment,
+    IGHDepartment,
+    IRequestDepartmentPayload,
+    ICreateDepartmentPayload,
+    REST_API_VERBS,
+} from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'department';
@@ -48,6 +56,12 @@ export const departmentServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IDepartment>) => response.data,
         }),
 
+        getGHDepartmentById: endpoint.query<IGHDepartment, Pick<IDepartment, '_id' | 'campusId'>>({
+            query: params => `/users/ghDepartment/${params._id}/${params.campusId}`,
+
+            transformResponse: (response: IDefaultResponse<IGHDepartment>) => response.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -56,6 +70,7 @@ export const departmentServiceSlice = createApi({
 export const {
     useGetDepartmentsQuery,
     useGetDepartmentByIdQuery,
+    useGetGHDepartmentByIdQuery,
     useUpdateDepartmentMutation,
     useCreateDepartmentMutation,
     useGetDepartmentsByCampusIdQuery,

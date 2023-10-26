@@ -1,4 +1,4 @@
-import { IRegisterPayload } from '../../../store/types';
+import { IRegisterPayload } from '@store/types';
 import { FormikErrors } from 'formik';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';

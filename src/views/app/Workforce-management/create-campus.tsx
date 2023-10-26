@@ -1,21 +1,21 @@
 import React from 'react';
 import { Box, FormControl, HStack, VStack } from 'native-base';
-import ViewWrapper from '../../../components/layout/viewWrapper';
-import ButtonComponent from '../../../components/atoms/button';
-import useModal from '../../../hooks/modal/useModal';
+import ViewWrapper from '@components/layout/viewWrapper';
+import ButtonComponent from '@components/atoms/button';
+import useModal from '@hooks/modal/useModal';
 import { ParamListBase } from '@react-navigation/native';
-import { useCreateCampusMutation } from '../../../store/services/campus';
-import { ICreateCampusPayload } from '../../../store/types';
+import { useCreateCampusMutation } from '@store/services/campus';
+import { ICreateCampusPayload } from '@store/types';
 import { Formik, FormikConfig } from 'formik';
-import { CreateCampusSchema } from '../../../utils/schemas';
+import { CreateCampusSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '../../../components/atoms/input';
-import TextAreaComponent from '../../../components/atoms/text-area';
-import { DateTimePickerComponent } from '../../../components/composite/date-picker';
-import { SelectComponent, SelectItemComponent } from '../../../components/atoms/select';
-import { useAddress } from '../../../hooks/address';
+import { InputComponent } from '@components/atoms/input';
+import TextAreaComponent from '@components/atoms/text-area';
+import { DateTimePickerComponent } from '@components/composite/date-picker';
+import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { useAddress } from '@hooks/address';
 
 const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
@@ -38,7 +38,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     status: 'success',
                     duration: 3,
                 });
-                resetForm(INITIAL_VALUES as any);
+                resetForm({ values: INITIAL_VALUES });
                 goBack();
             }
 
@@ -83,7 +83,6 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateCampusPayload>
                         validateOnChange
-                        enableReinitialize
                         onSubmit={submitForm}
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateCampusSchema}

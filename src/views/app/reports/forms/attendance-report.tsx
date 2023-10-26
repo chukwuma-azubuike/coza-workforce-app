@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import useModal from '../../../../hooks/modal/useModal';
-import { IAttendanceReportPayload } from '../../../../store/types';
-import { useCreateAttendanceReportMutation } from '../../../../store/services/reports';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
+import useModal from '@hooks/modal/useModal';
+import { IAttendanceReportPayload } from '@store/types';
+import { useCreateAttendanceReportMutation } from '@store/services/reports';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack, Text, Divider, WarningOutlineIcon, HStack } from 'native-base';
-import ButtonComponent from '../../../../components/atoms/button';
+import ButtonComponent from '@components/atoms/button';
 import moment from 'moment';
-import TextAreaComponent from '../../../../components/atoms/text-area';
-import { InputComponent } from '../../../../components/atoms/input';
+import TextAreaComponent from '@components/atoms/text-area';
+import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useRole from '../../../../hooks/role';
-import If from '../../../../components/composite/if-container';
+import useRole from '@hooks/role';
+import If from '@components/composite/if-container';
 
 const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IAttendanceReportPayload;
@@ -78,7 +78,6 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
     return (
         <Formik<IAttendanceReportPayload>
             validateOnChange
-            enableReinitialize
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
         >

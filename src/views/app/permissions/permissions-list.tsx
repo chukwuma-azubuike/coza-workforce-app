@@ -3,20 +3,21 @@ import uniqBy from 'lodash/uniqBy';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
-import AvatarComponent from '../../../components/atoms/avatar';
-import StatusTag from '../../../components/atoms/status-tag';
-import ErrorBoundary from '../../../components/composite/error-boundary';
-import FlatListComponent, { IFlatListColumn } from '../../../components/composite/flat-list';
-import { AVATAR_FALLBACK_URL } from '../../../constants';
-import useFetchMoreData from '../../../hooks/fetch-more-data';
-import useRole from '../../../hooks/role';
-import { useGetPermissionsQuery } from '../../../store/services/permissions';
-import { IPermission } from '../../../store/types';
-import Utils from '../../../utils';
-import useScreenFocus from '../../../hooks/focus';
+import AvatarComponent from '@components/atoms/avatar';
+import StatusTag from '@components/atoms/status-tag';
+import ErrorBoundary from '@components/composite/error-boundary';
+import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import useFetchMoreData from '@hooks/fetch-more-data';
+import useRole from '@hooks/role';
+import { useGetPermissionsQuery } from '@store/services/permissions';
+import { IPermission } from '@store/types';
+import Utils from '@utils/index';
+import useScreenFocus from '@hooks/focus';
 // import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
+    screen?: { name: string; value: string } | undefined;
     type: 'own' | 'team' | 'campus';
     '0'?: string;
     '1'?: IPermission[];
@@ -25,15 +26,17 @@ interface IPermissionListRowProps extends IPermission {
 export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
     const navigation = useNavigation();
 
-    const { type } = props;
+    const { type, screen } = props;
 
     return (
         <ErrorBoundary>
             {props[1]?.map((elm, index) => {
-                if (!elm) return;
+                if (!elm) {
+                    return;
+                }
 
                 const handlePress = () => {
-                    navigation.navigate('Permission Details' as never, elm as never);
+                    navigation.navigate('Permission Details' as never, { ...elm, screen } as never);
                 };
 
                 const { requestor, departmentName, categoryName, description, category, status } = elm;

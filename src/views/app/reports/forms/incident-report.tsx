@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import useModal from '../../../../hooks/modal/useModal';
-import { IIncidentReportPayload } from '../../../../store/types';
-import { useCreateIncidentReportMutation } from '../../../../store/services/reports';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
+import useModal from '@hooks/modal/useModal';
+import { IIncidentReportPayload } from '@store/types';
+import { useCreateIncidentReportMutation } from '@store/services/reports';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack, Text } from 'native-base';
-import ButtonComponent from '../../../../components/atoms/button';
+import ButtonComponent from '@components/atoms/button';
 import moment from 'moment';
-import TextAreaComponent from '../../../../components/atoms/text-area';
+import TextAreaComponent from '@components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
@@ -49,12 +49,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const INITIAL_VALUES = { ...params, imageUrl: params.imageUrl || '' };
 
     return (
-        <Formik<IIncidentReportPayload>
-            validateOnChange
-            enableReinitialize
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
+        <Formik<IIncidentReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
             {({ handleChange, errors, handleSubmit }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>

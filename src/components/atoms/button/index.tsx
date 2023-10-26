@@ -1,10 +1,12 @@
 import React from 'react';
-import { Button, IButtonProps } from 'native-base';
-import { THEME_CONFIG } from '../../../config/appConfig';
+import { Button, IButtonProps, IconButton } from 'native-base';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
-import { PermissionsAndroid } from 'react-native';
-import { generateExcelFile } from '../../../utils/generateFile';
+import { PermissionsAndroid, TouchableOpacityProps } from 'react-native';
+import { generateExcelFile } from '@utils/generateFile';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { InterfaceIconButtonProps } from 'native-base/lib/typescript/components/composites/IconButton/types';
 interface IButtonComponent extends IButtonProps {
     size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;
@@ -125,6 +127,26 @@ export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName
         >
             <Icon name="download-outline" type="ionicon" size={36} color="white" />
         </ButtonComponent>
+    );
+};
+
+export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = props => {
+    const { isDarkMode } = useAppColorMode();
+
+    return (
+        <IconButton
+            icon={
+                <Icon
+                    size={24}
+                    name="keyboard-backspace"
+                    type="material-community"
+                    color={isDarkMode ? THEME_CONFIG.lightGray : 'black'}
+                />
+            }
+            style={{ marginLeft: 6, padding: 6 }}
+            _pressed={{ _dark: { backgroundColor: 'gray.800' }, _light: { backgroundColor: 'gray.100' } }}
+            {...props}
+        />
     );
 };
 

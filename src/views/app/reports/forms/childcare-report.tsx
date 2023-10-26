@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import useModal from '../../../../hooks/modal/useModal';
-import { IChildCareReportPayload } from '../../../../store/types';
-import { useCreateChildCareReportMutation } from '../../../../store/services/reports';
-import ViewWrapper from '../../../../components/layout/viewWrapper';
+import useModal from '@hooks/modal/useModal';
+import { IChildCareReportPayload } from '@store/types';
+import { useCreateChildCareReportMutation } from '@store/services/reports';
+import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, HStack, VStack, Text, Divider } from 'native-base';
-import { InputComponent } from '../../../../components/atoms/input';
-import ButtonComponent from '../../../../components/atoms/button';
-import { THEME_CONFIG } from '../../../../config/appConfig';
+import { InputComponent } from '@components/atoms/input';
+import ButtonComponent from '@components/atoms/button';
+import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import moment from 'moment';
-import TextAreaComponent from '../../../../components/atoms/text-area';
+import TextAreaComponent from '@components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import If from '../../../../components/composite/if-container';
-import useRole from '../../../../hooks/role';
+import If from '@components/composite/if-container';
+import useRole from '@hooks/role';
 
 const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IChildCareReportPayload;
@@ -96,12 +96,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     };
 
     return (
-        <Formik<IChildCareReportPayload>
-            validateOnChange
-            enableReinitialize
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
+        <Formik<IChildCareReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
             {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>
