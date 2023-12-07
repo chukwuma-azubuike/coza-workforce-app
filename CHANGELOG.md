@@ -8,6 +8,8 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 
 -   Rework iOS permissions - Upgrade to new react-native-permissions api implementation ([83c413ae9c6c418a4bbc6aef35e48c05d33a880c](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/83c413ae9c6c418a4bbc6aef35e48c05d33a880c) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
+-   Setup ios staging and production environments - ([e6326e8d18c39aea087fe74ec5db684106c2ab58](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/53/commits/e6326e8d18c39aea087fe74ec5db684106c2ab58) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ### Changed
 
 -   Pagination on service management list ([d6a7a50d07e35eacad38746edb13fbd1873252e2](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/d6a7a50d07e35eacad38746edb13fbd1873252e2) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
