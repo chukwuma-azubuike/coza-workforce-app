@@ -695,6 +695,8 @@ export interface IReportDownloadPayload {
     campusId?: string;
     serviceId?: string;
     departmentId?: string;
+    startDate?: number;
+    endDate?: number;
 }
 
 // Score Mapping

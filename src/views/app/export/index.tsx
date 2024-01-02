@@ -20,6 +20,7 @@ import { DateTimePickerComponent } from '@components/composite/date-picker';
 import useRole from '@hooks/role';
 import { generateCummulativeAttendanceReport } from '@utils/generateCummulativeAttendanceReport';
 import { generateReportName } from '@utils/generateReportName';
+import { IReportDownloadPayload } from '@store/types';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -41,8 +42,8 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [serviceId, setServiceId] = React.useState<string>('all-services');
     const [triggerFetch, setTriggerFetch] = React.useState<boolean>(false);
     const [dataType, setDataType] = React.useState<IExportType>(type);
-    const [startDate, setStartDate] = React.useState<number>();
-    const [endDate, setEndDate] = React.useState<number>();
+    const [startDate, setStartDate] = React.useState<IReportDownloadPayload['startDate']>();
+    const [endDate, setEndDate] = React.useState<IReportDownloadPayload['endDate']>();
 
     const {
         data: campusDepartments,
@@ -71,11 +72,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isLoading: attendanceIsLoading,
         isFetching: attendanceIsFetching,
     } = useGetAttendanceReportForDownloadQuery(
-        {
-            campusId,
-            serviceId,
-            departmentId,
-        },
+        { endDate, startDate, campusId, serviceId, departmentId },
         { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
     const {
@@ -98,11 +95,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isLoading: ticketsIsLoading,
         isFetching: ticketsIsFetching,
     } = useGetTicketsReportForDownloadQuery(
-        {
-            campusId,
-            serviceId,
-            departmentId,
-        },
+        { endDate, startDate, campusId, serviceId, departmentId },
         { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
 
@@ -190,11 +183,11 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const isPermission = dataType === 'permissions';
 
     const handleStartDate = (fieldName: string, value: number) => {
-        setStartDate(moment(value).valueOf() / 1000);
+        setStartDate(moment(value).unix());
     };
 
     const handleEndDate = (fieldName: string, value: number) => {
-        setEndDate(moment(value).valueOf() / 1000);
+        setEndDate(moment(value).unix());
     };
 
     return (
@@ -265,24 +258,22 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 </SelectComponent>
                             </FormControl>
                         </If>
-                        <If condition={isPermission}>
-                            <HStack justifyContent="space-between">
-                                <FormControl w="1/2">
-                                    <DateTimePickerComponent
-                                        label="Start date"
-                                        fieldName="startDate"
-                                        onSelectDate={handleStartDate}
-                                    />
-                                </FormControl>
-                                <FormControl w="1/2">
-                                    <DateTimePickerComponent
-                                        label="End date"
-                                        fieldName="endDate"
-                                        onSelectDate={handleEndDate}
-                                    />
-                                </FormControl>
-                            </HStack>
-                        </If>
+                        <HStack justifyContent="space-between">
+                            <FormControl w="1/2">
+                                <DateTimePickerComponent
+                                    label="Start date"
+                                    fieldName="startDate"
+                                    onSelectDate={handleStartDate}
+                                />
+                            </FormControl>
+                            <FormControl w="1/2">
+                                <DateTimePickerComponent
+                                    label="End date"
+                                    fieldName="endDate"
+                                    onSelectDate={handleEndDate}
+                                />
+                            </FormControl>
+                        </HStack>
                         <FormControl isRequired>
                             <FormControl.Label>Department</FormControl.Label>
                             <SelectComponent
