@@ -2,6 +2,12 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.5.9
+
+### Changed
+
+-   Date Filter on Report Download ([aa04b1cbd644d5c901191558e7d213b725710a62](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/aa04b1cbd644d5c901191558e7d213b725710a62) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.5.8
 
 #### iOS specific
@@ -19,7 +25,6 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 ### Fixed
 
 -   Fix crash on flattening attendance record without `clockin` ([3943fd7](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/d6a7a50d07e35eacad38746edb13fbd1873252e2) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
-
 
 ============================================ Changelog Template ============================================
 
