@@ -9,7 +9,7 @@ export class fetchUtils {
 
         prepareHeaders: async headers => {
             const userSession = (await Utils.retrieveUserSession()) || '';
-            const token = JSON.parse(userSession)?.token.token;
+            const token = !!userSession && JSON.parse(userSession)?.token.token;
 
             if (token) {
                 headers.set('authorization', `Bearer ${token}`);
