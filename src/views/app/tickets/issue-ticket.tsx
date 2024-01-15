@@ -52,7 +52,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         skip: !departmentId,
     });
 
-    const { data: latestService } = useGetLatestServiceQuery(campus?._id as string, {
+    const { data: latestService, refetch: refetchLatestService } = useGetLatestServiceQuery(campus?._id as string, {
         refetchOnMountOrArgChange: true,
     });
     const { data: ticketCategories } = useGetTicketCategoriesQuery();
@@ -63,10 +63,17 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         [campusDepartmentsLoading, campusDepartmentsIsFetching]
     );
 
+    const isDepartment = type === 'DEPARTMENTAL';
+    const isIndividual = type === 'INDIVIDUAL';
+    const isCampus = type === 'CAMPUS';
+
     const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = async (values, { resetForm }) => {
         if (latestService) {
             const result = await issueTicket({
                 ...values,
+                isDepartment: initialValues.isDepartment,
+                isIndividual: initialValues.isIndividual,
+                isCampus: initialValues.isCampus,
                 issuedBy: userId,
                 serviceId: latestService._id,
                 userId: isIndividual ? values.userId : undefined,
@@ -130,10 +137,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     };
 
-    const isDepartment = type === 'DEPARTMENTAL';
-    const isIndividual = type === 'INDIVIDUAL';
-    const isCampus = type === 'CAMPUS';
-
     const [initialValues, setInitialValues] = React.useState<ICreateTicketPayload>({
         departmentId,
         campusId,
@@ -164,6 +167,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 ticketSummary: '',
                 issuedBy: '',
             } as ICreateTicketPayload);
+            refetchLatestService();
         },
     });
 
