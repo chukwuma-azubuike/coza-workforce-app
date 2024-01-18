@@ -4,9 +4,21 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 
 ## v1.5.9
 
+### Added
+
+-   Implementation of JWT Tokenisation ([c5d3e797795285fa70e24d03d5d02754b13d258e](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/c5d3e797795285fa70e24d03d5d02754b13d258e) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ### Changed
 
 -   Date Filter on Report Download ([aa04b1cbd644d5c901191558e7d213b725710a62](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/aa04b1cbd644d5c901191558e7d213b725710a62) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+### Fixed
+
+-   Ticket switching from Individual to Department and vice versa ([2efa4a00c170ed13336634904280587a399fe6d5](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/2efa4a00c170ed13336634904280587a399fe6d5) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+#### iOS specific
+
+-   Extend ios environment setup ([82ad6d7469879d0521a5cbfeeb88bc379f2ba7b5](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/82ad6d7469879d0521a5cbfeeb88bc379f2ba7b5) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
 ## v1.5.8
 
