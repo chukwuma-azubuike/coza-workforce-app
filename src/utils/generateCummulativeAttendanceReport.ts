@@ -5,7 +5,7 @@ export const cummulativeAttendanceReport = (data: any[]) => {
     const flatAttendance = data?.map(attendance => {
         return {
             ...attendance,
-            [attendance.clockIn?.split('T')[0]]: attendance?.clockIn,
+            [`${attendance.clockIn?.split('T')[0]}_${attendance.service}`]: attendance?.clockIn,
             userId: `${attendance.firstName}-${attendance.lastName}`,
         };
     });
@@ -34,7 +34,7 @@ export const cummulativeIndividualReport = (report: any[]) => {
         }
 
         // Add or update the date field
-        mergedData[userId][entry.clockIn.split('T')[0]] = moment(entry.clockIn).format('LTS');
+        mergedData[userId][`${entry.clockIn.split('T')[0]}_${entry.service}`] = moment(entry.clockIn).format('LTS');
     });
 
     // Convert the mergedData object to an array of objects
