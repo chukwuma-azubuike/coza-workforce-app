@@ -23,7 +23,7 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
     const [createCGWCInstantMessage, { isLoading, error, data, reset }] = useCreateCGWCInstantMessagesMutation();
 
     const onSubmit: FormikConfig<ICGWCInstantMessage>['onSubmit'] = async (values, { resetForm }) => {
-        const result = await createCGWCInstantMessage(values);
+        const result = await createCGWCInstantMessage({ ...values, cgwcId: CGWCId });
 
         if ('data' in result) {
             setModalState({

@@ -97,7 +97,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         data: messages,
         refetch: refetchMessages,
         isLoading: messagesIsLoading,
-    } = useGetCGWCInstantMessagesQuery({ CGWCId });
+    } = useGetCGWCInstantMessagesQuery({ cgwcId: CGWCId });
 
     const gotoCreateInstantMessage = () => {
         navigation.navigate('Create Instant Message', { CGWCId });
