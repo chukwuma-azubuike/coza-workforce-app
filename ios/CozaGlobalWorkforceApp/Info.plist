@@ -48,6 +48,8 @@
 	<string>Access to your camera is needed to allow you take a photo of yourself to be used as your profile picture on the app.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location is used to determine if you are within the accepted clock in range in order to mark your attendance for the event or service.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location is used to determine if you are within the accepted clock in range in order to mark your attendance for the event or service.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Access to your photo library is needed to allow you select an image to be used as your profile picture on the app.</string>
 	<key>UIAppFonts</key>
