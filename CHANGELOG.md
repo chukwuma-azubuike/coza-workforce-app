@@ -2,6 +2,12 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.0
+
+### Fixed
+
+-   Create and fetch messaged with cgwcId ([0fcf8dd91847f7a51b57eb03fd9a4d3fae1fa66d](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/0fcf8dd91847f7a51b57eb03fd9a4d3fae1fa66d) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.5.9
 
 ### Added

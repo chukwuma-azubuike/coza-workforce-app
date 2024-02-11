@@ -66,6 +66,7 @@ export interface IDefaultQueryParams {
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
     CGWCId?: string;
+    cgwcId?: string;
     limit?: number;
     page?: number;
 }
@@ -515,7 +516,8 @@ export interface ICGWCFeedback extends ICGWCFeedbackPayload {
 
 export interface ICGWCInstantMessagePayload {
     title: string;
-    CGWCId: string;
+    CGWCId?: string;
+    cgwcId: string;
     message: string;
     status: IStatus;
     messageLink: string;
