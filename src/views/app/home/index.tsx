@@ -21,6 +21,7 @@ import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import { useGetCampusByIdQuery } from '@store/services/campus';
 import { Platform } from 'react-native';
+
 interface IInitialHomeState {
     latestService: {
         data?: IService;
@@ -114,6 +115,8 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
+    const [refreshTrigger, setRefreshTrigger] = React.useState<boolean>(false);
+
     const handleRefresh = () => {
         refresh();
         refetchCurrentUser();
@@ -122,6 +125,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             refetch();
             !latestAttendanceisUninitialized && latestAttendanceRefetch();
         }
+        setRefreshTrigger(true);
     };
 
     React.useEffect(() => {
@@ -160,6 +164,8 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                         <Clocker
                             isInRange={isInRange}
                             refreshLocation={refresh}
+                            refreshTrigger={refreshTrigger}
+                            setRefreshTrigger={setRefreshTrigger}
                             deviceCoordinates={deviceCoordinates}
                             verifyRangeBeforeAction={verifyRangeBeforeAction}
                         />

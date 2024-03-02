@@ -23,15 +23,19 @@ import ErrorBoundary from '@components/composite/error-boundary';
 
 interface IClockerProps {
     isInRange: boolean;
+    refreshTrigger: boolean;
     deviceCoordinates: GeoCoordinates;
     refreshLocation: () => Promise<void>;
+    setRefreshTrigger: React.Dispatch<React.SetStateAction<boolean>>;
     verifyRangeBeforeAction: (successCallback: () => any, errorCallback: () => any) => Promise<void>;
 }
 
 const Clocker: React.FC<IClockerProps> = ({
     verifyRangeBeforeAction,
     deviceCoordinates,
+    setRefreshTrigger,
     refreshLocation,
+    refreshTrigger,
     isInRange,
 }) => {
     const {
@@ -93,19 +97,29 @@ const Clocker: React.FC<IClockerProps> = ({
         { skip: !latestService?._id }
     );
 
-    useScreenFocus({
-        onFocus: () => {
-            !serviceIsUninitialized && refetchService();
-            !leadersIsUninitialized && refetchLeaders();
-            !workersIsUninitialized && refetchWorkers();
-            !ticketsIsUninitialized && refetchTickets();
-            !attendanceReportIsUninitialized && attendanceReportRefetch();
-        },
-    });
+    const refreshData = () => {
+        refreshLocation();
+        !serviceIsUninitialized && refetchService();
+        !leadersIsUninitialized && refetchLeaders();
+        !workersIsUninitialized && refetchWorkers();
+        !ticketsIsUninitialized && refetchTickets();
+        !attendanceReportIsUninitialized && attendanceReportRefetch();
+    };
 
     useScreenFocus({
-        onFocus: refreshLocation,
+        onFocus: refreshData,
     });
+
+    React.useEffect(() => {
+        if (refreshTrigger) {
+            refreshData();
+        }
+        setRefreshTrigger(false);
+
+        return () => {
+            setRefreshTrigger(false);
+        };
+    }, [refreshTrigger]);
 
     const vh = Dimensions.get('window').height;
 
