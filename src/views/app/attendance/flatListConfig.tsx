@@ -92,20 +92,6 @@ const myAttendanceColumns: IFlatListColumn[] = [
                 </HStack>
             );
         },
-        //     title: 'Service hrs',
-        //     dataIndex: 'hours',
-        //     render: (elm: IAttendance, key) => (
-        //         <Text
-        //             key={`hours-${key}`}
-        //             _dark={{
-        //                 color: 'warmGray.50',
-        //             }}
-        //             color="gray.500"
-        //             textAlign="center"
-        //         >
-        //             {elm?.clockOut ? Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins : '--:--'}
-        //         </Text>
-        //     ),
     },
 ];
 
