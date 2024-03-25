@@ -16,6 +16,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InputComponent } from '@components/atoms/input';
 import Utils from '@utils/index';
+import { useGetCampusesQuery } from '@store/services/campus';
 
 const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
@@ -26,16 +27,33 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         rolesPermittedToCreate,
     } = useRole();
 
+    const { isSuperAdmin, isGlobalPastor, user } = useRole();
+    const canSwitchCampus = isSuperAdmin || isGlobalPastor;
+
     const { setModalState } = useModal();
+    const [campusId, setCampusId] = React.useState<string>(canSwitchCampus ? '' : campus?._id);
+
+    const {
+        data: allCampuses,
+        refetch: refetchAllCampuses,
+        isFetching: isFetchingAllCampuses,
+        isLoading: allCampusesLoading,
+        isUninitialized: campusesIsUninitialized,
+    } = useGetCampusesQuery();
 
     const {
         data: campusDepartments,
         refetch: refetchDepartments,
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
-    } = useGetDepartmentsByCampusIdQuery(campus._id);
+        isUninitialized: campusDepartmentsIsUninitialized,
+    } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campusId, refetchOnMountOrArgChange: true });
 
     const [uploadUser, { isLoading, error }] = useUploadUserMutation();
+
+    const handleCampus = (value: string) => {
+        setCampusId(value);
+    };
 
     const submitForm: FormikConfig<ICreateUserPayload>['onSubmit'] = async (values, { resetForm }) => {
         try {
@@ -72,8 +90,8 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     };
 
     const refresh = () => {
-        refetchDepartments();
-        // refetchRoles();
+        !campusDepartmentsIsUninitialized && refetchDepartments();
+        !campusesIsUninitialized && refetchAllCampuses();
     };
 
     const INITIAL_VALUES = {
@@ -82,10 +100,12 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         email: '',
         departmentId: '',
         roleId: '',
-        campusId: campus._id,
+        campusId: '',
         registeredBy: userId,
         isRegistered: false,
     } as ICreateUserPayload;
+
+    const sortedCampuses = React.useMemo(() => Utils.sortStringAscending(allCampuses, 'campusName'), [allCampuses]);
 
     const sortedCampusDepartments = React.useMemo(
         () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
@@ -104,6 +124,42 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     >
                         {({ errors, values, handleChange, handleSubmit }) => (
                             <VStack w="100%" space={1}>
+                                <FormControl isRequired isInvalid={!!errors?.departmentId}>
+                                    <FormControl.Label>Campus</FormControl.Label>
+                                    <SelectComponent
+                                        selectedValue={campusId}
+                                        placeholder="Choose campus"
+                                        onValueChange={value => {
+                                            handleCampus(value);
+                                            handleChange('campusId')(value);
+                                        }}
+                                        isDisabled={!canSwitchCampus}
+                                    >
+                                        {sortedCampuses?.map((campus, index) => (
+                                            <SelectItemComponent
+                                                value={campus._id}
+                                                key={`campus-${index}`}
+                                                label={campus.campusName}
+                                                isLoading={allCampusesLoading || isFetchingAllCampuses}
+                                            />
+                                        ))}
+                                    </SelectComponent>
+                                    <FormControl.ErrorMessage
+                                        fontSize="2xl"
+                                        mt={3}
+                                        leftIcon={
+                                            <Icon
+                                                size={16}
+                                                name="warning"
+                                                type="antdesign"
+                                                color={THEME_CONFIG.error}
+                                            />
+                                        }
+                                    >
+                                        {errors?.departmentId}
+                                    </FormControl.ErrorMessage>
+                                </FormControl>
+
                                 <FormControl isRequired isInvalid={!!errors?.departmentId}>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
