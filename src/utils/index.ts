@@ -179,28 +179,38 @@ class Utils {
 
     /************ Native Permisisons logic ************/
 
-    static checkLocationPermission = async () => {
+    static checkLocationPermission = async (successCallBack?: () => void) => {
         const isIOS = Platform.OS === 'ios';
 
-        check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+        return check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
             .then(result => {
                 switch (result) {
                     case RESULTS.UNAVAILABLE:
+                        this.requestLocationPermission(successCallBack);
+                        return result;
                         break;
                     case RESULTS.DENIED:
+                        this.requestLocationPermission(successCallBack);
+                        return result;
                         break;
                     case RESULTS.LIMITED:
+                        return result;
                         break;
                     case RESULTS.GRANTED:
+                        return result;
                         break;
                     case RESULTS.BLOCKED:
+                        this.requestLocationPermission(successCallBack);
+                        return result;
                         break;
                 }
             })
-            .catch(error => {});
+            .catch(error => {
+                return error;
+            });
     };
 
-    static requestLocationPermission = async () => {
+    static requestLocationPermission = async (successCallBack?: () => void) => {
         const isIOS = Platform.OS === 'ios';
 
         request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
@@ -208,7 +218,11 @@ class Utils {
             message: 'This App needs access to your location',
             buttonPositive: 'OK',
             buttonNegative: 'DENY',
-        }).then(result => {});
+        }).then(result => {
+            if (result === RESULTS.GRANTED) {
+                successCallBack && successCallBack();
+            }
+        });
     };
 
     /************** Objects **************/
