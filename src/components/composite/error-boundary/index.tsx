@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import * as Sentry from '@sentry/react';
 import { Text, VStack } from 'native-base';
 import ButtonComponent from '../../atoms/button';
 
-const ErrorBoundary: React.FC = ({ children }) => {
+const ErrorBoundary: React.FC<{
+    children?: ReactNode;
+}> = ({ children }) => {
     return (
         <Sentry.ErrorBoundary
             fallback={({ error, componentStack, resetError }) => (

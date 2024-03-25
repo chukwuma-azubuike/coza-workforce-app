@@ -40,7 +40,7 @@ class Utils {
     }
 
     static formatEmail(email: string) {
-        return this.splitString(email).toLowerCase();
+        return this.splitString(email).toLowerCase().trim();
     }
 
     /**************** Sorting ****************/

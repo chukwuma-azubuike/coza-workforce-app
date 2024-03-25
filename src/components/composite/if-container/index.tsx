@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 interface IIfProps {
     condition?: boolean;
+    children?: ReactNode;
 }
 
 const If: React.FC<IIfProps> = props => {
