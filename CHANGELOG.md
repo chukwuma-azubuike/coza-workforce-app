@@ -10,6 +10,8 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 
 -   Fix crash on exit image picker launch & fix few type issues ([c00b4b2b1565f1666933ee12e4b5d73ac85e1b95](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/c00b4b2b1565f1666933ee12e4b5d73ac85e1b95) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
+-   Show team score CWGC ([24abf116c3af5990d629611e27aae0d202d5ffe5](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/24abf116c3af5990d629611e27aae0d202d5ffe5) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ### Added
 
 -   Added campus options in create user ([4a0d419dd547165d503967ec2bff2a6bb8eb8e50](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/4a0d419dd547165d503967ec2bff2a6bb8eb8e50) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
