@@ -15,7 +15,7 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { InputComponent } from '@components/atoms/input';
-import Utils from '@utils';
+import Utils from '@utils/index';
 
 const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigation } = props;
