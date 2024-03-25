@@ -38,6 +38,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetch: refetchAllCampuses,
         isFetching: isFetchingAllCampuses,
         isLoading: allCampusesLoading,
+        isUninitialized: campusesIsUninitialized,
     } = useGetCampusesQuery();
 
     const {
@@ -45,6 +46,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetch: refetchDepartments,
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
+        isUninitialized: campusDepartmentsIsUninitialized,
     } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campusId, refetchOnMountOrArgChange: true });
 
     const [uploadUser, { isLoading, error }] = useUploadUserMutation();
@@ -88,8 +90,8 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     };
 
     const refresh = () => {
-        refetchDepartments();
-        refetchAllCampuses();
+        !campusDepartmentsIsUninitialized && refetchDepartments();
+        !campusesIsUninitialized && refetchAllCampuses();
     };
 
     const INITIAL_VALUES = {
