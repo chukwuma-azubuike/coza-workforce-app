@@ -16,6 +16,8 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 
 -   Added campus options in create user ([4a0d419dd547165d503967ec2bff2a6bb8eb8e50](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/4a0d419dd547165d503967ec2bff2a6bb8eb8e50) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
+-   Force location access ([287cad1cfc5186ca0f9476209c29c68bbdd8cad1](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/287cad1cfc5186ca0f9476209c29c68bbdd8cad1) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.0
 
 ### Fixed
