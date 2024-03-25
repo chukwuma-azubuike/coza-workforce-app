@@ -2,6 +2,12 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.1
+
+### Fixed
+
+-   Fast refresh restored & migrate RN 0.71 based on upgrade helper docs ([a2faa034f330bee795b22f9b524ca0387801d3fa](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/a2faa034f330bee795b22f9b524ca0387801d3fa) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.0
 
 ### Fixed
