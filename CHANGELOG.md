@@ -8,6 +8,8 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 
 -   Fast refresh restored & migrate RN 0.71 based on upgrade helper docs ([a2faa034f330bee795b22f9b524ca0387801d3fa](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/a2faa034f330bee795b22f9b524ca0387801d3fa) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
+-   Fix crash on exit image picker launch & fix few type issues ([c00b4b2b1565f1666933ee12e4b5d73ac85e1b95](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/c00b4b2b1565f1666933ee12e4b5d73ac85e1b95) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.0
 
 ### Fixed
