@@ -32,8 +32,6 @@ export const Col: React.FC<ColProps> = ({ children, span, rowGutter, sm, md, lg,
     const screenWidth = Dimensions.get('window').width;
     const { isMobile, isTablet, isTabletPortrait } = useMediaQuery();
 
-    console.log({ rowGutter });
-
     const getColWidth = (value: number | undefined) => {
         if (value === undefined) return undefined;
         return (
@@ -66,8 +64,6 @@ export const Col: React.FC<ColProps> = ({ children, span, rowGutter, sm, md, lg,
             }
         }
     }, [isMobile, isTablet, isTabletPortrait, lg, xl, sm, span]);
-
-    console.log({ derivedWidth });
 
     return (
         <View style={[{ width: derivedWidth }, style]} {...rest}>

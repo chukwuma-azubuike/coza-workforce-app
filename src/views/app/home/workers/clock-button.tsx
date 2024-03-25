@@ -13,6 +13,8 @@ import { GeoCoordinates } from 'react-native-geolocation-service';
 import If from '@components/composite/if-container';
 import Utils from '@utils/index';
 import { Alert } from 'react-native';
+import { RESULTS } from 'react-native-permissions';
+import openLocationSettings from '@utils/openLocationSettings';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -152,41 +154,56 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                 } has not yet started, kindly try again by ${moment(latestServiceData?.clockInStartTime).format('LT')}.`
             );
         }
-        refreshLocation();
 
-        if (!isInRange) {
-            setModalState({
-                duration: 6,
-                render: (
-                    <ModalAlertComponent
-                        description={'You are not within range of any campus!'}
-                        iconName={'warning-outline'}
-                        iconType={'ionicon'}
-                        status={'warning'}
-                    />
-                ),
-            });
-            return;
-        }
+        Utils.checkLocationPermission()
+            .then(res => {
+                refreshLocation();
 
-        if (canClockIn) {
-            return handleClockin();
-        }
+                if (res !== RESULTS.GRANTED) {
+                    Alert.alert(
+                        'Location access needed',
+                        'Please ensure that you have granted this app location access in your device settings.',
+                        [{ text: 'Go to settings', style: 'default', onPress: openLocationSettings }]
+                    );
+                    return;
+                }
+                if (!isInRange) {
+                    setModalState({
+                        duration: 6,
+                        render: (
+                            <ModalAlertComponent
+                                description={
+                                    'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
+                                }
+                                iconName={'warning-outline'}
+                                iconType={'ionicon'}
+                                status={'warning'}
+                            />
+                        ),
+                    });
+                    return;
+                }
 
-        if (canClockOut && latestAttendanceData) {
-            Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
-                {
-                    text: 'No',
-                    style: 'destructive',
-                },
-                {
-                    text: 'Yes',
-                    style: 'default',
-                    onPress: handleVerifyBeforeClockout,
-                },
-            ]);
-            return;
-        }
+                if (canClockIn) {
+                    return handleClockin();
+                }
+
+                if (canClockOut && latestAttendanceData) {
+                    Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
+                        {
+                            text: 'No',
+                            style: 'destructive',
+                        },
+                        {
+                            text: 'Yes',
+                            style: 'default',
+                            onPress: handleVerifyBeforeClockout,
+                        },
+                    ]);
+                    return;
+                }
+            })
+            .catch(err => {});
     };
 
     return (
