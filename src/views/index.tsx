@@ -44,8 +44,6 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     const { user } = useRole();
 
     React.useEffect(() => {
-        setColorMode(colorScheme);
-
         SplashScreen.hide();
 
         if (!user.userId) {
@@ -63,6 +61,10 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
 
         versionLogic();
     }, []);
+
+    React.useEffect(() => {
+        setColorMode(scheme);
+    }, [colorScheme, scheme]);
 
     useNotifications(user);
 

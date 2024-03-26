@@ -8,9 +8,11 @@ import { THEME_CONFIG } from '@config/appConfig';
 import { HomeContext } from '.';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { Linking, TouchableOpacity } from 'react-native';
+import { Linking, Platform, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { ScreenWidth } from '@rneui/base';
+import isIphoneLessThanTen from '@utils/isIPhoneLessThanTen';
+import useMediaQuery from '@hooks/media-query';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     const handleNotificationPress = () => {
@@ -29,11 +31,23 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     const isLoading = latestService?.isLoading;
 
     const { user } = useRole();
-
     const { isLightMode } = useAppColorMode();
+    const { isMobile } = useMediaQuery();
+
+    const isAndroidOrBelowIOSTenOrTab = React.useMemo(
+        () => Platform.OS === 'android' || isIphoneLessThanTen() || !isMobile,
+        []
+    );
 
     return (
-        <HStack px={3} pt={6} zIndex={20} w={ScreenWidth - 12} alignItems="center" justifyContent="space-between">
+        <HStack
+            px={3}
+            zIndex={20}
+            alignItems="center"
+            w={ScreenWidth - 12}
+            justifyContent="space-between"
+            pt={isAndroidOrBelowIOSTenOrTab ? 2 : 6}
+        >
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
