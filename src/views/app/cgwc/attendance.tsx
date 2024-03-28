@@ -504,92 +504,86 @@ interface IAttendanceContainerProps {
     scoreType: 'percent' | 'count';
 }
 
-export const AttendanceContainer: React.FC<IAttendanceContainerProps> = ({
-    children,
-    title,
-    score,
-    scoreType,
-    showTitle = true,
-}) => {
-    return (
-        <Box flexDirection="column" w={['100%', '46%']}>
-            <If condition={showTitle}>
-                <HStack px={2} justifyContent="space-between" alignItems="baseline">
-                    <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
-                        {title}
-                    </Text>
-                    {!!score && (
-                        <Text
-                            bold
-                            pb={4}
-                            pt={3}
-                            fontSize="lg"
-                            textAlign="center"
-                            color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
-                        >
-                            {score || 0}
-                            {scoreType === 'percent' && '%'}
+export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.memo(
+    ({ children, title, score, scoreType, showTitle = true }) => {
+        return (
+            <Box flexDirection="column" w={['100%', '46%']}>
+                <If condition={showTitle}>
+                    <HStack px={2} justifyContent="space-between" alignItems="baseline">
+                        <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
+                            {title}
                         </Text>
-                    )}
-                </HStack>
-            </If>
-            {children}
-        </Box>
-    );
-};
+                        {!!score && (
+                            <Text
+                                bold
+                                pb={4}
+                                pt={3}
+                                fontSize="lg"
+                                textAlign="center"
+                                color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
+                            >
+                                {score || 0}
+                                {scoreType === 'percent' && '%'}
+                            </Text>
+                        )}
+                    </HStack>
+                </If>
+                {children}
+            </Box>
+        );
+    }
+);
 
-export const AttendanceListRow: React.FC<IAttendance & { name: string; score?: number }> = ({
-    name,
-    clockIn,
-    clockOut,
-    score = 0,
-    ...props
-}) => {
-    return (
-        <>
-            <HStack
-                alignItems="center"
-                style={styles.listRow}
-                borderBottomWidth={0.2}
-                borderBottomColor="gray.400"
-                justifyContent="space-between"
-            >
-                <Text
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                    style={styles.listRowItem}
-                    width={[ScreenWidth / 3.6, '40%']}
-                >
-                    {name}
-                </Text>
+export const AttendanceListRow: React.FC<IAttendance & { name: string; score?: number }> = React.memo(
+    ({ name, clockIn, clockOut, score = 0, ...props }) => {
+        return (
+            <>
                 <HStack
-                    style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
-                    minWidth={[ScreenWidth / 4.5, '25%']}
+                    alignItems="center"
+                    style={styles.listRow}
+                    borderBottomWidth={0.2}
+                    borderBottomColor="gray.400"
+                    justifyContent="space-between"
                 >
-                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <Text style={[{ textAlign: 'right' }]}>{clockIn ? moment(clockIn).format('LT') : '--:--'}</Text>
-                </HStack>
-                <HStack
-                    style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
-                    minWidth={[ScreenWidth / 4.5, '25%']}
-                >
-                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <Text style={[{ textAlign: 'right' }]}>{!!clockOut ? moment(clockOut).format('LT') : '--:--'}</Text>
-                </HStack>
-                {typeof score === 'number' && (
+                    <Text
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                        style={styles.listRowItem}
+                        width={[ScreenWidth / 3.6, '40%']}
+                    >
+                        {name}
+                    </Text>
                     <HStack
                         style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
-                        minWidth={[ScreenWidth / 4.5, '10%']}
+                        minWidth={[ScreenWidth / 4.5, '25%']}
                     >
-                        <Text style={[{ textAlign: 'right' }]}>{score}</Text>
+                        <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                        <Text style={[{ textAlign: 'right' }]}>{clockIn ? moment(clockIn).format('LT') : '--:--'}</Text>
                     </HStack>
-                )}
-            </HStack>
-        </>
-    );
-};
+                    <HStack
+                        style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
+                        minWidth={[ScreenWidth / 4.5, '25%']}
+                    >
+                        <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                        <Text style={[{ textAlign: 'right' }]}>
+                            {!!clockOut ? moment(clockOut).format('LT') : '--:--'}
+                        </Text>
+                    </HStack>
+                    {typeof score === 'number' && (
+                        <HStack
+                            style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
+                            minWidth={[ScreenWidth / 4.5, '10%']}
+                        >
+                            <Text style={[{ textAlign: 'right' }]}>{score}</Text>
+                        </HStack>
+                    )}
+                </HStack>
+            </>
+        );
+    }
+);
 
-export const AttendanceHeader: React.FC<{ titles: string[] }> = ({ titles }) => {
+export const AttendanceHeader: React.FC<{ titles: string[] }> = React.memo(({ titles }) => {
     return (
         <HStack
             w={['100%', '50%']}
@@ -616,7 +610,7 @@ export const AttendanceHeader: React.FC<{ titles: string[] }> = ({ titles }) => 
             ))}
         </HStack>
     );
-};
+});
 
 const styles = StyleSheet.create({
     dateTime: {},

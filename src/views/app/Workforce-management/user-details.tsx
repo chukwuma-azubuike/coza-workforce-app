@@ -567,4 +567,4 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default UserDetails;
+export default React.memo(UserDetails);

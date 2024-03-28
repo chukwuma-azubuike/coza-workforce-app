@@ -15,7 +15,7 @@ export interface ITeamAttendanceSummary {
     isLoading?: boolean;
 }
 
-export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
+export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.memo(props => {
     const { departmentUsers, attendance, isLoading } = props;
     const navigation = useNavigation();
 
@@ -55,7 +55,7 @@ export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => 
             )}
         </Center>
     );
-};
+});
 
 export interface ITeamAttendanceSummary {
     leadersAttendance?: number;
@@ -65,7 +65,7 @@ export interface ITeamAttendanceSummary {
     isLoading?: boolean;
 }
 
-export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props => {
+export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.memo(props => {
     const { leaderUsers, leadersAttendance, workerUsers, workersAttendance } = props;
     const { navigate } = useNavigation<any>();
 
@@ -121,4 +121,4 @@ export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = props =
             </HStack>
         </Center>
     );
-};
+});

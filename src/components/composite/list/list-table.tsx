@@ -31,4 +31,4 @@ const ListTable: React.FC<IListtableProps> = ({ data, Column, Header, headerProp
     );
 };
 
-export default ListTable;
+export default React.memo(ListTable);

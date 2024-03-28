@@ -127,4 +127,4 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     );
 };
 
-export default Tickets;
+export default React.memo(Tickets);

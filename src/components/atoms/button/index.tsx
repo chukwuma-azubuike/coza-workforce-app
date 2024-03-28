@@ -48,7 +48,7 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
     );
 };
 
-export const AddButtonComponent: React.FC<IButtonComponent> = props => {
+export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props => {
     return (
         <ButtonComponent
             {...props}
@@ -66,7 +66,7 @@ export const AddButtonComponent: React.FC<IButtonComponent> = props => {
             <Icon name="plus" type="entypo" size={36} color="white" />
         </ButtonComponent>
     );
-};
+});
 
 interface IDownloadButton extends IButtonComponent {
     type: 'excel' | 'pdf' | 'csv';
@@ -74,7 +74,7 @@ interface IDownloadButton extends IButtonComponent {
     data: any[];
 }
 
-export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName, ...props }) => {
+export const DownloadButton: React.FC<IDownloadButton> = React.memo(({ data, type, fileName, ...props }) => {
     const handleDownload = async () => {
         try {
             // Check for Permission (check if permission is already given or not)
@@ -128,9 +128,9 @@ export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName
             <Icon name="download-outline" type="ionicon" size={36} color="white" />
         </ButtonComponent>
     );
-};
+});
 
-export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = props => {
+export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = React.memo(props => {
     const { isDarkMode } = useAppColorMode();
 
     return (
@@ -148,6 +148,6 @@ export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = props =>
             {...props}
         />
     );
-};
+});
 
-export default ButtonComponent;
+export default React.memo(ButtonComponent);

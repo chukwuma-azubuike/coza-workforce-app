@@ -375,4 +375,4 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     );
 };
 
-export default PermissionDetails;
+export default React.memo(PermissionDetails);

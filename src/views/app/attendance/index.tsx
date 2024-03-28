@@ -94,4 +94,4 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default Attendance;
+export default React.memo(Attendance);

@@ -127,4 +127,4 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
     );
 };
 
-export default CreateCGWCInstantMessage;
+export default React.memo(CreateCGWCInstantMessage);

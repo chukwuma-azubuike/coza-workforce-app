@@ -492,4 +492,4 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     );
 };
 
-export default TicketDetails;
+export default React.memo(TicketDetails);

@@ -236,4 +236,4 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     );
 };
 
-export default RegisterStepFour;
+export default React.memo(RegisterStepFour);

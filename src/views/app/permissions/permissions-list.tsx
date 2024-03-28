@@ -23,7 +23,7 @@ interface IPermissionListRowProps extends IPermission {
     '1'?: IPermission[];
 }
 
-export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
+export const PermissionListRow: React.FC<IPermissionListRowProps> = memo(props => {
     const navigation = useNavigation();
 
     const { type, screen } = props;
@@ -93,7 +93,7 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
             })}
         </ErrorBoundary>
     );
-};
+});
 
 const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolean }> = memo(
     ({ updatedListItem, reload }) => {

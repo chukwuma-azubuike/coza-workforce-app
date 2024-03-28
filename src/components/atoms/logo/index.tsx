@@ -10,4 +10,4 @@ const Logo: React.FC = () => {
     return <Image source={isLightMode ? logoBlack : logoWhite} />;
 };
 
-export default Logo;
+export default React.memo(Logo);

@@ -51,4 +51,4 @@ const UploadButton: React.FC<IUploadButton> = props => {
     );
 };
 
-export default UploadButton;
+export default React.memo(UploadButton);

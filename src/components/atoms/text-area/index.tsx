@@ -4,7 +4,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 
 interface ITextAreaComponent extends ITextAreaProps {}
 
-const TextAreaComponent = (props: ITextAreaComponent) => {
+const TextAreaComponent: React.FC<ITextAreaComponent> = props => {
     return (
         <TextArea
             p={3}
@@ -23,4 +23,4 @@ const TextAreaComponent = (props: ITextAreaComponent) => {
     );
 };
 
-export default TextAreaComponent;
+export default React.memo(TextAreaComponent);

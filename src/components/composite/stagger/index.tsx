@@ -81,4 +81,4 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
     );
 };
 
-export default StaggerButtonComponent;
+export default React.memo(StaggerButtonComponent);

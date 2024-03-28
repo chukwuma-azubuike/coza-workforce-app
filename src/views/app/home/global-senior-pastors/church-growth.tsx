@@ -145,4 +145,4 @@ const ChurchGrowth: React.FC = () => {
     );
 };
 
-export default ChurchGrowth;
+export default React.memo(ChurchGrowth);

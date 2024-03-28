@@ -160,4 +160,4 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     );
 };
 
-export default Login;
+export default React.memo(Login);

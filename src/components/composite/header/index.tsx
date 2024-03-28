@@ -12,7 +12,7 @@ interface IDynamicHeader {
     animHeaderValue: Animated.Value;
 }
 
-const DynamicHeader: React.FC<IDynamicHeader> = ({ animHeaderValue, title, children }) => {
+const DynamicHeader: React.FC<IDynamicHeader> = React.memo(({ animHeaderValue, title, children }) => {
     const { isDarkMode } = useAppColorMode();
 
     const animatedHeaderHeight = animHeaderValue.interpolate({
@@ -71,7 +71,7 @@ const DynamicHeader: React.FC<IDynamicHeader> = ({ animHeaderValue, title, child
             </View>
         </Animated.View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     header: {

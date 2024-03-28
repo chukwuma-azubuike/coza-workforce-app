@@ -151,4 +151,4 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
     );
 });
 
-export default TabBar;
+export default React.memo(TabBar);

@@ -235,4 +235,4 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     );
 };
 
-export default RequestPermission;
+export default React.memo(RequestPermission);

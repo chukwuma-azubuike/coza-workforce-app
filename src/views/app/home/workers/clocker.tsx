@@ -166,4 +166,4 @@ const Clocker: React.FC<IClockerProps> = ({
     );
 };
 
-export default Clocker;
+export default React.memo(Clocker);

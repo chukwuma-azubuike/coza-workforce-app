@@ -339,4 +339,4 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
     );
 };
 
-export default CGWCReport;
+export default React.memo(CGWCReport);

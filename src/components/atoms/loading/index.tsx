@@ -25,4 +25,4 @@ const Loading: React.FC<ILoadingProps> = ({ bootUp, color = 'gray.600', ...props
     );
 };
 
-export default Loading;
+export default React.memo(Loading);

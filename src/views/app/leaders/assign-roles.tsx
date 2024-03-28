@@ -358,4 +358,4 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
     );
 };
 
-export default AssignRole;
+export default React.memo(AssignRole);

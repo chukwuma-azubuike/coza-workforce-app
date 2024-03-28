@@ -162,7 +162,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     );
 };
 
-export default FlatListComponent;
+export default React.memo(FlatListComponent);
 
 const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }> = React.memo(
     ({ item, showHeader, columns }) => {

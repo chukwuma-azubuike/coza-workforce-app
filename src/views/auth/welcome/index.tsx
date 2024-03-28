@@ -148,4 +148,4 @@ const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     );
 };
 
-export default VerifyEmail;
+export default React.memo(VerifyEmail);

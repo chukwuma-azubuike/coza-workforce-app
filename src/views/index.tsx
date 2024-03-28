@@ -91,4 +91,4 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     );
 };
 
-export default Views;
+export default React.memo(Views);

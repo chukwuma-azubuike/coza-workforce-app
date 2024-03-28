@@ -159,7 +159,7 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
             .then(res => {
                 refreshLocation();
 
-                if (res !== RESULTS.GRANTED) {
+                if (res !== RESULTS.GRANTED || res !== RESULTS.LIMITED) {
                     Alert.alert(
                         'Location access needed',
                         'Please ensure that you have granted this app location access in your device settings.',
@@ -265,4 +265,4 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
     );
 };
 
-export default ClockButton;
+export default React.memo(ClockButton);

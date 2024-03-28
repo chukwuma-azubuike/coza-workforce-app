@@ -78,4 +78,4 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
     );
 };
 
-export default PhoneNumberInput;
+export default React.memo(PhoneNumberInput);

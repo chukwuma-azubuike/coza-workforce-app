@@ -54,4 +54,4 @@ const UserInfo = ({ heading, value, name, isEditable = true }: IUserInfo) => {
     );
 };
 
-export default UserInfo;
+export default React.memo(UserInfo);

@@ -107,4 +107,4 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     );
 };
 
-export default More;
+export default React.memo(More);

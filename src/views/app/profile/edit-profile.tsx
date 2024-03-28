@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, HStack, Text, VStack } from 'native-base';
+import { FormControl, Text, VStack } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -380,4 +380,4 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default EditProfile;
+export default React.memo(EditProfile);

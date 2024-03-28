@@ -257,4 +257,4 @@ const ManualClockin: React.FC = () => {
     );
 };
 
-export default ManualClockin;
+export default React.memo(ManualClockin);

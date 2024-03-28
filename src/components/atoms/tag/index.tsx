@@ -23,4 +23,4 @@ const TagComponent: React.FC<ITagComponentProps> = props => {
     );
 };
 
-export default TagComponent;
+export default React.memo(TagComponent);

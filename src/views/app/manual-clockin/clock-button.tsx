@@ -20,13 +20,13 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import { IThirdPartyUserDetails } from '.';
 import useGeoLocation from '@hooks/geo-location';
 
-interface ThirdPartyClockButton extends IThirdPartyUserDetails {
+interface IThirdPartyClockButton extends IThirdPartyUserDetails {
     isInRangeProp: boolean;
     deviceCoordinates: GeoCoordinates;
     campusCoordinates: ICampusCoordinates;
 }
 
-const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
+const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
     userId,
     roleId,
     campusId,
@@ -281,4 +281,4 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
     );
 };
 
-export default ThirdPartyClockButton;
+export default React.memo(ThirdPartyClockButton);

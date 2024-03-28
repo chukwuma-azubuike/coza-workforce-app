@@ -11,7 +11,7 @@ import { Field, Formik } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
 import PhoneNumberInput from '@components/atoms/phone-input';
-import Utils from '@utils';
+import Utils from '@utils/index';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
@@ -165,4 +165,4 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     );
 };
 
-export default RegisterStepOne;
+export default React.memo(RegisterStepOne);

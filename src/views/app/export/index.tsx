@@ -317,4 +317,4 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default Export;
+export default React.memo(Export);

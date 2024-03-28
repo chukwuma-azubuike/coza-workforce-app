@@ -211,7 +211,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default CGWCDetails;
+export default React.memo(CGWCDetails);
 
 const styles = StyleSheet.create({
     container: {

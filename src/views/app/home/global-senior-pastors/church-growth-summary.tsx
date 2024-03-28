@@ -227,4 +227,4 @@ const ChurchGrowthSummary: React.FC = () => {
     );
 };
 
-export default ChurchGrowthSummary;
+export default React.memo(ChurchGrowthSummary);

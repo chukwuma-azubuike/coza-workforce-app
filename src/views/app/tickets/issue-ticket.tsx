@@ -381,4 +381,4 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default IssueTicket;
+export default React.memo(IssueTicket);

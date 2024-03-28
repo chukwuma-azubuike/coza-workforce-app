@@ -42,4 +42,4 @@ const ErrorBoundary: React.FC<{
     );
 };
 
-export default ErrorBoundary;
+export default React.memo(ErrorBoundary);

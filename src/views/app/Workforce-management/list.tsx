@@ -5,13 +5,13 @@ import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import { AVATAR_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
 import { IUser } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 
-const UserListRow: React.FC<IUser> = user => {
+const UserListRow: React.FC<IUser> = memo(user => {
     const navigation = useNavigation();
 
     const handlePress = () => {
@@ -36,14 +36,14 @@ const UserListRow: React.FC<IUser> = user => {
             </HStack>
         </TouchableOpacity>
     );
-};
+});
 
 interface CampusUserList {
     '0'?: string;
     '1'?: IUser[];
 }
 
-const CampusListRow: React.FC<CampusUserList> = user => {
+const CampusListRow: React.FC<CampusUserList> = memo(user => {
     const navigation = useNavigation();
     const { leaderRoleIds } = useRole();
 
@@ -86,7 +86,7 @@ const CampusListRow: React.FC<CampusUserList> = user => {
             })}
         </>
     );
-};
+});
 
 const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     const teamColumns: IFlatListColumn[] = [

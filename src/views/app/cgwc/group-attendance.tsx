@@ -92,4 +92,4 @@ const CGWCGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     );
 };
 
-export default CGWCGroupAttendance;
+export default React.memo(CGWCGroupAttendance);

@@ -38,4 +38,4 @@ const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
     );
 };
 
-export default ModalAlertComponent;
+export default React.memo(ModalAlertComponent);

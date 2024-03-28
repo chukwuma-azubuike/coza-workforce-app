@@ -59,4 +59,4 @@ const ToastUI = ({ id, status, variant, title, description, isClosable, ...rest 
     );
 };
 
-export default ToastUI;
+export default React.memo(ToastUI);

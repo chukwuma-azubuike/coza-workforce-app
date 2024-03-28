@@ -58,4 +58,4 @@ const ConnectionStatusBar: React.FC = () => {
     );
 };
 
-export default ConnectionStatusBar;
+export default React.memo(ConnectionStatusBar);

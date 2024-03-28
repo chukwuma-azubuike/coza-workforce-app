@@ -11,7 +11,7 @@ import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
 import Utils from '@utils/index';
 
-const ServiceListRow: React.FC<IService> = service => {
+const ServiceListRow: React.FC<IService> = React.memo(service => {
     return (
         <TouchableOpacity
             disabled={false}
@@ -35,7 +35,7 @@ const ServiceListRow: React.FC<IService> = service => {
             </HStack>
         </TouchableOpacity>
     );
-};
+});
 
 const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListItem }) => {
     const serviceColumns: IFlatListColumn[] = [

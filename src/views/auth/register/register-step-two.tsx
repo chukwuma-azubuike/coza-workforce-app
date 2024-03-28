@@ -12,7 +12,7 @@ import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_2 } from '@utils/schemas';
 import { RegisterFormContext } from '.';
 import PhoneNumberInput from '@components/atoms/phone-input';
-import Utils from '@utils';
+import Utils from '@utils/index';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const handleBackPress = () => onStepPress(0);
@@ -192,4 +192,4 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     );
 };
 
-export default RegisterStepTwo;
+export default React.memo(RegisterStepTwo);

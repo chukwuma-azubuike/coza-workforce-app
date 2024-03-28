@@ -40,4 +40,4 @@ const Welcome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
     );
 };
 
-export default Welcome;
+export default React.memo(Welcome);

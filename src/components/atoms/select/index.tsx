@@ -11,7 +11,7 @@ interface ISelectItemComponent extends ISelectItemProps {
     icon?: { name: string; type: IIconTypes };
 }
 
-const SelectComponent = (props: ISelectComponent) => {
+const SelectComponent = React.memo((props: ISelectComponent) => {
     return (
         <Select
             p={3}
@@ -37,9 +37,9 @@ const SelectComponent = (props: ISelectComponent) => {
             )}
         </Select>
     );
-};
+});
 
-const SelectItemComponent = (props: ISelectItemComponent) => {
+const SelectItemComponent = React.memo((props: ISelectItemComponent) => {
     const { icon } = props;
     const { isLightMode } = useAppColorMode();
 
@@ -59,6 +59,6 @@ const SelectItemComponent = (props: ISelectItemComponent) => {
             }
         />
     );
-};
+});
 
 export { SelectComponent, SelectItemComponent };

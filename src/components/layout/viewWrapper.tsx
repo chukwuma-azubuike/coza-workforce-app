@@ -46,4 +46,4 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
     );
 };
 
-export default ViewWrapper;
+export default React.memo(ViewWrapper);

@@ -89,4 +89,4 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     );
 };
 
-export default TopNav;
+export default React.memo(TopNav);

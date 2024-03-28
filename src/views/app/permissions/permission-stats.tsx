@@ -66,4 +66,4 @@ const PermissionStats: React.FC<IPermissionsStats> = props => {
     );
 };
 
-export default PermissionStats;
+export default React.memo(PermissionStats);

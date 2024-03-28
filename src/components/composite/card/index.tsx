@@ -52,7 +52,7 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
     );
 };
 
-export default CardComponent;
+export default React.memo(CardComponent);
 interface IStatCardComponentProps {
     value?: number | string;
     flex?: number;
@@ -166,7 +166,7 @@ interface SummaryCardProps {
     value?: string | number;
 }
 
-export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = props => {
+export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = React.memo(props => {
     const { summaryList } = props;
 
     return (
@@ -194,7 +194,7 @@ export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = pr
             ))}
         </Stack>
     );
-};
+});
 
 interface SummaryListCardFlexProps extends Omit<SummaryCardProps, 'color'> {
     _id: string;
@@ -204,7 +204,7 @@ interface SummaryListCardFlexProps extends Omit<SummaryCardProps, 'color'> {
 export const SummaryListCardFlex: React.FC<{
     summaryList?: SummaryListCardFlexProps[];
     onPress: (args?: any) => void;
-}> = props => {
+}> = React.memo(props => {
     const { summaryList, onPress } = props;
 
     return (
@@ -259,7 +259,7 @@ export const SummaryListCardFlex: React.FC<{
             </Stack>
         </Center>
     );
-};
+});
 
 const style = StyleSheet.create({
     shadowProp: {

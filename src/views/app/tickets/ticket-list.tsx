@@ -19,7 +19,7 @@ export interface TicketListRowProps extends ITicket {
     '1'?: ITicket[];
 }
 
-export const TicketListRow: React.FC<TicketListRowProps> = props => {
+export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
     const navigation = useNavigation();
     const { type } = props;
 
@@ -131,7 +131,7 @@ export const TicketListRow: React.FC<TicketListRowProps> = props => {
             })}
         </>
     );
-};
+});
 
 const MyTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(({ updatedListItem, reload }) => {
     const myTicketsColumns: IFlatListColumn[] = [

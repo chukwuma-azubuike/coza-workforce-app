@@ -41,9 +41,9 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
     );
 };
 
-export default AvatarComponent;
+export default React.memo(AvatarComponent);
 
-export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({ imageUrl }) => {
+export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = React.memo(({ imageUrl }) => {
     return (
         <Avatar
             bg="amber.500"
@@ -53,4 +53,4 @@ export const AvatarComponentWithoutBadge: React.FC<IAvatarComponentProps> = ({ i
             size="sm"
         />
     );
-};
+});

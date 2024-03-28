@@ -42,4 +42,4 @@ const CGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, rou
     );
 };
 
-export default CGWC;
+export default React.memo(CGWC);

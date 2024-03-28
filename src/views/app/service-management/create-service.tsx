@@ -411,4 +411,4 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
     );
 };
 
-export default CreateServiceManagement;
+export default React.memo(CreateServiceManagement);

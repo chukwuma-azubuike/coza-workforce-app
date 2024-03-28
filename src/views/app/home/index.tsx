@@ -186,4 +186,4 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     );
 };
 
-export default Home;
+export default React.memo(Home);

@@ -17,7 +17,7 @@ type INumberInputComponentProps = INumberInputProps & {
     onIconPress?: () => void;
 };
 
-const InputComponent = (props: IInputComponentProps) => {
+const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
     const { leftIcon, rightIcon, onIconPress } = props;
 
     return (
@@ -60,9 +60,9 @@ const InputComponent = (props: IInputComponentProps) => {
             _ios={{ returnKeyType: 'done' }}
         />
     );
-};
+});
 
-const NumberInputComponent = (props: INumberInputComponentProps) => {
+const NumberInputComponent: React.FC<INumberInputComponentProps> = React.memo(props => {
     const { leftIcon, rightIcon, onIconPress } = props;
 
     return (
@@ -106,7 +106,7 @@ const NumberInputComponent = (props: INumberInputComponentProps) => {
             }
         />
     );
-};
+});
 
 const style = StyleSheet.create({
     base: {

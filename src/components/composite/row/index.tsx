@@ -15,7 +15,7 @@ interface ColProps extends ViewProps {
     rowGutter?: number;
 }
 
-export const Row: React.FC<RowProps> = ({ children, gutter = 0, style, ...rest }) => {
+export const Row: React.FC<RowProps> = React.memo(({ children, gutter = 0, style, ...rest }) => {
     const marginValue = gutter / 2;
     const marginStyle = { marginLeft: marginValue, marginRight: marginValue };
 
@@ -26,9 +26,9 @@ export const Row: React.FC<RowProps> = ({ children, gutter = 0, style, ...rest }
             })}
         </View>
     );
-};
+});
 
-export const Col: React.FC<ColProps> = ({ children, span, rowGutter, sm, md, lg, xl, style, ...rest }) => {
+export const Col: React.FC<ColProps> = React.memo(({ children, span, rowGutter, sm, md, lg, xl, style, ...rest }) => {
     const screenWidth = Dimensions.get('window').width;
     const { isMobile, isTablet, isTabletPortrait } = useMediaQuery();
 
@@ -70,7 +70,7 @@ export const Col: React.FC<ColProps> = ({ children, span, rowGutter, sm, md, lg,
             {children}
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     row: {

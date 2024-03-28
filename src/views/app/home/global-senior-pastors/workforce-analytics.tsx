@@ -47,4 +47,4 @@ const WorkforceAnalytics: React.FC<IWorkforceAnalyticsProps> = ({ CGWCId, servic
     );
 };
 
-export default WorkforceAnalytics;
+export default React.memo(WorkforceAnalytics);
