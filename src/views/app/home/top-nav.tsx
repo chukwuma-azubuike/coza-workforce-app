@@ -35,12 +35,13 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     const isAndroidOrBelowIOSTenOrTab = React.useMemo(
         () => Platform.OS === 'android' || isIphoneLessThanTen() || !isMobile,
-        []
+        [isMobile]
     );
 
     return (
         <HStack
             px={4}
+            w="100%"
             zIndex={20}
             alignItems="center"
             _dark={{ bg: 'black' }}

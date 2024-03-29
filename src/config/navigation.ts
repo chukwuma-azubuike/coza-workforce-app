@@ -69,6 +69,7 @@ export interface IAppRoute {
     users: (ROLES | DEPARTMENTS)[];
     inMenuBar: boolean;
     inMore: boolean;
+    hideHeader?: boolean;
     customHeader?: React.FC<any>;
     icon: { name: string; type: IIconTypes };
 }
@@ -542,6 +543,8 @@ const AppRoutes: IAppRoute[] = [
                 users: [],
                 inMenuBar: false,
                 inMore: false,
+                hideHeader: true,
+                customHeader: TopNav,
                 icon: { name: 'crown', type: 'foundation' },
             },
             {

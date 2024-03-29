@@ -64,6 +64,7 @@ const TabRoutes: React.FC = () => {
                             justifyContent: 'center',
                             alignContent: 'center',
                         },
+                        headerShown: !route.hideHeader,
                         headerLeft: () => <NavigationBackButton onPress={handleGoBack} />,
                         header: !!route.customHeader
                             ? props => {
