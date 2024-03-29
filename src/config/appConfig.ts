@@ -18,6 +18,7 @@ const THEME_CONFIG = {
     error: '#DC2626',
     rose: '#F87171',
     lightRose: '#FECDD3',
+    transparentGray: '#8484881A',
 };
 
 const extendedTheme = extendTheme({

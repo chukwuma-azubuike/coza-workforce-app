@@ -157,12 +157,12 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             <DynamicSearch
                 data={campusUsers}
                 onPress={handleUserPress}
-                loading={isLoading || isFetching}
+                loading={isLoadingUsers || isLoadingUsers}
                 searchFields={['firstName', 'lastName', 'departmentName', 'email']}
             />
             <ViewWrapper scroll>
                 {campusInfo.map((item, index) =>
-                    isLoadingUsers || isFetchingUsers ? (
+                    isLoading || isFetching ? (
                         <FlexListSkeleton count={1} />
                     ) : (
                         <Stack key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} px={2}>

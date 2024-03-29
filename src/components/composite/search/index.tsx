@@ -3,7 +3,7 @@ import { FloatButton } from '@components/atoms/button';
 import { InputComponent } from '@components/atoms/input';
 import { IUser } from '@store/types';
 import { HStack, IconButton, Modal, Text, VStack } from 'native-base';
-import { KeyboardAvoidingView, ListRenderItemInfo, TouchableHighlight } from 'react-native';
+import { Alert, KeyboardAvoidingView, ListRenderItemInfo, TouchableHighlight, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import Utils from '@utils/index';
@@ -21,29 +21,34 @@ import Loading from '@components/atoms/loading';
 interface IUseSearchProps<D> {
     data?: Array<D>;
     loading?: boolean;
+    disable?: boolean;
     searchFields: Array<string>;
     onPress: (params: IUser) => void;
 }
 
 function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
-    const { data = [], searchFields, onPress, loading } = props;
+    const { data, searchFields, onPress, loading, disable } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
-    const [searchResults, setSearchResults] = React.useState<Array<D>>(data);
+    const [searchResults, setSearchResults] = React.useState<Array<D> | undefined>(data);
     const [text, setText] = React.useState<string>('');
 
     const handleSearchBar = () => {
+        if (typeof data === 'undefined' && !loading) {
+            Alert.alert('Select a campus', 'Please select a campus to proceed with your search');
+            return;
+        }
         setSearchBar(true);
     };
 
     const handlePress = (id: IUser) => () => {
-        onPress(id);
         setText('');
+        onPress(id);
         setSearchBar(false);
     };
 
     const handleCancel = () => {
-        setSearchBar(false);
         setText('');
+        setSearchBar(false);
     };
 
     const handleChange = React.useCallback(
@@ -55,6 +60,11 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
             debounce(fn, 500)();
         },
         [data, searchFields]
+    );
+
+    const sortedSearchResults = React.useMemo(
+        () => Utils.sortStringAscending(searchResults, 'firstName'),
+        [searchResults]
     );
 
     const { isAndroidOrBelowIOSTenOrTab } = useDevice();
@@ -99,15 +109,15 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                             />
                         </HStack>
                         <FlatList
-                            data={searchResults}
+                            data={sortedSearchResults}
                             ListEmptyComponent={
-                                !loading ? (
-                                    <Text textAlign="center" py={2}>
-                                        No data found
-                                    </Text>
-                                ) : (
-                                    <Loading />
-                                )
+                                <Text textAlign="center" py={2}>
+                                    {loading
+                                        ? 'Loading...'
+                                        : !!data?.length && !searchResults?.length
+                                        ? 'No data found'
+                                        : ''}
+                                </Text>
                             }
                             keyExtractor={item => item?._id}
                             getItemLayout={(data, index) => ({
@@ -120,7 +130,9 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                             removeClippedSubviews={true}
                             renderItem={({ item: elm, index: key, separators }: ListRenderItemInfo<any>) => {
                                 return loading ? (
-                                    <Loading />
+                                    <Text textAlign="center" py={2}>
+                                        Loading...
+                                    </Text>
                                 ) : (
                                     <TouchableHighlight
                                         key={key}
@@ -131,7 +143,7 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                                         onShowUnderlay={separators.highlight}
                                         onHideUnderlay={separators.unhighlight}
                                         underlayColor={
-                                            isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray
+                                            isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.transparentGray
                                         }
                                     >
                                         <HStack

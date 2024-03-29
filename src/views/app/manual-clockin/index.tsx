@@ -1,6 +1,6 @@
 import { Icon } from '@rneui/themed';
 import { Formik } from 'formik';
-import { Center, FormControl, HStack, VStack } from 'native-base';
+import { Center, FormControl, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -17,6 +17,11 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import { IUser } from '@store/types';
 import { WorkforceClockinSchema } from '@utils/schemas';
 import ThirdPartyClockButton from './clock-button';
+import DynamicSearch from '@components/composite/search';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
+import AvatarComponent from '@components/atoms/avatar';
+import Utils from '@utils/index';
+import StatusTag from '@components/atoms/status-tag';
 
 export interface IThirdPartyUserDetails {
     userId: string;
@@ -32,7 +37,15 @@ const ManualClockin: React.FC = () => {
 
     const handleSubmit = () => {};
 
-    const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
+    const {
+        data: campuses,
+        isLoading: campusLoading,
+        isFetching: campusIsFetching,
+        refetch: refetchCampuses,
+        isUninitialized: campusesIsUninitialized,
+    } = useGetCampusesQuery();
+
+    const sortedCampuses = React.useMemo(() => Utils.sortStringAscending(campuses, 'campusName'), [campuses]);
 
     const {
         data: departments,
@@ -41,6 +54,19 @@ const ManualClockin: React.FC = () => {
     } = useGetDepartmentsByCampusIdQuery(campusId as string, {
         skip: !campusId,
     });
+
+    const sortedDepartments = React.useMemo(
+        () => Utils.sortStringAscending(departments, 'departmentName'),
+        [departments]
+    );
+
+    const {
+        data: campusUsers,
+        isLoading: isLoadingUsers,
+        isFetching: isFetchingUsers,
+        refetch: refetchCampusUsers,
+        isUninitialized: campusUsersIsUninitialized,
+    } = useGetUsersQuery({ campusId }, { refetchOnMountOrArgChange: true, skip: !campusId });
 
     const {
         data: users,
@@ -52,6 +78,8 @@ const ManualClockin: React.FC = () => {
             skip: !departmentId,
         }
     );
+
+    const sortedUsers = React.useMemo(() => Utils.sortStringAscending(users, 'firstName'), [users]);
 
     const {
         user: { campus },
@@ -66,14 +94,30 @@ const ManualClockin: React.FC = () => {
     const handleRefresh = () => {
         refresh();
         latestServiceRefetch();
+        campusUsersIsUninitialized && refetchCampusUsers();
+        campusesIsUninitialized && refetchCampuses();
     };
 
     useScreenFocus({
         onFocus: refresh,
     });
 
+    const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>();
+
+    const handleUserPress = (user: IUser) => {
+        setThirdPartyUserId(user);
+        setSearchedUser(user);
+    };
+
     return (
         <ErrorBoundary>
+            <DynamicSearch
+                data={campusUsers}
+                disable={!campusUsers}
+                onPress={handleUserPress}
+                loading={isLoadingUsers || isFetchingUsers}
+                searchFields={['firstName', 'lastName', 'departmentName', 'email']}
+            />
             <ViewWrapper scroll onRefresh={handleRefresh} refreshing={isFetching}>
                 <Formik<IClockInPayload>
                     onSubmit={handleSubmit}
@@ -87,22 +131,26 @@ const ManualClockin: React.FC = () => {
                             setDepartmentId(undefined);
                             setThirdPartyUserId(undefined);
                             handleChange('campusId');
+                            setSearchedUser(undefined);
                         };
 
                         const onDepartmentChange = (value: string) => {
                             refresh();
                             setDepartmentId(value);
+                            setSearchedUser(undefined);
                             setThirdPartyUserId(undefined);
                             handleChange('departmentId');
                         };
 
                         const onUserChange = (value: string) => {
+                            const user = users?.find(user => user._id === value);
                             refresh();
-                            setThirdPartyUserId(users?.find(user => user._id === value));
+                            setSearchedUser(user);
+                            setThirdPartyUserId(user);
                         };
 
                         return (
-                            <VStack space="md" alignItems="flex-start" w="100%" px={4}>
+                            <VStack space="sm" alignItems="flex-start" w="100%" px={4}>
                                 <FormControl isRequired>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent
@@ -118,7 +166,7 @@ const ManualClockin: React.FC = () => {
                                             </HStack>
                                         }
                                     >
-                                        {campuses?.map((campus, index) => (
+                                        {sortedCampuses?.map((campus, index) => (
                                             <SelectItemComponent
                                                 value={campus._id}
                                                 key={`campus-${index}`}
@@ -158,7 +206,7 @@ const ManualClockin: React.FC = () => {
                                             </HStack>
                                         }
                                     >
-                                        {departments?.map((department, index) => (
+                                        {sortedDepartments?.map((department, index) => (
                                             <SelectItemComponent
                                                 value={department._id}
                                                 key={`department-${index}`}
@@ -198,7 +246,7 @@ const ManualClockin: React.FC = () => {
                                         selectedValue={thirdPartyUser?._id as unknown as string}
                                         onValueChange={onUserChange as unknown as (value: string) => void}
                                     >
-                                        {users?.map((user, index) => (
+                                        {sortedUsers?.map((user, index) => (
                                             <SelectItemComponent
                                                 key={`department-${index}`}
                                                 isLoading={usersLoading || usersIsFetching}
@@ -223,7 +271,39 @@ const ManualClockin: React.FC = () => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <Center w="full" mt={10} h={280}>
+                                {!!searchedUser && (
+                                    <HStack space={3} alignItems="center" flex={1} w="100%">
+                                        <AvatarComponent imageUrl={searchedUser?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                        <VStack flex={1} w="100%">
+                                            <Text
+                                                bold
+                                                fontSize="md"
+                                                noOfLines={1}
+                                                ellipsizeMode="tail"
+                                                _dark={{ color: 'gray.200' }}
+                                                _light={{ color: 'gray.800' }}
+                                            >
+                                                {`${Utils.capitalizeFirstChar(
+                                                    searchedUser?.firstName
+                                                )} ${Utils.capitalizeFirstChar(searchedUser?.lastName)}`}
+                                            </Text>
+                                            <Text
+                                                fontSize="md"
+                                                noOfLines={1}
+                                                ellipsizeMode="tail"
+                                                _dark={{ color: 'gray.200' }}
+                                                _light={{ color: 'gray.800' }}
+                                            >
+                                                {searchedUser?.departmentName}
+                                            </Text>
+                                        </VStack>
+                                        <StatusTag>
+                                            {(searchedUser?.gender === 'M' ? 'Male' : 'Female') as any}
+                                        </StatusTag>
+                                    </HStack>
+                                )}
+
+                                <Center w="full" mt={10} height={280}>
                                     <ThirdPartyClockButton
                                         isInRangeProp={isInRange}
                                         campusId={campusId as string}

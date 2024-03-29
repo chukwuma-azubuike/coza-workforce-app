@@ -1,5 +1,5 @@
 interface IDynamicSearch {
-    data: Array<any>;
+    data?: Array<any>;
     searchText: string;
     searchFields: Array<string>;
 }
