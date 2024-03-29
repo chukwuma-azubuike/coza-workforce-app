@@ -44,7 +44,11 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         refetch: campusSummaryRefetch,
     } = useGetCampusSummaryByCampusIdQuery(campusId || campus._id);
 
-    const { data: campusUsers } = useGetUsersQuery({ campusId });
+    const {
+        data: campusUsers,
+        isLoading: isLoadingUsers,
+        isFetching: isFetchingUsers,
+    } = useGetUsersQuery({ campusId }, { refetchOnMountOrArgChange: true });
 
     const campusInfo = [
         {
@@ -153,11 +157,12 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             <DynamicSearch
                 data={campusUsers}
                 onPress={handleUserPress}
+                loading={isLoading || isFetching}
                 searchFields={['firstName', 'lastName', 'departmentName', 'email']}
             />
             <ViewWrapper scroll>
                 {campusInfo.map((item, index) =>
-                    isLoading || isFetching ? (
+                    isLoadingUsers || isFetchingUsers ? (
                         <FlexListSkeleton count={1} />
                     ) : (
                         <Stack key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} px={2}>

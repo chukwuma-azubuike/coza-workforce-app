@@ -14,17 +14,22 @@ import useDevice from '@hooks/device';
 import { Icon } from '@rneui/themed';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { THEME_CONFIG } from '@config/appConfig';
+import { ScreenHeight } from '@rneui/base';
+import debounce from 'lodash/debounce';
+import Loading from '@components/atoms/loading';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
+    loading?: boolean;
     searchFields: Array<string>;
     onPress: (params: IUser) => void;
 }
 
 function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
-    const { data = [], searchFields, onPress } = props;
+    const { data = [], searchFields, onPress, loading } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
     const [searchResults, setSearchResults] = React.useState<Array<D>>(data);
+    const [text, setText] = React.useState<string>('');
 
     const handleSearchBar = () => {
         setSearchBar(true);
@@ -32,16 +37,22 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
 
     const handlePress = (id: IUser) => () => {
         onPress(id);
+        setText('');
         setSearchBar(false);
     };
 
     const handleCancel = () => {
         setSearchBar(false);
+        setText('');
     };
 
     const handleChange = React.useCallback(
         (searchText: string) => {
-            setSearchResults(dynamicSearch({ data, searchText, searchFields }));
+            setText(searchText);
+
+            const fn = () => setSearchResults(dynamicSearch({ data, searchText, searchFields }));
+
+            debounce(fn, 500)();
         },
         [data, searchFields]
     );
@@ -65,6 +76,7 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                                 autoFocus
                                 variant="outline"
                                 clearButtonMode="always"
+                                value={text}
                                 onChangeText={handleChange}
                                 placeholder={`Search by ${searchFields?.join(', ')}`}
                             />
@@ -89,12 +101,27 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                         <FlatList
                             data={searchResults}
                             ListEmptyComponent={
-                                <Text textAlign="center" py={2}>
-                                    No data found
-                                </Text>
+                                !loading ? (
+                                    <Text textAlign="center" py={2}>
+                                        No data found
+                                    </Text>
+                                ) : (
+                                    <Loading />
+                                )
                             }
+                            keyExtractor={item => item?._id}
+                            getItemLayout={(data, index) => ({
+                                length: ScreenHeight / 10, // Assuming a constant item height
+                                offset: (ScreenHeight / 10) * index,
+                                index,
+                            })}
+                            windowSize={20}
+                            initialNumToRender={20}
+                            removeClippedSubviews={true}
                             renderItem={({ item: elm, index: key, separators }: ListRenderItemInfo<any>) => {
-                                return (
+                                return loading ? (
+                                    <Loading />
+                                ) : (
                                     <TouchableHighlight
                                         key={key}
                                         delayPressIn={0}
