@@ -23,7 +23,6 @@ import useGeoLocation from '@hooks/geo-location';
 interface IThirdPartyClockButton extends IThirdPartyUserDetails {
     isInRangeProp: boolean;
     deviceCoordinates: GeoCoordinates;
-    campusCoordinates: ICampusCoordinates;
 }
 
 const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
@@ -32,7 +31,6 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
     campusId,
     departmentId,
     deviceCoordinates,
-    campusCoordinates,
     isInRangeProp: isInRange,
 }) => {
     const {
@@ -46,7 +44,6 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
 
     const { verifyRangeBeforeAction } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
-        campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
     const { data: latestAttendanceData } = useGetAttendanceQuery(

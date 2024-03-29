@@ -10,8 +10,8 @@ import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
-import { ICampusCoordinates, IClockInPayload } from '@store/services/attendance';
-import { useGetCampusByIdQuery, useGetCampusesQuery } from '@store/services/campus';
+import { IClockInPayload } from '@store/services/attendance';
+import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { IUser } from '@store/types';
@@ -59,22 +59,8 @@ const ManualClockin: React.FC = () => {
 
     const { data: latestService, refetch: latestServiceRefetch, isFetching } = useGetLatestServiceQuery(campus._id);
 
-    const { data: campusData } = useGetCampusByIdQuery(campus?._id);
-
-    const selectCoordinateRef = React.useMemo(() => {
-        if (latestService?.isGlobalService) return latestService?.coordinates;
-
-        return campusData?.coordinates;
-    }, [latestService, campusData]);
-
-    const campusCoordinates = {
-        latitude: selectCoordinateRef?.lat,
-        longitude: selectCoordinateRef?.long,
-    };
-
     const { isInRange, refresh, deviceCoordinates } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
-        campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
     const handleRefresh = () => {
@@ -245,7 +231,6 @@ const ManualClockin: React.FC = () => {
                                         departmentId={departmentId as string}
                                         userId={thirdPartyUser?._id as string}
                                         roleId={thirdPartyUser?.roleId as string}
-                                        campusCoordinates={campusCoordinates as ICampusCoordinates}
                                     />
                                 </Center>
                             </VStack>

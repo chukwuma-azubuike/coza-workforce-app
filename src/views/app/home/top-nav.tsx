@@ -5,14 +5,13 @@ import { ParamListBase } from '@react-navigation/native';
 import AvatarComponent from '@components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { HomeContext } from '.';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, Platform, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { ScreenWidth } from '@rneui/base';
 import isIphoneLessThanTen from '@utils/isIPhoneLessThanTen';
 import useMediaQuery from '@hooks/media-query';
+import { useGetLatestServiceQuery } from '@store/services/services';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     const handleNotificationPress = () => {
@@ -25,14 +24,14 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     const handlePress = () => navigation.navigate('Profile');
 
-    const { latestService } = React.useContext(HomeContext);
-    const data = latestService?.data;
-    const isError = latestService?.isError;
-    const isLoading = latestService?.isLoading;
-
     const { user } = useRole();
     const { isLightMode } = useAppColorMode();
     const { isMobile } = useMediaQuery();
+
+    const { data, isError, isLoading } = useGetLatestServiceQuery(user?.campus?._id as string, {
+        skip: !user,
+        refetchOnMountOrArgChange: true,
+    });
 
     const isAndroidOrBelowIOSTenOrTab = React.useMemo(
         () => Platform.OS === 'android' || isIphoneLessThanTen() || !isMobile,
@@ -41,12 +40,13 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     return (
         <HStack
-            px={3}
+            px={4}
             zIndex={20}
             alignItems="center"
-            w={ScreenWidth - 12}
+            _dark={{ bg: 'black' }}
+            _light={{ bg: 'white' }}
             justifyContent="space-between"
-            pt={isAndroidOrBelowIOSTenOrTab ? 2 : 6}
+            pt={isAndroidOrBelowIOSTenOrTab ? 2 : 16}
         >
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
@@ -60,7 +60,15 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
                     imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
-            <Text fontSize="lg" fontWeight="light" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
+            <Text
+                flex={1}
+                fontSize="lg"
+                fontWeight="light"
+                textAlign="center"
+                justifyContent="center"
+                _dark={{ color: 'gray.400' }}
+                _light={{ color: 'gray.600' }}
+            >
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
             {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>
@@ -81,7 +89,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
                     type="Entypo"
                     borderRadius={10}
                     underlayColor="white"
-                    iconStyle={{ fontSize: 35 }}
+                    iconStyle={{ fontSize: 36, marginRight: -3 }}
                     color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
                 />
             </TouchableOpacity>
