@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-base';
+import { Box, Button, Center, Spinner, Text, VStack } from 'native-base';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableOpacity } from 'react-native';
@@ -23,7 +23,12 @@ interface IClockButtonProps {
     verifyRangeBeforeAction: (successCallback: () => any, errorCallback: () => any) => Promise<void>;
 }
 
-const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRangeBeforeAction }: IClockButtonProps) => {
+const ClockButton: React.FC<IClockButtonProps> = ({
+    isInRange,
+    refreshLocation,
+    deviceCoordinates,
+    verifyRangeBeforeAction,
+}) => {
     const {
         latestService: {
             data: latestServiceData,
@@ -157,57 +162,62 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
 
         Utils.checkLocationPermission()
             .then(res => {
-                refreshLocation();
+                refreshLocation()
+                    .then(() => {
+                        if (res === RESULTS.DENIED || res === RESULTS.BLOCKED || res === RESULTS.UNAVAILABLE) {
+                            Alert.alert(
+                                'Location access needed',
+                                'Please ensure that you have granted this app location access in your device settings.',
+                                [
+                                    { text: 'Cancel', style: 'destructive' },
+                                    { text: 'Go to settings', style: 'default', onPress: openLocationSettings },
+                                ]
+                            );
+                            return;
+                        }
+                        if (!isInRange) {
+                            setModalState({
+                                duration: 6,
+                                render: (
+                                    <ModalAlertComponent
+                                        description={
+                                            'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
+                                        }
+                                        iconName={'warning-outline'}
+                                        iconType={'ionicon'}
+                                        status={'warning'}
+                                    />
+                                ),
+                            });
+                            return;
+                        }
 
-                if (res !== RESULTS.GRANTED || res !== RESULTS.LIMITED) {
-                    Alert.alert(
-                        'Location access needed',
-                        'Please ensure that you have granted this app location access in your device settings.',
-                        [{ text: 'Go to settings', style: 'default', onPress: openLocationSettings }]
-                    );
-                    return;
-                }
-                if (!isInRange) {
-                    setModalState({
-                        duration: 6,
-                        render: (
-                            <ModalAlertComponent
-                                description={
-                                    'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
-                                }
-                                iconName={'warning-outline'}
-                                iconType={'ionicon'}
-                                status={'warning'}
-                            />
-                        ),
-                    });
-                    return;
-                }
+                        if (canClockIn) {
+                            return handleClockin();
+                        }
 
-                if (canClockIn) {
-                    return handleClockin();
-                }
-
-                if (canClockOut && latestAttendanceData) {
-                    Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
-                        {
-                            text: 'No',
-                            style: 'destructive',
-                        },
-                        {
-                            text: 'Yes',
-                            style: 'default',
-                            onPress: handleVerifyBeforeClockout,
-                        },
-                    ]);
-                    return;
-                }
+                        if (canClockOut && latestAttendanceData) {
+                            Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
+                                {
+                                    text: 'No',
+                                    style: 'destructive',
+                                },
+                                {
+                                    text: 'Yes',
+                                    style: 'default',
+                                    onPress: handleVerifyBeforeClockout,
+                                },
+                            ]);
+                            return;
+                        }
+                    })
+                    .catch(err => {});
             })
             .catch(err => {});
     };
 
     return (
-        <Pressable>
+        <Center>
             {canClockIn && !disabled && (
                 <LottieView
                     source={require('@assets/json/clock-button-animation.json')}
@@ -222,46 +232,51 @@ const ClockButton = ({ isInRange, refreshLocation, deviceCoordinates, verifyRang
                     loop
                 />
             )}
-            <Box alignItems="center" shadow={7}>
-                <Button
-                    w={200}
-                    h={200}
-                    shadow={9}
-                    borderRadius="full"
-                    _isDisabled={disabled}
-                    backgroundColor={
-                        canClockIn && !disabled
-                            ? 'primary.600'
-                            : canClockOut
-                            ? 'rose.400'
-                            : disabled
-                            ? 'gray.400'
-                            : 'gray.400'
-                    }
-                >
-                    <TouchableOpacity
-                        disabled={disabled}
+            <TouchableOpacity>
+                <Box alignItems="center" shadow={7}>
+                    <Button
+                        w={200}
+                        h={200}
+                        shadow={9}
+                        borderRadius="full"
                         activeOpacity={0.6}
                         onPress={handlePress}
+                        _isDisabled={disabled}
                         accessibilityRole="button"
+                        backgroundColor={
+                            canClockIn && !disabled
+                                ? 'primary.600'
+                                : canClockOut
+                                ? 'rose.400'
+                                : disabled
+                                ? 'gray.400'
+                                : 'gray.400'
+                        }
                     >
-                        <Center>
-                            <If condition={isLoading || clockOutLoading}>
-                                <Spinner color="white" size="lg" />
-                            </If>
-                            <If condition={!isLoading && !clockOutLoading}>
-                                <VStack alignItems="center" space={4}>
-                                    <Icon type="materialicons" name="touch-app" color="white" size={110} />
-                                    <Text fontWeight="light" fontSize="md" color="white">
-                                        {disabled ? '' : canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
-                                    </Text>
-                                </VStack>
-                            </If>
-                        </Center>
-                    </TouchableOpacity>
-                </Button>
-            </Box>
-        </Pressable>
+                        <TouchableOpacity
+                            disabled={disabled}
+                            activeOpacity={0.6}
+                            onPress={handlePress}
+                            accessibilityRole="button"
+                        >
+                            <Center>
+                                <If condition={isLoading || clockOutLoading}>
+                                    <Spinner color="white" size="lg" />
+                                </If>
+                                <If condition={!isLoading && !clockOutLoading}>
+                                    <VStack alignItems="center" space={4}>
+                                        <Icon type="materialicons" name="touch-app" color="white" size={110} />
+                                        <Text fontWeight="light" fontSize="md" color="white">
+                                            {disabled ? '' : canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
+                                        </Text>
+                                    </VStack>
+                                </If>
+                            </Center>
+                        </TouchableOpacity>
+                    </Button>
+                </Box>
+            </TouchableOpacity>
+        </Center>
     );
 };
 
