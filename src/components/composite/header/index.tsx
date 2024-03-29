@@ -3,8 +3,7 @@ import { StyleSheet, Animated, View, Platform } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import CgwcTopNav from '@components/composite/header/cgwc-top-nav';
 import useAppColorMode from '@hooks/theme/colorMode';
-import isIphoneLessThanTen from '@utils/isIPhoneLessThanTen';
-import useMediaQuery from '@hooks/media-query';
+import useDevice from '@hooks/device';
 
 const MIN_HEADER_HEIGHT = 90;
 const MAX_HEADER_HEIGHT = 120;
@@ -21,11 +20,7 @@ interface IDynamicHeader {
 
 const DynamicHeader: React.FC<IDynamicHeader> = React.memo(({ animHeaderValue, title }) => {
     const { isDarkMode } = useAppColorMode();
-    const { isMobile } = useMediaQuery();
-    const isAndroidOrBelowIOSTenOrTab = React.useMemo(
-        () => Platform.OS === 'android' || isIphoneLessThanTen() || !isMobile,
-        [isMobile]
-    );
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     const animatedHeaderHeight = animHeaderValue.interpolate({
         extrapolate: 'clamp',

@@ -7,11 +7,11 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { Linking, Platform, TouchableOpacity } from 'react-native';
+import { Linking, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import isIphoneLessThanTen from '@utils/isIPhoneLessThanTen';
 import useMediaQuery from '@hooks/media-query';
 import { useGetLatestServiceQuery } from '@store/services/services';
+import useDevice from '@hooks/device';
 
 const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
     const handleNotificationPress = () => {
@@ -33,10 +33,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
         refetchOnMountOrArgChange: true,
     });
 
-    const isAndroidOrBelowIOSTenOrTab = React.useMemo(
-        () => Platform.OS === 'android' || isIphoneLessThanTen() || !isMobile,
-        [isMobile]
-    );
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     return (
         <HStack

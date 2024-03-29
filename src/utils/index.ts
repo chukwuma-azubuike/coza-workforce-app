@@ -20,7 +20,7 @@ class Utils {
         return char.split(separator).join(' ');
     }
 
-    static capitalizeFirstChar(char: string, separator: string = ' ') {
+    static capitalizeFirstChar(char: string = '', separator: string = ' ') {
         if (!char) {
             return '';
         }
@@ -32,7 +32,7 @@ class Utils {
         return `${firstChar}${restChar.toLowerCase()}`;
     }
 
-    static truncateString(str: string, num: number = 25) {
+    static truncateString(str: string = '', num: number = 25) {
         if (str?.length > num) {
             return str.slice(0, num) + '...';
         }

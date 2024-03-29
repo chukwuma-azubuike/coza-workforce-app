@@ -150,4 +150,26 @@ export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = React.me
     );
 });
 
+export const FloatButton: React.FC<IButtonComponent & { iconName: string; iconType: string }> = React.memo(
+    ({ iconName, iconType, ...props }) => {
+        return (
+            <ButtonComponent
+                size="md"
+                right={6}
+                bottom={6}
+                width={60}
+                height={60}
+                zIndex={10}
+                borderRadius="full"
+                position="absolute"
+                alignItems="center"
+                justifyContent="center"
+                {...props}
+            >
+                <Icon name={iconName} type={iconType} size={28} color="white" />
+            </ButtonComponent>
+        );
+    }
+);
+
 export default React.memo(ButtonComponent);

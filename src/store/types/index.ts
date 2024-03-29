@@ -144,7 +144,9 @@ export interface IUser {
     role: IRole;
     roleId: IRole['_id'];
     department: IDepartment;
+    departmentName?: string;
     campus: ICampus;
+    campusName?: string;
     status: IUserStatus;
     socialMedia: {
         facebook: string;

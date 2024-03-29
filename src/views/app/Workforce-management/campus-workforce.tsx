@@ -10,9 +10,11 @@ import { FlatListSkeleton, FlexListSkeleton } from '@components/layout/skeleton'
 import ViewWrapper from '@components/layout/viewWrapper';
 import { useCustomBackNavigation } from '@hooks/navigation';
 import useRole from '@hooks/role';
-import { useGetCampusSummaryByCampusIdQuery } from '@store/services/account';
-import Utils from '@utils';
+import { useGetCampusSummaryByCampusIdQuery, useGetUsersQuery } from '@store/services/account';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
+import DynamicSearch from '@components/composite/search';
+import { IUser } from '@store/types';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { _id?: string };
@@ -41,6 +43,8 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         isFetching,
         refetch: campusSummaryRefetch,
     } = useGetCampusSummaryByCampusIdQuery(campusId || campus._id);
+
+    const { data: campusUsers } = useGetUsersQuery({ campusId });
 
     const campusInfo = [
         {
@@ -140,8 +144,17 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         onFocus: campusSummaryRefetch,
     });
 
+    const handleUserPress = (user: IUser) => {
+        navigate('User Profile', user);
+    };
+
     return (
         <ErrorBoundary>
+            <DynamicSearch
+                data={campusUsers}
+                onPress={handleUserPress}
+                searchFields={['firstName', 'lastName', 'departmentName', 'email']}
+            />
             <ViewWrapper scroll>
                 {campusInfo.map((item, index) =>
                     isLoading || isFetching ? (

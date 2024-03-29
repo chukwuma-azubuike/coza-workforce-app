@@ -19,7 +19,7 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
     const { isOpen, onToggle } = useDisclose();
 
     return (
-        <Box right={6} bottom={6} position="absolute">
+        <Box right={6} bottom={24} position="absolute">
             <Box alignItems="center">
                 <Stagger
                     visible={isOpen}

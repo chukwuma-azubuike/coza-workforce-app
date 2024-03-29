@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Center, HStack, Text, VStack } from 'native-base';
 import moment from 'moment';
-import { Icon, ScreenWidth } from '@rneui/base';
+import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { IFlatListColumn } from '@components/composite/flat-list';
 import { IAttendance, IScoreMapping, IUser } from '@store/types';

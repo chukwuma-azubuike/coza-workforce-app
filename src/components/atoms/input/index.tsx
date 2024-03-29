@@ -31,7 +31,9 @@ const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
             _dark={{
                 bg: 'gray.900',
             }}
-            {...props}
+            autoComplete="off"
+            autoCorrect={false}
+            autoCapitalize="none"
             borderRadius={THEME_CONFIG.borderRadius}
             InputLeftElement={
                 leftIcon ? (
@@ -58,6 +60,7 @@ const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
                 ) : undefined
             }
             _ios={{ returnKeyType: 'done' }}
+            {...props}
         />
     );
 });
