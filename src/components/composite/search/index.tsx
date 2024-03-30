@@ -1,7 +1,7 @@
 import React from 'react';
 import { FloatButton } from '@components/atoms/button';
 import { InputComponent } from '@components/atoms/input';
-import { IUser } from '@store/types';
+import { IPermission, ITicket, IUser } from '@store/types';
 import { HStack, IconButton, Modal, Text } from 'native-base';
 import { Alert, KeyboardAvoidingView, ListRenderItemInfo, TouchableHighlight } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -27,7 +27,7 @@ interface IUseSearchProps<D> {
     onPress: (params: IUser) => void;
 }
 
-function DynamicSearch<D extends IUser>(props: IUseSearchProps<D>) {
+function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPermission>>(props: IUseSearchProps<D>) {
     const { data, searchFields, onPress, loading, disable } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
     const [searchResults, setSearchResults] = React.useState<Array<D> | undefined>(data);
@@ -144,7 +144,12 @@ function DynamicSearch<D extends IUser>(props: IUseSearchProps<D>) {
                                     >
                                         <HStackComponent style={{ paddingHorizontal: 6, paddingVertical: 4 }}>
                                             <HStackComponent space={6}>
-                                                <AvatarComponent size='md' imageUrl={elm?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                                <AvatarComponent
+                                                    size="md"
+                                                    imageUrl={
+                                                        elm?.pictureUrl || elm?.user?.pictureUrl || AVATAR_FALLBACK_URL
+                                                    }
+                                                />
                                                 <VStackComponent>
                                                     <Text
                                                         _dark={{ color: 'gray.200' }}
@@ -155,8 +160,10 @@ function DynamicSearch<D extends IUser>(props: IUseSearchProps<D>) {
                                                         ellipsizeMode="tail"
                                                     >
                                                         {`${Utils.capitalizeFirstChar(
-                                                            elm?.firstName
-                                                        )} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
+                                                            elm?.firstName || elm?.user?.firstName
+                                                        )} ${Utils.capitalizeFirstChar(
+                                                            elm?.lastName || elm?.user?.lastName
+                                                        )}`}
                                                     </Text>
                                                     <Text
                                                         _dark={{ color: 'gray.300' }}
@@ -174,11 +181,13 @@ function DynamicSearch<D extends IUser>(props: IUseSearchProps<D>) {
                                                         noOfLines={1}
                                                         ellipsizeMode="tail"
                                                     >
-                                                        {elm?.email}
+                                                        {elm?.categoryName || elm?.email || elm?.user?.email}
                                                     </Text>
                                                 </VStackComponent>
                                             </HStackComponent>
-                                            <StatusTag>{(elm?.gender === 'M' ? 'Male' : 'Female') as any}</StatusTag>
+                                            <StatusTag>
+                                                {elm?.status || ((elm?.gender === 'M' ? 'Male' : 'Female') as any)}
+                                            </StatusTag>
                                         </HStackComponent>
                                     </TouchableHighlight>
                                 );

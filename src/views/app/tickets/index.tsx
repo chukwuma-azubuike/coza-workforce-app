@@ -12,6 +12,8 @@ import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
 import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
+import DynamicSearch from '@components/composite/search';
+import { useGetTicketsQuery } from '@store/services/tickets';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -53,7 +55,22 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         leadersTickets: () => <LeadersTicketsList updatedListItem={updatedListItem} />,
     });
 
-    const { isQC, isQcHOD, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
+    const {
+        isQC,
+        isAHOD,
+        isHOD,
+        isCampusPastor,
+        isGlobalPastor,
+        user: { campus },
+    } = useRole();
+
+    const canSearch = isQC || isCampusPastor || isGlobalPastor;
+
+    const {
+        data: tickets,
+        isLoading: isLoadingTickets,
+        isFetching: isFetchingTickets,
+    } = useGetTicketsQuery({ campusId: campus?._id, limit: 500 }, { skip: !canSearch });
 
     const allRoutes = React.useMemo(() => {
         if (isQC) return ROUTES;
@@ -111,6 +128,10 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         onFocus: routeFocus,
     });
 
+    const handleUserPress = (user: ITicket) => {
+        navigation.navigate('Ticket Details', user);
+    };
+
     return (
         <ViewWrapper>
             <TabComponent
@@ -122,6 +143,15 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
             {/* TODO: Uncomment once reports is resolved with IOS */}
             <If condition={isQC}>
                 <StaggerButtonComponent buttons={filteredButtons} />
+            </If>
+            <If condition={canSearch}>
+                <DynamicSearch
+                    data={tickets}
+                    disable={!tickets}
+                    onPress={handleUserPress as any}
+                    loading={isLoadingTickets || isFetchingTickets}
+                    searchFields={['firstName', 'lastName', 'departmentName', 'categoryName', 'status', 'user']}
+                />
             </If>
         </ViewWrapper>
     );
