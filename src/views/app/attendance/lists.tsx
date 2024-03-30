@@ -1,7 +1,7 @@
 import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
-    campusColumns_1,
+    campusColumns,
     leadersAttendanceDataColumns,
     myAttendanceColumns,
     teamAttendanceDataColumns,
@@ -368,8 +368,8 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
+                columns={campusColumns}
                 onRefresh={handleRefetch}
-                columns={campusColumns_1}
                 data={data as IAttendance[]}
                 padding={isAndroid ? 3 : true}
                 // fetchMoreData={fetchMoreData}
