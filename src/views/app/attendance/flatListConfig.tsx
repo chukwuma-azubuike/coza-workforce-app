@@ -110,138 +110,142 @@ export interface ITransformUserAttendanceList {
 
 const teamAttendanceDataColumns: IFlatListColumn[] = [
     {
-        title: 'Name',
+        title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
+            <HStackComponent style={{ alignItems: 'center', paddingHorizontal: 4 }} key={key}>
                 <AvatarComponent
                     mr={4}
                     size="md"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <VStack justifyContent="center">
-                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                        {Utils.capitalizeFirstChar(elm.firstName)}
+                <VStack minWidth={{ base: '36%', md: '40%' }} ml={2} flex={1}>
+                    <Text
+                        bold
+                        fontSize="md"
+                        noOfLines={1}
+                        ellipsizeMode="tail"
+                        _dark={{ color: 'gray.200' }}
+                        _light={{ color: 'gray.800' }}
+                    >
+                        {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
                     </Text>
-                    <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                        {Utils.capitalizeFirstChar(elm.lastName)}
+                    <Text
+                        noOfLines={1}
+                        flexWrap="wrap"
+                        ellipsizeMode="tail"
+                        color={isLightMode ? 'gray.800' : 'gray.100'}
+                    >
+                        {Utils.truncateString(elm.departmentName)}
                     </Text>
                 </VStack>
-            </HStack>
-        ),
-    },
-    {
-        title: '                     Clock In',
-        dataIndex: 'clockIn',
-        render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockin-${key}`} minWidth={0} justifyContent="center" flex={1} textAlign="left" w="full">
-                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                <Text
-                    _dark={{
-                        color: elm.clockIn ? 'green.300' : 'red.300',
-                    }}
-                    color={elm.clockIn ? 'green.500' : 'red.500'}
-                    textAlign="center"
+                <HStack
+                    justifyContent="center"
+                    flex={1}
+                    key={`clockin-${key}`}
+                    alignItems="center"
+                    minWidth={{ base: '15%', md: '15%' }}
                 >
-                    {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
-                </Text>
-            </HStack>
-        ),
-    },
-    {
-        title: 'Clock Out',
-        dataIndex: 'clockOut',
-        render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
-                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                <Text
-                    color="gray.500"
-                    _dark={{
-                        color: 'warmGray.200',
-                    }}
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <Text
+                        _dark={{
+                            color: elm.clockIn ? 'green.300' : 'red.300',
+                        }}
+                        color={elm.clockIn ? 'green.500' : 'red.500'}
+                    >
+                        {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
+                    </Text>
+                </HStack>
+                <HStack
+                    justifyContent="center"
+                    flex={1}
+                    key={`clockout-${key}`}
+                    alignItems="center"
+                    minWidth={{ base: '15%', md: '15%' }}
                 >
-                    {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
-                </Text>
-            </HStack>
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                    <Text
+                        color="gray.500"
+                        _dark={{
+                            color: 'warmGray.200',
+                        }}
+                    >
+                        {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
+                    </Text>
+                </HStack>
+            </HStackComponent>
         ),
     },
 ];
 
 const teamAttendanceDataColumns_1: IFlatListColumn[] = [
     {
-        title: 'Name',
+        title: '',
         dataIndex: 'name',
-        render: (elm: IAttendance & IUser, key) => (
-            <VStack key={`name-${key}`}>
-                <HStack alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
-                    <AvatarComponent
-                        mr={4}
-                        size="sm"
-                        badge={!!elm.clockIn}
-                        imageUrl={elm?.user?.pictureUrl || elm?.pictureUrl || AVATAR_FALLBACK_URL}
-                    />
-                    <VStack justifyContent="center">
-                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                            {Utils.capitalizeFirstChar(elm?.user?.firstName || elm?.firstName)}
-                        </Text>
-                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
-                            {Utils.capitalizeFirstChar(elm?.user?.lastName || elm?.lastName)}
-                        </Text>
-                    </VStack>
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStackComponent style={{ alignItems: 'center', paddingHorizontal: 4 }} key={key}>
+                <AvatarComponent
+                    mr={4}
+                    size="md"
+                    badge={!!elm.clockIn}
+                    imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                />
+                <VStack minWidth={{ base: '36%', md: '40%' }} ml={2} flex={1}>
+                    <Text
+                        bold
+                        fontSize="md"
+                        noOfLines={1}
+                        ellipsizeMode="tail"
+                        _dark={{ color: 'gray.200' }}
+                        _light={{ color: 'gray.800' }}
+                    >
+                        {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
+                    </Text>
+                    <Text
+                        noOfLines={1}
+                        flexWrap="wrap"
+                        ellipsizeMode="tail"
+                        color={isLightMode ? 'gray.800' : 'gray.100'}
+                    >
+                        {Utils.truncateString(elm.departmentName)}
+                    </Text>
+                </VStack>
+                <HStack
+                    justifyContent="center"
+                    flex={1}
+                    key={`clockin-${key}`}
+                    alignItems="center"
+                    minWidth={{ base: '15%', md: '15%' }}
+                >
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <Text
+                        _dark={{
+                            color: elm.clockIn ? 'green.300' : 'red.300',
+                        }}
+                        color={elm.clockIn ? 'green.500' : 'red.500'}
+                    >
+                        {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
+                    </Text>
                 </HStack>
-            </VStack>
-        ),
-    },
-    {
-        title: 'Clock In',
-        dataIndex: 'clockIn',
-        render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockin-${key}`} minWidth={0} justifyContent="center" flex={1} textAlign="left" w="full">
-                <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                <Text
-                    _dark={{
-                        color: elm.clockIn ? 'green.300' : 'red.300',
-                    }}
-                    color={elm.clockIn ? 'green.500' : 'red.500'}
-                    textAlign="center"
+                <HStack
+                    justifyContent="center"
+                    flex={1}
+                    key={`clockout-${key}`}
+                    alignItems="center"
+                    minWidth={{ base: '15%', md: '15%' }}
                 >
-                    {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
-                </Text>
-            </HStack>
-        ),
-    },
-    {
-        title: 'Clock Out',
-        dataIndex: 'clockOut',
-        render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
-                <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                <Text
-                    color="gray.500"
-                    _dark={{
-                        color: 'warmGray.200',
-                    }}
-                >
-                    {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
-                </Text>
-            </HStack>
-        ),
-    },
-    {
-        title: 'Score',
-        dataIndex: 'score',
-        render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
-                <Text
-                    color="gray.500"
-                    _dark={{
-                        color: 'warmGray.200',
-                    }}
-                >
-                    {!!elm.score ? `${elm.score}` : `${0}`}
-                </Text>
-            </HStack>
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                    <Text
+                        color="gray.500"
+                        _dark={{
+                            color: 'warmGray.200',
+                        }}
+                    >
+                        {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
+                    </Text>
+                </HStack>
+            </HStackComponent>
         ),
     },
 ];
