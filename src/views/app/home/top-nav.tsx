@@ -46,7 +46,7 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
-                    size="sm"
+                    size="xs"
                     shadow={4}
                     _dark={{ bg: 'gray.900' }}
                     _light={{ bg: 'gray.100' }}

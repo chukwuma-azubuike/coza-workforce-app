@@ -1,4 +1,4 @@
-import React, { ReactChildren } from 'react';
+import React from 'react';
 import { KeyboardAvoidingView, Platform, RefreshControl, ViewProps } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
@@ -9,7 +9,7 @@ interface IViewWrapper
     extends IScrollViewProps,
         ViewProps,
         Partial<React.ForwardRefExoticComponent<InterfaceViewProps & React.RefAttributes<unknown>>> {
-    children?: JSX.Element | ReactChildren | React.ReactNode;
+    children?: JSX.Element | React.ReactNode;
     scroll?: boolean;
     noPadding?: boolean;
     refreshing?: boolean;

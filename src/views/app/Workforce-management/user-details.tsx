@@ -194,7 +194,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
-            <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
+            <CardComponent isLoading={isLoading || isFetching} mt={1} pt={4} px={1} py={8} mx={3} mb={10}>
                 <Formik<IReAssignUserPayload> validateOnChange onSubmit={submitForm} initialValues={INITIAL_VALUES}>
                     {({ values, handleChange, handleSubmit }) => {
                         const handleCampusIdChange = (value: string) => {

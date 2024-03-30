@@ -22,6 +22,7 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import AvatarComponent from '@components/atoms/avatar';
 import Utils from '@utils/index';
 import StatusTag from '@components/atoms/status-tag';
+import UserListItem from '@components/composite/user-list-item';
 
 export interface IThirdPartyUserDetails {
     userId: string;
@@ -277,37 +278,7 @@ const ManualClockin: React.FC = () => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                {!!searchedUser && (
-                                    <HStack space={3} alignItems="center" flex={1} w="100%">
-                                        <AvatarComponent imageUrl={searchedUser?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                        <VStack flex={1} w="100%">
-                                            <Text
-                                                bold
-                                                fontSize="md"
-                                                noOfLines={1}
-                                                ellipsizeMode="tail"
-                                                _dark={{ color: 'gray.200' }}
-                                                _light={{ color: 'gray.800' }}
-                                            >
-                                                {`${Utils.capitalizeFirstChar(
-                                                    searchedUser?.firstName
-                                                )} ${Utils.capitalizeFirstChar(searchedUser?.lastName)}`}
-                                            </Text>
-                                            <Text
-                                                fontSize="md"
-                                                noOfLines={1}
-                                                ellipsizeMode="tail"
-                                                _dark={{ color: 'gray.200' }}
-                                                _light={{ color: 'gray.800' }}
-                                            >
-                                                {searchedUser?.departmentName}
-                                            </Text>
-                                        </VStack>
-                                        <StatusTag>
-                                            {(searchedUser?.gender === 'M' ? 'Male' : 'Female') as any}
-                                        </StatusTag>
-                                    </HStack>
-                                )}
+                                {!!searchedUser && <UserListItem {...searchedUser} />}
 
                                 <Center w="full" mt={10} height={280}>
                                     <ThirdPartyClockButton

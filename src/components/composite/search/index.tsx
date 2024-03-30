@@ -142,7 +142,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                                             isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.transparentGray
                                         }
                                     >
-                                        <HStackComponent style={{ paddingHorizontal: 6, paddingVertical: 4 }}>
+                                        <HStackComponent style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
                                             <HStackComponent space={6}>
                                                 <AvatarComponent
                                                     size="md"

@@ -143,6 +143,8 @@ export interface IUser {
     placeOfWork: string;
     role: IRole;
     roleId: IRole['_id'];
+    departmentId?: string;
+    campusId?: string;
     department: IDepartment;
     departmentName?: string;
     campus: ICampus;

@@ -13,8 +13,8 @@ interface IAvatarComponentProps extends IAvatarProps {
 }
 
 enum SIZE {
-    xs = 24,
-    sm = 32,
+    xs = 32,
+    sm = 44,
     md = 64,
     lg = 96,
     xl = 112,
@@ -22,7 +22,7 @@ enum SIZE {
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, badge, error, firstName, lastName, isLoading } = props;
+    const { imageUrl, badge, error, isLoading } = props;
 
     return (
         <Center>
@@ -37,14 +37,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                     priority: FastImage.priority.normal,
                 }}
             >
-                {isLoading ? (
-                    <Loading marginLeft={1} marginTop={1} />
-                ) : (
-                    <Text fontSize="sm" color="error.500">
-                        {firstName ? firstName.substring(0, 1) : ''} {lastName ? lastName.substring(0, 1) : ''}
-                    </Text>
-                )}
-                {badge && <Avatar.Badge bg="green.500" />}
+                {badge && <Avatar.Badge right={0.9} bottom={0.9} bg="green.500" />}
             </FastImage>
 
             {error && (

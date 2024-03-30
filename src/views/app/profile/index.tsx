@@ -2,7 +2,7 @@ import { Icon } from '@rneui/themed';
 import moment from 'moment';
 import { Box, Heading, HStack, Stack, Text, VStack } from 'native-base';
 import React from 'react';
-import { Image, Pressable, TouchableOpacity } from 'react-native';
+import { Pressable, TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -12,7 +12,7 @@ import Utils from '@utils/index';
 import DeviceInfo from 'react-native-device-info';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { useAuth } from '@hooks/auth';
-import { useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { IEditProfilePayload } from '@store/types';
 import useUpload from '@hooks/upload';
 import { IMGBB_ALBUM_ID } from '@config/uploadConfig';
@@ -21,12 +21,13 @@ import { useAppDispatch } from '@store/hooks';
 import { userActionTypes } from '@store/services/users';
 import { useGetUserScoreQuery } from '@store/services/score';
 import StatusTag from '@components/atoms/status-tag';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const Profile: React.FC = () => {
+const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { user, isGlobalPastor } = useRole();
 
     const { logOut } = useAuth();
-    const { navigate } = useNavigation();
+    const { navigate } = navigation;
 
     const dispatch = useAppDispatch();
 
@@ -37,7 +38,7 @@ const Profile: React.FC = () => {
     const handleEdit = (key: string, value: any) => () => {
         let field: any = {};
         field[key] = value;
-        navigate('Edit Profile' as never, field as never);
+        navigate('Edit Profile', field);
     };
 
     const {

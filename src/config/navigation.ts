@@ -479,6 +479,8 @@ const AppRoutes: IAppRoute[] = [
         users: [
             ROLES.HOD,
             ROLES.AHOD,
+            DEPARTMENTS.ME,
+            DEPARTMENTS.QC,
             ROLES.groupHead,
             ROLES.superAdmin,
             ROLES.globalAdmin,

@@ -34,7 +34,7 @@ const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
-                    size="sm"
+                    size="xs"
                     shadow={4}
                     lastName={user?.lastName}
                     _dark={{ bg: 'gray.900' }}
