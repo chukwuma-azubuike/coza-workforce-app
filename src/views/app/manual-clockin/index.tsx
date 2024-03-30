@@ -31,7 +31,11 @@ export interface IThirdPartyUserDetails {
 }
 
 const ManualClockin: React.FC = () => {
-    const [campusId, setCampusId] = React.useState<string>();
+    const {
+        user: { campus },
+    } = useRole();
+
+    const [campusId, setCampusId] = React.useState<string>(campus?._id);
     const [departmentId, setDepartmentId] = React.useState<string>();
     const [thirdPartyUser, setThirdPartyUserId] = React.useState<IUser>();
 
@@ -82,10 +86,11 @@ const ManualClockin: React.FC = () => {
     const sortedUsers = React.useMemo(() => Utils.sortStringAscending(users, 'firstName'), [users]);
 
     const {
-        user: { campus },
-    } = useRole();
-
-    const { data: latestService, refetch: latestServiceRefetch, isFetching } = useGetLatestServiceQuery(campus._id);
+        data: latestService,
+        refetch: latestServiceRefetch,
+        isUninitialized: latestServiceIsUninitialized,
+        isFetching,
+    } = useGetLatestServiceQuery(campus._id);
 
     const { isInRange, refresh, deviceCoordinates } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
@@ -93,7 +98,7 @@ const ManualClockin: React.FC = () => {
 
     const handleRefresh = () => {
         refresh();
-        latestServiceRefetch();
+        latestServiceIsUninitialized && latestServiceRefetch();
         campusUsersIsUninitialized && refetchCampusUsers();
         campusesIsUninitialized && refetchCampuses();
     };
@@ -156,6 +161,7 @@ const ManualClockin: React.FC = () => {
                                     <SelectComponent
                                         onValueChange={onCampusChange}
                                         selectedValue={values.campusId}
+                                        defaultValue={campus?._id}
                                         dropdownIcon={
                                             <HStack mr={2} space={2}>
                                                 <Icon

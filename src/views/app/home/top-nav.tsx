@@ -1,7 +1,5 @@
 import React from 'react';
 import { HStack, Text } from 'native-base';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import AvatarComponent from '@components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -9,11 +7,11 @@ import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import useMediaQuery from '@hooks/media-query';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import useDevice from '@hooks/device';
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 
-const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
+const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     const handleNotificationPress = () => {
         navigation.navigate('Notifications');
     };
@@ -26,7 +24,6 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     const { user } = useRole();
     const { isLightMode } = useAppColorMode();
-    const { isMobile } = useMediaQuery();
 
     const { data, isError, isLoading } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,

@@ -8,7 +8,6 @@ import useModal from '@hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '@components/composite/modal-alert';
 import {
-    ICampusCoordinates,
     useClockInMutation,
     useClockOutMutation,
     useGetAttendanceQuery,

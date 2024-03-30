@@ -2,8 +2,8 @@ import React from 'react';
 import { FloatButton } from '@components/atoms/button';
 import { InputComponent } from '@components/atoms/input';
 import { IUser } from '@store/types';
-import { HStack, IconButton, Modal, Text, VStack } from 'native-base';
-import { Alert, KeyboardAvoidingView, ListRenderItemInfo, TouchableHighlight, View } from 'react-native';
+import { HStack, IconButton, Modal, Text } from 'native-base';
+import { Alert, KeyboardAvoidingView, ListRenderItemInfo, TouchableHighlight } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import Utils from '@utils/index';
@@ -16,7 +16,8 @@ import useAppColorMode from '@hooks/theme/colorMode';
 import { THEME_CONFIG } from '@config/appConfig';
 import { ScreenHeight } from '@rneui/base';
 import debounce from 'lodash/debounce';
-import Loading from '@components/atoms/loading';
+import HStackComponent from '@components/layout/h-stack';
+import VStackComponent from '@components/layout/v-stack';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
@@ -26,11 +27,11 @@ interface IUseSearchProps<D> {
     onPress: (params: IUser) => void;
 }
 
-function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
+function DynamicSearch<D extends IUser>(props: IUseSearchProps<D>) {
     const { data, searchFields, onPress, loading, disable } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
     const [searchResults, setSearchResults] = React.useState<Array<D> | undefined>(data);
-    const [text, setText] = React.useState<string>('');
+    const inputRef = React.useRef();
 
     const handleSearchBar = () => {
         if (typeof data === 'undefined' && !loading) {
@@ -41,31 +42,30 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
     };
 
     const handlePress = (id: IUser) => () => {
-        setText('');
         onPress(id);
         setSearchBar(false);
     };
 
     const handleCancel = () => {
-        setText('');
         setSearchBar(false);
     };
 
-    const handleChange = React.useCallback(
-        (searchText: string) => {
-            setText(searchText);
-
-            const fn = () => setSearchResults(dynamicSearch({ data, searchText, searchFields }));
-
-            debounce(fn, 500)();
-        },
+    const handleTextChange = React.useCallback(
+        debounce((searchText: string) => {
+            if (!!searchText) {
+                setSearchResults(dynamicSearch({ data, searchText, searchFields }));
+            }
+        }, 500),
         [data, searchFields]
     );
 
-    const sortedSearchResults = React.useMemo(
-        () => Utils.sortStringAscending(searchResults, 'firstName'),
-        [searchResults]
-    );
+    const sortedSearchResults = React.useMemo(() => {
+        return Utils.sortStringAscending(searchResults, 'firstName');
+    }, [
+        searchResults && searchResults[0]?._id,
+        searchResults && searchResults[searchResults?.length - 1]?._id,
+        searchResults && searchResults?.length,
+    ]);
 
     const { isAndroidOrBelowIOSTenOrTab } = useDevice();
     const { isDarkMode } = useAppColorMode();
@@ -84,10 +84,10 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                             <InputComponent
                                 flex={1}
                                 autoFocus
+                                ref={inputRef}
                                 variant="outline"
                                 clearButtonMode="always"
-                                value={text}
-                                onChangeText={handleChange}
+                                onChangeText={handleTextChange}
                                 placeholder={`Search by ${searchFields?.join(', ')}`}
                             />
                             <IconButton
@@ -112,11 +112,7 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                             data={sortedSearchResults}
                             ListEmptyComponent={
                                 <Text textAlign="center" py={2}>
-                                    {loading
-                                        ? 'Loading...'
-                                        : !!data?.length && !searchResults?.length
-                                        ? 'No data found'
-                                        : ''}
+                                    No data found
                                 </Text>
                             }
                             keyExtractor={item => item?._id}
@@ -146,17 +142,10 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                                             isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.transparentGray
                                         }
                                     >
-                                        <HStack
-                                            py={2}
-                                            px={3}
-                                            flex={1}
-                                            w="full"
-                                            alignItems="center"
-                                            justifyContent="space-between"
-                                        >
-                                            <HStack space={3} alignItems="center" flex={1}>
-                                                <AvatarComponent imageUrl={elm?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                                <VStack justifyContent="space-between" flex={1}>
+                                        <HStackComponent style={{ paddingHorizontal: 6, paddingVertical: 4 }}>
+                                            <HStackComponent space={6}>
+                                                <AvatarComponent size='md' imageUrl={elm?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                                <VStackComponent>
                                                     <Text
                                                         _dark={{ color: 'gray.200' }}
                                                         _light={{ color: 'gray.800' }}
@@ -187,10 +176,10 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
                                                     >
                                                         {elm?.email}
                                                     </Text>
-                                                </VStack>
-                                            </HStack>
+                                                </VStackComponent>
+                                            </HStackComponent>
                                             <StatusTag>{(elm?.gender === 'M' ? 'Male' : 'Female') as any}</StatusTag>
-                                        </HStack>
+                                        </HStackComponent>
                                     </TouchableHighlight>
                                 );
                             }}
@@ -204,4 +193,4 @@ function DynamicSearch<D = IUser>(props: IUseSearchProps<D>) {
     );
 }
 
-export default DynamicSearch;
+export default React.memo(DynamicSearch);
