@@ -197,7 +197,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 </Modal>
             </KeyboardAvoidingView>
 
-            <FloatButton buttom={16} iconName="search1" iconType="ant-design" onPress={handleSearchBar} />
+            <FloatButton shadow={6} buttom={16} iconName="search1" iconType="ant-design" onPress={handleSearchBar} />
         </>
     );
 }

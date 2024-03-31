@@ -6,7 +6,8 @@ import useRole from '@hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '@components/composite/tabs';
-import StaggerButtonComponent, { IStaggerButtonComponentProps } from '@components/composite/stagger';
+// TODO: Someworth redundant
+// import StaggerButtonComponent, { IStaggerButtonComponentProps } from '@components/composite/stagger';
 import { ITicket } from '@store/types';
 import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
@@ -14,6 +15,7 @@ import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
 import DynamicSearch from '@components/composite/search';
 import { useGetTicketsQuery } from '@store/services/tickets';
+import { AddButtonComponent } from '@components/atoms/button';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -82,41 +84,42 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
 
     const [index, setIndex] = React.useState(0);
 
-    const allButtons = [
-        {
-            color: 'blue.400',
-            iconType: 'ionicon',
-            iconName: 'person-outline',
-            handleClick: gotoIndividual,
-        },
-        {
-            color: 'blue.600',
-            iconType: 'ionicon',
-            iconName: 'people-outline',
-            handleClick: goToDepartmental,
-        },
-        {
-            color: 'blue.800',
-            iconName: 'church',
-            handleClick: goToCampus,
-            iconType: 'material-community',
-        },
-        {
-            color: 'green.600',
-            iconName: 'download-outline',
-            handleClick: goToExport,
-            iconType: 'ionicon',
-        },
-    ];
+    // TODO: Some worth redundant
+    // const allButtons = [
+    //     {
+    //         color: 'blue.400',
+    //         iconType: 'ionicon',
+    //         iconName: 'person-outline',
+    //         handleClick: gotoIndividual,
+    //     },
+    //     {
+    //         color: 'blue.600',
+    //         iconType: 'ionicon',
+    //         iconName: 'people-outline',
+    //         handleClick: goToDepartmental,
+    //     },
+    //     {
+    //         color: 'blue.800',
+    //         iconName: 'church',
+    //         handleClick: goToCampus,
+    //         iconType: 'material-community',
+    //     },
+    //     {
+    //         color: 'green.600',
+    //         iconName: 'download-outline',
+    //         handleClick: goToExport,
+    //         iconType: 'ionicon',
+    //     },
+    // ];
 
-    const filteredButtons = React.useMemo(() => {
-        // TODO: Uncomment once resolved with IOS
-        if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
-        if (isQC) return [...allButtons];
+    // const filteredButtons = React.useMemo(() => {
+    //     // TODO: Uncomment once resolved with IOS
+    //     if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
+    //     if (isQC) return [...allButtons];
 
-        return [allButtons[0]];
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []) as IStaggerButtonComponentProps['buttons'];
+    //     return [allButtons[0]];
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []) as IStaggerButtonComponentProps['buttons'];
 
     const routeFocus = () => {
         if (params?.tabKey) {
@@ -142,7 +145,8 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
             />
             {/* TODO: Uncomment once reports is resolved with IOS */}
             <If condition={isQC}>
-                <StaggerButtonComponent buttons={filteredButtons} />
+                <AddButtonComponent onPress={gotoIndividual} />
+                {/* <StaggerButtonComponent buttons={filteredButtons} /> */}
             </If>
             <If condition={canSearch}>
                 <DynamicSearch

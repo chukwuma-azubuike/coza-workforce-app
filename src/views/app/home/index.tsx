@@ -137,9 +137,9 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             <ViewWrapper
-                pt={isIOS ? 10 : 4}
                 refreshing={isLoading}
                 onRefresh={handleRefresh}
+                style={{ paddingTop: isIOS ? 20 : 40 }}
                 scroll={!(isCampusPastor || isGlobalPastor)}
             >
                 <If condition={!!user}>

@@ -53,7 +53,7 @@ export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props =
         <ButtonComponent
             {...props}
             right={6}
-            bottom={6}
+            bottom={24}
             width={60}
             height={60}
             shadow={6}
