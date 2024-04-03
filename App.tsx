@@ -33,7 +33,7 @@ export interface IAppStateContext {
 
 export const AppStateContext = React.createContext<Partial<IAppStateContext>>({});
 
-const App: React.FC<JSX.Element> = () => {
+const App: React.FC<React.JSX.Element> = () => {
     const modalInitialState: Pick<IModalProps, 'modalState'> = {
         modalState: {
             open: false,

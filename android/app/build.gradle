@@ -1,9 +1,9 @@
 apply plugin: "com.android.application"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
-import com.android.build.OutputFile
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -14,9 +14,9 @@ react {
     //   The root of your project, i.e. where "package.json" lives. Default is '..'
     // root = file("../")
     //   The folder where the react-native NPM package is. Default is ../node_modules/react-native
-    // reactNativeDir = file("../node-modules/react-native")
-    //   The folder where the react-native Codegen package is. Default is ../node_modules/react-native-codegen
-    // codegenDir = file("../node-modules/react-native-codegen")
+    // reactNativeDir = file("../node_modules/react-native")
+    //   The folder where the react-native Codegen package is. Default is ../node_modules/@react-native/codegen
+    // codegenDir = file("../node_modules/@react-native/codegen")
     //   The cli.js file which is the React Native CLI entrypoint. Default is ../node_modules/react-native/cli.js
     // cliFile = file("../node_modules/react-native/cli.js")
 
@@ -55,14 +55,6 @@ react {
 }
 
 /**
- * Set this to true to create four separate APKs instead of one,
- * one for each native architecture. This is useful if you don't
- * use App Bundles (https://developer.android.com/guide/app-bundle/)
- * and want to have separate APKs to upload to the Play Store.
- */
-def enableSeparateBuildPerCPUArchitecture = false
-
-/**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
 def enableProguardInReleaseBuilds = false
@@ -98,7 +90,8 @@ def reactNativeArchitectures() {
 android {
     ndkVersion rootProject.ext.ndkVersion
 
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    compileSdk rootProject.ext.compileSdkVersion
 
     namespace "com.cozaglobalworkforceapp"
     defaultConfig {
@@ -109,14 +102,6 @@ android {
         versionName nodePackageVersion
     }
 
-    splits {
-        abi {
-            reset()
-            enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
-            include (*reactNativeArchitectures())
-        }
-    }
     signingConfigs {
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
@@ -146,22 +131,6 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
-
-    // applicationVariants are e.g. debug, release
-    applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            // For each separate APK per architecture, set a unique version code as described here:
-            // https://developer.android.com/studio/build/configure-apk-splits.html
-            // Example: versionCode 1 will generate 1001 for armeabi-v7a, 1002 for x86, etc.
-            def versionCodes = ["armeabi-v7a": 1, "x86": 2, "arm64-v8a": 3, "x86_64": 4]
-            def abi = output.getFilter(OutputFile.ABI)
-            if (abi != null) {  // null for the universal-debug, universal-release variants
-                output.versionCodeOverride =
-                        defaultConfig.versionCode * 1000 + versionCodes.get(abi)
-            }
-
-        }
-    }
 }
 
 dependencies {
@@ -170,7 +139,8 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-    
+    implementation("com.facebook.react:flipper-integration")
+
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
 
@@ -178,12 +148,6 @@ dependencies {
 
     implementation project(':rn-fetch-blob')
 
-    debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
-    debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
-    }
-
-    debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {
