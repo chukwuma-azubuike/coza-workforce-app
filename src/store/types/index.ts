@@ -203,9 +203,10 @@ export interface IAttendance extends ILog {
     createdAt: string;
     updatedAt: string;
     user: IUser;
-    score: number;
+    score?: number;
     service: IService;
     CGWCId?: string;
+    name: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 

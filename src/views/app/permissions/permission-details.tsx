@@ -1,8 +1,10 @@
+import React from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import { HStack, Text, VStack } from 'native-base';
-import React from 'react';
+import VStackComponent from '@components/layout/v-stack';
+import HStackComponent from '@components/layout/h-stack';
+import TextComponent from '@components/text';
 import { Platform } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
@@ -21,6 +23,8 @@ import {
     useGetPermissionByIdQuery,
 } from '@store/services/permissions';
 import { IPermission, IUpdatePermissionPayload } from '@store/types';
+
+import { THEME_CONFIG } from '@config/appConfig';
 
 interface PermissionDetailsParamsProps extends IPermission {
     screen: { name: string; value: string } | undefined;
@@ -178,17 +182,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
-        <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
-            <CardComponent
-                mt={1}
-                px={2}
-                pt={8}
-                pb={4}
-                mx={3}
-                mb={10}
-                isLoading={permissionLoading || permissionIsFetching}
-            >
-                <VStack space={4}>
+        <ViewWrapper avoidKeyboard scroll onRefresh={refetch} refreshing={isFetching}>
+            <CardComponent style={{ paddingVertical: 20 }} isLoading={permissionLoading || permissionIsFetching}>
+                <VStackComponent space={8}>
                     <AvatarComponent
                         size="xl"
                         shadow={9}
@@ -196,163 +192,154 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         firstName={permission?.requestor?.firstName}
                         imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        flexWrap="wrap"
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 4,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Requester
-                        </Text>
-                        <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
-                    </HStack>
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        flexWrap="wrap"
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                        <TextComponent bold>Requester</TextComponent>
+                        <TextComponent>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</TextComponent>
+                    </HStackComponent>
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 4,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Department
-                        </Text>
-                        <Text>{permission?.department?.departmentName}</Text>
-                    </HStack>
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                        <TextComponent bold>Department</TextComponent>
+                        <TextComponent>{permission?.department?.departmentName}</TextComponent>
+                    </HStackComponent>
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 4,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Category
-                        </Text>
-                        <Text>{permission?.category.name}</Text>
-                    </HStack>
-                    <HStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                        <TextComponent bold>Category</TextComponent>
+                        <TextComponent>{permission?.category.name}</TextComponent>
+                    </HStackComponent>
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 4,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Date Requested
-                        </Text>
-                        <Text>{moment(permission?.createdAt).format('DD/MM/YYYY - LT')}</Text>
-                    </HStack>
+                        <TextComponent bold>Date Requested</TextComponent>
+                        <TextComponent>{moment(permission?.createdAt).format('DD/MM/YYYY - LT')}</TextComponent>
+                    </HStackComponent>
 
                     {permission?.dateApproved ? (
-                        <HStack
-                            pb={2}
-                            w="full"
-                            space={2}
-                            borderColor="gray.300"
-                            borderBottomWidth={0.2}
-                            justifyContent="space-between"
+                        <HStackComponent
+                            space={4}
+                            style={{
+                                paddingBottom: 4,
+                                borderBottomWidth: 0.2,
+                                justifyContent: 'space-between',
+                                borderColor: THEME_CONFIG.lightGray,
+                            }}
                         >
-                            <Text alignSelf="flex-start" bold>
-                                Date Approved
-                            </Text>
-                            <Text>{moment(permission?.dateApproved).format('DD/MM/YYYY - LT')}</Text>
-                        </HStack>
+                            <TextComponent bold>Date Approved</TextComponent>
+                            <TextComponent>{moment(permission?.dateApproved).format('DD/MM/YYYY - LT')}</TextComponent>
+                        </HStackComponent>
                     ) : null}
 
                     {permission?.rejectedOn ? (
-                        <HStack
-                            pb={2}
-                            w="full"
-                            space={2}
-                            borderColor="gray.300"
-                            borderBottomWidth={0.2}
-                            justifyContent="space-between"
+                        <HStackComponent
+                            space={4}
+                            style={{
+                                paddingBottom: 4,
+                                borderBottomWidth: 0.2,
+                                justifyContent: 'space-between',
+                                borderColor: THEME_CONFIG.lightGray,
+                            }}
                         >
-                            <Text alignSelf="flex-start" bold>
-                                Date Rejected
-                            </Text>
-                            <Text>{moment(permission?.rejectedOn).format('DD/MM/YYYY - LT')}</Text>
-                        </HStack>
+                            <TextComponent bold>Date Rejected</TextComponent>
+                            <TextComponent>{moment(permission?.rejectedOn).format('DD/MM/YYYY - LT')}</TextComponent>
+                        </HStackComponent>
                     ) : null}
 
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 4,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Start Date
-                        </Text>
-                        <Text>{moment(permission?.startDate).format('Do MMM, YYYY')}</Text>
-                    </HStack>
+                        <TextComponent bold>Start Date</TextComponent>
+                        <TextComponent>{moment(permission?.startDate).format('Do MMM, YYYY')}</TextComponent>
+                    </HStackComponent>
 
-                    <HStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 4,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            End Date
-                        </Text>
-                        <Text>{moment(permission?.endDate).format('Do MMM, YYYY')}</Text>
-                    </HStack>
+                        <TextComponent bold>End Date</TextComponent>
+                        <TextComponent>{moment(permission?.endDate).format('Do MMM, YYYY')}</TextComponent>
+                    </HStackComponent>
 
-                    <VStack pb={2} w="full" space={2}>
-                        <Text alignSelf="flex-start" bold>
-                            Description
-                        </Text>
+                    <VStackComponent style={{ paddingBottom: 4 }} space={8}>
+                        <TextComponent bold>Description</TextComponent>
                         {!permission?.description && (
                             <TextAreaComponent value={permission?.description} isDisabled={Platform.OS !== 'android'} />
                         )}
-                        {permission?.description && <Text flexWrap="wrap">{permission?.description}</Text>}
-                    </VStack>
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                        {permission?.description && (
+                            <TextComponent numberOfLines={undefined} size="md" flexWrap="wrap">
+                                {permission?.description}
+                            </TextComponent>
+                        )}
+                    </VStackComponent>
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                            borderColor: THEME_CONFIG.lightGray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Status
-                        </Text>
+                        <TextComponent bold>Status</TextComponent>
                         <StatusTag>{permission?.status as any}</StatusTag>
-                    </HStack>
-                    <VStack pb={2} w="full" space={2}>
-                        <Text alignSelf="flex-start" bold>
+                    </HStackComponent>
+                    <VStackComponent style={{ paddingBottom: 4 }} space={8}>
+                        <TextComponent bold>
                             {!isHOD && !isAHOD && !isCampusPastor
                                 ? "Leader's comment"
                                 : (isAHOD || isHOD) && requestorId === user.userId
                                 ? "Pastor's comment"
                                 : 'Comment'}
-                        </Text>
+                        </TextComponent>
                         {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
-                        {permission?.comment && <Text flexWrap="wrap">{permission?.comment}</Text>}
-                    </VStack>
+                        {permission?.comment && <TextComponent flexWrap="wrap">{permission?.comment}</TextComponent>}
+                    </VStackComponent>
                     <If condition={takePermissionAction}>
-                        <HStack space={4} w="95%" justifyContent="space-between">
+                        <HStackComponent style={{ justifyContent: 'space-between' }}>
                             <ButtonComponent
                                 isDisabled={!permissionComment || approveIsLoading}
                                 isLoading={declineIsLoading}
                                 onPress={handleDecline}
-                                width="1/2"
+                                style={{ width: '48%' }}
                                 secondary
                                 size="md"
                             >
@@ -362,14 +349,14 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 isDisabled={declineIsLoading}
                                 isLoading={approveIsLoading}
                                 onPress={handleApprove}
-                                width="1/2"
+                                style={{ width: '48%' }}
                                 size="md"
                             >
                                 Approve
                             </ButtonComponent>
-                        </HStack>
+                        </HStackComponent>
                     </If>
-                </VStack>
+                </VStackComponent>
             </CardComponent>
         </ViewWrapper>
     );

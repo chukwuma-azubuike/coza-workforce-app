@@ -49,7 +49,12 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const INITIAL_VALUES = { ...params, imageUrl: params.imageUrl || '' };
 
     return (
-        <Formik<IIncidentReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
+        <Formik<IIncidentReportPayload>
+            enableReinitialize
+            validateOnChange
+            onSubmit={onSubmit}
+            initialValues={INITIAL_VALUES}
+        >
             {({ handleChange, errors, handleSubmit }) => (
                 <ViewWrapper scroll>
                     <VStack pb={10}>

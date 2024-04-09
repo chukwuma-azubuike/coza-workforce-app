@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import { scoreMappingColumn } from '../attendance/flatListConfig';
 import { useGetAttendanceQuery } from '@store/services/attendance';
@@ -10,8 +10,7 @@ import ErrorBoundary from '@components/composite/error-boundary';
 // import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { Box, HStack, Text } from 'native-base';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import ListTable from '@components/composite/list/list-table';
@@ -19,6 +18,8 @@ import { ScreenWidth } from '@rneui/base';
 import If from '@components/composite/if-container';
 import useScreenFocus from '@hooks/focus';
 import { useGetCummulativeScoresQuery } from '@store/services/score-mapping';
+import HStackComponent from '@components/layout/h-stack';
+import TextComponent from '@components/text';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -176,35 +177,52 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
     return (
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
-                <HStack mb={3} mx={4} mr={10} w={ScreenWidth - 42} alignItems="baseline" justifyContent="space-between">
+                <HStackComponent
+                    style={{
+                        flex: 0,
+                        marginBottom: 6,
+                        paddingHorizontal: 8,
+                        alignItems: 'baseline',
+                    }}
+                    space={8}
+                >
                     <SelectComponent
-                        w={ScreenWidth / 1.8}
+                        valueKey="_id"
+                        displayKey="name"
+                        items={sessions || []}
+                        style={{ width: 200 }}
                         selectedValue={serviceId}
-                        onValueChange={setService}
                         placeholder="Select Session"
+                        onValueChange={setService as any}
                     >
                         {sessions?.map((session, index) => (
                             <SelectItemComponent
                                 value={session._id}
                                 key={`session-${index}`}
                                 isLoading={sessionsIsLoading}
-                                label={`${session.name} - ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
+                                label={`${session.name} | ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>
-                    <HStack justifyContent="space-between" alignItems="baseline">
-                        <Text fontSize="lg" bold>
+                    <View
+                        style={{
+                            flexDirection: 'row',
+                            alignItems: 'baseline',
+                            justifyContent: 'space-between',
+                        }}
+                    >
+                        <TextComponent size="lg" bold>
                             Eligible:{'  '}
-                        </Text>
-                        <Text bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
+                        </TextComponent>
+                        <TextComponent bold size="2xl">
                             {eligible || 0}
-                        </Text>
-                    </HStack>
-                </HStack>
+                        </TextComponent>
+                    </View>
+                </HStackComponent>
             </AttendanceContainer>
             <FlatListComponent
-                padding={isAndroid ? 3 : 4}
                 onRefresh={handleRefetch}
+                padding={isAndroid ? 3 : 4}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 columns={scoreMappingColumn}
@@ -318,31 +336,48 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
 
     return (
         <ErrorBoundary>
-            <HStack mt={4} px={2} w="full" justifyContent="space-between">
+            <HStackComponent
+                style={{
+                    flex: 0,
+                    marginBottom: 6,
+                    paddingHorizontal: 8,
+                    alignItems: 'baseline',
+                }}
+                space={8}
+            >
                 <SelectComponent
-                    w={ScreenWidth / 1.8}
+                    valueKey="_id"
+                    displayKey="name"
+                    items={sessions || []}
+                    style={{ width: 200 }}
                     selectedValue={serviceId}
-                    onValueChange={setService}
                     placeholder="Select Session"
+                    onValueChange={setService as any}
                 >
                     {sessions?.map((session, index) => (
                         <SelectItemComponent
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${session.name} - ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
-                <HStack justifyContent="space-between" alignItems="baseline" px={4}>
-                    <Text fontSize="lg" bold>
-                        Eligible:
-                    </Text>
-                    <Text ml={4} bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'baseline',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <TextComponent size="lg" bold>
+                        Eligible:{'  '}
+                    </TextComponent>
+                    <TextComponent bold size="2xl">
                         {eligible || 0}
-                    </Text>
-                </HStack>
-            </HStack>
+                    </TextComponent>
+                </View>
+            </HStackComponent>
             <FlatListComponent
                 onRefresh={handleRefetch}
                 padding={isAndroid ? 3 : 10}
@@ -458,31 +493,48 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
 
     return (
         <ErrorBoundary>
-            <HStack mt={4} px={2} w="full" justifyContent="space-between">
+            <HStackComponent
+                style={{
+                    flex: 0,
+                    marginBottom: 6,
+                    paddingHorizontal: 8,
+                    alignItems: 'baseline',
+                }}
+                space={8}
+            >
                 <SelectComponent
-                    w={ScreenWidth / 1.8}
-                    placeholder="Select Session"
+                    valueKey="_id"
+                    displayKey="name"
+                    items={sessions || []}
+                    style={{ width: 200 }}
                     selectedValue={serviceId}
-                    onValueChange={setService}
+                    placeholder="Select Session"
+                    onValueChange={setService as any}
                 >
                     {sessions?.map((session, index) => (
                         <SelectItemComponent
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={sessionsIsLoading}
-                            label={`${session.name} - ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
-                <HStack justifyContent="space-between" alignItems="baseline" px={4}>
-                    <Text fontSize="lg" bold>
-                        Eligible:
-                    </Text>
-                    <Text ml={4} bold _dark={{ color: 'gray.400' }} fontSize="4xl" _light={{ color: 'gray.800' }}>
+                <View
+                    style={{
+                        flexDirection: 'row',
+                        alignItems: 'baseline',
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <TextComponent size="lg" bold>
+                        Eligible:{'  '}
+                    </TextComponent>
+                    <TextComponent bold size="2xl">
                         {eligible || 0}
-                    </Text>
-                </HStack>
-            </HStack>
+                    </TextComponent>
+                </View>
+            </HStackComponent>
             <FlatListComponent
                 onRefresh={handleRefetch}
                 data={mergedAttendanceWithLeaderList || []}
@@ -500,6 +552,7 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
 interface IAttendanceContainerProps {
     title: string;
     showTitle?: boolean;
+    children: ReactNode;
     score?: number | string;
     scoreType: 'percent' | 'count';
 }
@@ -507,108 +560,106 @@ interface IAttendanceContainerProps {
 export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.memo(
     ({ children, title, score, scoreType, showTitle = true }) => {
         return (
-            <Box flexDirection="column" w={['100%', '46%']}>
+            <View style={{ paddingHorizontal: 4 }}>
                 <If condition={showTitle}>
-                    <HStack px={2} justifyContent="space-between" alignItems="baseline">
-                        <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
+                    <HStackComponent
+                        style={{ paddingVertical: 10, justifyContent: 'space-between', alignItems: 'baseline' }}
+                    >
+                        <TextComponent size="lg" bold style={{ textAlign: 'center', paddingTop: 3, paddingBottom: 4 }}>
                             {title}
-                        </Text>
+                        </TextComponent>
                         {!!score && (
-                            <Text
+                            <TextComponent
                                 bold
-                                pb={4}
-                                pt={3}
                                 fontSize="lg"
-                                textAlign="center"
-                                color={+score < 31 ? 'red.600' : +score > 69 ? 'green.600' : 'yellow.400'}
+                                style={{
+                                    paddingTop: 3,
+                                    paddingBottom: 4,
+                                    textAlign: 'center',
+                                    color:
+                                        +score < 31
+                                            ? THEME_CONFIG.rose
+                                            : +score > 69
+                                            ? THEME_CONFIG.lightSuccess
+                                            : THEME_CONFIG.warning,
+                                }}
                             >
                                 {score || 0}
                                 {scoreType === 'percent' && '%'}
-                            </Text>
+                            </TextComponent>
                         )}
-                    </HStack>
+                    </HStackComponent>
                 </If>
                 {children}
-            </Box>
+            </View>
         );
     }
 );
 
-export const AttendanceListRow: React.FC<IAttendance & { name: string; score?: number }> = React.memo(
+export const AttendanceListRow: React.FC<IAttendance> = React.memo(
     ({ name, clockIn, clockOut, score = 0, ...props }) => {
         return (
-            <>
-                <HStack
-                    alignItems="center"
-                    style={styles.listRow}
-                    borderBottomWidth={0.2}
-                    borderBottomColor="gray.400"
-                    justifyContent="space-between"
-                >
-                    <Text
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        style={styles.listRowItem}
-                        width={[ScreenWidth / 3.6, '40%']}
-                    >
-                        {name}
-                    </Text>
-                    <HStack
-                        style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
-                        minWidth={[ScreenWidth / 4.5, '25%']}
-                    >
-                        <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                        <Text style={[{ textAlign: 'right' }]}>{clockIn ? moment(clockIn).format('LT') : '--:--'}</Text>
-                    </HStack>
-                    <HStack
-                        style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
-                        minWidth={[ScreenWidth / 4.5, '25%']}
-                    >
-                        <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                        <Text style={[{ textAlign: 'right' }]}>
-                            {!!clockOut ? moment(clockOut).format('LT') : '--:--'}
-                        </Text>
-                    </HStack>
-                    {typeof score === 'number' && (
-                        <HStack
-                            style={[styles.listRowItem, { justifyContent: 'flex-end' }]}
-                            minWidth={[ScreenWidth / 4.5, '10%']}
-                        >
-                            <Text style={[{ textAlign: 'right' }]}>{score}</Text>
-                        </HStack>
-                    )}
-                </HStack>
-            </>
+            <HStackComponent
+                style={{
+                    paddingVertical: 10,
+                    alignItems: 'center',
+                    borderBottomWidth: 0.4,
+                    justifyContent: 'space-between',
+                    borderBottomColor: THEME_CONFIG.lightGray,
+                }}
+            >
+                <TextComponent style={{ width: '40%' }}>{name}</TextComponent>
+                <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <TextComponent style={{ textAlign: 'right' }}>
+                        {clockIn ? moment(clockIn).format('LT') : '--:--'}
+                    </TextComponent>
+                </HStackComponent>
+                <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                    <TextComponent style={{ textAlign: 'right' }}>
+                        {!!clockOut ? moment(clockOut).format('LT') : '--:--'}
+                    </TextComponent>
+                </HStackComponent>
+                {typeof score === 'number' && (
+                    <HStackComponent style={{ justifyContent: 'center', minWidth: '15%' }}>
+                        <TextComponent style={{ textAlign: 'center' }}>{score}</TextComponent>
+                    </HStackComponent>
+                )}
+            </HStackComponent>
         );
     }
 );
 
 export const AttendanceHeader: React.FC<{ titles: string[] }> = React.memo(({ titles }) => {
     return (
-        <HStack
-            w={['100%', '50%']}
-            alignItems="center"
-            borderTopWidth={0.2}
-            style={styles.listRow}
-            borderColor="gray.400"
-            borderBottomWidth={0.2}
-            justifyContent="space-between"
+        <HStackComponent
+            style={[
+                styles.listRow,
+                {
+                    width: '50%',
+                    alignItems: 'center',
+                    borderTopWidth: 0.6,
+                    borderBottomWidth: 0.6,
+                    justifyContent: 'space-between',
+                    borderColor: THEME_CONFIG.lightGray,
+                },
+            ]}
         >
             {titles?.map((title, index) => (
-                <Box minWidth={[index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5, index === 0 ? '40%' : '20%']}>
-                    <Text
+                <View key={index} style={{ minWidth: index === 0 ? '40%' : index === 3 ? '15%' : '23%' }}>
+                    <TextComponent
                         bold
-                        key={index}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        maxWidth={index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5}
-                        style={[styles.listRowItem, { textAlign: index !== 0 ? 'right' : 'left' }]}
+                        style={{
+                            textAlign: index !== 0 ? 'center' : 'left',
+                            maxWidth: index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5,
+                        }}
                     >
                         {title}
-                    </Text>
-                </Box>
+                    </TextComponent>
+                </View>
             ))}
-        </HStack>
+        </HStackComponent>
     );
 });
 

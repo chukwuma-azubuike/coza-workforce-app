@@ -139,13 +139,20 @@ export const TeamAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <Box mb={2} px={2}>
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                <SelectComponent
+                    valueKey="_id"
+                    selectedValue={serviceId}
+                    placeholder="Select Service"
+                    onValueChange={setService as any}
+                    displayKey={['name', 'clockInStartTime']}
+                    items={sortedServices || []}
+                >
                     {sortedServices?.map((service, index) => (
                         <SelectItemComponent
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -274,13 +281,20 @@ export const LeadersAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <Box mb={2} px={2}>
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                <SelectComponent
+                    valueKey="_id"
+                    placeholder="Select Service"
+                    selectedValue={serviceId}
+                    items={sortedServices || []}
+                    onValueChange={setService as any}
+                    displayKey={['name', 'clockInStartTime']}
+                >
                     {sortedServices?.map((service, index) => (
                         <SelectItemComponent
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -356,13 +370,20 @@ export const CampusAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <Box mb={2} px={2}>
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                <SelectComponent
+                    valueKey="_id"
+                    selectedValue={serviceId}
+                    placeholder="Select Service"
+                    items={sortedServices || []}
+                    onValueChange={setService as any}
+                    displayKey={['name', 'clockInStartTime']}
+                >
                     {sortedServices?.map((service, index) => (
                         <SelectItemComponent
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

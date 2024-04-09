@@ -1,40 +1,37 @@
 import React, { ReactNode } from 'react';
 import * as Sentry from '@sentry/react';
-import { Text, VStack } from 'native-base';
-import ButtonComponent from '../../atoms/button';
+import VStackComponent from '@components/layout/v-stack';
+import { THEME_CONFIG } from '@config/appConfig';
+import TextComponent from '@components/text';
+import { Button, Text } from 'react-native';
+import useAppColorMode from '@hooks/theme/colorMode';
+import ViewWrapper from '@components/layout/viewWrapper';
 
 const ErrorBoundary: React.FC<{
     children?: ReactNode;
 }> = ({ children }) => {
+    const { textColor } = useAppColorMode();
     return (
         <Sentry.ErrorBoundary
-            fallback={({ error, componentStack, resetError }) => (
-                <VStack
-                    justifyContent="center"
-                    borderColor="rose.400"
-                    borderRadius="lg"
-                    borderWidth={1}
-                    bg="rose.100"
-                    space={2}
-                    w="100%"
-                    p={4}
-                >
-                    <Text textAlign="center">Oops something broke!</Text>
-                    <ButtonComponent
-                        borderColor="rose.400"
-                        justifyItems="center"
-                        onClick={resetError}
-                        variant="outline"
-                        bg="rose.400"
-                        color="white"
-                        secondary
-                        size="xs"
+            fallback={({ error, resetError }) => (
+                <ViewWrapper scroll style={{ paddingVertical: 6 }}>
+                    <VStackComponent
+                        style={{
+                            borderColor: THEME_CONFIG.rose,
+                            borderRadius: 20,
+                            borderWidth: 0.2,
+                            flex: 0,
+                            backgroundColor: THEME_CONFIG.lightRose,
+                            padding: 20,
+                        }}
+                        space={8}
                     >
-                        <Text textAlign="left" color="black">
-                            Retry
-                        </Text>
-                    </ButtonComponent>
-                </VStack>
+                        <TextComponent size="lg" bold style={{ textAlign: 'center' }}>
+                            Oops something broke!
+                        </TextComponent>
+                        <Button onPress={resetError} color={textColor} title="Retry" />
+                    </VStackComponent>
+                </ViewWrapper>
             )}
         >
             {children}

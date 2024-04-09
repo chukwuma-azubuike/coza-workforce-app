@@ -77,6 +77,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         <Formik<IServiceReportPayload>
             validateOnChange
             onSubmit={onSubmit}
+            enableReinitialize
             validationSchema={ServiceReportSchema}
             initialValues={INITIAL_VALUES as unknown as IServiceReportPayload}
         >

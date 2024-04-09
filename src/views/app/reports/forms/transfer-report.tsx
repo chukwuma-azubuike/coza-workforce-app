@@ -16,6 +16,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import { Platform } from 'react-native';
+import HStackComponent from '@components/layout/h-stack';
+import { ScreenHeight } from '@rneui/base';
 
 const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ITransferReportPayload;
@@ -72,18 +74,23 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         locations: params?.locations?.length ? params?.locations : [{ name: '', adultCount: '', minorCount: '' }],
     } as ITransferReportPayload;
 
-    const addValues = (values: ITransferReportPayload, field: 'adultCount' | 'minorCount') => {
+    const addValues = React.useCallback((values: ITransferReportPayload, field: 'adultCount' | 'minorCount') => {
         return values?.locations?.length
             ? (values?.locations?.map(a => a[field]).reduce((a, b) => +a + +b) as unknown as string)
             : '0';
-    };
+    }, []);
 
     const isIOS = Platform.OS === 'ios';
 
     return (
-        <Formik<ITransferReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
+        <Formik<ITransferReportPayload>
+            validateOnChange
+            onSubmit={onSubmit}
+            enableReinitialize
+            initialValues={INITIAL_VALUES}
+        >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll>
+                <ViewWrapper scroll avoidKeyboard={isIOS}>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
@@ -94,10 +101,20 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                             render={arrayHelpers => (
                                 <VStack>
                                     {values?.locations?.map((location, idx) => (
-                                        <HStack mb={4} space={2} key={idx} alignItems="flex-end">
-                                            <FormControl isRequired w="30.5%">
+                                        <HStackComponent
+                                            style={{
+                                                marginBottom: 4,
+                                                alignItems: 'center',
+                                            }}
+                                            space={2}
+                                            key={idx}
+                                        >
+                                            <FormControl isRequired w="36%">
                                                 <FormControl.Label>Location</FormControl.Label>
                                                 <InputComponent
+                                                    style={{
+                                                        fontSize: 14,
+                                                    }}
                                                     placeholder="Name"
                                                     value={`${location.name}`}
                                                     isDisabled={isCampusPastor}
@@ -107,9 +124,12 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <FormControl isRequired w="20%">
+                                            <FormControl isRequired w="19%">
                                                 <FormControl.Label>Adults</FormControl.Label>
                                                 <InputComponent
+                                                    style={{
+                                                        fontSize: 14,
+                                                    }}
                                                     placeholder="0"
                                                     keyboardType="numeric"
                                                     isDisabled={isCampusPastor}
@@ -123,6 +143,9 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             <FormControl isRequired w="30%">
                                                 <FormControl.Label>Children/Teens</FormControl.Label>
                                                 <InputComponent
+                                                    style={{
+                                                        fontSize: 14,
+                                                    }}
                                                     placeholder="0"
                                                     keyboardType="numeric"
                                                     isDisabled={isCampusPastor}
@@ -133,19 +156,29 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <FormControl w="14%">
+                                            <FormControl
+                                                w="10%"
+                                                style={{
+                                                    marginTop: 0,
+                                                    paddingBottom: 0,
+                                                }}
+                                            >
                                                 <ButtonComponent
-                                                    h={isIOS ? '46px' : '54px'}
                                                     leftIcon={
                                                         <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
                                                     }
+                                                    style={{
+                                                        paddingVertical: 8,
+                                                        marginVertical: 0,
+                                                        marginTop: 30,
+                                                    }}
                                                     onPress={() => arrayHelpers.remove(idx)}
                                                     isDisabled={isCampusPastor}
                                                     secondary
-                                                    size={12}
+                                                    size="md"
                                                 />
                                             </FormControl>
-                                        </HStack>
+                                        </HStackComponent>
                                     ))}
 
                                     <HStack mb={4}>
@@ -158,10 +191,10 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     minorCount: '',
                                                 });
                                             }}
+                                            style={{ flex: 1 }}
                                             isDisabled={isCampusPastor || isLoading}
-                                            width="100%"
                                             secondary
-                                            size={10}
+                                            size="md"
                                         >
                                             Add Location
                                         </ButtonComponent>
@@ -204,7 +237,6 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     isLoading={isLoading}
                                     onPress={() => {
                                         setFieldValue('total.adults', addValues(values, 'adultCount'));
-                                        ``;
                                         setFieldValue('total.minors', addValues(values, 'minorCount'));
                                         handleSubmit();
                                     }}
@@ -226,7 +258,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 <ButtonComponent
                                     onPress={() => onRequestReview(values)}
                                     isLoading={isLoading}
-                                    width="1/2"
+                                    // width="1/2"
                                     secondary
                                     size="md"
                                 >
@@ -235,7 +267,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 <ButtonComponent
                                     onPress={() => onApprove(values)}
                                     isLoading={isLoading}
-                                    width="1/2"
+                                    // width="1/2"
                                     size="md"
                                 >
                                     Approve

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormControl, Radio } from 'native-base';
+import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -24,9 +24,9 @@ import { useGetCampusesQuery } from '@store/services/campus';
 import useScreenFocus from '@hooks/focus';
 import DynamicSearch from '@components/composite/search';
 import UserListItem from '@components/composite/user-list-item';
-import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 import { Switch } from 'react-native';
+import RadioButton from '@components/composite/radio-button';
 
 enum TICKET_TEMPLATE {
     minimal = `We celebrate you,
@@ -109,7 +109,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 serviceId: latestService._id,
                 userId: isIndividual ? values.userId : undefined,
             });
-
             if ('data' in result) {
                 setModalState({
                     message: 'Ticket successfully issued',
@@ -135,7 +134,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 });
                 navigate('Tickets', data);
             }
-
             if ('error' in result) {
                 setModalState({
                     message: error?.data?.message || 'Oops, something went wrong!',
@@ -223,8 +221,8 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     searchFields={['firstName', 'lastName', 'departmentName', 'email']}
                 />
             </If>
-            <ViewWrapper scroll noPadding style={{ paddingTop: 8 }}>
-                <VStackComponent style={{ marginBottom: 48, paddingHorizontal: 12, gap: 20 }}>
+            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 8 }}>
+                <VStackComponent style={{ marginBottom: 20, paddingHorizontal: 12, gap: 20 }}>
                     <Formik<ICreateTicketPayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -255,8 +253,8 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 }
                             };
 
-                            const handleTest = () => {
-                                console.log(values);
+                            const handleTemplate = (value: string) => () => {
+                                setFieldValue('ticketSummary', value);
                             };
 
                             return (
@@ -270,9 +268,12 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <FormControl isRequired isInvalid={!!errors?.campusId && touched.campusId}>
                                         <FormControl.Label>Campus</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="_id"
+                                            items={campuses || []}
+                                            displayKey="campusName"
                                             selectedValue={campusId}
                                             placeholder="Choose campus"
-                                            onValueChange={handleCampus}
+                                            onValueChange={handleCampus as any}
                                         >
                                             {campuses?.map((campus, index) => (
                                                 <SelectItemComponent
@@ -305,9 +306,12 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         >
                                             <FormControl.Label>Department</FormControl.Label>
                                             <SelectComponent
+                                                valueKey="_id"
+                                                displayKey="departmentName"
                                                 placeholder="Choose department"
-                                                onValueChange={handleDepartment}
                                                 selectedValue={values?.departmentId}
+                                                items={sortedCampusDepartments || []}
+                                                onValueChange={handleDepartment as any}
                                             >
                                                 {sortedCampusDepartments?.map((department, index) => (
                                                     <SelectItemComponent
@@ -340,10 +344,13 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl isRequired isInvalid={!!errors?.userId && touched.userId}>
                                             <FormControl.Label>Worker</FormControl.Label>
                                             <SelectComponent
+                                                valueKey="_id"
+                                                items={workers || []}
                                                 isDisabled={!departmentId}
                                                 placeholder="Choose Worker"
-                                                onValueChange={handleChange('userId')}
                                                 selectedValue={values.userId}
+                                                displayKey={['firstName', 'lastName']}
+                                                onValueChange={handleChange('userId') as any}
                                             >
                                                 {workers?.map((worker, index) => (
                                                     <SelectItemComponent
@@ -376,8 +383,11 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <SelectComponent
                                             placeholder="Choose Category"
                                             isDisabled={!ticketCategories}
-                                            onValueChange={handleChange('categoryId')}
+                                            onValueChange={handleChange('categoryId') as any}
                                             selectedValue={values.categoryId}
+                                            valueKey="_id"
+                                            items={ticketCategories || []}
+                                            displayKey="categoryName"
                                         >
                                             {ticketCategories?.map((categories, index) => (
                                                 <SelectItemComponent
@@ -405,23 +415,27 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl>
                                     <FormControl>
                                         <FormControl.Label>Description Template</FormControl.Label>
-                                        <Radio.Group
-                                            name="ticketSummary"
-                                            defaultValue={TICKET_TEMPLATE.verbose}
-                                            onChange={handleChange('ticketSummary')}
-                                        >
-                                            <HStackComponent>
-                                                <Radio size="lg" value={TICKET_TEMPLATE.verbose}>
-                                                    <FormControl.Label>Verbose</FormControl.Label>
-                                                </Radio>
-                                                <Radio size="lg" value={TICKET_TEMPLATE.minimal}>
-                                                    <FormControl.Label>Minimal</FormControl.Label>
-                                                </Radio>
-                                                <Radio size="lg" value="">
-                                                    <FormControl.Label>Blank</FormControl.Label>
-                                                </Radio>
-                                            </HStackComponent>
-                                        </Radio.Group>
+                                        <RadioButton
+                                            defaultSelected="1"
+                                            onChange={handleChange('ticketSummary') as any}
+                                            radioButtons={[
+                                                {
+                                                    id: '1',
+                                                    label: 'Verbose',
+                                                    value: TICKET_TEMPLATE.verbose,
+                                                },
+                                                {
+                                                    id: '2',
+                                                    label: 'Minimal',
+                                                    value: TICKET_TEMPLATE.minimal,
+                                                },
+                                                {
+                                                    id: '3',
+                                                    label: 'Blank',
+                                                    value: '',
+                                                },
+                                            ]}
+                                        />
                                     </FormControl>
                                     <FormControl
                                         isRequired
@@ -429,7 +443,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     >
                                         <FormControl.Label>Description</FormControl.Label>
                                         <TextAreaComponent
-                                            isRequired
                                             returnKeyType="done"
                                             placeholder="Details"
                                             value={values.ticketSummary}

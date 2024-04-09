@@ -16,6 +16,11 @@ import { CREATE_SERVICE_ENUM, ICreateServicePayload, SERVICE_TAGS } from '@store
 import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
 
+const SERVICE_TYPES = [
+    { id: 'local', label: 'Local' },
+    { id: 'global', label: 'Global' },
+];
+
 const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { navigate } = navigation;
     const { setModalState } = useModal();
@@ -211,7 +216,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
     } as ICreateServicePayload;
 
     return (
-        <ViewWrapper scroll noPadding pt={4}>
+        <ViewWrapper scroll noPadding style={{ paddingTop: 8 }}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateServicePayload>
@@ -240,9 +245,12 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                     <FormControl isRequired isInvalid={!!errors?.serviceTag && touched.serviceTag}>
                                         <FormControl.Label>Service Tag</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="id"
+                                            displayKey="value"
+                                            items={SERVICE_TAGS}
                                             placeholder="Service Tags"
                                             selectedValue={values.serviceTag}
-                                            onValueChange={handleServiceTag}
+                                            onValueChange={handleServiceTag as any}
                                         >
                                             {SERVICE_TAGS?.map((tag: any, index: any) => (
                                                 <SelectItemComponent
@@ -271,12 +279,19 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                     <FormControl isRequired isInvalid={!!errors?.serviceType && touched.serviceType}>
                                         <FormControl.Label>Service Type</FormControl.Label>
                                         <SelectComponent
-                                            selectedValue={values.serviceType}
+                                            valueKey="id"
+                                            displayKey="label"
                                             placeholder="Service Type"
-                                            onValueChange={handleChange('serviceType')}
+                                            selectedValue={values.serviceType}
+                                            items={[
+                                                { id: 'local', label: 'Local' },
+                                                { id: 'global', label: 'Global' },
+                                            ]}
+                                            onValueChange={handleChange('serviceType') as any}
                                         >
-                                            <SelectItemComponent value="global" label="Global" />
-                                            <SelectItemComponent value="local" label="Local" />
+                                            {SERVICE_TYPES?.map(type => (
+                                                <SelectItemComponent value={type.id} label={type.label} />
+                                            ))}
                                         </SelectComponent>
                                         <FormControl.ErrorMessage
                                             fontSize="2xl"

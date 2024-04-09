@@ -18,6 +18,7 @@ import useScreenFocus from '@hooks/focus';
 import moment from 'moment';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ScreenHeight } from '@rneui/base';
 
 const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { user } = useRole();
@@ -98,7 +99,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
 
     return (
         <ErrorBoundary>
-            <ViewWrapper>
+            <ViewWrapper avoidKeyboard avoidKeyboardOffset={-(ScreenHeight / 2)}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Box alignItems="center" w="100%">
                         <Formik<IRequestPermissionPayload>

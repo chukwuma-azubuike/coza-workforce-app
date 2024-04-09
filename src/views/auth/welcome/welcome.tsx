@@ -15,7 +15,7 @@ const Welcome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
     const goToRegister = () => navigate('Verify Email');
 
     return (
-        <ViewWrapper pt={10}>
+        <ViewWrapper style={{ paddingTop: 40 }}>
             <Box w="full" h="full" justifyContent="space-between" pb={4}>
                 <VStack space={32} pb={5} px={4} pt={10}>
                     <VStack space={6} alignItems="center" justifyContent="space-around">

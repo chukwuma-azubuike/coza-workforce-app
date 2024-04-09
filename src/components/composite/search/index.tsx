@@ -2,22 +2,23 @@ import React from 'react';
 import { FloatButton } from '@components/atoms/button';
 import { InputComponent } from '@components/atoms/input';
 import { IPermission, ITicket, IUser } from '@store/types';
-import { HStack, IconButton, Modal, Text } from 'native-base';
-import { Alert, KeyboardAvoidingView, ListRenderItemInfo, TouchableHighlight } from 'react-native';
+import { Alert, ListRenderItemInfo, Text, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import Utils from '@utils/index';
 import dynamicSearch from '@utils/dynamicSearch';
 import { FlatList } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import useDevice from '@hooks/device';
-import { Icon } from '@rneui/themed';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { THEME_CONFIG } from '@config/appConfig';
 import { ScreenHeight } from '@rneui/base';
 import debounce from 'lodash/debounce';
 import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
+import { TouchableOpacity } from 'react-native';
+import ModalComponent from '../modal';
+import { THEME_CONFIG } from '@config/appConfig';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
+import Loading from '@components/atoms/loading';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
@@ -30,6 +31,7 @@ interface IUseSearchProps<D> {
 function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPermission>>(props: IUseSearchProps<D>) {
     const { data, searchFields, onPress, loading, disable } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
+    const [searchText, setSearchText] = React.useState<string>('');
     const [searchResults, setSearchResults] = React.useState<Array<D> | undefined>(data);
     const inputRef = React.useRef();
 
@@ -52,151 +54,154 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
 
     const handleTextChange = React.useCallback(
         debounce((searchText: string) => {
+            setSearchText(searchText);
             if (!!searchText) {
                 setSearchResults(dynamicSearch({ data, searchText, searchFields }));
             }
+            if (searchText === '') {
+                setSearchResults(data);
+            }
         }, 500),
-        [data, searchFields]
+        [...spreadDependencyArray(data), searchFields]
     );
 
     const sortedSearchResults = React.useMemo(() => {
-        return Utils.sortStringAscending(searchResults, 'firstName');
-    }, [
-        searchResults && searchResults[0]?._id,
-        searchResults && searchResults[searchResults?.length - 1]?._id,
-        searchResults && searchResults?.length,
-    ]);
+        return Utils.sortStringAscending(searchText === '' ? data : searchResults, 'firstName');
+    }, [...spreadDependencyArray(data), ...spreadDependencyArray(searchResults), searchText]);
 
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
-    const { isDarkMode } = useAppColorMode();
+    const { textColor, backgroundColor } = useAppColorMode();
 
     return (
         <>
-            <KeyboardAvoidingView enabled={openSearchBar}>
-                <Modal isOpen={openSearchBar} width="100%" height="100%" animationPreset="slide">
-                    <Modal.Content
-                        w="94%"
-                        position="absolute"
-                        top={isAndroidOrBelowIOSTenOrTab ? 62 : 110}
-                        _dark={{ opacity: 0.9 }}
-                    >
-                        <HStack justifyContent="space-between" alignItems="center" flex={1}>
-                            <InputComponent
-                                flex={1}
-                                autoFocus
-                                ref={inputRef}
-                                variant="outline"
-                                clearButtonMode="always"
-                                onChangeText={handleTextChange}
-                                placeholder={`Search by ${searchFields?.join(', ')}`}
-                            />
-                            <IconButton
-                                p={0}
-                                width={10}
-                                height={10}
-                                borderRadius="full"
-                                alignItems="center"
-                                onPress={handleCancel}
-                                justifyContent="center"
-                                icon={
-                                    <Icon
-                                        size={24}
-                                        name="close"
-                                        type="ant-design"
-                                        color={isDarkMode ? 'white' : 'black'}
-                                    />
-                                }
-                            />
-                        </HStack>
-                        <FlatList
-                            data={sortedSearchResults}
-                            ListEmptyComponent={
-                                <Text textAlign="center" py={2}>
-                                    No data found
-                                </Text>
-                            }
-                            keyExtractor={item => item?._id}
-                            getItemLayout={(data, index) => ({
-                                length: ScreenHeight / 10, // Assuming a constant item height
-                                offset: (ScreenHeight / 10) * index,
-                                index,
-                            })}
-                            windowSize={20}
-                            initialNumToRender={20}
-                            removeClippedSubviews={true}
-                            renderItem={({ item: elm, index: key, separators }: ListRenderItemInfo<any>) => {
-                                return loading ? (
-                                    <Text textAlign="center" py={2}>
-                                        Loading...
-                                    </Text>
-                                ) : (
-                                    <TouchableHighlight
-                                        key={key}
-                                        delayPressIn={0}
-                                        activeOpacity={0.2}
-                                        style={{ flex: 1 }}
-                                        onPress={handlePress(elm as any)}
-                                        onShowUnderlay={separators.highlight}
-                                        onHideUnderlay={separators.unhighlight}
-                                        underlayColor={
-                                            isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.transparentGray
-                                        }
-                                    >
-                                        <HStackComponent style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
-                                            <HStackComponent space={6}>
-                                                <AvatarComponent
-                                                    size="md"
-                                                    imageUrl={
-                                                        elm?.pictureUrl || elm?.user?.pictureUrl || AVATAR_FALLBACK_URL
-                                                    }
-                                                />
-                                                <VStackComponent>
-                                                    <Text
-                                                        _dark={{ color: 'gray.200' }}
-                                                        _light={{ color: 'gray.800' }}
-                                                        fontSize="md"
-                                                        bold
-                                                        noOfLines={1}
-                                                        ellipsizeMode="tail"
-                                                    >
-                                                        {`${Utils.capitalizeFirstChar(
-                                                            elm?.firstName || elm?.user?.firstName
-                                                        )} ${Utils.capitalizeFirstChar(
-                                                            elm?.lastName || elm?.user?.lastName
-                                                        )}`}
-                                                    </Text>
-                                                    <Text
-                                                        _dark={{ color: 'gray.300' }}
-                                                        _light={{ color: 'gray.700' }}
-                                                        fontSize="sm"
-                                                        noOfLines={1}
-                                                        ellipsizeMode="tail"
-                                                    >
-                                                        {elm?.departmentName}
-                                                    </Text>
-                                                    <Text
-                                                        _dark={{ color: 'gray.300' }}
-                                                        _light={{ color: 'gray.700' }}
-                                                        fontSize="sm"
-                                                        noOfLines={1}
-                                                        ellipsizeMode="tail"
-                                                    >
-                                                        {elm?.categoryName || elm?.email || elm?.user?.email}
-                                                    </Text>
-                                                </VStackComponent>
-                                            </HStackComponent>
-                                            <StatusTag>
-                                                {elm?.status || ((elm?.gender === 'M' ? 'Male' : 'Female') as any)}
-                                            </StatusTag>
-                                        </HStackComponent>
-                                    </TouchableHighlight>
-                                );
-                            }}
-                        />
-                    </Modal.Content>
-                </Modal>
-            </KeyboardAvoidingView>
-
+            <ModalComponent
+                isOpen={openSearchBar}
+                onClose={handleCancel}
+                header={
+                    <InputComponent
+                        autoFocus
+                        flex={1}
+                        ref={inputRef}
+                        variant="outline"
+                        clearButtonMode="always"
+                        leftIcon={{
+                            name: 'search1',
+                            type: 'antdesign',
+                        }}
+                        onChangeText={handleTextChange}
+                        style={{
+                            flex: 1,
+                            height: 40,
+                            padding: 0,
+                            fontSize: 18,
+                            paddingTop: 0,
+                            paddingLeft: 10,
+                            color: textColor,
+                            paddingVertical: 0,
+                        }}
+                        placeholder="Search"
+                    />
+                }
+            >
+                <FlatList
+                    data={sortedSearchResults}
+                    ListEmptyComponent={
+                        <View style={{ padding: 16 }}>
+                            <Text
+                                style={{
+                                    fontSize: 18,
+                                    width: '100%',
+                                    color: textColor,
+                                    textAlign: 'center',
+                                }}
+                                numberOfLines={1}
+                                lineBreakMode="tail"
+                                ellipsizeMode="tail"
+                            >
+                                No data found
+                            </Text>
+                        </View>
+                    }
+                    keyExtractor={item => item?._id}
+                    getItemLayout={(data, index) => ({
+                        length: ScreenHeight / 10, // Assuming a constant item height
+                        offset: (ScreenHeight / 10) * index,
+                        index,
+                    })}
+                    windowSize={20}
+                    initialNumToRender={20}
+                    removeClippedSubviews={true}
+                    style={{ backgroundColor: backgroundColor, marginBottom: 36 }}
+                    renderItem={({ item: elm, index: key }: ListRenderItemInfo<any>) => {
+                        return loading ? (
+                            <Loading style={{ paddingVertical: 44 }} />
+                        ) : (
+                            <TouchableOpacity
+                                key={key}
+                                delayPressIn={0}
+                                activeOpacity={0.6}
+                                onPress={handlePress(elm as any)}
+                                style={{
+                                    flex: 1,
+                                    paddingVertical: 10,
+                                    borderBottomWidth: 1,
+                                    paddingHorizontal: 10,
+                                    borderBottomColor: THEME_CONFIG.transparentGray,
+                                }}
+                            >
+                                <HStackComponent>
+                                    <HStackComponent space={12}>
+                                        <AvatarComponent
+                                            size="md"
+                                            imageUrl={elm?.pictureUrl || elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
+                                        />
+                                        <VStackComponent>
+                                            <Text
+                                                style={{
+                                                    color: textColor,
+                                                    fontSize: 18,
+                                                    fontWeight: '700',
+                                                }}
+                                                numberOfLines={1}
+                                                lineBreakMode="tail"
+                                                ellipsizeMode="tail"
+                                            >
+                                                {`${Utils.capitalizeFirstChar(
+                                                    elm?.firstName || elm?.user?.firstName
+                                                )} ${Utils.capitalizeFirstChar(elm?.lastName || elm?.user?.lastName)}`}
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    color: textColor,
+                                                    fontSize: 16,
+                                                }}
+                                                numberOfLines={1}
+                                                lineBreakMode="tail"
+                                                ellipsizeMode="tail"
+                                            >
+                                                {elm?.departmentName}
+                                            </Text>
+                                            <Text
+                                                style={{
+                                                    color: textColor,
+                                                    fontSize: 14,
+                                                }}
+                                                numberOfLines={1}
+                                                lineBreakMode="tail"
+                                                ellipsizeMode="tail"
+                                            >
+                                                {elm?.categoryName || elm?.email || elm?.user?.email}
+                                            </Text>
+                                        </VStackComponent>
+                                    </HStackComponent>
+                                    <StatusTag>
+                                        {elm?.status || ((elm?.gender === 'M' ? 'Male' : 'Female') as any)}
+                                    </StatusTag>
+                                </HStackComponent>
+                            </TouchableOpacity>
+                        );
+                    }}
+                />
+            </ModalComponent>
             <FloatButton shadow={6} buttom={16} iconName="search1" iconType="ant-design" onPress={handleSearchBar} />
         </>
     );

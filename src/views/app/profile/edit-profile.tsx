@@ -21,7 +21,7 @@ import { userActionTypes } from '@store/services/users';
 import moment from 'moment';
 
 const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const userData = props.route.params as IEditProfilePayload;
+    const userData = props?.route?.params as IEditProfilePayload;
 
     const { user } = useRole();
     const { goBack } = useNavigation();
@@ -51,7 +51,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = userData as IEditProfilePayload;
+    const INITIAL_VALUES = (userData || {}) as IEditProfilePayload;
 
     const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
 
@@ -66,7 +66,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ErrorBoundary>
-            <ViewWrapper scroll px={4}>
+            <ViewWrapper scroll style={{ paddingHorizontal: 12 }}>
                 <Formik<IEditProfilePayload> onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
                     {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
                         const handleDate = (fieldName: string, value: any) => {
@@ -75,12 +75,12 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
                         return (
                             <VStack w="100%" space={1}>
-                                <If condition={!!userData.firstName}>
+                                <If condition={!!userData?.firstName}>
                                     <FormControl isRequired isInvalid={!!errors?.firstName && touched.firstName}>
                                         <FormControl.Label>First name</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.firstName}
+                                            value={values?.firstName}
                                             placeholder="First name"
                                             onChangeText={handleChange('firstName')}
                                         />
@@ -101,12 +101,12 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl>
                                 </If>
 
-                                <If condition={!!userData.lastName}>
+                                <If condition={!!userData?.lastName}>
                                     <FormControl isRequired isInvalid={!!errors?.lastName && touched.lastName}>
                                         <FormControl.Label>Last name</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.lastName}
+                                            value={values?.lastName}
                                             placeholder="Last name"
                                             onChangeText={handleChange('lastName')}
                                         />
@@ -132,7 +132,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Phone number</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.phoneNumber}
+                                            value={values?.phoneNumber}
                                             placeholder="Eg: +2347012345678"
                                             onChangeText={handleChange('phoneNumber')}
                                         />
@@ -158,7 +158,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Address</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.address}
+                                            value={values?.address}
                                             placeholder="Your home address"
                                             onChangeText={handleChange('address')}
                                         />
@@ -184,7 +184,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Occupation</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.occupation}
+                                            value={values?.occupation}
                                             placeholder="Your occupation"
                                             onChangeText={handleChange('occupation')}
                                         />
@@ -210,7 +210,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Place of work</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.placeOfWork}
+                                            value={values?.placeOfWork}
                                             placeholder="Your place of work"
                                             onChangeText={handleChange('placeOfWork')}
                                         />
@@ -232,11 +232,18 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 </If>
 
                                 <If condition={!!userData?.gender}>
-                                    <FormControl isRequired isInvalid={!!errors?.gender && touched.gender}>
+                                    <FormControl isRequired isInvalid={!!errors?.gender && touched?.gender}>
                                         <FormControl.Label>Gender</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="_id"
+                                            displayKey="name"
+                                            selectedValue={values?.gender}
                                             placeholder="Enter your gender"
-                                            onValueChange={handleChange('gender')}
+                                            items={[
+                                                { _id: 'M', name: 'Male' },
+                                                { _id: 'F', name: 'Female' },
+                                            ]}
+                                            onValueChange={handleChange('gender') as any}
                                         >
                                             <SelectItemComponent label="Male" value="M" />
                                             <SelectItemComponent label="Female" value="F" />
@@ -259,37 +266,48 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 </If>
 
                                 <If condition={!!userData?.maritalStatus}>
-                                    <FormControl
-                                        isRequired
-                                        isInvalid={!!errors?.maritalStatus && touched.maritalStatus}
-                                    >
-                                        <FormControl.Label>Marital Status</FormControl.Label>
-                                        <SelectComponent
-                                            defaultValue={values.maritalStatus}
-                                            selectedValue={values.maritalStatus}
-                                            onValueChange={handleChange('maritalStatus')}
+                                    <ErrorBoundary>
+                                        <FormControl
+                                            isRequired
+                                            isInvalid={!!errors?.maritalStatus && touched.maritalStatus}
                                         >
-                                            <SelectItemComponent label="Single" value="single" />
-                                            <SelectItemComponent label="Married" value="married" />
-                                            <SelectItemComponent label="Widowed" value="widowed" />
-                                            <SelectItemComponent label="Separated" value="separated" />
-                                            <SelectItemComponent label="Divorced" value="divorced" />
-                                        </SelectComponent>
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.maritalStatus}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                            <FormControl.Label>Marital Status</FormControl.Label>
+                                            <SelectComponent
+                                                selectedValue={values?.maritalStatus}
+                                                onValueChange={handleChange('maritalStatus') as any}
+                                                valueKey="_id"
+                                                displayKey="name"
+                                                placeholder="Enter your marital status"
+                                                items={[
+                                                    { _id: 'Single', name: 'Single' },
+                                                    { _id: 'Married', name: 'Married' },
+                                                    { _id: 'Widowed', name: 'Widowed' },
+                                                    { _id: 'Separated', name: 'Separated' },
+                                                    { _id: 'Divorced', name: 'Divorced' },
+                                                ]}
+                                            >
+                                                <SelectItemComponent label="Single" value="Single" />
+                                                <SelectItemComponent label="Married" value="Married" />
+                                                <SelectItemComponent label="Widowed" value="Widowed" />
+                                                <SelectItemComponent label="Separated" value="Separated" />
+                                                <SelectItemComponent label="Divorced" value="Divorced" />
+                                            </SelectComponent>
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.maritalStatus}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                    </ErrorBoundary>
                                 </If>
 
                                 <If condition={!!userData?.birthDay}>
@@ -312,7 +330,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Next Of Kin</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.nextOfKin}
+                                            value={values?.nextOfKin}
                                             placeholder="Next of Kin's name"
                                             onChangeText={handleChange('nextOfKin')}
                                         />
@@ -341,7 +359,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Next of kin phone number</FormControl.Label>
                                         <InputComponent
                                             isRequired
-                                            value={values.phoneNumber}
+                                            value={values?.phoneNumber}
                                             placeholder="Eg: +2347012345678"
                                             onChangeText={handleChange('nextOfKinPhoneNo')}
                                         />

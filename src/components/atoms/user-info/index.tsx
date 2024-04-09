@@ -1,10 +1,10 @@
 import React from 'react';
-import { Heading, HStack, Text } from 'native-base';
 import { Pressable } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { ScreenWidth } from '@rneui/base';
+import TextComponent from '@components/text';
+import HStackComponent from '@components/layout/h-stack';
 
 interface IUserInfo {
     heading?: string;
@@ -15,7 +15,7 @@ interface IUserInfo {
 
 const NON_EDITABLE = ['email', 'role'];
 
-const UserInfo = ({ heading, value, name, isEditable = true }: IUserInfo) => {
+const UserInfo = ({ heading, value, name }: IUserInfo) => {
     const { navigate } = useNavigation();
 
     const handleEdit = () => {
@@ -29,27 +29,17 @@ const UserInfo = ({ heading, value, name, isEditable = true }: IUserInfo) => {
 
     return (
         <Pressable onPress={handleEdit}>
-            <HStack alignItems="center" justifyContent="space-between" paddingRight={4}>
-                <Text ml={3} my={2} flexDirection="row" width={ScreenWidth / 1.25}>
-                    <Heading size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
+            <HStackComponent style={{ paddingVertical: 8 }}>
+                <TextComponent>
+                    <TextComponent size="lg" bold>
                         {heading}:{' '}
-                    </Heading>
-                    <Text
-                        flexWrap="wrap"
-                        fontWeight="400"
-                        ellipsizeMode="tail"
-                        numberOfLines={1}
-                        width={ScreenWidth / 1.85}
-                        _dark={{ color: 'gray.400' }}
-                        _light={{ color: 'gray.600' }}
-                    >
-                        {value}
-                    </Text>
-                </Text>
+                    </TextComponent>
+                    <TextComponent size="lg">{value}</TextComponent>
+                </TextComponent>
                 {!NON_EDITABLE.includes(name) && (
                     <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
                 )}
-            </HStack>
+            </HStackComponent>
         </Pressable>
     );
 };

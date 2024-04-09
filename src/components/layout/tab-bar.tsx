@@ -2,7 +2,7 @@ import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Center, HStack } from 'native-base';
 import React from 'react';
-import { Text, TouchableNativeFeedback } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
@@ -100,22 +100,18 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
 
                 // Roles and permissions filter
                 if (isWorker && !isQC && route.name === 'More') return;
+                if (isWorker && isQC && route.name === 'CGWC') return;
 
                 return (
-                    <TouchableNativeFeedback
+                    <TouchableOpacity
                         key={index}
+                        activeOpacity={0.6}
                         accessibilityRole="button"
                         accessibilityState={isFocused ? { selected: true } : {}}
                         accessibilityLabel={options.tabBarAccessibilityLabel}
                         testID={options.tabBarTestID}
                         onPress={onPress}
                         onLongPress={onLongPress}
-                        style={{ height: 100 }}
-                        background={TouchableNativeFeedback.Ripple(
-                            isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent,
-                            true,
-                            40
-                        )}
                     >
                         <Center py={1.5} minWidth={60}>
                             <Icon
@@ -144,7 +140,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
                                 {label}
                             </Text>
                         </Center>
-                    </TouchableNativeFeedback>
+                    </TouchableOpacity>
                 );
             })}
         </HStack>

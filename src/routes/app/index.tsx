@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AppRoutes, IAppRoute } from '@config/navigation';
 import TabBar from '@components/layout/tab-bar';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { Route, useNavigation } from '@react-navigation/native';
 import { NavigationBackButton } from '@components/atoms/button';
 import { useDeepLinkNavigation } from '@hooks/navigation';
@@ -26,7 +25,6 @@ const flattenNestedRoutes = (routes: IAppRoute[]) => {
 };
 
 const TabRoutes: React.FC = () => {
-    const { isDarkMode } = useAppColorMode();
     const { goBack, navigate } = useNavigation<{
         navigate: (route: string, options: any) => void;
         goBack: () => void;

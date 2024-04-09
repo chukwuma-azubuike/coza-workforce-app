@@ -1,5 +1,4 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -10,6 +9,10 @@ import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
 import { IUser } from '@store/types';
 import Utils from '@utils/index';
+import TextComponent from '@components/text';
+import VStackComponent from '@components/layout/v-stack';
+import HStackComponent from '@components/layout/h-stack';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const UserListRow: React.FC<IUser> = memo(user => {
     const navigation = useNavigation();
@@ -20,20 +23,18 @@ const UserListRow: React.FC<IUser> = memo(user => {
 
     return (
         <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
-            <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                <HStack space={3} alignItems="center">
+            <HStackComponent style={{ padding: 2 }}>
+                <HStackComponent space={6} style={{ alignItems: 'center' }}>
                     <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                    <VStack justifyContent="space-between">
-                        <Text bold>
+                    <VStackComponent>
+                        <TextComponent bold>
                             {Utils.capitalizeFirstChar(user?.firstName)} {Utils.capitalizeFirstChar(user?.lastName)}
-                        </Text>
-                        <Text fontSize="sm" color="gray.400">
-                            {Utils.truncateString(user?.email)}
-                        </Text>
-                    </VStack>
-                </HStack>
+                        </TextComponent>
+                        <TextComponent fontSize="sm">{user?.email}</TextComponent>
+                    </VStackComponent>
+                </HStackComponent>
                 <StatusTag>{user?.status || 'ACTIVE'}</StatusTag>
-            </HStack>
+            </HStackComponent>
         </TouchableOpacity>
     );
 });
@@ -66,21 +67,19 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <HStack p={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center">
-                                <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <VStack justifyContent="space-between">
-                                    <Text bold>
+                        <HStackComponent style={{ padding: 2, paddingVertical: 6 }}>
+                            <HStackComponent space={6} style={{ alignItems: 'center' }}>
+                                <AvatarComponent size="sm" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                <VStackComponent space={2}>
+                                    <TextComponent bold>
                                         {Utils.capitalizeFirstChar(user?.firstName)}{' '}
                                         {Utils.capitalizeFirstChar(user?.lastName)}
-                                    </Text>
-                                    <Text fontSize="sm" color="gray.400">
-                                        {Utils.truncateString(user?.email)}
-                                    </Text>
-                                </VStack>
-                            </HStack>
+                                    </TextComponent>
+                                    <TextComponent size="sm">{user?.email}</TextComponent>
+                                </VStackComponent>
+                            </HStackComponent>
                             <StatusTag>{isHOD ? 'HOD' : isAHOD ? 'AHOD' : user?.status || 'ACTIVE'}</StatusTag>
-                        </HStack>
+                        </HStackComponent>
                     </TouchableOpacity>
                 );
             })}
@@ -134,13 +133,14 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
 
     const sortedGroupedData = React.useMemo(
         () => data && Utils.groupListByKey(Utils.sortStringAscending(data, 'firstName'), 'departmentName'),
-        [data]
+        [...spreadDependencyArray(data)]
     );
 
     return (
         <FlatListComponent
             showHeader={false}
             refreshing={isFetching}
+            style={{ marginTop: 16 }}
             columns={departmentColumns}
             data={sortedGroupedData || []}
             isLoading={isLoading || isFetching}

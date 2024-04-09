@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, Heading, Stack, VStack, Text, Center, HStack } from 'native-base';
+import { FormControl, Heading, Text, Center, HStack } from 'native-base';
 import { InputComponent } from '@components/atoms/input';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -18,6 +18,9 @@ import { versionActiontypes } from '@store/services/version';
 import { useAppDispatch } from '@store/hooks';
 import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
+import { View } from 'react-native';
+import VStackComponent from '@components/layout/v-stack';
+import { ScreenHeight } from '@rneui/base';
 
 const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const dispatch = useAppDispatch();
@@ -61,69 +64,72 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     }, [isSuccess, isError]);
 
     return (
-        <ViewWrapper>
-            <Box w="100%" h="full" justifyContent="space-between" pb={4}>
-                <VStack space="lg" pt={20} px={4}>
+        <ViewWrapper avoidKeyboard avoidKeyboardOffset={-(ScreenHeight / 2)}>
+            <View
+                style={{
+                    flex: 1,
+                    paddingTop: 100,
+                }}
+            >
+                <VStackComponent style={{ paddingHorizontal: 8 }}>
                     <Center>
                         <Logo />
                         <Heading mt={4}>Welcome back</Heading>
                     </Center>
-                    <Box alignItems="center" w="100%" mb={3}>
-                        <Formik<ILoginPayload>
-                            validateOnChange
-                            onSubmit={onSubmit}
-                            initialValues={INITIAL_VALUES}
-                            validationSchema={LoginSchema}
-                        >
-                            {({ errors, touched, handleChange, handleSubmit }) => {
-                                return (
-                                    <Stack w="100%" space={1}>
-                                        <FormControl isRequired isInvalid={!!errors?.email && touched.email}>
-                                            <FormControl.Label>Email</FormControl.Label>
-                                            <InputComponent
-                                                leftIcon={{
-                                                    type: 'ionicon',
-                                                    name: 'mail-outline',
-                                                }}
-                                                keyboardType="email-address"
-                                                placeholder="jondoe@gmail.com"
-                                                onChangeText={handleChange('email')}
-                                            />
-                                            <FormControl.ErrorMessage>{errors?.email}</FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl isRequired isInvalid={!!errors?.password && touched.password}>
-                                            <FormControl.Label>Password</FormControl.Label>
-                                            <InputComponent
-                                                type={showPassword ? 'text' : 'password'}
-                                                placeholder="password"
-                                                isRequired
-                                                leftIcon={{
-                                                    name: 'lock-closed-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                rightIcon={{
-                                                    name: showPassword ? 'eye-off-outline' : 'eye-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                onIconPress={handleIconPress}
-                                                onChangeText={handleChange('password')}
-                                            />
-                                            <FormControl.ErrorMessage>{errors?.password}</FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl>
-                                            <ButtonComponent
-                                                mt={4}
-                                                isLoading={isLoading}
-                                                onPress={handleSubmit as (event: any) => void}
-                                            >
-                                                Login
-                                            </ButtonComponent>
-                                        </FormControl>
-                                    </Stack>
-                                );
-                            }}
-                        </Formik>
-                    </Box>
+                    <Formik<ILoginPayload>
+                        validateOnChange
+                        onSubmit={onSubmit}
+                        initialValues={INITIAL_VALUES}
+                        validationSchema={LoginSchema}
+                    >
+                        {({ errors, touched, handleChange, handleSubmit }) => {
+                            return (
+                                <VStackComponent style={{ flex: 0, marginBottom: 20 }} space={4}>
+                                    <FormControl isRequired isInvalid={!!errors?.email && touched.email}>
+                                        <FormControl.Label>Email</FormControl.Label>
+                                        <InputComponent
+                                            leftIcon={{
+                                                type: 'ionicon',
+                                                name: 'mail-outline',
+                                            }}
+                                            keyboardType="email-address"
+                                            placeholder="jondoe@gmail.com"
+                                            onChangeText={handleChange('email')}
+                                        />
+                                        <FormControl.ErrorMessage>{errors?.email}</FormControl.ErrorMessage>
+                                    </FormControl>
+                                    <FormControl isRequired isInvalid={!!errors?.password && touched.password}>
+                                        <FormControl.Label>Password</FormControl.Label>
+                                        <InputComponent
+                                            type={showPassword ? 'text' : 'password'}
+                                            placeholder="password"
+                                            isRequired
+                                            leftIcon={{
+                                                name: 'lock-closed-outline',
+                                                type: 'ionicon',
+                                            }}
+                                            rightIcon={{
+                                                name: showPassword ? 'eye-off-outline' : 'eye-outline',
+                                                type: 'ionicon',
+                                            }}
+                                            onIconPress={handleIconPress}
+                                            onChangeText={handleChange('password')}
+                                        />
+                                        <FormControl.ErrorMessage>{errors?.password}</FormControl.ErrorMessage>
+                                    </FormControl>
+                                    <FormControl>
+                                        <ButtonComponent
+                                            mt={4}
+                                            isLoading={isLoading}
+                                            onPress={handleSubmit as (event: any) => void}
+                                        >
+                                            Login
+                                        </ButtonComponent>
+                                    </FormControl>
+                                </VStackComponent>
+                            );
+                        }}
+                    </Formik>
                     <TouchableRipple
                         rippleColor="rgba(255, 255, 255, 0)"
                         style={{ paddingHorizontal: 6, borderRadius: 10 }}
@@ -151,11 +157,19 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
                             </Text>
                         </TouchableRipple>
                     </HStack>
-                </VStack>
-                <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
-                    <SupportLink />
-                </Box>
-            </Box>
+                </VStackComponent>
+            </View>
+            <View
+                style={{
+                    bottom: 40,
+                    width: '100%',
+                    position: 'absolute',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <SupportLink />
+            </View>
         </ViewWrapper>
     );
 };

@@ -9,8 +9,10 @@ const useDevice = () => {
         () => Platform.OS === 'android' || isIphoneLessThanTen() || !isMobile,
         [isMobile]
     );
+    const isIOS = Platform.OS === 'ios';
 
     return {
+        isIOS,
         isAndroidOrBelowIOSTenOrTab,
     };
 };

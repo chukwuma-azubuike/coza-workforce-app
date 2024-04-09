@@ -1,8 +1,8 @@
 import { Icon } from '@rneui/themed';
 import moment from 'moment';
-import { Box, Heading, HStack, Stack, Text, VStack } from 'native-base';
+import { Heading } from 'native-base';
 import React from 'react';
-import { Pressable, TouchableOpacity } from 'react-native';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -22,6 +22,10 @@ import { userActionTypes } from '@store/services/users';
 import { useGetUserScoreQuery } from '@store/services/score';
 import StatusTag from '@components/atoms/status-tag';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import VStackComponent from '@components/layout/v-stack';
+import HStackComponent from '@components/layout/h-stack';
+import TextComponent from '@components/text';
+import useAppColorMode from '@hooks/theme/colorMode';
 
 const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { user, isGlobalPastor } = useRole();
@@ -97,10 +101,17 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
         }
     }, [newUserData]);
 
+    const { backgroundColor } = useAppColorMode();
+
     return (
-        <ViewWrapper scroll refreshing={newUserDataLoading} onRefresh={refetchUser} pt={4}>
-            <VStack pb={8}>
-                <VStack pb={4} flexDirection="column" alignItems="center">
+        <ViewWrapper
+            scroll
+            onRefresh={refetchUser}
+            refreshing={newUserDataLoading}
+            style={{ paddingVertical: 20, paddingHorizontal: 20 }}
+        >
+            <VStackComponent style={{ paddingBottom: 24 }}>
+                <VStackComponent style={{ paddingBottom: 8, alignItems: 'center' }}>
                     <Pressable
                         style={{ maxHeight: 114 }}
                         onPress={handleProfilePicture}
@@ -123,17 +134,26 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                             style={{ marginBottom: 20, top: -2, left: 30, zIndex: 100 }}
                         />
                     </Pressable>
-                    <Stack mt="4" space={2}>
-                        <HStack space={2} alignItems="center">
-                            <Heading
-                                size="md"
-                                textAlign="center"
-                                _dark={{ color: 'gray.300' }}
-                                _light={{ color: 'gray.700' }}
-                                onPress={handleEdit('firstName', user?.firstName)}
-                            >
-                                {user?.firstName}
-                            </Heading>
+                    <VStackComponent style={{ marginTop: 20 }} space={4}>
+                        <View
+                            style={{
+                                justifyContent: 'space-between',
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                gap: 8,
+                            }}
+                        >
+                            <View>
+                                <Heading
+                                    size="md"
+                                    textAlign="center"
+                                    _dark={{ color: 'gray.300' }}
+                                    _light={{ color: 'gray.700' }}
+                                    onPress={handleEdit('firstName', user?.firstName)}
+                                >
+                                    {user?.firstName}
+                                </Heading>
+                            </View>
                             <Heading
                                 size="md"
                                 textAlign="center"
@@ -144,52 +164,41 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                                 {user?.lastName}
                             </Heading>
                             <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
-                        </HStack>
-                        <Text
-                            fontSize="md"
-                            fontWeight="600"
-                            color="gray.400"
-                            textAlign="center"
-                            _dark={{ color: 'gray.300' }}
-                            _light={{ color: 'gray.700' }}
-                        >
+                        </View>
+                        <TextComponent bold style={{ textAlign: 'center' }}>
                             {user?.campus?.campusName}
-                        </Text>
-                        <Text
-                            fontWeight="400"
-                            color="gray.400"
-                            textAlign="center"
-                            _dark={{ color: 'gray.400' }}
-                            _light={{ color: 'gray.600' }}
-                        >
+                        </TextComponent>
+                        <TextComponent style={{ textAlign: 'center' }}>
                             {isGlobalPastor ? 'Global Senior Pastor' : user?.department?.departmentName}
-                        </Text>
-                    </Stack>
-                </VStack>
-                <Stack
-                    mb={2}
-                    mx={4}
-                    py={4}
-                    borderRadius={6}
-                    borderWidth={0.2}
-                    borderColor="gray.400"
-                    _dark={{ bg: 'gray.900' }}
-                    _light={{ bg: 'gray.100' }}
+                        </TextComponent>
+                    </VStackComponent>
+                </VStackComponent>
+                <HStackComponent
+                    style={{
+                        marginBottom: 8,
+                        paddingVertical: 8,
+                        borderRadius: 12,
+                        borderWidth: 0.2,
+                        borderColor: THEME_CONFIG.lightGray,
+                        backgroundColor: backgroundColor,
+                    }}
                 >
-                    <Box px={3} flexDirection="row" justifyContent="flex-start">
+                    <HStackComponent style={{ padding: 6, justifyContent: 'flex-start' }}>
                         <Icon size={22} name="person" type="Ionicons" color={THEME_CONFIG.lightGray} />
-                        <Text ml={4} fontSize="md" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-                            User Info
-                        </Text>
-                    </Box>
-                </Stack>
-                <Box mx={2}>
-                    <HStack alignItems="center" justifyContent="space-between" pr={4} pl={3} my={2}>
-                        <Text bold fontSize="md">
-                            CGWC Status
-                        </Text>
+                        <TextComponent style={{ marginLeft: 4 }}>User Info</TextComponent>
+                    </HStackComponent>
+                </HStackComponent>
+                <View style={{ marginHorizontal: 4 }}>
+                    <HStackComponent
+                        style={{
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginVertical: 2,
+                        }}
+                    >
+                        <TextComponent bold>CGWC Status</TextComponent>
                         <StatusTag w={24}>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
-                    </HStack>
+                    </HStackComponent>
                     <UserInfo heading="Role" name="role" value={user?.role.name} />
                     <UserInfo heading="Address" name="address" value={user?.address} />
                     <UserInfo heading="Email" isEditable={false} name="email" value={user?.email} />
@@ -204,29 +213,27 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                         value={Utils.capitalizeFirstChar(user?.maritalStatus || '')}
                     />
                     <UserInfo heading="Birthday" name="birthDay" value={moment(user?.birthDay).format('DD MMM')} />
-                </Box>
+                </View>
                 <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
-                    <Stack
-                        my={3}
-                        mx={4}
-                        py={4}
-                        borderRadius={6}
-                        borderWidth={0.2}
-                        _dark={{ bg: 'gray.900' }}
-                        _light={{ bg: 'gray.100' }}
+                    <HStackComponent
+                        style={{
+                            marginVertical: 6,
+                            paddingVertical: 16,
+                            borderRadius: 12,
+                            borderWidth: 0.2,
+                            backgroundColor: backgroundColor,
+                        }}
                     >
-                        <Box px={3} flexDirection="row" justifyContent="flex-start">
+                        <View style={{ paddingHorizontal: 10, flexDirection: 'row', justifyContent: 'flex-start' }}>
                             <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
-                            <Text ml={4} fontSize="md" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
-                                Logout
-                            </Text>
-                        </Box>
-                    </Stack>
+                            <TextComponent style={{ marginLeft: 4 }}>Logout</TextComponent>
+                        </View>
+                    </HStackComponent>
                 </TouchableOpacity>
-                <Text pt={2} pb={4} color="gray.400" textAlign="center">
+                <TextComponent style={{ paddingVertical: 8, textAlign: 'center' }}>
                     Version {DeviceInfo.getVersion()}
-                </Text>
-            </VStack>
+                </TextComponent>
+            </VStackComponent>
         </ViewWrapper>
     );
 };

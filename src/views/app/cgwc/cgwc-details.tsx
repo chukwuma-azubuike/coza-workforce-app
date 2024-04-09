@@ -166,16 +166,20 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <Box px={1}>
                             <Divider mt={6} mb={1} />
                             <Stack flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
-                                <MyCGWCAttendance sessions={sessions || []} CGWCId={CGWCId} userId={userId} />
-                                <If condition={isLeader}>
-                                    {!isMobile && <Divider mt={3} mb={2} orientation="vertical" />}
-                                    <CGWCReportSummary
-                                        CGWCId={CGWCId}
-                                        sessions={sessions || []}
-                                        latestService={latestService}
-                                        title={isCampusPastor ? 'Campus Report' : 'Team Report'}
-                                    />
-                                </If>
+                                <View style={{ width: isMobile ? '100%' : '50%' }}>
+                                    <MyCGWCAttendance sessions={sessions || []} CGWCId={CGWCId} userId={userId} />
+                                </View>
+                                <View style={{ width: isMobile ? '100%' : '50%', flex: 1 }}>
+                                    <If condition={isLeader}>
+                                        {!isMobile && <Divider mt={3} mb={2} orientation="vertical" />}
+                                        <CGWCReportSummary
+                                            CGWCId={CGWCId}
+                                            sessions={sessions || []}
+                                            latestService={latestService}
+                                            title={isCampusPastor ? 'Campus Report' : 'Team Report'}
+                                        />
+                                    </If>
+                                </View>
                             </Stack>
                             <Divider mt={6} mb={1} />
                         </Box>
@@ -183,30 +187,30 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <Text bold px={3} fontSize="lg">
                                 Give Feedback
                             </Text>
-                            <View style={{ marginBottom: 220, width: '100%' }}>
+                            <View style={{ marginBottom: 60, width: '100%' }}>
                                 <TouchableOpacity onPress={handleFeedbackPress} activeOpacity={0.9}>
                                     <RatingComponent isDisabled defaultRating={params?.rating || 0} />
                                 </TouchableOpacity>
                             </View>
                         </Box>
                     </ScrollContainer>
-                    <If condition={isSuperAdmin}>
-                        <StaggerButtonComponent buttons={allButtons as unknown as any} />
-                    </If>
-                    <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                        <StaggerButtonComponent
-                            buttons={[
-                                {
-                                    color: 'green.600',
-                                    iconType: 'ionicon',
-                                    handleClick: goToExport,
-                                    iconName: 'download-outline',
-                                },
-                            ]}
-                        />
-                    </If>
                 </If>
             </ViewWrapper>
+            <If condition={isSuperAdmin}>
+                <StaggerButtonComponent buttons={allButtons as unknown as any} />
+            </If>
+            <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                <StaggerButtonComponent
+                    buttons={[
+                        {
+                            color: 'green.600',
+                            iconType: 'ionicon',
+                            handleClick: goToExport,
+                            iconName: 'download-outline',
+                        },
+                    ]}
+                />
+            </If>
         </SafeAreaView>
     );
 };

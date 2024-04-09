@@ -376,7 +376,6 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <VStack space={2}>
                                     <FormControl
                                         isRequired
-                                        minHeight={210}
                                         isInvalid={!!errors?.campusCoordinatorComment}
                                     >
                                         <FormControl.Label>For the GSP's attention</FormControl.Label>

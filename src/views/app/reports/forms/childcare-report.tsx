@@ -15,6 +15,7 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
+import { isIOS } from '@rneui/base';
 
 const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IChildCareReportPayload;
@@ -96,9 +97,14 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     };
 
     return (
-        <Formik<IChildCareReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
+        <Formik<IChildCareReportPayload>
+            validateOnChange
+            enableReinitialize
+            onSubmit={onSubmit}
+            initialValues={INITIAL_VALUES}
+        >
             {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
-                <ViewWrapper scroll>
+                <ViewWrapper scroll avoidKeyboard={isIOS}>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
@@ -338,11 +344,11 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                         </HStack>
                         <VStack space={4} mt={4} px={4}>
                             <FormControl>
-                                <HStack justifyContent="space-between" alignItems="center">
+                                <HStack style={{ justifyContent: 'space-between', alignItems: 'center' }} space={12}>
                                     <FormControl.Label>Grand Total</FormControl.Label>
                                     <InputComponent
-                                        w="66%"
                                         isDisabled
+                                        style={{ flex: 1 }}
                                         keyboardType="numeric"
                                         value={addGrandTotal(values)}
                                         onChangeText={handleChange('grandTotal')}

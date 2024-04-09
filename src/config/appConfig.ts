@@ -19,6 +19,26 @@ const THEME_CONFIG = {
     rose: '#F87171',
     lightRose: '#FECDD3',
     transparentGray: '#8484881A',
+    transparent: 'rgba(52, 52, 52, 0)',
+};
+
+export enum SIZE {
+    xs = 32,
+    sm = 44,
+    md = 64,
+    lg = 96,
+    xl = 112,
+    '2xl' = 144,
+}
+
+export const BACKGROUND_THEME = {
+    light: THEME_CONFIG.veryVeryLightGray,
+    dark: THEME_CONFIG.darkGray,
+};
+
+export const TEXT_THEME = {
+    light: THEME_CONFIG.gray,
+    dark: THEME_CONFIG.lightGray,
 };
 
 const extendedTheme = extendTheme({
