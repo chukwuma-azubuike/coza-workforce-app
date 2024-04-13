@@ -137,7 +137,7 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                     <VStackComponent style={{ marginTop: 20 }} space={4}>
                         <View
                             style={{
-                                justifyContent: 'space-between',
+                                justifyContent: 'space-around',
                                 flexDirection: 'row',
                                 alignItems: 'center',
                                 gap: 8,

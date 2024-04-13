@@ -111,7 +111,9 @@ const ClockButton: React.FC<IClockButtonProps> = ({
         }
     };
 
-    const assertClockinStartTime = !!latestServiceData && moment().diff(moment(latestServiceData.clockInStartTime)) > 0;
+    const assertClockinStartTime = !!latestServiceData
+        ? moment().diff(moment(latestServiceData?.clockInStartTime)) > 0
+        : false;
     const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut || latestAttendanceIsLoading;
     const clockedIn = !!latestAttendanceData?.length
         ? (!!clockinData?.clockIn || !!latestAttendanceData[0].clockIn) && isLatestServiceSuccess
@@ -156,62 +158,60 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 `${!!latestServiceData?.CGWCId ? 'Session' : 'Service'} Not Started`,
                 `Clock in for this ${
                     !!latestServiceData?.CGWCId ? 'session' : 'service'
-                } has not yet started, kindly try again by ${moment(latestServiceData?.clockInStartTime).format('LT')}.`
+                } has not yet started, kindly try again ${
+                    !!latestServiceData ? `by ${moment(latestServiceData?.clockInStartTime).format('LT')}` : 'later'
+                }.`
             );
         }
 
-        Utils.checkLocationPermission()
+        Utils.checkLocationPermission(refreshLocation)
             .then(res => {
-                refreshLocation()
-                    .then(() => {
-                        if (res === RESULTS.DENIED || res === RESULTS.BLOCKED || res === RESULTS.UNAVAILABLE) {
-                            Alert.alert(
-                                'Location access needed',
-                                'Please ensure that you have granted this app location access in your device settings.',
-                                [
-                                    { text: 'Cancel', style: 'destructive' },
-                                    { text: 'Go to settings', style: 'default', onPress: openLocationSettings },
-                                ]
-                            );
-                            return;
-                        }
-                        if (!isInRange) {
-                            setModalState({
-                                duration: 6,
-                                render: (
-                                    <ModalAlertComponent
-                                        description={
-                                            'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
-                                        }
-                                        iconName={'warning-outline'}
-                                        iconType={'ionicon'}
-                                        status={'warning'}
-                                    />
-                                ),
-                            });
-                            return;
-                        }
+                if (res === RESULTS.DENIED || res === RESULTS.BLOCKED || res === RESULTS.UNAVAILABLE) {
+                    Alert.alert(
+                        'Location access needed',
+                        'Please ensure that you have granted this app location access in your device settings.',
+                        [
+                            { text: 'Cancel', style: 'destructive' },
+                            { text: 'Go to settings', style: 'default', onPress: openLocationSettings },
+                        ]
+                    );
+                    return;
+                }
+                if (!isInRange && (res === RESULTS.GRANTED || res === RESULTS.LIMITED)) {
+                    setModalState({
+                        duration: 6,
+                        render: (
+                            <ModalAlertComponent
+                                description={
+                                    'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
+                                }
+                                iconName={'warning-outline'}
+                                iconType={'ionicon'}
+                                status={'warning'}
+                            />
+                        ),
+                    });
+                    return;
+                }
 
-                        if (canClockIn) {
-                            return handleClockin();
-                        }
+                if (canClockIn) {
+                    return handleClockin();
+                }
 
-                        if (canClockOut && latestAttendanceData) {
-                            Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
-                                {
-                                    text: 'No',
-                                    style: 'destructive',
-                                },
-                                {
-                                    text: 'Yes',
-                                    style: 'default',
-                                    onPress: handleVerifyBeforeClockout,
-                                },
-                            ]);
-                            return;
-                        }
-                    })
-                    .catch(err => {});
+                if (canClockOut && latestAttendanceData) {
+                    Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
+                        {
+                            text: 'No',
+                            style: 'destructive',
+                        },
+                        {
+                            text: 'Yes',
+                            style: 'default',
+                            onPress: handleVerifyBeforeClockout,
+                        },
+                    ]);
+                    return;
+                }
             })
             .catch(err => {});
     };

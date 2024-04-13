@@ -18,6 +18,7 @@ import { versionActiontypes } from '@store/services/version';
 import Utils from '@utils/index';
 import { useNavigation } from '@react-navigation/native';
 import { userActionTypes } from '@store/services/users';
+import useDevice from '@hooks/device';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
@@ -110,8 +111,10 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
         }
     }, [loginIsError, loginIsSuccess]);
 
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+
     return (
-        <ViewWrapper pt={10}>
+        <ViewWrapper avoidKeyboard scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Create a password</Heading>
@@ -202,22 +205,24 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
                                             <FormControl>
-                                                <HStack space={4} w="95%" justifyContent="space-between">
+                                                <HStack space={4} mt={2} justifyContent="space-between">
                                                     <ButtonComponent
+                                                        size="md"
+                                                        style={{ flex: 1 }}
                                                         onPress={handleBackPress}
-                                                        width="1/2"
                                                         secondary
                                                         mt={4}
                                                     >
                                                         Go back
                                                     </ButtonComponent>
                                                     <ButtonComponent
+                                                        size="md"
+                                                        style={{ flex: 1 }}
                                                         isLoading={registerIsLoading || loginIsLoading}
                                                         isLoadingText={
                                                             loginIsLoading ? 'Logging in...' : 'Signing up...'
                                                         }
                                                         onPress={handleContinuePress}
-                                                        width="1/2"
                                                         mt={4}
                                                     >
                                                         Register

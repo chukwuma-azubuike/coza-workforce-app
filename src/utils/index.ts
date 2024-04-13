@@ -181,29 +181,28 @@ class Utils {
 
     /************ Native Permisisons logic ************/
 
-    static checkLocationPermission = async (successCallBack?: () => void) => {
+    static checkLocationPermission = async (successCallBack?: () => void): Promise<string> => {
         const isIOS = Platform.OS === 'ios';
 
         return check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
             .then(result => {
                 switch (result) {
                     case RESULTS.UNAVAILABLE:
-                        this.requestLocationPermission(successCallBack);
-                        return result;
+                        return this.requestLocationPermission(successCallBack);
                         break;
                     case RESULTS.DENIED:
-                        this.requestLocationPermission(successCallBack);
-                        return result;
+                        return this.requestLocationPermission(successCallBack);
                         break;
                     case RESULTS.LIMITED:
+                        successCallBack && successCallBack();
                         return result;
                         break;
                     case RESULTS.GRANTED:
+                        successCallBack && successCallBack();
                         return result;
                         break;
                     case RESULTS.BLOCKED:
-                        this.requestLocationPermission(successCallBack);
-                        return result;
+                        return this.requestLocationPermission(successCallBack);
                         break;
                 }
             })
@@ -215,15 +214,16 @@ class Utils {
     static requestLocationPermission = async (successCallBack?: () => void) => {
         const isIOS = Platform.OS === 'ios';
 
-        request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
+        return request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
             title: 'Location Access',
             message: 'This App needs access to your location',
             buttonPositive: 'OK',
             buttonNegative: 'DENY',
         }).then(result => {
-            if (result === RESULTS.GRANTED) {
+            if (result === RESULTS.GRANTED || result === RESULTS.LIMITED) {
                 successCallBack && successCallBack();
             }
+            return result;
         });
     };
 

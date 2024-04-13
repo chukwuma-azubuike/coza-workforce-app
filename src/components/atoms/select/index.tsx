@@ -51,7 +51,7 @@ const SelectButton: React.FC<ISelectButtonProps> = React.memo(
                         flex: 0,
                         paddingVertical: 6,
                         paddingRight: 10,
-                        paddingLeft: 6,
+                        paddingLeft: 16,
                     }}
                 >
                     <TextComponent size="lg" style={{ flex: 1, paddingVertical: 10 }}>

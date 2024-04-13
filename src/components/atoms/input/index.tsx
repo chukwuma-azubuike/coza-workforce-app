@@ -25,8 +25,8 @@ const InputContainer: React.FC<IInputContainerProps> = props => {
     return (
         <View
             style={{
-                padding: 10,
-                paddingTop: 10,
+                paddingVertical: 6,
+                paddingHorizontal: 10,
                 borderWidth: 1,
                 borderRadius: 10,
                 display: 'flex',
@@ -76,9 +76,10 @@ const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
                 returnKeyType={isIOS ? 'done' : 'default'}
                 {...(props as any)}
                 style={{
+                    height: 36,
                     fontSize: 17,
                     color: textColor,
-                    height: isIOS ? 36 : 42,
+                    paddingVertical: 0,
                     backgroundColor: backgroundColor,
                     ...(props.style as any),
                 }}

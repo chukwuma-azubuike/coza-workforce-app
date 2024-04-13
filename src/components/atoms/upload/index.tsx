@@ -19,34 +19,33 @@ const UploadButton: React.FC<IUploadButton> = props => {
         <ButtonComponent
             _loading={{ color: 'primary.600' }}
             isLoadingText="Uploading..."
-            color="primary.600"
-            variant="ghost"
             secondary
             w="full"
-            minH={90}
+            style={{ minHeight: 90, paddingVertical: 10 }}
             pb={0}
-            pt={4}
             {...props}
         >
-            <Center p={0}>
-                <Icon
-                    size={40}
-                    type={isError ? 'MaterialIcons' : 'feather'}
-                    name={isSuccess ? 'check-circle' : isError ? 'error-outline' : 'upload'}
-                    color={isSuccess ? THEME_CONFIG.success : isError ? THEME_CONFIG.error : THEME_CONFIG.primary}
-                />
-                {!isSuccess && (
-                    <Text mt={3} color="gray.400">
-                        {props.children}
-                    </Text>
-                )}
-                <Text mt={3}>{isSuccess ? data?.image.filename : ''}</Text>
-                {error && (
-                    <Text color="error.500" mt={3}>
-                        {JSON.stringify(error)}
-                    </Text>
-                )}
-            </Center>
+            {!props?.isLoading && (
+                <Center p={0}>
+                    <Icon
+                        size={40}
+                        type={isError ? 'MaterialIcons' : 'feather'}
+                        name={isSuccess ? 'check-circle' : isError ? 'error-outline' : 'upload'}
+                        color={isSuccess ? THEME_CONFIG.success : isError ? THEME_CONFIG.error : THEME_CONFIG.primary}
+                    />
+                    {!isSuccess && (
+                        <Text mt={3} color="gray.400">
+                            {props.children}
+                        </Text>
+                    )}
+                    <Text mt={3}>{isSuccess ? data?.image.filename : ''}</Text>
+                    {error && (
+                        <Text color="error.500" mt={3}>
+                            {JSON.stringify(error)}
+                        </Text>
+                    )}
+                </Center>
+            )}
         </ButtonComponent>
     );
 };

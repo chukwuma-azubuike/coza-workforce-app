@@ -2,11 +2,12 @@ import { Platform, NativeModules } from 'react-native';
 import { Icon } from '@rneui/base';
 import { useFormikContext } from 'formik';
 import { getCountryCallingCode, CountryCode } from 'libphonenumber-js';
-import { Box, FormControl } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import CountryPicker, { Country } from 'react-native-country-picker-modal';
 import { THEME_CONFIG } from '@config/appConfig';
 import { InputComponent } from '../input';
+import { View } from 'react-native';
 
 const deviceLanguage =
     Platform.OS === 'ios'
@@ -48,9 +49,9 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
     const hasError = touched[name] && !!errors[name];
 
     return (
-        <FormControl isRequired isInvalid={hasError}>
+        <FormControl isRequired isInvalid={hasError} flex={1}>
             <FormControl.Label>{label}</FormControl.Label>
-            <Box w="100%" flexDirection="row" alignItems="center" borderRadius={THEME_CONFIG.borderRadius}>
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 10 }}>
                 <CountryPicker
                     withFlag
                     withAlphaFilter
@@ -60,13 +61,13 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
                     containerButtonStyle={{ width: Platform.OS === 'ios' ? '10%' : undefined }}
                 />
                 <InputComponent
-                    w="89%"
                     isRequired
+                    style={{ flex: 1 }}
                     keyboardType="phone-pad"
                     placeholder="Eg: 07012345678"
                     onChangeText={handlePhoneNumberChange}
                 />
-            </Box>
+            </View>
             <FormControl.ErrorMessage
                 fontSize="2xl"
                 mt={3}

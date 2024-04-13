@@ -27,25 +27,7 @@ import UserListItem from '@components/composite/user-list-item';
 import VStackComponent from '@components/layout/v-stack';
 import { Switch } from 'react-native';
 import RadioButton from '@components/composite/radio-button';
-
-enum TICKET_TEMPLATE {
-    minimal = `We celebrate you,
-
-QC/M&E is issuing you this ticket BECAUSE ...
-
-#GreaterHonour`,
-    verbose = `We celebrate you Sir/Ma/Dept,
-
-We appreciate what you do in the house and we know you are committed to serving God.
-
-We are issuing you this ticket for ...
-
-While we know you may have genuine reasons for this action, it is not in line with the church standards.
-
-Let us be reminded of the COZA culture and stay true to it.
-
-We love & celebrate you!`,
-}
+import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };
@@ -151,6 +133,36 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     };
 
+    const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>();
+
+    const offendingDepartment = React.useMemo(
+        () => campusDepartments?.find(dept => dept._id === departmentId),
+        [...spreadDependencyArray(campusDepartments), departmentId]
+    );
+
+    enum TICKET_TEMPLATE {
+        minimal = `We celebrate you, 
+        
+QC/M&E is issuing you this ticket BECAUSE ... 
+        
+#GreaterHonour`,
+        verbose = `We celebrate you ${
+            isIndividual
+                ? (searchedUser?.gender === 'M' ? 'sir' : 'ma') || ''
+                : offendingDepartment?.departmentName || ''
+        },
+
+We appreciate what you do in the house and we know you are committed to serving God.
+    
+We are issuing you this ticket for ...
+    
+While we know you may have genuine reasons for this action, it is not in line with the church standards.
+    
+Let us be reminded of the COZA culture and stay true to it.
+    
+We love & celebrate you!` as any,
+    }
+
     const [initialValues, setInitialValues] = React.useState<ICreateTicketPayload>({
         departmentId,
         campusId,
@@ -186,8 +198,6 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     });
 
-    const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>();
-
     const handleUserPress = (user: IUser) => {
         setSearchedUser(user);
         setInitialValues(prev => {
@@ -221,7 +231,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     searchFields={['firstName', 'lastName', 'departmentName', 'email']}
                 />
             </If>
-            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 8 }}>
+            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20 }}>
                 <VStackComponent style={{ marginBottom: 20, paddingHorizontal: 12, gap: 20 }}>
                     <Formik<ICreateTicketPayload>
                         validateOnChange
@@ -240,25 +250,21 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             const handleDepartment = (value: IDepartment['_id']) => {
                                 setDepartmentId(value);
                                 setFieldValue('departmentId', value);
-                                if (searchedUser?.department?._id !== value) {
-                                    setSearchedUser(undefined);
-                                }
                             };
 
                             const handleCampus = (value: ICampus['_id']) => {
                                 setCampusId(value);
                                 setFieldValue('campusId', value);
-                                if (searchedUser?.campus?._id !== value) {
-                                    setSearchedUser(undefined);
-                                }
                             };
 
-                            const handleTemplate = (value: string) => () => {
-                                setFieldValue('ticketSummary', value);
+                            const handleUserChange = (value: string) => {
+                                setFieldValue('userId', value);
+                                const foundWorker = workers?.find(worker => worker._id === value);
+                                !!foundWorker && setSearchedUser(foundWorker);
                             };
 
                             return (
-                                <VStackComponent style={{ gap: 2 }}>
+                                <VStackComponent style={{ gap: 10 }}>
                                     <FormControl flexDirection="row" justifyContent="space-between">
                                         <FormControl.Label>
                                             Switch to {isIndividual ? 'Departmental' : 'Individual'} Ticket
@@ -350,7 +356,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 placeholder="Choose Worker"
                                                 selectedValue={values.userId}
                                                 displayKey={['firstName', 'lastName']}
-                                                onValueChange={handleChange('userId') as any}
+                                                onValueChange={handleUserChange as any}
                                             >
                                                 {workers?.map((worker, index) => (
                                                     <SelectItemComponent

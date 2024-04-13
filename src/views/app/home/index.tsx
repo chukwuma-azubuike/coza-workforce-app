@@ -110,11 +110,11 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             !latestAttendanceisUninitialized && latestAttendanceRefetch();
         }
         setRefreshTrigger(true);
-        Utils.checkLocationPermission();
+        Utils.checkLocationPermission(refresh);
     };
 
     React.useEffect(() => {
-        Utils.checkLocationPermission();
+        Utils.checkLocationPermission(refresh);
     }, []);
 
     React.useEffect(() => {

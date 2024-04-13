@@ -2,7 +2,6 @@ import React from 'react';
 import { KeyboardAvoidingView, RefreshControl, ViewProps, ScrollViewProps, useColorScheme } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
-import { useHeaderHeight } from '@react-navigation/elements';
 import { ScrollView } from 'react-native';
 import { View } from 'react-native';
 
@@ -27,7 +26,6 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
     const { scroll, onRefresh, refreshing, noPadding, avoidKeyboard, avoidKeyboardOffset } = props;
     const ActiveView = scroll ? ScrollView : View;
 
-    const height = useHeaderHeight();
     const scheme = useColorScheme() as keyof typeof THEME;
 
     return (

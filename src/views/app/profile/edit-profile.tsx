@@ -66,7 +66,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ErrorBoundary>
-            <ViewWrapper scroll style={{ paddingHorizontal: 12 }}>
+            <ViewWrapper scroll style={{ paddingHorizontal: 12, paddingVertical: 20 }}>
                 <Formik<IEditProfilePayload> onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
                     {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
                         const handleDate = (fieldName: string, value: any) => {

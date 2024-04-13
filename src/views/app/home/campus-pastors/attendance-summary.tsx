@@ -26,7 +26,7 @@ export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.mem
     return (
         <Center>
             {isLoading ? (
-                <Loading h={20} w={20} />
+                <Loading style={{ height: 40, width: 40 }} />
             ) : (
                 <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
                     <HStack alignItems="baseline">

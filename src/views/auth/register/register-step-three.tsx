@@ -12,6 +12,7 @@ import { RegisterFormContext } from '.';
 import { IMGBB_ALBUM_ID } from '@config/uploadConfig';
 import useUpload from '@hooks/upload';
 import UploadButton from '@components/atoms/upload';
+import useDevice from '@hooks/device';
 
 const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
@@ -34,8 +35,10 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
         }
     }, [isSuccess, isError, data]);
 
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+
     return (
-        <ViewWrapper scroll pt={10}>
+        <ViewWrapper scroll avoidKeyboard style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" pt={20} px={4}>
                     <Heading textAlign="left">Register</Heading>
@@ -82,6 +85,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     label="Next birthday"
                                                     onSelectDate={onSelectDate}
                                                     dateFormat="dayofweek day month"
+                                                    value={values?.birthDay}
                                                 />
                                                 <FormControl.ErrorMessage>{errors?.birthDay}</FormControl.ErrorMessage>
                                             </FormControl>
@@ -93,6 +97,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                         type: 'material',
                                                     }}
                                                     isRequired
+                                                    value={values?.socialMedia?.facebook}
                                                     placeholder="Enter your facebook handle"
                                                     onChangeText={handleChange('socialMedia.facebook')}
                                                 />
@@ -108,6 +113,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                         name: 'logo-instagram',
                                                         type: 'ionicon',
                                                     }}
+                                                    value={values?.socialMedia?.instagram}
                                                     placeholder="Enter your instagram handle"
                                                     onChangeText={handleChange('socialMedia.instagram')}
                                                 />
@@ -123,6 +129,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                         name: 'logo-twitter',
                                                         type: 'ionicon',
                                                     }}
+                                                    value={values?.socialMedia?.twitter}
                                                     placeholder="Enter your twitter handle"
                                                     onChangeText={handleChange('socialMedia.twitter')}
                                                 />
@@ -146,21 +153,21 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <HStack space={4} w="95%" justifyContent="space-between">
+                                            <HStack space={4} mt={2} justifyContent="space-between">
                                                 <ButtonComponent
                                                     isDisabled={loading}
                                                     onPress={handleBackPress}
-                                                    width="1/2"
                                                     secondary
-                                                    mt={4}
+                                                    size="md"
+                                                    style={{ flex: 1 }}
                                                 >
                                                     Go back
                                                 </ButtonComponent>
                                                 <ButtonComponent
+                                                    size="md"
                                                     isDisabled={loading}
                                                     onPress={handleContinuePress}
-                                                    width="1/2"
-                                                    mt={4}
+                                                    style={{ flex: 1 }}
                                                 >
                                                     Continue
                                                 </ButtonComponent>

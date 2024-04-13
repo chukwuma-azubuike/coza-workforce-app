@@ -18,6 +18,7 @@ import { TouchableRipple } from 'react-native-paper';
 import useWelcome from './hooks';
 import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
+import useDevice from '@hooks/device';
 
 const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const {
@@ -37,10 +38,15 @@ const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     } = useWelcome();
 
     const isIOS = Platform.OS === 'ios';
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     return (
         <>
-            <Box w="100%" h="full" justifyContent="space-between" pb={4} pt={10}>
+            <ViewWrapper
+                scroll
+                avoidKeyboard
+                style={{ paddingBottom: 8, paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}
+            >
                 <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
                     <Logo />
                     <Heading size="lg">{APP_NAME}</Heading>
@@ -103,7 +109,7 @@ const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
                 <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
                     <SupportLink />
                 </Box>
-            </Box>
+            </ViewWrapper>
             <Modal isOpen={modalVisible} onClose={hideModal} avoidKeyboard size="xl">
                 <Modal.Content minW={200} backgroundColor="gray.200">
                     <Modal.Body bg="gray.800" p={isIOS ? 4 : 0}>
