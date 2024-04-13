@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import moment from 'moment';
-import { Center, FormControl, HStack, Text, VStack } from 'native-base';
+import { FormControl, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Alert, Switch } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -24,6 +24,10 @@ import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser } from '@stor
 import Utils from '@utils/index';
 import compareObjectValueByKey from '@utils/compareObjectValuesByKey';
 import Loading from '@components/atoms/loading';
+import VStackComponent from '@components/layout/v-stack';
+import HStackComponent from '@components/layout/h-stack';
+import CenterComponent from '@components/layout/center';
+import { THEME_CONFIG } from '@config/appConfig';
 
 const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
@@ -192,9 +196,11 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             .catch(() => {});
     };
 
+    const rolesPermitted = React.useMemo(() => rolesPermittedToCreate(), []);
+
     return (
         <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
-            <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} py={8} mx={3} mb={10}>
+            <CardComponent isLoading={isLoading || isFetching} style={{ paddingVertical: 20, marginTop: 20 }}>
                 <Formik<IReAssignUserPayload> validateOnChange onSubmit={submitForm} initialValues={INITIAL_VALUES}>
                     {({ values, handleChange, handleSubmit }) => {
                         const handleCampusIdChange = (value: string) => {
@@ -207,18 +213,21 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             [values]
                         );
 
+                        const handleCrash = (val: string) => {
+                            console.log({ val, rolesPermitted });
+                            handleChange('roleId')(val);
+                        };
+
                         return (
-                            <VStack space={4}>
-                                <Center>
+                            <VStackComponent space={8}>
+                                <CenterComponent>
                                     <AvatarComponent size="2xl" imageUrl={data?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                </Center>
+                                </CenterComponent>
                                 <If condition={canEdit}>
-                                    <HStack my={3} justifyContent="space-between">
+                                    <HStackComponent style={{ marginVertical: 6, justifyContent: 'space-between' }}>
                                         <ButtonComponent
-                                            px={6}
-                                            size="xs"
-                                            width="auto"
-                                            bgColor="info.500"
+                                            style={{ paddingHorizontal: 6, backgroundColor: THEME_CONFIG.info }}
+                                            size="md"
                                             startIcon={
                                                 <Icon
                                                     size={18}
@@ -234,10 +243,8 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {isEditMode ? 'Done' : 'Reassign'}
                                         </ButtonComponent>
                                         <ButtonComponent
-                                            px={6}
-                                            size="xs"
-                                            width="auto"
-                                            bgColor="danger.600"
+                                            style={{ paddingHorizontal: 6, backgroundColor: THEME_CONFIG.rose }}
+                                            size="md"
                                             startIcon={
                                                 <Icon size={18} color="white" name={'delete'} type="material-icon" />
                                             }
@@ -247,10 +254,10 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         >
                                             Delete
                                         </ButtonComponent>
-                                    </HStack>
+                                    </HStackComponent>
                                 </If>
                                 <If condition={canApproveForCGWC}>
-                                    <HStack my={2}>
+                                    <HStackComponent style={{ marginHorizontal: 2 }}>
                                         <FormControl flexDirection="row" justifyContent="space-between">
                                             <FormControl.Label>
                                                 {data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC
@@ -266,7 +273,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 />
                                             )}
                                         </FormControl>
-                                    </HStack>
+                                    </HStackComponent>
                                 </If>
                                 <HStack
                                     space={2}
@@ -424,12 +431,15 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </If>
 
                                     {isEditMode && canEdit ? (
-                                        <FormControl mb={3} h={12} maxW={200}>
+                                        <FormControl mb={3} h={12} maxW={200} flexDirection="row-reverse">
                                             <SelectComponent
+                                                valueKey="_id"
+                                                items={sortedCampuses}
+                                                displayKey="campusName"
+                                                style={{ width: 200 }}
                                                 placeholder="Choose campus"
-                                                defaultValue={data?.campus._id}
                                                 selectedValue={values.campusId}
-                                                onValueChange={handleCampusIdChange}
+                                                onValueChange={handleCampusIdChange as any}
                                                 isDisabled={isInternshipHOD || isCampusPastor}
                                             >
                                                 {sortedCampuses?.map((campus, index) => (
@@ -463,12 +473,15 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </If>
 
                                     {isEditMode && canEdit ? (
-                                        <FormControl mb={3} h={12} maxW={200}>
+                                        <FormControl mb={3} h={12} maxW={200} flex={1} flexDirection="row-reverse">
                                             <SelectComponent
+                                                valueKey="_id"
+                                                style={{ width: 200 }}
+                                                displayKey="departmentName"
                                                 placeholder="Choose department"
-                                                defaultValue={data?.department._id}
+                                                items={campusDepartments || []}
                                                 selectedValue={values.departmentId}
-                                                onValueChange={handleChange('departmentId')}
+                                                onValueChange={handleChange('departmentId') as any}
                                             >
                                                 {campusDepartments?.map((department, index) => (
                                                     <SelectItemComponent
@@ -496,14 +509,17 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <Text alignSelf="flex-start" bold>
                                             Role
                                         </Text>
-                                        <FormControl mb={3} h={12} maxW={200}>
+                                        <FormControl mb={3} h={12} maxW={200} flexDirection="row-reverse">
                                             <SelectComponent
+                                                valueKey="_id"
+                                                displayKey="name"
                                                 placeholder="Choose role"
-                                                defaultValue={data?.roleId}
+                                                style={{ width: 200 }}
+                                                items={rolesPermitted || []}
                                                 selectedValue={values.roleId}
-                                                onValueChange={handleChange('roleId')}
+                                                onValueChange={handleChange('roleId') as any}
                                             >
-                                                {rolesPermittedToCreate()?.map((role, index) => (
+                                                {rolesPermitted?.map((role, index) => (
                                                     <SelectItemComponent
                                                         value={role._id}
                                                         label={role.name}
@@ -558,7 +574,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <Text>{data?.nextOfKinPhoneNo}</Text>
                                     </VStack>
                                 </HStack>
-                            </VStack>
+                            </VStackComponent>
                         );
                     }}
                 </Formik>
@@ -567,4 +583,4 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     );
 };
 
-export default UserDetails;
+export default React.memo(UserDetails);

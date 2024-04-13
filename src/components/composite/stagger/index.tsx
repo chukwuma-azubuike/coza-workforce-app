@@ -3,6 +3,7 @@ import { Box, HStack, IBoxProps, IconButton, Stagger, useDisclose } from 'native
 import { ColorType } from 'native-base/lib/typescript/components/types';
 import React from 'react';
 import { IIconTypes } from '@utils/types';
+import { View } from 'react-native';
 
 export interface IStaggerButtonComponentProps extends IBoxProps {
     buttons: {
@@ -19,7 +20,7 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
     const { isOpen, onToggle } = useDisclose();
 
     return (
-        <Box right={6} bottom={6} position="absolute">
+        <View style={{ right: 18, bottom: 36, position: 'absolute', zIndex: isOpen ? 12 : 0 }}>
             <Box alignItems="center">
                 <Stagger
                     visible={isOpen}
@@ -77,8 +78,8 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
                     icon={<Icon size={38} color="white" type="entypo" name={isOpen ? 'minus' : 'plus'} />}
                 />
             </HStack>
-        </Box>
+        </View>
     );
 };
 
-export default StaggerButtonComponent;
+export default React.memo(StaggerButtonComponent);

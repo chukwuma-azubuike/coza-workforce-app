@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Center, FormControl, Heading, HStack, Stack, VStack, WarningOutlineIcon } from 'native-base';
+import { Box, FormControl, Heading, HStack, VStack, WarningOutlineIcon } from 'native-base';
 import { InputComponent } from '@components/atoms/input';
 import ButtonComponent from '@components/atoms/button';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -12,7 +12,9 @@ import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_2 } from '@utils/schemas';
 import { RegisterFormContext } from '.';
 import PhoneNumberInput from '@components/atoms/phone-input';
-import Utils from '@utils';
+import Utils from '@utils/index';
+import CenterComponent from '@components/layout/center';
+import useDevice from '@hooks/device';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const handleBackPress = () => onStepPress(0);
@@ -21,175 +23,194 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+
     return (
-        <ViewWrapper scroll pt={10}>
-            <Center flex={1}>
+        <ViewWrapper avoidKeyboard scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
+            <CenterComponent>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
-                        <Stack w="100%" space={1}>
-                            <Formik<IRegisterPayload>
-                                onSubmit={onSubmit}
-                                validateOnMount={false}
-                                validationSchema={RegisterSchema_2}
-                                initialValues={formValues as IRegisterPayload}
-                                validate={value => Utils.validatePhoneNumber(value.nextOfKinPhoneNo)}
-                            >
-                                {({
-                                    errors,
-                                    values,
-                                    touched,
-                                    validateForm,
-                                    handleChange,
-                                    setFieldError,
-                                    setFieldTouched,
-                                }) => {
-                                    const handleContinuePress = () => {
-                                        validateForm().then(e => {
-                                            if (Object.keys(e).length === 0) {
-                                                setFormValues(prev => {
-                                                    return { ...prev, ...values };
-                                                });
-                                                onStepPress(2);
-                                            }
-                                            const errorKey = Object.keys(e)[0];
-                                            setFieldTouched(errorKey);
-                                            setFieldError(errorKey, 'This is a required field');
-                                        });
-                                    };
+                        <Formik<IRegisterPayload>
+                            onSubmit={onSubmit}
+                            validateOnMount={false}
+                            validationSchema={RegisterSchema_2}
+                            initialValues={formValues as IRegisterPayload}
+                            validate={value => Utils.validatePhoneNumber(value.nextOfKinPhoneNo)}
+                        >
+                            {({
+                                errors,
+                                values,
+                                touched,
+                                validateForm,
+                                handleChange,
+                                setFieldError,
+                                setFieldTouched,
+                            }) => {
+                                const handleContinuePress = () => {
+                                    validateForm().then(e => {
+                                        if (Object.keys(e).length === 0) {
+                                            setFormValues(prev => {
+                                                return { ...prev, ...values };
+                                            });
+                                            onStepPress(2);
+                                        }
+                                        const errorKey = Object.keys(e)[0];
+                                        setFieldTouched(errorKey);
+                                        setFieldError(errorKey, 'This is a required field');
+                                    });
+                                };
 
-                                    return (
-                                        <>
-                                            <FormControl isRequired isInvalid={!!errors?.gender && touched.gender}>
-                                                <FormControl.Label>Gender</FormControl.Label>
-                                                <SelectComponent
-                                                    placeholder="Enter your gender"
-                                                    onValueChange={handleChange('gender')}
-                                                >
-                                                    <SelectItemComponent label="Male" value="M" />
-                                                    <SelectItemComponent label="Female" value="F" />
-                                                </SelectComponent>
-                                                <FormControl.ErrorMessage
-                                                    fontSize="2xl"
-                                                    mt={3}
-                                                    leftIcon={
-                                                        <Icon
-                                                            size={16}
-                                                            name="warning"
-                                                            type="antdesign"
-                                                            color={THEME_CONFIG.error}
-                                                        />
-                                                    }
-                                                >
-                                                    {errors?.gender}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
+                                return (
+                                    <>
+                                        <FormControl isRequired isInvalid={!!errors?.gender && touched.gender}>
+                                            <FormControl.Label>Gender</FormControl.Label>
+                                            <SelectComponent
+                                                valueKey="_id"
+                                                displayKey="name"
+                                                selectedValue={values?.gender}
+                                                placeholder="Enter your gender"
+                                                items={[
+                                                    { _id: 'M', name: 'Male' },
+                                                    { _id: 'F', name: 'Female' },
+                                                ]}
+                                                onValueChange={handleChange('gender') as any}
+                                            >
+                                                <SelectItemComponent label="Male" value="M" />
+                                                <SelectItemComponent label="Female" value="F" />
+                                            </SelectComponent>
+                                            <FormControl.ErrorMessage
+                                                fontSize="2xl"
+                                                mt={3}
+                                                leftIcon={
+                                                    <Icon
+                                                        size={16}
+                                                        name="warning"
+                                                        type="antdesign"
+                                                        color={THEME_CONFIG.error}
+                                                    />
+                                                }
+                                            >
+                                                {errors?.gender}
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
 
-                                            <FormControl
+                                        <FormControl isRequired isInvalid={!!errors?.occupation && touched.occupation}>
+                                            <FormControl.Label>Occupation</FormControl.Label>
+                                            <InputComponent
                                                 isRequired
-                                                isInvalid={!!errors?.occupation && touched.occupation}
-                                            >
-                                                <FormControl.Label>Occupation</FormControl.Label>
-                                                <InputComponent
-                                                    isRequired
-                                                    leftIcon={{
-                                                        name: 'briefcase-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    placeholder="Enter your occupation"
-                                                    onChangeText={handleChange('occupation')}
-                                                />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl
-                                                isRequired
-                                                isInvalid={!!errors?.placeOfWork && touched.placeOfWork}
-                                            >
-                                                <FormControl.Label>Place of work</FormControl.Label>
-                                                <InputComponent
-                                                    isRequired
-                                                    leftIcon={{
-                                                        name: 'organization',
-                                                        type: 'octicon',
-                                                    }}
-                                                    placeholder="Enter your place of work"
-                                                    onChangeText={handleChange('placeOfWork')}
-                                                />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl
-                                                isRequired
-                                                isInvalid={!!errors?.nextOfKin && touched.nextOfKin}
-                                            >
-                                                <FormControl.Label>Next of Kin</FormControl.Label>
-                                                <InputComponent
-                                                    leftIcon={{
-                                                        name: 'person-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    placeholder="Enter their name"
-                                                    isRequired
-                                                    onChangeText={handleChange('nextOfKin')}
-                                                />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <Field
-                                                name="nextOfKinPhoneNo"
-                                                label="Next of Kin Contact"
-                                                required
-                                                component={PhoneNumberInput}
+                                                leftIcon={{
+                                                    name: 'briefcase-outline',
+                                                    type: 'ionicon',
+                                                }}
+                                                value={values?.occupation}
+                                                placeholder="Enter your occupation"
+                                                onChangeText={handleChange('occupation')}
                                             />
-
-                                            <FormControl
+                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                This field cannot be empty
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl
+                                            isRequired
+                                            isInvalid={!!errors?.placeOfWork && touched.placeOfWork}
+                                        >
+                                            <FormControl.Label>Place of work</FormControl.Label>
+                                            <InputComponent
                                                 isRequired
-                                                isInvalid={!!errors?.maritalStatus && touched.maritalStatus}
+                                                leftIcon={{
+                                                    name: 'organization',
+                                                    type: 'octicon',
+                                                }}
+                                                value={values?.placeOfWork}
+                                                placeholder="Enter your place of work"
+                                                onChangeText={handleChange('placeOfWork')}
+                                            />
+                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                This field cannot be empty
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl isRequired isInvalid={!!errors?.nextOfKin && touched.nextOfKin}>
+                                            <FormControl.Label>Next of Kin</FormControl.Label>
+                                            <InputComponent
+                                                leftIcon={{
+                                                    name: 'person-outline',
+                                                    type: 'ionicon',
+                                                }}
+                                                placeholder="Enter their name"
+                                                isRequired
+                                                value={values?.nextOfKin}
+                                                onChangeText={handleChange('nextOfKin')}
+                                            />
+                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                This field cannot be empty
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <Field
+                                            name="nextOfKinPhoneNo"
+                                            label="Next of Kin Contact"
+                                            required
+                                            value={values?.nextOfKinPhoneNo}
+                                            component={PhoneNumberInput}
+                                        />
+
+                                        <FormControl
+                                            isRequired
+                                            isInvalid={!!errors?.maritalStatus && touched.maritalStatus}
+                                        >
+                                            <FormControl.Label>Marital Status</FormControl.Label>
+                                            <SelectComponent
+                                                selectedValue={values?.maritalStatus}
+                                                onValueChange={handleChange('maritalStatus') as any}
+                                                valueKey="_id"
+                                                displayKey="name"
+                                                placeholder="Enter your marital status"
+                                                items={[
+                                                    { _id: 'Single', name: 'Single' },
+                                                    { _id: 'Married', name: 'Married' },
+                                                    { _id: 'Widowed', name: 'Widowed' },
+                                                    { _id: 'Separated', name: 'Separated' },
+                                                    { _id: 'Divorced', name: 'Divorced' },
+                                                ]}
                                             >
-                                                <FormControl.Label>Marital Status</FormControl.Label>
-                                                <SelectComponent
-                                                    placeholder="Enter your marital status"
-                                                    onValueChange={handleChange('maritalStatus')}
+                                                <SelectItemComponent label="Single" value="Single" />
+                                                <SelectItemComponent label="Married" value="Married" />
+                                                <SelectItemComponent label="Widowed" value="Widowed" />
+                                                <SelectItemComponent label="Separated" value="Separated" />
+                                                <SelectItemComponent label="Divorced" value="Divorced" />
+                                            </SelectComponent>
+                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                This field cannot be empty
+                                            </FormControl.ErrorMessage>
+                                        </FormControl>
+                                        <FormControl>
+                                            <HStack space={4} flex={1} mt={2} justifyContent="space-between">
+                                                <ButtonComponent
+                                                    secondary
+                                                    size="md"
+                                                    style={{ flex: 1 }}
+                                                    onPress={handleBackPress}
                                                 >
-                                                    <SelectItemComponent label="Single" value="single" />
-                                                    <SelectItemComponent label="Married" value="married" />
-                                                    <SelectItemComponent label="Widowed" value="widowed" />
-                                                    <SelectItemComponent label="Separated" value="separated" />
-                                                    <SelectItemComponent label="Divorced" value="divorced" />
-                                                </SelectComponent>
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl>
-                                                <HStack space={4} width="95%" justifyContent="space-between">
-                                                    <ButtonComponent
-                                                        onPress={handleBackPress}
-                                                        width="1/2"
-                                                        secondary
-                                                        mt={4}
-                                                    >
-                                                        Go back
-                                                    </ButtonComponent>
-                                                    <ButtonComponent onPress={handleContinuePress} width="1/2" mt={4}>
-                                                        Continue
-                                                    </ButtonComponent>
-                                                </HStack>
-                                            </FormControl>
-                                        </>
-                                    );
-                                }}
-                            </Formik>
-                        </Stack>
+                                                    Go back
+                                                </ButtonComponent>
+                                                <ButtonComponent
+                                                    size="md"
+                                                    style={{ flex: 1 }}
+                                                    onPress={handleContinuePress}
+                                                >
+                                                    Continue
+                                                </ButtonComponent>
+                                            </HStack>
+                                        </FormControl>
+                                    </>
+                                );
+                            }}
+                        </Formik>
                     </Box>
                 </VStack>
-            </Center>
+            </CenterComponent>
         </ViewWrapper>
     );
 };
 
-export default RegisterStepTwo;
+export default React.memo(RegisterStepTwo);

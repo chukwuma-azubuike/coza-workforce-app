@@ -55,4 +55,4 @@ const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route,
     );
 };
 
-export default CGWCResources;
+export default React.memo(CGWCResources);

@@ -163,4 +163,4 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
     );
 };
 
-export default CreateCGWC;
+export default React.memo(CreateCGWC);

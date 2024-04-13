@@ -50,4 +50,4 @@ const ButtonSelector = (props: IButtonSelectorProps) => {
     );
 };
 
-export default ButtonSelector;
+export default React.memo(ButtonSelector);

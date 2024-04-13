@@ -12,11 +12,13 @@ import { Box, Center, Flex, HStack, Text } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import Loading from '@components/atoms/loading';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { CountUp } from 'use-count-up';
 import { useNavigation } from '@react-navigation/native';
 import useScreenFocus from '@hooks/focus';
 import If from '@components/composite/if-container';
+import TextComponent from '@components/text';
+import HStackComponent from '@components/layout/h-stack';
 
 export const CGWCReportSummary: React.FC<{
     latestService?: IService;
@@ -93,27 +95,36 @@ export const CGWCReportSummary: React.FC<{
     }, [sessions]);
 
     return (
-        <Box flexDirection="column" w={['100%', '46%']}>
-            <HStack px={2} pt={[6, 0]} justifyContent="space-between" alignItems="baseline">
-                <Text textAlign="center" fontSize="lg" bold pt={3} pb={4}>
+        <View>
+            <HStackComponent
+                style={{
+                    paddingTop: 12,
+                    paddingHorizontal: 4,
+                    justifyContent: 'space-between',
+                }}
+            >
+                <TextComponent style={{ textAlign: 'center', paddingTop: 8, paddingBottom: 8 }} size="lg" bold>
                     {title}
-                </Text>
+                </TextComponent>
                 <SelectComponent
-                    w={180}
+                    valueKey="_id"
+                    items={sessions}
+                    displayKey="name"
+                    style={{ width: 200 }}
                     selectedValue={serviceId}
-                    onValueChange={setService}
                     placeholder="Select Service"
+                    onValueChange={setService as any}
                 >
                     {sessions?.map((session, index) => (
                         <SelectItemComponent
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={!sessions?.length}
-                            label={`${session.name} - ${moment(session.serviceTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${moment(session.serviceTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
-            </HStack>
+            </HStackComponent>
             <Center py={6}>
                 {attendanceReportLoading || leadersReportLoading ? (
                     <Loading h={20} w={20} />
@@ -296,6 +307,6 @@ export const CGWCReportSummary: React.FC<{
                     </Flex>
                 )}
             </Center>
-        </Box>
+        </View>
     );
 });

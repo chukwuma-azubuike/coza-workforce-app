@@ -56,7 +56,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper scroll pt={4} refreshing={isLoading} onRefresh={refetch}>
+        <ViewWrapper scroll style={{ paddingTop: 10 }} refreshing={isLoading} onRefresh={refetch}>
             <VStack>
                 <List mx={4} borderWidth={0}>
                     {filteredRoutes?.map((route, idx) => (
@@ -107,4 +107,4 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
     );
 };
 
-export default More;
+export default React.memo(More);

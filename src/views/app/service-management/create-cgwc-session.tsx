@@ -243,4 +243,4 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     );
 };
 
-export default CreateCGWGSession;
+export default React.memo(CreateCGWGSession);

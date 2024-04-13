@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { Animated, Platform } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Box, Text } from 'native-base';
+import useDevice from '@hooks/device';
 
 const ConnectionStatusBar: React.FC = () => {
     const netInfo = useNetInfo();
@@ -34,6 +35,8 @@ const ConnectionStatusBar: React.FC = () => {
 
     const isIOS = Platform.OS === 'ios';
 
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+
     return (
         <Animated.View
             style={{
@@ -45,9 +48,9 @@ const ConnectionStatusBar: React.FC = () => {
         >
             <Box
                 w="full"
-                height={isIOS ? 66 : 6}
-                pb={isIOS ? undefined : 1}
                 justifyContent="flex-end"
+                pb={isIOS ? undefined : 1}
+                height={isAndroidOrBelowIOSTenOrTab ? 6 : 66}
                 bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'}
             >
                 <Text textAlign="center" w="full" fontSize="xs" color="white">{`${
@@ -58,4 +61,4 @@ const ConnectionStatusBar: React.FC = () => {
     );
 };
 
-export default ConnectionStatusBar;
+export default React.memo(ConnectionStatusBar);

@@ -179,4 +179,4 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     );
 };
 
-export default ResetPassword;
+export default React.memo(ResetPassword);

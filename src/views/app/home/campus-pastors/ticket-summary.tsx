@@ -5,7 +5,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 import { TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const CampusTicketSummary: React.FC<{ tickets?: number }> = ({ tickets }) => {
+const CampusTicketSummary: React.FC<{ tickets?: number }> = React.memo(({ tickets }) => {
     const { navigate } = useNavigation<any>();
 
     const handleNavigation = () => {
@@ -32,6 +32,6 @@ const CampusTicketSummary: React.FC<{ tickets?: number }> = ({ tickets }) => {
             </HStack>
         </TouchableOpacity>
     );
-};
+});
 
 export { CampusTicketSummary };

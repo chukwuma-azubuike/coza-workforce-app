@@ -2,6 +2,26 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.1
+
+### Fixed
+
+-   User search functionality ([72620ec6a5a4165c511ce1cc2c588b81ed498941](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/72620ec6a5a4165c511ce1cc2c588b81ed498941) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Fast refresh restored & migrate RN 0.71 based on upgrade helper docs ([a2faa034f330bee795b22f9b524ca0387801d3fa](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/a2faa034f330bee795b22f9b524ca0387801d3fa) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Fix crash on exit image picker launch & fix few type issues ([c00b4b2b1565f1666933ee12e4b5d73ac85e1b95](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/c00b4b2b1565f1666933ee12e4b5d73ac85e1b95) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Show team score CWGC ([24abf116c3af5990d629611e27aae0d202d5ffe5](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/24abf116c3af5990d629611e27aae0d202d5ffe5) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Responsive theme toggle & cosmetics ([d341428d0d5719076885829252d080ae8e536c7a](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/d341428d0d5719076885829252d080ae8e536c7a) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+### Added
+
+-   Added campus options in create user ([4a0d419dd547165d503967ec2bff2a6bb8eb8e50](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/4a0d419dd547165d503967ec2bff2a6bb8eb8e50) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Force location access ([287cad1cfc5186ca0f9476209c29c68bbdd8cad1](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/287cad1cfc5186ca0f9476209c29c68bbdd8cad1) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.0
 
 ### Fixed

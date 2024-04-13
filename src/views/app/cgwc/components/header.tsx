@@ -1,6 +1,5 @@
 import React from 'react';
 import { Animated } from 'react-native';
-import TopNav from '../../home/top-nav';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import { DynamicHeader } from '@components/composite/header';
@@ -11,12 +10,8 @@ interface ICGWCHeaderProps {
     navigation: NativeStackNavigationProp<ParamListBase, string, undefined>;
 }
 
-const CGWCHeader: React.FC<ICGWCHeaderProps> = ({ scrollOffsetY, navigation, children, ...props }) => {
-    return (
-        <DynamicHeader animHeaderValue={scrollOffsetY} {...props}>
-            <TopNav {...navigation} />
-        </DynamicHeader>
-    );
+const CGWCHeader: React.FC<ICGWCHeaderProps> = ({ scrollOffsetY, navigation, ...props }) => {
+    return <DynamicHeader animHeaderValue={scrollOffsetY} {...props} />;
 };
 
 export default CGWCHeader;

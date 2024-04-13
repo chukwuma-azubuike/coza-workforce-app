@@ -20,4 +20,4 @@ const RatingComponent: React.FC<Partial<Rating & TapRatingProps>> = props => {
     );
 };
 
-export default RatingComponent;
+export default React.memo(RatingComponent);

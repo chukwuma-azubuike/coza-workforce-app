@@ -75,4 +75,4 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
     );
 };
 
-export default VerticalTable;
+export default React.memo(VerticalTable);

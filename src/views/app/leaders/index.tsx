@@ -18,4 +18,4 @@ const Leaders: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     );
 };
 
-export default Leaders;
+export default React.memo(Leaders);

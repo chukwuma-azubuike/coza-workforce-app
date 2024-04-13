@@ -117,4 +117,4 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     );
 };
 
-export default Permissions;
+export default React.memo(Permissions);

@@ -8,13 +8,13 @@ import useScreenFocus from '@hooks/focus';
 import useMediaQuery from '@hooks/media-query';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Icon, ScreenHeight, ScreenWidth } from '@rneui/base';
+import { Icon, ScreenWidth } from '@rneui/base';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
 import flattenedObject from '@utils/flattenObject';
 import moment from 'moment';
-import { Center, HStack, Stack } from 'native-base';
+import { HStack, Stack } from 'native-base';
 import React from 'react';
 
 const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
@@ -170,7 +170,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                 <SelectComponent
                     selectedValue={userCategory}
                     onValueChange={handleUserCategory}
-                    w={isMobile ? ScreenWidth : 300}
+                    w={isMobile ? ScreenWidth : ScreenWidth / 3.5}
                     dropdownIcon={
                         <HStack mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
@@ -189,7 +189,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                 <SelectComponent
                     selectedValue={campusId}
                     onValueChange={handleCampusChange}
-                    w={isMobile ? ScreenWidth - 36 : 300}
+                    w={isMobile ? ScreenWidth - 36 : ScreenWidth / 3.5}
                     dropdownIcon={
                         <HStack mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
@@ -210,7 +210,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                     selectedValue={serviceId}
                     placeholder="Choose session"
                     onValueChange={handleService}
-                    w={isMobile ? ScreenWidth - 36 : 300}
+                    w={isMobile ? ScreenWidth - 36 : ScreenWidth / 3.5}
                 >
                     <SelectItemComponent
                         key="all-sessions"
@@ -232,83 +232,81 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
             </ResponsiveGrid>
             <ResponsiveGrid>
                 <GridItem flexBasis="40%">
-                    <Center height={ScreenHeight / 2}>
-                        <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-                            <StatCardComponent
-                                label="Present"
-                                iconName="groups"
-                                iconType="material"
-                                isLoading={isLoadingOrFetching}
-                                value={totalPresent}
-                                bold
-                                width="48%"
-                                iconColor={THEME_CONFIG.primary}
-                                marginActive={false}
-                                cardProps={{
-                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                                }}
-                            />
-                            <StatCardComponent
-                                label="Late"
-                                iconName="groups"
-                                iconType="material"
-                                isLoading={isLoadingOrFetching}
-                                value={totalLate}
-                                bold
-                                width="48%"
-                                iconColor="orange"
-                                marginActive={false}
-                                cardProps={{
-                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                                }}
-                            />
-                        </Stack>
-                        <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-                            <StatCardComponent
-                                label="Early"
-                                iconName="groups"
-                                iconType="material"
-                                isLoading={isLoadingOrFetching}
-                                value={totalEarly}
-                                width="48%"
-                                bold
-                                marginActive={false}
-                                cardProps={{
-                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                                }}
-                            />
-                            <StatCardComponent
-                                label="Absent"
-                                iconName="groups"
-                                iconType="material"
-                                isLoading={isLoadingOrFetching}
-                                value={totalAbsent}
-                                bold
-                                width="48%"
-                                iconColor={THEME_CONFIG.rose}
-                                marginActive={false}
-                                cardProps={{
-                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                                }}
-                            />
-                        </Stack>
-                        <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
-                            <StatCardComponent
-                                label="Number of Tickets"
-                                iconType="material-community"
-                                iconName="ticket-confirmation-outline"
-                                iconColor={THEME_CONFIG.rose}
-                                isLoading={isLoadingOrFetching}
-                                value={totalTickets}
-                                bold
-                                width={['96%', '50%']}
-                                marginActive={false}
-                                cardProps={{
-                                    _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                                }}
-                            />
-                        </Stack>
-                    </Center>
+                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                        <StatCardComponent
+                            label="Present"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalPresent}
+                            bold
+                            width="48%"
+                            iconColor={THEME_CONFIG.primary}
+                            marginActive={false}
+                            cardProps={{
+                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                            }}
+                        />
+                        <StatCardComponent
+                            label="Late"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalLate}
+                            bold
+                            width="48%"
+                            iconColor="orange"
+                            marginActive={false}
+                            cardProps={{
+                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                            }}
+                        />
+                    </Stack>
+                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                        <StatCardComponent
+                            label="Early"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalEarly}
+                            width="48%"
+                            bold
+                            marginActive={false}
+                            cardProps={{
+                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                            }}
+                        />
+                        <StatCardComponent
+                            label="Absent"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalAbsent}
+                            bold
+                            width="48%"
+                            iconColor={THEME_CONFIG.rose}
+                            marginActive={false}
+                            cardProps={{
+                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                            }}
+                        />
+                    </Stack>
+                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                        <StatCardComponent
+                            label="Number of Tickets"
+                            iconType="material-community"
+                            iconName="ticket-confirmation-outline"
+                            iconColor={THEME_CONFIG.rose}
+                            isLoading={isLoadingOrFetching}
+                            value={totalTickets}
+                            bold
+                            width={['96%', '50%']}
+                            marginActive={false}
+                            cardProps={{
+                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
+                            }}
+                        />
+                    </Stack>
                 </GridItem>
                 <GridItem flexBasis="60%">
                     <StackedHistogram
@@ -341,4 +339,4 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
     );
 };
 
-export default CGWCReport;
+export default React.memo(CGWCReport);

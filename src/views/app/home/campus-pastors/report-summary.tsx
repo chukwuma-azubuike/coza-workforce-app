@@ -91,81 +91,86 @@ interface ICampusReportSummaryProps {
     refetchService: () => void;
 }
 
-const CampusReportSummary: React.FC<ICampusReportSummaryProps> = ({ serviceId, campusId, refetchService }) => {
-    const { data, refetch, isLoading, isFetching, isUninitialized } = useGetCampusReportSummaryQuery(
-        { serviceId: serviceId as string, campusId: campusId as string },
-        {
-            skip: !serviceId,
-        }
-    );
+const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
+    ({ serviceId, campusId, refetchService }) => {
+        const { data, refetch, isLoading, isFetching, isUninitialized } = useGetCampusReportSummaryQuery(
+            { serviceId: serviceId as string, campusId: campusId as string },
+            {
+                skip: !serviceId,
+            }
+        );
 
-    const handleRefresh = () => {
-        if (serviceId) {
-            refetch();
-        }
-        refetchService();
-    };
+        const handleRefresh = () => {
+            if (serviceId) {
+                refetch();
+            }
+            refetchService();
+        };
 
-    const { navigate } = useNavigation();
+        const { navigate } = useNavigation();
 
-    const navigateToReports = () => navigate('Reports' as never);
+        const navigateToReports = () => navigate('Reports' as never);
 
-    const reportColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ICampusReportSummary['departmentalReport'][0], key) => (
-                <ReportSummaryListRow {..._} key={key} />
-            ),
-        },
-    ];
+        const reportColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'createdAt',
+                render: (_: ICampusReportSummary['departmentalReport'][0], key) => (
+                    <ReportSummaryListRow {..._} key={key} />
+                ),
+            },
+        ];
 
-    const sortedData = React.useMemo(() => Utils.sortByDate(data ? data.departmentalReport : [], 'createdAt'), [data]);
+        const sortedData = React.useMemo(
+            () => Utils.sortByDate(data ? data.departmentalReport : [], 'createdAt'),
+            [data]
+        );
 
-    const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
+        const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
 
-    const submittedReportCount = React.useMemo(
-        () => data?.departmentalReport.filter(dept => dept?.report?.status !== 'PENDING').length,
-        [data]
-    );
+        const submittedReportCount = React.useMemo(
+            () => data?.departmentalReport.filter(dept => dept?.report?.status !== 'PENDING').length,
+            [data]
+        );
 
-    useScreenFocus({ onFocus: !isUninitialized ? refetch : undefined });
+        useScreenFocus({ onFocus: !isUninitialized ? refetch : undefined });
 
-    return (
-        <>
-            <VStack mt={4} px={4} overflow="scroll">
-                <HStack alignItems="baseline" justifyContent="space-between">
-                    <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
-                        <HStack alignItems="center" space={1}>
-                            <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
-                            <Text color="gray.400" fontSize="md" ml={2}>
-                                Reports submitted
+        return (
+            <>
+                <VStack mt={4} px={4} overflow="scroll">
+                    <HStack alignItems="baseline" justifyContent="space-between">
+                        <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
+                            <HStack alignItems="center" space={1}>
+                                <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
+                                <Text color="gray.400" fontSize="md" ml={2}>
+                                    Reports submitted
+                                </Text>
+                                <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
+                            </HStack>
+                        </TouchableOpacity>
+                        <Flex alignItems="baseline" flexDirection="row">
+                            <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                                {submittedReportCount || 0}
                             </Text>
-                            <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
-                        </HStack>
-                    </TouchableOpacity>
-                    <Flex alignItems="baseline" flexDirection="row">
-                        <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
-                            {submittedReportCount || 0}
-                        </Text>
-                        <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${
-                            sortedData?.length || 0
-                        }`}</Text>
-                    </Flex>
-                </HStack>
-                <Divider />
-            </VStack>
-            <FlatListComponent
-                padding={isAndroid ? 3 : true}
-                emptySize={160}
-                data={groupedData}
-                showHeader={false}
-                columns={reportColumns}
-                onRefresh={handleRefresh}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-            />
-        </>
-    );
-};
+                            <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${
+                                sortedData?.length || 0
+                            }`}</Text>
+                        </Flex>
+                    </HStack>
+                    <Divider />
+                </VStack>
+                <FlatListComponent
+                    padding={isAndroid ? 3 : true}
+                    emptySize={160}
+                    data={groupedData}
+                    showHeader={false}
+                    columns={reportColumns}
+                    onRefresh={handleRefresh}
+                    isLoading={isLoading || isFetching}
+                    refreshing={isLoading || isFetching}
+                />
+            </>
+        );
+    }
+);
 
 export { CampusReportSummary };

@@ -494,4 +494,4 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     );
 };
 
-export default WorkForceSummary;
+export default React.memo(WorkForceSummary);

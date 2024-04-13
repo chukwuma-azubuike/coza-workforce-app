@@ -143,8 +143,12 @@ export interface IUser {
     placeOfWork: string;
     role: IRole;
     roleId: IRole['_id'];
+    departmentId?: string;
+    campusId?: string;
     department: IDepartment;
+    departmentName?: string;
     campus: ICampus;
+    campusName?: string;
     status: IUserStatus;
     socialMedia: {
         facebook: string;
@@ -199,9 +203,10 @@ export interface IAttendance extends ILog {
     createdAt: string;
     updatedAt: string;
     user: IUser;
-    score: number;
+    score?: number;
     service: IService;
     CGWCId?: string;
+    name: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 

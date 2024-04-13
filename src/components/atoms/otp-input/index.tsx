@@ -128,4 +128,4 @@ const OTPInput = ({
     );
 };
 
-export default OTPInput;
+export default React.memo(OTPInput);

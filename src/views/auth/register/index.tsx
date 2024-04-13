@@ -34,4 +34,4 @@ const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation,
     );
 };
 
-export default Register;
+export default React.memo(Register);

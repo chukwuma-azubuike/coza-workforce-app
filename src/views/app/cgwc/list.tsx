@@ -12,7 +12,7 @@ import { ICGWC, IUserStatus } from '@store/types';
 import { useGetCGWCsQuery } from '@store/services/cgwc';
 import assertCGWCActive from '@utils/assertCGWCActive';
 
-const CGWCListRow: React.FC<ICGWC> = cgwc => {
+const CGWCListRow: React.FC<ICGWC> = memo(cgwc => {
     const navigation = useNavigation();
     const handlePress = () => {
         navigation.navigate('CGWC Details', { CGWCId: cgwc._id } as unknown as never);
@@ -44,7 +44,7 @@ const CGWCListRow: React.FC<ICGWC> = cgwc => {
             </HStack>
         </TouchableOpacity>
     );
-};
+});
 
 const CGWCList: React.FC<{ updatedListItem: ICGWC }> = memo(({ updatedListItem }) => {
     const cgwcColumns: IFlatListColumn[] = [

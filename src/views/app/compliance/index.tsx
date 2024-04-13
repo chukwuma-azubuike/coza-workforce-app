@@ -10,4 +10,4 @@ const Compliance: React.FC = () => {
     );
 };
 
-export default Compliance;
+export default React.memo(Compliance);

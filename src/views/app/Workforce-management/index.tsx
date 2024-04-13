@@ -32,4 +32,4 @@ const WorkforceSummary: React.FC = () => {
     return <ViewWrapper>{null}</ViewWrapper>;
 };
 
-export default WorkforceSummary;
+export default React.memo(WorkforceSummary);

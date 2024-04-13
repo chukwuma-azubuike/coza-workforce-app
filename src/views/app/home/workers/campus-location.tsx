@@ -26,4 +26,4 @@ const CampusLocation = () => {
     );
 };
 
-export default CampusLocation;
+export default React.memo(CampusLocation);
