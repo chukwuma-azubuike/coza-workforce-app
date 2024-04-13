@@ -2,7 +2,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, CloseIcon, FormControl, HStack, Text, VStack } from 'native-base';
+import { Box, CloseIcon, FormControl, Text, VStack } from 'native-base';
 import React, { useState } from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -16,6 +16,9 @@ import { useGetRolesQuery } from '@store/services/role';
 import { IAssignGroupHead } from '@store/types';
 import { AssignGroupHeadSchema } from '@utils/schemas';
 import { TouchableOpacity } from 'react-native';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
+import Utils from '@utils/index';
+import HStackComponent from '@components/layout/h-stack';
 
 interface IGroupHead {
     campus: string;
@@ -44,10 +47,23 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
         { departmentId: findCampusDept.department },
         { refetchOnMountOrArgChange: true }
     );
+    const sortedUsers = React.useMemo(
+        () => Utils.sortStringAscending(users, 'firstName'),
+        [...spreadDependencyArray(users)]
+    );
+
     const { data: roles } = useGetRolesQuery();
     const { data: campus } = useGetCampusesQuery();
+    const sortedCampuses = React.useMemo(
+        () => Utils.sortStringAscending(campus, 'campusName'),
+        [...spreadDependencyArray(campus)]
+    );
     const { data: alldepartments } = useGetDepartmentsByCampusIdQuery(addCampusDept.campus);
     const { data: finddepartments } = useGetDepartmentsByCampusIdQuery(findCampusDept.campus);
+    const sortedDepartments = React.useMemo(
+        () => Utils.sortStringAscending(finddepartments, 'departmentName'),
+        [...spreadDependencyArray(finddepartments)]
+    );
 
     const handleAddCampusDept = () => {
         const items = campusDept.find(
@@ -115,13 +131,16 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
         role: '',
     } as IAssignGroupHead;
 
-    const isGroupHead = roles?.find(item => item._id === findCampusDept.role)?.name === 'Group Head';
+    const isGroupHead = React.useMemo(
+        () => roles?.find(item => item._id === findCampusDept.role)?.name === 'Group Head',
+        [...spreadDependencyArray(roles), findCampusDept]
+    );
 
     const AddNewDept = () => {
         setIsOpen(!isOpen);
     };
     return (
-        <ViewWrapper scroll noPadding>
+        <ViewWrapper scroll noPadding style={{ paddingTop: 10 }}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
                 <Box alignItems="center" w="100%">
                     <Formik<IAssignGroupHead>
@@ -141,11 +160,14 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     <FormControl isRequired isInvalid={!!errors?.campus && touched.campus}>
                                         <FormControl.Label>Campus</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="_id"
+                                            items={sortedCampuses}
+                                            displayKey="campusName"
                                             selectedValue={values.campus}
                                             placeholder="Select Campus"
-                                            onValueChange={value => handleCampusDept('campus', value)}
+                                            onValueChange={value => handleCampusDept('campus', value as string) as any}
                                         >
-                                            {campus?.map((item, key) => (
+                                            {sortedCampuses?.map((item, key) => (
                                                 <SelectItemComponent
                                                     key={key}
                                                     value={item._id}
@@ -171,12 +193,15 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     <FormControl isRequired isInvalid={!!errors?.department && touched.department}>
                                         <FormControl.Label>Department</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="_id"
+                                            items={sortedDepartments}
+                                            displayKey="departmentName"
                                             selectedValue={values.department}
                                             placeholder="Select Department"
-                                            onValueChange={value => handleCampusDept('department', value)}
                                             isDisabled={!findCampusDept.campus}
+                                            onValueChange={value => handleCampusDept('department', value as string)}
                                         >
-                                            {finddepartments?.map((item, key) => (
+                                            {sortedDepartments?.map((item, key) => (
                                                 <SelectItemComponent
                                                     key={key}
                                                     value={item._id}
@@ -202,12 +227,15 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     <FormControl isRequired isInvalid={!!errors?.worker && touched.worker}>
                                         <FormControl.Label>Worker</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="_id"
+                                            items={sortedUsers}
                                             selectedValue={values.worker}
                                             placeholder="Select a Worker"
-                                            onValueChange={handleChange('worker')}
+                                            displayKey={['firstName', 'lastName']}
                                             isDisabled={!findCampusDept.department}
+                                            onValueChange={handleChange('worker') as any}
                                         >
-                                            {users?.map((item, key) => (
+                                            {sortedUsers?.map((item, key) => (
                                                 <SelectItemComponent
                                                     key={key}
                                                     value={item._id}
@@ -233,9 +261,12 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     <FormControl isRequired isInvalid={!!errors?.role && touched.role}>
                                         <FormControl.Label>Role</FormControl.Label>
                                         <SelectComponent
-                                            selectedValue={values.role}
+                                            valueKey="_id"
+                                            displayKey="name"
+                                            items={roles || []}
                                             placeholder="Select Role"
-                                            onValueChange={value => handleCampusDept('role', value)}
+                                            selectedValue={values.role}
+                                            onValueChange={value => handleCampusDept('role', value as string)}
                                             isDisabled={!findCampusDept.campus && !findCampusDept.department}
                                         >
                                             {roles?.map((item, key) => (
@@ -285,7 +316,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     </VStack>
                                     {isGroupHead && (
                                         <Box>
-                                            <ButtonComponent variant="outline" size="sm" onPress={AddNewDept}>
+                                            <ButtonComponent secondary size="md" onPress={AddNewDept}>
                                                 {isOpen ? 'Done' : '+ Add a Campus Department'}
                                             </ButtonComponent>
                                         </Box>
@@ -296,11 +327,14 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             <FormControl>
                                                 <FormControl.Label>Campus</FormControl.Label>
                                                 <SelectComponent
-                                                    selectedValue={addCampusDept.campus}
+                                                    valueKey="_id"
                                                     placeholder="Campus"
+                                                    items={sortedCampuses}
+                                                    displayKey={'campusName'}
+                                                    selectedValue={addCampusDept.campus}
                                                     onValueChange={(value: any) => handleInputChange('campus', value)}
                                                 >
-                                                    {campus?.map((item, key) => (
+                                                    {sortedCampuses?.map((item, key) => (
                                                         <SelectItemComponent
                                                             key={key}
                                                             value={item._id}
@@ -312,6 +346,9 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             <FormControl>
                                                 <FormControl.Label>Department</FormControl.Label>
                                                 <SelectComponent
+                                                    valueKey="_id"
+                                                    items={sortedDepartments}
+                                                    displayKey="departmentName"
                                                     selectedValue={addCampusDept.department}
                                                     placeholder="Department"
                                                     onValueChange={(value: any) =>
@@ -319,7 +356,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                     }
                                                     isDisabled={!addCampusDept.campus}
                                                 >
-                                                    {alldepartments?.map((item, key) => (
+                                                    {sortedDepartments?.map((item, key) => (
                                                         <SelectItemComponent
                                                             key={key}
                                                             value={item._id}
@@ -329,14 +366,23 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 </SelectComponent>
                                             </FormControl>
 
-                                            <HStack flexDirection={'row'} space={4} width="full">
-                                                <ButtonComponent secondary size="sm" width="48%" onPress={AddNewDept}>
+                                            <HStackComponent space={4}>
+                                                <ButtonComponent
+                                                    secondary
+                                                    size="md"
+                                                    onPress={AddNewDept}
+                                                    style={{ width: '100%', flex: 1 }}
+                                                >
                                                     Cancel
                                                 </ButtonComponent>
-                                                <ButtonComponent size="sm" width="48%" onPress={handleAddCampusDept}>
+                                                <ButtonComponent
+                                                    size="md"
+                                                    onPress={handleAddCampusDept}
+                                                    style={{ width: '100%', flex: 1 }}
+                                                >
                                                     Add
                                                 </ButtonComponent>
-                                            </HStack>
+                                            </HStackComponent>
                                         </VStack>
                                     )}
                                     <FormControl>
@@ -358,4 +404,4 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
     );
 };
 
-export default AssignRole;
+export default React.memo(AssignRole);

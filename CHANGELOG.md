@@ -12,6 +12,8 @@ This file contains all changelogs for latest releases, from 1.5.8 onward. Follow
 
 -   Show team score CWGC ([24abf116c3af5990d629611e27aae0d202d5ffe5](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/24abf116c3af5990d629611e27aae0d202d5ffe5) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
+-   Responsive theme toggle & cosmetics ([d341428d0d5719076885829252d080ae8e536c7a](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/d341428d0d5719076885829252d080ae8e536c7a) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ### Added
 
 -   Added campus options in create user ([4a0d419dd547165d503967ec2bff2a6bb8eb8e50](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/4a0d419dd547165d503967ec2bff2a6bb8eb8e50) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))

@@ -2,10 +2,11 @@ import React from 'react';
 import { VStack, Box, Divider, Text, HStack, IBoxProps, Stack, Heading, Center } from 'native-base';
 import { IIconTypes } from '@utils/types';
 import { Icon } from '@rneui/themed';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
 import { FlatListSkeleton, ProfileSkeleton } from '../../layout/skeleton';
+import useAppColorMode from '@hooks/theme/colorMode';
 
 interface ICardComponentProps extends IBoxProps {
     children: React.ReactNode;
@@ -18,18 +19,26 @@ interface ICardComponentProps extends IBoxProps {
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
     const { isLoading } = props;
+    const { backgroundColor } = useAppColorMode();
 
     return (
-        <Box
-            _dark={{ backgroundColor: 'gray.900' }}
-            _light={{ backgroundColor: 'white', borderColor: 'gray.400' }}
-            {...props}
+        <View
             py={2}
-            flex={[0, 1]}
-            borderRadius={3}
-            borderWidth={0.2}
-            minWidth={[160, 200]}
-            style={style.shadowProp}
+            // flex={[0, 1]}
+            {...props}
+            // minWidth={[160, 200]}
+            style={[
+                {
+                    flex: 1,
+                    minWidth: 160,
+                    borderRadius: 6,
+                    borderWidth: 0.2,
+                    backgroundColor: backgroundColor,
+                    borderColor: THEME_CONFIG.lightGray,
+                },
+                style.shadowProp,
+                props.style,
+            ]}
         >
             {isLoading ? (
                 <ProfileSkeleton count={9} />
@@ -48,11 +57,11 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
                     )}
                 </VStack>
             )}
-        </Box>
+        </View>
     );
 };
 
-export default CardComponent;
+export default React.memo(CardComponent);
 interface IStatCardComponentProps {
     value?: number | string;
     flex?: number;
@@ -166,7 +175,7 @@ interface SummaryCardProps {
     value?: string | number;
 }
 
-export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = props => {
+export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = React.memo(props => {
     const { summaryList } = props;
 
     return (
@@ -194,7 +203,7 @@ export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = pr
             ))}
         </Stack>
     );
-};
+});
 
 interface SummaryListCardFlexProps extends Omit<SummaryCardProps, 'color'> {
     _id: string;
@@ -204,7 +213,7 @@ interface SummaryListCardFlexProps extends Omit<SummaryCardProps, 'color'> {
 export const SummaryListCardFlex: React.FC<{
     summaryList?: SummaryListCardFlexProps[];
     onPress: (args?: any) => void;
-}> = props => {
+}> = React.memo(props => {
     const { summaryList, onPress } = props;
 
     return (
@@ -259,7 +268,7 @@ export const SummaryListCardFlex: React.FC<{
             </Stack>
         </Center>
     );
-};
+});
 
 const style = StyleSheet.create({
     shadowProp: {

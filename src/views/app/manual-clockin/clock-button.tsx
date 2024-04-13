@@ -8,7 +8,6 @@ import useModal from '@hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '@components/composite/modal-alert';
 import {
-    ICampusCoordinates,
     useClockInMutation,
     useClockOutMutation,
     useGetAttendanceQuery,
@@ -20,19 +19,17 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import { IThirdPartyUserDetails } from '.';
 import useGeoLocation from '@hooks/geo-location';
 
-interface ThirdPartyClockButton extends IThirdPartyUserDetails {
+interface IThirdPartyClockButton extends IThirdPartyUserDetails {
     isInRangeProp: boolean;
     deviceCoordinates: GeoCoordinates;
-    campusCoordinates: ICampusCoordinates;
 }
 
-const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
+const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
     userId,
     roleId,
     campusId,
     departmentId,
     deviceCoordinates,
-    campusCoordinates,
     isInRangeProp: isInRange,
 }) => {
     const {
@@ -46,7 +43,6 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
 
     const { verifyRangeBeforeAction } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
-        campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
     const { data: latestAttendanceData } = useGetAttendanceQuery(
@@ -281,4 +277,4 @@ const ThirdPartyClockButton: React.FC<ThirdPartyClockButton> = ({
     );
 };
 
-export default ThirdPartyClockButton;
+export default React.memo(ThirdPartyClockButton);

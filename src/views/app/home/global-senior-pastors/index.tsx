@@ -39,4 +39,4 @@ const GSPView: React.FC<GSPViewProps> = ({ services, servicesIsSuccess }) => {
     );
 };
 
-export default GSPView;
+export default React.memo(GSPView);

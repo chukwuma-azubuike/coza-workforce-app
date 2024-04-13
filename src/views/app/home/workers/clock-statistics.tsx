@@ -15,7 +15,7 @@ interface IStatProps {
     iconType: IIconTypes;
 }
 
-const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
+const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps) => {
     return (
         <VStack alignItems="center" space={0} minW="1/3">
             <Icon
@@ -44,7 +44,7 @@ const Stat = ({ time, label, icon, iconType, difference }: IStatProps) => {
             </Text>
         </VStack>
     );
-};
+});
 
 const ClockStatistics = () => {
     const {
@@ -80,4 +80,4 @@ const ClockStatistics = () => {
     );
 };
 
-export default ClockStatistics;
+export default React.memo(ClockStatistics);

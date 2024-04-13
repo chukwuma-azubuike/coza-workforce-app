@@ -58,335 +58,344 @@ interface LineChartProps {
     horizontal?: boolean;
 }
 
-export const BarChart: FC<BarChartProps> = ({
-    data,
-    xAxisLabel = '',
-    yAxisLabel = '',
-    entityKey,
-    valueKey,
-    title,
-    horizontal,
-    isLoading,
-    barColor = THEME_CONFIG.primary,
-}) => {
-    const tickFormat = React.useMemo(() => data?.flatMap(item => item[entityKey]), [data, entityKey]);
-    const tickValues = React.useMemo(() => data?.flatMap(item => item[valueKey]), [data, valueKey]);
-    const { isDarkMode } = useAppColorMode();
-    const { isMobile } = useMediaQuery();
+export const BarChart: FC<BarChartProps> = React.memo(
+    ({
+        data,
+        xAxisLabel = '',
+        yAxisLabel = '',
+        entityKey,
+        valueKey,
+        title,
+        horizontal,
+        isLoading,
+        barColor = THEME_CONFIG.primary,
+    }) => {
+        const tickFormat = React.useMemo(() => data?.flatMap(item => item[entityKey]), [data, entityKey]);
+        const tickValues = React.useMemo(() => data?.flatMap(item => item[valueKey]), [data, valueKey]);
+        const { isDarkMode } = useAppColorMode();
+        const { isMobile } = useMediaQuery();
 
-    return (
-        <View style={[styles.container, isMobile && { width: '100%' }]}>
-            <Text
-                style={{
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    textAlign: 'center',
-                    color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                }}
-            >
-                {title}
-            </Text>
-            {isLoading ? (
-                <Loading />
-            ) : (
-                <ScrollView horizontal={true}>
-                    <VictoryChart
-                        height={ScreenHeight / 1.2}
-                        horizontal={horizontal}
-                        containerComponent={<VictoryVoronoiContainer />}
-                        width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2.2}
-                    >
-                        <VictoryBar
-                            data={data}
-                            x={entityKey}
-                            y={valueKey}
-                            barWidth={26}
-                            labels={({ datum }) => datum[valueKey]}
-                            style={{ data: { fill: barColor }, labels: { fill: 'white', angle: -90 } }}
-                            labelComponent={
-                                <VictoryTooltip
-                                    cornerRadius={6}
-                                    pointerLength={10}
-                                    dx={-20}
-                                    flyoutStyle={{
-                                        stroke: 'grey',
-                                        fill: 'rgba(200, 200, 200, 0.8)',
-                                        padding: 12,
-                                        borderRadius: 4,
-                                    }}
-                                    style={{ fontSize: 22 }}
-                                    text={({ datum }) => `${datum[valueKey]} Tickets`}
-                                />
-                            }
-                        />
-                        <VictoryAxis
-                            label={xAxisLabel}
-                            style={{
-                                axisLabel: {
-                                    fontSize: 16,
-                                },
-                                tickLabels: {
-                                    fontSize: 14,
-                                    angle: -60,
-                                    textAnchor: 'end',
-                                    padding: 6,
-                                    fill: isDarkMode ? 'white' : 'black',
-                                },
-                                axis: { height: 700 },
-                            }}
-                            tickValues={tickValues}
-                            tickFormat={tickFormat}
-                        />
-                        <VictoryAxis
-                            dependentAxis
-                            label={yAxisLabel}
-                            style={{
-                                axisLabel: {
-                                    fontSize: 16,
-                                },
-                                tickLabels: {
-                                    padding: 20,
-                                    fontSize: 16,
-                                    fill: isDarkMode ? 'white' : 'black',
-                                    textAnchor: 'end', // Anchor labels at the end
-                                },
-                                axis: {
-                                    stroke: 'none',
-                                },
-                            }}
-                        />
-                    </VictoryChart>
-                </ScrollView>
-            )}
-        </View>
-    );
-};
+        return (
+            <View style={[styles.container, isMobile && { width: '100%' }]}>
+                <Text
+                    style={{
+                        fontWeight: 'bold',
+                        fontSize: 20,
+                        textAlign: 'center',
+                        color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
+                    }}
+                >
+                    {title}
+                </Text>
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    <ScrollView horizontal={true}>
+                        <VictoryChart
+                            height={ScreenHeight / 1.2}
+                            horizontal={horizontal}
+                            containerComponent={<VictoryVoronoiContainer />}
+                            width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2.2}
+                        >
+                            <VictoryBar
+                                data={data}
+                                x={entityKey}
+                                y={valueKey}
+                                barWidth={26}
+                                labels={({ datum }) => datum[valueKey]}
+                                style={{ data: { fill: barColor }, labels: { fill: 'white', angle: -90 } }}
+                                labelComponent={
+                                    <VictoryTooltip
+                                        cornerRadius={6}
+                                        pointerLength={10}
+                                        dx={-20}
+                                        flyoutStyle={{
+                                            stroke: 'grey',
+                                            fill: 'rgba(200, 200, 200, 0.8)',
+                                            padding: 12,
+                                            borderRadius: 4,
+                                        }}
+                                        style={{ fontSize: 22 }}
+                                        text={({ datum }) => `${datum[valueKey]} Tickets`}
+                                    />
+                                }
+                            />
+                            <VictoryAxis
+                                label={xAxisLabel}
+                                style={{
+                                    axisLabel: {
+                                        fontSize: 16,
+                                    },
+                                    tickLabels: {
+                                        fontSize: 14,
+                                        angle: -60,
+                                        textAnchor: 'end',
+                                        padding: 6,
+                                        fill: isDarkMode ? 'white' : 'black',
+                                    },
+                                    axis: { height: 700 },
+                                }}
+                                tickValues={tickValues}
+                                tickFormat={tickFormat}
+                            />
+                            <VictoryAxis
+                                dependentAxis
+                                label={yAxisLabel}
+                                style={{
+                                    axisLabel: {
+                                        fontSize: 16,
+                                    },
+                                    tickLabels: {
+                                        padding: 20,
+                                        fontSize: 16,
+                                        fill: isDarkMode ? 'white' : 'black',
+                                        textAnchor: 'end', // Anchor labels at the end
+                                    },
+                                    axis: {
+                                        stroke: 'none',
+                                    },
+                                }}
+                            />
+                        </VictoryChart>
+                    </ScrollView>
+                )}
+            </View>
+        );
+    }
+);
 
-export const LineChart: FC<LineChartProps> = ({
-    data,
-    xAxisLabel = '',
-    yAxisLabel = '',
-    entityKey,
-    valueKey,
-    title,
-    horizontal,
-    isLoading,
-    barColor = THEME_CONFIG.primary,
-}) => {
-    const tickFormat = React.useMemo(() => data?.flatMap(item => item[entityKey]), [data, entityKey]);
-    const tickValues = React.useMemo(() => data?.flatMap(item => item[valueKey]), [data, valueKey]);
-    const { isDarkMode } = useAppColorMode();
-    const { isMobile } = useMediaQuery();
+export const LineChart: FC<LineChartProps> = React.memo(
+    ({
+        data,
+        xAxisLabel = '',
+        yAxisLabel = '',
+        entityKey,
+        valueKey,
+        title,
+        horizontal,
+        isLoading,
+        barColor = THEME_CONFIG.primary,
+    }) => {
+        const tickFormat = React.useMemo(() => data?.flatMap(item => item[entityKey]), [data, entityKey]);
+        const tickValues = React.useMemo(() => data?.flatMap(item => item[valueKey]), [data, valueKey]);
+        const { isDarkMode } = useAppColorMode();
+        const { isMobile } = useMediaQuery();
 
-    return (
-        <View style={[styles.container, { padding: 2 }, isMobile && { width: '100%' }]}>
-            <Text
-                style={{
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    textAlign: 'center',
-                    color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                }}
-            >
-                {title}
-            </Text>
-            {isLoading ? (
-                <Loading />
-            ) : (
-                <ScrollView horizontal={true}>
-                    <VictoryLine
-                        height={ScreenHeight / 3}
-                        horizontal={horizontal}
-                        containerComponent={<VictoryVoronoiContainer />}
-                        width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2.2}
-                    >
-                        <VictoryBar
-                            data={data}
-                            x={entityKey}
-                            y={valueKey}
-                            barWidth={26}
-                            labels={({ datum }) => datum[valueKey]}
-                            style={{ data: { fill: barColor }, labels: { fill: 'white', angle: -90 } }}
-                            labelComponent={
-                                <VictoryTooltip
-                                    cornerRadius={6}
-                                    pointerLength={10}
-                                    dx={-20}
-                                    flyoutStyle={{
-                                        stroke: 'grey',
-                                        fill: 'rgba(200, 200, 200, 0.8)',
-                                        padding: 12,
-                                        borderRadius: 4,
-                                    }}
-                                    style={{ fontSize: 22 }}
-                                    text={({ datum }) => `${datum[valueKey]} Tickets`}
-                                />
-                            }
-                        />
-                        <VictoryAxis
-                            label={xAxisLabel}
-                            style={{
-                                axisLabel: {
-                                    fontSize: 16,
-                                },
-                                tickLabels: {
-                                    fontSize: 14,
-                                    angle: -60,
-                                    textAnchor: 'end',
-                                    padding: 6,
-                                    fill: isDarkMode ? 'white' : 'black',
-                                },
-                                axis: { height: 700 },
-                            }}
-                            tickValues={tickValues}
-                            tickFormat={tickFormat}
-                        />
-                        <VictoryAxis
-                            dependentAxis
-                            label={yAxisLabel}
-                            style={{
-                                axisLabel: {
-                                    fontSize: 16,
-                                },
-                                tickLabels: {
-                                    padding: 20,
-                                    fontSize: 16,
-                                    fill: isDarkMode ? 'white' : 'black',
-                                    textAnchor: 'end', // Anchor labels at the end
-                                },
-                                axis: {
-                                    stroke: 'none',
-                                },
-                            }}
-                        />
-                    </VictoryLine>
-                </ScrollView>
-            )}
-        </View>
-    );
-};
+        return (
+            <View style={[styles.container, { padding: 2 }, isMobile && { width: '100%' }]}>
+                <Text
+                    style={{
+                        fontWeight: 'bold',
+                        fontSize: 20,
+                        textAlign: 'center',
+                        color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
+                    }}
+                >
+                    {title}
+                </Text>
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    <ScrollView horizontal={true}>
+                        <VictoryLine
+                            height={ScreenHeight / 3}
+                            horizontal={horizontal}
+                            containerComponent={<VictoryVoronoiContainer />}
+                            width={isMobile ? ScreenWidth - 20 : ScreenWidth / 2.2}
+                        >
+                            <VictoryBar
+                                data={data}
+                                x={entityKey}
+                                y={valueKey}
+                                barWidth={26}
+                                labels={({ datum }) => datum[valueKey]}
+                                style={{ data: { fill: barColor }, labels: { fill: 'white', angle: -90 } }}
+                                labelComponent={
+                                    <VictoryTooltip
+                                        cornerRadius={6}
+                                        pointerLength={10}
+                                        dx={-20}
+                                        flyoutStyle={{
+                                            stroke: 'grey',
+                                            fill: 'rgba(200, 200, 200, 0.8)',
+                                            padding: 12,
+                                            borderRadius: 4,
+                                        }}
+                                        style={{ fontSize: 22 }}
+                                        text={({ datum }) => `${datum[valueKey]} Tickets`}
+                                    />
+                                }
+                            />
+                            <VictoryAxis
+                                label={xAxisLabel}
+                                style={{
+                                    axisLabel: {
+                                        fontSize: 16,
+                                    },
+                                    tickLabels: {
+                                        fontSize: 14,
+                                        angle: -60,
+                                        textAnchor: 'end',
+                                        padding: 6,
+                                        fill: isDarkMode ? 'white' : 'black',
+                                    },
+                                    axis: { height: 700 },
+                                }}
+                                tickValues={tickValues}
+                                tickFormat={tickFormat}
+                            />
+                            <VictoryAxis
+                                dependentAxis
+                                label={yAxisLabel}
+                                style={{
+                                    axisLabel: {
+                                        fontSize: 16,
+                                    },
+                                    tickLabels: {
+                                        padding: 20,
+                                        fontSize: 16,
+                                        fill: isDarkMode ? 'white' : 'black',
+                                        textAnchor: 'end', // Anchor labels at the end
+                                    },
+                                    axis: {
+                                        stroke: 'none',
+                                    },
+                                }}
+                            />
+                        </VictoryLine>
+                    </ScrollView>
+                )}
+            </View>
+        );
+    }
+);
 
-export const StackedHistogram: FC<StackedHistogramProps> = ({
-    data,
-    xAxisLabel = '',
-    yAxisLabel = '',
-    entityKey,
-    valueKey,
-    stackColors,
-    title,
-    isLoading,
-    height = ScreenHeight / 1.8,
-}) => {
-    const tickFormat = React.useMemo(() => data?.flatMap(item => item.map(key => key[entityKey])), [data, entityKey]);
-    const tickValues = React.useMemo(() => data?.flatMap(item => item.map(key => key[valueKey])), [data, valueKey]);
-    const { isDarkMode } = useAppColorMode();
-    const { isMobile } = useMediaQuery();
+export const StackedHistogram: FC<StackedHistogramProps> = React.memo(
+    ({
+        data,
+        xAxisLabel = '',
+        yAxisLabel = '',
+        entityKey,
+        valueKey,
+        stackColors,
+        title,
+        isLoading,
+        height = ScreenHeight / 1.8,
+    }) => {
+        const tickFormat = React.useMemo(
+            () => data?.flatMap(item => item.map(key => key[entityKey])),
+            [data, entityKey]
+        );
+        const tickValues = React.useMemo(() => data?.flatMap(item => item.map(key => key[valueKey])), [data, valueKey]);
+        const { isDarkMode } = useAppColorMode();
+        const { isMobile } = useMediaQuery();
 
-    return (
-        <ViewWrapper style={[styles.container, { height }]}>
-            <Text
-                style={{
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    textAlign: 'center',
-                    color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                }}
-            >
-                {title}
-            </Text>
-            {isLoading ? (
-                <Loading />
-            ) : (
-                <ScrollView horizontal={true}>
-                    <VictoryChart
-                        height={height - 46}
-                        width={isMobile ? ScreenWidth * 1.9 : ScreenWidth - 200}
-                        containerComponent={<VictoryVoronoiContainer />}
-                    >
-                        <VictoryStack>
-                            {data?.map((series, index) => (
-                                <VictoryBar
-                                    key={index}
-                                    data={series}
-                                    x={entityKey}
-                                    y={valueKey}
-                                    width={40}
-                                    labels={({ datum }) => datum[valueKey]}
-                                    barWidth={26}
-                                    style={{
-                                        labels: { fill: 'white', angle: -90 },
-                                        data: { fill: stackColors[index] },
-                                    }}
-                                    labelComponent={
-                                        <VictoryTooltip
-                                            cornerRadius={6}
-                                            pointerLength={10}
-                                            flyoutStyle={{
-                                                stroke: 'grey',
-                                                fill: 'rgba(200, 200, 200, 0.8)',
-                                                padding: 12,
-                                                borderRadius: 4,
-                                            }}
-                                            data={series}
-                                            style={{ fontSize: 22 }}
-                                            text={({ datum }) => `${datum[valueKey]} (${datum['status']})`}
-                                        />
-                                    }
-                                />
-                            ))}
-                        </VictoryStack>
-                        <VictoryAxis
-                            label={xAxisLabel}
-                            style={{
-                                axisLabel: {
-                                    fontSize: 16,
-                                },
-                                tickLabels: {
-                                    fontSize: 16,
-                                    angle: -20,
-                                    textAnchor: 'end',
-                                    padding: 2,
-                                    fill: isDarkMode ? 'white' : 'black',
-                                },
-                                axis: { height: 700 },
-                            }}
-                            tickValues={tickValues}
-                            tickFormat={tickFormat}
-                        />
-                        <VictoryAxis
-                            dependentAxis
-                            label={yAxisLabel}
-                            style={{
-                                axisLabel: {
-                                    fontSize: 16,
-                                    padding: 40,
-                                },
-                                tickLabels: {
-                                    fontSize: 16,
-                                    padding: 20,
-                                    fill: isDarkMode ? 'white' : 'black',
-                                    textAnchor: 'end', // Anchor labels at the end
-                                },
-                                axis: {
-                                    stroke: 'none',
-                                },
-                            }}
-                        />
-                        <VictoryLegend
-                            gutter={20}
-                            colorScale={stackColors}
-                            orientation="horizontal"
-                            data={[{ name: 'Early' }, { name: 'Late' }, { name: 'Absent' }]}
-                            style={{
-                                labels: { fill: isDarkMode ? 'white' : 'black', fontSize: 18 },
-                            }}
-                        />
-                    </VictoryChart>
-                </ScrollView>
-            )}
-        </ViewWrapper>
-    );
-};
+        return (
+            <ViewWrapper style={[styles.container, { height }]}>
+                <Text
+                    style={{
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
+                    }}
+                >
+                    {title}
+                </Text>
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    <ScrollView horizontal={true}>
+                        <VictoryChart
+                            height={height - 46}
+                            width={isMobile ? ScreenWidth * 1.9 : ScreenWidth - 200}
+                            containerComponent={<VictoryVoronoiContainer />}
+                        >
+                            <VictoryStack>
+                                {data?.map((series, index) => (
+                                    <VictoryBar
+                                        key={index}
+                                        data={series}
+                                        x={entityKey}
+                                        y={valueKey}
+                                        width={40}
+                                        labels={({ datum }) => datum[valueKey]}
+                                        barWidth={26}
+                                        style={{
+                                            labels: { fill: 'white', angle: -90 },
+                                            data: { fill: stackColors[index] },
+                                        }}
+                                        labelComponent={
+                                            <VictoryTooltip
+                                                cornerRadius={6}
+                                                pointerLength={10}
+                                                flyoutStyle={{
+                                                    stroke: 'grey',
+                                                    fill: 'rgba(200, 200, 200, 0.8)',
+                                                    padding: 12,
+                                                    borderRadius: 4,
+                                                }}
+                                                data={series}
+                                                style={{ fontSize: 22 }}
+                                                text={({ datum }) => `${datum[valueKey]} (${datum['status']})`}
+                                            />
+                                        }
+                                    />
+                                ))}
+                            </VictoryStack>
+                            <VictoryAxis
+                                label={xAxisLabel}
+                                style={{
+                                    axisLabel: {
+                                        fontSize: 16,
+                                    },
+                                    tickLabels: {
+                                        fontSize: 16,
+                                        angle: -20,
+                                        textAnchor: 'end',
+                                        padding: 2,
+                                        fill: isDarkMode ? 'white' : 'black',
+                                    },
+                                    axis: { height: 700 },
+                                }}
+                                tickValues={tickValues}
+                                tickFormat={tickFormat}
+                            />
+                            <VictoryAxis
+                                dependentAxis
+                                label={yAxisLabel}
+                                style={{
+                                    axisLabel: {
+                                        fontSize: 16,
+                                        padding: 40,
+                                    },
+                                    tickLabels: {
+                                        fontSize: 16,
+                                        padding: 20,
+                                        fill: isDarkMode ? 'white' : 'black',
+                                        textAnchor: 'end', // Anchor labels at the end
+                                    },
+                                    axis: {
+                                        stroke: 'none',
+                                    },
+                                }}
+                            />
+                            <VictoryLegend
+                                gutter={20}
+                                colorScale={stackColors}
+                                orientation="horizontal"
+                                data={[{ name: 'Early' }, { name: 'Late' }, { name: 'Absent' }]}
+                                style={{
+                                    labels: { fill: isDarkMode ? 'white' : 'black', fontSize: 18 },
+                                }}
+                            />
+                        </VictoryChart>
+                    </ScrollView>
+                )}
+            </ViewWrapper>
+        );
+    }
+);
 
 interface IPieChartProps {
     title?: string;
@@ -394,7 +403,7 @@ interface IPieChartProps {
     data: { label: string; x: number; y: number }[];
 }
 
-export const PieChart: React.FC<IPieChartProps> = props => {
+export const PieChart: React.FC<IPieChartProps> = React.memo(props => {
     const { isMobile } = useMediaQuery();
     const { isDarkMode } = useAppColorMode();
 
@@ -461,7 +470,7 @@ export const PieChart: React.FC<IPieChartProps> = props => {
             )}
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {

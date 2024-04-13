@@ -126,7 +126,7 @@ const Clocker: React.FC<IClockerProps> = ({
     const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 360 : vh - 300;
 
     return (
-        <Center pt={8} _dark={{ bg: 'black' }}>
+        <Center _dark={{ bg: 'black' }}>
             <Timer />
             <If condition={isCampusPastor}>
                 <CampusAttendanceSummary
@@ -166,4 +166,4 @@ const Clocker: React.FC<IClockerProps> = ({
     );
 };
 
-export default Clocker;
+export default React.memo(Clocker);

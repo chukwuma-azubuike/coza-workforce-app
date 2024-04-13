@@ -60,10 +60,10 @@ export const permissionsServiceSlice = createApi({
         }),
 
         declinePermission: endpoint.mutation<IPermission, IDeclinePermission>({
-            query: body => ({
-                url: `/${SERVICE_URL}/reject/${body.permissionId}/${body.declinerId}`,
+            query: ({ permissionId, declinerId, comment }) => ({
+                url: `/${SERVICE_URL}/reject/${permissionId}/${declinerId}`,
                 method: REST_API_VERBS.PATCH,
-                body: { comment: body.comment },
+                body: { comment },
             }),
 
             invalidatesTags: [SERVICE_URL],

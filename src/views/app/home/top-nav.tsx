@@ -1,18 +1,17 @@
 import React from 'react';
 import { HStack, Text } from 'native-base';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import AvatarComponent from '@components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { HomeContext } from '.';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { ScreenWidth } from '@rneui/base';
+import { useGetLatestServiceQuery } from '@store/services/services';
+import useDevice from '@hooks/device';
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 
-const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefined>> = navigation => {
+const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     const handleNotificationPress = () => {
         navigation.navigate('Notifications');
     };
@@ -23,21 +22,31 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
 
     const handlePress = () => navigation.navigate('Profile');
 
-    const { latestService } = React.useContext(HomeContext);
-    const data = latestService?.data;
-    const isError = latestService?.isError;
-    const isLoading = latestService?.isLoading;
-
     const { user } = useRole();
-
     const { isLightMode } = useAppColorMode();
 
+    const { data, isError, isLoading } = useGetLatestServiceQuery(user?.campus?._id as string, {
+        skip: !user,
+        refetchOnMountOrArgChange: true,
+    });
+
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+
     return (
-        <HStack px={3} pt={6} zIndex={20} w={ScreenWidth - 12} alignItems="center" justifyContent="space-between">
+        <HStack
+            px={4}
+            w="100%"
+            zIndex={20}
+            alignItems="center"
+            _dark={{ bg: 'black' }}
+            _light={{ bg: 'white' }}
+            justifyContent="space-between"
+            pt={isAndroidOrBelowIOSTenOrTab ? 2 : 16}
+        >
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
-                    size="sm"
+                    size="xs"
                     shadow={4}
                     _dark={{ bg: 'gray.900' }}
                     _light={{ bg: 'gray.100' }}
@@ -46,7 +55,15 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
                     imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
-            <Text fontSize="lg" fontWeight="light" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
+            <Text
+                flex={1}
+                fontSize="lg"
+                fontWeight="light"
+                textAlign="center"
+                justifyContent="center"
+                _dark={{ color: 'gray.400' }}
+                _light={{ color: 'gray.600' }}
+            >
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
             {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>
@@ -67,7 +84,7 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
                     type="Entypo"
                     borderRadius={10}
                     underlayColor="white"
-                    iconStyle={{ fontSize: 35 }}
+                    iconStyle={{ fontSize: 36, marginRight: -3 }}
                     color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
                 />
             </TouchableOpacity>
@@ -75,4 +92,4 @@ const TopNav: React.FC<NativeStackNavigationProp<ParamListBase, string, undefine
     );
 };
 
-export default TopNav;
+export default React.memo(TopNav);

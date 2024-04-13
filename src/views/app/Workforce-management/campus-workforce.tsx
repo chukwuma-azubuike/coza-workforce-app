@@ -1,6 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Heading, Stack, Text } from 'native-base';
+import { Center, Heading, Stack } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -10,9 +10,15 @@ import { FlatListSkeleton, FlexListSkeleton } from '@components/layout/skeleton'
 import ViewWrapper from '@components/layout/viewWrapper';
 import { useCustomBackNavigation } from '@hooks/navigation';
 import useRole from '@hooks/role';
-import { useGetCampusSummaryByCampusIdQuery } from '@store/services/account';
-import Utils from '@utils';
+import { useGetCampusSummaryByCampusIdQuery, useGetUsersQuery } from '@store/services/account';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
+import DynamicSearch from '@components/composite/search';
+import { IUser } from '@store/types';
+import HStackComponent from '@components/layout/h-stack';
+import TextComponent from '@components/text';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { View } from 'react-native';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { _id?: string };
@@ -40,7 +46,19 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         isLoading,
         isFetching,
         refetch: campusSummaryRefetch,
+        isUninitialized: campusSummaryIsUninitialized,
     } = useGetCampusSummaryByCampusIdQuery(campusId || campus._id);
+
+    const {
+        data: campusUsers,
+        isLoading: isLoadingUsers,
+        isFetching: isFetchingUsers,
+        refetch: campusUsersSummaryRefetch,
+        isUninitialized: campusUsersIsUninitialized,
+    } = useGetUsersQuery(
+        { campusId: campusId || campus._id },
+        { refetchOnMountOrArgChange: true, skip: typeof campusId === 'undefined' && typeof !campus._id === 'undefined' }
+    );
 
     const campusInfo = [
         {
@@ -137,64 +155,80 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     useCustomBackNavigation({ targetRoute: isGlobalPastor || isSuperAdmin ? 'Global workforce' : 'More' });
     useScreenFocus({
-        onFocus: campusSummaryRefetch,
+        onFocus: () => {
+            campusSummaryIsUninitialized && campusSummaryRefetch();
+            campusUsersIsUninitialized && campusSummaryRefetch();
+        },
     });
+
+    const handleUserPress = (user: IUser) => {
+        navigate('User Profile', user);
+    };
+
+    const { textColor } = useAppColorMode();
 
     return (
         <ErrorBoundary>
+            <DynamicSearch
+                data={campusUsers}
+                onPress={handleUserPress}
+                loading={isLoadingUsers || isLoadingUsers}
+                searchFields={['firstName', 'lastName', 'departmentName', 'email']}
+            />
             <ViewWrapper scroll>
                 {campusInfo.map((item, index) =>
                     isLoading || isFetching ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <Stack key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} px={2}>
-                            <Text
-                                flexWrap="wrap"
-                                fontWeight="400"
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                            >
-                                {item.name}
-                            </Text>
-                            <Heading ml={4} size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
+                        <HStackComponent
+                            key={index}
+                            style={{
+                                marginVertical: 12,
+                                paddingHorizontal: 6,
+                                justifyContent: 'flex-start',
+                            }}
+                        >
+                            <TextComponent>{item.name}</TextComponent>
+                            <TextComponent bold size="lg" style={{ marginLeft: 10 }}>
                                 {item.value}
-                            </Heading>
-                        </Stack>
+                            </TextComponent>
+                        </HStackComponent>
                     )
                 )}
 
                 {isLoading || isFetching ? (
                     <FlatListSkeleton count={1} />
                 ) : (
-                    <Stack
-                        my={6}
-                        mx={2}
-                        padding={4}
-                        borderWidth={1}
-                        borderRadius={8}
-                        flexDirection="row"
-                        alignItems="center"
-                        justifyItems="center"
-                        justifyContent="space-between"
-                        _dark={{ borderColor: 'gray.600' }}
-                        _light={{ borderColor: 'gray.200' }}
+                    <HStackComponent
+                        style={{
+                            marginVertical: 16,
+                            padding: 8,
+                            flex: 1,
+                            width: '100%',
+                            borderWidth: 0.4,
+                            borderRadius: 8,
+                            borderColor: textColor,
+                        }}
                     >
                         {summaryList.map((item, index) => (
-                            <Stack key={index} flexDirection="column" alignItems="center" justifyItems="center" my={2}>
-                                <Heading
-                                    size="xs"
-                                    fontWeight="400"
-                                    _dark={{ color: item.color }}
-                                    _light={{ color: item.color }}
-                                >
-                                    {item.title}
-                                </Heading>
+                            <View
+                                key={index}
+                                style={{
+                                    flex: 1,
+                                    width: '100%',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    marginVertical: 2,
+                                }}
+                            >
+                                <TextComponent size="lg">{item.title}</TextComponent>
                                 <Heading size="xl" _dark={{ color: item.color }} _light={{ color: item.color }}>
                                     {item.value || 0}
                                 </Heading>
-                            </Stack>
+                            </View>
                         ))}
-                    </Stack>
+                    </HStackComponent>
                 )}
 
                 <Center>

@@ -8,7 +8,7 @@ interface IResponsiveGrid extends Partial<View['props']> {
     children: ReactNode;
 }
 
-export const ResponsiveGrid: React.FC<IResponsiveGrid> = ({ gap = 10, children, rowCount, ...props }) => {
+export const ResponsiveGrid: React.FC<IResponsiveGrid> = React.memo(({ gap = 10, children, rowCount, ...props }) => {
     const windowWidth = Dimensions.get('window').width;
 
     return (
@@ -23,7 +23,7 @@ export const ResponsiveGrid: React.FC<IResponsiveGrid> = ({ gap = 10, children, 
             </If>
         </View>
     );
-};
+});
 
 const styles = StyleSheet.create({
     container: {
@@ -40,9 +40,9 @@ interface IGridItem {
     padding?: number;
 }
 
-export const GridItem: React.FC<IGridItem> = ({ children, flexBasis, padding = 10 }) => {
+export const GridItem: React.FC<IGridItem> = React.memo(({ children, flexBasis, padding = 10 }) => {
     return <View style={[itemStyles.container, { flexBasis, padding }]}>{children}</View>;
-};
+});
 
 const itemStyles = StyleSheet.create({
     container: {

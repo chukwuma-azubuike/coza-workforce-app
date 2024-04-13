@@ -73,4 +73,4 @@ const ChurchGrowthCards: React.FC<IChurchGrowthCardsProps> = ({ isLoading, guest
     );
 };
 
-export default ChurchGrowthCards;
+export default React.memo(ChurchGrowthCards);

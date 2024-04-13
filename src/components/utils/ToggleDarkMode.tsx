@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, HStack, Switch, useColorMode } from 'native-base';
 
 // Color Switch Component
-export function ToggleDarkMode() {
+const ToggleDarkMode = React.memo(() => {
     const { colorMode, toggleColorMode } = useColorMode();
     return (
         <HStack space={2} alignItems="center">
@@ -15,4 +15,6 @@ export function ToggleDarkMode() {
             <Text>Light</Text>
         </HStack>
     );
-}
+});
+
+export default ToggleDarkMode;

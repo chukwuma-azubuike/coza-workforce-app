@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
 import uniqBy from 'lodash/uniqBy';
-import { HStack, Text, VStack } from 'native-base';
 import React, { memo, useMemo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -14,6 +13,9 @@ import { useGetPermissionsQuery } from '@store/services/permissions';
 import { IPermission } from '@store/types';
 import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
+import HStackComponent from '@components/layout/h-stack';
+import VStackComponent from '@components/layout/v-stack';
+import TextComponent from '@components/text';
 // import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
@@ -23,7 +25,7 @@ interface IPermissionListRowProps extends IPermission {
     '1'?: IPermission[];
 }
 
-export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
+export const PermissionListRow: React.FC<IPermissionListRowProps> = memo(props => {
     const navigation = useNavigation();
 
     const { type, screen } = props;
@@ -39,61 +41,59 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = props => {
                     navigation.navigate('Permission Details' as never, { ...elm, screen } as never);
                 };
 
-                const { requestor, departmentName, categoryName, description, category, status } = elm;
+                const { requestor, departmentName, categoryName, description, status } = elm;
 
                 return (
-                    <TouchableOpacity activeOpacity={0.6} onPress={handlePress}>
-                        <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center">
+                    <TouchableOpacity activeOpacity={0.6} onPress={handlePress} style={{ flex: 1 }}>
+                        <HStackComponent
+                            style={{ paddingVertical: 12, alignItems: 'center', justifyContent: 'space-between' }}
+                        >
+                            <HStackComponent space={6} style={{ alignItems: 'center' }}>
                                 <AvatarComponent imageUrl={requestor?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <VStack justifyContent="space-between">
+                                <VStackComponent style={{ justifyContent: 'space-between' }}>
                                     {type === 'own' && (
                                         <>
-                                            <Text bold fontSize="sm" color="gray.400">
-                                                {categoryName}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.400">
-                                                {Utils.truncateString(description)}
-                                            </Text>
+                                            <TextComponent bold>{categoryName}</TextComponent>
+                                            <TextComponent size="sm">{description}</TextComponent>
                                         </>
                                     )}
                                     {type === 'team' && (
                                         <>
-                                            <Text bold>
+                                            <TextComponent bold>
                                                 {`${Utils.capitalizeFirstChar(
                                                     requestor?.firstName
                                                 )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.400">
+                                            </TextComponent>
+                                            <TextComponent bold size="sm">
                                                 {categoryName}
-                                            </Text>
+                                            </TextComponent>
                                         </>
                                     )}
                                     {type === 'campus' && (
                                         <>
-                                            <Text bold>
+                                            <TextComponent bold>
                                                 {`${Utils.capitalizeFirstChar(
                                                     requestor?.firstName
                                                 )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.600">
+                                            </TextComponent>
+                                            <TextComponent bold size="sm">
                                                 {departmentName}
-                                            </Text>
-                                            <Text fontSize="sm" color="gray.400">
+                                            </TextComponent>
+                                            <TextComponent bold size="sm">
                                                 {categoryName}
-                                            </Text>
+                                            </TextComponent>
                                         </>
                                     )}
-                                </VStack>
-                            </HStack>
+                                </VStackComponent>
+                            </HStackComponent>
                             <StatusTag>{status}</StatusTag>
-                        </HStack>
+                        </HStackComponent>
                     </TouchableOpacity>
                 );
             })}
         </ErrorBoundary>
     );
-};
+});
 
 const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolean }> = memo(
     ({ updatedListItem, reload }) => {

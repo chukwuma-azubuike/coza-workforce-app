@@ -1,6 +1,6 @@
 import { Icon } from '@rneui/themed';
 import { Formik } from 'formik';
-import { Center, FormControl, HStack, VStack } from 'native-base';
+import { Center, FormControl, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -10,13 +10,16 @@ import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
-import { ICampusCoordinates, IClockInPayload } from '@store/services/attendance';
-import { useGetCampusByIdQuery, useGetCampusesQuery } from '@store/services/campus';
+import { IClockInPayload } from '@store/services/attendance';
+import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { IUser } from '@store/types';
 import { WorkforceClockinSchema } from '@utils/schemas';
 import ThirdPartyClockButton from './clock-button';
+import DynamicSearch from '@components/composite/search';
+import Utils from '@utils/index';
+import UserListItem from '@components/composite/user-list-item';
 
 export interface IThirdPartyUserDetails {
     userId: string;
@@ -26,13 +29,25 @@ export interface IThirdPartyUserDetails {
 }
 
 const ManualClockin: React.FC = () => {
-    const [campusId, setCampusId] = React.useState<string>();
+    const {
+        user: { campus },
+    } = useRole();
+
+    const [campusId, setCampusId] = React.useState<string>(campus?._id);
     const [departmentId, setDepartmentId] = React.useState<string>();
     const [thirdPartyUser, setThirdPartyUserId] = React.useState<IUser>();
 
     const handleSubmit = () => {};
 
-    const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
+    const {
+        data: campuses,
+        isLoading: campusLoading,
+        isFetching: campusIsFetching,
+        refetch: refetchCampuses,
+        isUninitialized: campusesIsUninitialized,
+    } = useGetCampusesQuery();
+
+    const sortedCampuses = React.useMemo(() => Utils.sortStringAscending(campuses, 'campusName'), [campuses]);
 
     const {
         data: departments,
@@ -41,6 +56,19 @@ const ManualClockin: React.FC = () => {
     } = useGetDepartmentsByCampusIdQuery(campusId as string, {
         skip: !campusId,
     });
+
+    const sortedDepartments = React.useMemo(
+        () => Utils.sortStringAscending(departments, 'departmentName'),
+        [departments]
+    );
+
+    const {
+        data: campusUsers,
+        isLoading: isLoadingUsers,
+        isFetching: isFetchingUsers,
+        refetch: refetchCampusUsers,
+        isUninitialized: campusUsersIsUninitialized,
+    } = useGetUsersQuery({ campusId }, { refetchOnMountOrArgChange: true, skip: !campusId });
 
     const {
         data: users,
@@ -53,86 +81,99 @@ const ManualClockin: React.FC = () => {
         }
     );
 
+    const sortedUsers = React.useMemo(() => Utils.sortStringAscending(users, 'firstName'), [users]);
+
     const {
-        user: { campus },
-    } = useRole();
-
-    const { data: latestService, refetch: latestServiceRefetch, isFetching } = useGetLatestServiceQuery(campus._id);
-
-    const { data: campusData } = useGetCampusByIdQuery(campus?._id);
-
-    const selectCoordinateRef = React.useMemo(() => {
-        if (latestService?.isGlobalService) return latestService?.coordinates;
-
-        return campusData?.coordinates;
-    }, [latestService, campusData]);
-
-    const campusCoordinates = {
-        latitude: selectCoordinateRef?.lat,
-        longitude: selectCoordinateRef?.long,
-    };
+        data: latestService,
+        refetch: latestServiceRefetch,
+        isUninitialized: latestServiceIsUninitialized,
+        isFetching,
+    } = useGetLatestServiceQuery(campus._id);
 
     const { isInRange, refresh, deviceCoordinates } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
-        campusCoordinates: campusCoordinates as ICampusCoordinates,
     });
 
     const handleRefresh = () => {
         refresh();
-        latestServiceRefetch();
+        latestServiceIsUninitialized && latestServiceRefetch();
+        campusUsersIsUninitialized && refetchCampusUsers();
+        campusesIsUninitialized && refetchCampuses();
     };
 
     useScreenFocus({
         onFocus: refresh,
     });
 
+    let INITIAL_VALUES = {} as IClockInPayload;
+
+    const handleUserPress = (user: IUser) => {
+        INITIAL_VALUES = {
+            departmentId: user?.departmentId,
+            campusId: user?.campusId,
+            userId: user?._id || user?.userId,
+        } as IClockInPayload;
+        setDepartmentId(user?.departmentId);
+        setThirdPartyUserId(user);
+    };
+
     return (
         <ErrorBoundary>
+            <DynamicSearch
+                data={campusUsers}
+                disable={!campusUsers}
+                onPress={handleUserPress}
+                loading={isLoadingUsers || isFetchingUsers}
+                searchFields={['firstName', 'lastName', 'departmentName', 'email']}
+            />
             <ViewWrapper scroll onRefresh={handleRefresh} refreshing={isFetching}>
                 <Formik<IClockInPayload>
+                    enableReinitialize
                     onSubmit={handleSubmit}
-                    initialValues={{} as IClockInPayload}
+                    initialValues={INITIAL_VALUES}
                     validationSchema={WorkforceClockinSchema}
                 >
                     {({ errors, values, handleChange }) => {
                         const onCampusChange = (value: string) => {
                             refresh();
-                            setCampusId(value);
-                            setDepartmentId(undefined);
-                            setThirdPartyUserId(undefined);
-                            handleChange('campusId');
+                            if (!!value) {
+                                setCampusId(value);
+                                setDepartmentId(undefined);
+                                setThirdPartyUserId(undefined);
+                                handleChange('campusId')(value);
+                            }
                         };
 
                         const onDepartmentChange = (value: string) => {
                             refresh();
-                            setDepartmentId(value);
-                            setThirdPartyUserId(undefined);
-                            handleChange('departmentId');
+                            if (!!value) {
+                                setDepartmentId(value);
+                                setThirdPartyUserId(undefined);
+                                handleChange('departmentId')(value);
+                            }
                         };
 
                         const onUserChange = (value: string) => {
+                            const user = users?.find(user => user._id === value);
                             refresh();
-                            setThirdPartyUserId(users?.find(user => user._id === value));
+                            if (!!user) {
+                                setThirdPartyUserId(user);
+                            }
                         };
 
                         return (
-                            <VStack space="md" alignItems="flex-start" w="100%" px={4}>
+                            <VStack space="sm" alignItems="flex-start" w="100%" px={4}>
                                 <FormControl isRequired>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent
-                                        onValueChange={onCampusChange}
-                                        selectedValue={values.campusId}
-                                        dropdownIcon={
-                                            <HStack mr={2} space={2}>
-                                                <Icon
-                                                    type="entypo"
-                                                    name="chevron-small-down"
-                                                    color={THEME_CONFIG.lightGray}
-                                                />
-                                            </HStack>
-                                        }
+                                        valueKey="_id"
+                                        items={sortedCampuses}
+                                        displayKey="campusName"
+                                        placeholder="Choose campus"
+                                        onValueChange={onCampusChange as any}
+                                        selectedValue={values.campusId || campus?._id}
                                     >
-                                        {campuses?.map((campus, index) => (
+                                        {sortedCampuses?.map((campus, index) => (
                                             <SelectItemComponent
                                                 value={campus._id}
                                                 key={`campus-${index}`}
@@ -160,19 +201,14 @@ const ManualClockin: React.FC = () => {
                                 <FormControl isRequired>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
-                                        onValueChange={onDepartmentChange}
+                                        valueKey="_id"
+                                        items={sortedDepartments}
+                                        displayKey="departmentName"
+                                        placeholder="Choose department"
                                         selectedValue={values.departmentId}
-                                        dropdownIcon={
-                                            <HStack mr={2} space={2}>
-                                                <Icon
-                                                    type="entypo"
-                                                    name="chevron-small-down"
-                                                    color={THEME_CONFIG.lightGray}
-                                                />
-                                            </HStack>
-                                        }
+                                        onValueChange={onDepartmentChange as any}
                                     >
-                                        {departments?.map((department, index) => (
+                                        {sortedDepartments?.map((department, index) => (
                                             <SelectItemComponent
                                                 value={department._id}
                                                 key={`department-${index}`}
@@ -200,19 +236,15 @@ const ManualClockin: React.FC = () => {
                                 <FormControl isRequired>
                                     <FormControl.Label>Users</FormControl.Label>
                                     <SelectComponent
-                                        dropdownIcon={
-                                            <HStack mr={2} space={2}>
-                                                <Icon
-                                                    type="entypo"
-                                                    name="chevron-small-down"
-                                                    color={THEME_CONFIG.lightGray}
-                                                />
-                                            </HStack>
-                                        }
+                                        valueKey="_id"
+                                        items={sortedUsers}
+                                        labelSeparator=" "
+                                        placeholder="Choose user"
+                                        onValueChange={onUserChange as any}
+                                        displayKey={['firstName', 'lastName']}
                                         selectedValue={thirdPartyUser?._id as unknown as string}
-                                        onValueChange={onUserChange as unknown as (value: string) => void}
                                     >
-                                        {users?.map((user, index) => (
+                                        {sortedUsers?.map((user, index) => (
                                             <SelectItemComponent
                                                 key={`department-${index}`}
                                                 isLoading={usersLoading || usersIsFetching}
@@ -237,7 +269,9 @@ const ManualClockin: React.FC = () => {
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <Center w="full" mt={10} h={280}>
+                                {!!thirdPartyUser && <UserListItem {...thirdPartyUser} />}
+
+                                <Center w="full" mt={10} height={280}>
                                     <ThirdPartyClockButton
                                         isInRangeProp={isInRange}
                                         campusId={campusId as string}
@@ -245,7 +279,6 @@ const ManualClockin: React.FC = () => {
                                         departmentId={departmentId as string}
                                         userId={thirdPartyUser?._id as string}
                                         roleId={thirdPartyUser?.roleId as string}
-                                        campusCoordinates={campusCoordinates as ICampusCoordinates}
                                     />
                                 </Center>
                             </VStack>
@@ -257,4 +290,4 @@ const ManualClockin: React.FC = () => {
     );
 };
 
-export default ManualClockin;
+export default React.memo(ManualClockin);

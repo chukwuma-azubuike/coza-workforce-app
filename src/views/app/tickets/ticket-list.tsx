@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { HStack, Text, VStack } from 'native-base';
 import { TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
@@ -12,6 +11,9 @@ import { useGetTicketsQuery } from '@store/services/tickets';
 import { ITicket } from '@store/types';
 import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
+import TextComponent from '@components/text';
+import HStackComponent from '@components/layout/h-stack';
+import VStackComponent from '@components/layout/v-stack';
 
 export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus';
@@ -19,7 +21,7 @@ export interface TicketListRowProps extends ITicket {
     '1'?: ITicket[];
 }
 
-export const TicketListRow: React.FC<TicketListRowProps> = props => {
+export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
     const navigation = useNavigation();
     const { type } = props;
 
@@ -40,98 +42,71 @@ export const TicketListRow: React.FC<TicketListRowProps> = props => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <HStack py={2} flex={1} w="full" alignItems="center" justifyContent="space-between">
-                            <HStack space={3} alignItems="center">
+                        <HStackComponent
+                            style={{ paddingVertical: 12, alignItems: 'center', justifyContent: 'space-between' }}
+                        >
+                            <HStackComponent space={6} style={{ alignItems: 'center' }}>
                                 <AvatarComponent
+                                    size="sm"
                                     imageUrl={
                                         isIndividual
                                             ? user?.pictureUrl || AVATAR_FALLBACK_URL
                                             : AVATAR_GROUP_FALLBACK_URL
                                     }
                                 />
-                                <VStack justifyContent="space-between">
+                                <VStackComponent style={{ justifyContent: 'space-between' }}>
                                     {type === 'own' && (
                                         <>
-                                            <Text
-                                                fontSize="sm"
-                                                _dark={{ color: 'gray.300' }}
-                                                _light={{ color: 'gray.600' }}
-                                            >
+                                            <TextComponent>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
-                                            <Text
-                                                fontSize="sm"
-                                                _dark={{ color: 'gray.300' }}
-                                                _light={{ color: 'gray.600' }}
-                                            >
-                                                {Utils.truncateString(departmentName)}
-                                            </Text>
+                                            </TextComponent>
+                                            <TextComponent>{Utils.truncateString(departmentName)}</TextComponent>
                                         </>
                                     )}
                                     {type === 'team' && (
                                         <>
-                                            <Text bold>
+                                            <TextComponent bold>
                                                 {isDepartment
                                                     ? departmentName
                                                     : `${Utils.capitalizeFirstChar(
                                                           user?.firstName
                                                       )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                            </Text>
-                                            <Text
-                                                fontSize="sm"
-                                                _dark={{ color: 'gray.300' }}
-                                                _light={{ color: 'gray.600' }}
-                                            >
+                                            </TextComponent>
+                                            <TextComponent>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
+                                            </TextComponent>
                                         </>
                                     )}
                                     {type === 'campus' && (
                                         <>
                                             {isIndividual && (
-                                                <Text bold>
+                                                <TextComponent bold>
                                                     {`${Utils.capitalizeFirstChar(
                                                         user?.firstName
                                                     )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                                </Text>
+                                                </TextComponent>
                                             )}
-                                            <Text
-                                                fontSize="sm"
-                                                bold={isDepartment}
-                                                _dark={{ color: 'gray.300' }}
-                                                _light={{ color: 'gray.600' }}
-                                            >
-                                                {departmentName || ''}
-                                            </Text>
+                                            <TextComponent>{departmentName || ''}</TextComponent>
                                             {isDepartment && (
-                                                <Text
-                                                    fontSize="sm"
-                                                    bold={isDepartment}
-                                                    _dark={{ color: 'gray.300' }}
-                                                    _light={{ color: 'gray.600' }}
-                                                >
+                                                <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
                                                     Departmental
-                                                </Text>
+                                                </TextComponent>
                                             )}
-                                            <Text
-                                                fontSize="sm"
-                                                _dark={{ color: 'gray.300' }}
-                                                _light={{ color: 'gray.600' }}
-                                            >
+                                            <TextComponent style={{ fontSize: 14 }}>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
+                                            </TextComponent>
                                         </>
                                     )}
-                                </VStack>
-                            </HStack>
+                                </VStackComponent>
+                            </HStackComponent>
                             <StatusTag>{status}</StatusTag>
-                        </HStack>
+                        </HStackComponent>
                     </TouchableOpacity>
                 );
             })}
         </>
     );
-};
+});
 
 const MyTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(({ updatedListItem, reload }) => {
     const myTicketsColumns: IFlatListColumn[] = [

@@ -81,9 +81,14 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     const isIOS = Platform.OS === 'ios';
 
     return (
-        <Formik<ISecurityReportPayload> validateOnChange onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
+        <Formik<ISecurityReportPayload>
+            validateOnChange
+            enableReinitialize
+            onSubmit={onSubmit}
+            initialValues={INITIAL_VALUES}
+        >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll>
+                <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
@@ -121,14 +126,14 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             </FormControl>
                                             <FormControl w="14%">
                                                 <ButtonComponent
-                                                    h={isIOS ? '46px' : '54px'}
                                                     leftIcon={
                                                         <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
                                                     }
+                                                    style={{ paddingVertical: 10 }}
                                                     onPress={() => arrayHelpers.remove(idx)}
                                                     isDisabled={isCampusPastor}
                                                     secondary
-                                                    size={12}
+                                                    size="sm"
                                                 />
                                             </FormControl>
                                         </HStack>
@@ -143,10 +148,10 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     carCount: '',
                                                 })
                                             }
+                                            style={{ flex: 1 }}
                                             isDisabled={isCampusPastor || isLoading}
-                                            width="100%"
                                             secondary
-                                            size={10}
+                                            size="md"
                                         >
                                             Add Location
                                         </ButtonComponent>
@@ -197,18 +202,12 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 <ButtonComponent
                                     onPress={() => onRequestReview(values)}
                                     isLoading={isLoading}
-                                    width="1/2"
                                     secondary
                                     size="md"
                                 >
                                     Request Review
                                 </ButtonComponent>
-                                <ButtonComponent
-                                    onPress={() => onApprove(values)}
-                                    isLoading={isLoading}
-                                    width="1/2"
-                                    size="md"
-                                >
+                                <ButtonComponent onPress={() => onApprove(values)} isLoading={isLoading} size="md">
                                     Approve
                                 </ButtonComponent>
                             </HStack>

@@ -9,4 +9,4 @@ const If: React.FC<IIfProps> = props => {
     return <>{props.condition ? props.children : null}</>;
 };
 
-export default If;
+export default React.memo(If);

@@ -72,6 +72,7 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         <Formik<IGuestReportPayload>
             validateOnChange
             onSubmit={onSubmit}
+            enableReinitialize
             initialValues={INITIAL_VALUES as unknown as IGuestReportPayload}
         >
             {({ handleChange, errors, handleSubmit, values }) => (

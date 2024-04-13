@@ -134,4 +134,4 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
     );
 };
 
-export default CGWCFeedback;
+export default React.memo(CGWCFeedback);
