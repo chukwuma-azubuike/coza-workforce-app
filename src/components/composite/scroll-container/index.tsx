@@ -20,4 +20,4 @@ const ScrollContainer: React.FC<IScrollContainerProps> = ({ children, scrollOffs
     );
 };
 
-export default ScrollContainer;
+export default React.memo(ScrollContainer);

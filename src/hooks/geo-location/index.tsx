@@ -29,7 +29,6 @@ const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campus
 
 interface IUseGeoLocationArgs {
     rangeToClockIn: number;
-    campusCoordinates: ICampusCoordinates;
 }
 
 const useGeoLocation = (props: IUseGeoLocationArgs) => {

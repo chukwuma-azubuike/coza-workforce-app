@@ -1,6 +1,6 @@
-import Loading from '@components/atoms/loading';
 import React from 'react';
 import { Text } from 'react-native';
+import Loading from '@components/atoms/loading';
 
 interface IListtableProps<C = any, H = any> {
     data?: (C | any)[];
@@ -15,7 +15,7 @@ const ListTable: React.FC<IListtableProps> = ({ data, Column, Header, headerProp
         <>
             {Header && <Header {...headerProps} />}
             {isLoading ? (
-                <Loading mt={8} h={10} w="full" />
+                <Loading style={{ marginTop: 8, height: 20 }} />
             ) : (
                 data?.map((item, index) => {
                     return !!Column ? (
@@ -31,4 +31,4 @@ const ListTable: React.FC<IListtableProps> = ({ data, Column, Header, headerProp
     );
 };
 
-export default ListTable;
+export default React.memo(ListTable);

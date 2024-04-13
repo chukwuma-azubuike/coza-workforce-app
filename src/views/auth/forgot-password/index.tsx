@@ -155,4 +155,4 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
     );
 };
 
-export default ForgotPassword;
+export default React.memo(ForgotPassword);

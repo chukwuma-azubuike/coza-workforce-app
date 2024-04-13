@@ -1,6 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
 import moment from 'moment';
-import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
@@ -10,8 +9,11 @@ import useScreenFocus from '@hooks/focus';
 import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
 import Utils from '@utils/index';
+import HStackComponent from '@components/layout/h-stack';
+import VStackComponent from '@components/layout/v-stack';
+import TextComponent from '@components/text';
 
-const ServiceListRow: React.FC<IService> = service => {
+const ServiceListRow: React.FC<IService> = React.memo(service => {
     return (
         <TouchableOpacity
             disabled={false}
@@ -20,22 +22,22 @@ const ServiceListRow: React.FC<IService> = service => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStack p={2} flex={1} alignItems="center" justifyContent="space-between">
-                <HStack space={3} alignItems="center">
-                    <VStack justifyContent="space-between">
-                        <Text bold>{service?.name}</Text>
-                        <Text fontSize="sm" color="gray.400">
+            <HStackComponent style={{ padding: 4, alignItems: 'center', justifyContent: 'space-between' }}>
+                <HStackComponent space={6} style={{ alignItems: 'center' }}>
+                    <VStackComponent style={{ justifyContent: 'space-between' }}>
+                        <TextComponent bold>{service?.name}</TextComponent>
+                        <TextComponent fontSize="sm">
                             {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(
                                 service?.serviceTime
                             ).format('LT')}`}
-                        </Text>
-                    </VStack>
-                </HStack>
+                        </TextComponent>
+                    </VStackComponent>
+                </HStackComponent>
                 <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
-            </HStack>
+            </HStackComponent>
         </TouchableOpacity>
     );
-};
+});
 
 const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListItem }) => {
     const serviceColumns: IFlatListColumn[] = [

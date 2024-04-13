@@ -27,4 +27,4 @@ const SupportLink = () => {
     );
 };
 
-export default SupportLink;
+export default React.memo(SupportLink);

@@ -59,6 +59,7 @@ import CGWCGroupAttendance from '@views/app/cgwc/group-attendance';
 import CGWCResources from '@views/app/cgwc/cgwc-resources';
 import CGWCFeedback from '@views/app/cgwc/feedback';
 import CGWCReport from '@views/app/cgwc/cgwc-report';
+import TopNav from '@views/app/home/top-nav';
 
 export interface IAppRoute {
     name: string;
@@ -68,6 +69,8 @@ export interface IAppRoute {
     users: (ROLES | DEPARTMENTS)[];
     inMenuBar: boolean;
     inMore: boolean;
+    hideHeader?: boolean;
+    customHeader?: React.FC<any>;
     icon: { name: string; type: IIconTypes };
 }
 
@@ -80,6 +83,7 @@ const AppRoutes: IAppRoute[] = [
         users: [],
         inMenuBar: true,
         inMore: false,
+        customHeader: TopNav,
         icon: { name: 'home', type: 'antdesign' },
     },
     {
@@ -475,6 +479,8 @@ const AppRoutes: IAppRoute[] = [
         users: [
             ROLES.HOD,
             ROLES.AHOD,
+            DEPARTMENTS.ME,
+            DEPARTMENTS.QC,
             ROLES.groupHead,
             ROLES.superAdmin,
             ROLES.globalAdmin,
@@ -539,6 +545,8 @@ const AppRoutes: IAppRoute[] = [
                 users: [],
                 inMenuBar: false,
                 inMore: false,
+                hideHeader: true,
+                customHeader: TopNav,
                 icon: { name: 'crown', type: 'foundation' },
             },
             {

@@ -47,4 +47,4 @@ const Empty: React.FC<{
     );
 };
 
-export default Empty;
+export default React.memo(Empty);

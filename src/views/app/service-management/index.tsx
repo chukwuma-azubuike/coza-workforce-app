@@ -20,4 +20,4 @@ const ServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     );
 };
 
-export default ServiceManagement;
+export default React.memo(ServiceManagement);

@@ -58,4 +58,4 @@ const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
     );
 };
 
-export default HorizontalTable;
+export default React.memo(HorizontalTable);

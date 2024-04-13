@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Button, IButtonProps, IconButton } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
-import { PermissionsAndroid, TouchableOpacityProps } from 'react-native';
+import { PermissionsAndroid, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
 import { generateExcelFile } from '@utils/generateFile';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { InterfaceIconButtonProps } from 'native-base/lib/typescript/components/composites/IconButton/types';
+import { View } from 'react-native';
+import { Text } from 'react-native';
+import Loading from '../loading';
 interface IButtonComponent extends IButtonProps {
     size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;
@@ -18,55 +21,90 @@ interface IButtonComponent extends IButtonProps {
     >;
 }
 
+export enum BUTTON_SIZE {
+    sm = 12,
+    md = 16,
+    lg = 22,
+    xl = 24,
+}
+
 const ButtonComponent: React.FC<IButtonComponent> = props => {
-    const { borderRadius, secondary, shadow, size, width, isLoadingText } = props;
+    const { isLoadingText, isLoading, children, secondary, leftIcon, rightIcon } = props;
+    const scheme = useColorScheme();
+
+    const OUTLINE_THEME = {
+        background: scheme === 'dark' ? 'black' : 'white',
+        text: scheme === 'dark' ? THEME_CONFIG.primaryLight : THEME_CONFIG.primary,
+    };
+
     return (
-        <Button
-            {...props}
-            size={size ? size : 'lg'}
-            padding={props.padding ? props.padding : size ? 2 : 3}
-            width={width ? width : 'full'}
-            isLoadingText={isLoadingText ? isLoadingText : 'Loading...'}
-            borderRadius={borderRadius ? borderRadius : THEME_CONFIG.borderRadius}
-            _dark={{
-                _text: {
-                    fontSize: size ? undefined : 'xl',
-                    color: secondary ? 'primary.500' : 'white',
-                },
+        <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={props?.onPress as any}
+            style={{
+                display: 'flex',
+                borderRadius: 8,
+                marginVertical: 10,
+                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                borderWidth: secondary ? 0.6 : 0,
+                borderColor: secondary ? THEME_CONFIG.lightGray : undefined,
+                backgroundColor: secondary ? THEME_CONFIG.transparent : THEME_CONFIG.primary,
+                ...(props?.style as {}),
+                opacity: isLoading || props?.disabled || props?.isDisabled ? 0.5 : 1,
             }}
-            _light={{
-                _text: {
-                    fontSize: size ? undefined : 'xl',
-                    color: secondary ? 'primary.600' : 'white',
-                },
-            }}
-            shadow={shadow ? shadow : secondary ? 'none' : 2}
-            variant={props.variant ? props.variant : secondary ? 'outline' : 'solid'}
+            disabled={(isLoading || props?.disabled || props?.isDisabled) as boolean}
         >
-            {props.children}
-        </Button>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {isLoading && (
+                    <View style={{ width: 10 }}>
+                        <Loading />
+                    </View>
+                )}
+                {leftIcon}
+                {
+                    (typeof children === 'string' ? (
+                        <Text
+                            style={
+                                {
+                                    textAlign: 'center',
+                                    color: secondary ? OUTLINE_THEME.text : 'white',
+                                    fontSize: BUTTON_SIZE[(props.size || 'lg') as any],
+                                    padding: (BUTTON_SIZE[(props.size || 'lg') as any] as any) / 1.4,
+                                } as any
+                            }
+                        >
+                            {isLoading ? isLoadingText || 'Loading...' : children}
+                        </Text>
+                    ) : (
+                        children
+                    )) as ReactNode
+                }
+                {rightIcon}
+            </View>
+        </TouchableOpacity>
     );
 };
 
-export const AddButtonComponent: React.FC<IButtonComponent> = props => {
+export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props => {
     return (
         <ButtonComponent
             {...props}
-            right={6}
-            bottom={6}
-            width={60}
-            height={60}
             shadow={6}
-            borderRadius="full"
-            position="absolute"
-            justifyContent="center"
-            alignItems="center"
-            size="md"
+            style={{
+                right: 20,
+                bottom: 24,
+                width: 60,
+                height: 60,
+                borderRadius: 200,
+                position: 'absolute',
+            }}
         >
             <Icon name="plus" type="entypo" size={36} color="white" />
         </ButtonComponent>
     );
-};
+});
 
 interface IDownloadButton extends IButtonComponent {
     type: 'excel' | 'pdf' | 'csv';
@@ -74,7 +112,7 @@ interface IDownloadButton extends IButtonComponent {
     data: any[];
 }
 
-export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName, ...props }) => {
+export const DownloadButton: React.FC<IDownloadButton> = React.memo(({ data, type, fileName, ...props }) => {
     const handleDownload = async () => {
         try {
             // Check for Permission (check if permission is already given or not)
@@ -128,9 +166,9 @@ export const DownloadButton: React.FC<IDownloadButton> = ({ data, type, fileName
             <Icon name="download-outline" type="ionicon" size={36} color="white" />
         </ButtonComponent>
     );
-};
+});
 
-export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = props => {
+export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = React.memo(props => {
     const { isDarkMode } = useAppColorMode();
 
     return (
@@ -148,6 +186,34 @@ export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = props =>
             {...props}
         />
     );
-};
+});
 
-export default ButtonComponent;
+export const FloatButton: React.FC<IButtonComponent & { iconName: string; iconType: string }> = React.memo(
+    ({ iconName, iconType, ...props }) => {
+        return (
+            <ButtonComponent
+                size="md"
+                style={{
+                    right: 20,
+                    bottom: 100,
+                    width: 60,
+                    height: 60,
+                    zIndex: 10,
+                    borderRadius: 32,
+                    position: 'absolute',
+                }}
+                {...props}
+            >
+                <Icon name={iconName} type={iconType} size={28} color="white" />
+            </ButtonComponent>
+        );
+    }
+);
+
+const styles = StyleSheet.create({
+    disabledView: {
+        opacity: 0.5, // Reduce opacity to indicate disabled state
+    },
+});
+
+export default React.memo(ButtonComponent);

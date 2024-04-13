@@ -27,4 +27,4 @@ const RenderContainer = (props: IRenderContainer) => {
     );
 };
 
-export default RenderContainer;
+export default React.memo(RenderContainer);

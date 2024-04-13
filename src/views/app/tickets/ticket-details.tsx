@@ -1,7 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
@@ -11,7 +10,7 @@ import CardComponent from '@components/composite/card';
 import If from '@components/composite/if-container';
 import { FlatListSkeleton } from '@components/layout/skeleton';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants';
+import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants/index';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
@@ -24,6 +23,11 @@ import {
     useUpdateTicketMutation,
 } from '@store/services/tickets';
 import { ICreateTicketPayload, ITicket } from '@store/types';
+import VStackComponent from '@components/layout/v-stack';
+import HStackComponent from '@components/layout/h-stack';
+import TextComponent from '@components/text';
+import { THEME_CONFIG } from '@config/appConfig';
+import { ScreenHeight } from '@rneui/base';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = props.navigation;
@@ -244,9 +248,23 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
     }, [ticket?.department?._id, userId, ticket?.user?._id, ticket?.isDepartment, department?._id]);
 
     return (
-        <ViewWrapper scroll refreshing={isLoading || isFetching} onRefresh={refetch}>
-            <CardComponent isLoading={isLoading || isFetching} mt={1} px={2} pt={8} pb={4} mx={3} mb={10}>
-                <VStack space={4}>
+        <ViewWrapper
+            scroll
+            avoidKeyboard
+            onRefresh={refetch}
+            style={{
+                paddingBottom: 20,
+            }}
+            refreshing={isLoading || isFetching}
+            avoidKeyboardOffset={-(ScreenHeight / 2)}
+        >
+            <CardComponent
+                isLoading={isLoading || isFetching}
+                style={{
+                    paddingVertical: 20,
+                }}
+            >
+                <VStackComponent space={12}>
                     <AvatarComponent
                         size="xl"
                         shadow={9}
@@ -258,146 +276,146 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 : AVATAR_GROUP_FALLBACK_URL
                         }
                     />
-                    <HStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            justifyContent: 'space-between',
+                            borderBottomWidth: 0.2,
+                            borderColor: THEME_CONFIG.gray,
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Date issued
-                        </Text>
-                        <Text>{moment(ticket?.createdAt).format('DD/MM/YYYY - LT')}</Text>
-                    </HStack>
+                        <TextComponent bold>Date issued</TextComponent>
+                        <TextComponent>{moment(ticket?.createdAt).format('DD/MM/YYYY - LT')}</TextComponent>
+                    </HStackComponent>
                     {ticket?.updatedAt ? (
-                        <HStack
-                            pb={2}
-                            w="full"
-                            space={2}
-                            borderColor="gray.300"
-                            borderBottomWidth={0.2}
-                            justifyContent="space-between"
+                        <HStackComponent
+                            space={4}
+                            style={{
+                                paddingBottom: 8,
+                                borderColor: THEME_CONFIG.lightGray,
+                                borderBottomWidth: 0.2,
+                                justifyContent: 'space-between',
+                            }}
                         >
-                            <Text alignSelf="flex-start" bold>
-                                Last updated
-                            </Text>
-                            <Text>{moment(ticket?.updatedAt).format('DD/MM/YYYY - LT')}</Text>
-                        </HStack>
+                            <TextComponent bold>Last updated</TextComponent>
+                            <TextComponent>{moment(ticket?.updatedAt).format('DD/MM/YYYY - LT')}</TextComponent>
+                        </HStackComponent>
                     ) : null}
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderColor: THEME_CONFIG.lightGray,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Department
-                        </Text>
-                        <Text>{ticket?.department?.departmentName}</Text>
-                    </HStack>
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                        <TextComponent bold>Department</TextComponent>
+                        <TextComponent>{ticket?.department?.departmentName}</TextComponent>
+                    </HStackComponent>
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderColor: THEME_CONFIG.lightGray,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
-                            Ticket type
-                        </Text>
-                        <Text>{ticket?.isDepartment ? 'Departmental' : 'Individual'}</Text>
-                    </HStack>
+                        <TextComponent bold>Ticket type</TextComponent>
+                        <TextComponent>{ticket?.isDepartment ? 'Departmental' : 'Individual'}</TextComponent>
+                    </HStackComponent>
 
                     <If condition={isQC || isCampusPastor || isGlobalPastor}>
                         {issuerIsLoading ? (
                             <FlatListSkeleton count={1} />
                         ) : issuer ? (
-                            <HStack
-                                pb={2}
-                                w="full"
-                                space={2}
-                                borderColor="gray.300"
-                                borderBottomWidth={0.2}
-                                justifyContent="space-between"
+                            <HStackComponent
+                                space={4}
+                                style={{
+                                    paddingBottom: 8,
+                                    borderColor: THEME_CONFIG.lightGray,
+                                    borderBottomWidth: 0.2,
+                                    justifyContent: 'space-between',
+                                }}
                             >
-                                <Text alignSelf="flex-start" bold>
+                                <TextComponent style={{ alignSelf: 'flex-start' }} bold>
                                     Issued by
-                                </Text>
-                                <Text>{`${issuer?.firstName} ${issuer?.lastName}`}</Text>
-                            </HStack>
+                                </TextComponent>
+                                <TextComponent>{`${issuer?.firstName} ${issuer?.lastName}`}</TextComponent>
+                            </HStackComponent>
                         ) : null}
                     </If>
 
-                    <HStack
-                        pb={2}
-                        w="full"
-                        space={2}
-                        borderColor="gray.300"
-                        borderBottomWidth={0.2}
-                        justifyContent="space-between"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderColor: THEME_CONFIG.lightGray,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
+                        <TextComponent style={{ alignSelf: 'flex-start' }} bold>
                             Status
-                        </Text>
+                        </TextComponent>
                         <StatusTag>{ticket?.status}</StatusTag>
-                    </HStack>
+                    </HStackComponent>
 
-                    <HStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderColor: THEME_CONFIG.lightGray,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
+                        <TextComponent style={{ alignSelf: 'flex-start' }} bold>
                             Category
-                        </Text>
-                        <Text>{ticket?.category.categoryName}</Text>
-                    </HStack>
+                        </TextComponent>
+                        <TextComponent>{ticket?.category.categoryName}</TextComponent>
+                    </HStackComponent>
 
-                    <HStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                    <HStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderColor: THEME_CONFIG.lightGray,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold>
+                        <TextComponent style={{ alignSelf: 'flex-start' }} bold>
                             Offender
-                        </Text>
-                        <Text>
+                        </TextComponent>
+                        <TextComponent>
                             {ticket?.isIndividual
                                 ? `${ticket?.user?.firstName} ${ticket?.user?.lastName}`
                                 : `${ticket?.department?.departmentName}`}
-                        </Text>
-                    </HStack>
+                        </TextComponent>
+                    </HStackComponent>
 
-                    <HStack
-                        space={2}
-                        pb={2}
-                        w="full"
-                        flexWrap="wrap"
-                        justifyContent="space-between"
-                        borderBottomWidth={0.2}
-                        borderColor="gray.300"
+                    <VStackComponent
+                        space={4}
+                        style={{
+                            paddingBottom: 8,
+                            borderColor: THEME_CONFIG.lightGray,
+                            borderBottomWidth: 0.2,
+                            justifyContent: 'space-between',
+                        }}
                     >
-                        <Text alignSelf="flex-start" bold mb={1}>
+                        <TextComponent style={{ marginBottom: 8 }} bold>
                             Details
-                        </Text>
-                        <Text>{ticket?.ticketSummary}</Text>
-                    </HStack>
+                        </TextComponent>
+                        <TextComponent numberOfLines={undefined}>{ticket?.ticketSummary}</TextComponent>
+                    </VStackComponent>
 
-                    <VStack pb={2} w="full" space={2} justifyContent="space-between">
-                        <Text alignSelf="flex-start" bold>
+                    <VStackComponent style={{ paddingBottom: 4, justifyContent: 'space-between' }} space={4}>
+                        <TextComponent style={{ alignSelf: 'flex-start' }} bold>
                             Contest Comment
-                        </Text>
+                        </TextComponent>
                         <If condition={ticket?.isIndividual}>
                             {!ticket?.contestComment && (
                                 <TextAreaComponent
@@ -406,7 +424,9 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     isDisabled={ticket?.status !== 'ISSUED' && ticket?.user?._id !== userId}
                                 />
                             )}
-                            {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
+                            {ticket?.contestComment && (
+                                <TextComponent flexWrap="wrap">{ticket?.contestComment}</TextComponent>
+                            )}
                         </If>
                         <If condition={ticket?.isDepartment}>
                             {!ticket?.contestComment && (
@@ -418,27 +438,31 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     }
                                 />
                             )}
-                            {ticket?.contestComment && <Text flexWrap="wrap">{ticket?.contestComment}</Text>}
+                            {ticket?.contestComment && (
+                                <TextComponent flexWrap="wrap">{ticket?.contestComment}</TextComponent>
+                            )}
                         </If>
-                    </VStack>
-                    <VStack pb={2} w="full" space={2} justifyContent="space-between">
-                        <Text alignSelf="flex-start" bold>
+                    </VStackComponent>
+                    <VStackComponent style={{ paddingBottom: 4, justifyContent: 'space-between' }} space={4}>
+                        <TextComponent style={{ alignSelf: 'flex-start' }} bold>
                             QC / M&E Reply
-                        </Text>
+                        </TextComponent>
                         {!ticket?.contestReplyComment && (
                             <TextAreaComponent
                                 onChangeText={handleReplyChange}
                                 isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
                             />
                         )}
-                        {ticket?.contestReplyComment && <Text flexWrap="wrap">{ticket?.contestReplyComment}</Text>}
-                    </VStack>
+                        {ticket?.contestReplyComment && (
+                            <TextComponent flexWrap="wrap">{ticket?.contestReplyComment}</TextComponent>
+                        )}
+                    </VStackComponent>
                     <If condition={offenderAction}>
-                        <HStack space={4} w="95%" justifyContent="space-between">
+                        <HStackComponent style={{ paddingBottom: 4, justifyContent: 'space-between' }} space={4}>
                             <ButtonComponent
                                 size="md"
                                 secondary
-                                width="1/2"
+                                style={{ flex: 1 }}
                                 onPress={handleSubmit}
                                 isLoading={contestLoading}
                                 isDisabled={
@@ -452,7 +476,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                             <ButtonComponent
                                 size="md"
-                                width="1/2"
+                                style={{ flex: 1 }}
                                 onPress={handleAcknowledge}
                                 isLoading={acknowledgeLoading}
                                 isDisabled={
@@ -462,14 +486,14 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             >
                                 Acknowledge
                             </ButtonComponent>
-                        </HStack>
+                        </HStackComponent>
                     </If>
                     <If condition={qcAction}>
-                        <HStack space={4} w="95%" justifyContent="space-between">
+                        <HStackComponent style={{ paddingBottom: 4, justifyContent: 'space-between' }} space={6}>
                             <ButtonComponent
                                 size="md"
                                 secondary
-                                width="1/2"
+                                style={{ flex: 1 }}
                                 isLoading={retractLoading}
                                 onPress={handleRetractTicket}
                             >
@@ -477,19 +501,19 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             </ButtonComponent>
                             <ButtonComponent
                                 size="md"
-                                width="1/2"
+                                style={{ flex: 1 }}
                                 isLoading={replyLoading}
                                 onPress={handleReplySubmit}
                                 isDisabled={!contestReplyComment}
                             >
                                 Reply
                             </ButtonComponent>
-                        </HStack>
+                        </HStackComponent>
                     </If>
-                </VStack>
+                </VStackComponent>
             </CardComponent>
         </ViewWrapper>
     );
 };
 
-export default TicketDetails;
+export default React.memo(TicketDetails);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Center, HStack, Skeleton, Stack, VStack } from 'native-base';
 import ViewWrapper from './viewWrapper';
 
-export const HomeSkeleton: React.FC = () => {
+export const HomeSkeleton: React.FC = React.memo(() => {
     return (
         <Center w="full" p={0}>
             <VStack
@@ -49,11 +49,11 @@ export const HomeSkeleton: React.FC = () => {
             </VStack>
         </Center>
     );
-};
+});
 
 export const FlatListSkeleton: React.FC<{
     count?: number;
-}> = ({ count = 6 }) => {
+}> = React.memo(({ count = 6 }) => {
     return (
         <Center w="full" p={0}>
             {Array.from(Array(count).keys()).map((elm, idx) => (
@@ -70,11 +70,11 @@ export const FlatListSkeleton: React.FC<{
             ))}
         </Center>
     );
-};
+});
 
 export const ProfileSkeleton: React.FC<{
     count?: number;
-}> = ({ count = 6 }) => {
+}> = React.memo(({ count = 6 }) => {
     return (
         <Center w="full" p={0}>
             <Skeleton
@@ -99,11 +99,11 @@ export const ProfileSkeleton: React.FC<{
             ))}
         </Center>
     );
-};
+});
 
 export const ProfileSkeletonMini: React.FC<{
     count?: number;
-}> = ({ count = 4 }) => {
+}> = React.memo(({ count = 4 }) => {
     return (
         <HStack w="full" p={0} space={4} alignItems="center">
             <Skeleton
@@ -128,11 +128,11 @@ export const ProfileSkeletonMini: React.FC<{
             </VStack>
         </HStack>
     );
-};
+});
 
 export const FlexListSkeleton: React.FC<{
     count?: number;
-}> = ({ count = 1 }) => {
+}> = React.memo(({ count = 1 }) => {
     return (
         <ViewWrapper>
             {Array.from(Array(count).keys()).map((elm, idx) => (
@@ -158,4 +158,4 @@ export const FlexListSkeleton: React.FC<{
             ))}
         </ViewWrapper>
     );
-};
+});

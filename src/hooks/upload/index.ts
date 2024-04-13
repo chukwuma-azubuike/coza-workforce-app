@@ -89,14 +89,20 @@ const useUpload = ({ albumId }: { albumId: IImbbAlbumId }) => {
         setUploadResponse(undefined);
     };
 
-    const initialise = () => {
+    const initialise = async () => {
         reset();
-        launchImageLibrary({ mediaType: 'photo', includeBase64: true }, (res: any) => {
-            if (res?.assets[0]?.fileSize > MAX_IMAGE_SIZE) {
-                setError(`File must not be larger than ${MAX_IMAGE_SIZE / 1000000}mb`);
+        await launchImageLibrary({ mediaType: 'photo', includeBase64: true }, res => {
+            if (!res) {
                 return;
             }
-            uploadImage(res?.assets[0]);
+            if (!!res && !!res?.assets && res?.assets?.length > 0 && res?.assets[0]?.fileSize) {
+                if (res?.assets[0]?.fileSize > MAX_IMAGE_SIZE) {
+                    setError(`File must not be larger than ${MAX_IMAGE_SIZE / 1000000}mb`);
+                    return;
+                } else {
+                    uploadImage(res?.assets[0]);
+                }
+            }
         });
     };
 

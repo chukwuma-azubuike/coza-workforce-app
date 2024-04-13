@@ -11,15 +11,19 @@ import { Field, Formik } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
 import PhoneNumberInput from '@components/atoms/phone-input';
-import Utils from '@utils';
+import Utils from '@utils/index';
+import { View } from 'react-native';
+import useDevice from '@hooks/device';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
+    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+
     return (
-        <ViewWrapper scroll pt={10}>
+        <ViewWrapper avoidKeyboard scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
@@ -104,12 +108,15 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     placeholder="jondoe@gmail.com"
                                                 />
                                             </FormControl>
-                                            <Field
-                                                name="phoneNumber"
-                                                label="Phone Number"
-                                                required
-                                                component={PhoneNumberInput}
-                                            />
+                                            <View style={{ flex: 1 }}>
+                                                <Field
+                                                    required
+                                                    value={values?.phoneNumber}
+                                                    name="phoneNumber"
+                                                    label="Phone Number"
+                                                    component={PhoneNumberInput}
+                                                />
+                                            </View>
                                             <FormControl isRequired isInvalid={!!errors?.address && touched.address}>
                                                 <FormControl.Label>Address</FormControl.Label>
                                                 <InputComponent
@@ -150,7 +157,11 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     placeholder="Quality Control"
                                                 />
                                             </FormControl>
-                                            <ButtonComponent onPress={handleContinuePress} mt={4}>
+                                            <ButtonComponent
+                                                size="md"
+                                                style={{ marginTop: 20 }}
+                                                onPress={handleContinuePress}
+                                            >
                                                 Continue
                                             </ButtonComponent>
                                         </>
@@ -165,4 +176,4 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     );
 };
 
-export default RegisterStepOne;
+export default React.memo(RegisterStepOne);

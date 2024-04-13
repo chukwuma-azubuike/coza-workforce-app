@@ -13,6 +13,7 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
+import { isIOS } from '@rneui/base';
 
 const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IAttendanceReportPayload;
@@ -78,11 +79,12 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
     return (
         <Formik<IAttendanceReportPayload>
             validateOnChange
+            enableReinitialize
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll>
+                <ViewWrapper scroll avoidKeyboard={isIOS}>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}

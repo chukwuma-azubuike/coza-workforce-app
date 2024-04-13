@@ -81,4 +81,4 @@ const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setM
     );
 };
 
-export default NotificationModal;
+export default React.memo(NotificationModal);

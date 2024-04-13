@@ -20,7 +20,7 @@ class Utils {
         return char.split(separator).join(' ');
     }
 
-    static capitalizeFirstChar(char: string, separator: string = ' ') {
+    static capitalizeFirstChar(char: string = '', separator: string = ' ') {
         if (!char) {
             return '';
         }
@@ -32,7 +32,7 @@ class Utils {
         return `${firstChar}${restChar.toLowerCase()}`;
     }
 
-    static truncateString(str: string, num: number = 25) {
+    static truncateString(str: string = '', num: number = 25) {
         if (str?.length > num) {
             return str.slice(0, num) + '...';
         }
@@ -40,7 +40,7 @@ class Utils {
     }
 
     static formatEmail(email: string) {
-        return this.splitString(email).toLowerCase();
+        return this.splitString(email).toLowerCase().trim();
     }
 
     /**************** Sorting ****************/
@@ -52,8 +52,10 @@ class Utils {
      * @returns Sorted Array
      */
 
-    static sortStringAscending = (arrObject?: any[], key?: string) => {
-        if (arrObject && key) return [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+    static sortStringAscending = (arrObject: Array<{ [key: string]: any }> = [], key: string) => {
+        if (arrObject && typeof key === 'string') {
+            return [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+        }
         return [];
     };
 
@@ -179,36 +181,50 @@ class Utils {
 
     /************ Native Permisisons logic ************/
 
-    static checkLocationPermission = async () => {
+    static checkLocationPermission = async (successCallBack?: () => void): Promise<string> => {
         const isIOS = Platform.OS === 'ios';
 
-        check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+        return check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
             .then(result => {
                 switch (result) {
                     case RESULTS.UNAVAILABLE:
+                        return this.requestLocationPermission(successCallBack);
                         break;
                     case RESULTS.DENIED:
+                        return this.requestLocationPermission(successCallBack);
                         break;
                     case RESULTS.LIMITED:
+                        successCallBack && successCallBack();
+                        return result;
                         break;
                     case RESULTS.GRANTED:
+                        successCallBack && successCallBack();
+                        return result;
                         break;
                     case RESULTS.BLOCKED:
+                        return this.requestLocationPermission(successCallBack);
                         break;
                 }
             })
-            .catch(error => {});
+            .catch(error => {
+                return error;
+            });
     };
 
-    static requestLocationPermission = async () => {
+    static requestLocationPermission = async (successCallBack?: () => void) => {
         const isIOS = Platform.OS === 'ios';
 
-        request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
+        return request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
             title: 'Location Access',
             message: 'This App needs access to your location',
             buttonPositive: 'OK',
             buttonNegative: 'DENY',
-        }).then(result => {});
+        }).then(result => {
+            if (result === RESULTS.GRANTED || result === RESULTS.LIMITED) {
+                successCallBack && successCallBack();
+            }
+            return result;
+        });
     };
 
     /************** Objects **************/

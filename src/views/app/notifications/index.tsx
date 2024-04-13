@@ -10,4 +10,4 @@ const Notifications: React.FC = () => {
     );
 };
 
-export default Notifications;
+export default React.memo(Notifications);

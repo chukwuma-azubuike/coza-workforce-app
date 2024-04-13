@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AppRoutes, IAppRoute } from '@config/navigation';
 import TabBar from '@components/layout/tab-bar';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { Route, useNavigation } from '@react-navigation/native';
 import { NavigationBackButton } from '@components/atoms/button';
 import { useDeepLinkNavigation } from '@hooks/navigation';
@@ -26,7 +25,6 @@ const flattenNestedRoutes = (routes: IAppRoute[]) => {
 };
 
 const TabRoutes: React.FC = () => {
-    const { isDarkMode } = useAppColorMode();
     const { goBack, navigate } = useNavigation<{
         navigate: (route: string, options: any) => void;
         goBack: () => void;
@@ -35,8 +33,6 @@ const TabRoutes: React.FC = () => {
     const handleGoBack = () => {
         goBack();
     };
-
-    const hiddenHeaders = ['Home', 'CGWC Details'];
 
     // TODO: Restore when IOS notification is fixed
     const { initialRoute, tabKey } = useDeepLinkNavigation();
@@ -52,6 +48,7 @@ const TabRoutes: React.FC = () => {
             tabBar={props => <TabBar {...props} />}
             screenOptions={{
                 headerTitleAlign: 'center',
+                tabBarHideOnKeyboard: true,
             }}
             backBehavior="history"
         >
@@ -62,12 +59,20 @@ const TabRoutes: React.FC = () => {
                     name={route.name}
                     component={route.component}
                     options={{
-                        headerShown: !hiddenHeaders.includes(route.name),
                         headerBackgroundContainerStyle: {
                             justifyContent: 'center',
                             alignContent: 'center',
                         },
+                        headerShown: !route.hideHeader,
                         headerLeft: () => <NavigationBackButton onPress={handleGoBack} />,
+                        header: !!route.customHeader
+                            ? props => {
+                                  const CustomHeader = route.customHeader;
+                                  if (CustomHeader) {
+                                      return <CustomHeader {...(props as any)} />;
+                                  }
+                              }
+                            : undefined,
                     }}
                 />
             ))}

@@ -85,4 +85,4 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
     );
 };
 
-export default WorkforceManagement;
+export default React.memo(WorkforceManagement);

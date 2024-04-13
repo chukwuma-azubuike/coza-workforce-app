@@ -15,63 +15,58 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import { FlatListSkeleton } from '@components/layout/skeleton';
 import useScreenFocus from '@hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import { HStack, Text } from 'native-base';
+import { HStack } from 'native-base';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
 import moment from 'moment';
 import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '@store/types';
-import Utils from '@utils';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
+import TextComponent from '@components/text';
 
-export const DepartmentReportListRow: React.FC<
-    Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>
-> = props => {
-    const navigation = useNavigation();
+export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>> =
+    React.memo(props => {
+        const navigation = useNavigation();
 
-    const {
-        user: { department },
-    } = useRole();
+        const {
+            user: { department },
+        } = useRole();
 
-    const handlePress = () => {
-        navigation.navigate(ReportRouteIndex[department?.departmentName] as never, props as never);
-    };
+        const handlePress = () => {
+            navigation.navigate(ReportRouteIndex[department?.departmentName] as never, props as never);
+        };
 
-    return (
-        <TouchableOpacity
-            disabled={false}
-            delayPressIn={0}
-            activeOpacity={0.6}
-            onPress={handlePress}
-            style={{ width: '100%' }}
-            accessibilityRole="button"
-        >
-            <HStack
-                p={2}
-                px={4}
-                my={1.5}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
+        return (
+            <TouchableOpacity
+                disabled={false}
+                delayPressIn={0}
+                activeOpacity={0.6}
+                onPress={handlePress}
+                style={{ width: '100%' }}
+                accessibilityRole="button"
             >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}
-                </Text>
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
-                    Departmental
-                </Text>
-                <StatusTag>{props?.status as any}</StatusTag>
-            </HStack>
-        </TouchableOpacity>
-    );
-};
+                <HStack
+                    p={2}
+                    px={4}
+                    my={1.5}
+                    borderRadius={10}
+                    alignItems="center"
+                    _dark={{ bg: 'gray.900' }}
+                    _light={{ bg: 'gray.50' }}
+                    justifyContent="space-between"
+                >
+                    <TextComponent>{moment(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</TextComponent>
+                    <TextComponent bold>Departmental</TextComponent>
+                    <StatusTag>{props?.status as any}</StatusTag>
+                </HStack>
+            </TouchableOpacity>
+        );
+    });
 
-const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' | 'details'>> = props => {
+const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' | 'details'>> = React.memo(props => {
     const navigation = useNavigation();
 
     const handlePress = () => {
@@ -91,25 +86,26 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
                 p={2}
                 px={4}
                 my={1.5}
+                py={3}
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
             >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props.createdAt).format('DD/MM/YYYY')}
-                </Text>
-                <Text _dark={{ color: 'rose.400' }} _light={{ color: 'rose.500' }} bold>
-                    Incident
-                </Text>
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {Utils.truncateString(props.details, 10)}
-                </Text>
+                <View style={{ width: '25%' }}>
+                    <TextComponent>{moment(props.createdAt).format('DD/MM/YYYY')}</TextComponent>
+                </View>
+                <View style={{ width: '25%' }}>
+                    <TextComponent bold>Incident</TextComponent>
+                </View>
+                <View style={{ width: '50%' }}>
+                    <TextComponent>{props.details}</TextComponent>
+                </View>
             </HStack>
         </TouchableOpacity>
     );
-};
+});
 
 const reportColumns: IFlatListColumn[] = [
     {
@@ -275,4 +271,4 @@ const Reports: React.FC = () => {
     );
 };
 
-export default Reports;
+export default React.memo(Reports);

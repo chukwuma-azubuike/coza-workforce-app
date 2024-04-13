@@ -93,4 +93,4 @@ const StatusTag: React.FC<IStatusTag> = props => {
     );
 };
 
-export default StatusTag;
+export default React.memo(StatusTag);

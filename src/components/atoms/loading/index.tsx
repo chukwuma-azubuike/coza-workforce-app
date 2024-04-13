@@ -1,28 +1,33 @@
 import React from 'react';
-import { Center, ICenterProps, Image, Spinner, VStack } from 'native-base';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { ColorValue } from 'react-native';
+import { Image, View, ViewProps } from 'react-native';
+import { ActivityIndicator } from 'react-native';
+import VStackComponent from '@components/layout/v-stack';
+import CenterComponent from '@components/layout/center';
+
 const logoWhite = require('@assets/images/COZA-Logo-white.png');
 const logoBlack = require('@assets/images/COZA-Logo-black.png');
 
-interface ILoadingProps extends ICenterProps {
+interface ILoadingProps extends ViewProps {
     bootUp?: boolean;
 }
 
-const Loading: React.FC<ILoadingProps> = ({ bootUp, color = 'gray.600', ...props }) => {
+const Loading: React.FC<ILoadingProps> = ({ bootUp, ...props }) => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <Center justifyContent="center" h="full" w="full" {...props}>
-            <VStack justifyContent="center">
+        <View style={{ flex: 1, display: 'flex', justifyContent: 'center' }} {...props}>
+            <VStackComponent style={{ justifyContent: 'center' }}>
                 {bootUp ? (
-                    <Image alt="startuplogo" source={isLightMode ? logoBlack : logoWhite} />
+                    <CenterComponent>
+                        <Image alt="startuplogo" source={isLightMode ? logoBlack : logoWhite} />
+                    </CenterComponent>
                 ) : (
-                    <Spinner color={color as ColorValue} size="lg" />
+                    <ActivityIndicator />
                 )}
-            </VStack>
-        </Center>
+            </VStackComponent>
+        </View>
     );
 };
 
-export default Loading;
+export default React.memo(Loading);

@@ -1,4 +1,4 @@
-import { Box, FormControl, HStack, VStack } from 'native-base';
+import { FormControl, HStack, VStack } from 'native-base';
 import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -13,7 +13,7 @@ import { downloadFile } from '@utils/downloadFile';
 import { useGetAttendanceReportForDownloadQuery } from '@store/services/attendance';
 import { useGetPermissionsReportForDownloadQuery } from '@store/services/permissions';
 import { useGetTicketsReportForDownloadQuery } from '@store/services/tickets';
-import { Alert } from 'react-native';
+import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
@@ -21,6 +21,9 @@ import useRole from '@hooks/role';
 import { generateCummulativeAttendanceReport } from '@utils/generateCummulativeAttendanceReport';
 import { generateReportName } from '@utils/generateReportName';
 import { IReportDownloadPayload } from '@store/types';
+import Utils from '@utils/index';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
+import HStackComponent from '@components/layout/h-stack';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -51,6 +54,11 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
     } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campusId });
+
+    const sortedCampusDepartments = React.useMemo(
+        () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
+        [...spreadDependencyArray(campusDepartments, '_id')]
+    );
 
     const {
         data: allCampuses,
@@ -191,130 +199,138 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     };
 
     return (
-        <ViewWrapper scroll noPadding pt={4}>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                <Box alignItems="center" w="100%">
-                    <VStack w="100%" space={1}>
+        <ViewWrapper style={{ paddingTop: 8 }}>
+            <View style={{ alignItems: 'center' }}>
+                <View style={{ gap: 10, width: '100%' }}>
+                    <FormControl isRequired>
+                        <FormControl.Label>Data Type</FormControl.Label>
+                        <SelectComponent
+                            valueKey="value"
+                            displayKey="name"
+                            items={dataTypes}
+                            selectedValue={dataType}
+                            placeholder="Choose data type"
+                            onValueChange={handleDataType as any}
+                        >
+                            {dataTypes?.map((data, index) => (
+                                <SelectItemComponent value={data.value} key={`data-${index}`} label={data.name} />
+                            ))}
+                        </SelectComponent>
+                    </FormControl>
+                    <FormControl isRequired>
+                        <FormControl.Label>Campus</FormControl.Label>
+                        <SelectComponent
+                            valueKey="_id"
+                            displayKey="campusName"
+                            selectedValue={campusId}
+                            items={allCampuses || []}
+                            placeholder="Choose campus"
+                            isDisabled={cannotSwitchCampus}
+                            onValueChange={handleCampus as any}
+                        >
+                            <SelectItemComponent
+                                key="all-campuses"
+                                label="All Campuses"
+                                value={undefined as unknown as string}
+                            />
+                            {allCampuses?.map((campus, index) => (
+                                <SelectItemComponent
+                                    value={campus._id}
+                                    key={`campus-${index}`}
+                                    label={campus.campusName}
+                                    isLoading={allCampusesLoading}
+                                />
+                            ))}
+                        </SelectComponent>
+                    </FormControl>
+                    <If condition={!isPermission}>
                         <FormControl isRequired>
-                            <FormControl.Label>Data Type</FormControl.Label>
+                            <FormControl.Label>Service</FormControl.Label>
                             <SelectComponent
-                                defaultValue={dataType}
-                                placeholder="Choose data type"
-                                onValueChange={handleDataType as any}
-                            >
-                                {dataTypes?.map((data, index) => (
-                                    <SelectItemComponent value={data.value} key={`data-${index}`} label={data.name} />
-                                ))}
-                            </SelectComponent>
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormControl.Label>Campus</FormControl.Label>
-                            <SelectComponent
-                                selectedValue={campusId}
-                                placeholder="Choose campus"
-                                onValueChange={handleCampus}
-                                isDisabled={cannotSwitchCampus}
+                                valueKey="_id"
+                                selectedValue={serviceId}
+                                items={pastServices || []}
+                                placeholder="Choose service"
+                                displayKey={['name', 'serviceTime']}
+                                onValueChange={handleService as any}
                             >
                                 <SelectItemComponent
-                                    key="all-campuses"
-                                    label="All Campuses"
+                                    key="all-services"
+                                    label="All Services"
                                     value={undefined as unknown as string}
                                 />
-                                {allCampuses?.map((campus, index) => (
+                                {pastServices?.map((service, index) => (
                                     <SelectItemComponent
-                                        value={campus._id}
-                                        key={`campus-${index}`}
-                                        label={campus.campusName}
-                                        isLoading={allCampusesLoading}
+                                        value={service._id}
+                                        key={`service-${index}`}
+                                        label={`${service.name} - ${
+                                            service.serviceTime ? moment(service.serviceTime).format('DD-MM-YYYY') : ''
+                                        }`}
+                                        isLoading={servicesLoading}
                                     />
                                 ))}
                             </SelectComponent>
                         </FormControl>
-                        <If condition={!isPermission}>
-                            <FormControl isRequired>
-                                <FormControl.Label>Service</FormControl.Label>
-                                <SelectComponent
-                                    placeholder="Choose service"
-                                    selectedValue={serviceId}
-                                    onValueChange={handleService}
-                                >
-                                    <SelectItemComponent
-                                        key="all-services"
-                                        label="All Services"
-                                        value={undefined as unknown as string}
-                                    />
-                                    {pastServices?.map((service, index) => (
-                                        <SelectItemComponent
-                                            value={service._id}
-                                            key={`service-${index}`}
-                                            label={`${service.name} - ${
-                                                service.serviceTime
-                                                    ? moment(service.serviceTime).format('DD-MM-YYYY')
-                                                    : ''
-                                            }`}
-                                            isLoading={servicesLoading}
-                                        />
-                                    ))}
-                                </SelectComponent>
-                            </FormControl>
-                        </If>
-                        <HStack justifyContent="space-between">
-                            <FormControl w="1/2">
-                                <DateTimePickerComponent
-                                    label="Start date"
-                                    fieldName="startDate"
-                                    onSelectDate={handleStartDate}
-                                />
-                            </FormControl>
-                            <FormControl w="1/2">
-                                <DateTimePickerComponent
-                                    label="End date"
-                                    fieldName="endDate"
-                                    onSelectDate={handleEndDate}
-                                />
-                            </FormControl>
-                        </HStack>
-                        <FormControl isRequired>
-                            <FormControl.Label>Department</FormControl.Label>
-                            <SelectComponent
-                                selectedValue={departmentId}
-                                placeholder="Choose department"
-                                onValueChange={handleDepartment}
-                            >
-                                {/* TODO: Restore on crash fix */}
-                                {/* <SelectItemComponent key="all-departments" label="All Departments" value="undefined" /> */}
-                                {campusDepartments?.map((department, index) => (
-                                    <SelectItemComponent
-                                        value={department._id}
-                                        key={`department-${index}`}
-                                        label={department.departmentName}
-                                        isLoading={campusDepartmentsLoading}
-                                    />
-                                ))}
-                            </SelectComponent>
+                    </If>
+                    <HStackComponent style={{ flex: 0 }}>
+                        <FormControl w="1/2">
+                            <DateTimePickerComponent
+                                label="Start date"
+                                fieldName="startDate"
+                                onSelectDate={handleStartDate}
+                            />
                         </FormControl>
-
-                        <ButtonComponent
-                            mt={4}
-                            type="submit"
-                            isLoading={isLoading}
-                            onPress={handlePress}
-                            startIcon={
-                                <Icon
-                                    size={28}
-                                    color="white"
-                                    type={!triggerFetch ? 'evilicon' : 'ionicon'}
-                                    name={!triggerFetch ? 'refresh' : 'download-outline'}
-                                />
-                            }
+                        <FormControl w="1/2">
+                            <DateTimePickerComponent
+                                label="End date"
+                                fieldName="endDate"
+                                onSelectDate={handleEndDate}
+                            />
+                        </FormControl>
+                    </HStackComponent>
+                    <FormControl isRequired>
+                        <FormControl.Label>Department</FormControl.Label>
+                        <SelectComponent
+                            valueKey="_id"
+                            displayKey="departmentName"
+                            selectedValue={departmentId}
+                            items={sortedCampusDepartments || []}
+                            placeholder="Choose department"
+                            onValueChange={handleDepartment as any}
                         >
-                            {!triggerFetch ? 'Fetch report' : 'Download'}
-                        </ButtonComponent>
-                    </VStack>
-                </Box>
-            </VStack>
+                            {/* TODO: Restore on crash fix */}
+                            {/* <SelectItemComponent key="all-departments" label="All Departments" value="undefined" /> */}
+                            {sortedCampusDepartments?.map((department, index) => (
+                                <SelectItemComponent
+                                    value={department._id}
+                                    key={`department-${index}`}
+                                    label={department.departmentName}
+                                    isLoading={campusDepartmentsLoading}
+                                />
+                            ))}
+                        </SelectComponent>
+                    </FormControl>
+
+                    <ButtonComponent
+                        mt={4}
+                        type="submit"
+                        isLoading={isLoading}
+                        onPress={handlePress}
+                        startIcon={
+                            <Icon
+                                size={28}
+                                color="white"
+                                type={!triggerFetch ? 'evilicon' : 'ionicon'}
+                                name={!triggerFetch ? 'refresh' : 'download-outline'}
+                            />
+                        }
+                    >
+                        {!triggerFetch ? 'Fetch report' : 'Download'}
+                    </ButtonComponent>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };
 
-export default Export;
+export default React.memo(Export);
