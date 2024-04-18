@@ -1,8 +1,14 @@
 import React from 'react';
-import { KeyboardAvoidingView, RefreshControl, ViewProps, ScrollViewProps, useColorScheme } from 'react-native';
+import {
+    KeyboardAvoidingView,
+    RefreshControl,
+    ViewProps,
+    ScrollViewProps,
+    useColorScheme,
+    ScrollView,
+} from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
-import { ScrollView } from 'react-native';
 import { View } from 'react-native';
 
 interface IViewWrapper
@@ -29,32 +35,48 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
     const scheme = useColorScheme() as keyof typeof THEME;
 
     return (
-        <ActiveView
-            {...props}
-            refreshControl={onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />}
-            style={{
-                flex: 1,
-                paddingHorizontal: noPadding ? 0 : 6,
-                backgroundColor: THEME[scheme],
-                ...(props.style as {}),
-            }}
-        >
+        <>
             {avoidKeyboard ? (
                 <KeyboardAvoidingView
-                    keyboardVerticalOffset={avoidKeyboardOffset}
-                    contentContainerStyle={{ flex: 1, position: 'relative' }}
-                    style={{ flex: 1 }}
+                    keyboardVerticalOffset={avoidKeyboardOffset || 100}
+                    contentContainerStyle={{ position: 'relative' }}
+                    style={{
+                        flex: 1,
+                    }}
                     behavior="position"
                 >
-                    {props.children ? props.children : <Empty />}
+                    <ActiveView
+                        {...props}
+                        refreshControl={
+                            onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
+                        }
+                        style={{
+                            paddingHorizontal: noPadding ? 0 : 6,
+                            backgroundColor: THEME[scheme],
+                            ...(props.style as {}),
+                        }}
+                    >
+                        {props.children ? props.children : <Empty />}
+                    </ActiveView>
                 </KeyboardAvoidingView>
-            ) : props.children ? (
-                props.children
             ) : (
-                <Empty />
+                <ActiveView
+                    {...props}
+                    refreshControl={
+                        onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
+                    }
+                    style={{
+                        flex: 1,
+                        paddingHorizontal: noPadding ? 0 : 6,
+                        backgroundColor: THEME[scheme],
+                        ...(props.style as {}),
+                    }}
+                >
+                    {props.children ? props.children : <Empty />}
+                </ActiveView>
             )}
-        </ActiveView>
+        </>
     );
 };
 
-export default React.memo(ViewWrapper);
+export default ViewWrapper;

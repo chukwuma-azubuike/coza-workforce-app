@@ -94,7 +94,6 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                             padding: 0,
                             fontSize: 18,
                             paddingTop: 0,
-                            paddingLeft: 10,
                             color: textColor,
                             paddingVertical: 0,
                         }}

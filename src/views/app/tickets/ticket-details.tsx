@@ -27,7 +27,6 @@ import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
 import { THEME_CONFIG } from '@config/appConfig';
-import { ScreenHeight } from '@rneui/base';
 
 const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = props.navigation;
@@ -253,10 +252,10 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             avoidKeyboard
             onRefresh={refetch}
             style={{
-                paddingBottom: 20,
+                paddingVertical: 20,
+                paddingHorizontal: 10,
             }}
             refreshing={isLoading || isFetching}
-            avoidKeyboardOffset={-(ScreenHeight / 2)}
         >
             <CardComponent
                 isLoading={isLoading || isFetching}

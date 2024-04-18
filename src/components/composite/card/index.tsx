@@ -19,7 +19,7 @@ interface ICardComponentProps extends IBoxProps {
 
 const CardComponent: React.FC<ICardComponentProps> = props => {
     const { isLoading } = props;
-    const { backgroundColor } = useAppColorMode();
+    const { backgroundColor, borderColor } = useAppColorMode();
 
     return (
         <View
@@ -33,8 +33,8 @@ const CardComponent: React.FC<ICardComponentProps> = props => {
                     minWidth: 160,
                     borderRadius: 6,
                     borderWidth: 0.2,
+                    borderColor: borderColor,
                     backgroundColor: backgroundColor,
-                    borderColor: THEME_CONFIG.lightGray,
                 },
                 style.shadowProp,
                 props.style,
