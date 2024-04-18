@@ -110,7 +110,7 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
             refreshing={newUserDataLoading}
             style={{ paddingVertical: 20, paddingHorizontal: 20 }}
         >
-            <VStackComponent style={{ paddingBottom: 24 }}>
+            <VStackComponent style={{ paddingBottom: 32 }}>
                 <VStackComponent style={{ paddingBottom: 8, alignItems: 'center' }}>
                     <Pressable
                         style={{ maxHeight: 114 }}

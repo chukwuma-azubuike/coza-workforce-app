@@ -88,7 +88,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             initialValues={INITIAL_VALUES}
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
+                <ViewWrapper scroll avoidKeyboard={isIOS}>
                     <VStack pb={10} mt={4} px={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}

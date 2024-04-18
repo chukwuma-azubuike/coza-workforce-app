@@ -182,7 +182,16 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
-        <ViewWrapper avoidKeyboard scroll onRefresh={refetch} refreshing={isFetching}>
+        <ViewWrapper
+            avoidKeyboard
+            scroll
+            onRefresh={refetch}
+            refreshing={isFetching}
+            style={{
+                paddingVertical: 20,
+                paddingHorizontal: 10,
+            }}
+        >
             <CardComponent style={{ paddingVertical: 20 }} isLoading={permissionLoading || permissionIsFetching}>
                 <VStackComponent space={8}>
                     <AvatarComponent
