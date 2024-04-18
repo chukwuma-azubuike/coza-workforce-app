@@ -162,7 +162,7 @@ const ManualClockin: React.FC = () => {
                         };
 
                         return (
-                            <VStack space="sm" alignItems="flex-start" w="100%" px={4}>
+                            <VStack space="sm" alignItems="flex-start" w="100%" px={2}>
                                 <FormControl isRequired>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent

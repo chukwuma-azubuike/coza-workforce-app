@@ -153,18 +153,10 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
                                             <FormControl.Label>Category</FormControl.Label>
                                             <SelectComponent
-                                                defaultValue="work"
+                                                displayKey="name"
+                                                items={categories || []}
                                                 selectedValue={values.categoryId}
-                                                onValueChange={handleChange('categoryId')}
-                                                dropdownIcon={
-                                                    <HStack mr={2} space={2}>
-                                                        <Icon
-                                                            type="entypo"
-                                                            name="chevron-small-down"
-                                                            color={THEME_CONFIG.lightGray}
-                                                        />
-                                                    </HStack>
-                                                }
+                                                onValueChange={handleChange('categoryId') as any}
                                             >
                                                 {categories?.map((category, index) => (
                                                     <SelectItemComponent

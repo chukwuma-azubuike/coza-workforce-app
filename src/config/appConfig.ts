@@ -1,6 +1,8 @@
 import { extendTheme } from 'native-base';
 
 const THEME_CONFIG = {
+    black: '#000',
+    white: '#FFF',
     borderRadius: 'lg',
     primary: '#6B079C',
     primaryLight: '#A855F7',
@@ -31,6 +33,11 @@ export enum SIZE {
     '2xl' = 144,
 }
 
+export const BORDER_THEME = {
+    dark: THEME_CONFIG.gray,
+    light: THEME_CONFIG.lightGray,
+};
+
 export const BACKGROUND_THEME = {
     light: THEME_CONFIG.veryVeryLightGray,
     dark: THEME_CONFIG.darkGray,
@@ -39,6 +46,11 @@ export const BACKGROUND_THEME = {
 export const TEXT_THEME = {
     light: THEME_CONFIG.gray,
     dark: THEME_CONFIG.lightGray,
+};
+
+export const TEXT_THEME_MAIN = {
+    light: THEME_CONFIG.black,
+    dark: THEME_CONFIG.white,
 };
 
 const extendedTheme = extendTheme({

@@ -27,7 +27,6 @@ import UserListItem from '@components/composite/user-list-item';
 import VStackComponent from '@components/layout/v-stack';
 import { Switch } from 'react-native';
 import RadioButton from '@components/composite/radio-button';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { type } = props.route.params as { type: ITicketType };
@@ -135,22 +134,13 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>();
 
-    const offendingDepartment = React.useMemo(
-        () => campusDepartments?.find(dept => dept._id === departmentId),
-        [...spreadDependencyArray(campusDepartments), departmentId]
-    );
-
     enum TICKET_TEMPLATE {
         minimal = `We celebrate you, 
         
 QC/M&E is issuing you this ticket BECAUSE ... 
         
 #GreaterHonour`,
-        verbose = `We celebrate you ${
-            isIndividual
-                ? (searchedUser?.gender === 'M' ? 'sir' : 'ma') || ''
-                : offendingDepartment?.departmentName || ''
-        },
+        verbose = `We celebrate you,
 
 We appreciate what you do in the house and we know you are committed to serving God.
     

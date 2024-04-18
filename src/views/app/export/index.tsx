@@ -1,4 +1,4 @@
-import { FormControl, HStack, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -40,9 +40,9 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { isCampusPastor, isQC, user } = useRole();
     const cannotSwitchCampus = isCampusPastor || isQC;
 
-    const [campusId, setCampusId] = React.useState<string>(cannotSwitchCampus ? user?.campus?._id : '');
+    const [campusId, setCampusId] = React.useState<string | undefined>(cannotSwitchCampus ? user?.campus?._id : '');
     const [departmentId, setDepartmentId] = React.useState<string>();
-    const [serviceId, setServiceId] = React.useState<string>('all-services');
+    const [serviceId, setServiceId] = React.useState<string | undefined>('all-services');
     const [triggerFetch, setTriggerFetch] = React.useState<boolean>(false);
     const [dataType, setDataType] = React.useState<IExportType>(type);
     const [startDate, setStartDate] = React.useState<IReportDownloadPayload['startDate']>();
@@ -53,7 +53,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         refetch: refetchDepartments,
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
-    } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campusId });
+    } = useGetDepartmentsByCampusIdQuery(campusId as string, { skip: !campusId });
 
     const sortedCampusDepartments = React.useMemo(
         () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
@@ -80,7 +80,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isLoading: attendanceIsLoading,
         isFetching: attendanceIsFetching,
     } = useGetAttendanceReportForDownloadQuery(
-        { endDate, startDate, campusId, serviceId, departmentId },
+        { endDate, startDate, campusId, serviceId: serviceId === 'all-services' ? undefined : serviceId, departmentId },
         { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
     const {
@@ -103,7 +103,13 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isLoading: ticketsIsLoading,
         isFetching: ticketsIsFetching,
     } = useGetTicketsReportForDownloadQuery(
-        { endDate, startDate, campusId, serviceId, departmentId },
+        {
+            endDate,
+            startDate,
+            campusId: campusId === 'all-campuses' ? undefined : campusId,
+            serviceId: serviceId === 'all-services' ? undefined : serviceId,
+            departmentId: departmentId === 'all-departments' ? undefined : departmentId,
+        },
         { skip: !triggerFetch, refetchOnMountOrArgChange: true }
     );
 
@@ -222,16 +228,16 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <SelectComponent
                             valueKey="_id"
                             displayKey="campusName"
-                            selectedValue={campusId}
-                            items={allCampuses || []}
                             placeholder="Choose campus"
                             isDisabled={cannotSwitchCampus}
                             onValueChange={handleCampus as any}
+                            selectedValue={cannotSwitchCampus ? user?.campus?._id : campusId}
+                            items={[{ _id: 'all-campuses', campusName: 'All Campuses' }, ...(allCampuses || [])]}
                         >
                             <SelectItemComponent
                                 key="all-campuses"
                                 label="All Campuses"
-                                value={undefined as unknown as string}
+                                value={'all-campuses' as unknown as string}
                             />
                             {allCampuses?.map((campus, index) => (
                                 <SelectItemComponent
@@ -249,22 +255,24 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             <SelectComponent
                                 valueKey="_id"
                                 selectedValue={serviceId}
-                                items={pastServices || []}
                                 placeholder="Choose service"
                                 displayKey={['name', 'serviceTime']}
                                 onValueChange={handleService as any}
+                                items={[{ _id: 'all-services', name: 'All Services' }, ...(pastServices || [])]}
                             >
                                 <SelectItemComponent
                                     key="all-services"
                                     label="All Services"
-                                    value={undefined as unknown as string}
+                                    value={'all-services' as unknown as string}
                                 />
                                 {pastServices?.map((service, index) => (
                                     <SelectItemComponent
                                         value={service._id}
                                         key={`service-${index}`}
                                         label={`${service.name} - ${
-                                            service.serviceTime ? moment(service.serviceTime).format('DD-MM-YYYY') : ''
+                                            service?.serviceTime
+                                                ? moment(service?.serviceTime).format('DD-MM-YYYY')
+                                                : ''
                                         }`}
                                         isLoading={servicesLoading}
                                     />
@@ -294,12 +302,18 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             valueKey="_id"
                             displayKey="departmentName"
                             selectedValue={departmentId}
-                            items={sortedCampusDepartments || []}
                             placeholder="Choose department"
                             onValueChange={handleDepartment as any}
+                            items={[
+                                { _id: 'all-departments', departmentName: 'All Departments' },
+                                ...(sortedCampusDepartments || []),
+                            ]}
                         >
-                            {/* TODO: Restore on crash fix */}
-                            {/* <SelectItemComponent key="all-departments" label="All Departments" value="undefined" /> */}
+                            <SelectItemComponent
+                                key="all-departments"
+                                label="All Departments"
+                                value="all-departments"
+                            />
                             {sortedCampusDepartments?.map((department, index) => (
                                 <SelectItemComponent
                                     value={department._id}

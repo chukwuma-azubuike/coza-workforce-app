@@ -28,6 +28,7 @@ import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import CenterComponent from '@components/layout/center';
 import { THEME_CONFIG } from '@config/appConfig';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
@@ -55,6 +56,11 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
     } = useGetDepartmentsByCampusIdQuery(campusId || (data?.campus._id as string), { refetchOnMountOrArgChange: true });
+
+    const sortedCampusDepartments = React.useMemo(
+        () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
+        [...spreadDependencyArray(campusDepartments)]
+    );
 
     const [updateUser, updateResults] = useUpdateUserMutation();
     const [deleteUser, deleteUserResults] = useDeleteUserMutation();
@@ -199,7 +205,14 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const rolesPermitted = React.useMemo(() => rolesPermittedToCreate(), []);
 
     return (
-        <ViewWrapper scroll onRefresh={refetch} refreshing={isFetching}>
+        <ViewWrapper
+            scroll
+            onRefresh={refetch}
+            refreshing={isFetching}
+            style={{
+                paddingHorizontal: 10,
+            }}
+        >
             <CardComponent isLoading={isLoading || isFetching} style={{ paddingVertical: 20, marginTop: 20 }}>
                 <Formik<IReAssignUserPayload> validateOnChange onSubmit={submitForm} initialValues={INITIAL_VALUES}>
                     {({ values, handleChange, handleSubmit }) => {
@@ -212,11 +225,6 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             () => compareObjectValueByKey(INITIAL_VALUES, values),
                             [values]
                         );
-
-                        const handleCrash = (val: string) => {
-                            console.log({ val, rolesPermitted });
-                            handleChange('roleId')(val);
-                        };
 
                         return (
                             <VStackComponent space={8}>
@@ -479,11 +487,11 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 style={{ width: 200 }}
                                                 displayKey="departmentName"
                                                 placeholder="Choose department"
-                                                items={campusDepartments || []}
+                                                items={sortedCampusDepartments || []}
                                                 selectedValue={values.departmentId}
                                                 onValueChange={handleChange('departmentId') as any}
                                             >
-                                                {campusDepartments?.map((department, index) => (
+                                                {sortedCampusDepartments?.map((department, index) => (
                                                     <SelectItemComponent
                                                         value={department._id}
                                                         key={`department-${index}`}
