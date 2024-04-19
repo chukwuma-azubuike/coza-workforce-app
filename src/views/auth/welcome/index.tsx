@@ -42,11 +42,7 @@ const VerifyEmail: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
 
     return (
         <>
-            <ViewWrapper
-                scroll
-                avoidKeyboard
-                style={{ paddingBottom: 8, paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}
-            >
+            <ViewWrapper scroll style={{ paddingBottom: 8, paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
                 <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
                     <Logo />
                     <Heading size="lg">{APP_NAME}</Heading>

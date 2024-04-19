@@ -340,7 +340,11 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
-                        {permission?.comment && <TextComponent flexWrap="wrap">{permission?.comment}</TextComponent>}
+                        {permission?.comment && (
+                            <TextComponent numberOfLines={undefined} flexWrap="wrap">
+                                {permission?.comment}
+                            </TextComponent>
+                        )}
                     </VStackComponent>
                     <If condition={takePermissionAction}>
                         <HStackComponent style={{ justifyContent: 'space-between' }}>

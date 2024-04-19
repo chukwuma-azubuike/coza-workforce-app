@@ -42,6 +42,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                     contentContainerStyle={{ position: 'relative' }}
                     style={{
                         flex: 1,
+                        backgroundColor: THEME[scheme],
                     }}
                     behavior="position"
                 >
