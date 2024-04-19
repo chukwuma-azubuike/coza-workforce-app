@@ -64,7 +64,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     }, [isSuccess, isError]);
 
     return (
-        <ViewWrapper avoidKeyboard avoidKeyboardOffset={-(ScreenHeight / 2)}>
+        <ViewWrapper>
             <View
                 style={{
                     flex: 1,

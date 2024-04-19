@@ -12,8 +12,8 @@ import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
 import PhoneNumberInput from '@components/atoms/phone-input';
 import Utils from '@utils/index';
-import { View } from 'react-native';
 import useDevice from '@hooks/device';
+import { ScreenHeight, isIOS } from '@rneui/base';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
@@ -23,7 +23,12 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     return (
-        <ViewWrapper avoidKeyboard scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
+        <ViewWrapper
+            scroll
+            avoidKeyboard={isIOS}
+            avoidKeyboardOffset={isIOS ? -(ScreenHeight / 6) : 0}
+            style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 160 }}
+        >
             <Center flex={1}>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
@@ -108,15 +113,13 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     placeholder="jondoe@gmail.com"
                                                 />
                                             </FormControl>
-                                            <View style={{ flex: 1 }}>
-                                                <Field
-                                                    required
-                                                    value={values?.phoneNumber}
-                                                    name="phoneNumber"
-                                                    label="Phone Number"
-                                                    component={PhoneNumberInput}
-                                                />
-                                            </View>
+                                            <Field
+                                                required
+                                                value={values?.phoneNumber}
+                                                name="phoneNumber"
+                                                label="Phone Number"
+                                                component={PhoneNumberInput}
+                                            />
                                             <FormControl isRequired isInvalid={!!errors?.address && touched.address}>
                                                 <FormControl.Label>Address</FormControl.Label>
                                                 <InputComponent

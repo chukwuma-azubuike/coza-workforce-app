@@ -49,9 +49,9 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
     const hasError = touched[name] && !!errors[name];
 
     return (
-        <FormControl isRequired isInvalid={hasError} flex={1}>
+        <FormControl isRequired isInvalid={hasError}>
             <FormControl.Label>{label}</FormControl.Label>
-            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', borderRadius: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', borderRadius: 10 }}>
                 <CountryPicker
                     withFlag
                     withAlphaFilter
@@ -62,7 +62,7 @@ const PhoneNumberInput: React.FC<PhoneNumberInputProps> = props => {
                 />
                 <InputComponent
                     isRequired
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, height: 50 }}
                     keyboardType="phone-pad"
                     placeholder="Eg: 07012345678"
                     onChangeText={handlePhoneNumberChange}
