@@ -105,7 +105,6 @@ const Stepper: React.FC<IStepperProps> = ({ pages, otherProps, navigation, disab
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff',
     },
     stepIndicator: {
         marginTop: 30,

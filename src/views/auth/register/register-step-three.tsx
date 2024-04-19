@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, FormControl, Heading, HStack, Stack, Center, VStack, WarningOutlineIcon } from 'native-base';
+import { Box, FormControl, Heading, HStack, Stack, VStack, WarningOutlineIcon } from 'native-base';
 import { InputComponent } from '@components/atoms/input';
 import ButtonComponent from '@components/atoms/button';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -13,6 +13,7 @@ import { IMGBB_ALBUM_ID } from '@config/uploadConfig';
 import useUpload from '@hooks/upload';
 import UploadButton from '@components/atoms/upload';
 import useDevice from '@hooks/device';
+import CenterComponent from '@components/layout/center';
 
 const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
@@ -38,8 +39,8 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
     const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     return (
-        <ViewWrapper scroll avoidKeyboard style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
-            <Center flex={1}>
+        <ViewWrapper scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
+            <CenterComponent>
                 <VStack space="lg" alignItems="flex-start" w="100%" pt={20} px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
@@ -179,7 +180,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                         </Stack>
                     </Box>
                 </VStack>
-            </Center>
+            </CenterComponent>
         </ViewWrapper>
     );
 };

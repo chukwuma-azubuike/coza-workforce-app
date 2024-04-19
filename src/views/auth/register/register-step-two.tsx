@@ -26,7 +26,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     return (
-        <ViewWrapper avoidKeyboard scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
+        <ViewWrapper scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
             <CenterComponent>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
