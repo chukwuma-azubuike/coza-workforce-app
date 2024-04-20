@@ -1,15 +1,11 @@
 import React from 'react';
-import { StyleSheet, Animated, View, Platform } from 'react-native';
+import { StyleSheet, Animated, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import CgwcTopNav from '@components/composite/header/cgwc-top-nav';
 import useAppColorMode from '@hooks/theme/colorMode';
-import useDevice from '@hooks/device';
 
-const MIN_HEADER_HEIGHT = 90;
-const MAX_HEADER_HEIGHT = 120;
-
-const MAX_HEADER_HEIGHT_ANDROID = 76;
-const MIN_HEADER_HEIGHT_ANDROID = 44;
+const MIN_HEADER_HEIGHT = 50;
+const MAX_HEADER_HEIGHT = 80;
 
 const SCROLL_DISTANCE = MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT;
 
@@ -20,15 +16,11 @@ interface IDynamicHeader {
 
 const DynamicHeader: React.FC<IDynamicHeader> = React.memo(({ animHeaderValue, title }) => {
     const { isDarkMode } = useAppColorMode();
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     const animatedHeaderHeight = animHeaderValue.interpolate({
         extrapolate: 'clamp',
         inputRange: [0, SCROLL_DISTANCE],
-        outputRange: [
-            isAndroidOrBelowIOSTenOrTab ? MAX_HEADER_HEIGHT_ANDROID : MAX_HEADER_HEIGHT,
-            isAndroidOrBelowIOSTenOrTab ? MIN_HEADER_HEIGHT_ANDROID : MIN_HEADER_HEIGHT,
-        ],
+        outputRange: [MAX_HEADER_HEIGHT, MIN_HEADER_HEIGHT],
     });
 
     const animateHeaderBackgroundColor = animHeaderValue.interpolate({
@@ -59,7 +51,7 @@ const DynamicHeader: React.FC<IDynamicHeader> = React.memo(({ animHeaderValue, t
                 {
                     height: animatedHeaderHeight,
                     backgroundColor: animateHeaderBackgroundColor,
-                    paddingTop: isAndroidOrBelowIOSTenOrTab ? 0 : 48,
+                    paddingTop: 0,
                 },
             ]}
         >
