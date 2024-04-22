@@ -10,6 +10,7 @@ import {
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 import { View } from 'react-native';
+import { isIOS } from '@rneui/base';
 
 interface IViewWrapper
     extends ScrollViewProps,
@@ -38,13 +39,13 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
         <>
             {avoidKeyboard ? (
                 <KeyboardAvoidingView
-                    keyboardVerticalOffset={avoidKeyboardOffset || 100}
+                    keyboardVerticalOffset={avoidKeyboardOffset || isIOS ? 100 : 140}
                     contentContainerStyle={{ position: 'relative' }}
                     style={{
                         flex: 1,
                         backgroundColor: THEME[scheme],
                     }}
-                    behavior="position"
+                    behavior={isIOS ? 'padding' : 'height'}
                 >
                     <ActiveView
                         {...props}

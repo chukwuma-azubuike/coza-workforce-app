@@ -18,6 +18,7 @@ import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box } from 'native-base';
 import { Platform } from 'react-native';
+import useConcurrentFetch from '@hooks/concurrentFetch';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -227,6 +228,18 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         },
         { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
     );
+
+    const {
+        data,
+        isLoading: allLoading,
+        error,
+    } = useConcurrentFetch({
+        paramKey: 'roleId',
+        fetchParamValues: leaderRoleIds,
+        queryHook: useGetAttendanceQuery,
+        queryOptions: { skip: !leaderRoleIds?.length },
+        otherParams: { serviceId: serviceId, campusId: user?.campus?._id },
+    });
 
     const isLoading = hodLoading || ahodLoading;
     const isFetching = hodFetching || ahodFetching;

@@ -13,6 +13,7 @@ import TextComponent from '@components/text';
 import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import spreadDependencyArray from '@utils/spreadDependencyArray';
+import ViewWrapper from '@components/layout/viewWrapper';
 
 const UserListRow: React.FC<IUser> = memo(user => {
     const navigation = useNavigation();
@@ -126,25 +127,32 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
 
     const isScreenFocused = useIsFocused();
 
-    const { data, isLoading, isFetching } = useGetUsersQuery(
+    const { data, isLoading, isFetching, isUninitialized, refetch } = useGetUsersQuery(
         { departmentId },
         { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
     );
+    const isRefreshing = isLoading || isFetching;
 
     const sortedGroupedData = React.useMemo(
         () => data && Utils.groupListByKey(Utils.sortStringAscending(data, 'firstName'), 'departmentName'),
         [...spreadDependencyArray(data)]
     );
 
+    const refresh = () => {
+        !isUninitialized && refetch();
+    };
+
     return (
-        <FlatListComponent
-            showHeader={false}
-            refreshing={isFetching}
-            style={{ marginTop: 16 }}
-            columns={departmentColumns}
-            data={sortedGroupedData || []}
-            isLoading={isLoading || isFetching}
-        />
+        <ViewWrapper scroll onRefresh={refresh} refreshing={isRefreshing}>
+            <FlatListComponent
+                showHeader={false}
+                refreshing={isFetching}
+                style={{ marginTop: 16 }}
+                columns={departmentColumns}
+                data={sortedGroupedData || []}
+                isLoading={isLoading || isFetching}
+            />
+        </ViewWrapper>
     );
 });
 

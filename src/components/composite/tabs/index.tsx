@@ -1,9 +1,9 @@
 import React from 'react';
-import { Text } from 'native-base';
 import { TabBar, TabBarProps, TabView, TabViewProps } from 'react-native-tab-view';
 import { THEME_CONFIG } from '@config/appConfig';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
+import TextComponent from '@components/text';
 
 interface ITabComponentProps extends TabViewProps<any> {
     tabBarScroll?: boolean;
@@ -26,7 +26,9 @@ const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = prop
                     inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
                     pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
                     labelStyle={{ color: THEME_CONFIG.primary }}
-                    renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
+                    renderLabel={({ route, focused, color }) => (
+                        <TextComponent style={{ color }}>{route.title}</TextComponent>
+                    )}
                 />
             )}
         </>
@@ -50,7 +52,9 @@ const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> 
                     labelStyle={{ color: THEME_CONFIG.primary }}
                     inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
                     pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-                    renderLabel={({ route, focused, color }) => <Text style={{ color }}>{route.title}</Text>}
+                    renderLabel={({ route, focused, color }) => (
+                        <TextComponent style={{ color }}>{route.title}</TextComponent>
+                    )}
                 />
             )}
         </>

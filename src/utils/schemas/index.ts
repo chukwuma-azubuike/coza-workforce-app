@@ -106,13 +106,6 @@ export const LoginSchema = Yup.object().shape({
     password: Yup.string().required('Password is required'),
 });
 
-export const CreateIndividualTicketSchema = Yup.object().shape({
-    userId: Yup.string().required('You are required to select a user.'),
-    categoryId: Yup.string().required('You are required to select a category.'),
-    departmentId: Yup.string().required('You are required to select a department'),
-    ticketSummary: Yup.string().required('You are required to input a ticket description.'),
-});
-
 export const CreateServiceSchema = Yup.object().shape({
     serviceTag: Yup.string().required('You are required to select the service tag.'),
     serviceType: Yup.string().required('You are required to select the service type.'),
@@ -130,13 +123,23 @@ export const AssignGroupHeadSchema = Yup.object().shape({
     role: Yup.string().required('You are required to select a role.'),
 });
 
+export const CreateIndividualTicketSchema = Yup.object().shape({
+    ticketType: Yup.string().required('You are required to select a ticket type.'),
+    userId: Yup.string().required('You are required to select a user.'),
+    categoryId: Yup.string().required('You are required to select a category.'),
+    departmentId: Yup.string().required('You are required to select a department'),
+    ticketSummary: Yup.string().required('You are required to input a ticket description.'),
+});
+
 export const CreateDepartmentalTicketSchema = Yup.object().shape({
+    ticketType: Yup.string().required('You are required to select a ticket type.'),
     categoryId: Yup.string().required('You are required to select a category.'),
     departmentId: Yup.string().required('You are required to select a department'),
     ticketSummary: Yup.string().required('You are required to input a ticket description.'),
 });
 
 export const CreateCampusTicketSchema = Yup.object().shape({
+    ticketType: Yup.string().required('You are required to select a ticket type.'),
     categoryId: Yup.string().required('You are required to select a category.'),
     campusId: Yup.string().required('You are required to select a campus'),
     ticketSummary: Yup.string().required('You are required to input a ticket description.'),
