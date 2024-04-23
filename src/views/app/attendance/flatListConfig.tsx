@@ -103,14 +103,14 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={2} key={key}>
+            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={6} key={key}>
                 <AvatarComponent
                     mr={4}
                     size="md"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <VStackComponent style={{ minWidth: '36%' }}>
+                <VStackComponent style={{ minWidth: '40%' }}>
                     <TextComponent bold>
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
                     </TextComponent>

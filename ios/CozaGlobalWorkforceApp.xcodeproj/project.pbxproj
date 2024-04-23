@@ -554,7 +554,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CozaGlobalWorkforceApp/CozaGlobalWorkforceAppDebug.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = 499THBRLGD;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -573,7 +573,7 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 1.6.1;
+				MARKETING_VERSION = 1.6.2;
 				NO_FLIPPER = 1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -600,7 +600,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CozaGlobalWorkforceApp/CozaGlobalWorkforceApp.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = 499THBRLGD;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = CozaGlobalWorkforceApp/Info.plist;
@@ -625,7 +625,7 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 1.6.1;
+				MARKETING_VERSION = 1.6.2;
 				NO_FLIPPER = 1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
@@ -879,7 +879,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CozaGlobalWorkforceApp/CozaGlobalWorkforceAppDebug.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = 499THBRLGD;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -898,7 +898,7 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 1.6.1;
+				MARKETING_VERSION = 1.6.2;
 				NO_FLIPPER = 1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1028,7 +1028,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CozaGlobalWorkforceApp/CozaGlobalWorkforceAppDebug.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = 499THBRLGD;
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -1047,7 +1047,7 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 1.6.1;
+				MARKETING_VERSION = 1.6.2;
 				NO_FLIPPER = 1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
@@ -1174,7 +1174,7 @@
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CozaGlobalWorkforceApp/CozaGlobalWorkforceApp.entitlements;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 35;
 				DEVELOPMENT_TEAM = 499THBRLGD;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = CozaGlobalWorkforceApp/Info.plist;
@@ -1199,7 +1199,7 @@
 					/usr/lib/swift,
 					"$(inherited)",
 				);
-				MARKETING_VERSION = 1.6.1;
+				MARKETING_VERSION = 1.6.2;
 				NO_FLIPPER = 1;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
