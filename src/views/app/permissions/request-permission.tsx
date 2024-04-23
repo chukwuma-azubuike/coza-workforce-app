@@ -99,7 +99,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
 
     return (
         <ErrorBoundary>
-            <ViewWrapper avoidKeyboard avoidKeyboardOffset={-(ScreenHeight / 2)}>
+            <ViewWrapper avoidKeyboard avoidKeyboardBehavior="height">
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Box alignItems="center" w="100%">
                         <Formik<IRequestPermissionPayload>
@@ -114,9 +114,9 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
 
                                 return (
                                     <VStack w="100%" space={1}>
-                                        <HStack justifyContent="space-between">
+                                        <HStack justifyContent="space-between" space={4}>
                                             <FormControl
-                                                w="1/2"
+                                                w="46%"
                                                 isRequired
                                                 isInvalid={!!errors.startDate && touched.startDate}
                                             >
@@ -133,7 +133,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                 )}
                                             </FormControl>
                                             <FormControl
-                                                w="1/2"
+                                                w="46%"
                                                 isRequired
                                                 isInvalid={!!errors.endDate && touched.endDate}
                                             >
