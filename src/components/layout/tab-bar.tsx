@@ -2,11 +2,12 @@ import { ParamListBase, RouteProp } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Center, HStack } from 'native-base';
 import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
+import TextComponent from '@components/text';
 
 const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) => {
     const { isWorker, isQC, isCGWCApproved } = useRole();
@@ -24,6 +25,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
         <HStack
             px={2}
             borderTopWidth={0.5}
+            style={{ height: 55 }}
             justifyContent="space-between"
             _dark={{ bg: 'black', borderColor: 'gray.800' }}
             _light={{ bg: 'white', borderColor: 'gray.300' }}
@@ -111,6 +113,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
                         accessibilityLabel={options.tabBarAccessibilityLabel}
                         testID={options.tabBarTestID}
                         onPress={onPress}
+                        style={{ flex: 1 }}
                         onLongPress={onLongPress}
                     >
                         <Center py={1.5} minWidth={60}>
@@ -126,7 +129,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
                                         : THEME_CONFIG.lightGray
                                 }
                             />
-                            <Text
+                            <TextComponent
                                 style={{
                                     color: isFocused
                                         ? isLightMode
@@ -138,7 +141,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
                                 }}
                             >
                                 {label}
-                            </Text>
+                            </TextComponent>
                         </Center>
                     </TouchableOpacity>
                 );

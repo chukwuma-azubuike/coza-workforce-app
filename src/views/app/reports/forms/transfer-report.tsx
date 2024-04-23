@@ -17,7 +17,7 @@ import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import { Platform } from 'react-native';
 import HStackComponent from '@components/layout/h-stack';
-import { ScreenHeight } from '@rneui/base';
+import TextComponent from '@components/text';
 
 const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ITransferReportPayload;
@@ -90,8 +90,8 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             initialValues={INITIAL_VALUES}
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <VStack pb={10} mt={4} px={4}>
+                <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
+                    <VStack pb={10} mt={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
@@ -103,16 +103,18 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     {values?.locations?.map((location, idx) => (
                                         <HStackComponent
                                             style={{
-                                                marginBottom: 4,
+                                                marginBottom: 12,
                                                 alignItems: 'center',
                                             }}
-                                            space={2}
                                             key={idx}
                                         >
                                             <FormControl isRequired w="36%">
-                                                <FormControl.Label>Location</FormControl.Label>
+                                                <FormControl.Label>
+                                                    <TextComponent style={{ flex: 1 }}>Location</TextComponent>
+                                                </FormControl.Label>
                                                 <InputComponent
                                                     style={{
+                                                        padding: 0,
                                                         fontSize: 14,
                                                     }}
                                                     placeholder="Name"
@@ -124,8 +126,10 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <FormControl isRequired w="19%">
-                                                <FormControl.Label>Adults</FormControl.Label>
+                                            <FormControl isRequired w="22%">
+                                                <FormControl.Label>
+                                                    <TextComponent style={{ flex: 1 }}>Adults</TextComponent>
+                                                </FormControl.Label>
                                                 <InputComponent
                                                     style={{
                                                         fontSize: 14,
@@ -140,8 +144,10 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     This field cannot be empty
                                                 </FormControl.ErrorMessage>
                                             </FormControl>
-                                            <FormControl isRequired w="30%">
-                                                <FormControl.Label>Children/Teens</FormControl.Label>
+                                            <FormControl isRequired w="22%">
+                                                <FormControl.Label>
+                                                    <TextComponent style={{ flex: 1 }}>Children/Teens</TextComponent>
+                                                </FormControl.Label>
                                                 <InputComponent
                                                     style={{
                                                         fontSize: 14,
@@ -170,7 +176,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     style={{
                                                         paddingVertical: 8,
                                                         marginVertical: 0,
-                                                        marginTop: 30,
+                                                        marginTop: 31,
                                                     }}
                                                     onPress={() => arrayHelpers.remove(idx)}
                                                     isDisabled={isCampusPastor}

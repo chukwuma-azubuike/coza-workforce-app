@@ -20,6 +20,7 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
+import { ScreenHeight } from '@rneui/base';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -121,9 +122,7 @@ const Clocker: React.FC<IClockerProps> = ({
         };
     }, [refreshTrigger]);
 
-    const vh = Dimensions.get('window').height;
-
-    const heightOffset = vh > 835 ? vh - 380 : vh > 800 ? vh - 360 : vh - 300;
+    const heightOffset = ScreenHeight * 0.6;
 
     return (
         <Center _dark={{ bg: 'black' }}>

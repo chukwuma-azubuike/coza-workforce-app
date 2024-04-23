@@ -25,11 +25,9 @@ import useScreenFocus from '@hooks/focus';
 import DynamicSearch from '@components/composite/search';
 import UserListItem from '@components/composite/user-list-item';
 import VStackComponent from '@components/layout/v-stack';
-import { Switch } from 'react-native';
 import RadioButton from '@components/composite/radio-button';
 
 const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { type } = props.route.params as { type: ITicketType };
     const { setOptions, navigate } = props.navigation;
 
     const {
@@ -38,7 +36,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const [campusId, setCampusId] = React.useState<ICampus['_id']>(campus?._id);
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
-    const [ticketType, setTicketType] = React.useState<string>(type);
+    const [ticketType, setTicketType] = React.useState<string>();
 
     const isDepartment = ticketType === 'DEPARTMENTAL';
     const isIndividual = ticketType === 'INDIVIDUAL';
@@ -81,15 +79,16 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const onSubmit: FormikConfig<ICreateTicketPayload>['onSubmit'] = async (values, { resetForm }) => {
         if (latestService) {
+            delete values.ticketType;
+
             const result = await issueTicket({
                 ...values,
-                isDepartment: initialValues.isDepartment,
-                isIndividual: initialValues.isIndividual,
-                isCampus: initialValues.isCampus,
                 issuedBy: userId,
                 serviceId: latestService._id,
-                userId: isIndividual ? values.userId : undefined,
+                userId: values?.isIndividual ? values?.userId : undefined,
+                departmentId: values?.isIndividual || values?.isDepartment ? values?.departmentId : (undefined as any),
             });
+
             if ('data' in result) {
                 setModalState({
                     message: 'Ticket successfully issued',
@@ -109,6 +108,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         isCampus,
                         isRetracted: false,
                         serviceId: '',
+                        ticketType: '',
                         ticketSummary: '',
                         issuedBy: '',
                     } as ICreateTicketPayload,
@@ -163,6 +163,7 @@ We love & celebrate you!` as any,
         isCampus,
         isRetracted: false,
         serviceId: '',
+        ticketType: '',
         ticketSummary: TICKET_TEMPLATE.verbose,
         issuedBy: '',
     } as ICreateTicketPayload);
@@ -181,6 +182,7 @@ We love & celebrate you!` as any,
                 isCampus,
                 isRetracted: false,
                 serviceId: '',
+                ticketType: '',
                 ticketSummary: TICKET_TEMPLATE.verbose,
                 issuedBy: '',
             } as ICreateTicketPayload);
@@ -199,14 +201,10 @@ We love & celebrate you!` as any,
         });
     };
 
-    const handleToggleTicketType = (value: boolean) => {
-        if (value) {
-            setTicketType('INDIVIDUAL');
-            setOptions({ title: 'Individual Ticket' });
-        }
-        if (!value) {
-            setTicketType('DEPARTMENTAL');
-            setOptions({ title: 'Departmental Ticket' });
+    const handleToggleTicketType = (value: string) => {
+        if (!!value) {
+            setTicketType(value);
+            setOptions({ title: `${Utils.capitalizeFirstChar(value)} Ticket` });
         }
     };
 
@@ -236,7 +234,7 @@ We love & celebrate you!` as any,
                                 : CreateIndividualTicketSchema
                         }
                     >
-                        {({ errors, values, handleChange, setFieldValue, handleSubmit, touched }) => {
+                        {({ errors, values, handleChange, setFieldValue, handleSubmit, touched, validateField }) => {
                             const handleDepartment = (value: IDepartment['_id']) => {
                                 setDepartmentId(value);
                                 setFieldValue('departmentId', value);
@@ -253,13 +251,81 @@ We love & celebrate you!` as any,
                                 !!foundWorker && setSearchedUser(foundWorker);
                             };
 
+                            const handleTicketType = (value: string) => {
+                                handleToggleTicketType(value);
+                                setFieldValue('ticketType', value).then(() => {
+                                    validateField('ticketType');
+                                });
+
+                                if (value === 'INDIVIDUAL') {
+                                    setFieldValue('isIndividual', true);
+                                    setFieldValue('isDepartment', false);
+                                    setFieldValue('isCampus', false);
+                                    return;
+                                }
+
+                                if (value === 'DEPARTMENTAL') {
+                                    setFieldValue('isIndividual', false);
+                                    setFieldValue('isDepartment', true);
+                                    setFieldValue('isCampus', false);
+                                    return;
+                                }
+
+                                if (value === 'CAMPUS') {
+                                    setFieldValue('isIndividual', false);
+                                    setFieldValue('isDepartment', false);
+                                    setFieldValue('isCampus', true);
+                                    return;
+                                }
+                            };
+
                             return (
                                 <VStackComponent style={{ gap: 10 }}>
-                                    <FormControl flexDirection="row" justifyContent="space-between">
-                                        <FormControl.Label>
-                                            Switch to {isIndividual ? 'Departmental' : 'Individual'} Ticket
-                                        </FormControl.Label>
-                                        <Switch value={isIndividual} onValueChange={handleToggleTicketType} />
+                                    <FormControl
+                                        isRequired
+                                        justifyContent="space-between"
+                                        isInvalid={!!errors?.ticketType && touched?.ticketType}
+                                    >
+                                        <FormControl.Label>Ticket Type</FormControl.Label>
+                                        <RadioButton
+                                            value={values?.ticketType}
+                                            onChange={handleTicketType as any}
+                                            containerStyle={{
+                                                justifyContent: 'flex-start',
+                                                flexDirection: 'row',
+                                            }}
+                                            radioButtons={[
+                                                {
+                                                    id: '1',
+                                                    label: 'Individual',
+                                                    value: 'INDIVIDUAL',
+                                                },
+                                                {
+                                                    id: '2',
+                                                    label: 'Departmental',
+                                                    value: 'DEPARTMENTAL',
+                                                },
+                                                {
+                                                    id: '3',
+                                                    label: 'Campus',
+                                                    value: 'CAMPUS',
+                                                },
+                                            ]}
+                                        />
+                                        <FormControl.ErrorMessage
+                                            fontSize="2xl"
+                                            mt={3}
+                                            leftIcon={
+                                                <Icon
+                                                    size={16}
+                                                    name="warning"
+                                                    type="antdesign"
+                                                    color={THEME_CONFIG.error}
+                                                />
+                                            }
+                                        >
+                                            {errors?.ticketType}
+                                        </FormControl.ErrorMessage>
                                     </FormControl>
                                     <FormControl isRequired isInvalid={!!errors?.campusId && touched.campusId}>
                                         <FormControl.Label>Campus</FormControl.Label>

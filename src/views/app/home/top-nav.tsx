@@ -10,6 +10,7 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import useDevice from '@hooks/device';
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
+import { isIOS } from '@rneui/base';
 
 const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     const handleNotificationPress = () => {
@@ -37,11 +38,11 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
             px={4}
             w="100%"
             zIndex={20}
+            pt={isIOS ? 3 : 6}
             alignItems="center"
             _dark={{ bg: 'black' }}
             _light={{ bg: 'white' }}
             justifyContent="space-between"
-            pt={isAndroidOrBelowIOSTenOrTab ? 2 : 16}
         >
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent

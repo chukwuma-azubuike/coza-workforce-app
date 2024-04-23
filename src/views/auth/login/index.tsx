@@ -64,11 +64,12 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
     }, [isSuccess, isError]);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper scroll>
             <View
                 style={{
                     flex: 1,
                     paddingTop: 100,
+                    height: ScreenHeight,
                 }}
             >
                 <VStackComponent style={{ paddingHorizontal: 8 }}>

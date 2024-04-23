@@ -112,8 +112,10 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         [campusDepartments]
     );
 
+    const memoizedRoles = React.useMemo(() => rolesPermittedToCreate(), []);
+
     return (
-        <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={isFetchingDepartments}>
+        <ViewWrapper scroll avoidKeyboard noPadding onRefresh={refresh} refreshing={isFetchingDepartments}>
             <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                 <Box alignItems="center" w="100%">
                     <Formik<ICreateUserPayload>
@@ -124,14 +126,16 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     >
                         {({ errors, values, handleChange, handleSubmit }) => (
                             <VStack w="100%" space={1}>
-                                <FormControl isRequired isInvalid={!!errors?.departmentId}>
+                                <FormControl isRequired isInvalid={!!errors?.campusId}>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent
+                                        displayKey="campusName"
                                         selectedValue={campusId}
                                         placeholder="Choose campus"
+                                        items={sortedCampuses || []}
                                         onValueChange={value => {
-                                            handleCampus(value);
-                                            handleChange('campusId')(value);
+                                            handleCampus(value as string);
+                                            handleChange('campusId')(value as string);
                                         }}
                                         isDisabled={!canSwitchCampus}
                                     >
@@ -156,16 +160,18 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             />
                                         }
                                     >
-                                        {errors?.departmentId}
+                                        {errors?.campusId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
                                 <FormControl isRequired isInvalid={!!errors?.departmentId}>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
+                                        displayKey="departmentName"
+                                        items={sortedCampusDepartments}
                                         selectedValue={values.departmentId}
                                         placeholder="Choose department"
-                                        onValueChange={handleChange('departmentId')}
+                                        onValueChange={handleChange('departmentId') as any}
                                     >
                                         {sortedCampusDepartments?.map((department, index) => (
                                             <SelectItemComponent
@@ -194,11 +200,13 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <FormControl isRequired isInvalid={!!errors?.roleId}>
                                     <FormControl.Label>Role</FormControl.Label>
                                     <SelectComponent
-                                        selectedValue={values.roleId}
+                                        displayKey="name"
                                         placeholder="Choose role"
-                                        onValueChange={handleChange('roleId')}
+                                        selectedValue={values.roleId}
+                                        items={memoizedRoles || []}
+                                        onValueChange={handleChange('roleId') as any}
                                     >
-                                        {rolesPermittedToCreate()?.map((role, index) => (
+                                        {memoizedRoles?.map((role, index) => (
                                             <SelectItemComponent
                                                 value={role._id}
                                                 key={`role-${index}`}

@@ -19,6 +19,7 @@ import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { View } from 'react-native';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { _id?: string };
@@ -59,6 +60,8 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         { campusId: campusId || campus._id },
         { refetchOnMountOrArgChange: true, skip: typeof campusId === 'undefined' && typeof !campus._id === 'undefined' }
     );
+
+    const isRefreshing = isLoading || isFetching || isLoadingUsers || isFetchingUsers;
 
     const campusInfo = [
         {
@@ -105,7 +108,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 })),
                 'title'
             ),
-        [data]
+        [...spreadDependencyArray(data?.departmentCount, 'departmentId')]
     );
 
     const gotoCreateWorker = () => {
@@ -153,12 +156,14 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         return [allButtons[0]];
     }, []);
 
+    const refresh = () => {
+        !campusSummaryIsUninitialized && campusSummaryRefetch();
+        !campusUsersIsUninitialized && campusUsersSummaryRefetch();
+    };
+
     useCustomBackNavigation({ targetRoute: isGlobalPastor || isSuperAdmin ? 'Global workforce' : 'More' });
     useScreenFocus({
-        onFocus: () => {
-            campusSummaryIsUninitialized && campusSummaryRefetch();
-            campusUsersIsUninitialized && campusSummaryRefetch();
-        },
+        onFocus: refresh,
     });
 
     const handleUserPress = (user: IUser) => {
@@ -175,9 +180,9 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 loading={isLoadingUsers || isLoadingUsers}
                 searchFields={['firstName', 'lastName', 'departmentName', 'email']}
             />
-            <ViewWrapper scroll>
+            <ViewWrapper scroll onRefresh={refresh} refreshing={isRefreshing}>
                 {campusInfo.map((item, index) =>
-                    isLoading || isFetching ? (
+                    isLoading ? (
                         <FlexListSkeleton count={1} />
                     ) : (
                         <HStackComponent
@@ -196,7 +201,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     )
                 )}
 
-                {isLoading || isFetching ? (
+                {isLoading ? (
                     <FlatListSkeleton count={1} />
                 ) : (
                     <HStackComponent
@@ -233,7 +238,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
                 <Center>
                     <Stack py={3} mb={4} flexDirection="row" flex={1} flexWrap="wrap">
-                        {isLoading || isFetching ? (
+                        {isLoading ? (
                             <FlatListSkeleton count={6} />
                         ) : (
                             <>
