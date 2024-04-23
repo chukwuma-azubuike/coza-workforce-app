@@ -249,7 +249,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         return allLeadersRaw?.map(leader => {
             return {
                 ...leader,
-                userId: leader._id,
+                userId: leader?._id,
             };
         });
     }, [allLeadersRaw]);
@@ -260,7 +260,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         return leadersClockedIn?.map(leader => {
             return {
                 ...leader,
-                userId: leader.user._id,
+                userId: leader?.user?._id,
             };
         });
     }, [leadersClockedIn]);
@@ -335,7 +335,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
     );
 
     React.useEffect(() => {
-        sortedServices && setServiceId(sortedServices[0]._id);
+        sortedServices && setServiceId(sortedServices[0]?._id);
     }, [sortedServices]);
 
     const { data, refetch, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
@@ -343,7 +343,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
             // page,
             // limit: 20,
             serviceId: serviceId,
-            campusId: user?.campus._id,
+            campusId: user?.campus?._id,
         },
         {
             skip: !serviceId,
@@ -380,7 +380,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 >
                     {sortedServices?.map((service, index) => (
                         <SelectItemComponent
-                            value={service._id}
+                            value={service?._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
                             label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}

@@ -6,11 +6,10 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
-import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View, SafeAreaView } from 'react-native';
 import { Box, Divider, Stack, Text } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import ScrollContainer from '@components/composite/scroll-container';
 import { useGetCGWCByIdQuery, useGetCGWCInstantMessagesQuery } from '@store/services/cgwc';
 import Loading from '@components/atoms/loading';
@@ -142,7 +141,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     };
 
     return (
-        <SafeAreaView edges={['bottom', 'left', 'right']} style={{ flex: 1, flexDirection: 'column' }}>
+        <SafeAreaView style={{ flex: 1 }}>
             <ViewWrapper noPadding>
                 <If condition={isLoading || isFetching || messagesIsLoading}>
                     <Loading />

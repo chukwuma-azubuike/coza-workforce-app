@@ -6,10 +6,12 @@ import {
     ScrollViewProps,
     useColorScheme,
     ScrollView,
+    KeyboardAvoidingViewProps,
 } from 'react-native';
 import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 import { View } from 'react-native';
+import { isIOS } from '@rneui/base';
 
 interface IViewWrapper
     extends ScrollViewProps,
@@ -21,6 +23,7 @@ interface IViewWrapper
     avoidKeyboard?: boolean;
     avoidKeyboardOffset?: number;
     onRefresh?: (args?: any) => void;
+    avoidKeyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
 }
 
 enum THEME {
@@ -29,22 +32,22 @@ enum THEME {
 }
 
 const ViewWrapper: React.FC<IViewWrapper> = props => {
-    const { scroll, onRefresh, refreshing, noPadding, avoidKeyboard, avoidKeyboardOffset } = props;
+    const { scroll, onRefresh, refreshing, noPadding, avoidKeyboard, avoidKeyboardOffset, avoidKeyboardBehavior } =
+        props;
     const ActiveView = scroll ? ScrollView : View;
-
     const scheme = useColorScheme() as keyof typeof THEME;
 
     return (
         <>
             {avoidKeyboard ? (
                 <KeyboardAvoidingView
-                    keyboardVerticalOffset={avoidKeyboardOffset || 100}
+                    keyboardVerticalOffset={avoidKeyboardOffset || isIOS ? 100 : 150}
                     contentContainerStyle={{ position: 'relative' }}
                     style={{
                         flex: 1,
                         backgroundColor: THEME[scheme],
                     }}
-                    behavior="position"
+                    behavior={isIOS ? avoidKeyboardBehavior || 'position' : undefined}
                 >
                     <ActiveView
                         {...props}

@@ -264,6 +264,7 @@ export interface ICreateTicketPayload {
     userId?: IUser['_id'];
     categoryId: string;
     isCampus: boolean;
+    ticketType?: string;
     isDepartment: boolean;
     isIndividual: boolean;
     isRetracted: boolean;

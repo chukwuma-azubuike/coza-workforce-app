@@ -50,7 +50,7 @@ const ConnectionStatusBar: React.FC = () => {
                 w="full"
                 justifyContent="flex-end"
                 pb={isIOS ? undefined : 1}
-                height={isAndroidOrBelowIOSTenOrTab ? 6 : 66}
+                height={isAndroidOrBelowIOSTenOrTab ? (isIOS ? 8 : 6) : 66}
                 bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'}
             >
                 <Text textAlign="center" w="full" fontSize="xs" color="white">{`${

@@ -6,6 +6,7 @@ import TabBar from '@components/layout/tab-bar';
 import { Route, useNavigation } from '@react-navigation/native';
 import { NavigationBackButton } from '@components/atoms/button';
 import { useDeepLinkNavigation } from '@hooks/navigation';
+import { SafeAreaView } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const AppStack = createNativeStackNavigator();
@@ -69,7 +70,11 @@ const TabRoutes: React.FC = () => {
                             ? props => {
                                   const CustomHeader = route.customHeader;
                                   if (CustomHeader) {
-                                      return <CustomHeader {...(props as any)} />;
+                                      return (
+                                          <SafeAreaView>
+                                              <CustomHeader {...(props as any)} />
+                                          </SafeAreaView>
+                                      );
                                   }
                               }
                             : undefined,

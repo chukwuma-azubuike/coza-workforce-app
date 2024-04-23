@@ -3,6 +3,7 @@ import { useAppSelector } from '@store/hooks';
 import { useGetRolesQuery } from '@store/services/role';
 import { selectCurrentUser } from '@store/services/users';
 import { useAuth } from '../auth';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 export enum ROLES {
     HOD = 'HOD',
@@ -77,11 +78,8 @@ const useRole = () => {
 
     const { data: roleObjects } = useGetRolesQuery();
     const leaderRoleIds = React.useMemo(
-        () =>
-            roleObjects
-                ?.filter(roleObject => roleObject.name === ROLES.HOD || roleObject.name === ROLES.AHOD)
-                .map(roleObject => roleObject._id),
-        [roleObjects]
+        () => roleObjects?.filter(roleObject => roleObject.name !== ROLES.worker).map(roleObject => roleObject._id),
+        [...spreadDependencyArray(roleObjects)]
     );
 
     const roleName = currentUser?.role?.name;

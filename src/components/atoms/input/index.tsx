@@ -26,7 +26,6 @@ const InputContainer: React.FC<IInputContainerProps> = props => {
         <View
             style={{
                 paddingVertical: 6,
-                paddingHorizontal: 10,
                 borderWidth: 1,
                 borderRadius: 10,
                 display: 'flex',
@@ -38,11 +37,25 @@ const InputContainer: React.FC<IInputContainerProps> = props => {
                 ...(props.style as any),
             }}
         >
-            {leftIcon && <Icon size={22} name={leftIcon.name} type={leftIcon.type} color={THEME_CONFIG.gray} />}
+            {leftIcon && (
+                <Icon
+                    size={22}
+                    name={leftIcon.name}
+                    type={leftIcon.type}
+                    color={THEME_CONFIG.gray}
+                    style={{ marginLeft: 10 }}
+                />
+            )}
             <View style={{ flex: 1, paddingHorizontal: 8 }}>{children}</View>
             {rightIcon && (
                 <TouchableOpacity onPress={onIconPress}>
-                    <Icon size={22} type={rightIcon.type} name={rightIcon.name} color={THEME_CONFIG.gray} />
+                    <Icon
+                        size={22}
+                        type={rightIcon.type}
+                        name={rightIcon.name}
+                        color={THEME_CONFIG.gray}
+                        style={{ marginRight: 10 }}
+                    />
                 </TouchableOpacity>
             )}
         </View>
