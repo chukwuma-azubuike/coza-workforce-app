@@ -59,6 +59,8 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                             backgroundColor: THEME[scheme],
                             ...(props.style as {}),
                         }}
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
                     >
                         {props.children ? props.children : <Empty />}
                     </ActiveView>
@@ -75,6 +77,8 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                         backgroundColor: THEME[scheme],
                         ...(props.style as {}),
                     }}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
                     {props.children ? props.children : <Empty />}
                 </ActiveView>

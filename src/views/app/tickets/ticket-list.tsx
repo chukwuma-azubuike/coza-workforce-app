@@ -15,6 +15,7 @@ import TextComponent from '@components/text';
 import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 
+const ITEM_HEIGHT = 60;
 export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus';
     '0'?: string;
@@ -167,6 +168,7 @@ const MyTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
                     ? 'There are no tickets issued sir'
                     : "Nothing here, let's keep it that way 😇"
             }
+            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
         />
     );
 });
@@ -253,6 +255,7 @@ const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }>
                         ? 'There are no tickets issued'
                         : "Nothing here, let's keep it that way 😇"
                 }
+                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
             />
         );
     }
@@ -358,6 +361,7 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
             columns={leadersTicketsColumns}
             refreshing={isLoading || isFetching}
             emptyMessage="There are no tickets issued"
+            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
         />
     );
 });
@@ -438,6 +442,7 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
                     ? 'There are no tickets issued'
                     : "Nothing here, let's keep it that way 😇"
             }
+            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
         />
     );
 });
