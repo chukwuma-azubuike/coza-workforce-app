@@ -122,8 +122,8 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                     }
                     keyExtractor={item => item?._id}
                     getItemLayout={(data, index) => ({
-                        length: ScreenHeight / 10, // Assuming a constant item height
-                        offset: (ScreenHeight / 10) * index,
+                        length: 80,
+                        offset: 80 * index,
                         index,
                     })}
                     windowSize={20}
