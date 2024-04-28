@@ -2,6 +2,14 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.2
+
+### Fixed
+
+-   Android keyboard avoid view ([98f5a2bd0a124e753715898d20c31281c91fc0e7](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/98f5a2bd0a124e753715898d20c31281c91fc0e7) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Safe Area View Fix ([b4a0a4761cc6ab497b0940df4bd07e78b080b8ca](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/b4a0a4761cc6ab497b0940df4bd07e78b080b8ca) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.1
 
 ### Fixed
