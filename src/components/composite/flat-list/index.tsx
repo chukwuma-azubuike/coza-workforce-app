@@ -83,6 +83,8 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                             renderItem={({ item }) => (
                                 <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />
                             )}
+                            showsVerticalScrollIndicator={false}
+                            showsHorizontalScrollIndicator={false}
                             ListFooterComponentStyle={{ paddingBottom: 20 }}
                             ListFooterComponent={
                                 <ActivityIndicator

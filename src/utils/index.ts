@@ -250,6 +250,14 @@ class Utils {
     /************** Arrays ***************/
 
     // This functions groups a list (Array of objects) by a common key;
+    /**
+     *
+     * @param array Array of objects
+     * @param key common key
+     * @param returnType 
+     * @returns 'entries' | 'values'
+     */
+
     static groupListByKey = (array: any[] = [], key: string, returnType: 'entries' | 'values' = 'entries') => {
         const map: any = {};
 
@@ -278,10 +286,10 @@ class Utils {
      *
      * @param array Original List Array
      * @param newObject Updated object
-     * @param keyValue Key value pair to be searched
+     * @param keyValue Key value pair to be searched [key, value]
      * @returns Updated array
      */
-    static replaceArrayItemByNestedKey = (array: any[], newObject: any, keyValue: any[]) => {
+    static replaceArrayItemByNestedKey = (array: any[], newObject: any, keyValue: string[]) => {
         if (!array || !array.length) return [];
 
         const originalList = array;

@@ -16,6 +16,7 @@ import useScreenFocus from '@hooks/focus';
 import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 import TextComponent from '@components/text';
+import spreadDependencyArray from '@utils/spreadDependencyArray';
 // import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
@@ -147,6 +148,8 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolea
             },
         });
 
+        const ITEM_HEIGHT = 60;
+
         return (
             <ErrorBoundary>
                 {/* <PermissionStats total={5} pending={1} declined={0} approved={4} /> */}
@@ -156,6 +159,7 @@ const MyPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolea
                     fetchMoreData={fetchMoreData}
                     columns={myPermissionsColumns}
                     isLoading={isLoading || isFetching}
+                    getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
                 />
             </ErrorBoundary>
         );
@@ -210,7 +214,7 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission; reload: bo
                     ),
                     'createdAt'
                 ),
-            [updatedListItem?._id, moreData]
+            [updatedListItem?._id, ...spreadDependencyArray(moreData, '_id')]
         );
 
         useScreenFocus({
@@ -219,15 +223,17 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission; reload: bo
             },
         });
 
+        const ITEM_HEIGHT = 60;
+
         return (
             <ErrorBoundary>
-                {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
                 <FlatListComponent
                     data={memoizedData}
                     refreshing={isFetching}
                     fetchMoreData={fetchMoreData}
                     columns={teamPermissionsColumns}
                     isLoading={isLoading || isFetching}
+                    getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
                 />
             </ErrorBoundary>
         );
@@ -312,9 +318,10 @@ const LeadersPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(
         ahodRefetch();
     };
 
+    const ITEM_HEIGHT = 60;
+
     return (
         <ErrorBoundary>
-            {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
             <FlatListComponent
                 data={memoizedData}
                 refreshing={isFetching}
@@ -322,6 +329,7 @@ const LeadersPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(
                 // fetchMoreData={fetchMoreData}
                 columns={LeadersPermissionsColumns}
                 isLoading={isLoading || isFetching}
+                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
             />
         </ErrorBoundary>
     );
@@ -375,6 +383,8 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission; reload: boolea
             },
         });
 
+        const ITEM_HEIGHT = 60;
+
         return (
             <ErrorBoundary>
                 {/* <PermissionStats total={67} pending={17} declined={15} approved={35} /> */}
@@ -384,6 +394,7 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission; reload: boolea
                     fetchMoreData={fetchMoreData}
                     columns={teamPermissionsColumns}
                     isLoading={isLoading || isFetching}
+                    getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
                 />
             </ErrorBoundary>
         );
