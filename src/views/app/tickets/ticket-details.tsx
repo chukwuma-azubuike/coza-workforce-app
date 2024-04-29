@@ -424,9 +424,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 />
                             )}
                             {ticket?.contestComment && (
-                                <TextComponent numberOfLines={undefined} flexWrap="wrap">
-                                    {ticket?.contestComment}
-                                </TextComponent>
+                                <TextComponent numberOfLines={undefined}>{ticket?.contestComment}</TextComponent>
                             )}
                         </If>
                         <If condition={ticket?.isDepartment}>
@@ -440,7 +438,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 />
                             )}
                             {ticket?.contestComment && (
-                                <TextComponent flexWrap="wrap">{ticket?.contestComment}</TextComponent>
+                                <TextComponent numberOfLines={undefined}>{ticket?.contestComment}</TextComponent>
                             )}
                         </If>
                     </VStackComponent>
@@ -455,9 +453,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             />
                         )}
                         {ticket?.contestReplyComment && (
-                            <TextComponent numberOfLines={undefined} flexWrap="wrap">
-                                {ticket?.contestReplyComment}
-                            </TextComponent>
+                            <TextComponent numberOfLines={undefined}>{ticket?.contestReplyComment}</TextComponent>
                         )}
                     </VStackComponent>
                     <If condition={offenderAction}>
