@@ -78,8 +78,11 @@ const useRole = () => {
 
     const { data: roleObjects } = useGetRolesQuery();
     const leaderRoleIds = React.useMemo(
-        () => roleObjects?.filter(roleObject => roleObject.name !== ROLES.worker).map(roleObject => roleObject._id),
-        [...spreadDependencyArray(roleObjects)]
+        () =>
+            roleObjects
+                ?.filter(roleObject => roleObject.name === ROLES.HOD || roleObject.name === ROLES.AHOD)
+                .map(roleObject => roleObject._id),
+        [...spreadDependencyArray(roleObjects, '_id')]
     );
 
     const roleName = currentUser?.role?.name;
