@@ -39,7 +39,11 @@ const useDeepLinkNavigation = () => {
     const { navigate } = useNavigation();
 
     const handleNavigation = (deepLink: IDeepLink, tabKey: string) => {
-        navigate(deepLink as never, { tabKey });
+        navigate(
+            deepLink as never
+            // TODO: Restore when proper notification payload is sent
+            //  { tabKey }
+        );
     };
 
     const [initialRoute, setInitialRoute] = React.useState<string>('Home');
