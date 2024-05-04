@@ -2,6 +2,16 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.3
+
+### Fixed
+
+-   Fix deeplink navigation list item crash ([a9d1c240510c296e030fc16a3e04bb102fba4c1d](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/a9d1c240510c296e030fc16a3e04bb102fba4c1d) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Fix leader roles & Auto populate on ticket issue ([d2f7cc17d7b2cc03fa1a58920907be61111b27f3](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/d2f7cc17d7b2cc03fa1a58920907be61111b27f3) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Revert ticket details text from ellipsis overflow ([343d194973cd7c4a8da142a4ad90eeb4f4d07662](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/343d194973cd7c4a8da142a4ad90eeb4f4d07662) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.2
 
 ### Fixed
