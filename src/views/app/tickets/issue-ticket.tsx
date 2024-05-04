@@ -197,6 +197,8 @@ We love & celebrate you!` as any,
                 ...prev,
                 userId: user?.userId || user?._id,
                 departmentId: user?.departmentId,
+                campusId: user?.campusId,
+                ticketType: 'INDIVIDUAL',
             } as any;
         });
     };
