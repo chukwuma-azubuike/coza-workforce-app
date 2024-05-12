@@ -56,7 +56,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             initialValues={INITIAL_VALUES}
         >
             {({ handleChange, errors, handleSubmit }) => (
-                <ViewWrapper scroll>
+                <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {moment(updatedAt || undefined).format('Do MMMM, YYYY')}

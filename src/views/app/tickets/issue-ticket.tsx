@@ -18,7 +18,6 @@ import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Utils from '@utils/index';
 import If from '@components/composite/if-container';
-import { ITicketType } from '.';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { useGetCampusesQuery } from '@store/services/campus';
 import useScreenFocus from '@hooks/focus';
@@ -36,7 +35,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const [campusId, setCampusId] = React.useState<ICampus['_id']>(campus?._id);
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
-    const [ticketType, setTicketType] = React.useState<string>();
+    const [ticketType, setTicketType] = React.useState<string>('INDIVIDUAL');
 
     const isDepartment = ticketType === 'DEPARTMENTAL';
     const isIndividual = ticketType === 'INDIVIDUAL';
@@ -50,7 +49,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         data: campusDepartments,
         isLoading: campusDepartmentsLoading,
         isFetching: campusDepartmentsIsFetching,
-    } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campuses?.length });
+    } = useGetDepartmentsByCampusIdQuery(campusId, { skip: !campuses?.length, refetchOnMountOrArgChange: true });
 
     const {
         data: workers,
@@ -58,6 +57,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         isFetching: workersIsFetching,
     } = useGetUsersByDepartmentIdQuery(departmentId as string, {
         skip: !departmentId,
+        refetchOnMountOrArgChange: true,
     });
 
     const { data: latestService, refetch: refetchLatestService } = useGetLatestServiceQuery(campus?._id as string, {
@@ -84,9 +84,9 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             const result = await issueTicket({
                 ...values,
                 issuedBy: userId,
-                serviceId: latestService._id,
+                serviceId: latestService?._id,
                 userId: values?.isIndividual ? values?.userId : undefined,
-                departmentId: values?.isIndividual || values?.isDepartment ? values?.departmentId : (undefined as any),
+                departmentId: values?.isCampus ? (undefined as any) : values?.departmentId,
             });
 
             if ('data' in result) {
@@ -108,8 +108,8 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         isCampus,
                         isRetracted: false,
                         serviceId: '',
-                        ticketType: '',
-                        ticketSummary: '',
+                        ticketType,
+                        ticketSummary: TICKET_TEMPLATE.verbose,
                         issuedBy: '',
                     } as ICreateTicketPayload,
                 });
@@ -117,7 +117,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             }
             if ('error' in result) {
                 setModalState({
-                    message: error?.data?.message || 'Oops, something went wrong!',
+                    message: (error as any)?.data?.message || 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 3,
@@ -153,7 +153,7 @@ Let us be reminded of the COZA culture and stay true to it.
 We love & celebrate you!` as any,
     }
 
-    const [initialValues, setInitialValues] = React.useState<ICreateTicketPayload>({
+    const [initialValues] = React.useState<ICreateTicketPayload>({
         departmentId,
         campusId,
         userId: '',
@@ -163,44 +163,21 @@ We love & celebrate you!` as any,
         isCampus,
         isRetracted: false,
         serviceId: '',
-        ticketType: '',
+        ticketType,
         ticketSummary: TICKET_TEMPLATE.verbose,
         issuedBy: '',
     } as ICreateTicketPayload);
 
     useScreenFocus({
         onFocus: () => {
-            setSearchedUser(undefined);
             setOptions({ title: `${Utils.capitalizeFirstChar(ticketType)} Ticket` });
-            setInitialValues({
-                departmentId,
-                campusId,
-                userId: '',
-                categoryId: '',
-                isDepartment,
-                isIndividual,
-                isCampus,
-                isRetracted: false,
-                serviceId: '',
-                ticketType: '',
-                ticketSummary: TICKET_TEMPLATE.verbose,
-                issuedBy: '',
-            } as ICreateTicketPayload);
             refetchLatestService();
         },
     });
 
     const handleUserPress = (user: IUser) => {
         setSearchedUser(user);
-        setInitialValues(prev => {
-            return {
-                ...prev,
-                userId: user?.userId || user?._id,
-                departmentId: user?.departmentId,
-                campusId: user?.campusId,
-                ticketType: 'INDIVIDUAL',
-            } as any;
-        });
+        setDepartmentId(user?.departmentId);
     };
 
     const handleToggleTicketType = (value: string) => {
@@ -239,11 +216,16 @@ We love & celebrate you!` as any,
                         {({ errors, values, handleChange, setFieldValue, handleSubmit, touched, validateField }) => {
                             const handleDepartment = (value: IDepartment['_id']) => {
                                 setDepartmentId(value);
+                                if (value) {
+                                    setFieldValue('userId', undefined);
+                                }
                                 setFieldValue('departmentId', value);
                             };
 
                             const handleCampus = (value: ICampus['_id']) => {
                                 setCampusId(value);
+                                setDepartmentId(undefined);
+                                setFieldValue('departmentId', undefined);
                                 setFieldValue('campusId', value);
                             };
 
@@ -290,6 +272,7 @@ We love & celebrate you!` as any,
                                     >
                                         <FormControl.Label>Ticket Type</FormControl.Label>
                                         <RadioButton
+                                            defaultSelected="1"
                                             value={values?.ticketType}
                                             onChange={handleTicketType as any}
                                             containerStyle={{
@@ -372,10 +355,13 @@ We love & celebrate you!` as any,
                                             <SelectComponent
                                                 valueKey="_id"
                                                 displayKey="departmentName"
+                                                selectedValue={departmentId}
                                                 placeholder="Choose department"
-                                                selectedValue={values?.departmentId}
                                                 items={sortedCampusDepartments || []}
+                                                setFieldValue={setFieldValue}
+                                                formFieldKey="departmentId"
                                                 onValueChange={handleDepartment as any}
+                                                isLoading={campusDepartmentsLoading || campusDepartmentsIsFetching}
                                             >
                                                 {sortedCampusDepartments?.map((department, index) => (
                                                     <SelectItemComponent
@@ -405,16 +391,18 @@ We love & celebrate you!` as any,
                                         </FormControl>
                                     </If>
                                     <If condition={isIndividual}>
-                                        <FormControl isRequired isInvalid={!!errors?.userId && touched.userId}>
+                                        <FormControl isRequired isInvalid={!!errors?.userId}>
                                             <FormControl.Label>Worker</FormControl.Label>
                                             <SelectComponent
                                                 valueKey="_id"
                                                 items={workers || []}
-                                                isDisabled={!departmentId}
                                                 placeholder="Choose Worker"
-                                                selectedValue={values.userId}
+                                                formFieldKey="userId"
+                                                setFieldValue={setFieldValue}
+                                                selectedValue={searchedUser?._id}
                                                 displayKey={['firstName', 'lastName']}
                                                 onValueChange={handleUserChange as any}
+                                                isLoading={workersIsFetching || workersLoading}
                                             >
                                                 {workers?.map((worker, index) => (
                                                     <SelectItemComponent
@@ -486,12 +474,12 @@ We love & celebrate you!` as any,
                                                 {
                                                     id: '1',
                                                     label: 'Verbose',
-                                                    value: TICKET_TEMPLATE.verbose,
+                                                    value: TICKET_TEMPLATE.verbose as string,
                                                 },
                                                 {
                                                     id: '2',
                                                     label: 'Minimal',
-                                                    value: TICKET_TEMPLATE.minimal,
+                                                    value: TICKET_TEMPLATE.minimal as string,
                                                 },
                                                 {
                                                     id: '3',
