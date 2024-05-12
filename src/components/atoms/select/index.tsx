@@ -17,8 +17,11 @@ interface ISelectComponent extends PickerProps {
     items: Array<any>;
     valueKey?: string;
     isDisabled?: boolean;
+    isLoading?: boolean;
+    formFieldKey?: string;
     labelSeparator?: string;
     containerStyle?: StyleProp<ViewStyle>;
+    setFieldValue?: (field: string, value: any) => void;
     displayKey?: string | Array<string | { key: string; path: string }>;
 }
 interface ISelectItemComponent extends PickerItemProps {
@@ -30,11 +33,12 @@ interface ISelectButtonProps {
     enabled: boolean;
     togglePicker: () => void;
     label?: string;
+    isLoading?: boolean;
     style?: StyleProp<ViewStyle>;
 }
 
 const SelectButton: React.FC<ISelectButtonProps> = React.memo(
-    ({ enabled, togglePicker, label, style }): React.ReactNode => {
+    ({ enabled, togglePicker, label, style, isLoading }): React.ReactNode => {
         const { backgroundColor, textColor } = useAppColorMode();
         return (
             <TouchableOpacity
@@ -55,7 +59,7 @@ const SelectButton: React.FC<ISelectButtonProps> = React.memo(
                     }}
                 >
                     <TextComponent size="lg" style={{ flex: 1, paddingVertical: 10 }}>
-                        {label}
+                        {isLoading ? 'Loading...' : label}
                     </TextComponent>
                     <Icon size={22} type="ant-design" style={{ marginLeft: 10 }} name="down" color={textColor} />
                 </HStackComponent>
@@ -73,6 +77,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
         selectedValue,
         valueKey,
         items = [],
+        isLoading,
         labelSeparator,
     } = props;
 
@@ -128,6 +133,15 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
         [items, valueKey, displayKey, props?.onValueChange]
     );
 
+    const handleChange = (itemValue: string | number, itemIndex: number) => {
+        props?.onValueChange && props.onValueChange(itemValue, itemIndex);
+        props?.setFieldValue && props?.formFieldKey && props.setFieldValue(props?.formFieldKey, itemValue);
+    };
+
+    React.useEffect(() => {
+        props?.setFieldValue && props?.formFieldKey && props.setFieldValue(props?.formFieldKey, selectedValue);
+    }, [selectedValue]);
+
     React.useEffect(() => {
         if (isIOS) {
             setSelectedId(undefined);
@@ -155,8 +169,9 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
                 {isIOS && (
                     <SelectButton
                         style={props.style}
-                        enabled={!isDisabled}
+                        isLoading={isLoading}
                         togglePicker={togglePicker}
+                        enabled={!isDisabled && !isLoading}
                         label={selectedItemLabel || placeholder}
                     />
                 )}
@@ -208,8 +223,9 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
                             borderRadius: 20,
                             backgroundColor: backgroundColor,
                         }}
-                        selectedValue={selectedId}
-                        onValueChange={handleValueChange}
+                        selectedValue={selectedValue}
+                        onValueChange={handleChange}
+                        enabled={!isDisabled && !isLoading}
                         mode="dialog"
                         prompt={props.placeholder}
                         selectionColor={THEME_CONFIG.primaryLight}

@@ -16,8 +16,6 @@ import useScreenFocus from '@hooks/focus';
 import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 import TextComponent from '@components/text';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
-// import PermissionStats from './permission-stats';
 
 interface IPermissionListRowProps extends IPermission {
     screen?: { name: string; value: string } | undefined;
@@ -214,7 +212,7 @@ const MyTeamPermissionsList: React.FC<{ updatedListItem: IPermission; reload: bo
                     ),
                     'createdAt'
                 ),
-            [updatedListItem?._id, ...spreadDependencyArray(moreData, '_id')]
+            [updatedListItem?._id, moreData]
         );
 
         useScreenFocus({
