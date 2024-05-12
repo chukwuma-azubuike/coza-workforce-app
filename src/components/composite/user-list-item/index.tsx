@@ -18,7 +18,7 @@ const UserListItem: React.FC<IUser & { style?: ViewProps['style'] }> = ({
     style,
 }) => {
     return (
-        <HStackComponent space={3} style={{ alignItems: 'center', ...(style as {}) }}>
+        <HStackComponent space={8} style={{ alignItems: 'center', ...(style as {}) }}>
             <AvatarComponent size="sm" imageUrl={pictureUrl || AVATAR_FALLBACK_URL} />
             <VStackComponent>
                 <TextComponent bold>

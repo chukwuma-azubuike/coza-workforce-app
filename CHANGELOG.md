@@ -2,6 +2,16 @@
 
 This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.4
+
+### Fixed
+
+-   Revert spread dependency array logic on team permission list ([abbf7aacf34e762f57ef5e7bf63e1a27e336ba3f](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/abbf7aacf34e762f57ef5e7bf63e1a27e336ba3f) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Fix state management on ticket issuance ([6369514ab31d0a912982d5f39331337a957aee6e](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/6369514ab31d0a912982d5f39331337a957aee6e) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Fix avoid keyboard on incident report & request permissions ([045be875d54a06493c919694942e8525522f7b9a](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/045be875d54a06493c919694942e8525522f7b9a) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.3
 
 ### Fixed
