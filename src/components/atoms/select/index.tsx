@@ -70,7 +70,6 @@ const SelectButton: React.FC<ISelectButtonProps> = React.memo(
 
 const SelectComponent = React.memo((props: ISelectComponent) => {
     const {
-        enabled = true,
         isDisabled,
         displayKey,
         placeholder,
@@ -139,6 +138,10 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
     };
 
     React.useEffect(() => {
+        if (!selectedValue && isIOS) {
+            setSelectedItemLabel(placeholder);
+        }
+
         props?.setFieldValue && props?.formFieldKey && props.setFieldValue(props?.formFieldKey, selectedValue);
     }, [selectedValue]);
 
@@ -161,7 +164,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
     };
 
     const isIOS = Platform.OS === 'ios';
-    const { isLightMode, backgroundColor, textColor } = useAppColorMode();
+    const { backgroundColor, textColor } = useAppColorMode();
 
     return (
         <ErrorBoundary>
