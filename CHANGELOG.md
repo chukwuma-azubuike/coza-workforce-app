@@ -1,6 +1,16 @@
 # Changelog
 
-This file contains all changelogs for latest releases, from 1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
+This file contains all changelogs for latest releases, from v1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
+
+## v1.6.5
+
+### Fixed
+
+-   fix department loading state on worker reassignment to campus ([3dee6bbeb09a198ccaaf0767184a5b902ceca1de](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/3dee6bbeb09a198ccaaf0767184a5b902ceca1de) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   fix reset logic on ticket issuance ([92762fade8f86f6355b3c0e019b56cfd7d6e2f11](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/92762fade8f86f6355b3c0e019b56cfd7d6e2f11) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   fix selectedValue update & reset form with campusId restored on user creation ([97bb3b21be3469c9207fce931b956bfbb42b6664](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/97bb3b21be3469c9207fce931b956bfbb42b6664) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
 ## v1.6.4
 
