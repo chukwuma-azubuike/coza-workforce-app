@@ -226,7 +226,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
                             borderRadius: 20,
                             backgroundColor: backgroundColor,
                         }}
-                        selectedValue={selectedValue}
+                        selectedValue={!!selectedValue ? selectedValue : (null as any)}
                         onValueChange={handleChange}
                         enabled={!isDisabled && !isLoading}
                         mode="dialog"
