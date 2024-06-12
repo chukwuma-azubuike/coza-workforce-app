@@ -336,6 +336,45 @@ const campusColumns: IFlatListColumn[] = [
     },
 ];
 
+const groupAttendanceDataColumns: IFlatListColumn[] = [
+    {
+        title: '',
+        dataIndex: 'name',
+        render: (elm: ITransformUserAttendanceList, key) => (
+            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={4} key={key}>
+                <AvatarComponent size="md" badge={!!elm.clockIn} imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL} />
+                <VStackComponent style={{ minWidth: '36%' }}>
+                    <TextComponent bold>
+                        {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
+                    </TextComponent>
+                    <TextComponent>{'Guzape Campus'}</TextComponent>
+                    <TextComponent>{elm.departmentName}</TextComponent>
+                </VStackComponent>
+                <HStackComponent style={{ justifyContent: 'center', alignItems: 'center', minWidth: '20%' }}>
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <TextComponent
+                        style={{
+                            color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
+                        }}
+                    >
+                        {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
+                    </TextComponent>
+                </HStackComponent>
+                <HStackComponent
+                    style={{
+                        minWidth: '20%',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}</TextComponent>
+                </HStackComponent>
+            </HStackComponent>
+        ),
+    },
+];
+
 export {
     campusColumns,
     myAttendanceColumns,
@@ -343,4 +382,5 @@ export {
     teamAttendanceDataColumns,
     teamAttendanceDataColumns_1,
     leadersAttendanceDataColumns,
+    groupAttendanceDataColumns,
 };
