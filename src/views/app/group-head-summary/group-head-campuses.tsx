@@ -19,7 +19,7 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
         navigate('Group head departments' as never, { ...elm } as never);
     };
 
-    const { user } = useRole();
+    const { user, isGroupHead } = useRole();
 
     const { refetch, data, isLoading, isFetching, isSuccess } = useGetGHCampusByIdQuery(user.userId);
 
@@ -28,6 +28,8 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
             refetch();
         },
     });
+
+    console.log(isLoading, isFetching, user.userId, isGroupHead);
 
     const Departmentlist = React.useMemo(
         () =>
