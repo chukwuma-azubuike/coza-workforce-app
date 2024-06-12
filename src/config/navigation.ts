@@ -60,6 +60,7 @@ import CGWCResources from '@views/app/cgwc/cgwc-resources';
 import CGWCFeedback from '@views/app/cgwc/feedback';
 import CGWCReport from '@views/app/cgwc/cgwc-report';
 import TopNav from '@views/app/home/top-nav';
+import GroupHeadServiceReport from '@views/app/group-head-report/GroupHeadServiceReport';
 
 export interface IAppRoute {
     name: string;
@@ -379,6 +380,27 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'home-group', type: 'material-community' },
+    },
+    {
+        name: 'Group head service report',
+        component: GroupHeadServiceReport,
+        options: { title: 'Group head service report' },
+        submenus: [
+            {
+                name: 'Group head service summary',
+                component: GroupHeadCampuses,
+                options: { title: 'Group head service summary' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+        ],
+        users: [ROLES.groupHead, ROLES.campusPastor],
+        inMenuBar: false,
+        inMore: false,
+        icon: { name: 'graph', type: 'octicon' },
     },
     {
         name: 'Workforce summary',

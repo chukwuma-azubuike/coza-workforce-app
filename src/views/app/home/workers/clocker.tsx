@@ -1,12 +1,12 @@
 import React from 'react';
-import { Center, VStack } from 'native-base';
+import { Center, HStack, Text, VStack, View } from 'native-base';
 import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
 import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import { Dimensions } from 'react-native';
+import { Dimensions, Pressable, TouchableOpacity } from 'react-native';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import {
@@ -20,9 +20,12 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { ScreenHeight } from '@rneui/base';
+import { Icon, ScreenHeight } from '@rneui/base';
+import { THEME_CONFIG } from '@config/appConfig';
+import { useNavigation } from '@react-navigation/native';
 
 interface IClockerProps {
+    isGh?: boolean;
     isInRange: boolean;
     refreshTrigger: boolean;
     deviceCoordinates: GeoCoordinates;
@@ -38,11 +41,15 @@ const Clocker: React.FC<IClockerProps> = ({
     refreshLocation,
     refreshTrigger,
     isInRange,
+    isGh,
 }) => {
+    const navigation = useNavigation();
+
     const {
         isHOD,
         isAHOD,
         isCampusPastor,
+        isGroupHead,
         user: { department, campus, userId },
     } = useRole();
 
@@ -124,10 +131,13 @@ const Clocker: React.FC<IClockerProps> = ({
 
     const heightOffset = ScreenHeight * 0.6;
 
+    const handleNavigateToReports = () => {
+        navigation.navigate('Group head service report' as never);
+    };
     return (
         <Center _dark={{ bg: 'black' }}>
             <Timer />
-            <If condition={isCampusPastor}>
+            <If condition={isCampusPastor || isGh}>
                 <CampusAttendanceSummary
                     leadersAttendance={leadersAttendance?.attendance}
                     workersAttendance={workersAttendance?.attendance}
@@ -139,7 +149,7 @@ const Clocker: React.FC<IClockerProps> = ({
             {!userId ? (
                 <Loading />
             ) : (
-                <If condition={!isCampusPastor}>
+                <If condition={!isCampusPastor && !isGh}>
                     <VStack h={heightOffset} alignItems="center" justifyContent="space-between">
                         <ErrorBoundary>
                             <ClockButton
@@ -148,6 +158,27 @@ const Clocker: React.FC<IClockerProps> = ({
                                 deviceCoordinates={deviceCoordinates}
                                 verifyRangeBeforeAction={verifyRangeBeforeAction}
                             />
+                            {isGroupHead && (
+                                <TouchableOpacity activeOpacity={0.6} onPress={handleNavigateToReports}>
+                                    <HStack alignItems="center" space={1} mt={10}>
+                                        <Icon
+                                            color={THEME_CONFIG.primary}
+                                            name="people-outline"
+                                            type="ionicon"
+                                            size={18}
+                                        />
+                                        <Text color="gray.400" fontSize="md" ml={2}>
+                                            Group reports submitted
+                                        </Text>
+                                        <Icon
+                                            color={THEME_CONFIG.primary}
+                                            name="external-link"
+                                            type="evilicon"
+                                            size={26}
+                                        />
+                                    </HStack>
+                                </TouchableOpacity>
+                            )}
                         </ErrorBoundary>
                         <CampusLocation />
                         <If condition={isAHOD || isHOD}>
