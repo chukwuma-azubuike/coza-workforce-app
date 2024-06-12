@@ -2,6 +2,7 @@ import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns,
+    groupAttendanceDataColumns,
     leadersAttendanceDataColumns,
     myAttendanceColumns,
     teamAttendanceDataColumns,
@@ -410,6 +411,147 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 // fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
+            />
+        </ErrorBoundary>
+    );
+});
+
+export const GroupAttendance: React.FC = React.memo(() => {
+    const { leaderRoleIds, user } = useRole();
+
+    const {
+        data: services,
+        refetch: refetchServices,
+        isLoading: serviceIsLoading,
+        isSuccess: servicesIsSuccess,
+    } = useGetServicesQuery({});
+
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
+    const setService = (value: IService['_id']) => {
+        setServiceId(value);
+    };
+
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
+    );
+
+    React.useEffect(() => {
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
+
+    const {
+        data: HODs,
+        refetch: refetchHods,
+        isLoading: hodLoading,
+        isFetching: hodFetching,
+    } = useGetAttendanceQuery(
+        {
+            serviceId: serviceId,
+            campusId: user?.campus?._id,
+            roleId: leaderRoleIds && (leaderRoleIds[0] as string),
+        },
+        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
+    );
+    const {
+        data: AHODs,
+        refetch: refetchAHods,
+        isLoading: ahodLoading,
+        isFetching: ahodFetching,
+    } = useGetAttendanceQuery(
+        {
+            serviceId: serviceId,
+            campusId: user?.campus?._id,
+            roleId: leaderRoleIds && (leaderRoleIds[1] as string),
+        },
+        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
+    );
+
+    const isLoading = hodLoading || ahodLoading;
+    const isFetching = hodFetching || ahodFetching;
+
+    const { data: HODProfiles } = useGetUsersQuery(
+        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id },
+        { skip: !leaderRoleIds?.length }
+    );
+    const { data: AHODProfiles } = useGetUsersQuery(
+        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id },
+        { skip: !leaderRoleIds?.length }
+    );
+
+    const leadersClockedIn = AHODs && HODs ? [...AHODs, ...HODs] : [];
+    const allLeadersRaw = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
+
+    const allLeaders = React.useMemo(() => {
+        if (!allLeadersRaw.length) return [];
+
+        return allLeadersRaw?.map(leader => {
+            return {
+                ...leader,
+                userId: leader?._id,
+            };
+        });
+    }, [allLeadersRaw]);
+
+    const leadersClockedInValid = React.useMemo(() => {
+        if (!leadersClockedIn?.length) return [];
+
+        return leadersClockedIn?.map(leader => {
+            return {
+                ...leader,
+                userId: leader?.user?._id,
+            };
+        });
+    }, [leadersClockedIn]);
+
+    const mergedLeaders = [...leadersClockedInValid, ...allLeaders] as any;
+
+    const mergedAttendanceWithLeaderList = React.useMemo(
+        () => Utils.mergeDuplicatesByKey(mergedLeaders, 'userId'),
+        [leadersClockedIn, mergedLeaders]
+    );
+
+    const handleRefetch = () => {
+        refetchHods();
+        refetchAHods();
+        refetchServices();
+    };
+
+    return (
+        <ErrorBoundary>
+            <Box mb={2} px={2}>
+                <SelectComponent
+                    valueKey="_id"
+                    placeholder="Select Service"
+                    selectedValue={serviceId}
+                    items={sortedServices || []}
+                    onValueChange={setService as any}
+                    displayKey={['name', 'clockInStartTime']}
+                >
+                    {sortedServices?.map((service, index) => (
+                        <SelectItemComponent
+                            value={service._id}
+                            key={`service-${index}`}
+                            isLoading={serviceIsLoading}
+                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                        />
+                    ))}
+                </SelectComponent>
+            </Box>
+            <FlatListComponent
+                padding={isAndroid ? 3 : true}
+                onRefresh={handleRefetch}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+                data={mergedAttendanceWithLeaderList}
+                columns={groupAttendanceDataColumns}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>

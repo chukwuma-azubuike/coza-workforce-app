@@ -17,7 +17,7 @@ import VStackComponent from '@components/layout/v-stack';
 
 const ITEM_HEIGHT = 60;
 export interface TicketListRowProps extends ITicket {
-    type: 'own' | 'team' | 'campus';
+    type: 'own' | 'team' | 'campus' | 'grouphead';
     '0'?: string;
     '1'?: ITicket[];
 }
@@ -92,6 +92,40 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                                                 <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
                                                     Departmental
                                                 </TextComponent>
+                                            )}
+                                            <TextComponent style={{ fontSize: 14 }}>
+                                                {Utils.capitalizeFirstChar(category?.categoryName)}
+                                            </TextComponent>
+                                        </>
+                                    )}
+
+                                    {type === 'grouphead' && (
+                                        <>
+                                            {isIndividual && (
+                                                <>
+                                                    <TextComponent bold>
+                                                        {`${Utils.capitalizeFirstChar(
+                                                            user?.firstName
+                                                        )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
+                                                    </TextComponent>
+                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                        Guzape Campus
+                                                    </TextComponent>
+                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                        {departmentName}
+                                                    </TextComponent>
+                                                </>
+                                            )}
+                                            <TextComponent>{departmentName || ''}</TextComponent>
+                                            {isDepartment && (
+                                                <>
+                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                        Guzape Campus
+                                                    </TextComponent>
+                                                    <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
+                                                        {departmentName}
+                                                    </TextComponent>
+                                                </>
                                             )}
                                             <TextComponent style={{ fontSize: 14 }}>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
@@ -447,4 +481,109 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
     );
 });
 
-export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets };
+const GroupTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
+    const groupTicketsColumns: IFlatListColumn[] = [
+        {
+            dataIndex: 'createdAt',
+            render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
+        },
+    ];
+
+    const {
+        user: { campus },
+        leaderRoleIds,
+    } = useRole();
+
+    const [page, setPage] = React.useState<number>(1);
+
+    const {
+        data: hodsTickets,
+        refetch: hodRefetch,
+        isLoading: hodLoading,
+        isSuccess: hodIsSuccess,
+        isFetching: hodIsFetching,
+    } = useGetTicketsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[0],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const {
+        data: ahodsTickets,
+        refetch: ahodRefetch,
+        isLoading: ahodLoading,
+        isSuccess: ahodIsSuccess,
+        isFetching: ahodIsFetching,
+    } = useGetTicketsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[1],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const isLoading = hodLoading || ahodLoading;
+    const isFetching = hodIsFetching || ahodIsFetching;
+    const isSuccess = hodIsSuccess && ahodIsSuccess;
+    const data = ahodsTickets && hodsTickets ? [...ahodsTickets, ...hodsTickets] : [];
+
+    // const fetchMoreData = () => {
+    //     if (!isFetching && !isLoading) {
+    //         if (data?.length) {
+    //             setPage(prev => prev + 1);
+    //         } else {
+    //             setPage(prev => prev - 1);
+    //         }
+    //     }
+    // };
+
+    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+
+    const preparedForSortData = React.useMemo(
+        () =>
+            data?.map((ticket: ITicket) => {
+                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+            }),
+        [data]
+    );
+
+    const sortedData = React.useMemo(
+        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+        [preparedForSortData]
+    );
+
+    const groupedData = React.useMemo(
+        () =>
+            Utils.groupListByKey(
+                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
+                'sortDateKey'
+            ),
+        [updatedListItem?._id, sortedData]
+    );
+
+    const handleRefetch = () => {
+        hodRefetch();
+        ahodRefetch();
+    };
+
+    return (
+        <FlatListComponent
+            data={groupedData}
+            isLoading={isLoading}
+            onRefresh={handleRefetch}
+            // fetchMoreData={fetchMoreData}
+            columns={groupTicketsColumns}
+            refreshing={isLoading || isFetching}
+            emptyMessage="There are no tickets issued"
+            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+        />
+    );
+});
+
+export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets, GroupTicketsList };

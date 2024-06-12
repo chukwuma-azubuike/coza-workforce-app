@@ -19,7 +19,7 @@ import TextComponent from '@components/text';
 
 interface IPermissionListRowProps extends IPermission {
     screen?: { name: string; value: string } | undefined;
-    type: 'own' | 'team' | 'campus';
+    type: 'own' | 'team' | 'campus' | 'grouphead';
     '0'?: string;
     '1'?: IPermission[];
 }
@@ -81,6 +81,21 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = memo(props =
                                             <TextComponent bold size="sm">
                                                 {categoryName}
                                             </TextComponent>
+                                        </>
+                                    )}
+
+                                    {type === 'grouphead' && (
+                                        <>
+                                            <TextComponent bold>
+                                                {`${Utils.capitalizeFirstChar(
+                                                    requestor?.firstName
+                                                )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
+                                            </TextComponent>
+                                            <TextComponent bold size="sm">
+                                                Guzape Campus
+                                            </TextComponent>
+                                            <TextComponent size="sm">{departmentName}</TextComponent>
+                                            <TextComponent size="sm">{categoryName}</TextComponent>
                                         </>
                                     )}
                                 </VStackComponent>
@@ -399,4 +414,99 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission; reload: boolea
     }
 );
 
-export { MyPermissionsList, MyTeamPermissionsList, LeadersPermissionsList, CampusPermissions };
+const GroupPermissionsList: React.FC<{ updatedListItem: IPermission }> = memo(({ updatedListItem }) => {
+    const GroupPermissionsColumns: IFlatListColumn[] = [
+        {
+            dataIndex: 'dateCreated',
+            render: (_: IPermission, key) => <PermissionListRow type="grouphead" {..._} key={key} />,
+        },
+    ];
+
+    const {
+        leaderRoleIds,
+        user: { campus },
+    } = useRole();
+
+    const [page, setPage] = React.useState<number>(1);
+
+    const {
+        refetch: hodRefetch,
+        data: hodsPermissions,
+        isLoading: hodLoading,
+        isSuccess: hodIsSuccess,
+        isFetching: hodIsFetching,
+    } = useGetPermissionsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[0],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const {
+        refetch: ahodRefetch,
+        data: ahodsPermissions,
+        isLoading: ahodLoading,
+        isSuccess: ahodIsSuccess,
+        isFetching: ahodIsFetching,
+    } = useGetPermissionsQuery(
+        {
+            // page,
+            // limit: 20,
+            campusId: campus._id,
+            roleId: leaderRoleIds && leaderRoleIds[1],
+        },
+        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+    );
+
+    const isLoading = hodLoading || ahodLoading;
+    const isSuccess = hodIsSuccess && ahodIsSuccess;
+    const isFetching = hodIsFetching || ahodIsFetching;
+    const data = hodsPermissions && ahodsPermissions ? [...ahodsPermissions, ...hodsPermissions] : [];
+
+    // const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+
+    // const fetchMoreData = () => {
+    //     if (!isFetching && !isLoading) {
+    //         if (data?.length) {
+    //             setPage(prev => prev + 1);
+    //         } else {
+    //             setPage(prev => prev - 1);
+    //         }
+    //     }
+    // };
+
+    const memoizedData = useMemo(
+        () =>
+            Utils.groupListByKey(
+                Utils.replaceArrayItemByNestedKey(data || [], updatedListItem, ['_id', updatedListItem?._id]),
+                'createdAt'
+            ),
+        [updatedListItem?._id, data]
+    );
+
+    const handleRefetch = () => {
+        hodRefetch();
+        ahodRefetch();
+    };
+
+    const ITEM_HEIGHT = 60;
+
+    return (
+        <ErrorBoundary>
+            <FlatListComponent
+                data={memoizedData}
+                refreshing={isFetching}
+                onRefresh={handleRefetch}
+                // fetchMoreData={fetchMoreData}
+                columns={GroupPermissionsColumns}
+                isLoading={isLoading || isFetching}
+                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+            />
+        </ErrorBoundary>
+    );
+});
+
+export { MyPermissionsList, MyTeamPermissionsList, LeadersPermissionsList, CampusPermissions, GroupPermissionsList };
