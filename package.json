@@ -15,10 +15,10 @@
         "prepare": "husky install",
         "log-android": "adb logcat '*:E'",
         "deep-clean": "npx react-native-clean-project",
-        "build-release-file": "npx react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle",
+        "build-release-file": "npx react-native build-android --mode=release",
         "build-android-apk": "./gradlew assembleRelease",
         "build-android-aab": "./gradlew bundleRelease",
-        "run-android-release": "npx react-native run-android --variant=release",
+        "run-android-release": "yarn android --mode release",
         "check-dependencies": "rnx-align-deps",
         "fix-dependencies": "rnx-align-deps --write"
     },
