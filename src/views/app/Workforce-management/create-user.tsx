@@ -23,11 +23,11 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { goBack } = navigation;
 
     const {
+        isSuperAdmin,
+        isGlobalPastor,
         user: { campus, userId },
         rolesPermittedToCreate,
     } = useRole();
-
-    const { isSuperAdmin, isGlobalPastor, user } = useRole();
     const canSwitchCampus = isSuperAdmin || isGlobalPastor;
 
     const { setModalState } = useModal();
@@ -100,7 +100,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         email: '',
         departmentId: '',
         roleId: '',
-        campusId: '',
+        campusId,
         registeredBy: userId,
         isRegistered: false,
     } as ICreateUserPayload;
