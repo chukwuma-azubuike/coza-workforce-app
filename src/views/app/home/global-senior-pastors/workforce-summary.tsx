@@ -109,14 +109,28 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
         <>
             <HStack justifyContent="space-around" w="100%" mb={4} space={10} px={4} position="static" top={3}>
                 <FormControl isRequired w="50%">
-                    <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
+                    <SelectComponent
+                        valueKey="_id"
+                        displayKey="campusName"
+                        selectedValue={campusId}
+                        placeholder="Select Campus"
+                        items={sortedCampuses || []}
+                        onValueChange={setCampus as any}
+                    >
                         {sortedCampuses?.map((campus, index) => (
                             <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
                         ))}
                     </SelectComponent>
                 </FormControl>
                 <FormControl isRequired w="50%">
-                    <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
+                    <SelectComponent
+                        valueKey="_id"
+                        displayKey={["name", "clockInStartTime"]}
+                        selectedValue={serviceId}
+                        placeholder="Select Service"
+                        items={sortedServices || []}
+                        onValueChange={setService as any}
+                    >
                         {sortedServices?.map((service, index) => (
                             <SelectItemComponent
                                 value={service._id}
