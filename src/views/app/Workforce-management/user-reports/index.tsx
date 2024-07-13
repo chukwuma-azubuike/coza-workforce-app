@@ -159,9 +159,12 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     <VStack w={isMobile ? '100%' : '40%'} flex={1} space={3} pt={4}>
                         <FormControl isRequired>
                             <SelectComponent
+                                valueKey="_id"
+                                displayKey="campusName"
                                 placeholder="Select Campus"
+                                items={sortedcampuses || []}
                                 selectedValue={campusIdUpdate}
-                                onValueChange={handleSetCampusId}
+                                onValueChange={handleSetCampusId as any}
                             >
                                 {sortedcampuses?.map((campus, index) => (
                                     <SelectItemComponent
