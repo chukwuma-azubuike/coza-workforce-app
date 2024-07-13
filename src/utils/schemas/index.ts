@@ -15,7 +15,7 @@ export const RegisterSchema = Yup.object().shape({
     phoneNumber: Yup.string()
         .phone(countryCodeIso as any, 'Please enter a valid phone number')
         .required('A phone number is required'),
-    email: Yup.string().required('Your email is required.'),
+    email: Yup.string().email('Must be email format').required('Email is required.'),
     departmentId: Yup.string(),
     campusId: Yup.string(),
     roleId: Yup.string(),
@@ -58,7 +58,7 @@ export const RegisterSchema_1 = Yup.object().shape({
     phoneNumber: Yup.string()
         .phone(countryCodeIso as any, 'Please enter a valid phone number')
         .required('A phone number is required'),
-    email: Yup.string().required('Your email is required.'),
+    email: Yup.string().email('Must be email format').required('Email is required.'),
     departmentId: Yup.string(),
 });
 
@@ -194,7 +194,7 @@ export const ServiceReportSchema = Yup.object().shape({
 export const CreateUserSchema = Yup.object().shape({
     firstName: Yup.string().required('First name is required.'),
     lastName: Yup.string().required('Last name is required.'),
-    email: Yup.string().required('email is required.'),
+    email: Yup.string().email('Must be email format').required('Email is required.'),
     departmentId: Yup.string().required('Department is required.'),
     roleId: Yup.string().required('Role is required.'),
 });

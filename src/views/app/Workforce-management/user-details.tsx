@@ -490,6 +490,8 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 items={sortedCampusDepartments || []}
                                                 selectedValue={values.departmentId}
                                                 onValueChange={handleChange('departmentId') as any}
+                                                isLoading={campusDepartmentsLoading || isFetchingDepartments}
+                                                isDisabled={campusDepartmentsLoading || isFetchingDepartments}
                                             >
                                                 {sortedCampusDepartments?.map((department, index) => (
                                                     <SelectItemComponent

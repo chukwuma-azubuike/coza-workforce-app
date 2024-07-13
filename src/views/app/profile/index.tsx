@@ -26,6 +26,7 @@ import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
 import useAppColorMode from '@hooks/theme/colorMode';
+import APP_ENV from '@config/envConfig';
 
 const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { user, isGlobalPastor } = useRole();
@@ -231,7 +232,7 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                     </HStackComponent>
                 </TouchableOpacity>
                 <TextComponent style={{ paddingVertical: 8, textAlign: 'center' }}>
-                    Version {DeviceInfo.getVersion()}
+                    Version {DeviceInfo.getVersion()} ({APP_ENV().ENV})
                 </TextComponent>
             </VStackComponent>
         </ViewWrapper>
