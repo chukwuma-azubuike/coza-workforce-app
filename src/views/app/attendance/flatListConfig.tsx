@@ -103,7 +103,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={6} key={key}>
+            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={4} key={key}>
                 <AvatarComponent
                     mr={4}
                     size="md"
@@ -114,19 +114,11 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                     <TextComponent bold>
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
                     </TextComponent>
-                    <TextComponent
-                        noOfLines={1}
-                        flexWrap="wrap"
-                        ellipsizeMode="tail"
-                        color={isLightMode ? 'gray.800' : 'gray.100'}
-                    >
-                        {`Score: ${elm?.score || 0}`}
-                    </TextComponent>
                 </VStackComponent>
                 <HStackComponent
                     key={`clockin-${key}`}
                     style={{
-                        minWidth: '15%',
+                        minWidth: '16%',
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}
@@ -143,7 +135,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                 <HStackComponent
                     key={`clockin-${key}`}
                     style={{
-                        minWidth: '15%',
+                        minWidth: '16%',
                         alignItems: 'center',
                         justifyContent: 'center',
                     }}
