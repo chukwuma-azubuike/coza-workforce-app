@@ -84,7 +84,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
             const result = await issueTicket({
                 ...values,
                 issuedBy: userId,
-                serviceId: latestService?._id,
+                serviceId: latestService?._id as string,
                 userId: values?.isIndividual ? values?.userId : undefined,
                 departmentId: values?.isCampus ? (undefined as any) : values?.departmentId,
             });
@@ -114,7 +114,10 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     } as ICreateTicketPayload,
                 });
                 navigate('Tickets', data);
+                setSearchedUser(undefined);
+                setDepartmentId(undefined);
             }
+
             if ('error' in result) {
                 setModalState({
                     message: (error as any)?.data?.message || 'Oops, something went wrong!',
@@ -187,6 +190,24 @@ We love & celebrate you!` as any,
         }
     };
 
+    const ticketSummaryTemplates = [
+        {
+            id: '1',
+            label: 'Verbose',
+            value: TICKET_TEMPLATE.verbose as string,
+        },
+        {
+            id: '2',
+            label: 'Minimal',
+            value: TICKET_TEMPLATE.minimal as string,
+        },
+        {
+            id: '3',
+            label: 'Blank',
+            value: '',
+        },
+    ];
+
     return (
         <>
             <If condition={isIndividual}>
@@ -213,11 +234,24 @@ We love & celebrate you!` as any,
                                 : CreateIndividualTicketSchema
                         }
                     >
-                        {({ errors, values, handleChange, setFieldValue, handleSubmit, touched, validateField }) => {
+                        {({
+                            errors,
+                            values,
+                            handleChange,
+                            setFieldValue,
+                            handleSubmit,
+                            touched,
+                            validateField,
+                            setTouched,
+                        }) => {
                             const handleDepartment = (value: IDepartment['_id']) => {
                                 setDepartmentId(value);
+                                setFieldValue('userId', undefined);
+                                setSearchedUser(undefined);
                                 if (value) {
-                                    setFieldValue('userId', undefined);
+                                    setFieldValue('userId', undefined).then(() => {
+                                        setTouched({ userId: true });
+                                    });
                                 }
                                 setFieldValue('departmentId', value);
                             };
@@ -225,7 +259,11 @@ We love & celebrate you!` as any,
                             const handleCampus = (value: ICampus['_id']) => {
                                 setCampusId(value);
                                 setDepartmentId(undefined);
-                                setFieldValue('departmentId', undefined);
+                                setFieldValue('userId', undefined);
+                                setSearchedUser(undefined);
+                                setFieldValue('departmentId', undefined).then(() => {
+                                    setTouched({ departmentId: true, userId: true });
+                                });
                                 setFieldValue('campusId', value);
                             };
 
@@ -469,24 +507,8 @@ We love & celebrate you!` as any,
                                         <FormControl.Label>Description Template</FormControl.Label>
                                         <RadioButton
                                             defaultSelected="1"
+                                            radioButtons={ticketSummaryTemplates}
                                             onChange={handleChange('ticketSummary') as any}
-                                            radioButtons={[
-                                                {
-                                                    id: '1',
-                                                    label: 'Verbose',
-                                                    value: TICKET_TEMPLATE.verbose as string,
-                                                },
-                                                {
-                                                    id: '2',
-                                                    label: 'Minimal',
-                                                    value: TICKET_TEMPLATE.minimal as string,
-                                                },
-                                                {
-                                                    id: '3',
-                                                    label: 'Blank',
-                                                    value: '',
-                                                },
-                                            ]}
                                         />
                                     </FormControl>
                                     <FormControl
