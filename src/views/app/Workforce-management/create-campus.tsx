@@ -143,9 +143,12 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         <FormControl.Label>Country</FormControl.Label>
                                         <SelectComponent
                                             isDisabled
-                                            placeholder="Choose Country"
+                                            valueKey="name"
+                                            displayKey="name"
                                             selectedValue={values.country}
-                                            onValueChange={handleChange('country')}
+                                            placeholder="Choose Country"
+                                            items={countries || []}
+                                            onValueChange={handleChange('country') as any}
                                         >
                                             {countries?.map((country, index) => (
                                                 <SelectItemComponent
@@ -174,8 +177,11 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <FormControl isRequired isInvalid={!!errors?.state}>
                                         <FormControl.Label>State</FormControl.Label>
                                         <SelectComponent
-                                            placeholder="Choose State"
+                                            valueKey="name"
+                                            displayKey="name"
                                             selectedValue={values.state}
+                                            placeholder="Choose State"
+                                            items={states || []}
                                             onValueChange={handleStateSelect as any}
                                         >
                                             {states?.map((state, index) => (
@@ -204,9 +210,12 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <FormControl isRequired isInvalid={!!errors?.LGA}>
                                         <FormControl.Label>LGA</FormControl.Label>
                                         <SelectComponent
+                                            valueKey="name"
+                                            displayKey="name"
+                                            items={lgas || []}
                                             placeholder="Choose LGA"
                                             selectedValue={values.LGA}
-                                            onValueChange={handleChange('LGA')}
+                                            onValueChange={handleChange('LGA') as any}
                                         >
                                             {lgas?.map((lga, index) => (
                                                 <SelectItemComponent
