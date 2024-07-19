@@ -316,7 +316,13 @@ export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
     const [page, setPage] = React.useState<number>(1);
 
-    const { data: services, isLoading: serviceIsLoading, isSuccess: servicesIsSuccess } = useGetServicesQuery({});
+    const {
+        data: services,
+        refetch: refetchServices,
+        isLoading: serviceIsLoading,
+        isSuccess: servicesIsSuccess,
+        isUninitialized: servicesIsUninitialized,
+    } = useGetServicesQuery({});
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
@@ -338,7 +344,14 @@ export const CampusAttendance: React.FC = React.memo(() => {
         sortedServices && setServiceId(sortedServices[0]?._id);
     }, [sortedServices]);
 
-    const { data, refetch, isLoading, isSuccess, isFetching } = useGetAttendanceQuery(
+    const {
+        data,
+        isLoading,
+        isSuccess,
+        isFetching,
+        isUninitialized: attedanceIsUninitialized,
+        refetch: refetchAttendance,
+    } = useGetAttendanceQuery(
         {
             // page,
             // limit: 20,
@@ -364,7 +377,8 @@ export const CampusAttendance: React.FC = React.memo(() => {
     // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
     const handleRefetch = () => {
-        refetch();
+        !attedanceIsUninitialized && refetchAttendance();
+        !servicesIsUninitialized && refetchServices();
     };
 
     return (
