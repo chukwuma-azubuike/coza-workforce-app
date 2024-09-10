@@ -291,6 +291,16 @@ export const accountServiceSlice = createApi({
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
 
+        getGroupHeadUsers: endpoint.query<IUser[], IDefaultQueryParams>({
+            query: params => ({
+                url: `/gh/users`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
+        }),
+
         getGlobalWorkForceSummary: endpoint.query<IGlobalWorkforceSummary, void>({
             query: () => ({
                 url: `/${USER_SERVICE_URL}/globalForce`,
@@ -345,4 +355,5 @@ export const {
     useUploadUserMutation,
     useAssignSecondaryRolesMutation,
     useAddDeviceTokenMutation,
+    useGetGroupHeadUsersQuery,
 } = accountServiceSlice;
