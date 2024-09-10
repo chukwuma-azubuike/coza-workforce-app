@@ -33,7 +33,7 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const { status, category, isIndividual, isDepartment, user, departmentName } = elm;
+                const { status, category, isIndividual, isDepartment, user, departmentName, campus } = elm;
 
                 return (
                     <TouchableOpacity
@@ -109,18 +109,16 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                                                         )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
                                                     </TextComponent>
                                                     <TextComponent style={{ fontSize: 14 }} bold>
-                                                        Guzape Campus
+                                                        {campus?.campusName}
                                                     </TextComponent>
-                                                    <TextComponent style={{ fontSize: 14 }} bold>
-                                                        {departmentName}
-                                                    </TextComponent>
+                                                    <TextComponent>{departmentName || ''}</TextComponent>
                                                 </>
                                             )}
-                                            <TextComponent>{departmentName || ''}</TextComponent>
+
                                             {isDepartment && (
                                                 <>
                                                     <TextComponent style={{ fontSize: 14 }} bold>
-                                                        Guzape Campus
+                                                        {campus?.campusName}
                                                     </TextComponent>
                                                     <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
                                                         {departmentName}
@@ -481,109 +479,82 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
     );
 });
 
-const GroupTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
-    const groupTicketsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
-        },
-    ];
+const GroupTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const groupTicketsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'createdAt',
+                render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
+            },
+        ];
 
-    const {
-        user: { campus },
-        leaderRoleIds,
-    } = useRole();
+        const [page, setPage] = React.useState<number>(1);
+        const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
+            {
+                isGH: true,
+                limit: 20,
+                page,
+            },
+            { refetchOnMountOrArgChange: true }
+        );
 
-    const [page, setPage] = React.useState<number>(1);
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
+            }
+        };
 
-    const {
-        data: hodsTickets,
-        refetch: hodRefetch,
-        isLoading: hodLoading,
-        isSuccess: hodIsSuccess,
-        isFetching: hodIsFetching,
-    } = useGetTicketsQuery(
-        {
-            // page,
-            // limit: 20,
-            campusId: campus._id,
-            roleId: leaderRoleIds && leaderRoleIds[0],
-        },
-        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
-    );
+        const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
-    const {
-        data: ahodsTickets,
-        refetch: ahodRefetch,
-        isLoading: ahodLoading,
-        isSuccess: ahodIsSuccess,
-        isFetching: ahodIsFetching,
-    } = useGetTicketsQuery(
-        {
-            // page,
-            // limit: 20,
-            campusId: campus._id,
-            roleId: leaderRoleIds && leaderRoleIds[1],
-        },
-        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
-    );
+        const preparedForSortData = React.useMemo(
+            () =>
+                moreData?.map((ticket: ITicket) => {
+                    return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+                }),
+            [moreData]
+        );
 
-    const isLoading = hodLoading || ahodLoading;
-    const isFetching = hodIsFetching || ahodIsFetching;
-    const isSuccess = hodIsSuccess && ahodIsSuccess;
-    const data = ahodsTickets && hodsTickets ? [...ahodsTickets, ...hodsTickets] : [];
+        const sortedData = React.useMemo(
+            () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+            [preparedForSortData]
+        );
 
-    // const fetchMoreData = () => {
-    //     if (!isFetching && !isLoading) {
-    //         if (data?.length) {
-    //             setPage(prev => prev + 1);
-    //         } else {
-    //             setPage(prev => prev - 1);
-    //         }
-    //     }
-    // };
+        const groupedData = React.useMemo(
+            () =>
+                Utils.groupListByKey(
+                    !!updatedListItem?._id
+                        ? Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, [
+                              '_id',
+                              updatedListItem?._id,
+                          ])
+                        : sortedData,
+                    'sortDateKey'
+                ),
+            [updatedListItem?._id, sortedData]
+        );
 
-    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
 
-    const preparedForSortData = React.useMemo(
-        () =>
-            data?.map((ticket: ITicket) => {
-                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
-            }),
-        [data]
-    );
-
-    const sortedData = React.useMemo(
-        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-        [preparedForSortData]
-    );
-
-    const groupedData = React.useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'sortDateKey'
-            ),
-        [updatedListItem?._id, sortedData]
-    );
-
-    const handleRefetch = () => {
-        hodRefetch();
-        ahodRefetch();
-    };
-
-    return (
-        <FlatListComponent
-            data={groupedData}
-            isLoading={isLoading}
-            onRefresh={handleRefetch}
-            // fetchMoreData={fetchMoreData}
-            columns={groupTicketsColumns}
-            refreshing={isLoading || isFetching}
-            emptyMessage="There are no tickets issued"
-            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-        />
-    );
-});
+        return (
+            <FlatListComponent
+                data={groupedData}
+                columns={groupTicketsColumns}
+                fetchMoreData={fetchMoreData}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+                emptyMessage="There are no tickets issued"
+                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+            />
+        );
+    }
+);
 
 export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets, GroupTicketsList };

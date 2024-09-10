@@ -11,7 +11,7 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
-import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
+import { useGetGroupHeadUsersQuery, useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
@@ -19,6 +19,7 @@ import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box } from 'native-base';
 import { Platform } from 'react-native';
+import { useGetGHCampusByIdQuery } from '@store/services/campus';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -418,7 +419,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
 });
 
 export const GroupAttendance: React.FC = React.memo(() => {
-    const { leaderRoleIds, user } = useRole();
+    const { user } = useRole();
 
     const {
         data: services,
@@ -448,80 +449,59 @@ export const GroupAttendance: React.FC = React.memo(() => {
     }, [sortedServices]);
 
     const {
-        data: HODs,
-        refetch: refetchHods,
-        isLoading: hodLoading,
-        isFetching: hodFetching,
-    } = useGetAttendanceQuery(
-        {
-            serviceId: serviceId,
-            campusId: user?.campus?._id,
-            roleId: leaderRoleIds && (leaderRoleIds[0] as string),
-        },
-        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
-    );
+        isLoading,
+        isFetching,
+        refetch: refetchAttendance,
+        data: membersClockedIn,
+    } = useGetAttendanceQuery({
+        serviceId: serviceId,
+        isGH: true,
+    });
+    // const { user: sss, isGroupHead } = useRole();
+
+    // const { refetch, data, isLoading: ss, isFetching: vv, isSuccess } = useGetGHCampusByIdQuery(sss.userId);
+    // console.log({ data, ss, vv });
+
     const {
-        data: AHODs,
-        refetch: refetchAHods,
-        isLoading: ahodLoading,
-        isFetching: ahodFetching,
-    } = useGetAttendanceQuery(
-        {
-            serviceId: serviceId,
-            campusId: user?.campus?._id,
-            roleId: leaderRoleIds && (leaderRoleIds[1] as string),
-        },
-        { skip: !leaderRoleIds?.length, refetchOnMountOrArgChange: true }
-    );
+        data: members,
+        refetch: usersRefetch,
+        isLoading: membersLoading,
+        isFetching: membersFetching,
+    } = useGetGroupHeadUsersQuery({});
+    console.log({ members, membersLoading, membersFetching });
+    const allMembers = React.useMemo(() => {
+        if (!members?.length) return [];
 
-    const isLoading = hodLoading || ahodLoading;
-    const isFetching = hodFetching || ahodFetching;
-
-    const { data: HODProfiles } = useGetUsersQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id },
-        { skip: !leaderRoleIds?.length }
-    );
-    const { data: AHODProfiles } = useGetUsersQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id },
-        { skip: !leaderRoleIds?.length }
-    );
-
-    const leadersClockedIn = AHODs && HODs ? [...AHODs, ...HODs] : [];
-    const allLeadersRaw = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
-
-    const allLeaders = React.useMemo(() => {
-        if (!allLeadersRaw.length) return [];
-
-        return allLeadersRaw?.map(leader => {
+        return members?.map(member => {
             return {
-                ...leader,
-                userId: leader?._id,
+                ...member,
+                userId: member._id,
             };
         });
-    }, [allLeadersRaw]);
+    }, [members]);
 
-    const leadersClockedInValid = React.useMemo(() => {
-        if (!leadersClockedIn?.length) return [];
+    const membersClockedInValid = React.useMemo(() => {
+        if (!membersClockedIn?.length) return [];
 
-        return leadersClockedIn?.map(leader => {
+        return membersClockedIn?.map(member => {
             return {
-                ...leader,
-                userId: leader?.user?._id,
+                ...member,
+                userId: member?.user?._id,
             };
         });
-    }, [leadersClockedIn]);
+    }, [membersClockedIn]);
 
-    const mergedLeaders = [...leadersClockedInValid, ...allLeaders] as any;
+    const mergedUsers = [...membersClockedInValid] as any;
 
-    const mergedAttendanceWithLeaderList = React.useMemo(
-        () => Utils.mergeDuplicatesByKey(mergedLeaders, 'userId'),
-        [leadersClockedIn, mergedLeaders]
+    const mergedAttendanceWithMemberList = React.useMemo(
+        () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
+        [membersClockedIn, mergedUsers]
     );
 
     const handleRefetch = () => {
-        refetchHods();
-        refetchAHods();
+        usersRefetch();
         refetchServices();
+        refetchAttendance();
     };
 
     return (
@@ -529,11 +509,11 @@ export const GroupAttendance: React.FC = React.memo(() => {
             <Box mb={2} px={2}>
                 <SelectComponent
                     valueKey="_id"
-                    placeholder="Select Service"
                     selectedValue={serviceId}
-                    items={sortedServices || []}
+                    placeholder="Select Service"
                     onValueChange={setService as any}
                     displayKey={['name', 'clockInStartTime']}
+                    items={sortedServices || []}
                 >
                     {sortedServices?.map((service, index) => (
                         <SelectItemComponent
@@ -546,12 +526,12 @@ export const GroupAttendance: React.FC = React.memo(() => {
                 </SelectComponent>
             </Box>
             <FlatListComponent
-                padding={isAndroid ? 3 : true}
+                padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-                data={mergedAttendanceWithLeaderList}
                 columns={groupAttendanceDataColumns}
+                refreshing={isLoading || isFetching}
+                data={mergedAttendanceWithMemberList}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
