@@ -185,6 +185,11 @@ export const GSPReportSchema = Yup.object().shape({
     campusCoordinatorComment: Yup.string().required('Please provide a comment'),
 });
 
+export const GHReportSchema = Yup.object().shape({
+    submittedReport: Yup.string().required('Please provide a comment'),
+});
+
+
 export const ServiceReportSchema = Yup.object().shape({
     serviceStartTime: Yup.string().required('Please provide service start time'),
     serviceEndTime: Yup.string().required('Please provide service end time'),

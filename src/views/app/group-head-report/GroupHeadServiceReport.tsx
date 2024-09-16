@@ -1,28 +1,25 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Stack } from 'native-base';
-import React from 'react';
-import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { FlatListSkeleton } from '@components/layout/skeleton';
 import ViewWrapper from '@components/layout/viewWrapper';
+import useScreenFocus from '@hooks/focus';
+import useGeoLocation from '@hooks/geo-location';
 import { useCustomBackNavigation, usePreventGoBack } from '@hooks/navigation';
 import useRole from '@hooks/role';
-import { useGetGHCampusByIdQuery } from '@store/services/campus';
-import Utils from '@utils';
-import useScreenFocus from '@hooks/focus';
-import { CampusReportSummary } from '../home/campus-pastors/report-summary';
+import { ParamListBase } from '@react-navigation/native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { selectCurrentUser, userActionTypes } from '@store/services/users';
 import { useGetUserByIdQuery } from '@store/services/account';
-import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import { useGetAttendanceQuery } from '@store/services/attendance';
-import useGeoLocation from '@hooks/geo-location';
-import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
+import { IGHSubmittedReport } from '@store/services/reports';
+import { useGetLatestServiceQuery } from '@store/services/services';
+import { selectCurrentUser, userActionTypes } from '@store/services/users';
 import { IAttendance, IService } from '@store/types';
-import { Platform, View } from 'react-native';
-import Clocker from '../home/workers/clocker';
+import Utils from '@utils';
+import React from 'react';
+import { Platform } from 'react-native';
+import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { HomeContext } from '../home';
+import { GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
+import Clocker from '../home/workers/clocker';
 
 interface IInitialHomeState {
     latestService: {
@@ -45,6 +42,7 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
     const currentUserId = useAppSelector(store => selectCurrentUser(store)).userId;
 
     usePreventGoBack();
+    const prop = props.route.params as IGHSubmittedReport;
 
     const {
         error,
@@ -63,7 +61,7 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
         isLoading,
         data: latestService,
     } = useGetLatestServiceQuery(user?.campus?._id as string, {
-        skip: !user,
+        skip: !user || !!prop?.serviceId,
         refetchOnMountOrArgChange: true,
     });
 
@@ -76,14 +74,15 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
         refetch: latestAttendanceRefetch,
     } = useGetAttendanceQuery(
         {
-            userId: latestService && (user?.userId as string), // Passing the userId an undefined value negates the call
-            serviceId: latestService?._id,
+            userId: (latestService || prop?.serviceId) && (user?.userId as string), // Passing the userId an undefined value negates the call
+            serviceId: prop?.serviceId ?? latestService?._id,
         },
         {
-            skip: !latestService, // Fetch only if there is a service available
+            skip: !latestService && !prop?.serviceId, // Fetch only if there is a service available
             refetchOnMountOrArgChange: true,
         }
     );
+
 
     const initialState = {
         latestService: { data: latestService, isError, isSuccess, isLoading },
@@ -104,7 +103,7 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
     const handleRefresh = () => {
         refresh();
         refetchCurrentUser();
-        refetch();
+        !prop?.serviceId && refetch();
         !latestAttendanceisUninitialized && latestAttendanceRefetch();
         setRefreshTrigger(true);
         Utils.checkLocationPermission(refresh);
@@ -129,7 +128,7 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
         },
     });
 
-    useCustomBackNavigation({ targetRoute: 'More' });
+    useCustomBackNavigation({ targetRoute: prop?.serviceId ? 'GH reports history' : 'Home' });
 
     const isIOS = Platform.OS === 'ios';
 
@@ -150,11 +149,11 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
                         deviceCoordinates={deviceCoordinates}
                         verifyRangeBeforeAction={verifyRangeBeforeAction}
                         isGh
+                        ghReport={prop}
                     />
-                    <CampusReportSummary
-                        campusId={user?.campus?._id}
+                    <GroupHeadReportSummary
                         refetchService={handleRefresh}
-                        serviceId={latestService?._id as string}
+                        serviceId={prop?.serviceId ?? (latestService?._id as string)}
                     />
                 </ErrorBoundary>
             </ViewWrapper>

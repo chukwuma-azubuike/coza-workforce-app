@@ -56,7 +56,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
         teamTickets: () => <MyTeamTicketsList reload={reload} updatedListItem={updatedListItem} />,
         campusTickets: () => <CampusTickets reload={reload} updatedListItem={updatedListItem} />,
         leadersTickets: () => <LeadersTicketsList updatedListItem={updatedListItem} />,
-        groupTickets: () => <GroupTicketsList updatedListItem={updatedListItem} />,
+        groupTickets: () => <GroupTicketsList reload={reload} updatedListItem={updatedListItem} />,
     });
 
     const {

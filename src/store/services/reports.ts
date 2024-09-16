@@ -78,10 +78,11 @@ export interface IBusReportSummary {
     adult: number;
     children: number;
 }
-
 export interface ICampusReportSummary<R = unknown> {
     departmentName: string;
+    campus: string;
     departmentalReport: {
+        campus: string;
         status: IReportStatus;
         departmentName: string;
         report: {
@@ -96,6 +97,7 @@ export interface ICampusReportSummary<R = unknown> {
         departmentName: string;
     }[];
     campusCoordinatorComment?: string;
+    submittedReport?: string;
 }
 
 export interface IDepartmentReportListById {
@@ -122,6 +124,13 @@ export interface IGSPReportPayload {
     status: IReportStatus;
 }
 
+export interface IGHReportPayload {
+    departmentReports: string[];
+    incidentReports: string[];
+    submittedReport: string;
+    serviceId: string;
+}
+
 export interface ICampusReport {
     serviceId: IService['_id'];
     campusId: ICampus['_id'];
@@ -135,6 +144,13 @@ export interface IGlobalReport {
     status: IReportStatus;
     campusId: ICampus['_id'];
     campusName: string;
+}
+
+export interface IGHSubmittedReport {
+    serviceId: string;
+    serviceName: string;
+    status: IReportStatus;
+    createdAt: number;
 }
 
 export interface ICampusReportListPayload extends Pick<IDefaultQueryParams, 'limit' | 'page'> {
@@ -335,6 +351,33 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IGraphAttendanceReports>) => res?.data,
         }),
 
+        submitGhReport: endpoint.mutation<any, IGHReportPayload>({
+            query: body => ({
+                url: `/gh/submitReport`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+        }),
+
+        getGhReportById: endpoint.query<ICampusReportSummary, { serviceId: IService['_id'] }>({
+            query: params => ({
+                url: `/gh/reports/${params.serviceId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res?.data,
+        }),
+
+        getGhReports: endpoint.query<IGHSubmittedReport[], IDefaultQueryParams>({
+            query: params => ({
+                url: `/gh/reports`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<IGHSubmittedReport[]>) => res?.data,
+        }),
+
         // Add your endpoints here
     }),
 });
@@ -361,4 +404,7 @@ export const {
     useGetGlobalWorkforceSummaryQuery,
     useGetGraphAttendanceReportsQuery,
     useGetServiceAttendanceSummaryQuery,
+    useSubmitGhReportMutation,
+    useGetGhReportsQuery,
+    useGetGhReportByIdQuery,
 } = reportsServiceSlice;

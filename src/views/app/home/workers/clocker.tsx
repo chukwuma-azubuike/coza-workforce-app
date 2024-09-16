@@ -1,28 +1,31 @@
-import React from 'react';
-import { Center, HStack, Text, VStack, View } from 'native-base';
-import ClockButton from './clock-button';
-import Timer from './timer';
-import CampusLocation from './campus-location';
-import ClockStatistics from './clock-statistics';
-import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
-import { GeoCoordinates } from 'react-native-geolocation-service';
-import { Dimensions, Pressable, TouchableOpacity } from 'react-native';
-import useRole from '@hooks/role';
+import Loading from '@components/atoms/loading';
+import ErrorBoundary from '@components/composite/error-boundary';
 import If from '@components/composite/if-container';
+import TextComponent from '@components/text';
+import { THEME_CONFIG } from '@config/appConfig';
+import useScreenFocus from '@hooks/focus';
+import useRole from '@hooks/role';
+import { useNavigation } from '@react-navigation/native';
+import { Icon, ScreenHeight } from '@rneui/base';
 import {
     useGetDepartmentAttendanceReportQuery,
     useGetLeadersAttendanceReportQuery,
     useGetWorkersAttendanceReportQuery,
 } from '@store/services/attendance';
-import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
-import Loading from '@components/atoms/loading';
+import { IGHSubmittedReport } from '@store/services/reports';
 import { useGetLatestServiceQuery } from '@store/services/services';
-import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
-import ErrorBoundary from '@components/composite/error-boundary';
-import { Icon, ScreenHeight } from '@rneui/base';
-import { THEME_CONFIG } from '@config/appConfig';
-import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
+import { Center, HStack, Text, VStack } from 'native-base';
+import React from 'react';
+import { TouchableOpacity } from 'react-native';
+import { GeoCoordinates } from 'react-native-geolocation-service';
+import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
+import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
+import ClockButton from './clock-button';
+import ClockStatistics from './clock-statistics';
+import Timer from './timer';
+import VStackComponent from '@components/layout/v-stack';
 
 interface IClockerProps {
     isGh?: boolean;
@@ -32,6 +35,7 @@ interface IClockerProps {
     refreshLocation: () => Promise<void>;
     setRefreshTrigger: React.Dispatch<React.SetStateAction<boolean>>;
     verifyRangeBeforeAction: (successCallback: () => any, errorCallback: () => any) => Promise<void>;
+    ghReport?: IGHSubmittedReport;
 }
 
 const Clocker: React.FC<IClockerProps> = ({
@@ -42,6 +46,7 @@ const Clocker: React.FC<IClockerProps> = ({
     refreshTrigger,
     isInRange,
     isGh,
+    ghReport,
 }) => {
     const navigation = useNavigation();
 
@@ -65,7 +70,7 @@ const Clocker: React.FC<IClockerProps> = ({
         refetch: attendanceReportRefetch,
         isUninitialized: attendanceReportIsUninitialized,
     } = useGetDepartmentAttendanceReportQuery({
-        serviceId: latestService?._id as string,
+        serviceId: ghReport?.serviceId ?? (latestService?._id as string),
         departmentId: department?._id,
     });
 
@@ -75,10 +80,10 @@ const Clocker: React.FC<IClockerProps> = ({
         isUninitialized: leadersIsUninitialized,
     } = useGetLeadersAttendanceReportQuery(
         {
-            serviceId: latestService?._id as string,
+            serviceId: ghReport?.serviceId ?? (latestService?._id as string),
             campusId: campus?._id,
         },
-        { skip: !latestService?._id }
+        { skip: !latestService?._id && !ghReport?.serviceId }
     );
 
     const {
@@ -87,10 +92,10 @@ const Clocker: React.FC<IClockerProps> = ({
         isUninitialized: workersIsUninitialized,
     } = useGetWorkersAttendanceReportQuery(
         {
-            serviceId: latestService?._id as string,
+            serviceId: ghReport?.serviceId ?? (latestService?._id as string),
             campusId: campus?._id,
         },
-        { skip: !latestService?._id }
+        { skip: !latestService?._id && !ghReport?.serviceId }
     );
 
     const {
@@ -99,10 +104,10 @@ const Clocker: React.FC<IClockerProps> = ({
         isUninitialized: ticketsIsUninitialized,
     } = useGetCampusTicketReportQuery(
         {
-            serviceId: latestService?._id as string,
+            serviceId: ghReport?.serviceId ?? (latestService?._id as string),
             campusId: campus?._id,
         },
-        { skip: !latestService?._id }
+        { skip: !latestService?._id && !ghReport?.serviceId }
     );
 
     const refreshData = () => {
@@ -132,11 +137,19 @@ const Clocker: React.FC<IClockerProps> = ({
     const heightOffset = ScreenHeight * 0.6;
 
     const handleNavigateToReports = () => {
-        navigation.navigate('Group head service report' as never);
+        navigation.navigate('Group Head Service Report' as never);
     };
+
     return (
         <Center _dark={{ bg: 'black' }}>
-            <Timer />
+            {ghReport?.serviceId ? (
+                <VStackComponent style={{ alignItems: 'center', paddingBottom: 10 }}>
+                    <TextComponent bold>{ghReport?.serviceName}</TextComponent>
+                    <TextComponent>{moment(ghReport?.createdAt).format('MMMM Do, YYYY')}</TextComponent>
+                </VStackComponent>
+            ) : (
+                <Timer />
+            )}
             <If condition={isCampusPastor || isGh}>
                 <CampusAttendanceSummary
                     leadersAttendance={leadersAttendance?.attendance}
@@ -158,7 +171,7 @@ const Clocker: React.FC<IClockerProps> = ({
                                 deviceCoordinates={deviceCoordinates}
                                 verifyRangeBeforeAction={verifyRangeBeforeAction}
                             />
-                            {isGroupHead && (
+                            {isGroupHead && latestService?._id && (
                                 <TouchableOpacity activeOpacity={0.6} onPress={handleNavigateToReports}>
                                     <HStack alignItems="center" space={1} mt={10}>
                                         <Icon
@@ -180,7 +193,7 @@ const Clocker: React.FC<IClockerProps> = ({
                                 </TouchableOpacity>
                             )}
                         </ErrorBoundary>
-                        <CampusLocation />
+                        {/* <CampusLocation /> */}
                         <If condition={isAHOD || isHOD}>
                             <TeamAttendanceSummary
                                 isLoading={attendanceReportLoading}

@@ -22,12 +22,6 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
     const { user, isGroupHead } = useRole();
 
     const { refetch, data, isLoading, isFetching, isSuccess } = useGetGHCampusByIdQuery(user.userId);
-    console.log({ data, isLoading, isFetching });
-    // useScreenFocus({
-    //     onFocus: () => {
-    //         refetch();
-    //     },
-    // });
 
     const Departmentlist = React.useMemo(
         () =>
