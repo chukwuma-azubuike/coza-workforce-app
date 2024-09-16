@@ -11,7 +11,7 @@ import useRole from '@hooks/role';
 import { useGetGHCampusByIdQuery } from '@store/services/campus';
 import Utils from '@utils';
 import useScreenFocus from '@hooks/focus';
-import { CampusReportSummary } from '../home/campus-pastors/report-summary';
+import { CampusReportSummary, GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { selectCurrentUser, userActionTypes } from '@store/services/users';
 import { useGetUserByIdQuery } from '@store/services/account';
@@ -95,7 +95,7 @@ const GroupHeadReportss: React.FC<NativeStackScreenProps<ParamListBase>> = props
                 deviceCoordinates={deviceCoordinates}
                 verifyRangeBeforeAction={verifyRangeBeforeAction}
             />
-            <CampusReportSummary
+            <GroupHeadReportSummary
                 campusId={user?.campus?._id}
                 refetchService={handleRefresh}
                 serviceId={latestService?._id as string}
