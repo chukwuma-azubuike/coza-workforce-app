@@ -87,6 +87,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
 ];
 
 export interface ITransformUserAttendanceList {
+    campus: string;
     score: number;
     userId: string;
     clockIn: string;
@@ -96,6 +97,7 @@ export interface ITransformUserAttendanceList {
     firstName: string;
     pictureUrl: string;
     departmentName: string;
+    department: string;
 }
 
 const teamAttendanceDataColumns: IFlatListColumn[] = [
@@ -347,8 +349,8 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                     <TextComponent bold>
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
                     </TextComponent>
-                    <TextComponent>{'Guzape Campus'}</TextComponent>
-                    <TextComponent>{elm.departmentName}</TextComponent>
+                    <TextComponent>{elm.campus}</TextComponent>
+                    <TextComponent>{elm.department}</TextComponent>
                 </VStackComponent>
                 <HStackComponent style={{ justifyContent: 'center', alignItems: 'center', minWidth: '20%' }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />

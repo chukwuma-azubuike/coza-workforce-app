@@ -457,10 +457,6 @@ export const GroupAttendance: React.FC = React.memo(() => {
         serviceId: serviceId,
         isGH: true,
     });
-    // const { user: sss, isGroupHead } = useRole();
-
-    // const { refetch, data, isLoading: ss, isFetching: vv, isSuccess } = useGetGHCampusByIdQuery(sss.userId);
-    // console.log({ data, ss, vv });
 
     const {
         data: members,
@@ -468,7 +464,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
         isLoading: membersLoading,
         isFetching: membersFetching,
     } = useGetGroupHeadUsersQuery({});
-    console.log({ members, membersLoading, membersFetching });
+
     const allMembers = React.useMemo(() => {
         if (!members?.length) return [];
 
@@ -491,7 +487,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
         });
     }, [membersClockedIn]);
 
-    const mergedUsers = [...membersClockedInValid] as any;
+    const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
 
     const mergedAttendanceWithMemberList = React.useMemo(
         () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
