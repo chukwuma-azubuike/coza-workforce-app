@@ -2,6 +2,14 @@
 
 This file contains all changelogs for latest releases, from v1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.7
+
+### Fixed
+
+-   Remove score from hod attendance view ([f472fb73d1863c4065d93febaacc5aef9f29dd65](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/f472fb73d1863c4065d93febaacc5aef9f29dd65) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Restore gsp original view ([cce758578f07344e9745e98f0a93af4410b590f7](https://github.com/chukwuma-azubuike/coza-workforce-app/commit/cce758578f07344e9745e98f0a93af4410b590f7) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.5
 
 ### Fixed
