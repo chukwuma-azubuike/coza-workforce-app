@@ -8,7 +8,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { useLoginMutation } from '@store/services/account';
 import { Formik } from 'formik';
 import { LoginSchema } from '@utils/schemas';
-import { ILoginPayload } from '@store/types';
+import { ILoginPayload, IUser } from '@store/types';
 import useModal from '@hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
 import { AppStateContext } from '../../../../App';
@@ -27,41 +27,38 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
 
     const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
-    const [login, { data, error, isError, isSuccess, isLoading, status }] = useLoginMutation();
+    const [login, { data, isLoading }] = useLoginMutation();
 
     const { setModalState } = useModal();
     const handleIconPress = () => setShowPassword(prev => !prev);
 
     const INITIAL_VALUES = { email: '', password: '' };
 
-    const onSubmit = (values: ILoginPayload) => {
-        login({ ...values, email: Utils.formatEmail(values.email) });
+    const onSubmit = async (values: ILoginPayload) => {
+        const response = await login({ ...values, email: Utils.formatEmail(values.email) });
+
+        if ('error' in response) {
+            setModalState({
+                defaultRender: true,
+                status: 'error',
+                message: (response?.error as any)?.data?.message || ((response as any)?.data)?.message,
+            });
+        }
+
+        if ('data' in response) {
+            dispatch({
+                type: userActionTypes.SET_USER_DATA,
+                payload: data?.profile,
+            });
+            dispatch({
+                type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
+            });
+            Utils.storeCurrentUserData(data?.profile as IUser);
+            setIsLoggedIn && setIsLoggedIn(true);
+        }
     };
 
     const { setIsLoggedIn } = React.useContext(AppStateContext);
-
-    React.useEffect(() => {
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: error?.error ? 'error' : 'info',
-                message: error?.data?.data?.message || error?.data?.message,
-            });
-        }
-        if (isSuccess) {
-            if (data) {
-                dispatch({
-                    type: userActionTypes.SET_USER_DATA,
-                    payload: data.profile,
-                });
-                dispatch({
-                    type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
-                });
-                Utils.storeCurrentUserData(data.profile);
-                setIsLoggedIn && setIsLoggedIn(true);
-            }
-        }
-    }, [isSuccess, isError]);
 
     return (
         <ViewWrapper scroll>
