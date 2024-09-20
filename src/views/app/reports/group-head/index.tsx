@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack } from 'native-base';
 import { Formik } from 'formik';
@@ -70,12 +70,13 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     };
 
     return (
-        <ViewWrapper py={10} scroll noPadding>
+        <ViewWrapper py={10} noPadding>
             <VStack px={4} space={10}>
                 <Formik<any>
                     onSubmit={onSubmit}
                     validationSchema={GHReportSchema}
                     initialValues={INITIAL_VALUES as unknown as any}
+                    enableReinitialize
                 >
                     {({ errors, handleChange, handleSubmit, values }) => {
                         return (

@@ -261,7 +261,9 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
 
         const { navigate } = useNavigation();
 
-        const navigateToReports = () => navigate('Submit report summary' as never, submitData as never);
+        const navigateToReportSummary = () => navigate('Submit report summary' as never, submitData as never);
+
+        const navigateToReports = () => navigate('Reports' as never);
 
         const reportColumns: IFlatListColumn[] = [
             {
@@ -288,9 +290,9 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
 
         return (
             <>
-                {!isLoading && (
+                {!isLoading && !isFetching && (
                     <Box flex={1} justifyContent="center" marginTop={3} alignItems="center">
-                        <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
+                        <TouchableOpacity activeOpacity={0.6} onPress={navigateToReportSummary}>
                             <HStack alignItems="center" space={1}>
                                 <Text color="gray.400" fontSize="md" ml={2}>
                                     {data?.submittedReport ? 'View report summary' : 'Submit report summary'}
