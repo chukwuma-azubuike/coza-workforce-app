@@ -83,7 +83,6 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
         }
     );
 
-
     const initialState = {
         latestService: { data: latestService, isError, isSuccess, isLoading },
         latestAttendance: {
@@ -127,6 +126,8 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
             Geolocation.stopObserving();
         },
     });
+
+    const now = Math.floor(Date.now() / 1000); // Current time in seconds (UNIX timestamp)
 
     useCustomBackNavigation({ targetRoute: prop?.serviceId ? 'GH reports history' : 'Home' });
 
