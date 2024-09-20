@@ -108,7 +108,7 @@ export type IGetUserByIdResponse = IDefaultResponse<IUser>;
 export const accountServiceSlice = createApi({
     reducerPath: 'account',
 
-    tagTypes: ['account'],
+    tagTypes: ['account', 'CampusSummaryByCampusId', 'userDetails', 'listOfDepartmentUsers', 'globalWorkforceSummary'],
 
     baseQuery: fetchUtils.baseQuery,
 
@@ -168,6 +168,8 @@ export const accountServiceSlice = createApi({
                     .catch(err => {});
                 return response.data;
             },
+
+            invalidatesTags: ['userDetails'],
         }),
 
         register: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
@@ -184,6 +186,8 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+
+            invalidatesTags: ['listOfDepartmentUsers', 'globalWorkforceSummary'],
         }),
 
         uploadUser: endpoint.mutation<IRegisterResponse, ICreateUserPayload>({
@@ -192,6 +196,8 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+
+            invalidatesTags: ['listOfDepartmentUsers', 'CampusSummaryByCampusId'],
         }),
 
         updateUser: endpoint.mutation<IRegisterResponse, IEditProfilePayload>({
@@ -200,6 +206,8 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.PATCH,
                 body,
             }),
+
+            invalidatesTags: ['listOfDepartmentUsers', 'CampusSummaryByCampusId', 'globalWorkforceSummary'],
         }),
 
         deleteUser: endpoint.mutation<IUser, string>({
@@ -207,6 +215,8 @@ export const accountServiceSlice = createApi({
                 url: `/${SERVICE_URL}/delete/${email}`,
                 method: REST_API_VERBS.DELETE,
             }),
+
+            invalidatesTags: ['listOfDepartmentUsers', 'CampusSummaryByCampusId', 'globalWorkforceSummary'],
         }),
 
         sendForgotPasswordOTP: endpoint.query<ISendOTPResponse, string>({
@@ -243,6 +253,8 @@ export const accountServiceSlice = createApi({
             }),
 
             transformResponse: async (response: IGetUserByIdResponse) => response.data,
+
+            providesTags: ['userDetails'],
         }),
 
         getUsersByDepartmentId: endpoint.query<IUser[], IDepartment['_id']>({
@@ -250,6 +262,8 @@ export const accountServiceSlice = createApi({
                 url: `/${USER_SERVICE_URL}/getUsers`,
                 params: { departmentId: _id },
             }),
+
+            providesTags: ['listOfDepartmentUsers'],
 
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
@@ -259,6 +273,8 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
                 params: { campusId },
             }),
+
+            providesTags: ['CampusSummaryByCampusId', 'listOfDepartmentUsers'],
 
             transformResponse: (response: IDefaultResponse<ICampusUserData>) => response.data,
         }),
@@ -270,6 +286,8 @@ export const accountServiceSlice = createApi({
                 params,
             }),
 
+            providesTags: ['listOfDepartmentUsers', 'CampusSummaryByCampusId'],
+
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
 
@@ -278,6 +296,8 @@ export const accountServiceSlice = createApi({
                 url: `/${USER_SERVICE_URL}/globalForce`,
                 method: REST_API_VERBS.GET,
             }),
+
+            providesTags: ['globalWorkforceSummary'],
 
             transformResponse: (response: IDefaultResponse<IGlobalWorkforceSummary>) => response.data,
         }),
