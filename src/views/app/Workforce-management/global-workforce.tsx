@@ -11,7 +11,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { useCustomBackNavigation } from '@hooks/navigation';
 import useRole from '@hooks/role';
 import { useGetGlobalWorkForceSummaryQuery } from '@store/services/account';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
 
 const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation: { navigate } }) => {
