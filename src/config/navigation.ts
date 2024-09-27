@@ -60,6 +60,9 @@ import CGWCResources from '@views/app/cgwc/cgwc-resources';
 import CGWCFeedback from '@views/app/cgwc/feedback';
 import CGWCReport from '@views/app/cgwc/cgwc-report';
 import TopNav from '@views/app/home/top-nav';
+import GroupHeadServiceReport from '@views/app/group-head-report/GroupHeadServiceReport';
+import GHReportSummary from '@views/app/reports/group-head';
+import GroupHeadReportHistory from '@views/app/group-head-report/group-head-report-history';
 
 export interface IAppRoute {
     name: string;
@@ -379,6 +382,48 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'home-group', type: 'material-community' },
+    },
+    {
+        name: 'GH reports history',
+        component: GroupHeadReportHistory,
+        options: { title: 'GH reports history' },
+        submenus: [],
+        users: [ROLES.groupHead],
+        inMenuBar: false,
+        inMore: true,
+        icon: { name: 'graph', type: 'octicon' },
+    },
+    {
+        name: 'Group Head Service Report',
+        component: GroupHeadServiceReport,
+        options: { title: 'Group Head Service Report' },
+        submenus: [
+            {
+                name: 'Group Head Service Summary',
+                component: GroupHeadCampuses,
+                options: { title: 'Group Head Service Summary' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+
+            {
+                name: 'Submit report summary',
+                component: GHReportSummary,
+                options: { title: 'Submit report summary' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'person', type: 'octicon' },
+            },
+        ],
+        users: [ROLES.groupHead, ROLES.campusPastor],
+        inMenuBar: false,
+        inMore: false,
+        icon: { name: 'graph', type: 'octicon' },
     },
     {
         name: 'Workforce summary',

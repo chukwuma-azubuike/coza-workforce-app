@@ -2,6 +2,7 @@ import React from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns,
+    groupAttendanceDataColumns,
     leadersAttendanceDataColumns,
     myAttendanceColumns,
     teamAttendanceDataColumns,
@@ -10,7 +11,7 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
-import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
+import { useGetGroupHeadUsersQuery, useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import moment from 'moment';
 import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
@@ -18,6 +19,7 @@ import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box } from 'native-base';
 import { Platform } from 'react-native';
+import { useGetGHCampusByIdQuery } from '@store/services/campus';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -410,6 +412,122 @@ export const CampusAttendance: React.FC = React.memo(() => {
                 // fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
+                ListFooterComponentStyle={{ marginVertical: 20 }}
+            />
+        </ErrorBoundary>
+    );
+});
+
+export const GroupAttendance: React.FC = React.memo(() => {
+    const { user } = useRole();
+
+    const {
+        data: services,
+        refetch: refetchServices,
+        isLoading: serviceIsLoading,
+        isSuccess: servicesIsSuccess,
+    } = useGetServicesQuery({});
+
+    const [serviceId, setServiceId] = React.useState<IService['_id']>();
+
+    const setService = (value: IService['_id']) => {
+        setServiceId(value);
+    };
+
+    const filteredServices = React.useMemo<IService[] | undefined>(
+        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        [services, servicesIsSuccess]
+    );
+
+    const sortedServices = React.useMemo<IService[] | undefined>(
+        () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
+        [filteredServices]
+    );
+
+    React.useEffect(() => {
+        sortedServices && setServiceId(sortedServices[0]._id);
+    }, [sortedServices]);
+
+    const {
+        isLoading,
+        isFetching,
+        refetch: refetchAttendance,
+        data: membersClockedIn,
+    } = useGetAttendanceQuery({
+        serviceId: serviceId,
+        isGH: true,
+    });
+
+    const {
+        data: members,
+        refetch: usersRefetch,
+        isLoading: membersLoading,
+        isFetching: membersFetching,
+    } = useGetGroupHeadUsersQuery({});
+
+    const allMembers = React.useMemo(() => {
+        if (!members?.length) return [];
+
+        return members?.map(member => {
+            return {
+                ...member,
+                userId: member._id,
+            };
+        });
+    }, [members]);
+
+    const membersClockedInValid = React.useMemo(() => {
+        if (!membersClockedIn?.length) return [];
+
+        return membersClockedIn?.map(member => {
+            return {
+                ...member,
+                userId: member?.user?._id,
+            };
+        });
+    }, [membersClockedIn]);
+
+    const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
+
+    const mergedAttendanceWithMemberList = React.useMemo(
+        () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
+        [membersClockedIn, mergedUsers]
+    );
+
+    const handleRefetch = () => {
+        usersRefetch();
+        refetchServices();
+        refetchAttendance();
+    };
+
+    return (
+        <ErrorBoundary>
+            <Box mb={2} px={2}>
+                <SelectComponent
+                    valueKey="_id"
+                    selectedValue={serviceId}
+                    placeholder="Select Service"
+                    onValueChange={setService as any}
+                    displayKey={['name', 'clockInStartTime']}
+                    items={sortedServices || []}
+                >
+                    {sortedServices?.map((service, index) => (
+                        <SelectItemComponent
+                            value={service._id}
+                            key={`service-${index}`}
+                            isLoading={serviceIsLoading}
+                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                        />
+                    ))}
+                </SelectComponent>
+            </Box>
+            <FlatListComponent
+                padding={isAndroid ? 3 : 1}
+                onRefresh={handleRefetch}
+                isLoading={isLoading || isFetching}
+                columns={groupAttendanceDataColumns}
+                refreshing={isLoading || isFetching}
+                data={mergedAttendanceWithMemberList}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>

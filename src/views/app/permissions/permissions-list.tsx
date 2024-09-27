@@ -19,7 +19,7 @@ import TextComponent from '@components/text';
 
 interface IPermissionListRowProps extends IPermission {
     screen?: { name: string; value: string } | undefined;
-    type: 'own' | 'team' | 'campus';
+    type: 'own' | 'team' | 'campus' | 'grouphead';
     '0'?: string;
     '1'?: IPermission[];
 }
@@ -40,7 +40,7 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = memo(props =
                     navigation.navigate('Permission Details' as never, { ...elm, screen } as never);
                 };
 
-                const { requestor, departmentName, categoryName, description, status } = elm;
+                const { requestor, departmentName, categoryName, description, status, campus } = elm;
 
                 return (
                     <TouchableOpacity activeOpacity={0.6} onPress={handlePress} style={{ flex: 1 }}>
@@ -81,6 +81,21 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = memo(props =
                                             <TextComponent bold size="sm">
                                                 {categoryName}
                                             </TextComponent>
+                                        </>
+                                    )}
+
+                                    {type === 'grouphead' && (
+                                        <>
+                                            <TextComponent bold>
+                                                {`${Utils.capitalizeFirstChar(
+                                                    requestor?.firstName
+                                                )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
+                                            </TextComponent>
+                                            <TextComponent bold size="sm">
+                                                {campus.campusName ?? ''}
+                                            </TextComponent>
+                                            <TextComponent size="sm">{departmentName}</TextComponent>
+                                            <TextComponent size="sm">{categoryName}</TextComponent>
                                         </>
                                     )}
                                 </VStackComponent>
@@ -399,4 +414,72 @@ const CampusPermissions: React.FC<{ updatedListItem: IPermission; reload: boolea
     }
 );
 
-export { MyPermissionsList, MyTeamPermissionsList, LeadersPermissionsList, CampusPermissions };
+const GroupPermissionsList: React.FC<{ updatedListItem: IPermission; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const groupPermissionsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'dateCreated',
+                render: (_: IPermission, key) => <PermissionListRow type="grouphead" {..._} key={key} />,
+            },
+        ];
+
+        const [page, setPage] = React.useState<number>(1);
+
+        const { data, isLoading, isFetching, isSuccess, refetch, isUninitialized } = useGetPermissionsQuery(
+            { isGH: true, limit: 20, page },
+            {
+                refetchOnMountOrArgChange: true,
+            }
+        );
+
+        const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
+
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
+            }
+        };
+
+        const memoizedData = useMemo(
+            () =>
+                Utils.groupListByKey(
+                    Utils.sortByDate(
+                        Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, [
+                            '_id',
+                            updatedListItem?._id,
+                        ]),
+                        'createdAt'
+                    ),
+                    'createdAt'
+                ),
+            [updatedListItem?._id, moreData]
+        );
+
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
+
+        const ITEM_HEIGHT = 60;
+
+        return (
+            <ErrorBoundary>
+                <FlatListComponent
+                    data={memoizedData}
+                    refreshing={isFetching}
+                    fetchMoreData={fetchMoreData}
+                    columns={groupPermissionsColumns}
+                    isLoading={isLoading || isFetching}
+                    getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+                />
+            </ErrorBoundary>
+        );
+    }
+);
+
+export { MyPermissionsList, MyTeamPermissionsList, LeadersPermissionsList, CampusPermissions, GroupPermissionsList };
