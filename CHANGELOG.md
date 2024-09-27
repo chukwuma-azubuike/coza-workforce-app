@@ -2,6 +2,12 @@
 
 This file contains all changelogs for latest releases, from v1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.8
+
+### Added
+
+-   Group head feature ([56eee3da0541b32796a0b770d537d1ee7d43a219](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/56eee3da0541b32796a0b770d537d1ee7d43a219) by [@rarumdj](https://github.com/rarumdj))
+
 ## v1.6.7
 
 ### Fixed
