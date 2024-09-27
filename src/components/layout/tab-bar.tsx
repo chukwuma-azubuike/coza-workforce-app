@@ -16,7 +16,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
     const inMenuBarNames = React.useMemo(
         () =>
             AppRoutes.map(route => {
-                if (route.inMenuBar || (isWorker && route.name === 'CGWC' && isCGWCApproved)) return route.name;
+                if (route.inMenuBar || (isWorker && route.name === 'CGLS' && isCGWCApproved)) return route.name;
             }),
         [AppRoutes, isCGWCApproved, isWorker]
     );
@@ -93,7 +93,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
                         iconName = 'menu-outline';
                         iconType = 'ionicon';
                         break;
-                    case 'CGWC':
+                    case 'CGLS':
                         iconName = 'crown';
                         iconType = 'foundation';
                     default:
@@ -102,7 +102,7 @@ const TabBar: React.FC<any> = React.memo(({ state, descriptors, navigation }) =>
 
                 // Roles and permissions filter
                 if (isWorker && !isQC && route.name === 'More') return;
-                if (isWorker && isQC && route.name === 'CGWC') return;
+                if (isWorker && isQC && route.name === 'CGLS') return;
 
                 return (
                     <TouchableOpacity
