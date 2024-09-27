@@ -322,6 +322,14 @@ export const accountServiceSlice = createApi({
 
             transformResponse: (response: IDefaultResponse<any>) => response.data,
         }),
+
+        getGroupHeadUsers: endpoint.query<IUser[], IDefaultQueryParams>({
+            query: params => ({
+                url: `/gh/users/`,
+                method: REST_API_VERBS.GET,
+            }),
+            transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
+        }),
     }),
 });
 
@@ -345,4 +353,5 @@ export const {
     useUploadUserMutation,
     useAssignSecondaryRolesMutation,
     useAddDeviceTokenMutation,
+    useGetGroupHeadUsersQuery,
 } = accountServiceSlice;
