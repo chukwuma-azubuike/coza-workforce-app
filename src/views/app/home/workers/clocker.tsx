@@ -142,14 +142,15 @@ const Clocker: React.FC<IClockerProps> = ({
 
     return (
         <Center _dark={{ bg: 'black' }}>
-            {ghReport?.serviceId ? (
+            <If condition={isGroupHead}>
                 <VStackComponent style={{ alignItems: 'center', paddingBottom: 10 }}>
                     <TextComponent bold>{ghReport?.serviceName}</TextComponent>
                     <TextComponent>{moment(ghReport?.createdAt).format('MMMM Do, YYYY')}</TextComponent>
                 </VStackComponent>
-            ) : (
+            </If>
+            <If condition={!isGroupHead}>
                 <Timer />
-            )}
+            </If>
             <If condition={isCampusPastor || isGh}>
                 <CampusAttendanceSummary
                     leadersAttendance={leadersAttendance?.attendance}

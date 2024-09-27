@@ -1,51 +1,29 @@
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Stack } from 'native-base';
 import React from 'react';
-import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { FlatListSkeleton } from '@components/layout/skeleton';
-import ViewWrapper from '@components/layout/viewWrapper';
 import { useCustomBackNavigation, usePreventGoBack } from '@hooks/navigation';
 import useRole from '@hooks/role';
-import { useGetGHCampusByIdQuery } from '@store/services/campus';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
-import { CampusReportSummary, GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
-import { selectCurrentUser, userActionTypes } from '@store/services/users';
+import { GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
+import { useAppDispatch } from '@store/hooks';
+import { userActionTypes } from '@store/services/users';
 import { useGetUserByIdQuery } from '@store/services/account';
-import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
-import { useGetAttendanceQuery } from '@store/services/attendance';
+import { useGetLatestServiceQuery } from '@store/services/services';
 import useGeoLocation from '@hooks/geo-location';
-import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import { IAttendance, IService } from '@store/types';
-import { View } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
 import Clocker from '../home/workers/clocker';
 
-const GroupHeadReportss: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+const GroupHeadReports: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     const dispatch = useAppDispatch();
-    const currentUserId = useAppSelector(store => selectCurrentUser(store)).userId;
+    const { user } = useRole();
 
     usePreventGoBack();
 
-    const {
-        error,
-        data: currentUserData,
-        refetch: refetchCurrentUser,
-        isLoading: userLoading,
-        isFetching: userFetching,
-    } = useGetUserByIdQuery(currentUserId);
+    const { data: currentUserData, refetch: refetchCurrentUser } = useGetUserByIdQuery(user?._id);
 
-    const { user, isGlobalPastor } = useRole();
-
-    const {
-        isError,
-        refetch,
-        isSuccess,
-        isLoading,
-        data: latestService,
-    } = useGetLatestServiceQuery(user?.campus?._id as string, {
+    const { refetch, data: latestService } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
@@ -104,4 +82,4 @@ const GroupHeadReportss: React.FC<NativeStackScreenProps<ParamListBase>> = props
     );
 };
 
-export default GroupHeadReportss;
+export default GroupHeadReports;
