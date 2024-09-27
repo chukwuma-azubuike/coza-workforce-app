@@ -568,9 +568,9 @@ const AppRoutes: IAppRoute[] = [
     },
     // TODO: CGWC on hold until Android is ready
     {
-        name: 'CGWC',
+        name: 'CGLS',
         component: CGWC,
-        options: { title: 'CGWC' },
+        options: { title: 'CGLS' },
         submenus: [
             {
                 name: 'Create CGWC',

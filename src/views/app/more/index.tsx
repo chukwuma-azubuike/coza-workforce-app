@@ -36,7 +36,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                 if (!route.inMore) {
                     return;
                 }
-                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGWC') {
+                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGLS') {
                     return;
                 }
                 if (!route.users?.length) {
