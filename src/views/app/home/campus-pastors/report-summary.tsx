@@ -291,7 +291,7 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
         return (
             <>
                 {!isLoading && !isFetching && (
-                    <Box flex={1} justifyContent="center" marginTop={3} alignItems="center">
+                    <Box flex={1} justifyContent="center" marginTop={6} alignItems="center">
                         <TouchableOpacity activeOpacity={0.6} onPress={navigateToReportSummary}>
                             <HStack alignItems="center" space={1}>
                                 <Text color="gray.400" fontSize="md" ml={2}>

@@ -566,7 +566,7 @@ const AppRoutes: IAppRoute[] = [
         inMore: true,
         icon: { name: 'download-outline', type: 'ionicon' },
     },
-    // TODO: CGWC on hold until Android is ready
+
     {
         name: 'CGLS',
         component: CGWC,
