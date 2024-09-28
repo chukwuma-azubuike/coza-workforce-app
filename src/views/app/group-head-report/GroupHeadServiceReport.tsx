@@ -13,13 +13,13 @@ import { IGHSubmittedReport } from '@store/services/reports';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { selectCurrentUser, userActionTypes } from '@store/services/users';
 import { IAttendance, IService } from '@store/types';
-import Utils from '@utils';
+import Utils from '@utils/index';
 import React from 'react';
 import { Platform } from 'react-native';
 import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import { HomeContext } from '../home';
 import { GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
-import Clocker from '../home/workers/clocker';
+import GhClocker from '../home/workers/gh-clocker';
 
 interface IInitialHomeState {
     latestService: {
@@ -142,14 +142,14 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 scroll
             >
                 <ErrorBoundary>
-                    <Clocker
+                    <GhClocker
+                        showReport
                         isInRange={isInRange}
                         refreshLocation={refresh}
                         refreshTrigger={refreshTrigger}
                         setRefreshTrigger={setRefreshTrigger}
                         deviceCoordinates={deviceCoordinates}
                         verifyRangeBeforeAction={verifyRangeBeforeAction}
-                        isGh
                         ghReport={prop}
                     />
                     <GroupHeadReportSummary
