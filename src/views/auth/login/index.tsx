@@ -41,19 +41,20 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: (response?.error as any)?.data?.message || ((response as any)?.data)?.message,
+                message: (response?.error as any)?.data?.message || (response as any)?.data?.message,
             });
         }
 
         if ('data' in response) {
             dispatch({
                 type: userActionTypes.SET_USER_DATA,
-                payload: data?.profile,
+                payload: response?.data?.profile,
             });
             dispatch({
                 type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
             });
-            Utils.storeCurrentUserData(data?.profile as IUser);
+            Utils.storeCurrentUserData(response?.data?.profile as IUser);
+
             setIsLoggedIn && setIsLoggedIn(true);
         }
     };
