@@ -13,7 +13,7 @@ import { useGetUserByIdQuery } from '@store/services/account';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import useGeoLocation from '@hooks/geo-location';
 import Geolocation from 'react-native-geolocation-service';
-import Clocker from '../home/workers/clocker';
+import GhClocker from '../home/workers/gh-clocker';
 
 const GroupHeadReports: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     const dispatch = useAppDispatch();
@@ -65,7 +65,8 @@ const GroupHeadReports: React.FC<NativeStackScreenProps<ParamListBase>> = () => 
 
     return (
         <ErrorBoundary>
-            <Clocker
+            <GhClocker
+                showReport
                 isInRange={isInRange}
                 refreshLocation={refresh}
                 refreshTrigger={refreshTrigger}
