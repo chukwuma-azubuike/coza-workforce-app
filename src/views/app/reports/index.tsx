@@ -134,6 +134,7 @@ const Reports: React.FC = () => {
         isAHOD,
         isPrograms,
         isGlobalPastor,
+        isGroupHead,
     } = useRole();
 
     const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus._id as string, { skip: !user });

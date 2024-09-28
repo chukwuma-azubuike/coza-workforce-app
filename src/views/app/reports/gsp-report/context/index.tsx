@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 interface IGlobalReportContext {
     serviceId: string;
@@ -11,7 +11,7 @@ interface IGlobalReportContext {
 
 const GlobalReportContext = React.createContext({} as IGlobalReportContext);
 
-const GlobalReportProvider: React.FC = ({ children }) => {
+const GlobalReportProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [serviceId, setServiceId] = React.useState<string>();
     const [campusId, setCampusId] = React.useState<string>();
     const [campusName, setCampusName] = React.useState<string>();

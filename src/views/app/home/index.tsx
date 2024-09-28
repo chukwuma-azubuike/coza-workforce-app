@@ -19,6 +19,7 @@ import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
 import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform } from 'react-native';
+import GhClocker from './workers/gh-clocker';
 
 interface IInitialHomeState {
     latestService: {
@@ -52,7 +53,7 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         isFetching: userFetching,
     } = useGetUserByIdQuery(currentUserId);
 
-    const { user, isGlobalPastor, isCampusPastor } = useRole();
+    const { user, isGlobalPastor, isGroupHead, isCampusPastor } = useRole();
 
     const {
         isError,
@@ -143,8 +144,18 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                 scroll={!(isCampusPastor || isGlobalPastor)}
             >
                 <If condition={!!user}>
-                    <If condition={!isGlobalPastor}>
+                    <If condition={!isGlobalPastor && !isGroupHead}>
                         <Clocker
+                            isInRange={isInRange}
+                            refreshLocation={refresh}
+                            refreshTrigger={refreshTrigger}
+                            setRefreshTrigger={setRefreshTrigger}
+                            deviceCoordinates={deviceCoordinates}
+                            verifyRangeBeforeAction={verifyRangeBeforeAction}
+                        />
+                    </If>
+                    <If condition={isGroupHead}>
+                        <GhClocker
                             isInRange={isInRange}
                             refreshLocation={refresh}
                             refreshTrigger={refreshTrigger}

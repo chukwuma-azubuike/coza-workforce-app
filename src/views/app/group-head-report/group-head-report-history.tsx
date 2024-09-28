@@ -2,7 +2,6 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { memo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import useScreenFocus from '@hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
@@ -77,7 +76,7 @@ const GroupReportList = memo(() => {
     ];
 
     const [page, setPage] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetGhReportsQuery(
+    const { data, isLoading, isSuccess, isFetching } = useGetGhReportsQuery(
         {
             limit: 20,
             page,

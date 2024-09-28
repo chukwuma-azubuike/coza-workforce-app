@@ -63,14 +63,15 @@ export interface ITeamAttendanceSummary {
     workerUsers?: number;
     leaderUsers?: number;
     isLoading?: boolean;
+    isGH?: boolean;
 }
 
 export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.memo(props => {
-    const { leaderUsers, leadersAttendance, workerUsers, workersAttendance } = props;
+    const { leaderUsers, leadersAttendance, workerUsers, workersAttendance, isGH } = props;
     const { navigate } = useNavigation<any>();
 
     const handleNavigation = (role: ROLES[] | ROLES) => () => {
-        return navigate('Attendance', { role });
+        return navigate('Attendance', isGH ? undefined : { role });
     };
 
     return (
