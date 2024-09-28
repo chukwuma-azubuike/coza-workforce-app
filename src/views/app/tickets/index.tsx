@@ -78,7 +78,7 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     } = useGetTicketsQuery({ campusId: campus?._id, limit: 500 }, { skip: !canSearch });
 
     const allRoutes = React.useMemo(() => {
-        if (isQC) return ROUTES;
+        if (isQC) return [ROUTES[0], ROUTES[1], ROUTES[2], ROUTES[3]];
         if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
         if (isGroupHead) return [ROUTES[0], ROUTES[4]];
         if (isCampusPastor || isGlobalPastor) return [ROUTES[3], ROUTES[2]];
