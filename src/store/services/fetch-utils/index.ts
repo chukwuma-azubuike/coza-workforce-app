@@ -1,3 +1,5 @@
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { BaseQueryFn } from '@reduxjs/toolkit/query/react';
 import APP_ENV from '@config/envConfig';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Utils from '@utils/index';
@@ -19,3 +21,34 @@ export class fetchUtils {
         },
     });
 }
+
+interface IAxiosBaseQuery {
+    baseUrl: string;
+}
+
+const axiosInstance = axios.create();
+
+export const axiosBaseQueryFn =
+    ({ baseUrl = API_BASE_URL }: IAxiosBaseQuery): BaseQueryFn<AxiosRequestConfig, unknown, unknown> =>
+    async ({ url, method, data, params, headers, ...args }) => {
+        try {
+            const result = await axiosInstance({
+                url: baseUrl + url,
+                method,
+                data,
+                params,
+                ...args,
+            });
+            return { data: result.data };
+        } catch (axiosError) {
+            const err = axiosError as AxiosError;
+            return {
+                error: {
+                    status: err.response?.status,
+                    data: err.response?.data || err.message,
+                },
+            };
+        }
+    };
+
+export const axiosBaseQuery = axiosBaseQueryFn({ baseUrl: API_BASE_URL });

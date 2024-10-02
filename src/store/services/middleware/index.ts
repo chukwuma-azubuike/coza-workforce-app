@@ -12,6 +12,7 @@ import { roleServiceSlice } from '../role';
 import { cgwcServiceSlice } from '../cgwc';
 import { scoreMappingServiceSlice } from '../score-mapping';
 import { groupHeadServiceSlice } from '../grouphead';
+import { uploadServiceSlice } from '../upload';
 
 const middlewaresSlices = [
     accountServiceSlice.middleware,
@@ -28,6 +29,7 @@ const middlewaresSlices = [
     cgwcServiceSlice.middleware,
     scoreMappingServiceSlice.middleware,
     groupHeadServiceSlice.middleware,
+    uploadServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;
