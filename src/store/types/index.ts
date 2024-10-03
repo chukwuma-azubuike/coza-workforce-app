@@ -558,6 +558,21 @@ export interface IScore {
 
 // Reports
 
+export interface IGHSubmittedReportForGSP {
+    id: string;
+    firstName: string;
+    lastName: string;
+    campusId: string;
+    campusName: string;
+    departmentId: string;
+    departmentName: string;
+    submittedReport: string;
+    status: string;
+    gspComment: string;
+    serviceName: string;
+    serviceTime: string;
+}
+
 export interface IChildCareReportPayload extends IReportFormProps {
     age1_2: {
         male: number;
