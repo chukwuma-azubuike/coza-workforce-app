@@ -41,7 +41,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
         <>
             {avoidKeyboard ? (
                 <KeyboardAvoidingView
-                    keyboardVerticalOffset={avoidKeyboardOffset || isIOS ? 100 : 150}
+                    keyboardVerticalOffset={avoidKeyboardOffset}
                     contentContainerStyle={{ position: 'relative' }}
                     style={{
                         flex: 1,
