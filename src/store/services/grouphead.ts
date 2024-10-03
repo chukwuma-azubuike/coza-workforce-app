@@ -55,7 +55,8 @@ export const groupHeadServiceSlice = createApi({
 
         getGHSubmittedReportsByServiceId: endpoint.query<Array<IGHSubmittedReportForGSP>, string>({
             query: serviceId => ({
-                url: `${SERVICE_URL}/gsp/${serviceId}`,
+                url: `/${SERVICE_URL}/gsp/${serviceId}`,
+                method: REST_API_VERBS.GET,
             }),
 
             transformResponse: (res: IDefaultResponse<Array<IGHSubmittedReportForGSP>>) => res.data,
@@ -66,4 +67,9 @@ export const groupHeadServiceSlice = createApi({
 });
 
 // Use exported hook in relevant components
-export const { useSubmitGhReportMutation, useGetGhReportsQuery, useGetGhReportByIdQuery } = groupHeadServiceSlice;
+export const {
+    useSubmitGhReportMutation,
+    useGetGhReportsQuery,
+    useGetGhReportByIdQuery,
+    useGetGHSubmittedReportsByServiceIdQuery,
+} = groupHeadServiceSlice;
