@@ -1,20 +1,24 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Box, Divider, FormControl, HStack, Text, VStack } from 'native-base';
+import { Box, Divider, FormControl, HStack, VStack } from 'native-base';
 import { GlobalReportContext } from './context';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
-import { IService } from '@store/types';
+import { IGHSubmittedReportForGSP, IService } from '@store/types';
 import moment from 'moment';
 import Utils from '@utils/index';
 import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
 import CampusReportDetails from './campusReportDetails';
+import TextComponent from '@components/text';
+import VStackComponent from '@components/layout/v-stack';
+import { useGetGHSubmittedReportsByServiceIdQuery } from '@store/services/grouphead';
+import BottomSheetComponent from '@components/composite/bottom-sheet';
 
 export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
     const navigation = useNavigation();
@@ -45,16 +49,55 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
             <HStack
                 p={2}
                 px={4}
-                my={1.5}
+                my={1}
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
             >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {props?.campusName.replace('Campus', '')}
-                </Text>
+                <TextComponent>{props?.campusName.replace('Campus', '')}</TextComponent>
+                <StatusTag>{props?.status as any}</StatusTag>
+            </HStack>
+        </TouchableOpacity>
+    );
+};
+
+export const GHSubmittedReportListRowForGSP: React.FC<IGHSubmittedReportForGSP> = props => {
+    const [isVisible, setIsVisible] = React.useState(false);
+
+    const handlePress = () => {
+        setIsVisible(!isVisible);
+    };
+
+    const ghName = `${props?.firstName} ${props?.lastName}`
+
+    return (
+        <TouchableOpacity
+            disabled={false}
+            delayPressIn={0}
+            activeOpacity={0.6}
+            onPress={handlePress}
+            style={{ width: '100%' }}
+            accessibilityRole="button"
+        >
+            <BottomSheetComponent
+                title={ghName}
+                isVisible={isVisible}
+                toggleBottomSheet={handlePress}
+                content={props.submittedReport}
+            />
+            <HStack
+                p={2}
+                px={4}
+                my={1}
+                borderRadius={10}
+                alignItems="center"
+                _dark={{ bg: 'gray.900' }}
+                _light={{ bg: 'gray.50' }}
+                justifyContent="space-between"
+            >
+                <TextComponent>{ghName}</TextComponent>
                 <StatusTag>{props?.status as any}</StatusTag>
             </HStack>
         </TouchableOpacity>
@@ -69,6 +112,13 @@ const reportColumns: IFlatListColumn[] = [
     {
         dataIndex: 'createdAt',
         render: (_: IGlobalReport, key) => <GlobalReportListRow key={key} {..._} />,
+    },
+];
+
+const ghReportColumns: IFlatListColumn[] = [
+    {
+        dataIndex: 'createdAt',
+        render: (_: IGHSubmittedReportForGSP, key) => <GHSubmittedReportListRowForGSP key={key} {..._} />,
     },
 ];
 
@@ -103,8 +153,19 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
         data: campusReports,
     } = useGetGlobalReportListQuery({ serviceId }, { refetchOnMountOrArgChange: true, skip: !serviceId });
 
+    const {
+        data: ghReports,
+        refetch: ghRefetch,
+        isLoading: ghIsLoading,
+        isFetching: ghIsFetching,
+        isUninitialized: ghIsUninitialized,
+    } = useGetGHSubmittedReportsByServiceIdQuery(serviceId);
+
     const handleRefresh = () => {
-        serviceId && !isUninitialized && refetch();
+        if (serviceId) {
+            !isUninitialized && refetch();
+            !ghIsUninitialized && ghRefetch();
+        }
     };
 
     React.useEffect(() => {
@@ -122,9 +183,12 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                 <VStack w={isMobile ? '100%' : '33%'} flex={1} space={3} pt={4}>
                     <FormControl isRequired>
                         <SelectComponent
+                            valueKey="_id"
                             selectedValue={serviceId}
-                            onValueChange={setService}
                             placeholder="Select Service"
+                            onValueChange={setService as any}
+                            displayKey={['name', 'clockInStartTime']}
+                            items={sortedServices || []}
                         >
                             {sortedServices?.map((service, index) => (
                                 <SelectItemComponent
@@ -137,13 +201,31 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                             ))}
                         </SelectComponent>
                     </FormControl>
-                    <FlatListComponent
-                        refreshing={isFetching}
-                        columns={reportColumns}
-                        onRefresh={handleRefresh}
-                        isLoading={isLoading || isFetching}
-                        data={campusReports as IGlobalReportList}
-                    />
+                    <VStackComponent>
+                        <View style={{ height: '65%' }}>
+                            <TextComponent bold>Campus Reports</TextComponent>
+                            <FlatListComponent
+                                refreshing={isFetching}
+                                columns={reportColumns}
+                                onRefresh={handleRefresh}
+                                isLoading={isLoading || isFetching}
+                                data={campusReports as IGlobalReportList}
+                            />
+                        </View>
+                        <Divider orientation="horizontal" />
+                        <>
+                            <TextComponent bold style={{ marginTop: 10 }}>
+                                Group Head Reports
+                            </TextComponent>
+                            <FlatListComponent
+                                refreshing={isFetching}
+                                onRefresh={handleRefresh}
+                                columns={ghReportColumns}
+                                isLoading={ghIsLoading || ghIsFetching}
+                                data={ghReports as Array<IGHSubmittedReportForGSP>}
+                            />
+                        </>
+                    </VStackComponent>
                 </VStack>
                 <If condition={isTablet}>
                     <Divider orientation="vertical" height="100%" m={4} />

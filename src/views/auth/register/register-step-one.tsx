@@ -12,24 +12,22 @@ import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
 import PhoneNumberInput from '@components/atoms/phone-input';
 import Utils from '@utils/index';
-import useDevice from '@hooks/device';
-import { ScreenHeight, isIOS } from '@rneui/base';
+import { isIOS } from '@rneui/base';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     const onSubmit = () => {};
 
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
-
     return (
         <ViewWrapper
             scroll
             avoidKeyboard={isIOS}
-            avoidKeyboardOffset={isIOS ? -(ScreenHeight / 6) : 0}
-            style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 160 }}
+            avoidKeyboardOffset={0}
+            style={{ paddingTop: 100 }}
+            avoidKeyboardBehavior="padding"
         >
-            <Center flex={1}>
+            <Center>
                 <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
                     <Heading textAlign="left">Register</Heading>
                     <Box alignItems="center" w="100%">
