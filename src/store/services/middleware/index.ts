@@ -11,6 +11,7 @@ import { campusServiceSlice } from './../campus';
 import { roleServiceSlice } from '../role';
 import { cgwcServiceSlice } from '../cgwc';
 import { scoreMappingServiceSlice } from '../score-mapping';
+import { groupHeadServiceSlice } from '../grouphead';
 
 const middlewaresSlices = [
     accountServiceSlice.middleware,
@@ -26,6 +27,7 @@ const middlewaresSlices = [
     roleServiceSlice.middleware,
     cgwcServiceSlice.middleware,
     scoreMappingServiceSlice.middleware,
+    groupHeadServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;

@@ -5,13 +5,14 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
-import { IGHSubmittedReport, useGetGhReportsQuery } from '@store/services/reports';
+import { IGHSubmittedReport } from '@store/services/reports';
 import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 import TextComponent from '@components/text';
 import StatusTag from '@components/atoms/status-tag';
 import { TouchableOpacity } from 'react-native';
 import moment from 'moment';
+import { useGetGhReportsQuery } from '@store/services/grouphead';
 
 const ITEM_HEIGHT = 60;
 
