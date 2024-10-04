@@ -9870,11 +9870,6 @@ react-native-vector-icons@^9.2.0:
     prop-types "^15.7.2"
     yargs "^16.1.1"
 
-react-native-view-pdf@0.14.0:
-  version "0.14.0"
-  resolved "https://registry.yarnpkg.com/react-native-view-pdf/-/react-native-view-pdf-0.14.0.tgz#e8fc6fa038a9c5911b037261b153b94641f0eac9"
-  integrity sha512-tW5zamLE0vYIgoEjASLOOCPmW3x1MfJM13GgKar5nPjltU6gWzgpviILmiqeuJB+H7aTCh/UrT81GoYlO0Oedg==
-
 react-native@^0.71.0:
   version "0.71.17"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.71.17.tgz#ae798a88d4bed5f484d1d61c8dc809882b4c5567"

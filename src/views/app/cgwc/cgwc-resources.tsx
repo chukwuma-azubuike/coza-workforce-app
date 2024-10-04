@@ -1,11 +1,11 @@
 import React from 'react';
+import { View } from 'react-native';
 import Loading from '@components/atoms/loading';
 import useScreenFocus from '@hooks/focus';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ICGWCInstantMessage } from '@store/types';
-import { View } from 'react-native';
-import PDFView from 'react-native-view-pdf';
+// import PDFView from 'react-native-view-pdf';
 
 const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
     const params = route.params as ICGWCInstantMessage;
@@ -42,7 +42,7 @@ const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route,
     return (
         <View style={{ flex: 1 }}>
             {isLoading && <Loading />}
-            <PDFView
+            {/* <PDFView
                 ref={pdfRef}
                 fadeInDuration={250.0}
                 style={{ flex: 1 }}
@@ -50,7 +50,7 @@ const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route,
                 resource={params.messageLink}
                 resourceType={resourceType}
                 onError={handleError}
-            />
+            /> */}
         </View>
     );
 };
