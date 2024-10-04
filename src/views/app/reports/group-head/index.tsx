@@ -1,19 +1,18 @@
-import { View, Text } from 'react-native';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack } from 'native-base';
 import { Formik } from 'formik';
 import TextAreaComponent from '@components/atoms/text-area';
-import { AddButtonComponent } from '@components/atoms/button';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import ButtonComponent from '@components/atoms/button';
 import { GHReportSchema } from '@utils/schemas';
-import { ICampusReportSummary, useSubmitGhReportMutation } from '@store/services/reports';
+import { ICampusReportSummary } from '@store/services/reports';
 import useModal from '@hooks/modal/useModal';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '@hooks/focus';
+import { useSubmitGhReportMutation } from '@store/services/grouphead';
 
 const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { setOptions } = props.navigation;

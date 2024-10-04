@@ -351,33 +351,6 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IGraphAttendanceReports>) => res?.data,
         }),
 
-        submitGhReport: endpoint.mutation<any, IGHReportPayload>({
-            query: body => ({
-                url: `/gh/submitReport`,
-                method: REST_API_VERBS.POST,
-                body,
-            }),
-        }),
-
-        getGhReportById: endpoint.query<ICampusReportSummary, { serviceId: IService['_id'] }>({
-            query: params => ({
-                url: `/gh/reports/${params.serviceId}`,
-                method: REST_API_VERBS.GET,
-            }),
-
-            transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res?.data,
-        }),
-
-        getGhReports: endpoint.query<IGHSubmittedReport[], IDefaultQueryParams>({
-            query: params => ({
-                url: `/gh/reports`,
-                method: REST_API_VERBS.GET,
-                params,
-            }),
-
-            transformResponse: (res: IDefaultResponse<IGHSubmittedReport[]>) => res?.data,
-        }),
-
         // Add your endpoints here
     }),
 });
@@ -404,7 +377,4 @@ export const {
     useGetGlobalWorkforceSummaryQuery,
     useGetGraphAttendanceReportsQuery,
     useGetServiceAttendanceSummaryQuery,
-    useSubmitGhReportMutation,
-    useGetGhReportsQuery,
-    useGetGhReportByIdQuery,
 } = reportsServiceSlice;

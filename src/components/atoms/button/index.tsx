@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Button, IButtonProps, IconButton } from 'native-base';
+import { IButtonProps, IconButton } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
