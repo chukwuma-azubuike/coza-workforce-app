@@ -87,13 +87,12 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
         isLoading,
         onPress,
         bold,
-        width = ['45%', '20%'],
         marginActive = true,
         cardProps,
     } = props;
 
     return (
-        <CardComponent width={width} m={marginActive ? 2 : 0} h={135} {...cardProps}>
+        <CardComponent m={marginActive ? 2 : 0} h={135} {...cardProps}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (
