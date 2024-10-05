@@ -1,11 +1,11 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import Pdf from 'react-native-pdf';
 import Loading from '@components/atoms/loading';
 import useScreenFocus from '@hooks/focus';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ICGWCInstantMessage } from '@store/types';
-// import PDFView from 'react-native-view-pdf';
 
 const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
     const params = route.params as ICGWCInstantMessage;
@@ -13,13 +13,10 @@ const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route,
     setOptions({
         title: params.title || 'CGWC Resource',
     });
-    const resourceType = 'url';
 
     const handleLoad = () => {
         setIsLoading(false);
     };
-
-    const handleError = () => {};
 
     const pdfRef = React.useRef<any>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -40,19 +37,29 @@ const CGWCResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route,
     });
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={styles.container}>
             {isLoading && <Loading />}
-            {/* <PDFView
-                ref={pdfRef}
-                fadeInDuration={250.0}
-                style={{ flex: 1 }}
-                onLoad={handleLoad}
-                resource={params.messageLink}
-                resourceType={resourceType}
-                onError={handleError}
-            /> */}
+            <Pdf
+                style={styles.pdf}
+                trustAllCerts={false}
+                onLoadComplete={handleLoad}
+                source={{ uri: params.messageLink, cache: true }}
+            />
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+    },
+    pdf: {
+        flex: 1,
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
+    },
+});
 
 export default React.memo(CGWCResources);
