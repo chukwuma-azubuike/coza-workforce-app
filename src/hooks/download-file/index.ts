@@ -1,4 +1,4 @@
-import RNFetchBlob from 'rn-fetch-blob';
+import RNFetchBlob from 'react-native-blob-util';
 import APP_ENV from '@config/envConfig';
 import { Alert } from 'react-native';
 import React from 'react';
