@@ -185,8 +185,6 @@ dependencies {
 
     implementation project(':react-native-splash-screen')
 
-    implementation project(':rn-fetch-blob')
-
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.squareup.okhttp3', module:'okhttp'
