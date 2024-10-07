@@ -4,11 +4,12 @@ import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '@store/types
 import Utils from '@utils/index';
 
 interface IStatusTag extends ITagProps {
+    capitalise?: boolean;
     children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;
 }
 
 const StatusTag: React.FC<IStatusTag> = props => {
-    const { children: status } = props;
+    const { children: status, capitalise = true } = props;
 
     const green =
         status === 'ACKNOWLEGDED' ||
@@ -88,7 +89,7 @@ const StatusTag: React.FC<IStatusTag> = props => {
                 },
             }}
         >
-            {status ? Utils.capitalizeFirstChar(status.replace('Gsp ', ''), '_') : 'Unknown'}
+            {status ? (capitalise ? Utils.capitalizeFirstChar(status.replace('Gsp ', ''), '_') : status) : 'Unknown'}
         </Tag>
     );
 };
