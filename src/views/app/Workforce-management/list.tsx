@@ -79,7 +79,12 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                                     <TextComponent size="sm">{user?.email}</TextComponent>
                                 </VStackComponent>
                             </HStackComponent>
-                            <StatusTag>{isHOD ? 'HOD' : isAHOD ? 'AHOD' : user?.status || 'ACTIVE'}</StatusTag>
+                            {(isHOD || isAHOD) && (
+                                <StatusTag capitalise={false} style={{ marginRight: 8 }}>
+                                    {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
+                                </StatusTag>
+                            )}
+                            <StatusTag>{user?.status}</StatusTag>
                         </HStackComponent>
                     </TouchableOpacity>
                 );
