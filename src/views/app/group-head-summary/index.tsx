@@ -8,7 +8,7 @@ const CampusGroupHeads: React.FC<NativeStackScreenProps<ParamListBase>> = ({ nav
     const { navigate } = useNavigation();
 
     const handleReroute = () => {
-        return navigate('Group head campuses' as never);
+        return navigate('Group Head Campuses' as never);
     };
 
     useScreenFocus({

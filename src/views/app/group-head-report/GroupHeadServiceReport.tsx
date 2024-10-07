@@ -129,7 +129,7 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     const now = Math.floor(Date.now() / 1000); // Current time in seconds (UNIX timestamp)
 
-    useCustomBackNavigation({ targetRoute: prop?.serviceId ? 'GH reports history' : 'Home' });
+    useCustomBackNavigation({ targetRoute: prop?.serviceId ? 'GH Reports History' : 'Home' });
 
     const isIOS = Platform.OS === 'ios';
 
