@@ -69,6 +69,7 @@ export interface IDefaultQueryParams {
     cgwcId?: string;
     limit?: number;
     page?: number;
+    isGH?: boolean;
 }
 export interface IDefaultResponse<D = unknown> {
     status: number;
@@ -323,6 +324,7 @@ export interface IPermission extends ILog {
     department: IDepartment;
     rejectedBy: string;
     rejectedOn: number;
+    campus: Pick<ICampus, '_id' | 'campusName'>;
 }
 
 export interface IPermissionCategory {
@@ -555,6 +557,21 @@ export interface IScore {
 }
 
 // Reports
+
+export interface IGHSubmittedReportForGSP {
+    id: string;
+    firstName: string;
+    lastName: string;
+    campusId: string;
+    campusName: string;
+    departmentId: string;
+    departmentName: string;
+    submittedReport: string;
+    status: string;
+    gspComment: string;
+    serviceName: string;
+    serviceTime: string;
+}
 
 export interface IChildCareReportPayload extends IReportFormProps {
     age1_2: {

@@ -78,10 +78,11 @@ export interface IBusReportSummary {
     adult: number;
     children: number;
 }
-
 export interface ICampusReportSummary<R = unknown> {
     departmentName: string;
+    campus: string;
     departmentalReport: {
+        campus: string;
         status: IReportStatus;
         departmentName: string;
         report: {
@@ -96,6 +97,7 @@ export interface ICampusReportSummary<R = unknown> {
         departmentName: string;
     }[];
     campusCoordinatorComment?: string;
+    submittedReport?: string;
 }
 
 export interface IDepartmentReportListById {
@@ -122,6 +124,13 @@ export interface IGSPReportPayload {
     status: IReportStatus;
 }
 
+export interface IGHReportPayload {
+    departmentReports: string[];
+    incidentReports: string[];
+    submittedReport: string;
+    serviceId: string;
+}
+
 export interface ICampusReport {
     serviceId: IService['_id'];
     campusId: ICampus['_id'];
@@ -135,6 +144,13 @@ export interface IGlobalReport {
     status: IReportStatus;
     campusId: ICampus['_id'];
     campusName: string;
+}
+
+export interface IGHSubmittedReport {
+    serviceId: string;
+    serviceName: string;
+    status: IReportStatus;
+    createdAt: number;
 }
 
 export interface ICampusReportListPayload extends Pick<IDefaultQueryParams, 'limit' | 'page'> {

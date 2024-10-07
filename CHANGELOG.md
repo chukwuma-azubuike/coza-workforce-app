@@ -2,6 +2,14 @@
 
 This file contains all changelogs for latest releases, from v1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.8
+
+### Added
+
+-   Group head feature ([56eee3da0541b32796a0b770d537d1ee7d43a219](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/56eee3da0541b32796a0b770d537d1ee7d43a219) by [@rarumdj](https://github.com/rarumdj))
+
+-   GH report for GSP ([8c19d49158922d56de8345ddf109bc669ffa3372](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/8c19d49158922d56de8345ddf109bc669ffa3372) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.7
 
 ### Fixed

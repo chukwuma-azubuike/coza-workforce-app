@@ -107,7 +107,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
 
     return (
         <>
-            <HStack justifyContent="space-around" w="100%" mb={4} space={10} px={4} position="static" top={3}>
+            <HStack justifyContent="space-around" w="100%" mb={3} space={10} px={4} position="static">
                 <FormControl isRequired w="50%">
                     <SelectComponent
                         valueKey="_id"
@@ -125,7 +125,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                 <FormControl isRequired w="50%">
                     <SelectComponent
                         valueKey="_id"
-                        displayKey={["name", "clockInStartTime"]}
+                        displayKey={['name', 'clockInStartTime']}
                         selectedValue={serviceId}
                         placeholder="Select Service"
                         items={sortedServices || []}

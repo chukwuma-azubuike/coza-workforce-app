@@ -17,7 +17,7 @@ import VStackComponent from '@components/layout/v-stack';
 
 const ITEM_HEIGHT = 60;
 export interface TicketListRowProps extends ITicket {
-    type: 'own' | 'team' | 'campus';
+    type: 'own' | 'team' | 'campus' | 'grouphead';
     '0'?: string;
     '1'?: ITicket[];
 }
@@ -33,7 +33,7 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                     navigation.navigate('Ticket Details' as never, elm as never);
                 };
 
-                const { status, category, isIndividual, isDepartment, user, departmentName } = elm;
+                const { status, category, isIndividual, isDepartment, user, departmentName, campus } = elm;
 
                 return (
                     <TouchableOpacity
@@ -92,6 +92,38 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                                                 <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
                                                     Departmental
                                                 </TextComponent>
+                                            )}
+                                            <TextComponent style={{ fontSize: 14 }}>
+                                                {Utils.capitalizeFirstChar(category?.categoryName)}
+                                            </TextComponent>
+                                        </>
+                                    )}
+
+                                    {type === 'grouphead' && (
+                                        <>
+                                            {isIndividual && (
+                                                <>
+                                                    <TextComponent bold>
+                                                        {`${Utils.capitalizeFirstChar(
+                                                            user?.firstName
+                                                        )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
+                                                    </TextComponent>
+                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                        {campus?.campusName}
+                                                    </TextComponent>
+                                                    <TextComponent>{departmentName || ''}</TextComponent>
+                                                </>
+                                            )}
+
+                                            {isDepartment && (
+                                                <>
+                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                        {campus?.campusName}
+                                                    </TextComponent>
+                                                    <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
+                                                        {departmentName}
+                                                    </TextComponent>
+                                                </>
                                             )}
                                             <TextComponent style={{ fontSize: 14 }}>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
@@ -447,4 +479,82 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
     );
 });
 
-export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets };
+const GroupTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(
+    ({ updatedListItem, reload }) => {
+        const groupTicketsColumns: IFlatListColumn[] = [
+            {
+                dataIndex: 'createdAt',
+                render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
+            },
+        ];
+
+        const [page, setPage] = React.useState<number>(1);
+        const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
+            {
+                isGH: true,
+                limit: 20,
+                page,
+            },
+            { refetchOnMountOrArgChange: true }
+        );
+
+        const fetchMoreData = () => {
+            if (!isFetching && !isLoading) {
+                if (data?.length) {
+                    setPage(prev => prev + 1);
+                } else {
+                    setPage(prev => prev - 1);
+                }
+            }
+        };
+
+        const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+
+        const preparedForSortData = React.useMemo(
+            () =>
+                moreData?.map((ticket: ITicket) => {
+                    return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+                }),
+            [moreData]
+        );
+
+        const sortedData = React.useMemo(
+            () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+            [preparedForSortData]
+        );
+
+        const groupedData = React.useMemo(
+            () =>
+                Utils.groupListByKey(
+                    !!updatedListItem?._id
+                        ? Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, [
+                              '_id',
+                              updatedListItem?._id,
+                          ])
+                        : sortedData,
+                    'sortDateKey'
+                ),
+            [updatedListItem?._id, sortedData]
+        );
+
+        useScreenFocus({
+            onFocus: () => {
+                if (reload && !isUninitialized) refetch();
+            },
+        });
+
+        return (
+            <FlatListComponent
+                data={groupedData}
+                columns={groupTicketsColumns}
+                fetchMoreData={fetchMoreData}
+                isLoading={isLoading || isFetching}
+                refreshing={isLoading || isFetching}
+                emptyMessage="There are no tickets issued"
+                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+            />
+        );
+    }
+);
+
+export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets, GroupTicketsList };

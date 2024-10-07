@@ -4,6 +4,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
     CampusPermissions,
+    GroupPermissionsList,
     LeadersPermissionsList,
     MyPermissionsList,
     MyTeamPermissionsList,
@@ -24,6 +25,7 @@ const ROUTES = [
     { key: 'teamPermissions', title: 'Team Permissions' },
     { key: 'campusPermissions', title: 'Campus Permissions' },
     { key: 'leadersPermissions', title: 'Leaders Permissions' },
+    { key: 'groupPermissions', title: 'Group Permissions' },
 ];
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
@@ -46,14 +48,16 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
         teamPermissions: () => <MyTeamPermissionsList reload={reload} updatedListItem={updatedListItem} />,
         campusPermissions: () => <CampusPermissions reload={reload} updatedListItem={updatedListItem} />,
         leadersPermissions: () => <LeadersPermissionsList updatedListItem={updatedListItem} />,
+        groupPermissions: () => <GroupPermissionsList reload={reload} updatedListItem={updatedListItem} />,
     });
 
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor } = useRole();
+    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isGroupHead } = useRole();
     const isQCHOD = isQC && isHOD;
 
     const allRoutes = React.useMemo(() => {
-        if (isQC) return ROUTES;
+        if (isQC) return [ROUTES[0], ROUTES[1], ROUTES[2], ROUTES[3]];
         if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
+        if (isGroupHead) return [ROUTES[0], ROUTES[4]];
         if (isCampusPastor || isGlobalPastor) return [ROUTES[3], ROUTES[2]];
 
         return [ROUTES[0]];
