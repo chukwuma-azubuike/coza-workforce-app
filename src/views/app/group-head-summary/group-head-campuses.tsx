@@ -9,14 +9,13 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { useCustomBackNavigation } from '@hooks/navigation';
 import useRole from '@hooks/role';
 import { useGetGHCampusByIdQuery } from '@store/services/campus';
-import Utils from '@utils';
-import useScreenFocus from '@hooks/focus';
+import Utils from '@utils/index';
 
 const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { navigate } = useNavigation();
 
     const handlePress = (elm: any) => {
-        navigate('Group head departments' as never, { ...elm } as never);
+        navigate('Group Head Departments' as never, { ...elm } as never);
     };
 
     const { user, isGroupHead } = useRole();
