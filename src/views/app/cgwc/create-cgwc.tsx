@@ -40,7 +40,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                 status: 'success',
             });
             reset();
-            navigate('CGWC', data);
+            navigate('CGLS', data);
             resetForm({ values: INITIAL_VALUES });
         }
 

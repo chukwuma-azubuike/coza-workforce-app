@@ -1,6 +1,6 @@
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { CampusAttendance, LeadersAttendance, MyAttendance, TeamAttendance } from './lists';
+import { CampusAttendance, GroupAttendance, LeadersAttendance, MyAttendance, TeamAttendance } from './lists';
 import TabComponent from '@components/composite/tabs';
 import { SceneMap } from 'react-native-tab-view';
 import useRole, { ROLES } from '@hooks/role';
@@ -13,7 +13,7 @@ import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 
 const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
+    const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD, isGroupHead } = useRole();
     const { isMobile } = useMediaQuery();
     const navigation = props.navigation;
 
@@ -27,6 +27,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         { key: 'teamAttendance', title: 'Team Attendance' },
         { key: 'campusAttendance', title: 'Campus Attendance' },
         { key: 'leadersAttendance', title: 'Leaders Attendance' },
+        { key: 'groupAttendance', title: 'Group Attendance' },
     ];
 
     const renderScene = SceneMap({
@@ -34,6 +35,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         teamAttendance: TeamAttendance,
         campusAttendance: CampusAttendance,
         leadersAttendance: LeadersAttendance,
+        groupAttendance: GroupAttendance,
     });
 
     const goToExport = () => {
@@ -43,8 +45,9 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const [index, setIndex] = React.useState(0);
 
     const allRoutes = React.useMemo(() => {
-        if (isQC) return ROUTES;
+        if (isQC) return [ROUTES[0], ROUTES[1], ROUTES[2], ROUTES[3]];
         if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
+        if (isGroupHead) return [ROUTES[0], ROUTES[4]];
         if (isCampusPastor || isGlobalPastor) return [ROUTES[3], ROUTES[2]];
 
         return [ROUTES[0]];
