@@ -2,11 +2,21 @@
 
 This file contains all changelogs for latest releases, from v1.5.8 onward. Follow this guide on best practices on change logging ([Keep A Change Log](https://keepachangelog.com/en/1.1.0/))
 
+## v1.6.9
+
+### Added
+
+-   Update campus summary ([7a50269ca1fc1e5d60a9ef6dff2a752e9c9cde15](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/7a50269ca1fc1e5d60a9ef6dff2a752e9c9cde15) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Add status for hod & ahod in user list ([0ed6f9bb86fee6ce89fbb48de143156d14d799da](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/0ed6f9bb86fee6ce89fbb48de143156d14d799da) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Fix GH routing typos ([98fcb0171b8f837d83213f2bf6a2625f374cb3b0](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/98fcb0171b8f837d83213f2bf6a2625f374cb3b0) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.8
 
 ### Added
 
--   Group head feature ([56eee3da0541b32796a0b770d537d1ee7d43a219](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/56eee3da0541b32796a0b770d537d1ee7d43a219) by [@rarumdj](https://github.com/rarumdj))
+-   Group Head feature ([56eee3da0541b32796a0b770d537d1ee7d43a219](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/56eee3da0541b32796a0b770d537d1ee7d43a219) by [@rarumdj](https://github.com/rarumdj))
 
 -   GH report for GSP ([8c19d49158922d56de8345ddf109bc669ffa3372](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/8c19d49158922d56de8345ddf109bc669ffa3372) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
