@@ -19,6 +19,7 @@ import { AddButtonComponent } from '@components/atoms/button';
 import If from '@components/composite/if-container';
 import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
+import { useGetRolesQuery } from '@store/services/role';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -30,6 +31,7 @@ const ROUTES = [
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const params = route.params as { tabKey: string; reload: boolean };
+    useGetRolesQuery()
 
     const { isMobile } = useMediaQuery();
     const gotoRequestPermission = () => {
