@@ -88,6 +88,8 @@ export interface IGlobalWorkforceSummary {
     inactiveUser: number;
     blacklistedUsers: number;
     UnregisteredUsers: number;
+    totalUsers: number;
+    dormantUsers: number;
     campusWorfForce: ICampusWorkforceSummary[];
 }
 

@@ -86,14 +86,24 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             value: data?.activeUser || 0,
         },
         {
+            title: 'Inactive',
+            color: 'red.700',
+            value: data?.inactiveUser || 0,
+        },
+        {
             title: 'Dormant',
             color: 'orange.700',
             value: data?.dormantUser || 0,
         },
         {
-            title: 'Inactive',
-            color: 'red.700',
-            value: data?.inactiveUser || 0,
+            title: 'Blacklisted',
+            color: 'orange.700',
+            value: data?.blacklistedUser || 0,
+        },
+        {
+            title: 'Unregistered',
+            color: 'gray.400',
+            value: data?.intendingWorkerUser || 0,
         },
     ];
 
@@ -209,9 +219,11 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                             marginVertical: 16,
                             padding: 8,
                             flex: 1,
+                            justifyContent: 'space-evenly',
                             width: '100%',
                             borderWidth: 0.4,
                             borderRadius: 8,
+                            flexWrap: 'wrap',
                             borderColor: textColor,
                         }}
                     >
@@ -219,8 +231,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                             <View
                                 key={index}
                                 style={{
-                                    flex: 1,
-                                    width: '100%',
+                                    minWidth: "20%",
                                     flexDirection: 'column',
                                     alignItems: 'center',
                                     justifyContent: 'center',

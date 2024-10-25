@@ -33,7 +33,7 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
 
     const handlePress = (elm: any) => {
         const screenName = `${data?.campusName} - ${elm.title}`;
-        navigate('Group head department activies' as never, { ...elm, campusId, screenName } as never);
+        navigate('Group Head Department Activities' as never, { ...elm, campusId, screenName } as never);
     };
 
     const campusInfo = [

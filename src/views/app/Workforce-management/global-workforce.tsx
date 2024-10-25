@@ -1,6 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Heading, Stack, Text } from 'native-base';
+import { Center, Heading, Stack } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -35,15 +35,20 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             value: data?.campusCount || 0,
         },
         {
+            title: 'Inactive',
+            color: 'purple.700',
+            value: data?.inactiveUser || 0,
+        },
+        {
+            title: 'Dormant',
+            color: 'orange.400',
+            value: data?.dormantUsers || 0,
+        },
+        {
             title: 'Blacklisted',
             color: 'orange.700',
             value: data?.blacklistedUsers || 0,
         },
-        // {
-        //     title: 'Inactive',
-        //     color: 'red.700',
-        //     value: data?.inactiveUser || 0,
-        // },
         {
             title: 'Unregistered',
             color: 'gray.400',
@@ -131,12 +136,20 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                         flexDirection="row"
                         alignItems="center"
                         justifyItems="center"
-                        justifyContent="space-between"
+                        justifyContent="space-evenly"
                         _dark={{ borderColor: 'gray.600' }}
                         _light={{ borderColor: 'gray.200' }}
                     >
                         {summaryList.map((item, index) => (
-                            <Stack key={index} flexDirection="column" alignItems="center" justifyItems="center" my={2}>
+                            <Stack
+                                key={index}
+                                flexDirection="column"
+                                alignItems="center"
+                                flexWrap="wrap"
+                                justifyItems="center"
+                                minWidth="20%"
+                                my={2}
+                            >
                                 <Heading
                                     size="xs"
                                     fontWeight="400"
