@@ -16,7 +16,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
-import useRole from '@hooks/role';
+import useRole, { ROLES } from '@hooks/role';
 import {
     useApprovePermissionMutation,
     useDeclinePermissionMutation,
@@ -25,6 +25,7 @@ import {
 import { IPermission, IUpdatePermissionPayload } from '@store/types';
 
 import { THEME_CONFIG } from '@config/appConfig';
+import useRoleName from '@hooks/role/useRoleName';
 
 interface PermissionDetailsParamsProps extends IPermission {
     screen: { name: string; value: string } | undefined;
@@ -34,14 +35,14 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     const permissionParams = props.route.params as PermissionDetailsParamsProps;
 
     const {
-        requestor: { _id: requestorId },
+        requestor: { _id: requestorId, roleId: requestorRoleId },
         _id,
         screen,
     } = permissionParams;
 
     const navigate = props.navigation;
 
-    const { user, isHOD, isAHOD, isCampusPastor, isQC } = useRole();
+    const { user, isHOD, isAHOD, isGlobalPastor, isCampusPastor, isQC } = useRole();
 
     const {
         refetch,
@@ -167,6 +168,8 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         }
     }, [declineIsSuccess, declineIsError]);
 
+    const requestorRoleName = useRoleName(requestorRoleId)?.name;
+
     const takePermissionAction = React.useMemo(() => {
         if (requestorId === user._id) {
             return false;
@@ -175,6 +178,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             return false;
         }
         if (permission?.status !== 'PENDING') {
+            return false;
+        }
+        if ((isCampusPastor || isGlobalPastor) && requestorRoleName === ROLES.worker) {
             return false;
         }
 
