@@ -378,7 +378,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <Text alignSelf="flex-start" bold>
                                         Status
                                     </Text>
-                                    <StatusTag>{data?.status || 'ACTIVE'}</StatusTag>
+                                    <StatusTag>{data?.status}</StatusTag>
                                 </HStack>
                                 <HStack
                                     space={2}
