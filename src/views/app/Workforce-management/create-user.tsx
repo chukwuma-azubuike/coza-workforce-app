@@ -57,7 +57,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const submitForm: FormikConfig<ICreateUserPayload>['onSubmit'] = async (values, { resetForm }) => {
         try {
-            const result = await uploadUser(values);
+            const result = await uploadUser({ ...values, email: Utils.formatEmail(values.email) });
 
             if ('data' in result) {
                 setModalState({
