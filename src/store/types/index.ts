@@ -703,6 +703,8 @@ export interface ICampusUserData {
     activeUser: number;
     dormantUser: number;
     inactiveUser: number;
+    blacklistedUser: number;
+    intendingWorkerUser: number;
     departmentCount: {
         departmentId: string;
         departmentName: string;
