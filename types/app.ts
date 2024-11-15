@@ -30,3 +30,5 @@ export interface ICountry {
     properties: { name: string; 'Alpha-2': string };
     id: string;
 }
+
+export type IStatusColors = 'green.500' | 'red.500' | 'yellow.500' | 'gray.400';

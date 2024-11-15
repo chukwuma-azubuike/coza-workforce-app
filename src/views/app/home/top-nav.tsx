@@ -8,9 +8,9 @@ import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, TouchableOpacity } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { useGetLatestServiceQuery } from '@store/services/services';
-import useDevice from '@hooks/device';
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 import { isIOS } from '@rneui/base';
+import { STATUS_COLORS } from '@constants/notification-types';
 
 const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     const handleNotificationPress = () => {
@@ -30,8 +30,6 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
-
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
 
     return (
         <HStack
@@ -53,7 +51,8 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
                     _light={{ bg: 'gray.100' }}
                     firstName={user?.firstName}
                     lastName={user?.lastName}
-                    imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
+                    badgeColor={STATUS_COLORS[user?.status]}
+                    imageUrl={user.pictureUrl ?? AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
             <Text

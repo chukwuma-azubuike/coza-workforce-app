@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Alert, VStack, Text } from 'native-base';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -11,6 +11,7 @@ interface IModalAlertComponentProps {
     iconName: string;
     color?: string;
     backgroundColor?: string;
+    children?: ReactNode;
 }
 
 const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {

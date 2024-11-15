@@ -2,10 +2,13 @@ import React from 'react';
 import { Avatar, Center, IAvatarProps, Text } from 'native-base';
 import FastImage from 'react-native-fast-image';
 import { SIZE } from '@config/appConfig';
+import { IStatusColors } from '@types/app';
+import { STATUS_COLORS } from '@constants/notification-types';
 
 interface IAvatarComponentProps extends IAvatarProps {
     error?: string;
     badge?: boolean;
+    badgeColor?: IStatusColors;
     imageUrl: string;
     lastName?: string;
     firstName?: string;
@@ -13,7 +16,7 @@ interface IAvatarComponentProps extends IAvatarProps {
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, badge, error, isLoading } = props;
+    const { imageUrl, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE } = props;
 
     return (
         <Center>
@@ -28,7 +31,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                     priority: FastImage.priority.normal,
                 }}
             >
-                {badge && <Avatar.Badge right={0.9} bottom={0.9} bg="green.500" />}
+                {badge && <Avatar.Badge right={0.9} bottom={0.9} bg={badgeColor} />}
             </FastImage>
 
             {error && (
