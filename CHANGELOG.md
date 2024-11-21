@@ -12,6 +12,12 @@ This file contains all changelogs for latest releases, from v1.5.8 onward. Follo
 
 -   format email on account creation ([7541bd44c38e0522819e8cdc7a33b4ccf6db0ca4](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/7541bd44c38e0522819e8cdc7a33b4ccf6db0ca4) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
 
+### Fixed
+
+-   Global & campus report fields in workforce management ([10f902a56e8ff28e4267da16414a7f24f7b425f0](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/10f902a56e8ff28e4267da16414a7f24f7b425f0) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+-   Implement S3 bucket upload ([f7b0be967b1e95087c9b311c9ec4c39219326464](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/f7b0be967b1e95087c9b311c9ec4c39219326464) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
 ## v1.6.9
 
 ### Added
