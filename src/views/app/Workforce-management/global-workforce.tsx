@@ -25,18 +25,18 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     const summaryList = [
         {
-            title: 'Active',
+            title: 'Total',
             color: 'purple.700',
+            value: data?.totalUsers || 0,
+        },
+        {
+            title: 'Active',
+            color: 'green.700',
             value: data?.activeUser || 0,
         },
         {
-            title: 'Campuses',
-            color: 'green.700',
-            value: data?.campusCount || 0,
-        },
-        {
             title: 'Inactive',
-            color: 'purple.700',
+            color: 'red.700',
             value: data?.inactiveUser || 0,
         },
         {
@@ -50,9 +50,9 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             value: data?.blacklistedUsers || 0,
         },
         {
-            title: 'Unregistered',
-            color: 'gray.400',
-            value: data?.UnregisteredUsers || 0,
+            title: 'Campuses',
+            color: 'green.700',
+            value: data?.campusCount || 0,
         },
     ];
 
