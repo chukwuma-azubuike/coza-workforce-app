@@ -346,6 +346,9 @@ PODS:
     - glog
   - react-native-blob-util (0.19.11):
     - React-Core
+  - react-native-document-picker (9.3.1):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - react-native-encrypted-storage (4.0.3):
     - React-Core
   - react-native-geolocation-service (5.3.1):
@@ -555,6 +558,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-encrypted-storage (from `../node_modules/react-native-encrypted-storage`)
   - react-native-geolocation-service (from `../node_modules/react-native-geolocation-service`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -662,6 +666,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-blob-util:
     :path: "../node_modules/react-native-blob-util"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-encrypted-storage:
     :path: "../node_modules/react-native-encrypted-storage"
   react-native-geolocation-service:
@@ -780,6 +786,7 @@ SPEC CHECKSUMS:
   React-jsinspector: aadc7a5f156f047800ab3d51f6a10ce5b009109d
   React-logger: a41d4cad677e9726b71a45a4012431d2fb1edd80
   react-native-blob-util: 39a20f2ef11556d958dc4beb0aa07d1ef2690745
+  react-native-document-picker: 52eab29bbc53f45399b475b7a3f4e503260f1134
   react-native-encrypted-storage: db300a3f2f0aba1e818417c1c0a6be549038deb7
   react-native-geolocation-service: 608e1da71a1ac31b4de64d9ef2815f697978c55b
   react-native-image-picker: ec9b713e248760bfa0f879f0715391de4651a7cb

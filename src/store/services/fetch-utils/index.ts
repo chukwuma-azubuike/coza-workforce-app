@@ -22,26 +22,21 @@ export class fetchUtils {
     });
 }
 
-interface IAxiosBaseQuery {
-    baseUrl: string;
-}
-
 const axiosInstance = axios.create();
 
 export const axiosBaseQueryFn =
-    ({ baseUrl = API_BASE_URL }: IAxiosBaseQuery): BaseQueryFn<AxiosRequestConfig, unknown, unknown> =>
-    async ({ url, method, data, params, headers, ...args }) => {
+    (): BaseQueryFn<AxiosRequestConfig, unknown, unknown> =>
+    async ({ url, baseURL, ...args }) => {
         try {
             const result = await axiosInstance({
-                url: baseUrl + url,
-                method,
-                data,
-                params,
+                url: (baseURL || '') + url,
                 ...args,
             });
+
             return { data: result.data };
         } catch (axiosError) {
             const err = axiosError as AxiosError;
+
             return {
                 error: {
                     status: err.response?.status,
@@ -51,4 +46,4 @@ export const axiosBaseQueryFn =
         }
     };
 
-export const axiosBaseQuery = axiosBaseQueryFn({ baseUrl: API_BASE_URL });
+export const axiosBaseQuery = axiosBaseQueryFn();

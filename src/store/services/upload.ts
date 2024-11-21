@@ -1,71 +1,76 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { createApi } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
 
-import { axiosBaseQueryFn } from './fetch-utils';
-import { uploadActions } from '@store/actions/upload';
 import { IDefaultResponse, REST_API_VERBS } from '@store/types';
-import { Asset } from 'react-native-image-picker';
+import APP_ENV from '@config/envConfig';
 
 type IUploadResponse = IDefaultResponse<{}>; // TODO: Update once upload endpoint is available
-type IGenerateUploadURLResponse = IDefaultResponse<{ url: string }>;
+type IGenerateUploadURLResponse = IDefaultResponse<string>;
 interface IUploadPayload {
     id?: string;
-    file: Asset;
+    file?: ArrayBuffer | Blob | string;
     url: string;
     dispatch?: ReduxDispatch; // Passed as a return from useDispatch hook in React component
     setProgress?: Dispatch<SetStateAction<number>>;
     description?: string;
+    contentType?: string;
+}
+
+interface IGenerateS3UrlPayload {
+    bucketName: string;
+    objectKey: string;
+    expirySeconds?: number;
 }
 
 const SERVICE_URL = 'uploadApi';
 
-const PROXY_URL = process.env.NEXT_PUBLIC_PROXY_URL;
-const UPLOAD_URL = `${PROXY_URL}${process.env.NEXT_PUBLIC_IMGBB_UPLOAD_URL}`;
+const { API_BASE_URL } = APP_ENV();
 
 export const uploadServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
     tagTypes: [SERVICE_URL],
 
-    baseQuery: axiosBaseQueryFn({ baseUrl: UPLOAD_URL }),
+    baseQuery: fetchBaseQuery({ baseUrl: '' }),
 
     endpoints: builder => ({
-        generateUploadUrl: builder.mutation<string, { file_key: string }>({
-            query: ({ ...data }) => ({
-                url: 'presigned_url_endpoint',
+        generateUploadUrl: builder.mutation<string, IGenerateS3UrlPayload>({
+            query: ({ ...body }) => ({
+                url: `${API_BASE_URL}/aws/s3`,
                 method: REST_API_VERBS.POST,
-                data,
+                body,
             }),
 
-            transformResponse: (response: IGenerateUploadURLResponse) => response?.data.url,
+            transformResponse: (response: IGenerateUploadURLResponse) => response?.data,
         }),
 
-        upload: builder.mutation<IUploadResponse['data'], IUploadPayload>({
-            query: ({ id, file, url, dispatch, setProgress, description }) => ({
+        upload: builder.mutation<IUploadResponse, IUploadPayload>({
+            query: ({ id, file, url, dispatch, setProgress, contentType, description }) => ({
                 url,
-                data: file,
+                body: file,
                 method: REST_API_VERBS.PUT,
-                headers: { 'Content-Type': file.type },
+                headers: { 'Content-Type': contentType },
 
+                // TODO: For axios base query
                 // Capture upload progress
-                onUploadProgress({ loaded, total }) {
-                    if (total) {
-                        const progress = Math.round((loaded * 100) / total);
+                // onUploadProgress({ loaded, total }) {
+                //     if (total) {
+                //         const progress = Math.round((loaded * 100) / total);
 
-                        if (setProgress) {
-                            setProgress(progress);
-                        }
+                //         if (setProgress) {
+                //             setProgress(progress);
+                //         }
 
-                        if (dispatch && id) {
-                            dispatch(uploadActions.updateProgress({ id, total, loaded, description }));
-                        }
-                    }
-                },
+                //         if (dispatch && id) {
+                //             dispatch(uploadActions.updateProgress({ id, total, loaded, description }));
+                //         }
+                //     }
+                // },
             }),
 
-            transformResponse: (response: IUploadResponse) => response?.data,
+            transformResponse: (response: IUploadResponse) => response,
         }),
     }),
 });
