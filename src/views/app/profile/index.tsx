@@ -1,8 +1,8 @@
 import { Icon } from '@rneui/themed';
 import moment from 'moment';
-import { Heading, Progress } from 'native-base';
+import { Heading } from 'native-base';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -46,40 +46,75 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
         navigate('Edit Profile', field);
     };
 
-    const [updateUser, { isLoading: updateIsLoading, isError: updateIsError, isSuccess: updateIsSuccess }] =
-        useUpdateUserMutation();
+    const [updateUser, { isLoading: updateIsLoading }] = useUpdateUserMutation();
 
     const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
 
-    const [genrateUrl] = useGenerateUploadUrlMutation();
+    const [generateUrl, { isLoading: generateUrlLoading }] = useGenerateUploadUrlMutation();
     const [upload, { isLoading: isUploading }] = useUploadMutation();
-    const [progress, setProgress] = React.useState<number>(0);
+    const [loading, setLoading] = React.useState<boolean>();
+    // TODO: Reuse when switched back to axios base query
+    // const [progress, setProgress] = React.useState<number>(0);
     const [uploadError, setUploadError] = React.useState<string>();
 
     const handleProfilePicture = async () => {
-        const { assets, errorMessage } = await filePicker();
+        const result = await filePicker({});
 
-        if (errorMessage) {
-            setUploadError(errorMessage);
+        if ('error' in result) {
+            setLoading(false);
+            setUploadError(result.errorMessage);
             return;
         }
 
-        if (assets) {
-            const file = assets[0];
-            const file_key = `${S3_BUCKET_FOLDERS.profile_pictures}/${user.campusName}_${user.firstName}_${user.lastName}_profile_picture${file.type}`;
-            const pictureUrl = `https://${AWS_S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${file_key}`;
+        const asset = result.assets;
+
+        if (asset && asset[0] && asset[0].fileName) {
+            const file = asset[0];
+
+            const lastDot = (file.fileName as string).lastIndexOf('.');
+            const ext = (file.fileName as string).slice(lastDot + 1);
+
+            const objectKey = `${S3_BUCKET_FOLDERS.profile_pictures}/${user?.campus?.campusName}_${user?._id}_${
+                user.firstName
+            }_${user.lastName}_timestamp=${new Date().toISOString()}.${ext}`;
+
+            const pictureUrl = `https://${AWS_S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${objectKey}`;
+
+            const response = await fetch(file.uri as string);
+            const blob = await response.blob();
 
             try {
-                const urlResponse = await genrateUrl({ file_key });
+                setLoading(true);
+
+                const urlResponse = await generateUrl({
+                    objectKey,
+                    expirySeconds: 3600,
+                    bucketName: AWS_S3_BUCKET_NAME,
+                });
 
                 if ('data' in urlResponse) {
-                    const response = await upload({ file, url: urlResponse?.data, setProgress });
+                    const response = await upload({
+                        file: blob,
+                        contentType: file.type!,
+                        url: urlResponse?.data,
+                        // setProgress, // TODO: Reuse when switched back to axios base query
+                    });
 
-                    if (response) {
-                        updateUser({ pictureUrl, _id: user?._id } as IEditProfilePayload);
+                    if ('data' in response) {
+                        setLoading(false);
+                        await updateUser({ pictureUrl, _id: user?._id } as IEditProfilePayload);
+                        refetchUser();
                     }
                 }
-            } catch (error) {}
+
+                if ('error' in urlResponse) {
+                    setLoading(false);
+                    Alert.alert('Error uploading file', 'Something went wrong in generating upload url.');
+                }
+            } catch (error) {
+                setLoading(false);
+                Alert.alert('Error uploading file', 'Something went wrong during the upload process.');
+            }
         }
     };
 
@@ -93,6 +128,7 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
     }, [newUserData]);
 
     const { backgroundColor } = useAppColorMode();
+    const isProfilePictureLoading = updateIsLoading || isUploading || generateUrlLoading;
 
     return (
         <ViewWrapper
@@ -114,10 +150,9 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                             error={uploadError}
                             lastName={user?.lastName}
                             firstName={user?.firstName}
-                            isLoading={newUserDataLoading || updateIsLoading || isUploading}
+                            isLoading={loading || newUserDataLoading || isProfilePictureLoading}
                             imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         />
-                        {isUploading && <Progress my={3} value={progress} />}
                         <TextComponent
                             style={{
                                 bottom: 14,
