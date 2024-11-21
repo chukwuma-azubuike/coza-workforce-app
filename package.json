@@ -92,7 +92,7 @@
         "redux-devtools-extension": "^2.13.9",
         "redux-logger": "^3.0.6",
         "redux-persist": "^6.0.0",
-        "sp-react-native-in-app-updates": "^1.2.0",
+        "sp-react-native-in-app-updates": "1.4.0",
         "use-count-up": "^3.0.1",
         "victory-native": "36.6.11",
         "xlsx": "0.18.5",
