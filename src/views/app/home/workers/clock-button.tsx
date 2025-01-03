@@ -18,6 +18,7 @@ import openLocationSettings from '@utils/openLocationSettings';
 
 interface IClockButtonProps {
     isInRange: boolean;
+    onSuccess?: () => void;
     deviceCoordinates: GeoCoordinates;
     refreshLocation: () => Promise<void>;
     verifyRangeBeforeAction: (successCallback: () => any, errorCallback: () => any) => Promise<void>;
@@ -25,6 +26,7 @@ interface IClockButtonProps {
 
 const ClockButton: React.FC<IClockButtonProps> = ({
     isInRange,
+    onSuccess,
     refreshLocation,
     deviceCoordinates,
     verifyRangeBeforeAction,
@@ -72,6 +74,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                     />
                 ),
             });
+            onSuccess && onSuccess();
         }
 
         if ('error' in result) {
@@ -233,11 +236,11 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 />
             )}
             <TouchableOpacity>
-                <Box alignItems="center" shadow={7}>
+                <Box alignItems="center">
                     <Button
                         w={200}
                         h={200}
-                        shadow={9}
+                        shadow={4}
                         borderRadius="full"
                         activeOpacity={0.6}
                         onPress={handlePress}

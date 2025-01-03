@@ -1,3 +1,6 @@
+import { IUserStatus } from '@store/types';
+import { IStatusColors } from '@types/app';
+
 export enum NOTIFICATION_TYPES {
     CLOCK_IN = 'CLOCK_IN',
     CLOCK_OUT = 'CLOCK_OUT',
@@ -41,6 +44,13 @@ export const NOTIFICATION_TYPES_ROUTING: INotificationTypesRoute = {
     NOTIFY_PASTOR_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'campusTickets', data: {} },
     NOTIFY_QC_RETRACTED_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'campusTickets', data: {} },
 };
+
+export const STATUS_COLORS: Record<IUserStatus, IStatusColors> = {
+    ACTIVE: 'green.500',
+    DORMANT: 'red.500',
+    INACTIVE: 'yellow.500',
+    BLACKLISTED: 'gray.400',
+} as Record<IUserStatus, IStatusColors>;
 
 export interface INotificationPayload {
     ttl: string;

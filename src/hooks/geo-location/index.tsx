@@ -52,7 +52,13 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
                 }
             },
             error => {},
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 10000,
+                distanceFilter: 10,
+                forceRequestLocation: true,
+            }
         );
     };
 
