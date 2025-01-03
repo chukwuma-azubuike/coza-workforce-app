@@ -100,11 +100,6 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
             color: 'orange.700',
             value: data?.blacklistedUser || 0,
         },
-        {
-            title: 'Unregistered',
-            color: 'gray.400',
-            value: data?.intendingWorkerUser || 0,
-        },
     ];
 
     const Departmentlist = React.useMemo(
@@ -231,7 +226,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                             <View
                                 key={index}
                                 style={{
-                                    minWidth: "20%",
+                                    minWidth: '20%',
                                     flexDirection: 'column',
                                     alignItems: 'center',
                                     justifyContent: 'center',

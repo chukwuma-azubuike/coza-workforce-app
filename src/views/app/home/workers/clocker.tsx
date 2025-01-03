@@ -140,6 +140,7 @@ const Clocker: React.FC<IClockerProps> = ({
                             <ClockButton
                                 isInRange={!!isInRange}
                                 refreshLocation={refreshLocation}
+                                onSuccess={attendanceReportRefetch}
                                 deviceCoordinates={deviceCoordinates}
                                 verifyRangeBeforeAction={verifyRangeBeforeAction}
                             />
