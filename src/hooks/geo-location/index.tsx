@@ -23,8 +23,9 @@ const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campus
 
     // Radius of earth in kilometers. Use 3956 for miles
     const EARTH_RADIUS = 6371;
+    const diff = curve * EARTH_RADIUS * 1000;
 
-    return curve * EARTH_RADIUS * 1000; // Distance in meters.
+    return diff; // Distance in meters.
 };
 
 interface IUseGeoLocationArgs {
