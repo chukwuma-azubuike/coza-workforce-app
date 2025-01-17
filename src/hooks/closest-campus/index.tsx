@@ -8,7 +8,7 @@ const useClosestCampus = (deviceCoordinates: ICampusCoordinates) => {
     const { data } = useGetCampusesQuery();
 
     const campusCoordinates = React.useMemo(
-        () => data?.map(campus => Object.values(campus.coordinates)),
+        () => data?.map(campus => [campus.coordinates.long, campus.coordinates.lat]),
         [...spreadDependencyArray(data)]
     );
 

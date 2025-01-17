@@ -4,6 +4,12 @@ This file contains all changelogs for latest releases, from v1.5.8 onward. Follo
 
 ## v1.7.1
 
+### Fixed
+
+-   Handle edge case of coordinate swap in array ([70fef2992762fd559bb4a5805bc327e5b4ee7240](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/70fef2992762fd559bb4a5805bc327e5b4ee7240) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
+
+## v1.7.1
+
 ### Added
 
 -   color coded status ([da16da5b7d729bf36090d2f05c24ae08660f6724](https://github.com/chukwuma-azubuike/coza-workforce-app/pull/96/commits/da16da5b7d729bf36090d2f05c24ae08660f6724) by [@chukwuma-azubuike](https://github.com/chukwuma-azubuike))
