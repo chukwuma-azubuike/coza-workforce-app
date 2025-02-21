@@ -70,7 +70,7 @@ export const GHSubmittedReportListRowForGSP: React.FC<IGHSubmittedReportForGSP> 
         setIsVisible(!isVisible);
     };
 
-    const ghName = `${props?.firstName} ${props?.lastName}`
+    const ghName = `${props?.firstName} ${props?.lastName}`;
 
     return (
         <TouchableOpacity

@@ -250,10 +250,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                             canClockIn && !disabled
                                 ? 'primary.600'
                                 : canClockOut
-                                ? 'rose.400'
-                                : disabled
-                                ? 'gray.400'
-                                : 'gray.400'
+                                  ? 'rose.400'
+                                  : disabled
+                                    ? 'gray.400'
+                                    : 'gray.400'
                         }
                     >
                         <TouchableOpacity

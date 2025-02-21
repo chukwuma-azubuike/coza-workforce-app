@@ -26,8 +26,8 @@ const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps
                     label === 'Clock out'
                         ? THEME_CONFIG.rose
                         : label === 'Service hrs'
-                        ? THEME_CONFIG.gray
-                        : THEME_CONFIG.primaryLight
+                          ? THEME_CONFIG.gray
+                          : THEME_CONFIG.primaryLight
                 }
             />
             {difference ? (

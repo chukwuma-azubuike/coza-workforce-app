@@ -230,8 +230,8 @@ We love & celebrate you!` as any,
                             isDepartment
                                 ? CreateDepartmentalTicketSchema
                                 : isCampus
-                                ? CreateCampusTicketSchema
-                                : CreateIndividualTicketSchema
+                                  ? CreateCampusTicketSchema
+                                  : CreateIndividualTicketSchema
                         }
                     >
                         {({

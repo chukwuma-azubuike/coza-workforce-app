@@ -35,8 +35,8 @@ const Empty: React.FC<{
                 {isCampusPastor || isGlobalPastor
                     ? `${message ? message : EMPTY_MESSAGE} ${gender === 'M' ? 'sir' : 'ma'}`
                     : message
-                    ? message
-                    : EMPTY_MESSAGE}
+                      ? message
+                      : EMPTY_MESSAGE}
             </Text>
             <If condition={refresh && true}>
                 <ButtonComponent mt={8} secondary size="sm" width={100} isLoading={isLoading} onPress={handleRefresh}>

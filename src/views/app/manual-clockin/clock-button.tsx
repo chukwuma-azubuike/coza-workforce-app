@@ -7,11 +7,7 @@ import { Alert, TouchableOpacity } from 'react-native';
 import useModal from '@hooks/modal/useModal';
 import moment from 'moment';
 import ModalAlertComponent from '@components/composite/modal-alert';
-import {
-    useClockInMutation,
-    useClockOutMutation,
-    useGetAttendanceQuery,
-} from '@store/services/attendance';
+import { useClockInMutation, useClockOutMutation, useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import Utils from '@utils/index';
