@@ -254,7 +254,7 @@ class Utils {
      *
      * @param array Array of objects
      * @param key common key
-     * @param returnType 
+     * @param returnType
      * @returns 'entries' | 'values'
      */
 
@@ -339,10 +339,10 @@ class Utils {
         return date && !time
             ? moment(date).subtract(1, 'hour').unix()
             : time && !date
-            ? moment(time).subtract(1, 'hour').unix()
-            : time && date
-            ? moment(concatedTime).subtract(1, 'hour').unix()
-            : null;
+              ? moment(time).subtract(1, 'hour').unix()
+              : time && date
+                ? moment(concatedTime).subtract(1, 'hour').unix()
+                : null;
     };
 }
 

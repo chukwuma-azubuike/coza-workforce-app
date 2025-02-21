@@ -36,55 +36,55 @@ const StatusTag: React.FC<IStatusTag> = props => {
                 bgColor: green
                     ? 'success.200'
                     : gray
-                    ? 'gray.300'
-                    : red
-                    ? 'error.200'
-                    : amber
-                    ? 'amber.100'
-                    : blue
-                    ? 'blue.100'
-                    : 'gray.300',
+                      ? 'gray.300'
+                      : red
+                        ? 'error.200'
+                        : amber
+                          ? 'amber.100'
+                          : blue
+                            ? 'blue.100'
+                            : 'gray.300',
             }}
             _light={{
                 bgColor: green
                     ? 'success.100'
                     : gray
-                    ? 'gray.200'
-                    : red
-                    ? 'error.100'
-                    : amber
-                    ? 'amber.100'
-                    : blue
-                    ? 'blue.100'
-                    : 'gray.200',
+                      ? 'gray.200'
+                      : red
+                        ? 'error.100'
+                        : amber
+                          ? 'amber.100'
+                          : blue
+                            ? 'blue.100'
+                            : 'gray.200',
             }}
             _text={{
                 _light: {
                     color: green
                         ? 'success.700'
                         : gray
-                        ? 'gray.700'
-                        : red
-                        ? 'error.700'
-                        : amber
-                        ? 'amber.700'
-                        : blue
-                        ? 'blue.700'
-                        : 'gray.700',
+                          ? 'gray.700'
+                          : red
+                            ? 'error.700'
+                            : amber
+                              ? 'amber.700'
+                              : blue
+                                ? 'blue.700'
+                                : 'gray.700',
                     fontSize: 'xs',
                 },
                 _dark: {
                     color: green
                         ? 'success.700'
                         : gray
-                        ? 'gray.700'
-                        : red
-                        ? 'error.700'
-                        : amber
-                        ? 'amber.700'
-                        : blue
-                        ? 'blue.700'
-                        : 'gray.700',
+                          ? 'gray.700'
+                          : red
+                            ? 'error.700'
+                            : amber
+                              ? 'amber.700'
+                              : blue
+                                ? 'blue.700'
+                                : 'gray.700',
                     fontSize: 'xs',
                 },
             }}

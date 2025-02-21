@@ -23,14 +23,7 @@ const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <HStack
-            h="100%"
-            zIndex={20}
-            px={2}
-            w={ScreenWidth}
-            alignItems="center"
-            justifyContent="space-between"
-        >
+        <HStack h="100%" zIndex={20} px={2} w={ScreenWidth} alignItems="center" justifyContent="space-between">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
