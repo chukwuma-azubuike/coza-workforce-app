@@ -133,21 +133,12 @@
     },
     "jest": {
         "preset": "react-native",
-        "moduleFileExtensions": [
-            "ts",
-            "tsx",
-            "js",
-            "jsx",
-            "json",
-            "node"
-        ]
+        "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"]
     },
     "rnx-kit": {
         "kitType": "app",
         "alignDeps": {
-            "requirements": [
-                "react-native@0.71"
-            ],
+            "requirements": ["react-native@0.71"],
             "capabilities": [
                 "animation",
                 "babel-preset-react-native",

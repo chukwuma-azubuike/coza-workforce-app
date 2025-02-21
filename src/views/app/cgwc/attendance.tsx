@@ -580,8 +580,8 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
                                         +score < 31
                                             ? THEME_CONFIG.rose
                                             : +score > 69
-                                            ? THEME_CONFIG.lightSuccess
-                                            : THEME_CONFIG.warning,
+                                              ? THEME_CONFIG.lightSuccess
+                                              : THEME_CONFIG.warning,
                                 }}
                             >
                                 {score || 0}

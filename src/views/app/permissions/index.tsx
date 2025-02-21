@@ -31,7 +31,7 @@ const ROUTES = [
 
 const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
     const params = route.params as { tabKey: string; reload: boolean };
-    useGetRolesQuery()
+    useGetRolesQuery();
 
     const { isMobile } = useMediaQuery();
     const gotoRequestPermission = () => {
