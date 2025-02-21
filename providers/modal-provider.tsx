@@ -1,5 +1,5 @@
 import React from 'react';
-import { IModalProps, IModalState } from '../../types/app';
+import { IModalProps, IModalState } from '../types/app';
 import useRootModal from '@hooks/modal/useRootModal';
 
 export const ModalContext = React.createContext(null as unknown as IModalProps);

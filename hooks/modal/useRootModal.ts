@@ -1,5 +1,5 @@
 import React from 'react';
-import { IModalState } from '../../../types/app';
+import { IModalState } from '../../types/app';
 
 const useRootModal = (initialModalState: IModalState) => {
     const [modalState, setModalState] = React.useState<IModalState>(initialModalState);

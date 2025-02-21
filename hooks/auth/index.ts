@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppStateContext } from '../../../App';
+import { AppStateContext } from '../../App';
 import Utils from '@utils/index';
 
 export const useAuth = () => {

@@ -11,7 +11,7 @@ import { LoginSchema } from '@utils/schemas';
 import { ILoginPayload, IUser } from '@store/types';
 import useModal from '@hooks/modal/useModal';
 import { TouchableRipple } from 'react-native-paper';
-import { AppStateContext } from '../../../../App';
+import { AppStateContext } from '../../../App';
 import Utils from '@utils/index';
 import { userActionTypes } from '@store/services/users';
 import { versionActiontypes } from '@store/services/version';
