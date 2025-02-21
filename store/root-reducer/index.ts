@@ -1,4 +1,4 @@
-import { scoreMappingServiceSlice } from './../services/score-mapping';
+import { scoreMappingServiceSlice } from '../services/score-mapping';
 import { combineReducers } from '@reduxjs/toolkit';
 import { attendanceServiceSlice } from '../services/attendance';
 import { accountServiceSlice } from '../services/account';
@@ -14,7 +14,7 @@ import versionReducer, { IVersionState } from '../services/version';
 import { IUser } from '../types';
 import { departmentServiceSlice } from '../services/department';
 import { ticketServiceSlice } from '../services/tickets';
-import { campusServiceSlice } from './../services/campus';
+import { campusServiceSlice } from '../services/campus';
 import { scoreServiceSlice } from '../services/score';
 import { roleServiceSlice } from '../services/role';
 import { cgwcServiceSlice } from '../services/cgwc';

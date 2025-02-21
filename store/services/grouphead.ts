@@ -1,4 +1,4 @@
-import { IDefaultQueryParams, IGHSubmittedReportForGSP } from './../types/index';
+import { IDefaultQueryParams, IGHSubmittedReportForGSP } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IDefaultResponse, IService, IReportStatus, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';

@@ -1,4 +1,4 @@
-import { ICampus, IDefaultQueryParams, IGraphAttendanceReports, IStatus, IUser } from './../types/index';
+import { ICampus, IDefaultQueryParams, IGraphAttendanceReports, IStatus, IUser } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     IChildCareReportPayload,
