@@ -1,13 +1,13 @@
-import { scoreServiceSlice } from './../score';
+import { scoreServiceSlice } from '../score';
 import { accountServiceSlice } from '../account';
 import { attendanceServiceSlice } from '../attendance';
 import { complianceServiceSlice } from '../compliance';
 import { reportsServiceSlice } from '../reports';
 import { servicesServiceSlice } from '../services';
-import { permissionsServiceSlice } from './../permissions';
+import { permissionsServiceSlice } from '../permissions';
 import { departmentServiceSlice } from '../department';
 import { ticketServiceSlice } from '../tickets';
-import { campusServiceSlice } from './../campus';
+import { campusServiceSlice } from '../campus';
 import { roleServiceSlice } from '../role';
 import { cgwcServiceSlice } from '../cgwc';
 import { scoreMappingServiceSlice } from '../score-mapping';

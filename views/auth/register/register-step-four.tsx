@@ -12,7 +12,7 @@ import { RegisterFormContext } from '.';
 import { RegisterSchema_4 } from '@utils/schemas';
 import { useLoginMutation, useRegisterMutation } from '@store/services/account';
 import { useAppDispatch } from '@store/hooks';
-import { AppStateContext } from '../../../../App';
+import { AppStateContext } from '../../../App';
 import useModal from '@hooks/modal/useModal';
 import { versionActiontypes } from '@store/services/version';
 import Utils from '@utils/index';

@@ -1,12 +1,13 @@
 import React from 'react';
-import { Avatar, Center, IAvatarProps, Text } from 'native-base';
 import FastImage from 'react-native-fast-image';
-import { SIZE, THEME_CONFIG } from '@config/appConfig';
-import { IStatusColors } from '@types/app';
-import { STATUS_COLORS } from '@constants/notification-types';
+import { SIZE, THEME_CONFIG } from '~/config/appConfig';
+import { IStatusColors } from '~/types/app';
+import { STATUS_COLORS } from '~/constants/notification-types';
 import Loading from '../loading';
+import { Text } from '~/components/ui/text';
 
 interface IAvatarComponentProps extends IAvatarProps {
+    size?: number;
     error?: string;
     badge?: boolean;
     badgeColor?: IStatusColors;
@@ -14,12 +15,10 @@ interface IAvatarComponentProps extends IAvatarProps {
     lastName?: string;
     firstName?: string;
     isLoading?: boolean;
-    onLoadEnd?: () => void;
-    onLoadStart?: () => void;
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE, onLoadEnd, onLoadStart } = props;
+    const { imageUrl, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE } = props;
     const [loading, setLoading] = React.useState<boolean>();
 
     return (
@@ -40,11 +39,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                 {badge && <Avatar.Badge right={0.9} bottom={0.9} bg={badgeColor} />}
             </FastImage>
 
-            {error && (
-                <Text fontSize="sm" color="error.500">
-                    {error}
-                </Text>
-            )}
+            {error && <Text className="text-sm text-destructive">{error}</Text>}
             {(loading || isLoading) && (
                 <Loading
                     style={{ position: 'absolute', borderRadius: 50 }}
