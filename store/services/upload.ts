@@ -26,7 +26,7 @@ interface IGenerateS3UrlPayload {
 
 const SERVICE_URL = 'uploadApi';
 
-const { API_BASE_URL } = APP_ENV();
+const { API_BASE_URL } = APP_ENV;
 
 export const uploadServiceSlice = createApi({
     reducerPath: SERVICE_URL,

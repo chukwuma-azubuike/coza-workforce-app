@@ -1,8 +1,7 @@
 import { Platform } from 'react-native';
-import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
 import * as SecureStore from 'expo-secure-store';
+import * as Location from 'expo-location';
 import { IToken, IUser } from '../store/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import findIndex from 'lodash/findIndex';
@@ -158,13 +157,13 @@ class Utils {
 
     static storeCurrentUserData = async (data: IUser) => {
         try {
-            await AsyncStorage.setItem('current_user', JSON.stringify(data));
+            await SecureStore.setItemAsync('current_user', JSON.stringify(data));
         } catch (error) {}
     };
 
     static retrieveCurrentUserData: () => Promise<any> = async () => {
         try {
-            const userData = await AsyncStorage.getItem('current_user');
+            const userData = await SecureStore.getItemAsync('current_user');
 
             if (userData) {
                 return JSON.parse(userData);
@@ -178,58 +177,43 @@ class Utils {
 
     static clearCurrentUserStorage = async () => {
         try {
-            await AsyncStorage.clear();
+            await SecureStore.deleteItemAsync('current_user');
+            await SecureStore.deleteItemAsync('user_session');
         } catch (error) {}
     };
 
     /************ Native Permisisons logic ************/
 
+    // Checks the current foreground location permission status.
+    // If not granted, it requests permission.
     static checkLocationPermission = async (successCallBack?: () => void): Promise<string> => {
-        const isIOS = Platform.OS === 'ios';
-
-        return check(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
-            .then(result => {
-                switch (result) {
-                    case RESULTS.UNAVAILABLE:
-                        return this.requestLocationPermission(successCallBack);
-                        break;
-                    case RESULTS.DENIED:
-                        return this.requestLocationPermission(successCallBack);
-                        break;
-                    case RESULTS.LIMITED:
-                        successCallBack && successCallBack();
-                        return result;
-                        break;
-                    case RESULTS.GRANTED:
-                        successCallBack && successCallBack();
-                        return result;
-                        break;
-                    case RESULTS.BLOCKED:
-                        return this.requestLocationPermission(successCallBack);
-                        break;
-                }
-            })
-            .catch(error => {
-                return error;
-            });
+        try {
+            const { status } = await Location.getForegroundPermissionsAsync();
+            if (status === 'granted') {
+                // Permission already granted.
+                successCallBack && successCallBack();
+                return status;
+            } else {
+                // Permission not granted or undetermined; request it.
+                return await this.requestLocationPermission(successCallBack);
+            }
+        } catch (error) {
+            return Promise.reject(error);
+        }
     };
 
-    static requestLocationPermission = async (successCallBack?: () => void) => {
-        const isIOS = Platform.OS === 'ios';
-
-        return request(isIOS ? PERMISSIONS.IOS.LOCATION_WHEN_IN_USE : PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION, {
-            title: 'Location Access',
-            message: 'This App needs access to your location',
-            buttonPositive: 'OK',
-            buttonNegative: 'DENY',
-        }).then(result => {
-            if (result === RESULTS.GRANTED || result === RESULTS.LIMITED) {
+    // Requests the foreground location permission.
+    static requestLocationPermission = async (successCallBack?: () => void): Promise<string> => {
+        try {
+            const { status } = await Location.requestForegroundPermissionsAsync();
+            if (status === 'granted') {
                 successCallBack && successCallBack();
             }
-            return result;
-        });
+            return status;
+        } catch (error) {
+            return Promise.reject(error);
+        }
     };
-
     /************** Objects **************/
 
     static compareObjectValueByKey(obj1: any, obj2: any) {
