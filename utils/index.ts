@@ -1,14 +1,17 @@
 import { Platform } from 'react-native';
 import { check, PERMISSIONS, request, RESULTS } from 'react-native-permissions';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import * as SecureStore from 'expo-secure-store';
 import { IToken, IUser } from '../store/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import moment from 'moment';
-import { isValidPhoneNumber } from 'libphonenumber-js';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import findIndex from 'lodash/findIndex';
 import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 import forEach from 'lodash/forEach';
+
+dayjs.extend(utc);
+
 class Utils {
     /************ Version Specific ************/
 
@@ -67,7 +70,7 @@ class Utils {
      */
 
     static sortByDate = (arrObject: any[] | [], key: string) => {
-        return [...arrObject]?.sort((a, b) => moment(b[key]).unix() - moment(a[key]).unix());
+        return [...arrObject]?.sort((a, b) => dayjs(b[key]).unix() - dayjs(a[key]).unix());
     };
 
     /*************** Filters ****************/
@@ -100,15 +103,15 @@ class Utils {
             return { hours: '--:--', minutes: '--:--' };
         }
 
-        var date1 = moment(date_1);
-        var date2 = moment(date_2);
+        var date1 = dayjs(date_1);
+        var date2 = dayjs(date_2);
 
         var diff = Math.abs(date2.diff(date1));
 
-        let hours = moment(diff).hours();
-        let minutes = moment(diff).minutes();
+        let hours = dayjs(diff).hour();
+        let minutes = dayjs(diff).minute();
 
-        const hrsMins = `${moment.utc(diff).format('HH:mm')} Hr(s)`;
+        const hrsMins = `${dayjs.utc(diff).format('HH:mm')} Hr(s)`;
 
         return { hours, minutes, hrsMins };
     }
@@ -118,7 +121,7 @@ class Utils {
 
     static storeUserSession = async (user: { token: IToken; profile: IUser }) => {
         try {
-            await EncryptedStorage.setItem('user_session', JSON.stringify(user));
+            await SecureStore.setItemAsync('user_session', JSON.stringify(user));
         } catch (error) {
             // There was an error on the native side
         }
@@ -126,7 +129,7 @@ class Utils {
 
     static retrieveUserSession = async () => {
         try {
-            const session = await EncryptedStorage.getItem('user_session');
+            const session = await SecureStore.getItemAsync('user_session');
 
             return session;
         } catch (error) {
@@ -137,7 +140,7 @@ class Utils {
 
     static removeUserSession = async () => {
         try {
-            await EncryptedStorage.removeItem('user_session');
+            await SecureStore.deleteItemAsync('user_session');
         } catch (error) {
             // There was an error on the native side
         }
@@ -145,7 +148,7 @@ class Utils {
 
     static clearStorage = async () => {
         try {
-            await EncryptedStorage.clear();
+            await SecureStore.deleteItemAsync('user_session');
         } catch (error) {
             // There was an error on the native side
         }
@@ -270,7 +273,7 @@ class Utils {
             let keyInMap = array[i][key];
 
             if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt' || key === 'sortDateKey') {
-                keyInMap = moment(array[i][key]).format('MMMM Do, YYYY');
+                keyInMap = dayjs(array[i][key]).format('MMMM Do, YYYY');
             }
 
             if (map[keyInMap]) {
@@ -319,30 +322,18 @@ class Utils {
         return merged;
     };
 
-    /************** validatePhoneNumber ***************/
-
-    static validatePhoneNumber = (phoneNumber: string) => {
-        const errors: Record<string, string> = {};
-
-        if (!isValidPhoneNumber(phoneNumber)) {
-            errors.phoneNumber = 'Invalid phone number';
-        }
-
-        return errors;
-    };
-
     /************** convertToEpoc ***************/
 
     static concatDateTimeToEpoc = (date: string | Date, time: string | Date) => {
-        const concatedTime = `${moment(date).format('YYYY-MM-DD')}T${moment(time).format('HH:mm:ss')}.000Z`;
+        const concatedTime = `${dayjs(date).format('YYYY-MM-DD')}T${dayjs(time).format('HH:mm:ss')}.000Z`;
 
         return date && !time
-            ? moment(date).subtract(1, 'hour').unix()
+            ? dayjs(date).subtract(1, 'hour').unix()
             : time && !date
-              ? moment(time).subtract(1, 'hour').unix()
-              : time && date
-                ? moment(concatedTime).subtract(1, 'hour').unix()
-                : null;
+            ? dayjs(time).subtract(1, 'hour').unix()
+            : time && date
+            ? dayjs(concatedTime).subtract(1, 'hour').unix()
+            : null;
     };
 }
 

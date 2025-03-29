@@ -1,14 +1,14 @@
 import React from 'react';
-import { useAddDeviceTokenMutation } from '@store/services/account';
-import { getFCMToken } from '@utils/notifications';
+import { useAddDeviceTokenMutation } from '~/store/services/account';
+import { getFCMToken } from '~/utils/notifications';
 import { getUniqueId } from 'react-native-device-info';
-import { IUser } from '@store/types';
+import { IUser } from '~/store/types';
 import { Permission, PermissionsAndroid, Platform } from 'react-native';
 import { PERMISSIONS } from 'react-native-permissions';
 
 export const useNotifications = (user: IUser) => {
     if (Platform.OS === 'android') {
-        PERMISSIONS.ANDROID.POST_NOTIFICATIONS;
+        PERMISSIONS.ANDROID;
         PermissionsAndroid.request(PERMISSIONS.ANDROID.POST_NOTIFICATIONS as Permission, {
             title: 'Push Notifications',
             message: 'We ',

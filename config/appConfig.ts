@@ -1,5 +1,3 @@
-import { extendTheme } from 'native-base';
-
 const THEME_CONFIG = {
     black: '#000',
     white: '#FFF',
@@ -53,7 +51,7 @@ export const TEXT_THEME_MAIN = {
     dark: THEME_CONFIG.white,
 };
 
-const extendedTheme = extendTheme({
+const extendedTheme = {
     useSystemColorMode: true,
     // initialColorMode: 'dark',
     colors: {
@@ -71,6 +69,6 @@ const extendedTheme = extendTheme({
             900: '#520578',
         },
     },
-});
+};
 
 export { THEME_CONFIG, extendedTheme };
