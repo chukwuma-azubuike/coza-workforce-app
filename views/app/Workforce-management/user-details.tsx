@@ -594,3 +594,5 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 };
 
 export default React.memo(UserDetails);
+
+UserDetails.displayName = 'UserDetails';

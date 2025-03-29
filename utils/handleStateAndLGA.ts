@@ -1,5 +1,5 @@
-import React from 'react';
 import { ICountry, INGState } from '../types/app';
+
 const stateAndLGAs: INGState[] = require('../assets/json/state-and-lgas.json');
 const countries: ICountry[] = require('../assets/json/countries.json');
 

@@ -1,4 +1,4 @@
-import { ICampus, IDepartment, IService } from '@store/types';
+import { ICampus, IDepartment, IService } from '~/store/types';
 
 interface IGenerateReportName {
     serviceId?: string;

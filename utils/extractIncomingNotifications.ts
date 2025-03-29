@@ -1,5 +1,5 @@
 import { RemoteMessage } from '../types/app';
-import { INotificationPayload, NOTIFICATION_TYPES_ROUTING } from '../src/constants/notification-types';
+import { INotificationPayload, NOTIFICATION_TYPES_ROUTING } from '~/constants/notification-types';
 
 export const extractIncomingNotifications = (remoteMessage: RemoteMessage) => {
     const data = remoteMessage.data as INotificationPayload['data'];
