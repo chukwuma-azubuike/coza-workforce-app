@@ -3,18 +3,18 @@ import { Box, Button, Center, Spinner, Text, VStack } from 'native-base';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { TouchableOpacity } from 'react-native';
-import useModal from '@hooks/modal/useModal';
-import moment from 'moment';
-import ModalAlertComponent from '@components/composite/modal-alert';
+import useModal from '~/hooks/modal/useModal';
+import moment from 'dayjs';
+import ModalAlertComponent from '~/components/composite/modal-alert';
 import { HomeContext } from '..';
-import { useClockInMutation, useClockOutMutation } from '@store/services/attendance';
-import useRole from '@hooks/role';
+import { useClockInMutation, useClockOutMutation } from '~/store/services/attendance';
+import useRole from '~/hooks/role';
 import { GeoCoordinates } from 'react-native-geolocation-service';
-import If from '@components/composite/if-container';
-import Utils from '@utils/index';
+import If from '~/components/composite/if-container';
+import Utils from '~/utils';
 import { Alert } from 'react-native';
 import { RESULTS } from 'react-native-permissions';
-import openLocationSettings from '@utils/openLocationSettings';
+import openLocationSettings from '~/utils/openLocationSettings';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -250,10 +250,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                             canClockIn && !disabled
                                 ? 'primary.600'
                                 : canClockOut
-                                  ? 'rose.400'
-                                  : disabled
-                                    ? 'gray.400'
-                                    : 'gray.400'
+                                ? 'rose.400'
+                                : disabled
+                                ? 'gray.400'
+                                : 'gray.400'
                         }
                     >
                         <TouchableOpacity

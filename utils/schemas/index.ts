@@ -27,10 +27,7 @@ export const RegisterSchema = Yup.object().shape({
     placeOfWork: Yup.string().required('Your place of work is required.'),
     gender: Yup.string().required('Your gender is required.'),
     maritalStatus: Yup.string().required('Your marital status is required.'),
-    birthDay: Yup.date()
-        .nullable()
-        .min(new Date(1900, 0, 1))
-        .required('Your birthday is required.'),
+    birthDay: Yup.date().nullable().min(new Date(1900, 0, 1)).required('Your birthday is required.'),
     socialMedia: Yup.object().shape({
         facebook: Yup.string(),
         instagram: Yup.string(),
@@ -50,7 +47,7 @@ export const RegisterSchema = Yup.object().shape({
         })
         .matches(/(\W)/, 'At least one special character is required'),
     confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .oneOf([Yup.ref('password'), undefined], 'Passwords must match')
         .required('Confirming you password is required.'),
 });
 
@@ -100,7 +97,7 @@ export const RegisterSchema_4 = Yup.object().shape({
         })
         .matches(/(\W)/, 'At least one special character is required'),
     confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .oneOf([Yup.ref('password'), undefined], 'Passwords must match')
         .required('Confirming you password is required.'),
 });
 
@@ -179,7 +176,7 @@ export const ResetPasswordSchema = Yup.object().shape({
         })
         .matches(/(\W)/, 'At least one special character is required'),
     confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        .oneOf([Yup.ref('password'), undefined], 'Passwords must match')
         .required('Confirming you password is required.'),
 });
 

@@ -1,5 +1,5 @@
-import { IUserStatus } from '@store/types';
-import { IStatusColors } from '@types/app';
+import { IUserStatus } from '~/store/types';
+import { IStatusColors } from '~/types/app';
 
 export enum NOTIFICATION_TYPES {
     CLOCK_IN = 'CLOCK_IN',

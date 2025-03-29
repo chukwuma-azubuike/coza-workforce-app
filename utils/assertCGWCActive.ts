@@ -1,8 +1,8 @@
-import { ICGWC } from '@store/types';
-import moment from 'moment';
+import { ICGWC } from '~/store/types';
+import dayjs from 'dayjs';
 
 const assertCGWCActive = (cgwc: ICGWC) => {
-    return moment(moment(cgwc?.endDate)).diff(moment()) > 0;
+    return dayjs(dayjs(cgwc?.endDate)).diff(dayjs()) > 0;
 };
 
 export default assertCGWCActive;

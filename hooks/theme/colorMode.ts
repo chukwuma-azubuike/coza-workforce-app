@@ -1,9 +1,10 @@
 import { BACKGROUND_THEME, BORDER_THEME, TEXT_THEME, TEXT_THEME_MAIN } from '@config/appConfig';
-import { useColorMode } from 'native-base';
+// import { useColorMode } from 'native-base';
 import { useColorScheme } from 'react-native';
 
 const useAppColorMode = () => {
-    const { colorMode, accessibleColors, setAccessibleColors, setColorMode, toggleColorMode } = useColorMode();
+    const { colorMode, accessibleColors, setAccessibleColors, setColorMode, toggleColorMode } = {} as any;
+    // useColorMode();
     const scheme = useColorScheme() as keyof typeof BACKGROUND_THEME;
 
     const isLightMode = colorMode === 'light';
