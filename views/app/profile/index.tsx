@@ -262,7 +262,7 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                     </HStackComponent>
                 </TouchableOpacity>
                 <TextComponent style={{ paddingVertical: 8, textAlign: 'center' }}>
-                    Version {DeviceInfo.getVersion()} ({APP_ENV().ENV})
+                    Version {DeviceInfo.getVersion()} ({APP_ENV.ENV})
                 </TextComponent>
             </VStackComponent>
         </ViewWrapper>

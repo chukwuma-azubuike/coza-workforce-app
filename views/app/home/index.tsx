@@ -15,8 +15,7 @@ import { CampusReportSummary } from './campus-pastors/report-summary';
 import { selectCurrentUser, userActionTypes } from '@store/services/users';
 import { useGetUserByIdQuery } from '@store/services/account';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
-import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
-import useScreenFocus from '@hooks/focus';
+import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform } from 'react-native';
 import GhClocker from './workers/gh-clocker';
@@ -34,7 +33,7 @@ interface IInitialHomeState {
         latestAttendanceIsSuccess: boolean;
         latestAttendanceIsLoading: boolean;
     };
-    currentCoordinate: GeoCoordinates;
+    currentCoordinate: LocationObjectCoords;
 }
 
 export const HomeContext = React.createContext({} as IInitialHomeState);
@@ -126,12 +125,6 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
             });
         }
     }, [currentUserData]);
-
-    useScreenFocus({
-        onFocusExit: () => {
-            Geolocation.stopObserving();
-        },
-    });
 
     const isIOS = Platform.OS === 'ios';
 

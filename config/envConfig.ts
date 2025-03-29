@@ -1,30 +1,9 @@
-import { API_KEY, PROD_API_BASE_URL, STAGING_API_BASE_URL, ENV } from '@env';
+export const ENV = process.env.ENV;
 
-const APP_ENV = () => {
-    switch (ENV) {
-        case 'development':
-            console.log('Running on', ENV, 'server...');
-            return {
-                ENV,
-                API_BASE_URL: STAGING_API_BASE_URL,
-                API_KEY,
-            };
-
-        case 'production':
-            console.log('Running on', ENV, 'server...');
-            return {
-                ENV,
-                API_BASE_URL: PROD_API_BASE_URL,
-                API_KEY,
-            };
-        default:
-            console.log('Running on', ENV, 'server...');
-            return {
-                ENV,
-                API_BASE_URL: STAGING_API_BASE_URL,
-                API_KEY,
-            };
-    }
+const APP_ENV = {
+    ENV,
+    API_KEY: process.env.API_KEY,
+    API_BASE_URL: process.env.STAGING_API_BASE_URL,
 };
 
 export default APP_ENV;

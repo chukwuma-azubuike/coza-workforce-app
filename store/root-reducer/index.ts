@@ -20,6 +20,7 @@ import { roleServiceSlice } from '../services/role';
 import { cgwcServiceSlice } from '../services/cgwc';
 import { groupHeadServiceSlice } from '@store/services/grouphead';
 import { uploadServiceSlice } from '@store/services/upload';
+import userStateSlice from '../actions/users';
 
 const userPersistConfig: PersistConfig<IUser> = {
     key: 'users',
@@ -55,6 +56,7 @@ const rootReducer = combineReducers({
     scoreMapping: scoreMappingServiceSlice.reducer,
     [groupHeadServiceSlice.reducerPath]: groupHeadServiceSlice.reducer,
     [uploadServiceSlice.reducerPath]: uploadServiceSlice.reducer,
+    [userStateSlice.reducerPath]: userStateSlice.reducer,
 });
 
 export default rootReducer;

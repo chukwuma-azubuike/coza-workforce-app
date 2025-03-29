@@ -8,7 +8,7 @@ import { persistStore } from 'redux-persist';
 
 const middlewares: Middleware[] = [];
 
-if (ENV === 'development') {
+if (__DEV__) {
     const logger: Middleware = createLogger({
         collapsed: true,
         duration: true,

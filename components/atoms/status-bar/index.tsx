@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import { Animated, Platform } from 'react-native';
+import { Animated, SafeAreaView, View } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { Box, Text } from 'native-base';
-import useDevice from '@hooks/device';
+import { Text } from '~/components/ui/text';
+import { cn } from '~/lib/utils';
 
 const ConnectionStatusBar: React.FC = () => {
     const netInfo = useNetInfo();
@@ -33,10 +33,6 @@ const ConnectionStatusBar: React.FC = () => {
         }
     }, [netInfo.isInternetReachable]);
 
-    const isIOS = Platform.OS === 'ios';
-
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
-
     return (
         <Animated.View
             style={{
@@ -46,17 +42,13 @@ const ConnectionStatusBar: React.FC = () => {
                 opacity,
             }}
         >
-            <Box
-                w="full"
-                justifyContent="flex-end"
-                pb={isIOS ? undefined : 1}
-                height={isAndroidOrBelowIOSTenOrTab ? (isIOS ? 8 : 6) : 66}
-                bg={netInfo.isInternetReachable ? 'success.500' : 'error.500'}
-            >
-                <Text textAlign="center" w="full" fontSize="xs" color="white">{`${
-                    netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
-                }`}</Text>
-            </Box>
+            <SafeAreaView className={cn(netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive')}>
+                <View className={cn('flex-1 w-full h-max pb-4')}>
+                    <Text className="text-center w-full text-white">{`${
+                        netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
+                    }`}</Text>
+                </View>
+            </SafeAreaView>
         </Animated.View>
     );
 };
