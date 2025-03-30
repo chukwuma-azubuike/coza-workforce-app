@@ -16,6 +16,7 @@ import { Link, router } from 'expo-router';
 import { Colors } from '~/constants/Colors';
 import APP_ENV from '~/config/envConfig';
 import { THEME_CONFIG } from '~/config/appConfig';
+import FormErrorMessage from '~/components/ui/error-message';
 
 const VerifyEmail: React.FC = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -81,33 +82,20 @@ const VerifyEmail: React.FC = () => {
                             >
                                 {({ handleChange, handleSubmit, errors, touched }) => (
                                     <View className="gap-6 w-full">
-                                        <View className="gap-1">
+                                        <View className="gap-2">
                                             <Label>Email</Label>
                                             <Input
                                                 placeholder="jondoe@gmail.com"
-                                                // leftIcon={{
-                                                //     name: 'mail-outline',
-                                                //     type: 'ionicon',
-                                                // }}
+                                                leftIcon={{
+                                                    name: 'mail-outline',
+                                                }}
                                                 keyboardType="email-address"
                                                 onChangeText={handleChange('email')}
                                             />
+                                            {!!errors.email && touched.email && (
+                                                <FormErrorMessage>{errors.email}</FormErrorMessage>
+                                            )}
                                         </View>
-                                        {!!errors.email && touched.email && (
-                                            <Text
-                                                className="text-destructive"
-                                                // leftIcon={
-                                                //     <Icon
-                                                //         size={16}
-                                                //         name="warning"
-                                                //         type="antdesign"
-                                                //         color={THEME_CONFIG.error}
-                                                //     />
-                                                // }
-                                            >
-                                                {errors.email}
-                                            </Text>
-                                        )}
                                         <Button
                                             onPress={handleSubmit as any}
                                             isLoading={isLoading || isFetching}
@@ -119,7 +107,7 @@ const VerifyEmail: React.FC = () => {
                                 )}
                             </Formik>
                             <View className="flex-row items-center gap-2 w-full justify-center">
-                                <Text className="text-base text-muted-foreground">Already registered?</Text>
+                                <Text className="text-muted-foreground">Already registered?</Text>
                                 <Link href="/login">
                                     <Text className="text-primary">Login</Text>
                                 </Link>
