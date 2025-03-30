@@ -338,6 +338,7 @@ export const accountServiceSlice = createApi({
 // Use exported hook in relevant components
 export const {
     useSendOTPQuery,
+    useLazySendOTPQuery,
     useGetUsersQuery,
     useLoginMutation,
     useRegisterMutation,

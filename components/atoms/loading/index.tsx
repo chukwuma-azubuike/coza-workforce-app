@@ -1,9 +1,6 @@
 import React from 'react';
-import useAppColorMode from '@hooks/theme/colorMode';
-import { ActivityIndicatorProps, Image, View, ViewProps } from 'react-native';
-import { ActivityIndicator } from 'react-native';
-import VStackComponent from '@components/layout/v-stack';
-import CenterComponent from '@components/layout/center';
+import { useColorScheme } from '~/lib/useColorScheme';
+import { ActivityIndicator, ActivityIndicatorProps, Image, View, ViewProps } from 'react-native';
 
 const logoWhite = require('@assets/images/COZA-Logo-white.png');
 const logoBlack = require('@assets/images/COZA-Logo-black.png');
@@ -14,19 +11,19 @@ interface ILoadingProps extends ViewProps {
 }
 
 const Loading: React.FC<ILoadingProps> = ({ bootUp, spinnerProps, ...props }) => {
-    const { isLightMode } = useAppColorMode();
+    const { isLightColorScheme } = useColorScheme();
 
     return (
-        <View style={{ flex: 1, display: 'flex', justifyContent: 'center' }} {...props}>
-            <VStackComponent style={{ justifyContent: 'center' }}>
+        <View {...props}>
+            <View className="justify-center">
                 {bootUp ? (
-                    <CenterComponent>
-                        <Image alt="startuplogo" source={isLightMode ? logoBlack : logoWhite} />
-                    </CenterComponent>
+                    <View>
+                        <Image alt="startuplogo" source={isLightColorScheme ? logoBlack : logoWhite} />
+                    </View>
                 ) : (
                     <ActivityIndicator {...spinnerProps} />
                 )}
-            </VStackComponent>
+            </View>
         </View>
     );
 };

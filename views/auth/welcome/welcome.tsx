@@ -1,42 +1,42 @@
 import React from 'react';
-import { Box, Heading, Text, VStack } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
-import ButtonComponent from '@components/atoms/button';
-import ViewWrapper from '@components/layout/viewWrapper';
 import { APP_NAME, APP_SLOGAN } from '@env';
 import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
+import { KeyboardAvoidingView, Platform, View } from 'react-native';
+import { SafeAreaView } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Button } from '~/components/ui/button';
+import { router } from 'expo-router';
 
 const Welcome: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
-    const { navigate } = navigation;
-
-    const goToLogin = () => navigate('Login');
-    const goToRegister = () => navigate('Verify Email');
+    const goToLogin = () => router.push('/login');
+    const goToRegister = () => router.push('/verify-email');
 
     return (
-        <ViewWrapper style={{ paddingTop: 40 }}>
-            <Box w="full" h="full" justifyContent="space-between" pb={4}>
-                <VStack space={32} pb={5} px={4} pt={10}>
-                    <VStack space={6} alignItems="center" justifyContent="space-around">
-                        <Logo />
-                        <Heading size="lg">{APP_NAME}</Heading>
-                        <Text color="gray.400">{APP_SLOGAN}</Text>
-                    </VStack>
-                    <VStack space={1} w="full">
-                        <ButtonComponent mt={4} onPress={goToLogin}>
-                            Login
-                        </ButtonComponent>
-                        <ButtonComponent mt={4} secondary onPress={goToRegister}>
-                            Register
-                        </ButtonComponent>
-                    </VStack>
-                </VStack>
-                <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
-                    <SupportLink />
-                </Box>
-            </Box>
-        </ViewWrapper>
+        <SafeAreaView>
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                <View className="w-full flex-1 justify-between pb-4">
+                    <View className="space-y-10 px-4">
+                        <View className="space-y-6 px-4 items-center justify-around">
+                            <Logo />
+                            <Text className="text-2xl">{APP_NAME}</Text>
+                            <Text className="text-muted-foreground">{APP_SLOGAN}</Text>
+                        </View>
+                        <View className="space-y-1 pt-4">
+                            <Button onPress={goToLogin}>Login</Button>
+                            <Button variant="outline" onPress={goToRegister}>
+                                Register
+                            </Button>
+                        </View>
+                    </View>
+                    <View className="w-full justify-center items-center">
+                        <SupportLink />
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 
