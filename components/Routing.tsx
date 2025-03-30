@@ -40,9 +40,9 @@ const Routing: React.FC = () => {
             {/* Unauthenticated Screens */}
             {!isLoggedIn ? (
                 <Stack>
-                    {/* <Stack.Screen name="index" options={{ headerShown: false }} /> */}
-                    <Stack.Screen name="(auth)/signin" options={{ headerShown: false }} />
-                    <Stack.Screen name="(auth)/signup" options={{ headerShown: false }} />
+                    <Stack.Screen name="index" options={{ headerShown: false }} />
+                    <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
+                    <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/verify" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/forgot-password" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/forgot-password-otp" options={{ headerShown: false }} />

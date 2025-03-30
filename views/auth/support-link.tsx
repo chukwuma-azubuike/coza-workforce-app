@@ -1,9 +1,9 @@
-import { Linking } from 'react-native';
 import React from 'react';
-import { Icon } from '@rneui/themed';
-import { HStack, Text } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
+import { Linking, TouchableOpacity } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { THEME_CONFIG } from '@config/appConfig';
+import { Text } from '~/components/ui/text';
 
 const SupportLink = () => {
     const handleNotificationPress = () => {
@@ -11,19 +11,14 @@ const SupportLink = () => {
     };
     const { isLightMode } = useAppColorMode();
     return (
-        <HStack px={2} py={1} pb={1.5} borderRadius="lg" alignItems="center" _dark={{ bg: 'gray.800', space: 2 }}>
-            <Icon
-                color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
-                iconStyle={{ fontSize: 16 }}
-                name="help"
-                underlayColor="white"
-                raised={isLightMode}
-                borderRadius={10}
-                type="Entypo"
-                size={8}
-            />
-            <Text onPress={handleNotificationPress}>Support</Text>
-        </HStack>
+        <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={handleNotificationPress}
+            className="flex-row px-3 py-1 pb-1 rounded-xl items-center bg-muted gap-x-2"
+        >
+            <Ionicons color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray} name="help" size={24} />
+            <Text>Support</Text>
+        </TouchableOpacity>
     );
 };
 

@@ -3,12 +3,12 @@ import { SafeAreaView } from 'react-native';
 import { Text } from '~/components/ui/text';
 // import { SignIn } from '~/modules/auth';
 
-const SignInScreen: React.FC = () => {
+const RegisterScreen: React.FC = () => {
     return (
         <SafeAreaView>
-            <Text>SignIn</Text>;
+            <Text>RegisterScreen</Text>;
         </SafeAreaView>
     );
 };
 
-export default SignInScreen;
+export default RegisterScreen;
