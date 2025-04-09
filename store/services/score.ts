@@ -9,6 +9,10 @@ export const scoreServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         getUserScore: endpoint.query<IScore, IUser['_id']>({
             query: userId => ({

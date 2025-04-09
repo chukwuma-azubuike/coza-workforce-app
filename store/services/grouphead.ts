@@ -25,6 +25,10 @@ export const groupHeadServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         submitGhReport: endpoint.mutation<any, IGHReportPayload>({
             query: body => ({

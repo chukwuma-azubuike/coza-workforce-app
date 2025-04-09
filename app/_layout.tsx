@@ -1,20 +1,20 @@
 import * as React from 'react';
 
-import store from '~/store';
+import store, { persistor } from '~/store';
 import { DarkTheme, DefaultTheme, Theme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
 import { Provider } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
 import { Platform } from 'react-native';
 import { NAV_THEME } from '~/lib/constants';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
-import { ThemeToggle } from '~/components/ThemeToggle';
 import ConnectionStatusBar from '~/components/atoms/status-bar';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
 
 import '~/global.css';
 import Routing from '~/components/Routing';
+import { PersistGate } from 'redux-persist/integration/react';
+import Loading from '~/components/atoms/loading';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -55,12 +55,14 @@ export default function RootLayout() {
 
     return (
         <Provider store={store}>
-            <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                <ConnectionStatusBar />
-                <Routing />
-                <PortalHost />
-            </ThemeProvider>
+            <PersistGate loading={<Loading bootUp />} persistor={persistor}>
+                <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+                    <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                    <ConnectionStatusBar />
+                    <Routing />
+                    <PortalHost />
+                </ThemeProvider>
+            </PersistGate>
         </Provider>
     );
 }

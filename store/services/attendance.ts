@@ -46,6 +46,10 @@ export const attendanceServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         clockIn: endpoint.mutation<IAttendance, IClockInPayload>({
             query: body => ({

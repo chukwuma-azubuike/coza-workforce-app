@@ -1,16 +1,19 @@
 import React from 'react';
-import { HStack, Text } from 'native-base';
 import AvatarComponent from '@components/atoms/avatar';
-import { Icon } from '@rneui/themed';
+
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { Linking, TouchableOpacity } from 'react-native';
+import { Linking, TouchableOpacity, View } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
-import { isIOS } from '@rneui/base';
+
 import { STATUS_COLORS } from '@constants/notification-types';
+import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
+import getFirstCharacter from '~/utils/getFirstCharacter';
+import { Text } from '~/components/ui/text';
+import { Ionicons } from '@expo/vector-icons';
 
 const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     const handleNotificationPress = () => {
@@ -32,42 +35,22 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     });
 
     return (
-        <HStack
-            px={4}
-            w="100%"
-            zIndex={20}
-            pt={isIOS ? 3 : 6}
-            alignItems="center"
-            _dark={{ bg: 'black' }}
-            _light={{ bg: 'white' }}
-            justifyContent="space-between"
-        >
+        <View className="px-4 w-full z-20 items-center bg-background justify-between">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
-                    size="xs"
-                    shadow={4}
-                    _dark={{ bg: 'gray.900' }}
-                    _light={{ bg: 'gray.100' }}
-                    firstName={user?.firstName}
+                    alt="profile-pic"
                     lastName={user?.lastName}
+                    firstName={user?.firstName}
                     badgeColor={STATUS_COLORS[user?.status]}
                     imageUrl={user.pictureUrl ?? AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
-            <Text
-                flex={1}
-                fontSize="lg"
-                fontWeight="light"
-                textAlign="center"
-                justifyContent="center"
-                _dark={{ color: 'gray.400' }}
-                _light={{ color: 'gray.600' }}
-            >
+            <Text className="flex-1 text-lg font-light text-center justify-center text-muted-foreground">
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
             {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>
-                <Icon
+                <Ionicons
                     size={16}
                     type="ionicon"
                     borderRadius={10}
@@ -78,7 +61,7 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
                 />
             </TouchableOpacity> */}
             <TouchableOpacity onPress={handleSupportPress} activeOpacity={0.6}>
-                <Icon
+                <Ionicons
                     size={16}
                     name="help"
                     type="Entypo"
@@ -88,7 +71,7 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
                     color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
                 />
             </TouchableOpacity>
-        </HStack>
+        </View>
     );
 };
 

@@ -3,10 +3,9 @@ import RegisterStepFour from './register-step-four';
 import RegisterStepOne from './register-step-one';
 import RegisterStepThree from './register-step-three';
 import RegisterStepTwo from './register-step-two';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import Stepper, { IRegisterPagesProps } from '@components/composite/stepper';
 import { IRegisterPayload } from '@store/types';
+import { router, useLocalSearchParams } from 'expo-router';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -22,14 +21,14 @@ export interface IRegisterContext {
 
 export const RegisterFormContext = React.createContext<IRegisterContext>({} as IRegisterContext);
 
-const Register: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route: { params } }) => {
-    const INITIAL_VALUES = params as IRegisterPayload;
+const Register: React.FC = () => {
+    const INITIAL_VALUES = useLocalSearchParams() as unknown as IRegisterPayload;
 
     const [formValues, setFormValues] = React.useState<IRegisterPayload>(INITIAL_VALUES);
 
     return (
         <RegisterFormContext.Provider value={{ formValues, setFormValues }}>
-            <Stepper disableSwipe pages={PAGES} navigation={navigation} />
+            <Stepper disableSwipe pages={PAGES} navigation={router} />
         </RegisterFormContext.Provider>
     );
 };

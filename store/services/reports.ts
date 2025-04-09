@@ -168,6 +168,10 @@ export const reportsServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         createChildCareReport: endpoint.mutation<void, IChildCareReportPayload>({
             query: body => ({

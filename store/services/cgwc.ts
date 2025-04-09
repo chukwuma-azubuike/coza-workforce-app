@@ -20,7 +20,10 @@ export const cgwcServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
     refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         createCGWC: endpoint.mutation<ICGWC, ICGWCPayload>({
             query: body => ({

@@ -1,215 +1,193 @@
-import React from 'react';
-import { Box, FormControl, Heading, HStack, VStack, WarningOutlineIcon } from 'native-base';
-import { InputComponent } from '@components/atoms/input';
-import ButtonComponent from '@components/atoms/button';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { IRegistrationPageStep } from './types';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
-import { Field, Formik } from 'formik';
+import React, { useState } from 'react';
+import { Input } from '~/components/ui/input';
+import { IRegisterFormStepTwo, IRegistrationPageStep } from './types';
+import { RegisterFormContext } from '.';
+import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_2 } from '@utils/schemas';
-import { RegisterFormContext } from '.';
-import PhoneNumberInput from '@components/atoms/phone-input';
-import Utils from '@utils/index';
-import CenterComponent from '@components/layout/center';
-import useDevice from '@hooks/device';
+import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Label } from '~/components/ui/label';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
+import { PhoneInput } from '~/components/ui/phone-input';
+import { ICountry } from 'react-native-international-phone-number';
+import PickerSelect from '~/components/ui/picker-select';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
-    const handleBackPress = () => onStepPress(0);
-
-    const onSubmit = () => {};
-
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
+    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
 
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+    const handleSelectedCountry = (country: ICountry) => {
+        setSelectedCountry(country);
+    };
+
+    const onSubmit: FormikConfig<IRegisterFormStepTwo>['onSubmit'] = values => {
+        setFormValues(prev => {
+            return { ...prev, ...values };
+        });
+
+        onStepPress(2);
+    };
+
+    const onGoback = (values: IRegisterFormStepTwo) => () => {
+        setFormValues(prev => {
+            return { ...prev, ...values };
+        });
+
+        onStepPress(0);
+    };
 
     return (
-        <ViewWrapper scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
-            <CenterComponent>
-                <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                    <Heading textAlign="left">Register</Heading>
-                    <Box alignItems="center" w="100%">
-                        <Formik<IRegisterPayload>
+        <SafeAreaView className="flex-1">
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+                <View className="flex-1 px-4 gap-8 pt-8">
+                    <Text className="text-3xl font-bold">Others</Text>
+                    <View className="items-center w-full flex-1">
+                        <Formik<IRegisterFormStepTwo>
                             onSubmit={onSubmit}
                             validateOnMount={false}
                             validationSchema={RegisterSchema_2}
                             initialValues={formValues as IRegisterPayload}
-                            validate={value => Utils.validatePhoneNumber(value.nextOfKinPhoneNo)}
                         >
                             {({
                                 errors,
                                 values,
                                 touched,
+                                isValid,
+                                handleBlur,
                                 validateForm,
                                 handleChange,
                                 setFieldError,
                                 setFieldTouched,
+                                ...props
                             }) => {
-                                const handleContinuePress = () => {
-                                    validateForm().then(e => {
-                                        if (Object.keys(e).length === 0) {
-                                            setFormValues(prev => {
-                                                return { ...prev, ...values };
-                                            });
-                                            onStepPress(2);
-                                        }
-                                        const errorKey = Object.keys(e)[0];
-                                        setFieldTouched(errorKey);
-                                        setFieldError(errorKey, 'This is a required field');
-                                    });
-                                };
-
                                 return (
-                                    <>
-                                        <FormControl isRequired isInvalid={!!errors?.gender && touched.gender}>
-                                            <FormControl.Label>Gender</FormControl.Label>
-                                            <SelectComponent
-                                                valueKey="_id"
-                                                displayKey="name"
-                                                selectedValue={values?.gender}
-                                                placeholder="Enter your gender"
-                                                items={[
-                                                    { _id: 'M', name: 'Male' },
-                                                    { _id: 'F', name: 'Female' },
-                                                ]}
-                                                onValueChange={handleChange('gender') as any}
-                                            >
-                                                <SelectItemComponent label="Male" value="M" />
-                                                <SelectItemComponent label="Female" value="F" />
-                                            </SelectComponent>
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
+                                    <View className="w-full gap-4 flex-1 justify-between">
+                                        <ScrollView className="w-full gap-3 flex-1">
+                                            <View className="w-full gap-3">
+                                                <View className="gap-4">
+                                                    <Label>Gender</Label>
+                                                    <PickerSelect
+                                                        valueKey="value"
+                                                        labelKey="label"
+                                                        items={[
+                                                            { label: 'Male', value: 'M' },
+                                                            { label: 'Female', value: 'F' },
+                                                        ]}
+                                                        value={values.gender}
+                                                        onValueChange={handleChange('gender')}
                                                     />
-                                                }
-                                            >
-                                                {errors?.gender}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
+                                                    {errors.gender && touched.gender && (
+                                                        <Text className="text-destructive">{errors.gender}</Text>
+                                                    )}
+                                                </View>
+                                                <View className="gap-1">
+                                                    <Label>Occupation</Label>
+                                                    <Input
+                                                        leftIcon={{
+                                                            name: 'briefcase-outline',
+                                                        }}
+                                                        value={values?.occupation}
+                                                        onBlur={handleBlur('occupation')}
+                                                        placeholder="Enter your occupation"
+                                                        onChangeText={handleChange('occupation')}
+                                                    />
+                                                    {!!errors.occupation && !!touched.occupation && (
+                                                        <FormErrorMessage>{errors.occupation}</FormErrorMessage>
+                                                    )}
+                                                </View>
 
-                                        <FormControl isRequired isInvalid={!!errors?.occupation && touched.occupation}>
-                                            <FormControl.Label>Occupation</FormControl.Label>
-                                            <InputComponent
-                                                isRequired
-                                                leftIcon={{
-                                                    name: 'briefcase-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                value={values?.occupation}
-                                                placeholder="Enter your occupation"
-                                                onChangeText={handleChange('occupation')}
-                                            />
-                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                This field cannot be empty
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl
-                                            isRequired
-                                            isInvalid={!!errors?.placeOfWork && touched.placeOfWork}
-                                        >
-                                            <FormControl.Label>Place of work</FormControl.Label>
-                                            <InputComponent
-                                                isRequired
-                                                leftIcon={{
-                                                    name: 'organization',
-                                                    type: 'octicon',
-                                                }}
-                                                value={values?.placeOfWork}
-                                                placeholder="Enter your place of work"
-                                                onChangeText={handleChange('placeOfWork')}
-                                            />
-                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                This field cannot be empty
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl isRequired isInvalid={!!errors?.nextOfKin && touched.nextOfKin}>
-                                            <FormControl.Label>Next of Kin</FormControl.Label>
-                                            <InputComponent
-                                                leftIcon={{
-                                                    name: 'person-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                placeholder="Enter their name"
-                                                isRequired
-                                                value={values?.nextOfKin}
-                                                onChangeText={handleChange('nextOfKin')}
-                                            />
-                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                This field cannot be empty
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <Field
-                                            name="nextOfKinPhoneNo"
-                                            label="Next of Kin Contact"
-                                            required
-                                            value={values?.nextOfKinPhoneNo}
-                                            component={PhoneNumberInput}
-                                        />
+                                                <View className="gap-1">
+                                                    <Label>Place of work</Label>
+                                                    <Input
+                                                        leftIcon={{
+                                                            name: 'people',
+                                                        }}
+                                                        value={values?.placeOfWork}
+                                                        onBlur={handleBlur('placeOfWork')}
+                                                        placeholder="Enter your place of work"
+                                                        onChangeText={handleChange('placeOfWork')}
+                                                    />
+                                                    {!!errors.placeOfWork && !!touched.placeOfWork && (
+                                                        <FormErrorMessage>{errors.placeOfWork}</FormErrorMessage>
+                                                    )}
+                                                </View>
 
-                                        <FormControl
-                                            isRequired
-                                            isInvalid={!!errors?.maritalStatus && touched.maritalStatus}
-                                        >
-                                            <FormControl.Label>Marital Status</FormControl.Label>
-                                            <SelectComponent
-                                                selectedValue={values?.maritalStatus}
-                                                onValueChange={handleChange('maritalStatus') as any}
-                                                valueKey="_id"
-                                                displayKey="name"
-                                                placeholder="Enter your marital status"
-                                                items={[
-                                                    { _id: 'Single', name: 'Single' },
-                                                    { _id: 'Married', name: 'Married' },
-                                                    { _id: 'Widowed', name: 'Widowed' },
-                                                    { _id: 'Separated', name: 'Separated' },
-                                                    { _id: 'Divorced', name: 'Divorced' },
-                                                ]}
+                                                <View className="gap-1">
+                                                    <Label>Next of kin</Label>
+                                                    <Input
+                                                        leftIcon={{
+                                                            name: 'person-outline',
+                                                        }}
+                                                        value={values?.nextOfKin}
+                                                        placeholder="Enter their name"
+                                                        onBlur={handleBlur('nextOfKin')}
+                                                        onChangeText={handleChange('nextOfKin')}
+                                                    />
+                                                    {!!errors.nextOfKin && !!touched.nextOfKin && (
+                                                        <FormErrorMessage>{errors.nextOfKin}</FormErrorMessage>
+                                                    )}
+                                                </View>
+
+                                                <View className="gap-1">
+                                                    <Label>Next of kin's phone number</Label>
+                                                    <PhoneInput
+                                                        defaultCountry="NG"
+                                                        value={values.nextOfKinPhoneNo}
+                                                        error={errors.nextOfKinPhoneNo}
+                                                        touched={touched.nextOfKinPhoneNo}
+                                                        selectedCountry={selectedCountry}
+                                                        onBlur={handleBlur('nextOfKinPhoneNo')}
+                                                        placeholder="Enter their phone number"
+                                                        onChangeSelectedCountry={handleSelectedCountry}
+                                                        onChangePhoneNumber={handleChange('nextOfKinPhoneNo')}
+                                                    />
+                                                </View>
+
+                                                <View className="gap-1">
+                                                    <Label>Marital Status</Label>
+                                                    <PickerSelect
+                                                        valueKey="value"
+                                                        labelKey="label"
+                                                        items={[
+                                                            { label: 'Single', value: 'Single' },
+                                                            { label: 'Married', value: 'Married' },
+                                                            { label: 'Widowed', value: 'Widowed' },
+                                                            { label: 'Separated', value: 'Separated' },
+                                                            { label: 'Divorced', value: 'Divorced' },
+                                                        ]}
+                                                        value={values.maritalStatus}
+                                                        onValueChange={handleChange('maritalStatus')}
+                                                    />
+                                                    {!!errors.maritalStatus && !!touched.maritalStatus && (
+                                                        <Text className="text-destructive">{errors.maritalStatus}</Text>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        </ScrollView>
+                                        <View className="w-full flex-row gap-4 mb-4">
+                                            <Button variant="outline" onPress={onGoback(values)} className="flex-1">
+                                                Back
+                                            </Button>
+                                            <Button
+                                                disabled={!isValid}
+                                                onPress={() => {
+                                                    onSubmit(values, props as any);
+                                                }}
+                                                className="flex-1"
                                             >
-                                                <SelectItemComponent label="Single" value="Single" />
-                                                <SelectItemComponent label="Married" value="Married" />
-                                                <SelectItemComponent label="Widowed" value="Widowed" />
-                                                <SelectItemComponent label="Separated" value="Separated" />
-                                                <SelectItemComponent label="Divorced" value="Divorced" />
-                                            </SelectComponent>
-                                            <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                This field cannot be empty
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl>
-                                            <HStack space={4} flex={1} mt={2} justifyContent="space-between">
-                                                <ButtonComponent
-                                                    secondary
-                                                    size="md"
-                                                    style={{ flex: 1 }}
-                                                    onPress={handleBackPress}
-                                                >
-                                                    Go back
-                                                </ButtonComponent>
-                                                <ButtonComponent
-                                                    size="md"
-                                                    style={{ flex: 1 }}
-                                                    onPress={handleContinuePress}
-                                                >
-                                                    Continue
-                                                </ButtonComponent>
-                                            </HStack>
-                                        </FormControl>
-                                    </>
+                                                Continue
+                                            </Button>
+                                        </View>
+                                    </View>
                                 );
                             }}
                         </Formik>
-                    </Box>
-                </VStack>
-            </CenterComponent>
-        </ViewWrapper>
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 

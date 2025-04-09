@@ -36,6 +36,10 @@ export const permissionsServiceSlice = createApi({
 
     tagTypes: [SERVICE_URL],
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         requestPermission: endpoint.mutation<IPermission, IRequestPermissionPayload>({
             query: body => ({

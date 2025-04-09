@@ -4,7 +4,6 @@ import {
     IDefaultResponse,
     IDepartment,
     IGHDepartment,
-    IRequestDepartmentPayload,
     ICreateDepartmentPayload,
     REST_API_VERBS,
 } from '../types';
@@ -16,6 +15,10 @@ export const departmentServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
     baseQuery: fetchUtils.baseQuery,
+
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
 
     endpoints: endpoint => ({
         createDepartment: endpoint.mutation<IDepartment, ICreateDepartmentPayload>({

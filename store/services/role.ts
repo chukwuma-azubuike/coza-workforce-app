@@ -9,6 +9,10 @@ export const roleServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         getRoles: endpoint.query<IRole[], void>({
             query: () => `/${SERVICE_URL}/getRoles`,

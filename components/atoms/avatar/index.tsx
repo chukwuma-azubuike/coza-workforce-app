@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-// import FastImage from 'react-native-fast-image';
-import { SIZE, THEME_CONFIG } from '~/config/appConfig';
+import { THEME_CONFIG } from '~/config/appConfig';
 import { IStatusColors } from '~/types/app';
 import { STATUS_COLORS } from '~/constants/notification-types';
 import Loading from '../loading';

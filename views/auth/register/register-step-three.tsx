@@ -1,187 +1,181 @@
 import React from 'react';
-import { Box, FormControl, Heading, HStack, Stack, VStack, WarningOutlineIcon } from 'native-base';
-import { InputComponent } from '@components/atoms/input';
-import ButtonComponent from '@components/atoms/button';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { IRegistrationPageStep } from './types';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
-import { Formik } from 'formik';
+import { Input } from '~/components/ui/input';
+import { IRegisterFormStepThree, IRegistrationPageStep } from './types';
+import { RegisterFormContext } from '.';
+import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_3 } from '@utils/schemas';
-import { RegisterFormContext } from '.';
-import { IMGBB_ALBUM_ID } from '@config/uploadConfig';
-import useUpload from '@hooks/upload';
-import UploadButton from '@components/atoms/upload';
-import useDevice from '@hooks/device';
-import CenterComponent from '@components/layout/center';
+import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Label } from '~/components/ui/label';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
+import DateTimePicker from '~/components/ui/date-time-picker';
+import dayjs from 'dayjs';
+import FilePickerUploader from '~/components/composite/file-picker-uploader';
+import { S3_BUCKET_FOLDERS } from '~/constants';
 
 const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
-    const onSubmit = () => {};
-    const handleBackPress = () => onStepPress(1);
-
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
-    const { initialise, loading, isSuccess, isError, error, data, reset } = useUpload({
-        albumId: IMGBB_ALBUM_ID.PROFILE_PICTURE,
-    });
+    const onSubmit: FormikConfig<IRegisterFormStepThree>['onSubmit'] = values => {
+        setFormValues(prev => {
+            return { ...prev, ...values };
+        });
 
-    React.useEffect(() => {
-        if (data?.display_url && isSuccess) {
-            setFormValues(prev => {
-                return { ...prev, pictureUrl: data.display_url };
-            });
-        }
-        if (isError) {
-            reset();
-        }
-    }, [isSuccess, isError, data]);
+        onStepPress(3);
+    };
 
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
+    const onGoback = (values: IRegisterFormStepThree) => () => {
+        setFormValues(prev => {
+            return { ...prev, ...values };
+        });
+
+        onStepPress(1);
+    };
 
     return (
-        <ViewWrapper scroll style={{ paddingTop: isAndroidOrBelowIOSTenOrTab ? 20 : 100 }}>
-            <CenterComponent>
-                <VStack space="lg" alignItems="flex-start" w="100%" pt={20} px={4}>
-                    <Heading textAlign="left">Register</Heading>
-                    <Box alignItems="center" w="100%">
-                        <Stack w="100%" space={1}>
-                            <Formik<IRegisterPayload>
-                                onSubmit={onSubmit}
-                                validateOnMount={false}
-                                validationSchema={RegisterSchema_3}
-                                initialValues={formValues as IRegisterPayload}
-                            >
-                                {({
-                                    errors,
-                                    values,
-                                    touched,
-                                    validateForm,
-                                    handleChange,
-                                    setFieldError,
-                                    setFieldValue,
-                                    setFieldTouched,
-                                }) => {
-                                    const handleContinuePress = () => {
-                                        validateForm().then(e => {
-                                            if (Object.keys(e).length === 0) {
-                                                setFormValues(prev => {
-                                                    return { ...prev, ...values };
-                                                });
-                                                onStepPress(3);
-                                            }
-                                            const errorKey = Object.keys(e)[0];
-                                            setFieldTouched(errorKey);
-                                            setFieldError(errorKey, 'This is a required field');
-                                        });
-                                    };
+        <SafeAreaView className="flex-1">
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+                <View className="flex-1 px-4 gap-8 pt-8">
+                    <Text className="text-3xl font-bold">Social</Text>
+                    <View className="items-center w-full flex-1">
+                        <Formik<IRegisterFormStepThree>
+                            onSubmit={onSubmit}
+                            validateOnMount={false}
+                            validationSchema={RegisterSchema_3}
+                            initialValues={formValues as IRegisterPayload}
+                        >
+                            {({
+                                errors,
+                                values,
+                                touched,
+                                isValid,
+                                handleBlur,
+                                validateForm,
+                                handleChange,
+                                setFieldError,
+                                setFieldTouched,
+                                ...props
+                            }) => {
+                                return (
+                                    <View className="w-full gap-4 flex-1 justify-between">
+                                        <ScrollView className="w-full gap-3 flex-1">
+                                            <View className="w-full gap-3">
+                                                <View className="gap-1">
+                                                    <DateTimePicker
+                                                        mode="date"
+                                                        className="flex-1"
+                                                        error={errors.birthDay}
+                                                        touched={touched.birthDay}
+                                                        label="Date of birth"
+                                                        initialValue={values.birthDay}
+                                                        placeholder="Enter your date of birth"
+                                                        maximumDate={dayjs().subtract(18, 'years').toDate()}
+                                                        minimumDate={dayjs().subtract(120, 'years').toDate()}
+                                                        onConfirm={
+                                                            handleChange('birthDay') as unknown as (value: Date) => void
+                                                        }
+                                                    />
+                                                    {!!errors.birthDay && !!touched.birthDay && (
+                                                        <FormErrorMessage>{errors.birthDay}</FormErrorMessage>
+                                                    )}
+                                                </View>
 
-                                    const onSelectDate = (field: string, value: any) => setFieldValue(field, value);
+                                                <View className="gap-1">
+                                                    <Label>Facebook</Label>
+                                                    <Input
+                                                        leftIcon={{
+                                                            name: 'logo-facebook',
+                                                        }}
+                                                        value={values?.socialMedia?.facebook}
+                                                        placeholder="Enter your facebook handle"
+                                                        onBlur={handleBlur('socialMedia.facebook')}
+                                                        onChangeText={handleChange('socialMedia.facebook')}
+                                                    />
+                                                    {!!errors?.socialMedia?.facebook &&
+                                                        !!touched?.socialMedia?.facebook && (
+                                                            <FormErrorMessage>
+                                                                {errors?.socialMedia?.facebook}
+                                                            </FormErrorMessage>
+                                                        )}
+                                                </View>
 
-                                    return (
-                                        <>
-                                            <FormControl isRequired isInvalid={!!errors?.birthDay && touched.birthDay}>
-                                                <DateTimePickerComponent
-                                                    mode="date"
-                                                    fieldName="birthDay"
-                                                    label="Next birthday"
-                                                    onSelectDate={onSelectDate}
-                                                    dateFormat="dayofweek day month"
-                                                    value={values?.birthDay}
-                                                />
-                                                <FormControl.ErrorMessage>{errors?.birthDay}</FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormControl.Label>Facebook</FormControl.Label>
-                                                <InputComponent
-                                                    leftIcon={{
-                                                        name: 'facebook',
-                                                        type: 'material',
-                                                    }}
-                                                    isRequired
-                                                    value={values?.socialMedia?.facebook}
-                                                    placeholder="Enter your facebook handle"
-                                                    onChangeText={handleChange('socialMedia.facebook')}
-                                                />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormControl.Label>Instagram</FormControl.Label>
-                                                <InputComponent
-                                                    isRequired
-                                                    leftIcon={{
-                                                        name: 'logo-instagram',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    value={values?.socialMedia?.instagram}
-                                                    placeholder="Enter your instagram handle"
-                                                    onChangeText={handleChange('socialMedia.instagram')}
-                                                />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormControl.Label>Twitter</FormControl.Label>
-                                                <InputComponent
-                                                    isRequired
-                                                    leftIcon={{
-                                                        name: 'logo-twitter',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    value={values?.socialMedia?.twitter}
-                                                    placeholder="Enter your twitter handle"
-                                                    onChangeText={handleChange('socialMedia.twitter')}
-                                                />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl>
-                                                <UploadButton
-                                                    mt={2}
-                                                    error={error}
-                                                    isSuccess={!!isSuccess}
-                                                    onPress={initialise}
-                                                    isLoading={loading}
-                                                    data={data as any}
-                                                    isError={isError}
-                                                >
-                                                    Upload profile picture
-                                                </UploadButton>
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <HStack space={4} mt={2} justifyContent="space-between">
-                                                <ButtonComponent
-                                                    isDisabled={loading}
-                                                    onPress={handleBackPress}
-                                                    secondary
-                                                    size="md"
-                                                    style={{ flex: 1 }}
-                                                >
-                                                    Go back
-                                                </ButtonComponent>
-                                                <ButtonComponent
-                                                    size="md"
-                                                    isDisabled={loading}
-                                                    onPress={handleContinuePress}
-                                                    style={{ flex: 1 }}
-                                                >
-                                                    Continue
-                                                </ButtonComponent>
-                                            </HStack>
-                                        </>
-                                    );
-                                }}
-                            </Formik>
-                        </Stack>
-                    </Box>
-                </VStack>
-            </CenterComponent>
-        </ViewWrapper>
+                                                <View className="gap-1">
+                                                    <Label>Instagram</Label>
+                                                    <Input
+                                                        leftIcon={{
+                                                            name: 'logo-instagram',
+                                                        }}
+                                                        value={values?.socialMedia?.instagram}
+                                                        placeholder="Enter your instagram handle"
+                                                        onBlur={handleBlur('socialMedia.instagram')}
+                                                        onChangeText={handleChange('socialMedia.instagram')}
+                                                    />
+                                                    {!!errors?.socialMedia?.instagram &&
+                                                        !!touched?.socialMedia?.instagram && (
+                                                            <FormErrorMessage>
+                                                                {errors?.socialMedia?.instagram}
+                                                            </FormErrorMessage>
+                                                        )}
+                                                </View>
+
+                                                <View className="gap-1">
+                                                    <Label>Twitter</Label>
+                                                    <Input
+                                                        leftIcon={{
+                                                            name: 'logo-twitter',
+                                                        }}
+                                                        value={values?.socialMedia?.twitter}
+                                                        placeholder="Enter your twitter handle"
+                                                        onBlur={handleBlur('socialMedia.twitter')}
+                                                        onChangeText={handleChange('socialMedia.twitter')}
+                                                    />
+                                                    {!!errors?.socialMedia?.twitter &&
+                                                        !!touched?.socialMedia?.twitter && (
+                                                            <FormErrorMessage>
+                                                                {errors?.socialMedia?.twitter}
+                                                            </FormErrorMessage>
+                                                        )}
+                                                </View>
+
+                                                <View className="gap-1">
+                                                    <FilePickerUploader
+                                                        type="gallery"
+                                                        user={formValues as any}
+                                                        allowedTypes={['image/*']}
+                                                        label="Upload profile picture"
+                                                        onUploadSuccess={handleChange('pictureUrl')}
+                                                        s3Folder={S3_BUCKET_FOLDERS.profile_pictures}
+                                                    />
+                                                    {errors.pictureUrl && touched.pictureUrl && (
+                                                        <Text className="text-destructive">{errors.pictureUrl}</Text>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        </ScrollView>
+                                        <View className="w-full flex-row gap-4 mb-4">
+                                            <Button variant="outline" className="flex-1" onPress={onGoback(values)}>
+                                                Back
+                                            </Button>
+                                            <Button
+                                                disabled={!isValid}
+                                                onPress={() => {
+                                                    onSubmit(values, props as any);
+                                                }}
+                                                className="flex-1"
+                                            >
+                                                Continue
+                                            </Button>
+                                        </View>
+                                    </View>
+                                );
+                            }}
+                        </Formik>
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 

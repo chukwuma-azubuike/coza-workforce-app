@@ -6,17 +6,16 @@ import {
     ScrollViewProps,
     useColorScheme,
     ScrollView,
+    Platform,
     KeyboardAvoidingViewProps,
 } from 'react-native';
-import { InterfaceViewProps } from 'native-base/lib/typescript/components/basic/View/types';
 import Empty from '../atoms/empty';
 import { View } from 'react-native';
-import { isIOS } from '@rneui/base';
 
 interface IViewWrapper
     extends ScrollViewProps,
         ViewProps,
-        Partial<React.ForwardRefExoticComponent<InterfaceViewProps & React.RefAttributes<unknown>>> {
+        Partial<React.ForwardRefExoticComponent<ViewProps & React.RefAttributes<unknown>>> {
     scroll?: boolean;
     noPadding?: boolean;
     refreshing?: boolean;
@@ -47,7 +46,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                         flex: 1,
                         backgroundColor: THEME[scheme],
                     }}
-                    behavior={isIOS ? avoidKeyboardBehavior || 'position' : undefined}
+                    behavior={Platform.OS === 'ios' ? avoidKeyboardBehavior || 'position' : undefined}
                 >
                     <ActiveView
                         {...props}

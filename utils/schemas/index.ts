@@ -5,7 +5,7 @@ import { countryCodeIso } from '../countryCodeIso';
 // Form validation
 
 export const EmailSchema = Yup.object().shape({
-    email: Yup.string().email('Invalid email'),
+    email: Yup.string().email('Invalid email').required('Email is required'),
 });
 
 export const RegisterSchema = Yup.object().shape({
@@ -74,12 +74,13 @@ export const RegisterSchema_2 = Yup.object().shape({
 });
 
 export const RegisterSchema_3 = Yup.object().shape({
-    birthDay: Yup.date().nullable().required('Your birthday is required.'),
+    birthDay: Yup.date().required('Your birthday is required.'),
     socialMedia: Yup.object().shape({
         facebook: Yup.string(),
         instagram: Yup.string(),
         twitter: Yup.string(),
     }),
+    pictureUrl: Yup.string().optional(),
 });
 
 export const RegisterSchema_4 = Yup.object().shape({

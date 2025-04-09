@@ -34,49 +34,6 @@ const useWelcome = () => {
         setEmail(Utils.formatEmail(values.email));
     };
 
-    // React.useEffect(() => {
-    //     if (isError) {
-    //         setModalVisible(true);
-    //         setTimeout(() => {
-    //             setModalVisible(false);
-    //             setEmail('');
-    //             setOtpValue('');
-    //         }, 6000);
-    //         resetValidate();
-    //     }
-    //     if (isSuccess) {
-    //         setModalVisible(true);
-    //         setOtpValue('');
-    //     }
-    // }, [isError, isSuccess]);
-
-    // React.useEffect(() => {
-    //     if (isSuccessValidate) {
-    //         setTimeout(() => {
-    //             navigate('Register' as never, validateData as never);
-    //         }, 2000);
-    //         setTimeout(() => {
-    //             setModalVisible(false);
-    //         }, 3000);
-    //     }
-    //     if (isErrorValidate) {
-    //         setTimeout(() => {
-    //             setModalVisible(false);
-    //         }, 3000);
-    //     }
-    // }, [isErrorValidate, isSuccessValidate]);
-
-    // React.useEffect(() => {
-    //     if (otpValue.length === CELL_COUNT) {
-    //         validateEmail({ email: Utils.formatEmail(email), otp: +otpValue });
-    //     }
-    // }, [otpValue]);
-
-    // interface PK {
-    //     data: { data: null; isError: true; isSuccessful: false; message: 'no valid token '; status: 400 };
-    //     status: 500;
-    // }
-
     return {
         handleSubmit,
         validateData,

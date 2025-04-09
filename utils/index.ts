@@ -155,12 +155,6 @@ class Utils {
 
     /****************** Async Storage ****************/
 
-    static storeCurrentUserData = async (data: IUser) => {
-        try {
-            await SecureStore.setItemAsync('current_user', JSON.stringify(data));
-        } catch (error) {}
-    };
-
     static retrieveCurrentUserData: () => Promise<any> = async () => {
         try {
             const userData = await SecureStore.getItemAsync('current_user');

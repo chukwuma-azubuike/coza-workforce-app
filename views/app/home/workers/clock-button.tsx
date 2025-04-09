@@ -1,10 +1,8 @@
 import React from 'react';
-import { Box, Button, Center, Spinner, Text, VStack } from 'native-base';
-import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import useModal from '~/hooks/modal/useModal';
-import moment from 'dayjs';
+import dayjs from 'dayjs';
 import ModalAlertComponent from '~/components/composite/modal-alert';
 import { HomeContext } from '..';
 import { useClockInMutation, useClockOutMutation } from '~/store/services/attendance';
@@ -15,6 +13,12 @@ import Utils from '~/utils';
 import { Alert } from 'react-native';
 import { RESULTS } from 'react-native-permissions';
 import openLocationSettings from '~/utils/openLocationSettings';
+import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
+import Loading from '~/components/atoms/loading';
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from '~/components/ui/text';
+import { LocateOffIcon, Timer } from 'lucide-react-native';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -50,7 +54,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
     const handleClockin = async () => {
         const result = await clockIn({
             userId: user?.userId as string,
-            clockIn: `${moment().unix()}`,
+            clockIn: `${dayjs().unix()}`,
             clockOut: null,
             serviceId: latestServiceData?._id as string,
             coordinates: {
@@ -67,10 +71,9 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 duration: 3,
                 render: (
                     <ModalAlertComponent
-                        description={`You clocked in at ${moment().format('LT')}`}
+                        description={`You clocked in at ${dayjs().format('LT')}`}
                         status={isInRange ? 'success' : 'warning'}
-                        iconType={'material-community'}
-                        iconName={'timer-outline'}
+                        icon={Timer}
                     />
                 ),
             });
@@ -81,7 +84,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
             setModalState({
                 defaultRender: true,
                 status: 'warning',
-                message: error?.data?.message || 'Oops something went wrong',
+                message: (error as any)?.data?.message || 'Oops something went wrong',
             });
         }
     };
@@ -95,10 +98,9 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 setModalState({
                     render: (
                         <ModalAlertComponent
-                            description={`You clocked out at ${moment().format('LT')}`}
+                            description={`You clocked out at ${dayjs().format('LT')}`}
                             status={isInRange ? 'success' : 'warning'}
-                            iconType={'material-community'}
-                            iconName={'timer-outline'}
+                            icon={Timer}
                         />
                     ),
                 });
@@ -108,14 +110,14 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 setModalState({
                     defaultRender: true,
                     status: 'warning',
-                    message: clockOutError?.data?.message || 'Oops something went wrong',
+                    message: (clockOutError as any)?.data?.message || 'Oops something went wrong',
                 });
             }
         }
     };
 
     const assertClockinStartTime = !!latestServiceData
-        ? moment().diff(moment(latestServiceData?.clockInStartTime)) > 0
+        ? dayjs().diff(dayjs(latestServiceData?.clockInStartTime)) > 0
         : false;
     const disabled = isLatestServiceError || isLatestServiceLoading || clockedOut || latestAttendanceIsLoading;
     const clockedIn = !!latestAttendanceData?.length
@@ -144,8 +146,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         render: (
                             <ModalAlertComponent
                                 description={'You are not within range of any campus!'}
-                                iconName={'warning-outline'}
-                                iconType={'ionicon'}
+                                icon={LocateOffIcon}
                                 status={'warning'}
                             />
                         ),
@@ -162,7 +163,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 `Clock in for this ${
                     !!latestServiceData?.CGWCId ? 'session' : 'service'
                 } has not yet started, kindly try again ${
-                    !!latestServiceData ? `by ${moment(latestServiceData?.clockInStartTime).format('LT')}` : 'later'
+                    !!latestServiceData ? `by ${dayjs(latestServiceData?.clockInStartTime).format('LT')}` : 'later'
                 }.`
             );
         }
@@ -188,8 +189,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                                 description={
                                     'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
                                 }
-                                iconName={'warning-outline'}
-                                iconType={'ionicon'}
+                                icon={LocateOffIcon}
                                 status={'warning'}
                             />
                         ),
@@ -220,7 +220,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
     };
 
     return (
-        <Center>
+        <View className="items-center">
             {canClockIn && !disabled && (
                 <LottieView
                     source={require('@assets/json/clock-button-animation.json')}
@@ -236,50 +236,39 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 />
             )}
             <TouchableOpacity>
-                <Box alignItems="center">
+                <View className="items-center">
                     <Button
-                        w={200}
-                        h={200}
-                        shadow={4}
-                        borderRadius="full"
-                        activeOpacity={0.6}
                         onPress={handlePress}
-                        _isDisabled={disabled}
+                        disabled={disabled}
                         accessibilityRole="button"
-                        backgroundColor={
+                        className={cn(
+                            '!w-24 !h-24 shadow-md rounded-full',
                             canClockIn && !disabled
-                                ? 'primary.600'
+                                ? 'bg-primary'
                                 : canClockOut
-                                ? 'rose.400'
+                                ? ' bg-rose-400'
                                 : disabled
-                                ? 'gray.400'
-                                : 'gray.400'
-                        }
+                                ? 'bg-gray-400'
+                                : 'bg-gray-400'
+                        )}
                     >
-                        <TouchableOpacity
-                            disabled={disabled}
-                            activeOpacity={0.6}
-                            onPress={handlePress}
-                            accessibilityRole="button"
-                        >
-                            <Center>
-                                <If condition={isLoading || clockOutLoading}>
-                                    <Spinner color="white" size="lg" />
-                                </If>
-                                <If condition={!isLoading && !clockOutLoading}>
-                                    <VStack alignItems="center" space={4}>
-                                        <Icon type="materialicons" name="touch-app" color="white" size={110} />
-                                        <Text fontWeight="light" fontSize="md" color="white">
-                                            {disabled ? '' : canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
-                                        </Text>
-                                    </VStack>
-                                </If>
-                            </Center>
-                        </TouchableOpacity>
+                        <View>
+                            <If condition={isLoading || clockOutLoading}>
+                                <Loading spinnerProps={{ size: 'large' }} />
+                            </If>
+                            <If condition={!isLoading && !clockOutLoading}>
+                                <View className="items-center gap-4">
+                                    <Ionicons type="materialicons" name="alarm" color="white" size={110} />
+                                    <Text className="font-light">
+                                        {disabled ? '' : canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
+                                    </Text>
+                                </View>
+                            </If>
+                        </View>
                     </Button>
-                </Box>
+                </View>
             </TouchableOpacity>
-        </Center>
+        </View>
     );
 };
 

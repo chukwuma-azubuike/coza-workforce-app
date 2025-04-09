@@ -13,7 +13,10 @@ export const servicesServiceSlice = createApi({
 
     tagTypes: ['latestService'],
 
+    refetchOnFocus: true,
     refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         createService: endpoint.mutation<IService, ICreateService>({
             query: body => ({

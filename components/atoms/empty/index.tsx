@@ -1,10 +1,11 @@
 import React from 'react';
-import { Center, Text } from 'native-base';
 const LottieView = require('lottie-react-native');
 import If from '../../composite/if-container';
-import ButtonComponent from '../button';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
+import { View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Button } from '~/components/ui/button';
 
 const Empty: React.FC<{
     message?: string;
@@ -29,21 +30,21 @@ const Empty: React.FC<{
     const lottieFile = isDarkMode ? require('@assets/json/empty-dark.json') : require('@assets/json/empty.json');
 
     return (
-        <Center>
+        <View className="items-center">
             <LottieView loop autoPlay style={{ width }} resizeMode="cover" source={lottieFile} />
-            <Text fontSize="md" color="gray.400" semi-bold>
+            <Text className="text-muted-foreground font-semibold">
                 {isCampusPastor || isGlobalPastor
                     ? `${message ? message : EMPTY_MESSAGE} ${gender === 'M' ? 'sir' : 'ma'}`
                     : message
-                      ? message
-                      : EMPTY_MESSAGE}
+                    ? message
+                    : EMPTY_MESSAGE}
             </Text>
             <If condition={refresh && true}>
-                <ButtonComponent mt={8} secondary size="sm" width={100} isLoading={isLoading} onPress={handleRefresh}>
+                <Button className="mt-8 w-24" variant="outline" size="sm" isLoading={isLoading} onPress={handleRefresh}>
                     Reload
-                </ButtonComponent>
+                </Button>
             </If>
-        </Center>
+        </View>
     );
 };
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Center, VStack } from 'native-base';
 import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
@@ -19,7 +18,7 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { ScreenHeight } from '@rneui/base';
+import { View } from 'react-native';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -57,7 +56,7 @@ const Clocker: React.FC<IClockerProps> = ({
         isUninitialized: attendanceReportIsUninitialized,
     } = useGetDepartmentAttendanceReportQuery({
         serviceId: latestService?._id as string,
-        departmentId: department?._id,
+        departmentId: department?._id as string,
     });
 
     const {
@@ -67,7 +66,7 @@ const Clocker: React.FC<IClockerProps> = ({
     } = useGetLeadersAttendanceReportQuery(
         {
             serviceId: latestService?._id as string,
-            campusId: campus?._id,
+            campusId: campus?._id as string,
         },
         { skip: !latestService?._id }
     );
@@ -79,7 +78,7 @@ const Clocker: React.FC<IClockerProps> = ({
     } = useGetWorkersAttendanceReportQuery(
         {
             serviceId: latestService?._id as string,
-            campusId: campus?._id,
+            campusId: campus?._id as string,
         },
         { skip: !latestService?._id }
     );
@@ -91,7 +90,7 @@ const Clocker: React.FC<IClockerProps> = ({
     } = useGetCampusTicketReportQuery(
         {
             serviceId: latestService?._id as string,
-            campusId: campus?._id,
+            campusId: campus?._id as string,
         },
         { skip: !latestService?._id }
     );
@@ -117,10 +116,8 @@ const Clocker: React.FC<IClockerProps> = ({
         };
     }, [refreshTrigger]);
 
-    const heightOffset = ScreenHeight * 0.6;
-
     return (
-        <Center _dark={{ bg: 'black' }}>
+        <View className="">
             <Timer />
             <If condition={isCampusPastor}>
                 <CampusAttendanceSummary
@@ -135,7 +132,7 @@ const Clocker: React.FC<IClockerProps> = ({
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>
-                    <VStack h={heightOffset} alignItems="center" justifyContent="space-between">
+                    <View className="items-center justify-between">
                         <ErrorBoundary>
                             <ClockButton
                                 isInRange={!!isInRange}
@@ -154,10 +151,10 @@ const Clocker: React.FC<IClockerProps> = ({
                             />
                         </If>
                         <ClockStatistics />
-                    </VStack>
+                    </View>
                 </If>
             )}
-        </Center>
+        </View>
     );
 };
 export default React.memo(Clocker);
