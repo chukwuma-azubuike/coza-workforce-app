@@ -13,7 +13,7 @@ export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
     const { isDarkColorScheme } = useColorScheme();
-    const isLoggedIn = !!useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const isLoggedIn = useAppSelector(store => userSelectors.selectCurrentUser(store));
 
     const handleGoBack = () => {
         if (router.canGoBack()) {
@@ -43,7 +43,7 @@ const Routing: React.FC = () => {
                     <Stack.Screen name="index" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/login" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/register" options={{ headerShown: false }} />
-                    <Stack.Screen name="(auth)/verify" options={{ headerShown: false }} />
+                    <Stack.Screen name="(auth)/verify-email" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/forgot-password" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/forgot-password-otp" options={{ headerShown: false }} />
                     <Stack.Screen name="(auth)/set-new-password" options={{ headerShown: false }} />
@@ -51,15 +51,8 @@ const Routing: React.FC = () => {
             ) : (
                 <Stack>
                     {/* Authenticated Screens */}
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                    <Stack.Screen name="(stack)/pay-bills" options={generalScreenOptions} />
-                    <Stack.Screen name="(stack)/electricity" options={generalScreenOptions} />
-                    <Stack.Screen name="(stack)/internet" options={generalScreenOptions} />
-                    <Stack.Screen name="(stack)/more-payments" options={generalScreenOptions} />
-                    <Stack.Screen name="(stack)/transactions" options={generalScreenOptions} />
-                    <Stack.Screen name="(stack)/send-money" options={generalScreenOptions} />
-                    <Stack.Screen name="(stack)/kyc" options={{ ...generalScreenOptions, headerShown: false }} />
-                    <Stack.Screen name="(stack)/successful" options={{ ...generalScreenOptions, headerShown: false }} />
+                    <Stack.Screen name="(tabs)/index" options={{ headerShown: false, gestureEnabled: false }} />
+                    <Stack.Screen name="(tabs)/attendance/index" options={{ headerShown: false }} />
                 </Stack>
             )}
         </View>

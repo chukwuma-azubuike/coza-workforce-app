@@ -9,6 +9,10 @@ export const scoreMappingServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     endpoints: endpoint => ({
         getCummulativeScores: endpoint.query<IScoreMapping[], IDefaultQueryParams>({
             query: params => ({

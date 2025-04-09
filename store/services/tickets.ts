@@ -22,7 +22,10 @@ type ITicketListResponse = IDefaultResponse<ITicket[]>;
 export const ticketServiceSlice = createApi({
     reducerPath: SERVICE_URL,
     baseQuery: fetchUtils.baseQuery,
+
+    refetchOnFocus: true,
     refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
 
     endpoints: endpoint => ({
         createTicket: endpoint.mutation<ITicket, ICreateTicketPayload>({

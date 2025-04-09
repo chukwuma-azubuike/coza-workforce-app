@@ -1,17 +1,20 @@
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import { THEME_CONFIG } from '@config/appConfig';
+import { Ionicons } from '@expo/vector-icons';
 import useScreenFocus from '@hooks/focus';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from '@rneui/base';
+
 import { useGetGhReportByIdQuery } from '@store/services/grouphead';
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '@store/services/reports';
 import Utils from '@utils/index';
-import { Box, Divider, Flex, HStack, Text, VStack } from 'native-base';
+import { router } from 'expo-router';
 import React from 'react';
-import { Platform, TouchableOpacity } from 'react-native';
+import { Platform, TouchableOpacity, View } from 'react-native';
+import { Separator } from '~/components/ui/separator';
+import { Text } from '~/components/ui/text';
 const isAndroid = Platform.OS === 'android';
 
 interface ReportSummaryListRowProps {
@@ -43,7 +46,6 @@ export const ReportRouteIndex: ReportSummaryMapIndex = {
 };
 
 const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
-    const navigation = useNavigation();
     const { isLightMode } = useAppColorMode();
 
     const { isGroupHead } = useRole();
@@ -52,7 +54,7 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
         <>
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
-                    navigation.navigate(ReportRouteIndex[elm?.departmentName] as never, elm.report as never);
+                    router.push({ pathname: ReportRouteIndex[elm?.departmentName] as any, params: elm.report });
                 };
 
                 return (
@@ -64,22 +66,10 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <HStack
-                            p={2}
-                            px={4}
-                            my={1.5}
-                            w="full"
-                            borderRadius={10}
-                            alignItems="center"
-                            _dark={{ bg: 'gray.900' }}
-                            _light={{ bg: 'gray.50' }}
-                            justifyContent="space-between"
-                        >
-                            <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                                {`${elm?.departmentName} Report`}
-                            </Text>
+                        <View className="p-2 px-4 my-1 w-full rounded-md items-center bg-muted-background justify-between">
+                            <Text className="text-muted-foreground">{`${elm?.departmentName} Report`}</Text>
                             <StatusTag>{elm?.report.status as any}</StatusTag>
-                        </HStack>
+                        </View>
                     </TouchableOpacity>
                 );
             })}
@@ -107,16 +97,14 @@ const GHReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
             {groupedData &&
                 Object.entries(groupedData).map(([campusName, reports]) => (
                     <>
-                        <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                            {campusName}
-                        </Text>
+                        <Text className="text-muted-foreground">{campusName}</Text>
 
                         {reports?.map((reportItem, index) => {
                             const handlePress = () => {
-                                navigation.navigate(
-                                    ReportRouteIndex[reportItem?.departmentName] as never,
-                                    reportItem.report as never
-                                );
+                                router.push({
+                                    pathname: ReportRouteIndex[reportItem?.departmentName] as any,
+                                    params: reportItem.report,
+                                });
                             };
                             return (
                                 <TouchableOpacity
@@ -127,22 +115,12 @@ const GHReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                                     onPress={handlePress}
                                     accessibilityRole="button"
                                 >
-                                    <HStack
-                                        p={2}
-                                        px={4}
-                                        my={1.5}
-                                        w="full"
-                                        borderRadius={10}
-                                        alignItems="center"
-                                        _dark={{ bg: 'gray.900' }}
-                                        _light={{ bg: 'gray.50' }}
-                                        justifyContent="space-between"
-                                    >
-                                        <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
+                                    <View className="p-2 px-4 my-1 w-full rounded-md items-center bg-muted-background justify-between">
+                                        <Text className="text-muted-foreground">
                                             {`${reportItem?.departmentName} Report`}
                                         </Text>
                                         <StatusTag>{reportItem?.report.status as any}</StatusTag>
-                                    </HStack>
+                                    </View>
                                 </TouchableOpacity>
                             );
                         })}
@@ -202,28 +180,24 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
 
         return (
             <>
-                <VStack mt={4} px={4} overflow="scroll">
-                    <HStack alignItems="baseline" justifyContent="space-between">
+                <View className="mt-4 px-4 ">
+                    <View className="items-baseline justify-between">
                         <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
-                            <HStack alignItems="center" space={1}>
-                                <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
-                                <Text color="gray.400" fontSize="md" ml={2}>
-                                    Reports submitted
-                                </Text>
-                                <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
-                            </HStack>
+                            <View className="items-center gap-1">
+                                <Ionicons color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
+                                <Text className="text-muted-foreground ml-2">Reports submitted</Text>
+                                <Ionicons color={THEME_CONFIG.primary} name="link-outline" type="evilicon" size={26} />
+                            </View>
                         </TouchableOpacity>
-                        <Flex alignItems="baseline" flexDirection="row">
-                            <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                        <View className="items-baseline flex-row">
+                            <Text className="font-semibold text-primary text-4xl ml-1">
                                 {submittedReportCount || 0}
                             </Text>
-                            <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${
-                                sortedData?.length || 0
-                            }`}</Text>
-                        </Flex>
-                    </HStack>
-                    <Divider />
-                </VStack>
+                            <Text className="font-semibold text-muted-foreground">{`/${sortedData?.length || 0}`}</Text>
+                        </View>
+                    </View>
+                    <Separator />
+                </View>
                 <FlatListComponent
                     padding={isAndroid ? 3 : true}
                     emptySize={160}
@@ -262,7 +236,8 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
 
         const { navigate } = useNavigation();
 
-        const navigateToReportSummary = () => navigate('Submit report summary' as never, submitData as never);
+        const navigateToReportSummary = () =>
+            router.push({ pathname: 'Submit report summary' as never, params: submitData as never });
 
         const navigateToReports = () => navigate('Reports' as never);
 
@@ -292,40 +267,36 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
         return (
             <>
                 {!isLoading && !isFetching && (
-                    <Box flex={1} justifyContent="center" marginTop={6} alignItems="center">
+                    <View className="flex-1 justify-center mt-6 items-center">
                         <TouchableOpacity activeOpacity={0.6} onPress={navigateToReportSummary}>
-                            <HStack alignItems="center" space={1}>
-                                <Text color="gray.400" fontSize="md" ml={2}>
+                            <View className="items-center gap-1">
+                                <Text className="text-muted-foreground ml-2">
                                     {data?.submittedReport ? 'View report summary' : 'Submit report summary'}
                                 </Text>
-                                <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
-                            </HStack>
+                                <Ionicons color={THEME_CONFIG.primary} name="link-outline" type="evilicon" size={26} />
+                            </View>
                         </TouchableOpacity>
-                    </Box>
+                    </View>
                 )}
 
-                <VStack mt={4} px={4} overflow="scroll">
-                    <HStack alignItems="baseline" justifyContent="space-between">
+                <View className="mt-4 px-4">
+                    <View className="items-baseline justify-between">
                         <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
-                            <HStack alignItems="center" space={1}>
-                                <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
-                                <Text color="gray.400" fontSize="md" ml={2}>
-                                    Reports submitted
-                                </Text>
-                                <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
-                            </HStack>
+                            <View className="items-center gap-1">
+                                <Ionicons color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
+                                <Text className="text-muted-foreground ml-2">Reports submitted</Text>
+                                <Ionicons color={THEME_CONFIG.primary} name="link-outline" type="evilicon" size={26} />
+                            </View>
                         </TouchableOpacity>
-                        <Flex alignItems="baseline" flexDirection="row">
-                            <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                        <View className="flex-row items-baseline">
+                            <Text className="font-semibold text-primary text-4xl ml-1">
                                 {submittedReportCount || 0}
                             </Text>
-                            <Text fontWeight="semibold" color="gray.600" fontSize="md">{`/${
-                                sortedData?.length || 0
-                            }`}</Text>
-                        </Flex>
-                    </HStack>
-                    <Divider />
-                </VStack>
+                            <Text className="font-semibold text-muted-foreground">{`/${sortedData?.length || 0}`}</Text>
+                        </View>
+                    </View>
+                    <Separator />
+                </View>
                 <FlatListComponent
                     padding={isAndroid ? 3 : true}
                     emptySize={160}

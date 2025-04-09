@@ -1,8 +1,8 @@
 import React from 'react';
-import { Stack } from 'native-base';
 import { StatCardComponent } from '@components/composite/card';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { IGSPReport } from '@store/services/reports';
+import { View } from 'react-native';
 
 interface IChurchGrowthCardsProps {
     isLoading?: boolean;
@@ -13,7 +13,7 @@ interface IChurchGrowthCardsProps {
 const ChurchGrowthCards: React.FC<IChurchGrowthCardsProps> = ({ isLoading, guestAttendance, serviceAttendance }) => {
     return (
         <ViewWrapper scroll noPadding refreshing={isLoading}>
-            <Stack flexDirection="row" flexWrap="wrap">
+            <View className="flex-row flex-wrap">
                 <StatCardComponent
                     // percent
                     label="Men"
@@ -68,7 +68,7 @@ const ChurchGrowthCards: React.FC<IChurchGrowthCardsProps> = ({ isLoading, guest
                     isLoading={isLoading}
                     value={guestAttendance?.newConvert}
                 />
-            </Stack>
+            </View>
         </ViewWrapper>
     );
 };

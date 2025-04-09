@@ -1,8 +1,9 @@
-import { Icon } from '@rneui/base';
-import { Center, Flex, Text } from 'native-base';
 import React from 'react';
 import { HomeContext } from '..';
 import { THEME_CONFIG } from '@config/appConfig';
+import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from '~/components/ui/text';
 
 const CampusLocation = () => {
     const {
@@ -10,19 +11,18 @@ const CampusLocation = () => {
     } = React.useContext(HomeContext);
 
     return (
-        <Center>
-            <Flex alignItems="center" flexDirection="row">
-                <Icon
+        <View className="items-center">
+            <View className="flex-row items-center">
+                <Ionicons
                     color={!isError && !isLoading ? THEME_CONFIG.gray : 'transparent'}
                     name="location-sharp"
-                    type="ionicon"
                     size={15}
                 />
-                <Text fontWeight="semibold" color="gray.600" fontSize="md" ml={1}>
+                <Text className="font-semibold text-muted-foreground text-base ml-1">
                     {!isError ? data?.campus?.campusName : ''}
                 </Text>
-            </Flex>
-        </Center>
+            </View>
+        </View>
     );
 };
 

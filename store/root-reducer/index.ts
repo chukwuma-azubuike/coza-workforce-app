@@ -6,12 +6,6 @@ import { complianceServiceSlice } from '../services/compliance';
 import { permissionsServiceSlice } from '../services/permissions';
 import { servicesServiceSlice } from '../services/services';
 import { reportsServiceSlice } from '../services/reports';
-import userReducer from '../services/users';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PersistConfig, persistReducer } from 'redux-persist';
-import hardSet from 'redux-persist/es/stateReconciler/hardSet';
-import versionReducer, { IVersionState } from '../services/version';
-import { IUser } from '../types';
 import { departmentServiceSlice } from '../services/department';
 import { ticketServiceSlice } from '../services/tickets';
 import { campusServiceSlice } from '../services/campus';
@@ -21,22 +15,6 @@ import { cgwcServiceSlice } from '../services/cgwc';
 import { groupHeadServiceSlice } from '@store/services/grouphead';
 import { uploadServiceSlice } from '@store/services/upload';
 import userStateSlice from '../actions/users';
-
-const userPersistConfig: PersistConfig<IUser> = {
-    key: 'users',
-    storage: AsyncStorage,
-    stateReconciler: hardSet,
-};
-
-const versionPersistConfig: PersistConfig<IVersionState> = {
-    key: 'version',
-    storage: AsyncStorage,
-    stateReconciler: hardSet,
-};
-
-const persistedUserReducer = persistReducer(userPersistConfig, userReducer);
-
-const persistedVersionReducer = persistReducer(versionPersistConfig, versionReducer);
 
 const rootReducer = combineReducers({
     account: accountServiceSlice.reducer,
@@ -48,8 +26,6 @@ const rootReducer = combineReducers({
     department: departmentServiceSlice.reducer,
     campus: campusServiceSlice.reducer,
     ticket: ticketServiceSlice.reducer,
-    users: persistedUserReducer,
-    version: persistedVersionReducer,
     score: scoreServiceSlice.reducer,
     role: roleServiceSlice.reducer,
     cgwc: cgwcServiceSlice.reducer,

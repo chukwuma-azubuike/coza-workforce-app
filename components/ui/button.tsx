@@ -65,7 +65,7 @@ type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
     };
 
 const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
-    ({ className, variant, size, isLoading, loadingText, children, ...props }, ref) => {
+    ({ className, variant, size, isLoading, loadingText = 'Loading...', children, ...props }, ref) => {
         return (
             <TextClassContext.Provider
                 value={cn(props.disabled && 'web:pointer-events-none', buttonTextVariants({ variant, size }))}

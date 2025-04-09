@@ -1,24 +1,27 @@
-import { Icon } from '@rneui/themed';
-import moment from 'moment';
-import { HStack, VStack, Text } from 'native-base';
+import dayjs from 'dayjs';
+
 import React from 'react';
 import { HomeContext } from '..';
 import { THEME_CONFIG } from '@config/appConfig';
 import Utils from '@utils/index';
 import { IIconTypes } from '@utils/types';
+import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { IoniconTypes } from '~/types/app';
+import { Text } from '~/components/ui/text';
 
 interface IStatProps {
     time?: string;
     label: string;
-    icon: string;
+    icon: IoniconTypes;
     difference?: number | string;
     iconType: IIconTypes;
 }
 
 const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps) => {
     return (
-        <VStack alignItems="center" space={0} minW="1/3">
-            <Icon
+        <View className="items-center">
+            <Ionicons
                 size={25}
                 name={icon}
                 type={iconType}
@@ -26,23 +29,17 @@ const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps
                     label === 'Clock out'
                         ? THEME_CONFIG.rose
                         : label === 'Service hrs'
-                          ? THEME_CONFIG.gray
-                          : THEME_CONFIG.primaryLight
+                        ? THEME_CONFIG.gray
+                        : THEME_CONFIG.primaryLight
                 }
             />
             {difference ? (
-                <Text fontSize="md" fontWeight="bold" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                    {difference ? difference : '--:--'}
-                </Text>
+                <Text className="font-bold text-muted-foreground">{difference ? difference : '--:--'}</Text>
             ) : (
-                <Text fontSize="md" fontWeight="bold" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                    {time ? moment(time).format('LT') : '--:--'}
-                </Text>
+                <Text className="font-bold text-muted-foreground">{time ? dayjs(time).format('LT') : '--:--'}</Text>
             )}
-            <Text fontSize="xs" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                {label}
-            </Text>
-        </VStack>
+            <Text className="font-bold text-muted-foreground text-base">{label}</Text>
+        </View>
     );
 });
 
@@ -52,17 +49,17 @@ const ClockStatistics = () => {
     } = React.useContext(HomeContext);
 
     return (
-        <HStack justifyContent="center" justifyItems="center">
+        <View className="justify-center justify-items-center">
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockIn : ''}
-                icon="check-circle"
+                icon="checkmark-circle"
                 iconType="feather"
                 label="Clock in"
             />
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockOut : ''}
                 label="Clock out"
-                icon="logout"
+                icon="log-out"
                 iconType="antdesign"
             />
             <Stat
@@ -73,10 +70,10 @@ const ClockStatistics = () => {
                     ).hrsMins
                 }
                 label="Time spent"
-                icon="hour-glass"
+                icon="hourglass"
                 iconType="entypo"
             />
-        </HStack>
+        </View>
     );
 };
 

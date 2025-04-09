@@ -17,13 +17,14 @@ import { Colors } from '~/constants/Colors';
 import APP_ENV from '~/config/envConfig';
 import { THEME_CONFIG } from '~/config/appConfig';
 import FormErrorMessage from '~/components/ui/error-message';
+import Loading from '~/components/atoms/loading';
 
 const VerifyEmail: React.FC = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
     const [email, setEmail] = React.useState<string>('');
 
     const [sendOtp, { isLoading, isFetching }] = useLazySendOTPQuery();
-    const [validateEmail] = useValidateEmailOTPMutation();
+    const [validateEmail, { isLoading: validatingOTP }] = useValidateEmailOTPMutation();
 
     const hideModal = () => {
         setModalVisible(false);
@@ -35,7 +36,10 @@ const VerifyEmail: React.FC = () => {
             const response = await sendOtp(Utils.formatEmail(values.email));
 
             if (response.error) {
-                Alert.alert('Failed', `${response.error?.data?.message || response.error?.TypeError}`);
+                Alert.alert(
+                    'Failed',
+                    `${(response.error as any)?.data?.message || (response.error as any)?.TypeError}`
+                );
             }
 
             if (response.data) {
@@ -51,12 +55,10 @@ const VerifyEmail: React.FC = () => {
                 const response = await validateEmail({ email, otp: +otp });
 
                 if (response.error) {
-                    Alert.alert('OTP validation failed', `${response.error?.data?.message}`);
+                    Alert.alert('OTP validation failed', `${(response.error as any)?.data?.message}`);
                 }
                 if (response.data) {
-                    Alert.alert('Successful', 'Continue your registration', [
-                        { text: 'Continue', onPress: () => router.replace('/(auth)/register') },
-                    ]);
+                    router.replace({ pathname: '/(auth)/register', params: response.data as any });
                 }
             } catch (error) {}
         }
@@ -68,8 +70,8 @@ const VerifyEmail: React.FC = () => {
         <>
             <SafeAreaView className="flex-1">
                 <KeyboardAvoidingView behavior={isIOS ? 'padding' : 'height'} className="flex-1">
-                    <View className="flex-1 justify-around">
-                        <View className="px-4 w-full gap-6">
+                    <View className="flex-1 justify-between">
+                        <View className="px-4 w-full gap-6 pt-20">
                             <View className="px-4 gap-6 w-full items-center justify-center">
                                 <Logo />
                                 <Text className="text-2xl">{APP_ENV.APP_NAME}</Text>
@@ -80,7 +82,7 @@ const VerifyEmail: React.FC = () => {
                                 initialValues={{ email: '' }}
                                 validationSchema={EmailSchema}
                             >
-                                {({ handleChange, handleSubmit, errors, touched }) => (
+                                {({ handleChange, handleSubmit, errors, touched, values, isValid }) => (
                                     <View className="gap-6 w-full">
                                         <View className="gap-2">
                                             <Label>Email</Label>
@@ -89,6 +91,7 @@ const VerifyEmail: React.FC = () => {
                                                 leftIcon={{
                                                     name: 'mail-outline',
                                                 }}
+                                                value={values.email}
                                                 keyboardType="email-address"
                                                 onChangeText={handleChange('email')}
                                             />
@@ -99,6 +102,7 @@ const VerifyEmail: React.FC = () => {
                                         <Button
                                             onPress={handleSubmit as any}
                                             isLoading={isLoading || isFetching}
+                                            disabled={!isValid || !values.email}
                                             loadingText="Checking for your email..."
                                         >
                                             Continue
@@ -120,15 +124,23 @@ const VerifyEmail: React.FC = () => {
                 </KeyboardAvoidingView>
             </SafeAreaView>
             <Dialog open={modalVisible} onOpenChange={hideModal}>
-                <DialogContent className="sm:max-w-[425px] bg-gray-200">
-                    <View className="gap-4">
+                <DialogContent className="max-w-md">
+                    <View className="gap-10">
+                        <Text className="text-center text-3xl font-bold">Verification</Text>
+                        {validatingOTP ? (
+                            <Loading spinnerProps={{ size: 'large' }} />
+                        ) : (
+                            <Text className="text-center text-base max-w-xs mx-auto text-muted-foreground">
+                                Please enter the OTP code we sent to your email address
+                            </Text>
+                        )}
                         <OtpInput
                             numberOfDigits={6}
                             focusColor={Colors.primary}
                             autoFocus={true}
                             hideStick={true}
                             blurOnFilled={true}
-                            disabled={false}
+                            disabled={validatingOTP}
                             type="numeric"
                             secureTextEntry={false}
                             focusStickBlinkingDuration={500}
@@ -204,3 +216,5 @@ const styles = StyleSheet.create({
 });
 
 export default React.memo(VerifyEmail);
+
+VerifyEmail.displayName = 'VerifyEmail';

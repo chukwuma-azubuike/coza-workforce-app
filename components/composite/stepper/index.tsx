@@ -5,8 +5,7 @@ import StepIndicator from 'react-native-step-indicator';
 import { StepIndicatorStyles } from 'react-native-step-indicator/lib/typescript/src/types';
 import Swiper from 'react-native-swiper';
 import { THEME_CONFIG } from '@config/appConfig';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
+import { Router } from 'expo-router';
 
 export interface IRegisterPagesProps {
     label: string;
@@ -43,7 +42,7 @@ interface IStepperProps {
     pages: IRegisterPagesProps[];
     stepIndicator?: boolean;
     disableSwipe?: boolean;
-    navigation?: NativeStackNavigationProp<ParamListBase, string, undefined>;
+    navigation?: Router;
 }
 
 const Stepper: React.FC<IStepperProps> = ({ pages, otherProps, navigation, disableSwipe, stepIndicator }) => {

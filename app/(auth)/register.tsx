@@ -1,8 +1,8 @@
 import React from 'react';
-import Welcome from '~/views/auth/welcome';
+import Register from '~/views/auth/register';
 
 const RegisterScreen: React.FC = () => {
-    return <Welcome />;
+    return <Register />;
 };
 
 export default RegisterScreen;
