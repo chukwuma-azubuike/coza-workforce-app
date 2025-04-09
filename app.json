@@ -50,6 +50,12 @@
                 {
                     "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
                 }
+            ],
+            [
+                "react-native-permissions",
+                {
+                    "ios": ["camera", "location", "microphone", "photo"]
+                }
             ]
         ],
         "experiments": {

@@ -4,9 +4,9 @@ import { IService } from '@store/types';
 // import TabComponent from '@components/composite/tabs';
 // import { SceneMap } from 'react-native-tab-view';
 // import ChurchGrowth from './church-growth';
-import ViewWrapper from '@components/layout/viewWrapper';
 // import WorkforceAnalytics from './workforce-analytics';
 import WorkForceSummary from './workforce-summary';
+import { SafeAreaView, View } from 'react-native';
 
 interface GSPViewProps {
     servicesIsSuccess: boolean;
@@ -28,15 +28,17 @@ const GSPView: React.FC<GSPViewProps> = ({ services, servicesIsSuccess }) => {
     // const [index, setIndex] = React.useState(0);
 
     return (
-        <ViewWrapper>
-            {/* <TabComponent
+        <SafeAreaView className="flex-1">
+            <View className="flex-1">
+                {/* <TabComponent
                 tabBarScroll={false}
                 onIndexChange={setIndex}
                 renderScene={renderScene}
                 navigationState={{ index, routes: ROUTES }}
             /> */}
-            <WorkForceSummary servicesIsSuccess={servicesIsSuccess} services={services} />
-        </ViewWrapper>
+                <WorkForceSummary servicesIsSuccess={servicesIsSuccess} services={services} />
+            </View>
+        </SafeAreaView>
     );
 };
 

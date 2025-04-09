@@ -5,7 +5,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useRole from '@hooks/role';
 import { useNavigation } from '@react-navigation/native';
-import { Icon, ScreenHeight } from '@rneui/base';
+
 import {
     useGetDepartmentAttendanceReportQuery,
     useGetLeadersAttendanceReportQuery,
@@ -14,15 +14,16 @@ import {
 import { IGHSubmittedReport } from '@store/services/reports';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
-import { Center, HStack, VStack } from 'native-base';
+
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import { CampusAttendanceSummary } from '../campus-pastors/attendance-summary';
 import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
 import ClockButton from './clock-button';
 import ClockStatistics from './clock-statistics';
 import Timer from './timer';
+import { Ionicons } from '@expo/vector-icons';
 
 interface IGHClockerProps {
     isGh?: boolean;
@@ -127,14 +128,12 @@ const GHClocker: React.FC<IGHClockerProps> = ({
         };
     }, [refreshTrigger]);
 
-    const heightOffset = ScreenHeight * 0.6;
-
     const handleNavigateToReports = () => {
         navigation.navigate('Group Head Service Report' as never);
     };
 
     return (
-        <Center _dark={{ bg: 'black' }}>
+        <View>
             {!showReport && <Timer />}
             <If condition={showReport}>
                 <CampusAttendanceSummary
@@ -149,7 +148,7 @@ const GHClocker: React.FC<IGHClockerProps> = ({
                 <Loading />
             ) : (
                 <If condition={!showReport}>
-                    <VStack h={heightOffset} alignItems="center" justifyContent="space-around">
+                    <View className="items-center justify-around">
                         {!showReport && (
                             <ClockButton
                                 isInRange={!!isInRange}
@@ -160,18 +159,28 @@ const GHClocker: React.FC<IGHClockerProps> = ({
                         )}
                         {isGroupHead && latestService?._id && (
                             <TouchableOpacity activeOpacity={0.6} onPress={handleNavigateToReports}>
-                                <HStack alignItems="center" space={1} mt={10}>
-                                    <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
+                                <View className="items-center gap-1 mt-10">
+                                    <Ionicons
+                                        color={THEME_CONFIG.primary}
+                                        name="people-outline"
+                                        type="ionicon"
+                                        size={18}
+                                    />
                                     <TextComponent>Group reports submitted</TextComponent>
-                                    <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
-                                </HStack>
+                                    <Ionicons
+                                        color={THEME_CONFIG.primary}
+                                        name="link-outline"
+                                        type="evilicon"
+                                        size={26}
+                                    />
+                                </View>
                             </TouchableOpacity>
                         )}
                         <ClockStatistics />
-                    </VStack>
+                    </View>
                 </If>
             )}
-        </Center>
+        </View>
     );
 };
 export default React.memo(GHClocker);

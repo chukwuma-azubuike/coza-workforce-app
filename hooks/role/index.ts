@@ -1,9 +1,10 @@
 import React from 'react';
 import { useAppSelector } from '@store/hooks';
 import { useGetRolesQuery } from '@store/services/role';
-import { selectCurrentUser } from '@store/services/users';
 import { useAuth } from '../auth';
 import spreadDependencyArray from '@utils/spreadDependencyArray';
+import { userSelectors } from '~/store/actions/users';
+import { IUser } from '~/store/types';
 
 export enum ROLES {
     HOD = 'HOD',
@@ -74,7 +75,7 @@ export enum DEPARTMENTS {
 }
 
 const useRole = () => {
-    const currentUser = useAppSelector(store => selectCurrentUser(store));
+    const currentUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
 
     const { data: roleObjects } = useGetRolesQuery();
     const leaderRoleIds = React.useMemo(
@@ -120,7 +121,7 @@ const useRole = () => {
     const { logOut } = useAuth();
 
     React.useEffect(() => {
-        if (!!currentUser._id && !!currentUser.userId) {
+        if (!!currentUser?._id && !!currentUser?.userId) {
             logOut();
         }
     }, []);
@@ -130,12 +131,12 @@ const useRole = () => {
         user: {
             roleName,
             ...currentUser,
-            _id: currentUser.userId || currentUser._id,
-            userId: currentUser.userId || currentUser._id,
-        },
+            _id: currentUser?.userId || currentUser?._id,
+            userId: currentUser?.userId || currentUser?._id,
+        } as IUser,
 
         //Status
-        isCGWCApproved: currentUser.isCGWCApproved,
+        isCGWCApproved: currentUser?.isCGWCApproved,
 
         //Role IDs
         leaderRoleIds,

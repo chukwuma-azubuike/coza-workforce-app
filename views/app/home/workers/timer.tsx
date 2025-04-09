@@ -1,13 +1,15 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Center, Text } from 'native-base';
-import moment, { Moment } from 'moment';
+
+import dayjs, { Dayjs } from 'dayjs';
+import { View } from 'react-native';
+import { Text } from '~/components/ui/text';
 
 const Timer: React.FC = () => {
-    const [time, setTime] = useState<Moment>(moment());
+    const [time, setTime] = useState<Dayjs>(dayjs());
 
     const timer = () =>
         setInterval(() => {
-            setTime(moment());
+            setTime(dayjs());
         }, 1000);
 
     useEffect(() => {
@@ -15,14 +17,10 @@ const Timer: React.FC = () => {
     }, []);
 
     return (
-        <Center mb={10}>
-            <Text _dark={{ color: 'gray.50' }} color="gray.600" fontSize="4xl">
-                {time.format('LT')}
-            </Text>
-            <Text _dark={{ color: 'gray.50' }} fontWeight="light" color="gray.400" fontSize="md">
-                {time.format('dddd ll')}
-            </Text>
-        </Center>
+        <View className="mb-10">
+            <Text className="text-muted-foreground text-4xl">{time.format('LT')}</Text>
+            <Text className="text-muted-foreground font-light">{time.format('dddd ll')}</Text>
+        </View>
     );
 };
 

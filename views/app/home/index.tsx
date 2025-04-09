@@ -1,24 +1,18 @@
 import React from 'react';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import Clocker from './workers/clocker';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { usePreventGoBack } from '@hooks/navigation';
+// import { usePreventGoBack } from '@hooks/navigation';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import If from '@components/composite/if-container';
-import GSPView from './global-senior-pastors';
+// import GSPView from './global-senior-pastors';
 import Utils from '@utils/index';
-import { CampusReportSummary } from './campus-pastors/report-summary';
-import { selectCurrentUser, userActionTypes } from '@store/services/users';
-import { useGetUserByIdQuery } from '@store/services/account';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+// import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
-import { Platform } from 'react-native';
-import GhClocker from './workers/gh-clocker';
+import { Platform, SafeAreaView, View } from 'react-native';
+// import GhClocker from './workers/gh-clocker';
 
 interface IInitialHomeState {
     latestService: {
@@ -38,21 +32,9 @@ interface IInitialHomeState {
 
 export const HomeContext = React.createContext({} as IInitialHomeState);
 
-const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
-    const dispatch = useAppDispatch();
-    const currentUserId = useAppSelector(store => selectCurrentUser(store)).userId;
-
-    usePreventGoBack();
-
-    const {
-        error,
-        data: currentUserData,
-        refetch: refetchCurrentUser,
-        isLoading: userLoading,
-        isFetching: userFetching,
-    } = useGetUserByIdQuery(currentUserId);
-
+const Home: React.FC = () => {
     const { user, isGlobalPastor, isGroupHead, isCampusPastor } = useRole();
+    // usePreventGoBack();
 
     const {
         isError,
@@ -103,7 +85,6 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     const handleRefresh = () => {
         refresh();
-        refetchCurrentUser();
         refetchServices();
         if (!isGlobalPastor) {
             refetch();
@@ -117,58 +98,50 @@ const Home: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         Utils.checkLocationPermission(refresh);
     }, []);
 
-    React.useEffect(() => {
-        if (currentUserData) {
-            dispatch({
-                type: userActionTypes.SET_USER_DATA,
-                payload: currentUserData,
-            });
-        }
-    }, [currentUserData]);
-
     const isIOS = Platform.OS === 'ios';
 
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            <ViewWrapper
-                refreshing={isLoading}
-                onRefresh={handleRefresh}
-                style={{ paddingTop: isIOS ? 20 : 40 }}
-                scroll={!(isCampusPastor || isGlobalPastor)}
-            >
-                <If condition={!!user}>
-                    <If condition={!isGlobalPastor && !isGroupHead}>
-                        <Clocker
+            <SafeAreaView className="flex-1">
+                <View
+                    className="flex-1"
+                    // refreshing={isLoading}
+                    // onRefresh={handleRefresh}
+                >
+                    <If condition={!!user}>
+                        <If condition={!isGlobalPastor && !isGroupHead}>
+                            <Clocker
+                                isInRange={isInRange}
+                                refreshLocation={refresh}
+                                refreshTrigger={refreshTrigger}
+                                setRefreshTrigger={setRefreshTrigger}
+                                deviceCoordinates={deviceCoordinates}
+                                verifyRangeBeforeAction={verifyRangeBeforeAction}
+                            />
+                        </If>
+                        <If condition={isGroupHead}>
+                            {/* <GhClocker
                             isInRange={isInRange}
                             refreshLocation={refresh}
                             refreshTrigger={refreshTrigger}
                             setRefreshTrigger={setRefreshTrigger}
                             deviceCoordinates={deviceCoordinates}
                             verifyRangeBeforeAction={verifyRangeBeforeAction}
-                        />
+                        /> */}
+                        </If>
+                        <If condition={isGlobalPastor}>
+                            {/* <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} /> */}
+                        </If>
                     </If>
-                    <If condition={isGroupHead}>
-                        <GhClocker
-                            isInRange={isInRange}
-                            refreshLocation={refresh}
-                            refreshTrigger={refreshTrigger}
-                            setRefreshTrigger={setRefreshTrigger}
-                            deviceCoordinates={deviceCoordinates}
-                            verifyRangeBeforeAction={verifyRangeBeforeAction}
-                        />
-                    </If>
-                    <If condition={isGlobalPastor}>
-                        <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
-                    </If>
-                </If>
-                <If condition={isCampusPastor}>
-                    <CampusReportSummary
-                        campusId={user?.campus?._id}
+                    <If condition={isCampusPastor}>
+                        {/* <CampusReportSummary
                         refetchService={handleRefresh}
+                        campusId={user?.campus?._id as string}
                         serviceId={latestService?._id as string}
-                    />
-                </If>
-            </ViewWrapper>
+                    /> */}
+                    </If>
+                </View>
+            </SafeAreaView>
         </HomeContext.Provider>
     );
 };

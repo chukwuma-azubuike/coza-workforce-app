@@ -112,6 +112,10 @@ export const accountServiceSlice = createApi({
 
     tagTypes: ['account', 'CampusSummaryByCampusId', 'userDetails', 'listOfDepartmentUsers', 'globalWorkforceSummary'],
 
+    refetchOnFocus: true,
+    refetchOnReconnect: true,
+    refetchOnMountOrArgChange: true,
+
     baseQuery: fetchUtils.baseQuery,
 
     endpoints: endpoint => ({

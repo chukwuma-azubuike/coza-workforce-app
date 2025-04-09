@@ -1,12 +1,12 @@
 import React from 'react';
-import { Icon } from '@rneui/base';
-import { Center, Flex, HStack, Text, VStack } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
 import Loading from '@components/atoms/loading';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { ROLES } from '@hooks/role';
-import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from '~/components/ui/text';
+import { router } from 'expo-router';
 
 export interface ITeamAttendanceSummary {
     departmentUsers?: number;
@@ -17,43 +17,40 @@ export interface ITeamAttendanceSummary {
 
 export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.memo(props => {
     const { departmentUsers, attendance, isLoading } = props;
-    const navigation = useNavigation();
 
     const handlePress = () => {
-        navigation.navigate('Attendance' as never, { route: 'teamAttendance' } as never);
+        router.push({ pathname: '/attendance', params: { route: 'teamAttendance' } });
     };
 
     return (
-        <Center>
+        <View className="items-center">
             {isLoading ? (
                 <Loading style={{ height: 40, width: 40 }} />
             ) : (
                 <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
-                    <HStack alignItems="baseline">
-                        <Flex alignItems="center" flexDirection="row">
-                            <Icon color={THEME_CONFIG.primaryLight} name="people-outline" type="ionicon" size={18} />
-                            <Text ml={2} fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                                Members clocked in:
-                            </Text>
-                        </Flex>
+                    <View className="items-baseline">
+                        <View className="items-center flex-row">
+                            <Ionicons
+                                color={THEME_CONFIG.primaryLight}
+                                name="people-outline"
+                                type="ionicon"
+                                size={18}
+                            />
+                            <Text className="ml-2 text-muted-foreground">Members clocked in:</Text>
+                        </View>
 
-                        <Flex alignItems="baseline" flexDirection="row">
-                            <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                        <View className="items-center flex-row">
+                            <Text className="font-bold text-primary text-4xl ml-1">
                                 <CountUp isCounting duration={2} end={attendance || 0} />
                             </Text>
-                            <Text
-                                fontSize="md"
-                                fontWeight="semibold"
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                            >
+                            <Text className="font-semibold text-muted-foreground">
                                 /<CountUp isCounting duration={2} end={departmentUsers || 0} />
                             </Text>
-                        </Flex>
-                    </HStack>
+                        </View>
+                    </View>
                 </TouchableOpacity>
             )}
-        </Center>
+        </View>
     );
 });
 
@@ -68,58 +65,48 @@ export interface ITeamAttendanceSummary {
 
 export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.memo(props => {
     const { leaderUsers, leadersAttendance, workerUsers, workersAttendance, isGH } = props;
-    const { navigate } = useNavigation<any>();
 
     const handleNavigation = (role: ROLES[] | ROLES) => () => {
-        return navigate('Attendance', isGH ? undefined : { role });
+        return router.push({ pathname: '/attendance', params: isGH ? undefined : { role } });
     };
 
     return (
-        <Center>
-            <HStack alignItems="center" space={10}>
+        <View className="items-center">
+            <View className="items-center gap-10">
                 <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation([ROLES.HOD, ROLES.AHOD])}>
-                    <VStack alignItems="center">
-                        <Flex alignItems="baseline" flexDirection="row">
-                            <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                    <View className="items-center">
+                        <View className="items-baseline flex-row">
+                            <Text className="font-semibold text-primary text-4xl ml-1">
                                 <CountUp isCounting duration={2} end={leadersAttendance || 0} />
                             </Text>
-                            <Text
-                                fontWeight="semibold"
-                                _light={{ color: 'gray.600' }}
-                                _dark={{ color: 'gray.400' }}
-                                fontSize="md"
-                            >{`/${leaderUsers || 0}`}</Text>
-                        </Flex>
-                        <Flex alignItems="center" flexDirection="row">
-                            <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
-                            <Text _light={{ color: 'gray.600' }} _dark={{ color: 'gray.400' }} fontSize="md" ml={2}>
-                                Leaders present
-                            </Text>
-                        </Flex>
-                    </VStack>
+                            <Text className="font-semibold text-muted-foreground">{`/${leaderUsers || 0}`}</Text>
+                        </View>
+                        <View className="items-center flex-row">
+                            <Ionicons color={THEME_CONFIG.primary} name="people-outline" size={18} />
+                            <Text className="text-muted-foreground ml-2">Leaders present</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
                 <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation(ROLES.worker)}>
-                    <VStack alignItems="center">
-                        <Flex alignItems="baseline" flexDirection="row">
-                            <Text fontWeight="semibold" color="primary.600" fontSize="4xl" ml={1}>
+                    <View className="items-center">
+                        <View className="items-center flex-row">
+                            <Text className="font-semibold text-primary ml-1">
                                 <CountUp isCounting duration={2} end={workersAttendance || 0} />
                             </Text>
-                            <Text
-                                fontWeight="semibold"
-                                _light={{ color: 'gray.600' }}
-                                _dark={{ color: 'gray.400' }}
-                                fontSize="md"
-                            >{`/${workerUsers || 0}`}</Text>
-                        </Flex>
-                        <Flex alignItems="center" flexDirection="row">
-                            <Icon color={THEME_CONFIG.primary} type="material-community" name="crowd" size={18} />
-                            <Text _light={{ color: 'gray.600' }} _dark={{ color: 'gray.400' }} fontSize="md" ml={2}>
-                                Workers present
-                            </Text>
-                        </Flex>
-                    </VStack>
+                            <Text className="font-semibold text-primary ml-1">{`/${workerUsers || 0}`}</Text>
+                        </View>
+                        <View className="items-center flex-row">
+                            <Ionicons
+                                color={THEME_CONFIG.primary}
+                                type="material-community"
+                                name="star-outline"
+                                size={18}
+                            />
+                            <Text className="text-muted-foreground ml-2">Workers present</Text>
+                        </View>
+                    </View>
                 </TouchableOpacity>
-            </HStack>
-        </Center>
+            </View>
+        </View>
     );
 });

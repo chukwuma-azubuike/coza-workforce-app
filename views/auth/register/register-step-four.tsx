@@ -1,64 +1,65 @@
 import React from 'react';
-import { Box, Center, FormControl, Heading, HStack, Stack, VStack } from 'native-base';
-import { InputComponent } from '@components/atoms/input';
-import ButtonComponent from '@components/atoms/button';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { IRegistrationPageStep } from './types';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
-import { Formik } from 'formik';
-import { ILoginPayload, IRegisterPayload } from '@store/types';
+import { Input } from '~/components/ui/input';
+import { IRegisterFormStepFour, IRegistrationPageStep } from './types';
 import { RegisterFormContext } from '.';
+import { Formik, FormikConfig } from 'formik';
+import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_4 } from '@utils/schemas';
-import { useLoginMutation, useRegisterMutation } from '@store/services/account';
-import { useAppDispatch } from '@store/hooks';
-import { AppStateContext } from '../../../App';
-import useModal from '@hooks/modal/useModal';
-import { versionActiontypes } from '@store/services/version';
-import Utils from '@utils/index';
-import { useNavigation } from '@react-navigation/native';
-import { userActionTypes } from '@store/services/users';
-import useDevice from '@hooks/device';
+import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Label } from '~/components/ui/label';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
+import { versionActiontypes } from '~/store/services/version';
+import { useLoginMutation, useRegisterMutation } from '~/store/services/account';
+import { useAppDispatch } from '~/store/hooks';
+import { storeSession } from '~/store/actions/users';
+import Utils from '~/utils';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
-    const [showPassword, setShowPassword] = React.useState<boolean>(false);
-    const { navigate } = useNavigation();
-
+    const dispatch = useAppDispatch();
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
-    const handleIconPress = () => setShowPassword(prev => !prev);
-    const handleBackPress = () => onStepPress(2);
+    const onGoback = (values: IRegisterFormStepFour) => () => {
+        setFormValues(prev => {
+            return { ...prev, ...values };
+        });
 
-    const [loginValues, setLoginValues] = React.useState<ILoginPayload>();
-    const [
-        register,
-        { error: registerError, isError: isRegisterError, isSuccess: registerIsSuccess, isLoading: registerIsLoading },
-    ] = useRegisterMutation();
-
-    const [
-        login,
-        {
-            data: loginData,
-            error: loginError,
-            isError: loginIsError,
-            isSuccess: loginIsSuccess,
-            isLoading: loginIsLoading,
-        },
-    ] = useLoginMutation();
-
-    const onSubmit = (values: IRegisterPayload) => {
-        delete formValues.confirmPassword;
-        delete formValues.departmentName;
-
-        register(formValues);
-        setLoginValues({ password: values.password, email: values.email });
+        onStepPress(2);
     };
 
-    const dispatch = useAppDispatch();
+    const [register, { isLoading: registerIsLoading }] = useRegisterMutation();
+    const [login, { isLoading: loginIsLoading }] = useLoginMutation();
 
-    const { setIsLoggedIn, isLoggedIn } = React.useContext(AppStateContext);
+    const onSubmit: FormikConfig<IRegisterFormStepFour>['onSubmit'] = async values => {
+        try {
+            delete formValues.confirmPassword;
+            delete formValues.departmentName;
 
-    const { setModalState } = useModal();
+            const response = await register({ ...formValues, password: values.password });
+
+            if ('data' in response) {
+                const loginResponse = await login({
+                    password: values.password,
+                    email: Utils.formatEmail(formValues.email),
+                });
+
+                if ('data' in loginResponse) {
+                    dispatch(storeSession(loginResponse.data as any));
+                }
+
+                if ('error' in loginResponse) {
+                    Alert.alert((loginResponse?.error as any)?.data?.message || loginResponse?.error);
+                }
+            }
+
+            if ('error' in response) {
+                Alert.alert((response?.error as any)?.data?.message || response?.error);
+            }
+        } catch (error) {
+            Alert.alert('Oops, something went wrong!');
+        }
+    };
 
     React.useEffect(() => {
         dispatch({
@@ -66,178 +67,87 @@ const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
         });
     }, []);
 
-    React.useEffect(() => {
-        if (registerIsSuccess) {
-            setModalState({
-                message: 'Registration successful',
-                defaultRender: true,
-                status: 'success',
-            });
-
-            loginValues &&
-                login({
-                    email: Utils.formatEmail(loginValues.email),
-                    password: loginValues.password,
-                });
-        }
-
-        if (isRegisterError) {
-            setModalState({
-                message: `${registerError?.data?.message}`,
-                defaultRender: true,
-                status: 'error',
-            });
-            navigate('Login' as never);
-        }
-    }, [registerIsSuccess, isRegisterError]);
-
-    React.useEffect(() => {
-        if (loginIsError) {
-            setModalState({
-                defaultRender: true,
-                status: loginError?.error ? 'error' : 'info',
-                message: loginError?.data?.data?.message || loginError?.error,
-            });
-        }
-        if (loginIsSuccess) {
-            if (loginData) {
-                dispatch({
-                    type: userActionTypes.SET_USER_DATA,
-                    payload: loginData.profile,
-                });
-                Utils.storeCurrentUserData(loginData.profile);
-                setIsLoggedIn && setIsLoggedIn(true);
-            }
-        }
-    }, [loginIsError, loginIsSuccess]);
-
-    const { isAndroidOrBelowIOSTenOrTab } = useDevice();
-
     return (
-        <ViewWrapper avoidKeyboard scroll style={{ paddingTop: 100 }} avoidKeyboardBehavior="padding">
-            <Center flex={1}>
-                <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                    <Heading textAlign="left">Create a password</Heading>
-                    <Box alignItems="center" w="100%">
-                        <Stack w="100%" space={1}>
-                            <Formik<IRegisterPayload>
-                                onSubmit={onSubmit}
-                                validationSchema={RegisterSchema_4}
-                                initialValues={formValues as IRegisterPayload}
-                            >
-                                {({ handleChange, errors, validateForm, values, submitForm }) => {
-                                    const handleContinuePress = () => {
-                                        validateForm()
-                                            .then(e => {
-                                                if (Object.keys(e).length === 0) {
-                                                    setFormValues(prev => {
-                                                        return { ...prev, ...values };
-                                                    });
-                                                }
-                                            })
-                                            .then(() => {
-                                                submitForm();
-                                            });
-                                    };
+        <SafeAreaView className="flex-1">
+            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
+                <View className="flex-1 px-4 gap-8 pt-8">
+                    <Text className="text-3xl font-bold">Password</Text>
+                    <View className="items-center w-full flex-1">
+                        <Formik<IRegisterFormStepFour>
+                            onSubmit={onSubmit}
+                            validateOnMount={false}
+                            validationSchema={RegisterSchema_4}
+                            initialValues={formValues as IRegisterPayload}
+                        >
+                            {({
+                                errors,
+                                values,
+                                touched,
+                                isValid,
+                                handleBlur,
+                                validateForm,
+                                handleChange,
+                                setFieldError,
+                                setFieldTouched,
+                                ...props
+                            }) => {
+                                return (
+                                    <View className="w-full gap-4 flex-1 justify-between">
+                                        <ScrollView className="w-full gap-3 flex-1">
+                                            <View className="w-full gap-3">
+                                                <View className="gap-1">
+                                                    <Label>Password</Label>
+                                                    <Input
+                                                        isPassword
+                                                        value={values.password}
+                                                        placeholder="Enter your password"
+                                                        onBlur={handleBlur('password')}
+                                                        onChangeText={handleChange('password')}
+                                                    />
+                                                    {!!errors?.password && !!touched?.password && (
+                                                        <FormErrorMessage>{errors?.password}</FormErrorMessage>
+                                                    )}
+                                                </View>
 
-                                    return (
-                                        <>
-                                            <FormControl isRequired isInvalid={errors?.password ? true : false}>
-                                                <FormControl.Label>Password</FormControl.Label>
-                                                <InputComponent
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    placeholder="password"
-                                                    leftIcon={{
-                                                        name: 'lock-closed-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    rightIcon={{
-                                                        name: showPassword ? 'eye-off-outline' : 'eye-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    onIconPress={handleIconPress}
-                                                    onChangeText={handleChange('password')}
-                                                />
-                                                <FormControl.ErrorMessage
-                                                    fontSize="2xl"
-                                                    mt={3}
-                                                    leftIcon={
-                                                        <Icon
-                                                            size={16}
-                                                            name="warning"
-                                                            type="antdesign"
-                                                            color={THEME_CONFIG.error}
-                                                        />
-                                                    }
-                                                >
-                                                    {errors?.password}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl isRequired isInvalid={!!errors?.confirmPassword}>
-                                                <FormControl.Label>Confirm password</FormControl.Label>
-                                                <InputComponent
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    placeholder="Repeat password"
-                                                    leftIcon={{
-                                                        name: 'lock-closed-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    rightIcon={{
-                                                        name: showPassword ? 'eye-off-outline' : 'eye-outline',
-                                                        type: 'ionicon',
-                                                    }}
-                                                    onIconPress={handleIconPress}
-                                                    onChangeText={handleChange('confirmPassword')}
-                                                />
-                                                <FormControl.ErrorMessage
-                                                    fontSize="2xl"
-                                                    mt={3}
-                                                    leftIcon={
-                                                        <Icon
-                                                            size={16}
-                                                            name="warning"
-                                                            type="antdesign"
-                                                            color={THEME_CONFIG.error}
-                                                        />
-                                                    }
-                                                >
-                                                    {errors?.confirmPassword}
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl>
-                                                <HStack space={4} mt={2} justifyContent="space-between">
-                                                    <ButtonComponent
-                                                        size="md"
-                                                        style={{ flex: 1 }}
-                                                        onPress={handleBackPress}
-                                                        secondary
-                                                        mt={4}
-                                                    >
-                                                        Go back
-                                                    </ButtonComponent>
-                                                    <ButtonComponent
-                                                        size="md"
-                                                        style={{ flex: 1 }}
-                                                        isLoading={registerIsLoading || loginIsLoading}
-                                                        isLoadingText={
-                                                            loginIsLoading ? 'Logging in...' : 'Signing up...'
-                                                        }
-                                                        onPress={handleContinuePress}
-                                                        mt={4}
-                                                    >
-                                                        Register
-                                                    </ButtonComponent>
-                                                </HStack>
-                                            </FormControl>
-                                        </>
-                                    );
-                                }}
-                            </Formik>
-                        </Stack>
-                    </Box>
-                </VStack>
-            </Center>
-        </ViewWrapper>
+                                                <View className="gap-1">
+                                                    <Label>Confirm password</Label>
+                                                    <Input
+                                                        isPassword
+                                                        value={values.confirmPassword}
+                                                        placeholder="Confirm your password"
+                                                        onBlur={handleBlur('confirmPassword')}
+                                                        onChangeText={handleChange('confirmPassword')}
+                                                    />
+                                                    {!!errors?.confirmPassword && !!touched?.confirmPassword && (
+                                                        <FormErrorMessage>{errors?.confirmPassword}</FormErrorMessage>
+                                                    )}
+                                                </View>
+                                            </View>
+                                        </ScrollView>
+                                        <View className="w-full flex-row gap-4 mb-4">
+                                            <Button variant="outline" className="flex-1" onPress={onGoback(values)}>
+                                                Back
+                                            </Button>
+                                            <Button
+                                                className="flex-1"
+                                                disabled={!isValid}
+                                                onPress={() => {
+                                                    onSubmit(values, props as any);
+                                                }}
+                                                isLoading={registerIsLoading || loginIsLoading}
+                                                loadingText={registerIsLoading ? 'Registering...' : 'Logging in...'}
+                                            >
+                                                Register
+                                            </Button>
+                                        </View>
+                                    </View>
+                                );
+                            }}
+                        </Formik>
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
 
