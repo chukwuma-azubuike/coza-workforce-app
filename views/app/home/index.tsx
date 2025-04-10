@@ -1,6 +1,5 @@
 import React from 'react';
 import Clocker from './workers/clocker';
-// import { usePreventGoBack } from '@hooks/navigation';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -34,7 +33,6 @@ export const HomeContext = React.createContext({} as IInitialHomeState);
 
 const Home: React.FC = () => {
     const { user, isGlobalPastor, isGroupHead, isCampusPastor } = useRole();
-    // usePreventGoBack();
 
     const {
         isError,
@@ -98,13 +96,11 @@ const Home: React.FC = () => {
         Utils.checkLocationPermission(refresh);
     }, []);
 
-    const isIOS = Platform.OS === 'ios';
-
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             <SafeAreaView className="flex-1">
                 <View
-                    className="flex-1"
+                    className="flex-1 pb-8"
                     // refreshing={isLoading}
                     // onRefresh={handleRefresh}
                 >

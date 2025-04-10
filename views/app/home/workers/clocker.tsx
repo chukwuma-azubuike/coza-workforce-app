@@ -118,7 +118,7 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className=" flex-1 gap-8">
+        <View className="flex-1 gap-8">
             <TopNav />
             <Timer />
             <If condition={isCampusPastor}>
@@ -134,7 +134,7 @@ const Clocker: React.FC<IClockerProps> = ({
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>
-                    <View className="flex-1 items-center justify-between">
+                    <View className="flex-1 items-center justify-between pt-12">
                         <ErrorBoundary>
                             <ClockButton
                                 isInRange={!!isInRange}
