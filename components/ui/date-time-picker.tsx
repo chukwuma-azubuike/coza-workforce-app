@@ -53,8 +53,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                               mode === 'date'
                                   ? 'DD MMMM, YYYY'
                                   : mode === 'datetime'
-                                  ? 'dddd, DD MMMM, HH:MM A'
-                                  : 'HH:MM A'
+                                    ? 'dddd, DD MMMM, HH:MM A'
+                                    : 'HH:MM A'
                           )}
                 </Text>
             </Button>

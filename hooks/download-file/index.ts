@@ -82,37 +82,3 @@ export const useDownloadFile = (params: DownloadTicketsProps, skip: boolean) => 
 
     return { isDownloading };
 };
-
-// export const downLoadExcelFile = (state: [boolean, React.Dispatch<React.SetStateAction<boolean>>]) => {
-//     const [isDownloading, setIsDownloading] = state;
-
-//     const handleDownload = async () => {
-//         setIsDownloading(true);
-//         try {
-//             const url = 'https://your-backend-api-url/download-excel';
-//             const headers = { 'Cache-Control': 'no-cache' };
-
-//             // Perform the request using RNFetchBlob
-//             const response = await RNFetchBlob.config({ fileCache: true }).fetch('GET', url, headers);
-
-//             // Get the response data as a Blob
-//             const fileData = await response.blob('blob', 1);
-
-//             // Save the file using RNFS
-//             const downloadDir = RNFS.DownloadDirectoryPath;
-//             const filePath = `${downloadDir}/example.xlsx`;
-//             await RNFS.writeFile(filePath, fileData, 'ascii');
-
-//             // Open the downloaded file with the default app for its type
-//             await Share.open({ url: `file://${filePath}`, title: 'Open Excel File' });
-
-//             Alert.alert('Success', 'Excel file downloaded successfully!');
-//         } catch (error) {
-//             console.error('Error downloading Excel file:', error);
-//         } finally {
-//             setIsDownloading(false);
-//         }
-//     };
-
-//     return { isDownloading };
-// };
