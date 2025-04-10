@@ -58,7 +58,7 @@ const TopNav: React.FC = () => {
                 <Ionicons
                     size={44}
                     type="Entypo"
-                    name='help-circle'
+                    name="help-circle"
                     borderRadius={10}
                     underlayColor="white"
                     iconStyle={{ fontSize: 36, marginRight: -3 }}
