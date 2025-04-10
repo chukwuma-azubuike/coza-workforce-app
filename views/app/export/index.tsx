@@ -8,7 +8,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetServicesQuery } from '@store/services/services';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import ButtonComponent from '@components/atoms/button';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { downloadFile } from '@utils/downloadFile';
 import { useGetAttendanceReportForDownloadQuery } from '@store/services/attendance';
 import { useGetPermissionsReportForDownloadQuery } from '@store/services/permissions';
@@ -22,7 +22,6 @@ import { generateCummulativeAttendanceReport } from '@utils/generateCummulativeA
 import { generateReportName } from '@utils/generateReportName';
 import { IReportDownloadPayload } from '@store/types';
 import Utils from '@utils/index';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 import HStackComponent from '@components/layout/h-stack';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
@@ -57,7 +56,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const sortedCampusDepartments = React.useMemo(
         () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
-        [...spreadDependencyArray(campusDepartments, '_id')]
+        [campusDepartments]
     );
 
     const {
@@ -70,7 +69,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { data: services, refetch: refetchServices, isLoading: servicesLoading } = useGetServicesQuery({});
 
     const pastServices = React.useMemo(
-        () => services?.filter(service => moment(service.clockInStartTime).unix() < moment().unix()),
+        () => services?.filter(service => dayjs(service.clockInStartTime).unix() < dayjs().unix()),
         [services]
     );
 
@@ -197,11 +196,11 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const isPermission = dataType === 'permissions';
 
     const handleStartDate = (fieldName: string, value: number) => {
-        setStartDate(moment(value).unix());
+        setStartDate(dayjs(value).unix());
     };
 
     const handleEndDate = (fieldName: string, value: number) => {
-        setEndDate(moment(value).unix());
+        setEndDate(dayjs(value).unix());
     };
 
     return (
@@ -270,9 +269,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         value={service._id}
                                         key={`service-${index}`}
                                         label={`${service.name} - ${
-                                            service?.serviceTime
-                                                ? moment(service?.serviceTime).format('DD-MM-YYYY')
-                                                : ''
+                                            service?.serviceTime ? dayjs(service?.serviceTime).format('DD-MM-YYYY') : ''
                                         }`}
                                         isLoading={servicesLoading}
                                     />

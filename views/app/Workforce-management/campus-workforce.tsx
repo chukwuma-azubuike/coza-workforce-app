@@ -19,7 +19,6 @@ import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { View } from 'react-native';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as { _id?: string };
@@ -113,7 +112,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 })),
                 'title'
             ),
-        [...spreadDependencyArray(data?.departmentCount, 'departmentId')]
+        [(data?.departmentCount, 'departmentId')]
     );
 
     const gotoCreateWorker = () => {

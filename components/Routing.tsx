@@ -8,8 +8,23 @@ import * as Haptics from 'expo-haptics';
 import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { NavButton } from './NavButton';
+import { AppRoutes, IAppRoute } from '~/config/navigation';
 
 export { ErrorBoundary } from 'expo-router';
+
+const flattenNestedRoutes = (routes: IAppRoute[]) => {
+    const allRoutes: IAppRoute[] = [];
+
+    routes.forEach(route => {
+        allRoutes.push(route);
+        if (route.submenus.length) {
+            // Apply recursion for nested submenu routes.
+            allRoutes.push(...flattenNestedRoutes(route.submenus));
+        }
+    });
+
+    return allRoutes;
+};
 
 const Routing: React.FC = () => {
     const { isDarkColorScheme } = useColorScheme();
@@ -22,6 +37,8 @@ const Routing: React.FC = () => {
             router.back();
         }
     };
+
+    const flattenedRoutes = React.useMemo(() => flattenNestedRoutes(AppRoutes), [AppRoutes]);
 
     const generalScreenOptions = {
         headerTitle: '',
@@ -59,10 +76,9 @@ const Routing: React.FC = () => {
             ) : (
                 <Stack>
                     {/* Authenticated Screens */}
-                    <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
-                    <Stack.Screen name="(tabs)/attendance" options={{ headerShown: false }} />
-
-                    <Stack.Screen name="(stack)/profile" options={{ headerShown: false }} />
+                    {flattenedRoutes.map(route => (
+                        <Stack.Screen key={route.href} name={route.href} options={{ headerShown: false }} />
+                    ))}
                 </Stack>
             )}
         </View>
