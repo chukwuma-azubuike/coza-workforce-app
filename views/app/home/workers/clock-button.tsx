@@ -1,6 +1,6 @@
 import React from 'react';
 import LottieView from 'lottie-react-native';
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import useModal from '~/hooks/modal/useModal';
 import dayjs from 'dayjs';
 import ModalAlertComponent from '~/components/composite/modal-alert';
@@ -16,9 +16,8 @@ import openLocationSettings from '~/utils/openLocationSettings';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 import Loading from '~/components/atoms/loading';
-import { Ionicons } from '@expo/vector-icons';
 import { Text } from '~/components/ui/text';
-import { LocateOffIcon, Timer } from 'lucide-react-native';
+import { Icon } from '@rneui/themed';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -246,10 +245,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         canClockIn && !disabled
                             ? 'bg-primary'
                             : canClockOut
-                              ? ' bg-rose-400'
-                              : disabled
-                                ? 'bg-gray-400'
-                                : 'bg-gray-400'
+                            ? ' bg-rose-400'
+                            : disabled
+                            ? 'bg-gray-400'
+                            : 'bg-gray-400'
                     )}
                 >
                     <View className="flex-1 justify-center items-center">
@@ -258,7 +257,13 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         </If>
                         <If condition={!isLoading && !clockOutLoading}>
                             <View className="items-center gap-4 flex-1 justify-center">
-                                <Ionicons name="alarm" color="white" size={110} />
+                                <Icon
+                                    size={110}
+                                    color="white"
+                                    name="touch-app"
+                                    type="materialicons"
+                                    className={cn(disabled && 'mb-6')}
+                                />
                                 {!disabled && (
                                     <Text className="font-light">
                                         {canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}

@@ -14,9 +14,7 @@ const NavTabBackground = forwardRef(({ children, ...props }: NavTabBackgroundPro
             ref={ref}
             {...props}
             style={{ backgroundColor: 'transparent' }}
-            className={`w-full !bg-transparent flex-row pb-10 !justify-around pt-4 border-t ${
-                isDarkColorScheme ? 'border-border/30' : 'border-border/20'
-            }`}
+            className={`w-full !bg-transparent flex-row pb-10 !justify-around pt-4 border-t border-border/60`}
         >
             <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-1">
                 {children}

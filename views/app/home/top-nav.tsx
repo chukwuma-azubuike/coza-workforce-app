@@ -29,7 +29,7 @@ const TopNav: React.FC = () => {
     });
 
     return (
-        <View className="px-4 w-full z-20 items-center bg-background justify-between flex-row">
+        <View className="px-4 w-full z-20 items-center justify-between flex-row">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
