@@ -1,11 +1,9 @@
-import React from 'react';
 import { IIconTypes } from '~/utils/types';
 import { DEPARTMENTS, ROLES } from '~/hooks/role';
-import TopNav from '~/views/app/home/top-nav';
 import { Href } from 'expo-router';
 
 export interface IAppRoute {
-    href: Href;
+    href: Href | any; // TODO: Remove `any` type after creating all routes.
     name: string;
     options: any;
     submenus: IAppRoute[] | [];
@@ -13,20 +11,18 @@ export interface IAppRoute {
     inMenuBar: boolean;
     inMore: boolean;
     hideHeader?: boolean;
-    customHeader?: React.FC<any>;
     icon: { name: string; type: IIconTypes };
 }
 
 const AppRoutes: IAppRoute[] = [
     {
         name: 'Home',
-        href: '/(tabs)',
+        href: '/',
         options: { title: 'Home' },
         submenus: [],
         users: [],
         inMenuBar: true,
         inMore: false,
-        customHeader: TopNav,
         icon: { name: 'home', type: 'antdesign' },
     },
     {
@@ -37,6 +33,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: true,
         inMore: false,
         icon: { name: 'checklist', type: 'octicon' },
+        href: '/(tabs)/attendance',
     },
     {
         name: 'Permissions',
@@ -50,6 +47,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'hand-left-outline', type: 'ionicon' },
+                href: '/(stack)/permissions/request-permission',
             },
             {
                 name: 'Permission Details',
@@ -59,12 +57,14 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'hand-left-outline', type: 'ionicon' },
+                href: '/(stack)/permissions/permission-details',
             },
         ],
         users: [],
         inMenuBar: true,
         inMore: false,
         icon: { name: 'hand-left-outline', type: 'ionicon' },
+        href: '/(tabs)/permissions',
     },
     {
         name: 'Tickets',
@@ -77,10 +77,8 @@ const AppRoutes: IAppRoute[] = [
                 users: [],
                 inMenuBar: false,
                 inMore: false,
-                icon: {
-                    name: 'ticket-confirmation-outline',
-                    type: 'material-community',
-                },
+                icon: { name: 'ticket-confirmation-outline', type: 'material-community' },
+                href: '/(stack)/tickets/ticket-details',
             },
             {
                 name: 'Issue Ticket',
@@ -89,19 +87,15 @@ const AppRoutes: IAppRoute[] = [
                 users: [],
                 inMenuBar: false,
                 inMore: false,
-                icon: {
-                    name: 'ticket-confirmation-outline',
-                    type: 'material-community',
-                },
+                icon: { name: 'ticket-confirmation-outline', type: 'material-community' },
+                href: '/(stack)/tickets/issue-ticket',
             },
         ],
         users: [],
         inMenuBar: true,
         inMore: false,
-        icon: {
-            name: 'ticket-confirmation-outline',
-            type: 'material-community',
-        },
+        icon: { name: 'ticket-confirmation-outline', type: 'material-community' },
+        href: '/(tabs)/tickets',
     },
     {
         name: 'Notifications',
@@ -111,6 +105,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: false,
         icon: { name: 'notifications-outline', type: 'ionicon' },
+        href: '/(tabs)/notifications',
     },
     {
         name: 'Profile',
@@ -124,12 +119,14 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person-outline', type: 'ionicon' },
+                href: '/(stack)/profile/edit-profile',
             },
         ],
         users: [],
         inMenuBar: false,
         inMore: false,
         icon: { name: 'person-outline', type: 'ionicon' },
+        href: '/(tabs)/profile',
     },
     {
         name: 'Reports',
@@ -143,6 +140,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/childcare-report',
             },
             {
                 name: 'Incident Report',
@@ -152,6 +150,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/incident-report',
             },
             {
                 name: 'Attendance Report',
@@ -161,6 +160,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/attendance-report',
             },
             {
                 name: 'Guest Report',
@@ -170,6 +170,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/guest-report',
             },
             {
                 name: 'Service Report',
@@ -179,6 +180,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/service-report',
             },
             {
                 name: 'Security Report',
@@ -188,6 +190,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/security-report',
             },
             {
                 name: 'Transfer Report',
@@ -197,6 +200,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/transfer-report',
             },
             {
                 name: 'Campus Report',
@@ -206,6 +210,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'graph', type: 'octicon' },
+                href: '/(stack)/reports/campus-report',
             },
         ],
         users: [
@@ -219,6 +224,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'graph', type: 'octicon' },
+        href: '/(stack)/reports',
     },
     {
         name: 'Service management',
@@ -232,6 +238,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'church', type: 'material-community' },
+                href: '/(stack)/service-management/create-service',
             },
             {
                 name: 'Create CGWC session',
@@ -241,12 +248,14 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'church', type: 'material-community' },
+                href: '/(stack)/service-management/create-cgwc-session',
             },
         ],
         users: [ROLES.superAdmin],
         inMenuBar: false,
         inMore: true,
         icon: { name: 'church', type: 'material-community' },
+        href: '/(stack)/service-management',
     },
     {
         name: 'Assign Group Head',
@@ -256,6 +265,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'account-group-outline', type: 'material-community' },
+        href: '/(stack)/assign-group-head',
     },
     {
         name: 'Group Head Campus',
@@ -269,6 +279,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/group-head-campus/group-head-campuses',
             },
             {
                 name: 'Group Head Departments',
@@ -278,6 +289,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/group-head-campus/group-head-departments',
             },
             {
                 name: 'Group Head Department Activities',
@@ -287,12 +299,14 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/group-head-campus/group-head-department-activities',
             },
         ],
         users: [ROLES.groupHead],
         inMenuBar: false,
         inMore: true,
         icon: { name: 'home-group', type: 'material-community' },
+        href: '/(stack)/group-head-campus',
     },
     {
         name: 'GH Reports History',
@@ -302,6 +316,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'graph', type: 'octicon' },
+        href: '/(stack)/gh-reports-history',
     },
     {
         name: 'Group Head Service Report',
@@ -315,8 +330,8 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/group-head-service-report/group-head-service-summary',
             },
-
             {
                 name: 'Submit report summary',
                 options: { title: 'Submit report summary' },
@@ -325,12 +340,14 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/group-head-service-report/submit-report-summary',
             },
         ],
         users: [ROLES.groupHead, ROLES.campusPastor],
         inMenuBar: false,
         inMore: false,
         icon: { name: 'graph', type: 'octicon' },
+        href: '/(tabs)/group-head-service-report',
     },
     {
         name: 'Workforce summary',
@@ -344,6 +361,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/workforce-management',
             },
             {
                 name: 'User Profile',
@@ -353,6 +371,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/user-profile',
             },
             {
                 name: 'User Report',
@@ -362,6 +381,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/user-report',
             },
             {
                 name: 'User Report Details',
@@ -371,6 +391,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/user-report-details',
             },
             {
                 name: 'Create User',
@@ -380,6 +401,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/create-user',
             },
             {
                 name: 'Create Department',
@@ -389,6 +411,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/create-department',
             },
             {
                 name: 'Create Campus',
@@ -398,6 +421,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/create-campus',
             },
             {
                 name: 'Campus workforce',
@@ -407,6 +431,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/campus-workforce',
             },
             {
                 name: 'Global workforce',
@@ -416,6 +441,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'octicon' },
+                href: '/(stack)/workforce-summary/global-workforce',
             },
         ],
         users: [
@@ -433,6 +459,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'database-cog-outline', type: 'material-community' },
+        href: '/(stack)/workforce-summary',
     },
     {
         name: 'Manual clock in',
@@ -442,6 +469,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'timer-outline', type: 'material-community' },
+        href: '/(stack)/manual-clock-in',
     },
     {
         name: 'Export Data',
@@ -460,8 +488,8 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: true,
         icon: { name: 'download-outline', type: 'ionicon' },
+        href: '/(stack)/export-data',
     },
-
     {
         name: 'CGLS',
         options: { title: 'CGLS' },
@@ -474,6 +502,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'crown', type: 'foundation' },
+                href: '/(stack)/cgwc/create-cgwc',
             },
             {
                 name: 'CGWC Details',
@@ -483,8 +512,8 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 hideHeader: true,
-                customHeader: TopNav,
                 icon: { name: 'crown', type: 'foundation' },
+                href: '/(stack)/cgwc/cgwc-details',
             },
             {
                 name: 'Create Instant Message',
@@ -494,6 +523,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'new-message', type: 'entypo' },
+                href: '/(stack)/cgwc/create-instant-message',
             },
             {
                 name: 'CGWC Report',
@@ -503,6 +533,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'crown', type: 'foundation' },
+                href: '/(stack)/cgwc/cgwc-report',
             },
             {
                 name: 'CGWC Attendance',
@@ -512,6 +543,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'ionicon' },
+                href: '/(stack)/cgwc/cgwc-attendance',
             },
             {
                 name: 'CGWC Resources',
@@ -521,6 +553,7 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'ionicon' },
+                href: '/(stack)/cgwc/cgwc-resources',
             },
             {
                 name: 'CGWC Feedback',
@@ -530,14 +563,15 @@ const AppRoutes: IAppRoute[] = [
                 inMenuBar: false,
                 inMore: false,
                 icon: { name: 'person', type: 'ionicon' },
+                href: '/(stack)/cgwc/cgwc-feedback',
             },
         ],
         users: [],
         inMenuBar: false,
         inMore: true,
         icon: { name: 'crown', type: 'foundation' },
+        href: '/(stack)/cgls',
     },
-
     {
         name: 'More',
         options: { title: 'More' },
@@ -546,58 +580,8 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: true,
         inMore: false,
         icon: { name: 'menu-outline', type: 'ionicon' },
+        href: '/(tabs)/more',
     },
 ];
 
-const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
-    {
-        name: 'Welcome',
-        options: { title: 'Welcome' },
-        submenus: [],
-        users: [],
-        inMore: false,
-        inMenuBar: false,
-    },
-    {
-        name: 'Verify Email',
-        options: { title: 'Verify Email' },
-        submenus: [],
-        users: [],
-        inMore: false,
-        inMenuBar: false,
-    },
-    {
-        name: 'Login',
-        options: { title: 'Login' },
-        submenus: [],
-        users: [],
-        inMore: false,
-        inMenuBar: false,
-    },
-    {
-        name: 'Register',
-        options: { title: 'Register' },
-        submenus: [],
-        users: [],
-        inMore: false,
-        inMenuBar: false,
-    },
-    {
-        name: 'Forgot Password',
-        options: { title: 'Forgot Password' },
-        submenus: [],
-        users: [],
-        inMore: false,
-        inMenuBar: false,
-    },
-    {
-        name: 'Reset Password',
-        options: { title: 'Reset Password' },
-        submenus: [],
-        users: [],
-        inMore: false,
-        inMenuBar: false,
-    },
-];
-
-export { AppRoutes, AuthRoutes };
+export { AppRoutes };

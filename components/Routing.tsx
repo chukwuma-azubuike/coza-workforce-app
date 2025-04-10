@@ -59,10 +59,10 @@ const Routing: React.FC = () => {
             ) : (
                 <Stack>
                     {/* Authenticated Screens */}
-                    <Stack.Screen name="(tabs)/index" options={{ headerShown: false, gestureEnabled: false }} />
-                    <Stack.Screen name="(tabs)/attendance/index" options={{ headerShown: false }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+                    <Stack.Screen name="(tabs)/attendance" options={{ headerShown: false }} />
 
-                    <Stack.Screen name="(stacks)/profile/index" options={{ headerShown: false }} />
+                    <Stack.Screen name="(stack)/profile" options={{ headerShown: false }} />
                 </Stack>
             )}
         </View>
