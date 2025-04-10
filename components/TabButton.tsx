@@ -1,4 +1,4 @@
-import { ReactNode, Ref, forwardRef } from 'react';
+import { Ref, forwardRef } from 'react';
 
 import { Pressable, View } from 'react-native';
 import { TabTriggerSlotProps } from 'expo-router/ui';
@@ -31,9 +31,7 @@ const TabButton = forwardRef(
                     }
                 />
                 <Text
-                    className={`!text-xs ${
-                        isFocused ? 'text-primary dark:text-primary/70' : 'text-muted-foreground'
-                    }`}
+                    className={`!text-xs ${isFocused ? 'text-primary dark:text-primary/70' : 'text-muted-foreground'}`}
                 >
                     {children}
                 </Text>

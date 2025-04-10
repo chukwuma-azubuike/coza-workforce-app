@@ -51,7 +51,6 @@ const VerifyEmail: React.FC = () => {
     const handleValidateOtp = async (otp: string) => {
         if (otp.length === 6) {
             try {
-                console.log({ email, otp: +otp });
                 const response = await validateEmail({ email, otp: +otp });
 
                 if (response.error) {

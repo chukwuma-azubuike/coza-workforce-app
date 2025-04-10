@@ -29,8 +29,8 @@ const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps
                     label === 'Clock out'
                         ? THEME_CONFIG.rose
                         : label === 'Service hrs'
-                        ? THEME_CONFIG.gray
-                        : THEME_CONFIG.primaryLight
+                          ? THEME_CONFIG.gray
+                          : THEME_CONFIG.primaryLight
                 }
             />
             {difference ? (
@@ -52,14 +52,14 @@ const ClockStatistics = () => {
         <View className="justify-items-center flex-row w-full justify-around">
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockIn : ''}
-                icon='checkmark-sharp'
+                icon="checkmark-sharp"
                 iconType="feather"
                 label="Clock in"
             />
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockOut : ''}
                 label="Clock out"
-                icon='log-out-outline'
+                icon="log-out-outline"
                 iconType="antdesign"
             />
             <Stat
