@@ -1,6 +1,5 @@
 import React from 'react';
 import uniqBy from 'lodash/uniqBy';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const useFetchMoreData = ({
     uniqKey = '_id',
@@ -24,7 +23,7 @@ const useFetchMoreData = ({
                 return prev;
             });
         }
-    }, [isSuccess, ...spreadDependencyArray(dataSet)]);
+    }, [isSuccess, dataSet]);
 
     return { data: (data as any[]) || (dataSet as any[]) };
 };

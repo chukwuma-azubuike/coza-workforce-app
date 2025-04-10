@@ -2,14 +2,13 @@ import React from 'react';
 import { ICampusCoordinates } from '@store/services/attendance';
 import { useGetCampusesQuery } from '@store/services/campus';
 import CampusTree from '@utils/campusTree';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const useClosestCampus = (deviceCoordinates: ICampusCoordinates) => {
     const { data } = useGetCampusesQuery();
 
     const campusCoordinates = React.useMemo(
         () => data?.map(campus => [campus.coordinates.long, campus.coordinates.lat]),
-        [...spreadDependencyArray(data)]
+        [data]
     );
 
     const campusTree = campusCoordinates && new CampusTree(campusCoordinates);

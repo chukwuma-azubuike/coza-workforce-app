@@ -2,7 +2,6 @@ import React from 'react';
 import { useAppSelector } from '@store/hooks';
 import { useGetRolesQuery } from '@store/services/role';
 import { useAuth } from '../auth';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 import { userSelectors } from '~/store/actions/users';
 import { IUser } from '~/store/types';
 import { useGetUserByIdQuery } from '~/store/services/account';
@@ -86,7 +85,7 @@ const useRole = () => {
             roleObjects
                 ?.filter(roleObject => roleObject.name === ROLES.HOD || roleObject.name === ROLES.AHOD)
                 .map(roleObject => roleObject._id),
-        [...spreadDependencyArray(roleObjects, '_id')]
+        [roleObjects]
     );
 
     const roleName = currentUser?.role?.name;
