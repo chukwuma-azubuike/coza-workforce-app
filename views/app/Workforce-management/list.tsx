@@ -12,7 +12,6 @@ import Utils from '@utils/index';
 import TextComponent from '@components/text';
 import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 import ViewWrapper from '@components/layout/viewWrapper';
 
 const UserListRow: React.FC<IUser> = memo(user => {
@@ -140,7 +139,7 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
 
     const sortedGroupedData = React.useMemo(
         () => data && Utils.groupListByKey(Utils.sortStringAscending(data, 'firstName'), 'departmentName'),
-        [...spreadDependencyArray(data)]
+        [data]
     );
 
     const refresh = () => {

@@ -2,7 +2,7 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { FormControl, HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Alert, Switch } from 'react-native';
@@ -28,7 +28,6 @@ import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import CenterComponent from '@components/layout/center';
 import { THEME_CONFIG } from '@config/appConfig';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
@@ -59,7 +58,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const sortedCampusDepartments = React.useMemo(
         () => Utils.sortStringAscending(campusDepartments, 'departmentName'),
-        [...spreadDependencyArray(campusDepartments)]
+        [campusDepartments]
     );
 
     const [updateUser, updateResults] = useUpdateUserMutation();
@@ -419,7 +418,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <Text alignSelf="flex-start" bold>
                                         Birthday
                                     </Text>
-                                    <Text>{moment(data?.birthDay).format('Do MMMM')}</Text>
+                                    <Text>{dayjs(data?.birthDay).format('Do MMMM')}</Text>
                                 </HStack>
 
                                 <HStack

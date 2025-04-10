@@ -10,14 +10,12 @@ import dynamicSearch from '@utils/dynamicSearch';
 import { FlatList } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { ScreenHeight } from '@rneui/base';
 import debounce from 'lodash/debounce';
 import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 import { TouchableOpacity } from 'react-native';
 import ModalComponent from '../modal';
 import { THEME_CONFIG } from '@config/appConfig';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 import Loading from '@components/atoms/loading';
 
 interface IUseSearchProps<D> {
@@ -62,12 +60,12 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 setSearchResults(data);
             }
         }, 500),
-        [...spreadDependencyArray(data), searchFields]
+        [data, searchFields]
     );
 
     const sortedSearchResults = React.useMemo(() => {
         return Utils.sortStringAscending(searchText === '' ? data : searchResults, 'firstName');
-    }, [...spreadDependencyArray(data), ...spreadDependencyArray(searchResults), searchText]);
+    }, [data, searchResults, searchText]);
 
     const { textColor, backgroundColor } = useAppColorMode();
 

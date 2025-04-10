@@ -16,7 +16,6 @@ import { useGetRolesQuery } from '@store/services/role';
 import { IAssignGroupHead } from '@store/types';
 import { AssignGroupHeadSchema } from '@utils/schemas';
 import { TouchableOpacity } from 'react-native';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 import Utils from '@utils/index';
 import HStackComponent from '@components/layout/h-stack';
 
@@ -47,22 +46,16 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
         { departmentId: findCampusDept.department },
         { refetchOnMountOrArgChange: true }
     );
-    const sortedUsers = React.useMemo(
-        () => Utils.sortStringAscending(users, 'firstName'),
-        [...spreadDependencyArray(users)]
-    );
+    const sortedUsers = React.useMemo(() => Utils.sortStringAscending(users, 'firstName'), [users]);
 
     const { data: roles } = useGetRolesQuery();
     const { data: campus } = useGetCampusesQuery();
-    const sortedCampuses = React.useMemo(
-        () => Utils.sortStringAscending(campus, 'campusName'),
-        [...spreadDependencyArray(campus)]
-    );
+    const sortedCampuses = React.useMemo(() => Utils.sortStringAscending(campus, 'campusName'), [campus]);
     const { data: alldepartments } = useGetDepartmentsByCampusIdQuery(addCampusDept.campus);
     const { data: finddepartments } = useGetDepartmentsByCampusIdQuery(findCampusDept.campus);
     const sortedDepartments = React.useMemo(
         () => Utils.sortStringAscending(finddepartments, 'departmentName'),
-        [...spreadDependencyArray(finddepartments)]
+        [finddepartments]
     );
 
     const handleAddCampusDept = () => {
@@ -133,7 +126,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
 
     const isGroupHead = React.useMemo(
         () => roles?.find(item => item._id === findCampusDept.role)?.name === 'Group Head',
-        [...spreadDependencyArray(roles), findCampusDept]
+        [roles, findCampusDept]
     );
 
     const AddNewDept = () => {

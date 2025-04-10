@@ -5,22 +5,8 @@ import * as Haptics from 'expo-haptics';
 import { TabButton } from '~/components/TabButton';
 import { NavTabBackground } from '~/components/NavBackgroundBlur';
 
-import { AppRoutes, IAppRoute } from '@config/navigation';
+import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
-
-const flattenNestedRoutes = (routes: IAppRoute[]) => {
-    const allRoutes: IAppRoute[] = [];
-
-    routes.forEach(route => {
-        allRoutes.push(route);
-        if (route.submenus.length) {
-            // Apply recursion for nested submenu routes.
-            allRoutes.push(...flattenNestedRoutes(route.submenus));
-        }
-    });
-
-    return allRoutes;
-};
 
 const TabLayout: React.FC = () => {
     const { isWorker, isQC, isCGWCApproved } = useRole();
@@ -76,7 +62,7 @@ const TabLayout: React.FC = () => {
 
                         // Roles and permissions filter
                         if (isWorker && !isQC && route.name === 'More') return;
-                        if (isWorker && isQC && route.name === 'CGLS') return;
+                        if (isWorker && isQC && route.name === 'CGLS' && !isCGWCApproved) return;
 
                         return (
                             <TabTrigger

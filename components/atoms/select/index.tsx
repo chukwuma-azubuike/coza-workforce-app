@@ -8,10 +8,9 @@ import { Button, Modal, Platform, StyleProp, TouchableOpacity, View, ViewStyle }
 import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
 import getDeepField from '@utils/getDeepField';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import isValidDate from '@utils/isValidDate';
 import ErrorBoundary from '@components/composite/error-boundary';
-import spreadDependencyArray from '@utils/spreadDependencyArray';
 
 interface ISelectComponent extends PickerProps {
     items: Array<any>;
@@ -90,7 +89,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
 
     const formatLabel = (value: string | number) => {
         if (isValidDate(value)) {
-            return moment(value).format('Do MMM YYYY');
+            return dayjs(value).format('Do MMM YYYY');
         }
         return value;
     };
@@ -150,7 +149,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
             setSelectedId(undefined);
             setSelectedItemLabel(placeholder);
         }
-    }, [...spreadDependencyArray(items, valueKey)]);
+    }, [(items, valueKey)]);
 
     // Initialise button label
     React.useEffect(() => {
