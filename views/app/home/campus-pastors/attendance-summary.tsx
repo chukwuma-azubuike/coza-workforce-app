@@ -28,7 +28,7 @@ export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.mem
                 <Loading style={{ height: 40, width: 40 }} />
             ) : (
                 <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
-                    <View className="items-baseline">
+                    <View className="items-baseline flex-row">
                         <View className="items-center flex-row">
                             <Ionicons
                                 color={THEME_CONFIG.primaryLight}
@@ -39,8 +39,8 @@ export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.mem
                             <Text className="ml-2 text-muted-foreground">Members clocked in:</Text>
                         </View>
 
-                        <View className="items-center flex-row">
-                            <Text className="font-bold text-primary text-4xl ml-1">
+                        <View className="items-baseline flex-row">
+                            <Text className="font-bold text-primary/70 text-4xl ml-1">
                                 <CountUp isCounting duration={2} end={attendance || 0} />
                             </Text>
                             <Text className="font-semibold text-muted-foreground">

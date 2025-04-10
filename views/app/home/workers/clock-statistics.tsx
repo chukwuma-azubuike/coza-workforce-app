@@ -20,7 +20,7 @@ interface IStatProps {
 
 const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps) => {
     return (
-        <View className="items-center">
+        <View className="items-center min-w-[6rem]">
             <Ionicons
                 size={25}
                 name={icon}
@@ -38,7 +38,7 @@ const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps
             ) : (
                 <Text className="font-bold text-muted-foreground">{time ? dayjs(time).format('LT') : '--:--'}</Text>
             )}
-            <Text className="font-bold text-muted-foreground text-base">{label}</Text>
+            <Text className="font-light text-muted-foreground text-sm">{label}</Text>
         </View>
     );
 });
@@ -49,17 +49,17 @@ const ClockStatistics = () => {
     } = React.useContext(HomeContext);
 
     return (
-        <View className="justify-center justify-items-center">
+        <View className="justify-items-center flex-row w-full justify-around">
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockIn : ''}
-                icon="checkmark-circle"
+                icon='checkmark-sharp'
                 iconType="feather"
                 label="Clock in"
             />
             <Stat
                 time={latestAttendanceData?.length ? latestAttendanceData[0]?.clockOut : ''}
                 label="Clock out"
-                icon="log-out"
+                icon='log-out-outline'
                 iconType="antdesign"
             />
             <Stat

@@ -7,24 +7,18 @@ import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, TouchableOpacity, View } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { useGetLatestServiceQuery } from '@store/services/services';
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 
 import { STATUS_COLORS } from '@constants/notification-types';
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
-import getFirstCharacter from '~/utils/getFirstCharacter';
 import { Text } from '~/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
-const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
-    const handleNotificationPress = () => {
-        navigation.navigate('Notifications');
-    };
-
+const TopNav: React.FC = () => {
     const handleSupportPress = () => {
         Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
     };
 
-    const handlePress = () => navigation.navigate('Profile');
+    const handlePress = () => router.push('/(stacks)/profile');
 
     const { user } = useRole();
     const { isLightMode } = useAppColorMode();
@@ -35,7 +29,7 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
     });
 
     return (
-        <View className="px-4 w-full z-20 items-center bg-background justify-between">
+        <View className="px-4 w-full z-20 items-center bg-background justify-between flex-row">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
@@ -46,7 +40,7 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
                     imageUrl={user.pictureUrl ?? AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
-            <Text className="flex-1 text-lg font-light text-center justify-center text-muted-foreground">
+            <Text className="text-xl font-light text-center justify-center text-muted-foreground">
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
             {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>
@@ -60,11 +54,11 @@ const TopNav: React.FC<BottomTabHeaderProps> = ({ navigation }) => {
                     color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
                 />
             </TouchableOpacity> */}
-            <TouchableOpacity onPress={handleSupportPress} activeOpacity={0.6}>
+            <TouchableOpacity onPress={handleSupportPress} activeOpacity={0.6} className="w-12">
                 <Ionicons
-                    size={16}
-                    name="help"
+                    size={44}
                     type="Entypo"
+                    name='help-circle'
                     borderRadius={10}
                     underlayColor="white"
                     iconStyle={{ fontSize: 36, marginRight: -3 }}

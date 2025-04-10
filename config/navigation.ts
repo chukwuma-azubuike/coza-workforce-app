@@ -1,79 +1,12 @@
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import Attendance from '~/views/app/attendance';
-import Home from '~/views/app/home';
-import Login from '~/views/auth/login';
-import Notifications from '~/views/app/notifications';
-import Permissions from '~/views/app/permissions';
-import Profile from '~/views/app/profile';
-import Reports from '~/views/app/reports';
 import { IIconTypes } from '~/utils/types';
-import More from '~/views/app/more';
-import Tickets from '~/views/app/tickets';
-import IssueTicket from '~/views/app/tickets/issue-ticket';
-import RequestPermission from '~/views/app/permissions/request-permission';
-import Register from '~/views/auth/register';
-import TicketDetails from '~/views/app/tickets/ticket-details';
-// import CreateUser from '~/views/app/workforce-management/create-user';
-// import UserDetails from '~/views/app/workforce-management/user-details';
-import ManualClockin from '~/views/app/manual-clockin';
-import PermissionDetails from '~/views/app/permissions/permission-details';
-import EditProfile from '~/views/app/profile/edit-profile';
-import CampusReport from '~/views/app/reports/campus-report/reportDetails';
-import AttendanceReport from '~/views/app/reports/forms/attendance-report';
-import ChildcareReport from '~/views/app/reports/forms/childcare-report';
-import GuestReport from '~/views/app/reports/forms/guest-report';
-import IncidentReport from '~/views/app/reports/forms/incident-report';
-import SecurityReport from '~/views/app/reports/forms/security-report';
-import ServiceReport from '~/views/app/reports/forms/service-report';
-import TransferReport from '~/views/app/reports/forms/transfer-report';
-import ForgotPassword from '~/views/auth/forgot-password';
-import ResetPassword from '~/views/auth/reset-password';
-import ServiceManagement from '~/views/app/service-management';
-import CreateServiceManagement from '~/views/app/service-management/create-service';
-import VerifyEmail from '~/views/auth/welcome';
-import Welcome from '~/views/auth/welcome/welcome';
-// import WorkforceManagement from '~/views/app/workforce-management/workforce-management';
-// import GlobalWorkforceSummary from '~/views/app/workforce-management/global-workforce';
-// import WorkforceSummary from '~/views/app/workforce-management';
-// import CampusWorkforceSummary from '~/views/app/workforce-management/campus-workforce';
-// import UserReport from '~/views/app/workforce-management/user-reports';
-import UserReport from '~/views/app/workforce-management/user-reports';
-// import UserReportDetailsPage from '~/views/app/workforce-management/user-reports/UserReportDetailsPage';
-import CampusGroupHeads from '~/views/app/group-head-summary';
-import AssignRole from '~/views/app/leaders/assign-roles';
-import GroupHeadCampuses from '~/views/app/group-head-summary/group-head-campuses';
-import GroupHeadDepartments from '~/views/app/group-head-summary/group-head-departments';
-import GroupHeadDepartmentActivies from '~/views/app/group-head-summary/group-head-tabs';
-import Export from '~/views/app/export';
-// import CreateCampus from '~/views/app/workforce-management/create-campus';
-// import CreateDepartment from '~/views/app/workforce-management/create-department';
 import { DEPARTMENTS, ROLES } from '~/hooks/role';
-import CGWC from '~/views/app/cgwc';
-import CGWCDetails from '~/views/app/cgwc/cgwc-details';
-import CreateCGWC from '~/views/app/cgwc/create-cgwc';
-import CreateCGWGSession from '~/views/app/service-management/create-cgwc-session';
-import CreateCGWCInstantMessage from '~/views/app/cgwc/create-instant-message';
-import CGWCGroupAttendance from '~/views/app/cgwc/group-attendance';
-import CGWCResources from '~/views/app/cgwc/cgwc-resources';
-import CGWCFeedback from '~/views/app/cgwc/feedback';
-import CGWCReport from '~/views/app/cgwc/cgwc-report';
 import TopNav from '~/views/app/home/top-nav';
-import GroupHeadServiceReport from '~/views/app/group-head-report/GroupHeadServiceReport';
-import GHReportSummary from '~/views/app/reports/group-head';
-import GroupHeadReportHistory from '~/views/app/group-head-report/group-head-report-history';
-import WorkforceManagement from '~/views/app/Workforce-management';
-import UserReportDetailsPage from '~/views/app/Workforce-management/user-reports/UserReportDetailsPage';
-import CreateUser from '~/views/app/Workforce-management/create-user';
-import CreateCampus from '~/views/app/Workforce-management/create-campus';
-import CampusWorkforceSummary from '~/views/app/Workforce-management/campus-workforce';
-import GlobalWorkforceSummary from '~/views/app/Workforce-management/global-workforce';
-import CreateDepartment from '~/views/app/Workforce-management/create-department';
+import { Href } from 'expo-router';
 
 export interface IAppRoute {
+    href: Href;
     name: string;
-    component: React.FC<NativeStackScreenProps<ParamListBase, string, undefined>> | React.FC<any>;
     options: any;
     submenus: IAppRoute[] | [];
     users: (ROLES | DEPARTMENTS)[];
@@ -87,7 +20,7 @@ export interface IAppRoute {
 const AppRoutes: IAppRoute[] = [
     {
         name: 'Home',
-        component: Home,
+        href: '/(tabs)',
         options: { title: 'Home' },
         submenus: [],
         users: [],
@@ -98,7 +31,6 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Attendance',
-        component: Attendance,
         options: { title: 'Attendance' },
         submenus: [],
         users: [],
@@ -108,12 +40,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Permissions',
-        component: Permissions,
         options: { title: 'Permissions' },
         submenus: [
             {
                 name: 'Request permission',
-                component: RequestPermission,
                 options: { title: 'Request permission' },
                 submenus: [],
                 users: [],
@@ -123,9 +53,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Permission Details',
-                component: PermissionDetails as any as React.FC<
-                    NativeStackScreenProps<ParamListBase, string, undefined>
-                >,
                 options: { title: 'Permission Details' },
                 submenus: [],
                 users: [],
@@ -141,12 +68,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Tickets',
-        component: Tickets,
         options: { title: 'Tickets' },
         submenus: [
             {
                 name: 'Ticket Details',
-                component: TicketDetails,
                 options: { title: 'Ticket Details' },
                 submenus: [],
                 users: [],
@@ -159,7 +84,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Issue Ticket',
-                component: IssueTicket,
                 options: { title: 'Issue Ticket' },
                 submenus: [],
                 users: [],
@@ -181,7 +105,6 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Notifications',
-        component: Notifications,
         options: { title: 'Notifications' },
         submenus: [],
         users: [],
@@ -191,12 +114,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Profile',
-        component: Profile,
         options: { title: 'Profile' },
         submenus: [
             {
                 name: 'Edit Profile',
-                component: EditProfile,
                 options: { title: 'Edit Profile' },
                 submenus: [],
                 users: [],
@@ -212,12 +133,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Reports',
-        component: Reports,
         options: { title: 'Reports' },
         submenus: [
             {
                 name: 'Childcare Report',
-                component: ChildcareReport,
                 options: { title: 'Childcare Report' },
                 submenus: [],
                 users: [],
@@ -227,7 +146,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Incident Report',
-                component: IncidentReport,
                 options: { title: 'Incident Report' },
                 submenus: [],
                 users: [],
@@ -237,7 +155,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Attendance Report',
-                component: AttendanceReport,
                 options: { title: 'Attendance Report' },
                 submenus: [],
                 users: [],
@@ -247,7 +164,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Guest Report',
-                component: GuestReport,
                 options: { title: 'Guest Report' },
                 submenus: [],
                 users: [],
@@ -257,7 +173,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Service Report',
-                component: ServiceReport,
                 options: { title: 'Service Report' },
                 submenus: [],
                 users: [],
@@ -267,7 +182,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Security Report',
-                component: SecurityReport,
                 options: { title: 'Security Report' },
                 submenus: [],
                 users: [],
@@ -277,7 +191,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Transfer Report',
-                component: TransferReport,
                 options: { title: 'Transfer Report' },
                 submenus: [],
                 users: [],
@@ -287,7 +200,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Campus Report',
-                component: CampusReport,
                 options: { title: 'Campus Report' },
                 submenus: [],
                 users: [],
@@ -310,12 +222,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Service management',
-        component: ServiceManagement,
         options: { title: 'Service management' },
         submenus: [
             {
                 name: 'Create service',
-                component: CreateServiceManagement,
                 options: { title: 'Create service' },
                 submenus: [],
                 users: [],
@@ -325,7 +235,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Create CGWC session',
-                component: CreateCGWGSession,
                 options: { title: 'Create CGWC Session' },
                 submenus: [],
                 users: [],
@@ -341,7 +250,6 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Assign Group Head',
-        component: AssignRole,
         options: { title: 'Assign Group Head' },
         submenus: [],
         users: [ROLES.superAdmin, ROLES.globalPastor],
@@ -351,12 +259,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Group Head Campus',
-        component: CampusGroupHeads,
         options: { title: 'Group Head Campus' },
         submenus: [
             {
                 name: 'Group Head Campuses',
-                component: GroupHeadCampuses,
                 options: { title: 'Group Head Campuses' },
                 submenus: [],
                 users: [],
@@ -366,7 +272,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Group Head Departments',
-                component: GroupHeadDepartments,
                 options: { title: 'Group Head Departments' },
                 submenus: [],
                 users: [],
@@ -376,7 +281,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Group Head Department Activities',
-                component: GroupHeadDepartmentActivies,
                 options: { title: 'Group Head Department Activities' },
                 submenus: [],
                 users: [],
@@ -392,7 +296,6 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'GH Reports History',
-        component: GroupHeadReportHistory,
         options: { title: 'GH Reports History' },
         submenus: [],
         users: [ROLES.groupHead],
@@ -402,12 +305,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Group Head Service Report',
-        component: GroupHeadServiceReport,
         options: { title: 'Group Head Service Report' },
         submenus: [
             {
                 name: 'Group Head Service Summary',
-                component: GroupHeadCampuses,
                 options: { title: 'Group Head Service Summary' },
                 submenus: [],
                 users: [],
@@ -418,7 +319,6 @@ const AppRoutes: IAppRoute[] = [
 
             {
                 name: 'Submit report summary',
-                component: GHReportSummary,
                 options: { title: 'Submit report summary' },
                 submenus: [],
                 users: [],
@@ -434,12 +334,10 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Workforce summary',
-        component: WorkforceSummary,
         options: { title: 'Workforce management' },
         submenus: [
             {
                 name: 'Workforce management',
-                component: WorkforceManagement,
                 options: { title: 'Workforce management' },
                 submenus: [],
                 users: [],
@@ -449,7 +347,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'User Profile',
-                component: UserDetails,
                 options: { title: 'User profile' },
                 submenus: [],
                 users: [],
@@ -459,7 +356,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'User Report',
-                component: UserReport,
                 options: { title: 'User report' },
                 submenus: [],
                 users: [],
@@ -469,7 +365,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'User Report Details',
-                component: UserReportDetailsPage,
                 options: { title: 'User report' },
                 submenus: [],
                 users: [],
@@ -479,7 +374,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Create User',
-                component: CreateUser,
                 options: { title: 'Create user' },
                 submenus: [],
                 users: [],
@@ -489,7 +383,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Create Department',
-                component: CreateDepartment,
                 options: { title: 'Create department' },
                 submenus: [],
                 users: [],
@@ -499,7 +392,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Create Campus',
-                component: CreateCampus,
                 options: { title: 'Create campus' },
                 submenus: [],
                 users: [],
@@ -509,7 +401,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Campus workforce',
-                component: CampusWorkforceSummary,
                 options: { title: 'Campus workforce' },
                 submenus: [],
                 users: [],
@@ -519,7 +410,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Global workforce',
-                component: GlobalWorkforceSummary,
                 options: { title: 'Global workforce' },
                 submenus: [],
                 users: [],
@@ -546,7 +436,6 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Manual clock in',
-        component: ManualClockin,
         options: { title: 'Manual clock in' },
         submenus: [],
         users: [ROLES.superAdmin, ROLES.campusPastor, DEPARTMENTS.QC, DEPARTMENTS.ME, ROLES.campusCoordinator],
@@ -556,7 +445,6 @@ const AppRoutes: IAppRoute[] = [
     },
     {
         name: 'Export Data',
-        component: Export,
         options: { title: 'Export Data' },
         submenus: [],
         users: [
@@ -576,12 +464,10 @@ const AppRoutes: IAppRoute[] = [
 
     {
         name: 'CGLS',
-        component: CGWC,
         options: { title: 'CGLS' },
         submenus: [
             {
                 name: 'Create CGWC',
-                component: CreateCGWC,
                 options: { title: 'Create CGWC' },
                 submenus: [],
                 users: [],
@@ -591,7 +477,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'CGWC Details',
-                component: CGWCDetails,
                 options: { title: 'CGWC Details' },
                 submenus: [],
                 users: [],
@@ -603,7 +488,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'Create Instant Message',
-                component: CreateCGWCInstantMessage,
                 options: { title: 'Create Instant Message' },
                 submenus: [],
                 users: [],
@@ -613,7 +497,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'CGWC Report',
-                component: CGWCReport,
                 options: { title: 'CGWC Report' },
                 submenus: [],
                 users: [],
@@ -623,7 +506,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'CGWC Attendance',
-                component: CGWCGroupAttendance,
                 options: { title: 'CGWC Attendance' },
                 submenus: [],
                 users: [],
@@ -633,7 +515,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'CGWC Resources',
-                component: CGWCResources,
                 options: { title: 'CGWC Resources' },
                 submenus: [],
                 users: [],
@@ -643,7 +524,6 @@ const AppRoutes: IAppRoute[] = [
             },
             {
                 name: 'CGWC Feedback',
-                component: CGWCFeedback,
                 options: { title: 'CGWC Feedback' },
                 submenus: [],
                 users: [],
@@ -660,7 +540,6 @@ const AppRoutes: IAppRoute[] = [
 
     {
         name: 'More',
-        component: More,
         options: { title: 'More' },
         submenus: [],
         users: [],
@@ -673,7 +552,6 @@ const AppRoutes: IAppRoute[] = [
 const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     {
         name: 'Welcome',
-        component: Welcome,
         options: { title: 'Welcome' },
         submenus: [],
         users: [],
@@ -682,7 +560,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     },
     {
         name: 'Verify Email',
-        component: VerifyEmail,
         options: { title: 'Verify Email' },
         submenus: [],
         users: [],
@@ -691,7 +568,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     },
     {
         name: 'Login',
-        component: Login,
         options: { title: 'Login' },
         submenus: [],
         users: [],
@@ -700,7 +576,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     },
     {
         name: 'Register',
-        component: Register,
         options: { title: 'Register' },
         submenus: [],
         users: [],
@@ -709,7 +584,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     },
     {
         name: 'Forgot Password',
-        component: ForgotPassword,
         options: { title: 'Forgot Password' },
         submenus: [],
         users: [],
@@ -718,7 +592,6 @@ const AuthRoutes: Omit<IAppRoute, 'icon'>[] = [
     },
     {
         name: 'Reset Password',
-        component: ResetPassword,
         options: { title: 'Reset Password' },
         submenus: [],
         users: [],
