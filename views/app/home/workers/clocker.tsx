@@ -19,6 +19,7 @@ import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { View } from 'react-native';
+import TopNav from '../top-nav';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -117,7 +118,8 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className="">
+        <View className=" flex-1 gap-8">
+            <TopNav />
             <Timer />
             <If condition={isCampusPastor}>
                 <CampusAttendanceSummary
@@ -132,7 +134,7 @@ const Clocker: React.FC<IClockerProps> = ({
                 <Loading />
             ) : (
                 <If condition={!isCampusPastor}>
-                    <View className="items-center justify-between">
+                    <View className="flex-1 items-center justify-between">
                         <ErrorBoundary>
                             <ClockButton
                                 isInRange={!!isInRange}

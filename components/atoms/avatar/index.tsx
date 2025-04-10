@@ -8,6 +8,7 @@ import { Text } from '~/components/ui/text';
 import AvatarPrimitive from '@rn-primitives/avatar';
 import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
 import getFirstCharacter from '~/utils/getFirstCharacter';
+import { cn } from '~/lib/utils';
 
 interface IAvatarComponentProps extends AvatarPrimitive.RootProps {
     size?: number;
@@ -18,15 +19,25 @@ interface IAvatarComponentProps extends AvatarPrimitive.RootProps {
     lastName?: string;
     firstName?: string;
     isLoading?: boolean;
+    className?: string;
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, size, badge, error, isLoading, firstName, lastName, badgeColor = STATUS_COLORS.ACTIVE } = props;
+    const {
+        imageUrl,
+        className,
+        badge,
+        error,
+        isLoading,
+        firstName,
+        lastName,
+        badgeColor = STATUS_COLORS.ACTIVE,
+    } = props;
     const [loading, setLoading] = React.useState<boolean>();
 
     return (
         <>
-            <Avatar className="w-24 h-24 relative" {...props}>
+            <Avatar className={cn('w-12 h-12 relative', className)} {...props}>
                 <AvatarImage source={{ uri: imageUrl }} />
                 <AvatarFallback>
                     <Text>

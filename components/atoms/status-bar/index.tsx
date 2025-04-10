@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated, SafeAreaView, View } from 'react-native';
+import { Animated, SafeAreaView } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
@@ -43,11 +43,9 @@ const ConnectionStatusBar: React.FC = () => {
             }}
         >
             <SafeAreaView className={cn(netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive')}>
-                <View className={cn('flex-1 w-full h-max pb-4')}>
-                    <Text className="text-center w-full !text-base text-white">{`${
-                        netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
-                    }`}</Text>
-                </View>
+                <Text className="text-center w-full !text-base text-white">{`${
+                    netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
+                }`}</Text>
             </SafeAreaView>
         </Animated.View>
     );

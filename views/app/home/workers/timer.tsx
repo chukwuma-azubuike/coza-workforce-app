@@ -17,9 +17,9 @@ const Timer: React.FC = () => {
     }, []);
 
     return (
-        <View className="mb-10">
-            <Text className="text-muted-foreground text-4xl">{time.format('LT')}</Text>
-            <Text className="text-muted-foreground font-light">{time.format('dddd ll')}</Text>
+        <View className="w-full items-center">
+            <Text className="text-4xl">{time.format('hh:mm A')}</Text>
+            <Text className="text-muted-foreground font-light">{time.format('dddd MMM D, YYYY')}</Text>
         </View>
     );
 };

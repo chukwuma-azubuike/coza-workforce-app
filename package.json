@@ -52,6 +52,8 @@
     "@rn-primitives/toggle-group": "1.1.0",
     "@rn-primitives/tooltip": "1.1.0",
     "@rn-primitives/types": "1.1.0",
+    "@rneui/base": "4.0.0-rc.8",
+    "@rneui/themed": "4.0.0-rc.8",
     "@sentry/react": "9.12.0",
     "axios": "1.8.4",
     "class-variance-authority": "^0.7.0",
