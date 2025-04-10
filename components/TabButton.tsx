@@ -17,7 +17,7 @@ const TabButton = forwardRef(
         const { isLightMode } = useAppColorMode();
 
         return (
-            <Pressable ref={ref} {...props} className="gap-1 !flex-col items-center justify-between">
+            <Pressable ref={ref} {...props} className="gap-1 !flex-col items-center justify-between w-24">
                 <Icon
                     size={22}
                     name={iconName}
@@ -30,7 +30,11 @@ const TabButton = forwardRef(
                             : THEME_CONFIG.lightGray
                     }
                 />
-                <Text className={`${isFocused ? 'text-primary dark:text-primary/70' : 'text-muted-foreground'}`}>
+                <Text
+                    className={`!text-xs ${
+                        isFocused ? 'text-primary dark:text-primary/70' : 'text-muted-foreground'
+                    }`}
+                >
                     {children}
                 </Text>
             </Pressable>
