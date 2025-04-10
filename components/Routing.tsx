@@ -35,6 +35,14 @@ const Routing: React.FC = () => {
         ),
     };
 
+    React.useEffect(() => {
+        if (isLoggedIn) {
+            router.replace('/(tabs)');
+        } else {
+            router.replace('/');
+        }
+    }, [isLoggedIn]);
+
     return (
         <View className="flex-1">
             {/* Unauthenticated Screens */}
@@ -53,6 +61,8 @@ const Routing: React.FC = () => {
                     {/* Authenticated Screens */}
                     <Stack.Screen name="(tabs)/index" options={{ headerShown: false, gestureEnabled: false }} />
                     <Stack.Screen name="(tabs)/attendance/index" options={{ headerShown: false }} />
+
+                    <Stack.Screen name="(stacks)/profile/index" options={{ headerShown: false }} />
                 </Stack>
             )}
         </View>

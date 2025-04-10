@@ -5,6 +5,7 @@ import { useAuth } from '../auth';
 import spreadDependencyArray from '@utils/spreadDependencyArray';
 import { userSelectors } from '~/store/actions/users';
 import { IUser } from '~/store/types';
+import { useGetUserByIdQuery } from '~/store/services/account';
 
 export enum ROLES {
     HOD = 'HOD',
@@ -75,7 +76,9 @@ export enum DEPARTMENTS {
 }
 
 const useRole = () => {
-    const currentUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const storedUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const { data: latestUser } = useGetUserByIdQuery(storedUser?.userId as string);
+    const currentUser = latestUser || storedUser;
 
     const { data: roleObjects } = useGetRolesQuery();
     const leaderRoleIds = React.useMemo(
