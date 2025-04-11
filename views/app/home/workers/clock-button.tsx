@@ -70,7 +70,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
             //     duration: 3,
             //     render: (
             //         <ModalAlertComponent
-            //             description={`You clocked in at ${dayjs().format('LT')}`}
+            //             description={`You clocked in at ${dayjs().format('h:mm A')}`}
             //             status={isInRange ? 'success' : 'warning'}
             //             icon={Timer}
             //         />
@@ -97,7 +97,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 // setModalState({
                 //     render: (
                 //         <ModalAlertComponent
-                //             description={`You clocked out at ${dayjs().format('LT')}`}
+                //             description={`You clocked out at ${dayjs().format('h:mm A')}`}
                 //             status={isInRange ? 'success' : 'warning'}
                 //             icon={Timer}
                 //         />
@@ -162,7 +162,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 `Clock in for this ${
                     !!latestServiceData?.CGWCId ? 'session' : 'service'
                 } has not yet started, kindly try again ${
-                    !!latestServiceData ? `by ${dayjs(latestServiceData?.clockInStartTime).format('LT')}` : 'later'
+                    !!latestServiceData ? `by ${dayjs(latestServiceData?.clockInStartTime).format('h:mm A')}` : 'later'
                 }.`
             );
         }

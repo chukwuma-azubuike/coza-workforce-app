@@ -326,11 +326,11 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                     >
                         <Text>Start Time:</Text>
                         <Text color="primary.500" bold>
-                            {serviceTime?.start ? moment(serviceTime?.start).format('LT') : '--:--'}
+                            {serviceTime?.start ? moment(serviceTime?.start).format('h:mm A') : '--:--'}
                         </Text>
                         <Text>End Time:</Text>
                         <Text color="primary.500" bold>
-                            {serviceTime?.end ? moment(serviceTime?.end).format('LT') : '--:--'}
+                            {serviceTime?.end ? moment(serviceTime?.end).format('h:mm A') : '--:--'}
                         </Text>
                     </HStack>
                 </VerticalTable>

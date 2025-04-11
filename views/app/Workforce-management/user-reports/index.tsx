@@ -65,7 +65,7 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            {elm?.clockIn ? <Text>{moment(elm?.clockIn).format('LT')}</Text> : null}
+                            {elm?.clockIn ? <Text>{moment(elm?.clockIn).format('h:mm A')}</Text> : null}
                         </HStack>
                     </TouchableOpacity>
                 );
