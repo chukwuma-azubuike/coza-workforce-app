@@ -7,7 +7,7 @@ import { TouchableOpacity } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import { IAttendance, ICampus, IService, IUserReportType } from '@store/types';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Utils from '@utils/index';
 import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
@@ -65,7 +65,7 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
                             </HStack>
-                            {elm?.clockIn ? <Text>{moment(elm?.clockIn).format('h:mm A')}</Text> : null}
+                            {elm?.clockIn ? <Text>{dayjs(elm?.clockIn).format('h:mm A')}</Text> : null}
                         </HStack>
                     </TouchableOpacity>
                 );

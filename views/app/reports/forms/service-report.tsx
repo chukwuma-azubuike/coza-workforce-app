@@ -7,7 +7,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack, Text, Divider, WarningOutlineIcon, HStack } from 'native-base';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
 import ButtonComponent from '@components/atoms/button';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
 import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
@@ -85,7 +85,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 <ViewWrapper scroll>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <VStack space={4} mt={4} px={4}>
                             <HStack justifyContent="space-between">

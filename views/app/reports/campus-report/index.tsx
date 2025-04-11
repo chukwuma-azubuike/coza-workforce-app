@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { HStack, Text } from 'native-base';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
@@ -39,7 +39,7 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
                 justifyContent="space-between"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {moment(props?.serviceTime).format('DD/MM/YYYY')}
+                    {dayjs(props?.serviceTime).format('DD/MM/YYYY')}
                 </Text>
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
                     {Utils.truncateString(props?.serviceName)}

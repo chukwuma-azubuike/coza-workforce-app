@@ -8,7 +8,7 @@ import { useGetGSPReportQuery } from '@store/services/reports';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { useGetLatestServiceQuery } from '@store/services/services';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { IAttendanceStatus, ICampus, IService, IUserReportType } from '@store/types';
 import Utils from '@utils/index';
 import useRole from '@hooks/role';
@@ -67,7 +67,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     const serviceAttendance = gspReport?.serviceAttendance;
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -135,7 +135,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             <SelectItemComponent
                                 value={service._id}
                                 key={`service-${index}`}
-                                label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>

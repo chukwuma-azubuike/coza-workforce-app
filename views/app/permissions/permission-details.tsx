@@ -1,7 +1,7 @@
 import React from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
@@ -253,7 +253,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         }}
                     >
                         <TextComponent bold>Date Requested</TextComponent>
-                        <TextComponent>{moment(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
+                        <TextComponent>{dayjs(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                     </HStackComponent>
 
                     {permission?.dateApproved ? (
@@ -267,7 +267,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                             }}
                         >
                             <TextComponent bold>Date Approved</TextComponent>
-                            <TextComponent>{moment(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</TextComponent>
+                            <TextComponent>{dayjs(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                         </HStackComponent>
                     ) : null}
 
@@ -282,7 +282,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                             }}
                         >
                             <TextComponent bold>Date Rejected</TextComponent>
-                            <TextComponent>{moment(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</TextComponent>
+                            <TextComponent>{dayjs(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                         </HStackComponent>
                     ) : null}
 
@@ -296,7 +296,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         }}
                     >
                         <TextComponent bold>Start Date</TextComponent>
-                        <TextComponent>{moment(permission?.startDate).format('Do MMM, YYYY')}</TextComponent>
+                        <TextComponent>{dayjs(permission?.startDate).format('Do MMM, YYYY')}</TextComponent>
                     </HStackComponent>
 
                     <HStackComponent
@@ -309,7 +309,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         }}
                     >
                         <TextComponent bold>End Date</TextComponent>
-                        <TextComponent>{moment(permission?.endDate).format('Do MMM, YYYY')}</TextComponent>
+                        <TextComponent>{dayjs(permission?.endDate).format('Do MMM, YYYY')}</TextComponent>
                     </HStackComponent>
 
                     <VStackComponent style={{ paddingBottom: 4 }} space={8}>

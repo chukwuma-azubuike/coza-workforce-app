@@ -6,7 +6,7 @@ import { useCreateIncidentReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack, Text } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -59,7 +59,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <VStack
                             mt={4}

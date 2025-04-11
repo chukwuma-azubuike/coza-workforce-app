@@ -2,7 +2,7 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik } from 'formik';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { VStack, Text, HStack, Divider, FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
@@ -344,11 +344,11 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     >
                         <Text>Start Time:</Text>
                         <Text color="primary.500" bold>
-                            {serviceTime?.start ? moment(serviceTime?.start).format('h:mm A') : '--:--'}
+                            {serviceTime?.start ? dayjs(serviceTime?.start).format('h:mm A') : '--:--'}
                         </Text>
                         <Text>End Time:</Text>
                         <Text color="primary.500" bold>
-                            {serviceTime?.end ? moment(serviceTime?.end).format('h:mm A') : '--:--'}
+                            {serviceTime?.end ? dayjs(serviceTime?.end).format('h:mm A') : '--:--'}
                         </Text>
                     </HStack>
                 </VerticalTable>

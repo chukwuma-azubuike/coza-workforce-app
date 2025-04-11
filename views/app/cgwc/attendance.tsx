@@ -5,7 +5,7 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 // import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
@@ -200,7 +200,7 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
                                 value={session._id}
                                 key={`session-${index}`}
                                 isLoading={sessionsIsLoading}
-                                label={`${session.name} | ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
+                                label={`${session.name} | ${dayjs(session.clockInStartTime).format('Do MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>
@@ -359,7 +359,7 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${session.name} | ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -516,7 +516,7 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={sessionsIsLoading}
-                            label={`${session.name} | ${moment(session.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -612,13 +612,13 @@ export const AttendanceListRow: React.FC<IAttendance> = React.memo(
                 <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                     <TextComponent style={{ textAlign: 'right' }}>
-                        {clockIn ? moment(clockIn).format('h:mm A') : '--:--'}
+                        {clockIn ? dayjs(clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                     <TextComponent style={{ textAlign: 'right' }}>
-                        {!!clockOut ? moment(clockOut).format('h:mm A') : '--:--'}
+                        {!!clockOut ? dayjs(clockOut).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 {typeof score === 'number' && (

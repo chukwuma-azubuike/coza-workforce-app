@@ -9,7 +9,7 @@ import { InputComponent } from '@components/atoms/input';
 import ButtonComponent from '@components/atoms/button';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -107,7 +107,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
                     <VStack pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <HStack px={4} flex={1} justifyContent="space-between">
                             <VStack space={4} mt={12}>

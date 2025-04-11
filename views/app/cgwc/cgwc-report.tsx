@@ -13,7 +13,7 @@ import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
 import flattenedObject from '@utils/flattenObject';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { HStack, Stack } from 'native-base';
 import React from 'react';
 
@@ -98,7 +98,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
     );
 
     const pastServices = React.useMemo(
-        () => services?.filter(service => moment(service.clockInStartTime).unix() < moment().unix()),
+        () => services?.filter(service => dayjs(service.clockInStartTime).unix() < dayjs().unix()),
         [services]
     );
 
@@ -223,7 +223,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                             value={service._id}
                             key={`service-${index}`}
                             label={`${service.name} - ${
-                                service.serviceTime ? moment(service.serviceTime).format('DD-MM-YYYY') : ''
+                                service.serviceTime ? dayjs(service.serviceTime).format('DD-MM-YYYY') : ''
                             }`}
                             isLoading={servicesLoading}
                         />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Center, HStack, Text, VStack } from 'native-base';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { IFlatListColumn } from '@components/composite/flat-list';
@@ -39,14 +39,14 @@ const myAttendanceColumns: IFlatListColumn[] = [
                         key={`date-${key}`}
                     >
                         <TextComponent bold size="xs">
-                            {moment(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
+                            {dayjs(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
                         </TextComponent>
                         <TextComponent bold size="xs">
-                            {moment(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
+                            {dayjs(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
                         </TextComponent>
                         <TextComponent bold size="xs">
-                            {moment(elm.createdAt).format('MMMM').substring(0, 3)} /{' '}
-                            {moment(elm.createdAt).format('YY')}
+                            {dayjs(elm.createdAt).format('MMMM').substring(0, 3)} /{' '}
+                            {dayjs(elm.createdAt).format('YY')}
                         </TextComponent>
                     </View>
                     <HStackComponent
@@ -63,7 +63,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
                                 color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
                             }}
                         >
-                            {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                            {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                         </TextComponent>
                     </HStackComponent>
                     <HStackComponent
@@ -75,7 +75,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
                         }}
                     >
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                        <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                        <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                     </HStackComponent>
                     <TextComponent key={`hours-${key}`} style={{ flex: 1, minWidth: '15%', textAlign: 'center' }}>
                         {elm?.clockOut ? Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins : '--:--'}
@@ -131,7 +131,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                             color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
                         }}
                     >
-                        {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent
@@ -143,7 +143,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                     }}
                 >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                 </HStackComponent>
             </HStackComponent>
         ),
@@ -189,7 +189,7 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
                             color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
                         }}
                     >
-                        {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent
@@ -201,7 +201,7 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
                     }}
                 >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                 </HStackComponent>
             </HStackComponent>
         ),
@@ -241,12 +241,12 @@ const scoreMappingColumn: IFlatListColumn[] = [
                 <HStackComponent key={`clockin-${key}`} style={{ width: '20%', flex: 0 }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                     <TextComponent style={{ color: elm?.clockIn ? THEME_CONFIG.lightSuccess : undefined }}>
-                        {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent key={`clockout-${key}`} style={{ width: '20%', flex: 0 }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                 </HStackComponent>
                 <HStackComponent key={`score-${key}`} style={{ width: '10%', flex: 0, justifyContent: 'center' }}>
                     <TextComponent>{!!elm.score ? `${elm.score}` : `${0}`}</TextComponent>
@@ -276,7 +276,7 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                             color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
                         }}
                     >
-                        {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent
@@ -287,7 +287,7 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                     }}
                 >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                 </HStackComponent>
             </HStackComponent>
         ),
@@ -320,7 +320,7 @@ const campusColumns: IFlatListColumn[] = [
                             color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
                         }}
                     >
-                        {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent
@@ -331,7 +331,7 @@ const campusColumns: IFlatListColumn[] = [
                     }}
                 >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                 </HStackComponent>
             </HStackComponent>
         ),
@@ -359,7 +359,7 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                             color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
                         }}
                     >
-                        {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent
@@ -370,7 +370,7 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                     }}
                 >
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
+                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
                 </HStackComponent>
             </HStackComponent>
         ),

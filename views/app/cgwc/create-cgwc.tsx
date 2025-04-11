@@ -12,7 +12,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { ICGWCPayload } from '@store/types';
 import { CreateCGWCSchema } from '@utils/schemas';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useCreateCGWCMutation } from '@store/services/cgwc';
 import { ScreenWidth } from '@rneui/base';
 
@@ -25,8 +25,8 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
 
     const onSubmit: FormikConfig<ICGWCPayload>['onSubmit'] = async (values, { resetForm }) => {
         const name = values.name;
-        const endDate = moment(values.endDate).unix();
-        const startDate = moment(values.startDate).unix();
+        const endDate = dayjs(values.endDate).unix();
+        const startDate = dayjs(values.startDate).unix();
 
         const result = await createCGWC({
             name,
