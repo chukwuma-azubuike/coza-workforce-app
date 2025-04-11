@@ -1,6 +1,6 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React from 'react';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
@@ -285,7 +285,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         }}
                     >
                         <TextComponent bold>Date issued</TextComponent>
-                        <TextComponent>{moment(ticket?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
+                        <TextComponent>{dayjs(ticket?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                     </HStackComponent>
                     {ticket?.updatedAt ? (
                         <HStackComponent
@@ -298,7 +298,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             }}
                         >
                             <TextComponent bold>Last updated</TextComponent>
-                            <TextComponent>{moment(ticket?.updatedAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
+                            <TextComponent>{dayjs(ticket?.updatedAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                         </HStackComponent>
                     ) : null}
                     <HStackComponent

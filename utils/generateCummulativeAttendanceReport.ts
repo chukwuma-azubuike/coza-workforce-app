@@ -34,7 +34,7 @@ export const cummulativeIndividualReport = (report: any[]) => {
         }
 
         // Add or update the date field
-        mergedData[userId][`${entry.clockIn.split('T')[0]}_${entry.service}`] = dayjs(entry.clockIn).format('LTS');
+        mergedData[userId][`${entry.clockIn.split('T')[0]}_${entry.service}`] = dayjs(entry.clockIn).format('h:mm:ss A');
     });
 
     // Convert the mergedData object to an array of objects

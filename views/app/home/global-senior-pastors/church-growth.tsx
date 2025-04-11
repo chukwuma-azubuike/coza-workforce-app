@@ -4,7 +4,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetGraphAttendanceReportsQuery, useGetGSPReportQuery } from '@store/services/reports';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { ICampus, IService } from '@store/types';
 import Utils from '@utils/index';
 import useRole from '@hooks/role';
@@ -68,7 +68,7 @@ const ChurchGrowth: React.FC = () => {
     const serviceAttendance = gspReport?.serviceAttendance;
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -112,7 +112,7 @@ const ChurchGrowth: React.FC = () => {
                             <SelectItemComponent
                                 value={service._id}
                                 key={`service-${index}`}
-                                label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>

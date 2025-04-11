@@ -18,7 +18,7 @@ import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useAppDispatch } from '@store/hooks';
 import { userActionTypes } from '@store/services/users';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const userData = props?.route?.params as IEditProfilePayload;
@@ -70,7 +70,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <Formik<IEditProfilePayload> onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
                     {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
                         const handleDate = (fieldName: string, value: any) => {
-                            setFieldValue(fieldName, moment(value).unix());
+                            setFieldValue(fieldName, dayjs(value).unix());
                         };
 
                         return (

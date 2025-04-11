@@ -1,5 +1,5 @@
 import { useIsFocused } from '@react-navigation/native';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
@@ -27,7 +27,7 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
                     <VStackComponent style={{ justifyContent: 'space-between' }}>
                         <TextComponent bold>{service?.name}</TextComponent>
                         <TextComponent fontSize="sm">
-                            {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(
+                            {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
                                 service?.serviceTime
                             ).format('h:mm A')}`}
                         </TextComponent>

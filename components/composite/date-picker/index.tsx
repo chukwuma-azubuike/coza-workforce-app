@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, VStack } from 'native-base';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { InputComponent } from '../../atoms/input';
@@ -68,11 +68,11 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = React.memo(
                             }}
                             onPressIn={handlePress}
                             showSoftInputOnFocus={false}
-                            value={moment(date).format(
-                                mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
+                            value={dayjs(date).format(
+                                mode === 'time' ? 'h:mm:ss A' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
                             )}
-                            placeholder={moment().format(
-                                mode === 'time' ? 'LTS' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
+                            placeholder={dayjs().format(
+                                mode === 'time' ? 'h:mm:ss A' : mode === 'dayMonth' ? 'DD MMM' : 'DD MMM, yy'
                             )}
                         />
                     </If>

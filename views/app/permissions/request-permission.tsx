@@ -15,7 +15,7 @@ import { IRequestPermissionPayload } from '@store/types';
 import useRole from '@hooks/role';
 import { RequestPermissionSchema } from '@utils/schemas';
 import useScreenFocus from '@hooks/focus';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ScreenHeight } from '@rneui/base';
@@ -31,8 +31,8 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     const handleSubmit: FormikConfig<IRequestPermissionPayload>['onSubmit'] = async (values, { resetForm }) => {
         const result = await requestPermission({
             ...values,
-            startDate: moment(values.startDate).unix(),
-            endDate: moment(values.endDate).unix(),
+            startDate: dayjs(values.startDate).unix(),
+            endDate: dayjs(values.endDate).unix(),
         });
 
         if ('data' in result) {

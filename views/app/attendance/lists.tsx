@@ -12,7 +12,7 @@ import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
 import { useGetGroupHeadUsersQuery, useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
@@ -78,7 +78,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
     };
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -154,7 +154,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -189,7 +189,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
     };
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -296,7 +296,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -333,7 +333,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
     };
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -399,7 +399,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                             value={service?._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -435,7 +435,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
     };
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -516,7 +516,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

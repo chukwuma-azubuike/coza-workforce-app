@@ -20,7 +20,7 @@ import ErrorBoundary from '@components/composite/error-boundary';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import { ReportRouteIndex } from '../home/campus-pastors/report-summary';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '@store/types';
 import GlobalReportDetails from './gsp-report';
@@ -58,7 +58,7 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
                     _light={{ bg: 'gray.50' }}
                     justifyContent="space-between"
                 >
-                    <TextComponent>{moment(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</TextComponent>
+                    <TextComponent>{dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</TextComponent>
                     <TextComponent bold>Departmental</TextComponent>
                     <StatusTag>{props?.status as any}</StatusTag>
                 </HStack>
@@ -94,7 +94,7 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
                 justifyContent="space-between"
             >
                 <View style={{ width: '25%' }}>
-                    <TextComponent>{moment(props.createdAt).format('DD/MM/YYYY')}</TextComponent>
+                    <TextComponent>{dayjs(props.createdAt).format('DD/MM/YYYY')}</TextComponent>
                 </View>
                 <View style={{ width: '25%' }}>
                     <TextComponent bold>Incident</TextComponent>

@@ -10,7 +10,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
 import { IGHSubmittedReportForGSP, IService } from '@store/types';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import Utils from '@utils/index';
 import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
@@ -130,7 +130,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
     } = useGetServicesQuery({ limit: 40, page: 1 });
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -194,7 +194,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                                 <SelectItemComponent
                                     value={service._id}
                                     key={`service-${index}`}
-                                    label={`${service.name} - ${moment(service.clockInStartTime).format(
+                                    label={`${service.name} - ${dayjs(service.clockInStartTime).format(
                                         'Do MMM YYYY'
                                     )}`}
                                 />

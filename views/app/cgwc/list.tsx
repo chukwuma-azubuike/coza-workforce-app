@@ -1,5 +1,5 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
 import { TouchableOpacity } from 'react-native';
@@ -34,7 +34,7 @@ const CGWCListRow: React.FC<ICGWC> = memo(cgwc => {
                     <VStack justifyContent="space-between">
                         <Text bold>{cgwc?.name}</Text>
                         <Text fontSize="sm" color="gray.400">
-                            {`${moment(cgwc?.startDate).format('DD MMM, YYYY')} - ${moment(cgwc?.endDate).format(
+                            {`${dayjs(cgwc?.startDate).format('DD MMM, YYYY')} - ${dayjs(cgwc?.endDate).format(
                                 'DD MMM, YYYY'
                             )}`}
                         </Text>
