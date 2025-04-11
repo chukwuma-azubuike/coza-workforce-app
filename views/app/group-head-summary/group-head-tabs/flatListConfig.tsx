@@ -1,5 +1,5 @@
 import { Icon } from '@rneui/base';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
 import { Appearance } from 'react-native';
@@ -60,7 +60,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                     color={elm.clockIn ? 'green.500' : 'red.500'}
                     textAlign="center"
                 >
-                    {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
+                    {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                 </Text>
             </HStack>
         ),
@@ -77,7 +77,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                         color: 'warmGray.200',
                     }}
                 >
-                    {elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}
+                    {elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}
                 </Text>
             </HStack>
         ),

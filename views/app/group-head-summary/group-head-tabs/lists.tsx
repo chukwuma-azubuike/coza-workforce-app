@@ -1,4 +1,4 @@
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Box } from 'native-base';
 import React, { memo, useMemo } from 'react';
 import { Platform } from 'react-native';
@@ -36,7 +36,7 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
     };
 
     const filteredServices = React.useMemo<IService[] | undefined>(
-        () => services && services.filter(service => moment().unix() > moment(service.clockInStartTime).unix()),
+        () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
         [services, servicesIsSuccess]
     );
 
@@ -109,7 +109,7 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} - ${moment(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} - ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

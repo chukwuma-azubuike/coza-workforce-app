@@ -1,5 +1,5 @@
 import { Icon } from '@rneui/themed';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { Heading } from 'native-base';
 import React from 'react';
 import { Alert, TouchableOpacity, View } from 'react-native';
@@ -243,7 +243,7 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                         heading="Marital Status"
                         value={Utils.capitalizeFirstChar(user?.maritalStatus || '')}
                     />
-                    <UserInfo heading="Birthday" name="birthDay" value={moment(user?.birthDay).format('DD MMM')} />
+                    <UserInfo heading="Birthday" name="birthDay" value={dayjs(user?.birthDay).format('DD MMM')} />
                 </View>
                 <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
                     <HStackComponent

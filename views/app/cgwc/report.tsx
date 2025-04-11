@@ -6,7 +6,7 @@ import {
 } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IService } from '@store/types';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Box, Center, Flex, HStack, Text } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -120,7 +120,7 @@ export const CGWCReportSummary: React.FC<{
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={!sessions?.length}
-                            label={`${session.name} | ${moment(session.serviceTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${dayjs(session.serviceTime).format('Do MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

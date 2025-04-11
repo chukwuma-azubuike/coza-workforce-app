@@ -6,7 +6,7 @@ import { useCreateTransferReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, VStack, HStack, Text, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
 import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
@@ -93,7 +93,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
                     <VStack pb={10} mt={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {moment(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
 
                         <FieldArray

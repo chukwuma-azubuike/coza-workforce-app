@@ -11,7 +11,7 @@ import VStackComponent from '@components/layout/v-stack';
 import TextComponent from '@components/text';
 import StatusTag from '@components/atoms/status-tag';
 import { TouchableOpacity } from 'react-native';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { useGetGhReportsQuery } from '@store/services/grouphead';
 
 const ITEM_HEIGHT = 60;
@@ -47,7 +47,7 @@ export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
                     <VStackComponent style={{ justifyContent: 'space-between' }}>
                         <>
                             <TextComponent>{serviceName}</TextComponent>
-                            <TextComponent>{moment(createdAt).format('MMMM Do, YYYY')}</TextComponent>
+                            <TextComponent>{dayjs(createdAt).format('MMMM Do, YYYY')}</TextComponent>
                         </>
                     </VStackComponent>
                 </HStackComponent>

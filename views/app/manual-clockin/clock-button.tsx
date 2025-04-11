@@ -5,7 +5,7 @@ import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
 import { Alert, TouchableOpacity } from 'react-native';
 import useModal from '@hooks/modal/useModal';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import ModalAlertComponent from '@components/composite/modal-alert';
 import { useClockInMutation, useClockOutMutation, useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
@@ -102,7 +102,7 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
         if (canClockIn) {
             clockIn({
                 userId: userId,
-                clockIn: `${moment().unix()}`,
+                clockIn: `${dayjs().unix()}`,
                 clockOut: null,
                 serviceId: latestService?._id as string,
                 coordinates: {
@@ -138,7 +138,7 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
                 duration: 3,
                 render: (
                     <ModalAlertComponent
-                        description={`Clocked in at ${moment().format('h:mm A')}`}
+                        description={`Clocked in at ${dayjs().format('h:mm A')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
@@ -160,7 +160,7 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
             setModalState({
                 render: (
                     <ModalAlertComponent
-                        description={`Clocked out at ${moment().format('h:mm A')}`}
+                        description={`Clocked out at ${dayjs().format('h:mm A')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
