@@ -35,7 +35,7 @@ const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps
             {difference ? (
                 <Text className="font-bold text-muted-foreground">{difference ? difference : '--:--'}</Text>
             ) : (
-                <Text className="font-bold text-muted-foreground">{time ? dayjs(time).format('LT') : '--:--'}</Text>
+                <Text className="font-bold text-muted-foreground">{time ? dayjs(time).format('h:mm A') : '--:--'}</Text>
             )}
             <Text className="font-light text-muted-foreground text-sm">{label}</Text>
         </View>

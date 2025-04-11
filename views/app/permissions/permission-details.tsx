@@ -253,7 +253,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         }}
                     >
                         <TextComponent bold>Date Requested</TextComponent>
-                        <TextComponent>{moment(permission?.createdAt).format('DD/MM/YYYY - LT')}</TextComponent>
+                        <TextComponent>{moment(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                     </HStackComponent>
 
                     {permission?.dateApproved ? (
@@ -267,7 +267,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                             }}
                         >
                             <TextComponent bold>Date Approved</TextComponent>
-                            <TextComponent>{moment(permission?.dateApproved).format('DD/MM/YYYY - LT')}</TextComponent>
+                            <TextComponent>{moment(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                         </HStackComponent>
                     ) : null}
 
@@ -282,7 +282,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                             }}
                         >
                             <TextComponent bold>Date Rejected</TextComponent>
-                            <TextComponent>{moment(permission?.rejectedOn).format('DD/MM/YYYY - LT')}</TextComponent>
+                            <TextComponent>{moment(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                         </HStackComponent>
                     ) : null}
 

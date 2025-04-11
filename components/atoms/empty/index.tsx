@@ -27,7 +27,7 @@ const Empty: React.FC<{
 
     const { isDarkMode } = useAppColorMode();
 
-    const lottieFile = isDarkMode ? require('@assets/json/empty-dark.json') : require('@assets/json/empty.json');
+    const lottieFile = isDarkMode ? require('~/assets/json/empty-dark.json') : require('~/assets/json/empty.json');
 
     return (
         <View className="items-center flex-1 justify-center">

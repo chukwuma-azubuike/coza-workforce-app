@@ -29,7 +29,7 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
                         <TextComponent fontSize="sm">
                             {`${moment(service?.serviceTime).format('DD-MM-YYYY')} - ${moment(
                                 service?.serviceTime
-                            ).format('LT')}`}
+                            ).format('h:mm A')}`}
                         </TextComponent>
                     </VStackComponent>
                 </HStackComponent>

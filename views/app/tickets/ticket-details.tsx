@@ -285,7 +285,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         }}
                     >
                         <TextComponent bold>Date issued</TextComponent>
-                        <TextComponent>{moment(ticket?.createdAt).format('DD/MM/YYYY - LT')}</TextComponent>
+                        <TextComponent>{moment(ticket?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                     </HStackComponent>
                     {ticket?.updatedAt ? (
                         <HStackComponent
@@ -298,7 +298,7 @@ const TicketDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                             }}
                         >
                             <TextComponent bold>Last updated</TextComponent>
-                            <TextComponent>{moment(ticket?.updatedAt).format('DD/MM/YYYY - LT')}</TextComponent>
+                            <TextComponent>{moment(ticket?.updatedAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
                         </HStackComponent>
                     ) : null}
                     <HStackComponent

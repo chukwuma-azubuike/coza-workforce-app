@@ -11,6 +11,7 @@ import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView, View } from 'react-native';
+import { useAuth } from '~/hooks/auth';
 // import GhClocker from './workers/gh-clocker';
 
 interface IInitialHomeState {
@@ -91,6 +92,8 @@ const Home: React.FC = () => {
         setRefreshTrigger(true);
         Utils.checkLocationPermission(refresh);
     };
+
+    // useAuth().logOut()
 
     React.useEffect(() => {
         Utils.checkLocationPermission(refresh);

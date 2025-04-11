@@ -612,13 +612,13 @@ export const AttendanceListRow: React.FC<IAttendance> = React.memo(
                 <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                     <TextComponent style={{ textAlign: 'right' }}>
-                        {clockIn ? moment(clockIn).format('LT') : '--:--'}
+                        {clockIn ? moment(clockIn).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                     <TextComponent style={{ textAlign: 'right' }}>
-                        {!!clockOut ? moment(clockOut).format('LT') : '--:--'}
+                        {!!clockOut ? moment(clockOut).format('h:mm A') : '--:--'}
                     </TextComponent>
                 </HStackComponent>
                 {typeof score === 'number' && (
