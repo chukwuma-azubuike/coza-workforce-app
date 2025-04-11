@@ -4,7 +4,7 @@ import If from '../if-container';
 import Utils from '@utils/index';
 import Empty from '../../atoms/empty';
 import { FlatListSkeleton } from '../../layout/skeleton';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import { THEME_CONFIG } from '@config/appConfig';
 import { useNavigation } from '@react-navigation/native';
 import HStackComponent from '@components/layout/h-stack';
@@ -29,7 +29,7 @@ export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     showHeader?: boolean;
     padding?: boolean | number;
     fetchMoreData?: () => void;
-    emptySize?: number | string;
+    emptySize?: number;
     showEmpty?: boolean;
 }
 
@@ -176,9 +176,9 @@ const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }
                 }}
             >
                 {showHeader ? (
-                    <TextComponent pb={3} fontSize="md" style={{ borderColor: textColor }}>
-                        {moment(item[0]).format() !== 'Invalid date'
-                            ? moment(item[0]).format('Do MMMM, YYYY')
+                    <TextComponent className="pb-3" style={{ borderColor: textColor }}>
+                        {dayjs(item[0]).format() !== 'Invalid date'
+                            ? dayjs(item[0]).format('Do MMMM, YYYY')
                             : Utils.capitalizeFirstChar(item[0])}
                     </TextComponent>
                 ) : null}

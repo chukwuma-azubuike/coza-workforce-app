@@ -38,7 +38,21 @@ const Routing: React.FC = () => {
         }
     };
 
-    const flattenedRoutes = React.useMemo(() => flattenNestedRoutes(AppRoutes), [AppRoutes]);
+    const flattenedRoutes = React.useMemo(
+        () =>
+            flattenNestedRoutes(
+                AppRoutes.map(route => {
+                    if (
+                        (route.href as string).lastIndexOf('/') === (route.href as string).indexOf('/') &&
+                        route.href !== '(tabs)'
+                    ) {
+                        return { ...route, href: `${route.href}/index` }; // Append index to apex routes
+                    }
+                    return route;
+                })
+            ),
+        [AppRoutes]
+    );
 
     const generalScreenOptions = {
         headerTitle: '',
@@ -46,7 +60,7 @@ const Routing: React.FC = () => {
             backgroundColor: isDarkColorScheme ? Colors.dark.background : Colors.light.background,
         },
         header: () => (
-            <SafeAreaView className="mx-6">
+            <SafeAreaView className="mx-2">
                 <NavButton onBack={handleGoBack} />
             </SafeAreaView>
         ),
@@ -77,7 +91,14 @@ const Routing: React.FC = () => {
                 <Stack>
                     {/* Authenticated Screens */}
                     {flattenedRoutes.map(route => (
-                        <Stack.Screen key={route.href} name={route.href} options={{ headerShown: false }} />
+                        <Stack.Screen
+                            key={route.href}
+                            name={route.href}
+                            options={{
+                                gestureEnabled: true,
+                                ...(route.href.includes('(stack)') ? generalScreenOptions : { headerShown: false }),
+                            }}
+                        />
                     ))}
                 </Stack>
             )}

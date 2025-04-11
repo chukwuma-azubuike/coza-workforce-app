@@ -26,7 +26,7 @@ const TabLayout: React.FC = () => {
             className="shadow-lg shadow-black/5"
         >
             <TabSlot />
-            <TabList asChild style={{ backgroundColor: 'transparent' }} className="!bg-transparent overflow-x-auto">
+            <TabList asChild className="!bg-transparent overflow-x-auto">
                 <NavTabBackground>
                     {tabRoutes.map((route, index) => {
                         let iconName = 'home';
