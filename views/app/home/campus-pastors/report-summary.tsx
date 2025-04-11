@@ -6,6 +6,7 @@ import useScreenFocus from '@hooks/focus';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { useNavigation } from '@react-navigation/native';
+import { Icon } from '@rneui/themed';
 
 import { useGetGhReportByIdQuery } from '@store/services/grouphead';
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '@store/services/reports';
@@ -151,9 +152,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
             refetchService();
         };
 
-        const { navigate } = useNavigation();
-
-        const navigateToReports = () => navigate('Reports' as never);
+        const navigateToReports = () => router.push('/reports');
 
         const reportColumns: IFlatListColumn[] = [
             {
@@ -179,18 +178,18 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
         useScreenFocus({ onFocus: !isUninitialized ? refetch : undefined });
 
         return (
-            <>
-                <View className="mt-4 px-4 ">
-                    <View className="items-baseline justify-between">
+            <View className="flex-1">
+                <View className="mt-4 px-4">
+                    <View className="items-baseline justify-between flex-row">
                         <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
-                            <View className="items-center gap-1">
-                                <Ionicons color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
+                            <View className="items-center gap-1 flex-row">
+                                <Icon color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
                                 <Text className="text-muted-foreground ml-2">Reports submitted</Text>
-                                <Ionicons color={THEME_CONFIG.primary} name="link-outline" type="evilicon" size={26} />
+                                <Icon color={THEME_CONFIG.primary} name="external-link" type="evilicon" size={26} />
                             </View>
                         </TouchableOpacity>
                         <View className="items-baseline flex-row">
-                            <Text className="font-semibold text-primary text-4xl ml-1">
+                            <Text className="font-semibold text-primary text-5xl ml-1">
                                 {submittedReportCount || 0}
                             </Text>
                             <Text className="font-semibold text-muted-foreground">{`/${sortedData?.length || 0}`}</Text>
@@ -208,7 +207,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
                 />
-            </>
+            </View>
         );
     }
 );
@@ -282,7 +281,7 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
                 <View className="mt-4 px-4">
                     <View className="items-baseline justify-between">
                         <TouchableOpacity activeOpacity={0.6} onPress={navigateToReports}>
-                            <View className="items-center gap-1">
+                            <View className="items-center gap-1 flex-row">
                                 <Ionicons color={THEME_CONFIG.primary} name="people-outline" type="ionicon" size={18} />
                                 <Text className="text-muted-foreground ml-2">Reports submitted</Text>
                                 <Ionicons color={THEME_CONFIG.primary} name="link-outline" type="evilicon" size={26} />

@@ -1,9 +1,8 @@
 import useAppColorMode from '@hooks/theme/colorMode';
-import { ITextProps } from 'native-base';
-import { Text } from 'react-native';
 import { TextProps } from 'react-native';
+import { Text } from '../ui/text';
 
-interface ITextComponent extends TextProps, ITextProps {
+interface ITextComponent extends TextProps {
     bold?: boolean;
 }
 
@@ -28,7 +27,6 @@ const TextComponent: React.FC<ITextComponent> = ({ bold, ...props }) => {
             style={
                 {
                     color: textColor,
-                    fontSize: TEXT_SIZE[props.size as any] || 16,
                     fontWeight: bold ? '700' : '400',
                     ...(props.style as {}),
                 } as any

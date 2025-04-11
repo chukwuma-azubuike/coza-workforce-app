@@ -20,6 +20,7 @@ import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { View } from 'react-native';
 import TopNav from '../top-nav';
+import { cn } from '~/lib/utils';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -118,17 +119,19 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className="flex-1 gap-8">
+        <View className={cn('gap-8 pb-8', !isCampusPastor && 'flex-1')}>
             <TopNav />
             <Timer />
             <If condition={isCampusPastor}>
-                <CampusAttendanceSummary
-                    leadersAttendance={leadersAttendance?.attendance}
-                    workersAttendance={workersAttendance?.attendance}
-                    leaderUsers={leadersAttendance?.leaderUsers}
-                    workerUsers={workersAttendance?.workerUsers}
-                />
-                <CampusTicketSummary tickets={tickets} />
+                <View className="gap-5">
+                    <CampusAttendanceSummary
+                        leadersAttendance={leadersAttendance?.attendance}
+                        workersAttendance={workersAttendance?.attendance}
+                        leaderUsers={leadersAttendance?.leaderUsers}
+                        workerUsers={workersAttendance?.workerUsers}
+                    />
+                    <CampusTicketSummary tickets={tickets} />
+                </View>
             </If>
             {!userId ? (
                 <Loading />
