@@ -7,6 +7,7 @@ import { ROLES } from '@hooks/role';
 import { Ionicons } from '@expo/vector-icons';
 import { Text } from '~/components/ui/text';
 import { router } from 'expo-router';
+import { Icon } from '@rneui/themed';
 
 export interface ITeamAttendanceSummary {
     departmentUsers?: number;
@@ -71,15 +72,17 @@ export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.m
     };
 
     return (
-        <View className="items-center">
-            <View className="items-center gap-10">
+        <View className="items-center py-2">
+            <View className="items-center gap-10 flex-row">
                 <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation([ROLES.HOD, ROLES.AHOD])}>
                     <View className="items-center">
                         <View className="items-baseline flex-row">
-                            <Text className="font-semibold text-primary text-4xl ml-1">
+                            <Text className="font-semibold text-primary text-5xl ml-1">
                                 <CountUp isCounting duration={2} end={leadersAttendance || 0} />
                             </Text>
-                            <Text className="font-semibold text-muted-foreground">{`/${leaderUsers || 0}`}</Text>
+                            <Text className="font-semibold text-2xl text-muted-foreground">{`/${
+                                leaderUsers || 0
+                            }`}</Text>
                         </View>
                         <View className="items-center flex-row">
                             <Ionicons color={THEME_CONFIG.primary} name="people-outline" size={18} />
@@ -90,18 +93,13 @@ export const CampusAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.m
                 <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation(ROLES.worker)}>
                     <View className="items-center">
                         <View className="items-center flex-row">
-                            <Text className="font-semibold text-primary ml-1">
+                            <Text className="font-semibold text-primary text-5xl ml-1">
                                 <CountUp isCounting duration={2} end={workersAttendance || 0} />
                             </Text>
-                            <Text className="font-semibold text-primary ml-1">{`/${workerUsers || 0}`}</Text>
+                            <Text className="font-semibold text-muted-foreground text-2xl ml-1">{`/${workerUsers || 0}`}</Text>
                         </View>
                         <View className="items-center flex-row">
-                            <Ionicons
-                                color={THEME_CONFIG.primary}
-                                type="material-community"
-                                name="star-outline"
-                                size={18}
-                            />
+                            <Icon color={THEME_CONFIG.primary} type="material-community" name="crowd" size={18} />
                             <Text className="text-muted-foreground ml-2">Workers present</Text>
                         </View>
                     </View>

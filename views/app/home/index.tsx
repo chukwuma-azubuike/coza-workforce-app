@@ -7,7 +7,7 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import If from '@components/composite/if-container';
 // import GSPView from './global-senior-pastors';
 import Utils from '@utils/index';
-// import { CampusReportSummary } from './campus-pastors/report-summary';
+import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView, View } from 'react-native';
@@ -100,7 +100,7 @@ const Home: React.FC = () => {
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             <SafeAreaView className="flex-1">
                 <View
-                    className="flex-1 pb-8"
+                    className="flex-1"
                     // refreshing={isLoading}
                     // onRefresh={handleRefresh}
                 >
@@ -130,11 +130,11 @@ const Home: React.FC = () => {
                         </If>
                     </If>
                     <If condition={isCampusPastor}>
-                        {/* <CampusReportSummary
-                        refetchService={handleRefresh}
-                        campusId={user?.campus?._id as string}
-                        serviceId={latestService?._id as string}
-                    /> */}
+                        <CampusReportSummary
+                            refetchService={handleRefresh}
+                            campusId={user?.campus?._id as string}
+                            serviceId={latestService?._id as string}
+                        />
                     </If>
                 </View>
             </SafeAreaView>

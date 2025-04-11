@@ -1,53 +1,19 @@
 import React from 'react';
-import { Center, HStack, Skeleton, Stack, VStack } from 'native-base';
-import ViewWrapper from './viewWrapper';
+import { View } from 'react-native';
+import { Skeleton } from '../ui/skeleton';
 
 export const HomeSkeleton: React.FC = React.memo(() => {
     return (
-        <Center w="full" p={0}>
-            <VStack
-                w="90%"
-                maxW="400"
-                space={8}
-                overflow="hidden"
-                rounded="md"
-                _dark={{
-                    borderColor: 'coolGray.500',
-                }}
-                _light={{
-                    borderColor: 'coolGray.200',
-                }}
-            >
-                <Skeleton
-                    h="40"
-                    rounded="md"
-                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                />
-                <Skeleton.Text px="4" rounded="md" _dark={{ bg: 'gray.800' }} _light={{ bg: 'gray.100' }} />
-                <Skeleton
-                    px="4"
-                    my="4"
-                    rounded="md"
-                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                />
-                <Skeleton
-                    h="40"
-                    rounded="md"
-                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                />
-                <Skeleton.Text px="4" rounded="md" _dark={{ bg: 'gray.800' }} _light={{ bg: 'gray.100' }} />
-                <Skeleton
-                    px="4"
-                    my="4"
-                    rounded="md"
-                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                />
-            </VStack>
-        </Center>
+        <View className="items-center w-full">
+            <View className="gap-10 overflow-hidden rounded-md max-w-sm border-border">
+                <Skeleton className="w-40" />
+                <Skeleton className="px-4 h-10" />
+                <Skeleton className="px-4 my-4" />
+                <Skeleton className="h-40" />
+                <Skeleton className="px-4 h-10" />
+                <Skeleton className="px-4 my-4" />
+            </View>
+        </View>
     );
 });
 
@@ -55,20 +21,11 @@ export const FlatListSkeleton: React.FC<{
     count?: number;
 }> = React.memo(({ count = 6 }) => {
     return (
-        <Center w="full" p={0}>
+        <View className="items-center w-full">
             {Array.from(Array(count).keys()).map((elm, idx) => (
-                <Skeleton
-                    h="8"
-                    my={3}
-                    w="90%"
-                    rounded="md"
-                    overflow="hidden"
-                    key={`elm-${idx}`}
-                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                />
+                <Skeleton className="overflow-hidden my-3 h-8 w-11/12" key={`elm-${idx}`} />
             ))}
-        </Center>
+        </View>
     );
 });
 
@@ -76,28 +33,12 @@ export const ProfileSkeleton: React.FC<{
     count?: number;
 }> = React.memo(({ count = 6 }) => {
     return (
-        <Center w="full" p={0}>
-            <Skeleton
-                h={24}
-                w={24}
-                mb={3}
-                rounded="full"
-                _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-            />
+        <View className="items-center w-full">
+            <Skeleton className="my-3 h-24 w-24 mb-3 rounded-full" />
             {Array.from(Array(count).keys()).map((elm, idx) => (
-                <Skeleton
-                    h="8"
-                    my={3}
-                    w="90%"
-                    rounded="md"
-                    overflow="hidden"
-                    key={`elm-${idx}`}
-                    _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                    _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                />
+                <Skeleton key={`elm-${idx}`} className="h-8 my-3 w-11/12 overflow-hidden" />
             ))}
-        </Center>
+        </View>
     );
 });
 
@@ -105,28 +46,14 @@ export const ProfileSkeletonMini: React.FC<{
     count?: number;
 }> = React.memo(({ count = 4 }) => {
     return (
-        <HStack w="full" p={0} space={4} alignItems="center">
-            <Skeleton
-                h={32}
-                w={32}
-                rounded="full"
-                _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-            />
-            <VStack flex={1}>
+        <View className="flex-row gap-4 items-center">
+            <Skeleton className="h-32 w-32 rounded-full" />
+            <View className="flex-1">
                 {Array.from(Array(count).keys()).map((elm, idx) => (
-                    <Skeleton
-                        h="4"
-                        mb={2}
-                        rounded="md"
-                        overflow="hidden"
-                        key={`elm-${idx}`}
-                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                    />
+                    <Skeleton className="h-4 mb-2 overflow-hidden" key={`elm-${idx}`} />
                 ))}
-            </VStack>
-        </HStack>
+            </View>
+        </View>
     );
 });
 
@@ -134,28 +61,13 @@ export const FlexListSkeleton: React.FC<{
     count?: number;
 }> = React.memo(({ count = 1 }) => {
     return (
-        <ViewWrapper>
+        <View>
             {Array.from(Array(count).keys()).map((elm, idx) => (
-                <Stack key={idx} flexDirection="row" alignItems="center" justifyItems="center" my={1}>
-                    <Skeleton
-                        h="2"
-                        flex={1}
-                        rounded="md"
-                        overflow="hidden"
-                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                    />
-                    <Skeleton
-                        h="2"
-                        ml="12"
-                        flex={1}
-                        rounded="md"
-                        overflow="hidden"
-                        _dark={{ bg: 'gray.800', startColor: 'gray.900' }}
-                        _light={{ bg: 'gray.100', startColor: 'gray.200' }}
-                    />
-                </Stack>
+                <View key={idx} className="flex-row items-center justify-center my-1">
+                    <Skeleton className="h-2 flex-1 overflow-hidden" />
+                    <Skeleton className="h-2 ml-12 flex-1 overflow-hidden" />
+                </View>
             ))}
-        </ViewWrapper>
+        </View>
     );
 });
