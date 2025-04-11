@@ -60,7 +60,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                     color={elm.clockIn ? 'green.500' : 'red.500'}
                     textAlign="center"
                 >
-                    {elm.clockIn ? moment(elm.clockIn).format('LT') : '--:--'}
+                    {elm.clockIn ? moment(elm.clockIn).format('h:mm A') : '--:--'}
                 </Text>
             </HStack>
         ),
@@ -77,7 +77,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                         color: 'warmGray.200',
                     }}
                 >
-                    {elm.clockOut ? moment(elm.clockOut).format('LT') : '--:--'}
+                    {elm.clockOut ? moment(elm.clockOut).format('h:mm A') : '--:--'}
                 </Text>
             </HStack>
         ),

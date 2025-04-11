@@ -138,7 +138,7 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
                 duration: 3,
                 render: (
                     <ModalAlertComponent
-                        description={`Clocked in at ${moment().format('LT')}`}
+                        description={`Clocked in at ${moment().format('h:mm A')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
@@ -160,7 +160,7 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
             setModalState({
                 render: (
                     <ModalAlertComponent
-                        description={`Clocked out at ${moment().format('LT')}`}
+                        description={`Clocked out at ${moment().format('h:mm A')}`}
                         status={isInRange ? 'success' : 'warning'}
                         iconType={'material-community'}
                         iconName={'timer-outline'}
