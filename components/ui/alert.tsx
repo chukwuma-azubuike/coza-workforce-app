@@ -55,7 +55,7 @@ AlertTitle.displayName = 'AlertTitle';
 
 const AlertDescription = React.forwardRef<React.ElementRef<typeof Text>, React.ComponentPropsWithoutRef<typeof Text>>(
     ({ className, ...props }, ref) => (
-        <Text ref={ref} className={cn('pl-7 text-sm leading-relaxed text-foreground', className)} {...props} />
+        <Text ref={ref} className={cn('text-center text-xl leading-relaxed text-foreground', className)} {...props} />
     )
 );
 AlertDescription.displayName = 'AlertDescription';
