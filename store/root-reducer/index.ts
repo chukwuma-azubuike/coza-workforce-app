@@ -15,8 +15,10 @@ import { cgwcServiceSlice } from '../services/cgwc';
 import { groupHeadServiceSlice } from '@store/services/grouphead';
 import { uploadServiceSlice } from '@store/services/upload';
 import userStateSlice from '../actions/users';
+import appStateSlice from '../actions/app';
 
 const rootReducer = combineReducers({
+    [appStateSlice.reducerPath]: appStateSlice.reducer,
     [accountServiceSlice.reducerPath]: accountServiceSlice.reducer,
     [attendanceServiceSlice.reducerPath]: attendanceServiceSlice.reducer,
     [complianceServiceSlice.reducerPath]: complianceServiceSlice.reducer,

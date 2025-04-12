@@ -31,7 +31,7 @@ const TabButton = forwardRef(
                     }
                 />
                 <Text
-                    className={`!text-xs ${isFocused ? 'text-primary dark:text-primary/70' : 'text-muted-foreground'}`}
+                    className={`!text-xs ${isFocused ? 'text-primary dark:text-purple-400' : 'text-muted-foreground'}`}
                 >
                     {children}
                 </Text>

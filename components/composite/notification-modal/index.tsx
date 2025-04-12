@@ -1,40 +1,25 @@
-import { Center, Modal, Text, VStack } from 'native-base';
-import React, { useEffect } from 'react';
-import { IModalProps } from '../../../types/app';
-import ButtonComponent from '../../atoms/button';
+import React from 'react';
+import { Button } from '~/components/ui/button';
+import { Dialog, DialogContent } from '~/components/ui/dialog';
+import { Text } from '~/components/ui/text';
 import If from '../if-container';
 import ModalAlertComponent from '../modal-alert';
+import { View } from 'react-native';
+import useModal from '~/hooks/modal/useModal';
 
-interface INotificationModalProps extends IModalProps {}
-
-const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setModalState }) => {
-    const { open, render, button, message, status, duration, defaultRender = true } = modalState;
+const NotificationModal: React.FC = () => {
+    const { modalState, setModalState } = useModal();
+    const { open, render, button, message, status, defaultRender = true } = modalState;
 
     const hideModal = () => {
-        setModalState(prev => {
-            return { ...prev, open: false };
-        });
+        setModalState({ ...modalState, open: false });
     };
 
-    useEffect(() => {
-        if (message || render) {
-            setModalState(prev => {
-                return { ...prev, open: true };
-            });
-        }
-        setTimeout(
-            () => {
-                setModalState({ open: false });
-            },
-            duration ? duration * 1000 : 3000 // Modal timeout
-        );
-    }, [message, render]);
-
     return (
-        <Modal w="full" isOpen={open} onClose={hideModal}>
-            <Modal.Content w="90%" h={300}>
-                <Center>
-                    <VStack w="full" space={2} borderRadius="2xl" backgroundColor="transparent">
+        <Dialog open={typeof open === 'boolean' ? open : !!(render || message)} onOpenChange={hideModal}>
+            <DialogContent className="w-11/12 h-72">
+                <View className="justify-center">
+                    <View className="w-full gap-2 rounded-2xl bg-transparent">
                         {render ? (
                             render
                         ) : defaultRender ? (
@@ -44,40 +29,38 @@ const NotificationModal: React.FC<INotificationModalProps> = ({ modalState, setM
                                     status === 'success'
                                         ? 'checkmark-circle-outline'
                                         : status === 'info'
-                                          ? 'info'
-                                          : status === 'warning'
-                                            ? 'warning-outline'
-                                            : status === 'error'
-                                              ? 'error-outline'
-                                              : ''
+                                        ? 'info'
+                                        : status === 'warning'
+                                        ? 'warning-outline'
+                                        : status === 'error'
+                                        ? 'error-outline'
+                                        : ''
                                 }
                                 iconType={
                                     status === 'success'
                                         ? 'ionicon'
                                         : status === 'info'
-                                          ? 'feather'
-                                          : status === 'warning'
-                                            ? 'ionicon'
-                                            : status === 'error'
-                                              ? 'material'
-                                              : 'ionicon'
+                                        ? 'feather'
+                                        : status === 'warning'
+                                        ? 'ionicon'
+                                        : status === 'error'
+                                        ? 'material'
+                                        : 'ionicon'
                                 }
                                 status={status}
                             />
                         ) : (
-                            <Text my={4} fontSize="xl" textAlign="center">
-                                {message}
-                            </Text>
+                            <Text className="my-4 text-3xl text-center">{message}</Text>
                         )}
                         <If condition={button}>
-                            <ButtonComponent title="Hide modal" onPress={hideModal}>
+                            <Button variant="destructive" onPress={hideModal}>
                                 Close
-                            </ButtonComponent>
+                            </Button>
                         </If>
-                    </VStack>
-                </Center>
-            </Modal.Content>
-        </Modal>
+                    </View>
+                </View>
+            </DialogContent>
+        </Dialog>
     );
 };
 

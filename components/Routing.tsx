@@ -3,6 +3,7 @@ import { router, Stack } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { Colors } from '~/constants/Colors';
+import NotificationModal from '~/components/composite/notification-modal';
 
 import * as Haptics from 'expo-haptics';
 import { useAppSelector } from '~/store/hooks';
@@ -76,6 +77,7 @@ const Routing: React.FC = () => {
 
     return (
         <View className="flex-1">
+            {/* <NotificationModal /> */}
             {/* Unauthenticated Screens */}
             {!isLoggedIn ? (
                 <Stack>
