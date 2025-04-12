@@ -1,6 +1,7 @@
+import { View } from "react-native";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Heading, Stack } from 'native-base';
+import { Heading } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -126,7 +127,7 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 {isLoading || isFetching ? (
                     <FlatListSkeleton count={1} />
                 ) : (
-                    <Stack
+                    <View
                         my={2}
                         mx={2}
                         padding={4}
@@ -141,7 +142,7 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                         _light={{ borderColor: 'gray.200' }}
                     >
                         {summaryList.map((item, index) => (
-                            <Stack
+                            <View
                                 key={index}
                                 flexDirection="column"
                                 alignItems="center"
@@ -161,13 +162,13 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                                 <Heading size="xl" _dark={{ color: item.color }} _light={{ color: item.color }}>
                                     {item.value || 0}
                                 </Heading>
-                            </Stack>
+                            </View>
                         ))}
-                    </Stack>
+                    </View>
                 )}
 
-                <Center>
-                    <Stack py={3} mb={6} flexDirection="row" flex={1} flexWrap="wrap">
+                <View>
+                    <View mb={6} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (
@@ -182,8 +183,8 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                                 ))}
                             </>
                         )}
-                    </Stack>
-                </Center>
+                    </View>
+                </View>
             </ViewWrapper>
             <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin}>
                 <StaggerButtonComponent buttons={filteredButtons as unknown as any} />

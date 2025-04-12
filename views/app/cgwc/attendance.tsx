@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React, { ReactNode } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import { scoreMappingColumn } from '../attendance/flatListConfig';
@@ -177,14 +178,9 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
     return (
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
-                <HStackComponent
-                    style={{
-                        flex: 0,
-                        marginBottom: 6,
-                        paddingHorizontal: 8,
-                        alignItems: 'baseline',
-                    }}
+                <View
                     space={8}
+                    className="flex-0 mb-6 px-8 items-baseline"
                 >
                     <SelectComponent
                         valueKey="_id"
@@ -211,14 +207,14 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
                             justifyContent: 'space-between',
                         }}
                     >
-                        <TextComponent size="lg" bold>
+                        <Text size="lg" className="font-bold">
                             Eligible:{'  '}
-                        </TextComponent>
-                        <TextComponent bold size="2xl">
+                        </Text>
+                        <Text size="2xl" className="font-bold">
                             {eligible || 0}
-                        </TextComponent>
+                        </Text>
                     </View>
-                </HStackComponent>
+                </View>
             </AttendanceContainer>
             <FlatListComponent
                 onRefresh={handleRefetch}
@@ -336,14 +332,9 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
 
     return (
         <ErrorBoundary>
-            <HStackComponent
-                style={{
-                    flex: 0,
-                    marginBottom: 6,
-                    paddingHorizontal: 8,
-                    alignItems: 'baseline',
-                }}
+            <View
                 space={8}
+                className="flex-0 mb-6 px-8 items-baseline"
             >
                 <SelectComponent
                     valueKey="_id"
@@ -370,14 +361,14 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
                         justifyContent: 'space-between',
                     }}
                 >
-                    <TextComponent size="lg" bold>
+                    <Text size="lg" className="font-bold">
                         Eligible:{'  '}
-                    </TextComponent>
-                    <TextComponent bold size="2xl">
+                    </Text>
+                    <Text size="2xl" className="font-bold">
                         {eligible || 0}
-                    </TextComponent>
+                    </Text>
                 </View>
-            </HStackComponent>
+            </View>
             <FlatListComponent
                 onRefresh={handleRefetch}
                 padding={isAndroid ? 3 : 10}
@@ -493,14 +484,9 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
 
     return (
         <ErrorBoundary>
-            <HStackComponent
-                style={{
-                    flex: 0,
-                    marginBottom: 6,
-                    paddingHorizontal: 8,
-                    alignItems: 'baseline',
-                }}
+            <View
                 space={8}
+                className="flex-0 mb-6 px-8 items-baseline"
             >
                 <SelectComponent
                     valueKey="_id"
@@ -527,14 +513,14 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
                         justifyContent: 'space-between',
                     }}
                 >
-                    <TextComponent size="lg" bold>
+                    <Text size="lg" className="font-bold">
                         Eligible:{'  '}
-                    </TextComponent>
-                    <TextComponent bold size="2xl">
+                    </Text>
+                    <Text size="2xl" className="font-bold">
                         {eligible || 0}
-                    </TextComponent>
+                    </Text>
                 </View>
-            </HStackComponent>
+            </View>
             <FlatListComponent
                 onRefresh={handleRefetch}
                 data={mergedAttendanceWithLeaderList || []}
@@ -562,33 +548,19 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
         return (
             <View style={{ paddingHorizontal: 4 }}>
                 <If condition={showTitle}>
-                    <HStackComponent
-                        style={{ paddingVertical: 10, justifyContent: 'space-between', alignItems: 'baseline' }}
+                    <View
+                        className="py-10 justify-between items-baseline"
                     >
-                        <TextComponent size="lg" bold style={{ textAlign: 'center', paddingTop: 3, paddingBottom: 4 }}>
+                        <Text size="lg" className="font-bold text-center pt-3 pb-4">
                             {title}
-                        </TextComponent>
+                        </Text>
                         {!!score && (
-                            <TextComponent
-                                bold
-                                fontSize="lg"
-                                style={{
-                                    paddingTop: 3,
-                                    paddingBottom: 4,
-                                    textAlign: 'center',
-                                    color:
-                                        +score < 31
-                                            ? THEME_CONFIG.rose
-                                            : +score > 69
-                                              ? THEME_CONFIG.lightSuccess
-                                              : THEME_CONFIG.warning,
-                                }}
-                            >
+                            <Text fontSize="lg" className="font-bold pt-3 pb-4 text-center">
                                 {score || 0}
                                 {scoreType === 'percent' && '%'}
-                            </TextComponent>
+                            </Text>
                         )}
-                    </HStackComponent>
+                    </View>
                 </If>
                 {children}
             </View>
@@ -599,67 +571,43 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
 export const AttendanceListRow: React.FC<IAttendance> = React.memo(
     ({ name, clockIn, clockOut, score = 0, ...props }) => {
         return (
-            <HStackComponent
-                style={{
-                    paddingVertical: 10,
-                    alignItems: 'center',
-                    borderBottomWidth: 0.4,
-                    justifyContent: 'space-between',
-                    borderBottomColor: THEME_CONFIG.lightGray,
-                }}
+            <View
+                className="py-10 items-center justify-between"
             >
-                <TextComponent style={{ width: '40%' }}>{name}</TextComponent>
-                <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
+                <Text className="w-40%">{name}</Text>
+                <View className="justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent style={{ textAlign: 'right' }}>
+                    <Text className="text-right">
                         {clockIn ? dayjs(clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent style={{ justifyContent: 'center', minWidth: '23%' }}>
+                    </Text>
+                </View>
+                <View className="justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent style={{ textAlign: 'right' }}>
+                    <Text className="text-right">
                         {!!clockOut ? dayjs(clockOut).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
+                    </Text>
+                </View>
                 {typeof score === 'number' && (
-                    <HStackComponent style={{ justifyContent: 'center', minWidth: '15%' }}>
-                        <TextComponent style={{ textAlign: 'center' }}>{score}</TextComponent>
-                    </HStackComponent>
+                    <View className="justify-center">
+                        <Text className="text-center">{score}</Text>
+                    </View>
                 )}
-            </HStackComponent>
+            </View>
         );
     }
 );
 
 export const AttendanceHeader: React.FC<{ titles: string[] }> = React.memo(({ titles }) => {
     return (
-        <HStackComponent
-            style={[
-                styles.listRow,
-                {
-                    width: '50%',
-                    alignItems: 'center',
-                    borderTopWidth: 0.6,
-                    borderBottomWidth: 0.6,
-                    justifyContent: 'space-between',
-                    borderColor: THEME_CONFIG.lightGray,
-                },
-            ]}
-        >
+        <View>
             {titles?.map((title, index) => (
                 <View key={index} style={{ minWidth: index === 0 ? '40%' : index === 3 ? '15%' : '23%' }}>
-                    <TextComponent
-                        bold
-                        style={{
-                            textAlign: index !== 0 ? 'center' : 'left',
-                            maxWidth: index === 0 ? ScreenWidth / 3.6 : ScreenWidth / 4.5,
-                        }}
-                    >
+                    <Text className="font-bold">
                         {title}
-                    </TextComponent>
+                    </Text>
                 </View>
             ))}
-        </HStackComponent>
+        </View>
     );
 });
 

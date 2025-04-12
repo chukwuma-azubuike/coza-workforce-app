@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
 import { Formik } from 'formik';
@@ -7,7 +8,6 @@ import { useLazySendOTPQuery, useValidateEmailOTPMutation } from '@store/service
 import Utils from '@utils/index';
 import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
-import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';

@@ -1,9 +1,7 @@
+import { Text } from '~/components/ui/text';
 import React, { ReactNode } from 'react';
 import * as Sentry from '@sentry/react';
-import VStackComponent from '@components/layout/v-stack';
-import { THEME_CONFIG } from '@config/appConfig';
-import TextComponent from '@components/text';
-import { Button, Text } from 'react-native';
+import { Button, View } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
 import ViewWrapper from '@components/layout/viewWrapper';
 
@@ -15,22 +13,10 @@ const ErrorBoundary: React.FC<{
         <Sentry.ErrorBoundary
             fallback={({ error, resetError }) => (
                 <ViewWrapper scroll style={{ paddingVertical: 6 }}>
-                    <VStackComponent
-                        style={{
-                            borderColor: THEME_CONFIG.rose,
-                            borderRadius: 20,
-                            borderWidth: 0.2,
-                            flex: 0,
-                            backgroundColor: THEME_CONFIG.lightRose,
-                            padding: 20,
-                        }}
-                        space={8}
-                    >
-                        <TextComponent size="lg" bold style={{ textAlign: 'center' }}>
-                            Oops something broke!
-                        </TextComponent>
+                    <View className="rounded-20 border-0.2 flex-0 p-20 gap-8">
+                        <Text className="font-bold text-center text-2xl">Oops something broke!</Text>
                         <Button onPress={resetError} color={textColor} title="Retry" />
-                    </VStackComponent>
+                    </View>
                 </ViewWrapper>
             )}
         >

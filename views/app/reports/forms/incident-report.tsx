@@ -1,10 +1,12 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IIncidentReportPayload } from '@store/types';
 import { useCreateIncidentReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, VStack, Text } from 'native-base';
+import { FormControl } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -57,15 +59,15 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         >
             {({ handleChange, errors, handleSubmit }) => (
                 <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
-                    <VStack pb={10}>
+                    <View pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
-                        <VStack
+                        <View
                             mt={4}
-                            px={4}
                             space={4}
                             minHeight={details?.length ? (details?.length * 7) / 8 : undefined}
+                            className="px-4"
                         >
                             <FormControl isRequired mb={2}>
                                 <FormControl.Label mb={4}>Details of Incident</FormControl.Label>
@@ -86,8 +88,8 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     {`${!status ? 'Submit' : 'Update'}`}
                                 </ButtonComponent>
                             </FormControl>
-                        </VStack>
-                    </VStack>
+                        </View>
+                    </View>
                 </ViewWrapper>
             )}
         </Formik>

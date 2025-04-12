@@ -1,4 +1,5 @@
-import { FormControl, HStack } from 'native-base';
+import { View } from "react-native";
+import { FormControl } from 'native-base';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetGraphAttendanceReportsQuery, useGetGSPReportQuery } from '@store/services/reports';
@@ -91,7 +92,7 @@ const ChurchGrowth: React.FC = () => {
 
     return (
         <>
-            <HStack justifyContent="space-around" w="100%" mb={4} space={10} px={4} position="static" top={3}>
+            <View justifyContent="space-around" w="100%" mb={4} space={10} position="static" top={3} className="px-4">
                 <FormControl isRequired w="30%">
                     <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
                         {sortedCampuses?.map((campus, index) => (
@@ -117,7 +118,7 @@ const ChurchGrowth: React.FC = () => {
                         ))}
                     </SelectComponent>
                 </FormControl>
-            </HStack>
+            </View>
             <Row style={{ marginVertical: 4, height: ScreenHeight / 2 }}>
                 <Col sm={24} lg={10}>
                     <ChurchGrowthSummary />

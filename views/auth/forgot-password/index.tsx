@@ -1,11 +1,11 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
-import { Box, FormControl, Heading, HStack, Modal, Text, VStack } from 'native-base';
-import { Platform } from 'react-native';
+import { FormControl, Heading, Modal } from 'native-base';
+import { Platform, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import ButtonComponent from '@components/atoms/button';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { InputComponent } from '@components/atoms/input';
 import ModalAlertComponent from '@components/composite/modal-alert';
 import OTPInput from '@components/atoms/otp-input';
 import { Formik } from 'formik';
@@ -39,7 +39,7 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
     return (
         <>
             <ViewWrapper pt={10}>
-                <Box w="100%" h="full" justifyContent="space-between" pb={4}>
+                <View w="100%" h="full" justifyContent="space-between" pb={4}>
                     <TouchableRipple
                         style={{ paddingHorizontal: 6, borderRadius: 10 }}
                         rippleColor="rgba(255, 255, 255, 0)"
@@ -53,9 +53,17 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                             style={{ alignSelf: 'flex-start' }}
                         />
                     </TouchableRipple>
-                    <VStack p={6} pb={5} px={4} pt={10} space={6} alignItems="center" justifyContent="space-around">
+                    <View
+                        p={6}
+                        pb={5}
+                        pt={10}
+                        space={6}
+                        alignItems="center"
+                        justifyContent="space-around"
+                        className="px-4"
+                    >
                         <Heading>Forgot Password</Heading>
-                        <Box alignItems="center" w="100%">
+                        <View alignItems="center" w="100%">
                             <Formik
                                 onSubmit={handleSubmit}
                                 initialValues={{ email: '' }}
@@ -63,7 +71,7 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                             >
                                 {({ handleChange, handleSubmit, errors }: any) => (
                                     <FormControl isInvalid={errors.email && true}>
-                                        <VStack space={1}>
+                                        <View space={1}>
                                             <FormControl.Label isRequired>Email</FormControl.Label>
                                             <InputComponent
                                                 isRequired
@@ -97,12 +105,12 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                                             >
                                                 Continue
                                             </ButtonComponent>
-                                        </VStack>
+                                        </View>
                                     </FormControl>
                                 )}
                             </Formik>
-                        </Box>
-                        <HStack alignItems="center">
+                        </View>
+                        <View alignItems="center">
                             <Text fontSize="md" color="gray.400">
                                 Remember you password?
                             </Text>
@@ -114,12 +122,12 @@ const ForgotPassword: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                                     Login
                                 </Text>
                             </TouchableRipple>
-                        </HStack>
-                    </VStack>
-                    <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
+                        </View>
+                    </View>
+                    <View w="full" justifyContent="center" justifyItems="center" alignItems="center">
                         <SupportLink />
-                    </Box>
-                </Box>
+                    </View>
+                </View>
             </ViewWrapper>
             <Modal isOpen={modalVisible} onClose={hideModal} avoidKeyboard size="xl">
                 <Modal.Content minW={200} backgroundColor="gray.200">

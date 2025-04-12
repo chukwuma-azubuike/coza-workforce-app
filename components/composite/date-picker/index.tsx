@@ -1,11 +1,10 @@
 import React from 'react';
-import { FormControl, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import dayjs from 'dayjs';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { InputComponent } from '../../atoms/input';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import If from '../if-container';
 import { InterfaceFormControlProps } from 'native-base/lib/typescript/components/composites/FormControl/types';
 interface IDateTimePickerProps {
@@ -58,7 +57,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = React.memo(
 
         return (
             <FormControl isInvalid={formControlProps?.isInvalid} {...formControlProps} minW={150} w="auto">
-                <VStack w="auto" alignItems="flex-start" minW={150}>
+                <View w="auto" alignItems="flex-start" minW={150}>
                     <FormControl.Label>{label}</FormControl.Label>
                     <If condition={!isIOS}>
                         <InputComponent
@@ -98,7 +97,7 @@ const DateTimePickerComponent: React.FC<IDateTimePickerProps> = React.memo(
                             {errorMessage}
                         </FormControl.ErrorMessage>
                     </If>
-                </VStack>
+                </View>
             </FormControl>
         );
     }

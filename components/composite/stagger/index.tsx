@@ -1,5 +1,5 @@
 import { Icon } from '@rneui/themed';
-import { Box, HStack, IBoxProps, IconButton, Stagger, useDisclose } from 'native-base';
+import { IBoxProps, IconButton, Stagger, useDisclose } from 'native-base';
 import { ColorType } from 'native-base/lib/typescript/components/types';
 import React from 'react';
 import { IIconTypes } from '@utils/types';
@@ -21,7 +21,7 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
 
     return (
         <View style={{ right: 18, bottom: 36, position: 'absolute', zIndex: isOpen ? 12 : 0 }}>
-            <Box alignItems="center">
+            <View alignItems="center">
                 <Stagger
                     visible={isOpen}
                     initial={{
@@ -67,8 +67,8 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
                         />
                     ))}
                 </Stagger>
-            </Box>
-            <HStack justifyContent="center">
+            </View>
+            <View justifyContent="center">
                 <IconButton
                     size="lg"
                     variant="solid"
@@ -77,7 +77,7 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
                     onPress={onToggle}
                     icon={<Icon size={38} color="white" type="entypo" name={isOpen ? 'minus' : 'plus'} />}
                 />
-            </HStack>
+            </View>
         </View>
     );
 };

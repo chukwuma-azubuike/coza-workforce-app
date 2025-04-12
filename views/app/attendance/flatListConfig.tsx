@@ -1,5 +1,5 @@
+import { Text } from '~/components/ui/text';
 import React from 'react';
-import { Box, Center, HStack, Text, VStack } from 'native-base';
 import dayjs from 'dayjs';
 import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -9,9 +9,6 @@ import Utils from '@utils/index';
 import { Appearance, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
-import VStackComponent from '@components/layout/v-stack';
 
 const colorScheme = Appearance.getColorScheme();
 
@@ -23,7 +20,7 @@ const myAttendanceColumns: IFlatListColumn[] = [
         dataIndex: 'date',
         render: (elm: IAttendance, key) => {
             return (
-                <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} key={key}>
+                <View key={key} className="items-center py-4">
                     <View
                         style={{
                             flex: 1,
@@ -38,49 +35,28 @@ const myAttendanceColumns: IFlatListColumn[] = [
                         }}
                         key={`date-${key}`}
                     >
-                        <TextComponent bold size="xs">
+                        <Text size="xs" className="font-bold">
                             {dayjs(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
-                        </TextComponent>
-                        <TextComponent bold size="xs">
+                        </Text>
+                        <Text size="xs" className="font-bold">
                             {dayjs(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
-                        </TextComponent>
-                        <TextComponent bold size="xs">
-                            {dayjs(elm.createdAt).format('MMMM').substring(0, 3)} /{' '}
-                            {dayjs(elm.createdAt).format('YY')}
-                        </TextComponent>
+                        </Text>
+                        <Text size="xs" className="font-bold">
+                            {dayjs(elm.createdAt).format('MMMM').substring(0, 3)} / {dayjs(elm.createdAt).format('YY')}
+                        </Text>
                     </View>
-                    <HStackComponent
-                        key={`clockin-${key}`}
-                        style={{
-                            minWidth: '15%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
+                    <View key={`clockin-${key}`} className="justify-center items-center">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                        <TextComponent
-                            style={{
-                                color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
-                            }}
-                        >
-                            {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                        </TextComponent>
-                    </HStackComponent>
-                    <HStackComponent
-                        key={`clockin-${key}`}
-                        style={{
-                            minWidth: '15%',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                        }}
-                    >
+                        <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                    </View>
+                    <View key={`clockin-${key}`} className="justify-center items-center">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                        <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                    </HStackComponent>
-                    <TextComponent key={`hours-${key}`} style={{ flex: 1, minWidth: '15%', textAlign: 'center' }}>
+                        <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                    </View>
+                    <Text key={`hours-${key}`} className="flex-1 text-center">
                         {elm?.clockOut ? Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
+                    </Text>
+                </View>
             );
         },
     },
@@ -105,47 +81,27 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={4} key={key}>
+            <View space={4} key={key} className="items-center py-4">
                 <AvatarComponent
                     mr={4}
                     size="md"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <VStackComponent style={{ minWidth: '40%' }}>
-                    <TextComponent bold>
+                <View>
+                    <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
-                    </TextComponent>
-                </VStackComponent>
-                <HStackComponent
-                    key={`clockin-${key}`}
-                    style={{
-                        minWidth: '16%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    </Text>
+                </View>
+                <View key={`clockin-${key}`} className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent
-                        style={{
-                            color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
-                        }}
-                    >
-                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent
-                    key={`clockin-${key}`}
-                    style={{
-                        minWidth: '16%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View key={`clockin-${key}`} className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                </HStackComponent>
-            </HStackComponent>
+                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                </View>
+            </View>
         ),
     },
 ];
@@ -155,55 +111,35 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={6} key={key}>
+            <View space={6} key={key} className="items-center py-4">
                 <AvatarComponent
                     mr={4}
                     size="md"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <VStackComponent style={{ minWidth: '36%' }}>
-                    <TextComponent bold>
+                <View>
+                    <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
-                    </TextComponent>
-                    <TextComponent
+                    </Text>
+                    <Text
                         noOfLines={1}
                         flexWrap="wrap"
                         ellipsizeMode="tail"
                         color={isLightMode ? 'gray.800' : 'gray.100'}
                     >
                         {`Score: ${elm?.score || 0}`}
-                    </TextComponent>
-                </VStackComponent>
-                <HStackComponent
-                    key={`clockin-${key}`}
-                    style={{
-                        minWidth: '15%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    </Text>
+                </View>
+                <View key={`clockin-${key}`} className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent
-                        style={{
-                            color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
-                        }}
-                    >
-                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent
-                    key={`clockin-${key}`}
-                    style={{
-                        minWidth: '15%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View key={`clockin-${key}`} className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                </HStackComponent>
-            </HStackComponent>
+                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                </View>
+            </View>
         ),
     },
 ];
@@ -213,45 +149,35 @@ const scoreMappingColumn: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: IScoreMapping & IAttendance, key) => (
-            <HStackComponent key={`name-${key}`} space={4}>
-                <HStackComponent
-                    key={`name-${key}`}
-                    space={6}
-                    style={{
-                        minWidth: '40%',
-                        alignItems: 'center',
-                        justifyContent: 'flex-start',
-                    }}
-                >
+            <View key={`name-${key}`} space={4}>
+                <View key={`name-${key}`} space={6} className="items-center justify-start">
                     <AvatarComponent
                         mr={4}
                         size="sm"
                         badge={!!elm.clockIn}
                         imageUrl={elm?.user?.pictureUrl || elm?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
-                    <VStackComponent>
-                        <TextComponent flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'}>
+                    <View>
+                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'}>
                             {Utils.capitalizeFirstChar(elm?.user?.firstName || elm?.firstName)}
-                        </TextComponent>
-                        <TextComponent flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'}>
+                        </Text>
+                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'}>
                             {Utils.capitalizeFirstChar(elm?.user?.lastName || elm?.lastName)}
-                        </TextComponent>
-                    </VStackComponent>
-                </HStackComponent>
-                <HStackComponent key={`clockin-${key}`} style={{ width: '20%', flex: 0 }}>
+                        </Text>
+                    </View>
+                </View>
+                <View key={`clockin-${key}`} className="w-20% flex-0">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent style={{ color: elm?.clockIn ? THEME_CONFIG.lightSuccess : undefined }}>
-                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent key={`clockout-${key}`} style={{ width: '20%', flex: 0 }}>
+                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View key={`clockout-${key}`} className="w-20% flex-0">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                </HStackComponent>
-                <HStackComponent key={`score-${key}`} style={{ width: '10%', flex: 0, justifyContent: 'center' }}>
-                    <TextComponent>{!!elm.score ? `${elm.score}` : `${0}`}</TextComponent>
-                </HStackComponent>
-            </HStackComponent>
+                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View key={`score-${key}`} className="w-10% flex-0 justify-center">
+                    <Text>{!!elm.score ? `${elm.score}` : `${0}`}</Text>
+                </View>
+            </View>
         ),
     },
 ];
@@ -261,35 +187,23 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={4} key={key}>
+            <View space={4} key={key} className="items-center py-4">
                 <AvatarComponent size="md" badge={!!elm.clockIn} imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL} />
-                <VStackComponent style={{ minWidth: '36%' }}>
-                    <TextComponent bold>
+                <View>
+                    <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
-                    </TextComponent>
-                    <TextComponent>{elm.departmentName}</TextComponent>
-                </VStackComponent>
-                <HStackComponent style={{ justifyContent: 'center', alignItems: 'center', minWidth: '20%' }}>
+                    </Text>
+                    <Text>{elm.departmentName}</Text>
+                </View>
+                <View className="justify-center items-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent
-                        style={{
-                            color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
-                        }}
-                    >
-                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent
-                    style={{
-                        minWidth: '20%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                </HStackComponent>
-            </HStackComponent>
+                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                </View>
+            </View>
         ),
     },
 ];
@@ -299,41 +213,29 @@ const campusColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: '',
         render: (elm: IAttendance, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={4} key={key}>
+            <View space={4} key={key} className="items-center py-4">
                 <AvatarComponent
                     size="md"
                     badge={!!elm.clockIn}
                     imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <VStackComponent style={{ minWidth: '36%' }}>
-                    <TextComponent bold>
+                <View>
+                    <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.user?.firstName)} ${Utils.capitalizeFirstChar(
                             elm?.user?.lastName
                         )}`}
-                    </TextComponent>
-                    <TextComponent>{elm.departmentName}</TextComponent>
-                </VStackComponent>
-                <HStackComponent style={{ justifyContent: 'center', alignItems: 'center', minWidth: '20%' }}>
+                    </Text>
+                    <Text>{elm.departmentName}</Text>
+                </View>
+                <View className="justify-center items-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent
-                        style={{
-                            color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
-                        }}
-                    >
-                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent
-                    style={{
-                        minWidth: '20%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                </HStackComponent>
-            </HStackComponent>
+                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                </View>
+            </View>
         ),
     },
 ];
@@ -343,36 +245,24 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStackComponent style={{ alignItems: 'center', paddingVertical: 4 }} space={4} key={key}>
+            <View space={4} key={key} className="items-center py-4">
                 <AvatarComponent size="md" badge={!!elm.clockIn} imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL} />
-                <VStackComponent style={{ minWidth: '36%' }}>
-                    <TextComponent bold>
+                <View>
+                    <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
-                    </TextComponent>
-                    <TextComponent>{elm.campus}</TextComponent>
-                    <TextComponent>{elm.department}</TextComponent>
-                </VStackComponent>
-                <HStackComponent style={{ justifyContent: 'center', alignItems: 'center', minWidth: '20%' }}>
+                    </Text>
+                    <Text>{elm.campus}</Text>
+                    <Text>{elm.department}</Text>
+                </View>
+                <View className="justify-center items-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <TextComponent
-                        style={{
-                            color: elm.clockIn ? THEME_CONFIG.lightSuccess : THEME_CONFIG.rose,
-                        }}
-                    >
-                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
-                    </TextComponent>
-                </HStackComponent>
-                <HStackComponent
-                    style={{
-                        minWidth: '20%',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}
-                >
+                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                </View>
+                <View className="items-center justify-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <TextComponent>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</TextComponent>
-                </HStackComponent>
-            </HStackComponent>
+                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                </View>
+            </View>
         ),
     },
 ];

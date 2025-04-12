@@ -1,4 +1,6 @@
-import { FormControl, HStack, Stack, Text } from 'native-base';
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
+import { FormControl } from 'native-base';
 import React from 'react';
 import { StatCardComponent } from '@components/composite/card';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -107,7 +109,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
 
     return (
         <>
-            <HStack justifyContent="space-around" w="100%" mb={3} space={10} px={4} position="static">
+            <View justifyContent="space-around" w="100%" mb={3} space={10} position="static" className="px-4">
                 <FormControl isRequired w="50%">
                     <SelectComponent
                         valueKey="_id"
@@ -140,7 +142,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         ))}
                     </SelectComponent>
                 </FormControl>
-            </HStack>
+            </View>
             <ViewWrapper mt={4} scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
                 <ListItem.Accordion
                     content={
@@ -187,7 +189,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <Stack py={3} flexDirection="row" flexWrap="wrap">
+                    <View flexDirection="row" flexWrap="wrap" className="py-3">
                         <StatCardComponent
                             // percent
                             label="Total"
@@ -249,7 +251,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             iconName="ticket-confirmation-outline"
                             onPress={handlePressCard({ service: 'ticket' })}
                         />
-                    </Stack>
+                    </View>
                 </ListItem.Accordion>
                 <ListItem.Accordion
                     content={
@@ -296,7 +298,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <Stack py={3} flexDirection="row" flexWrap="wrap">
+                    <View flexDirection="row" flexWrap="wrap" className="py-3">
                         <StatCardComponent
                             // percent
                             label="Total"
@@ -342,7 +344,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             isLoading={gspReportIsLoading}
                             value={serviceAttendance?.childrenAttendance}
                         />
-                    </Stack>
+                    </View>
                 </ListItem.Accordion>
                 <ListItem.Accordion
                     content={
@@ -389,7 +391,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <Stack py={3} flexDirection="row" flexWrap="wrap">
+                    <View flexDirection="row" flexWrap="wrap" className="py-3">
                         <StatCardComponent
                             // percent
                             label="First timers"
@@ -408,7 +410,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             isLoading={gspReportIsLoading}
                             value={guestAttendance?.newConvert}
                         />
-                    </Stack>
+                    </View>
                 </ListItem.Accordion>
                 <ListItem.Accordion
                     content={
@@ -455,7 +457,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <Stack py={3} flexDirection="row" flexWrap="wrap">
+                    <View flexDirection="row" flexWrap="wrap" className="py-3">
                         <StatCardComponent
                             // percent
                             label="Locations"
@@ -501,7 +503,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             isLoading={gspReportIsLoading}
                             value={busCount?.totalCars}
                         />
-                    </Stack>
+                    </View>
                 </ListItem.Accordion>
             </ViewWrapper>
         </>

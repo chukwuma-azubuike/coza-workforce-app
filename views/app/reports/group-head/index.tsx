@@ -1,6 +1,7 @@
+import { View } from "react-native";
 import React, { useMemo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import { Formik } from 'formik';
 import TextAreaComponent from '@components/atoms/text-area';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -70,7 +71,7 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
 
     return (
         <ViewWrapper py={10} noPadding>
-            <VStack px={4} space={10}>
+            <View space={10} className="px-4">
                 <Formik<any>
                     onSubmit={onSubmit}
                     validationSchema={GHReportSchema}
@@ -79,7 +80,7 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 >
                     {({ errors, handleChange, handleSubmit, values }) => {
                         return (
-                            <VStack space={2}>
+                            <View space={2}>
                                 <FormControl isRequired isInvalid={!!errors?.submittedReport}>
                                     <FormControl.Label>For the GSP's attention</FormControl.Label>
                                     <TextAreaComponent
@@ -114,11 +115,11 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         </ButtonComponent>
                                     </FormControl>
                                 )}
-                            </VStack>
+                            </View>
                         );
                     }}
                 </Formik>
-            </VStack>
+            </View>
         </ViewWrapper>
     );
 };

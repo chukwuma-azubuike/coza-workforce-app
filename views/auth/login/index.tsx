@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { useLoginMutation } from '@store/services/account';
 import { Formik } from 'formik';
@@ -9,7 +10,6 @@ import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { storeSession } from '~/store/actions/users';
-import { Text } from '~/components/ui/text';
 import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
 import FormErrorMessage from '~/components/ui/error-message';

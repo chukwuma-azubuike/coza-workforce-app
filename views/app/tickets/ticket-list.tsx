@@ -1,6 +1,7 @@
+import { Text } from "~/components/ui/text";
 import React, { memo } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
@@ -43,10 +44,10 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <HStackComponent
-                            style={{ paddingVertical: 12, alignItems: 'center', justifyContent: 'space-between' }}
+                        <View
+                            className="py-12 items-center justify-between"
                         >
-                            <HStackComponent space={6} style={{ alignItems: 'center' }}>
+                            <View space={6} className="items-center">
                                 <AvatarComponent
                                     size="sm"
                                     imageUrl={
@@ -55,47 +56,47 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                                             : AVATAR_GROUP_FALLBACK_URL
                                     }
                                 />
-                                <VStackComponent style={{ justifyContent: 'space-between' }}>
+                                <View className="justify-between">
                                     {type === 'own' && (
                                         <>
-                                            <TextComponent>
+                                            <Text>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </TextComponent>
-                                            <TextComponent>{Utils.truncateString(departmentName)}</TextComponent>
+                                            </Text>
+                                            <Text>{Utils.truncateString(departmentName)}</Text>
                                         </>
                                     )}
                                     {type === 'team' && (
                                         <>
-                                            <TextComponent bold>
+                                            <Text className="font-bold">
                                                 {isDepartment
                                                     ? departmentName
                                                     : `${Utils.capitalizeFirstChar(
                                                           user?.firstName
                                                       )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                            </TextComponent>
-                                            <TextComponent>
+                                            </Text>
+                                            <Text>
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </TextComponent>
+                                            </Text>
                                         </>
                                     )}
                                     {type === 'campus' && (
                                         <>
                                             {isIndividual && (
-                                                <TextComponent bold>
+                                                <Text className="font-bold">
                                                     {`${Utils.capitalizeFirstChar(
                                                         user?.firstName
                                                     )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                                </TextComponent>
+                                                </Text>
                                             )}
-                                            <TextComponent>{departmentName || ''}</TextComponent>
+                                            <Text>{departmentName || ''}</Text>
                                             {isDepartment && (
-                                                <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
+                                                <Text className="text-14 font-bold">
                                                     Departmental
-                                                </TextComponent>
+                                                </Text>
                                             )}
-                                            <TextComponent style={{ fontSize: 14 }}>
+                                            <Text className="text-14">
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </TextComponent>
+                                            </Text>
                                         </>
                                     )}
 
@@ -103,37 +104,37 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
                                         <>
                                             {isIndividual && (
                                                 <>
-                                                    <TextComponent bold>
+                                                    <Text className="font-bold">
                                                         {`${Utils.capitalizeFirstChar(
                                                             user?.firstName
                                                         )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                                    </TextComponent>
-                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                    </Text>
+                                                    <Text className="text-14 font-bold">
                                                         {campus?.campusName}
-                                                    </TextComponent>
-                                                    <TextComponent>{departmentName || ''}</TextComponent>
+                                                    </Text>
+                                                    <Text>{departmentName || ''}</Text>
                                                 </>
                                             )}
 
                                             {isDepartment && (
                                                 <>
-                                                    <TextComponent style={{ fontSize: 14 }} bold>
+                                                    <Text className="text-14 font-bold">
                                                         {campus?.campusName}
-                                                    </TextComponent>
-                                                    <TextComponent style={{ fontSize: 14 }} bold={isDepartment}>
+                                                    </Text>
+                                                    <Text className="text-14 font-bold">
                                                         {departmentName}
-                                                    </TextComponent>
+                                                    </Text>
                                                 </>
                                             )}
-                                            <TextComponent style={{ fontSize: 14 }}>
+                                            <Text className="text-14">
                                                 {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </TextComponent>
+                                            </Text>
                                         </>
                                     )}
-                                </VStackComponent>
-                            </HStackComponent>
+                                </View>
+                            </View>
                             <StatusTag>{status}</StatusTag>
-                        </HStackComponent>
+                        </View>
                     </TouchableOpacity>
                 );
             })}

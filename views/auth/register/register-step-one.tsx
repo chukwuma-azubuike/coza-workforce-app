@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepOne, IRegistrationPageStep } from './types';
@@ -6,7 +7,6 @@ import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
 import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from 'react-native';
-import { Text } from '~/components/ui/text';
 import { Label } from '~/components/ui/label';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';

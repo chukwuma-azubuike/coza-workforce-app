@@ -1,21 +1,21 @@
+import { Text } from "~/components/ui/text";
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { ITransferReportPayload } from '@store/types';
 import { useCreateTransferReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, VStack, HStack, Text, Divider, WarningOutlineIcon } from 'native-base';
+import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
-import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
 
@@ -91,7 +91,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
-                    <VStack pb={10} mt={4}>
+                    <View pb={10} mt={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
@@ -99,18 +99,15 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <FieldArray
                             name="locations"
                             render={arrayHelpers => (
-                                <VStack>
+                                <View>
                                     {values?.locations?.map((location, idx) => (
-                                        <HStackComponent
-                                            style={{
-                                                marginBottom: 12,
-                                                alignItems: 'center',
-                                            }}
+                                        <View
                                             key={idx}
+                                            className="mb-12 items-center"
                                         >
                                             <FormControl isRequired w="36%">
                                                 <FormControl.Label>
-                                                    <TextComponent style={{ flex: 1 }}>Location</TextComponent>
+                                                    <Text className="flex-1">Location</Text>
                                                 </FormControl.Label>
                                                 <InputComponent
                                                     style={{
@@ -128,7 +125,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             </FormControl>
                                             <FormControl isRequired w="22%">
                                                 <FormControl.Label>
-                                                    <TextComponent style={{ flex: 1 }}>Adults</TextComponent>
+                                                    <Text className="flex-1">Adults</Text>
                                                 </FormControl.Label>
                                                 <InputComponent
                                                     style={{
@@ -146,7 +143,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             </FormControl>
                                             <FormControl isRequired w="22%">
                                                 <FormControl.Label>
-                                                    <TextComponent style={{ flex: 1 }}>Children/Teens</TextComponent>
+                                                    <Text className="flex-1">Children/Teens</Text>
                                                 </FormControl.Label>
                                                 <InputComponent
                                                     style={{
@@ -184,10 +181,10 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     size="md"
                                                 />
                                             </FormControl>
-                                        </HStackComponent>
+                                        </View>
                                     ))}
 
-                                    <HStack mb={4}>
+                                    <View mb={4}>
                                         <ButtonComponent
                                             leftIcon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             onPress={() => {
@@ -204,12 +201,12 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                         >
                                             Add Location
                                         </ButtonComponent>
-                                    </HStack>
-                                </VStack>
+                                    </View>
+                                </View>
                             )}
                         />
 
-                        <HStack space={4} mb={4}>
+                        <View space={4} mb={4}>
                             <FormControl w="48%">
                                 <FormControl.Label>Total Adults</FormControl.Label>
                                 <InputComponent
@@ -226,7 +223,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     value={`${addValues(values, 'minorCount')}`}
                                 />
                             </FormControl>
-                        </HStack>
+                        </View>
 
                         <Divider />
                         <FormControl my={4}>
@@ -260,7 +257,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     value={values?.pastorComment ? values?.pastorComment : ''}
                                 />
                             </FormControl>
-                            <HStack space={4} justifyContent="space-between" w="95%">
+                            <View space={4} justifyContent="space-between" w="95%">
                                 <ButtonComponent
                                     onPress={() => onRequestReview(values)}
                                     isLoading={isLoading}
@@ -278,9 +275,9 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 >
                                     Approve
                                 </ButtonComponent>
-                            </HStack>
+                            </View>
                         </If>
-                    </VStack>
+                    </View>
                 </ViewWrapper>
             )}
         </Formik>

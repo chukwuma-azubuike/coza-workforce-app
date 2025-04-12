@@ -1,5 +1,7 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
-import { FormControl, Text, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -12,7 +14,6 @@ import { Formik } from 'formik';
 import { IEditProfilePayload } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '@components/atoms/input';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
@@ -74,7 +75,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         };
 
                         return (
-                            <VStack w="100%" space={1}>
+                            <View w="100%" space={1}>
                                 <If condition={!!userData?.firstName}>
                                     <FormControl isRequired isInvalid={!!errors?.firstName && touched.firstName}>
                                         <FormControl.Label>First name</FormControl.Label>
@@ -100,7 +101,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.lastName}>
                                     <FormControl isRequired isInvalid={!!errors?.lastName && touched.lastName}>
                                         <FormControl.Label>Last name</FormControl.Label>
@@ -126,7 +126,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.phoneNumber}>
                                     <FormControl isRequired isInvalid={!!errors?.phoneNumber && touched.phoneNumber}>
                                         <FormControl.Label>Phone number</FormControl.Label>
@@ -152,7 +151,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.address}>
                                     <FormControl isRequired isInvalid={!!errors?.address && touched.address}>
                                         <FormControl.Label>Address</FormControl.Label>
@@ -178,7 +176,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.occupation}>
                                     <FormControl isRequired isInvalid={!!errors?.occupation && touched.occupation}>
                                         <FormControl.Label>Occupation</FormControl.Label>
@@ -204,7 +201,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.placeOfWork}>
                                     <FormControl isRequired isInvalid={!!errors?.placeOfWork && touched.placeOfWork}>
                                         <FormControl.Label>Place of work</FormControl.Label>
@@ -230,7 +226,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.gender}>
                                     <FormControl isRequired isInvalid={!!errors?.gender && touched?.gender}>
                                         <FormControl.Label>Gender</FormControl.Label>
@@ -264,7 +259,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.maritalStatus}>
                                     <ErrorBoundary>
                                         <FormControl
@@ -309,7 +303,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl>
                                     </ErrorBoundary>
                                 </If>
-
                                 <If condition={!!userData?.birthDay}>
                                     <FormControl isRequired isInvalid={!!errors.birthDay && touched.birthDay}>
                                         <DateTimePickerComponent
@@ -324,7 +317,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         )}
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.nextOfKin}>
                                     <FormControl isRequired isInvalid={!!errors?.nextOfKin && touched.nextOfKin}>
                                         <FormControl.Label>Next Of Kin</FormControl.Label>
@@ -350,7 +342,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <If condition={!!userData?.nextOfKinPhoneNo}>
                                     <FormControl
                                         isRequired
@@ -379,7 +370,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                 </If>
-
                                 <FormControl>
                                     <ButtonComponent
                                         isLoading={isLoading}
@@ -389,7 +379,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         Save
                                     </ButtonComponent>
                                 </FormControl>
-                            </VStack>
+                            </View>
                         );
                     }}
                 </Formik>

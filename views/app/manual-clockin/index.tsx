@@ -1,6 +1,7 @@
+import { View } from "react-native";
 import { Icon } from '@rneui/themed';
 import { Formik } from 'formik';
-import { Center, FormControl, HStack, Text, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -162,7 +163,7 @@ const ManualClockin: React.FC = () => {
                         };
 
                         return (
-                            <VStack space="sm" alignItems="flex-start" w="100%" px={2}>
+                            <View space="sm" alignItems="flex-start" w="100%" className="px-2">
                                 <FormControl isRequired>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent
@@ -197,7 +198,6 @@ const ManualClockin: React.FC = () => {
                                         {errors?.campusId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-
                                 <FormControl isRequired>
                                     <FormControl.Label>Department</FormControl.Label>
                                     <SelectComponent
@@ -232,7 +232,6 @@ const ManualClockin: React.FC = () => {
                                         {errors?.departmentId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-
                                 <FormControl isRequired>
                                     <FormControl.Label>Users</FormControl.Label>
                                     <SelectComponent
@@ -268,10 +267,8 @@ const ManualClockin: React.FC = () => {
                                         {errors?.userId}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-
                                 {!!thirdPartyUser && <UserListItem {...thirdPartyUser} />}
-
-                                <Center w="full" mt={10} height={280}>
+                                <View w="full" mt={10} height={280}>
                                     <ThirdPartyClockButton
                                         isInRangeProp={isInRange}
                                         campusId={campusId as string}
@@ -280,8 +277,8 @@ const ManualClockin: React.FC = () => {
                                         userId={thirdPartyUser?._id as string}
                                         roleId={thirdPartyUser?.roleId as string}
                                     />
-                                </Center>
-                            </VStack>
+                                </View>
+                            </View>
                         );
                     }}
                 </Formik>

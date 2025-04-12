@@ -1,8 +1,8 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { THEME_CONFIG } from '@config/appConfig';
 import { TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Text } from '~/components/ui/text';
 import { router } from 'expo-router';
 
 const CampusTicketSummary: React.FC<{ tickets?: number }> = React.memo(({ tickets }) => {

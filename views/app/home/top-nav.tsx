@@ -1,15 +1,15 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
-import AvatarComponent from '@components/atoms/avatar';
 
+import AvatarComponent from '@components/atoms/avatar';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { Linking, TouchableOpacity, View } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { useGetLatestServiceQuery } from '@store/services/services';
 
+import { useGetLatestServiceQuery } from '@store/services/services';
 import { STATUS_COLORS } from '@constants/notification-types';
-import { Text } from '~/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 

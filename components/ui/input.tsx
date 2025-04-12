@@ -3,12 +3,12 @@ import * as React from 'react';
 import { TextInput, TouchableOpacity, View, type TextInputProps } from 'react-native';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { cn } from '~/lib/utils';
-import { IoniconTypes } from '~/types/app';
 import * as Haptics from 'expo-haptics';
+import { Icon } from '@rneui/themed';
 
 export interface ITextInputProps {
-    leftIcon?: { name?: IoniconTypes };
-    rightIcon?: { name?: IoniconTypes };
+    leftIcon?: { name: string; type: string };
+    rightIcon?: { name: string; type: string };
     onIconPress?: () => void;
     isDisabled?: boolean;
     isPassword?: boolean;
@@ -25,7 +25,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
         return (
             <View className={cn('relative', (props.editable === false || isDisabled) && 'opacity-40')}>
                 {leftIcon && (
-                    <Ionicons
+                    <Icon
                         size={24}
                         name={leftIcon.name}
                         color={THEME_CONFIG.gray}

@@ -1,11 +1,11 @@
+import { View } from "react-native";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, FormControl, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
-import { InputComponent } from '@components/atoms/input';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -53,8 +53,8 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
 
     return (
         <ViewWrapper scroll noPadding>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICGWCInstantMessage>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -62,7 +62,7 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
                         validationSchema={CreateCGWCInstantMessageSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit, touched }) => (
-                            <VStack w="100%" space={4}>
+                            <View w="100%" space={4}>
                                 <FormControl isRequired isInvalid={!!errors?.title && touched.title}>
                                     <FormControl.Label>Title</FormControl.Label>
                                     <InputComponent
@@ -118,11 +118,11 @@ const CreateCGWCInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> 
                                         Post Instant Message
                                     </ButtonComponent>
                                 </FormControl>
-                            </VStack>
+                            </View>
                         )}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

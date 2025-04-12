@@ -1,5 +1,6 @@
+import { View } from "react-native";
 import React from 'react';
-import { Box, FormControl, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -14,7 +15,6 @@ import { CreateUserSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '@components/atoms/input';
 import Utils from '@utils/index';
 import { useGetCampusesQuery } from '@store/services/campus';
 
@@ -116,8 +116,8 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ViewWrapper scroll avoidKeyboard noPadding onRefresh={refresh} refreshing={isFetchingDepartments}>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICreateUserPayload>
                         validateOnChange
                         onSubmit={submitForm}
@@ -125,7 +125,7 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         validationSchema={CreateUserSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit }) => (
-                            <VStack w="100%" space={1}>
+                            <View w="100%" space={1}>
                                 <FormControl isRequired isInvalid={!!errors?.campusId}>
                                     <FormControl.Label>Campus</FormControl.Label>
                                     <SelectComponent
@@ -293,11 +293,11 @@ const CreateUser: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         Submit
                                     </ButtonComponent>
                                 </FormControl>
-                            </VStack>
+                            </View>
                         )}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

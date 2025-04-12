@@ -1,4 +1,5 @@
-import { Box, HStack, Text, VStack } from 'native-base';
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
 import Empty from '../../atoms/empty';
 import If from '../if-container';
@@ -17,21 +18,21 @@ type Props = {
 
 const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter = true }) => {
     return (
-        <Box>
+        <View>
             <Text textAlign="left" fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
                 {title}
             </Text>
             {children}
-            <Box w="100%">
+            <View w="100%">
                 <If condition={isLoading}>
                     <FlatListSkeleton />
                 </If>
                 <If condition={!isLoading}>
                     {tableData.rows.length ? (
-                        <VStack space={'2px'}>
-                            <HStack space={'2px'}>
+                        <View space={'2px'}>
+                            <View space={'2px'}>
                                 {tableData?.headers?.map((item, index) => (
-                                    <Box
+                                    <View
                                         alignItems={alignItemsCenter ? 'center' : 'flex-start'}
                                         w={`${100 / tableData?.headers?.length}%`}
                                         key={`${item}-${index}`}
@@ -42,13 +43,13 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                         <Text textAlign="left" color="white">
                                             {item}
                                         </Text>
-                                    </Box>
+                                    </View>
                                 ))}
-                            </HStack>
+                            </View>
                             {tableData?.rows?.map((row, index) => (
-                                <HStack key={`row-data-${index}`} space={'2px'} w={'100%'}>
+                                <View key={`row-data-${index}`} space={'2px'} w={'100%'}>
                                     {Object.values(row)?.map(item => (
-                                        <Box
+                                        <View
                                             alignItems={alignItemsCenter ? 'center' : 'flex-start'}
                                             padding={'10px'}
                                             w={`${100 / tableData?.headers?.length}%`}
@@ -61,17 +62,17 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                             _dark={{ color: 'gray.300', bgColor: 'gray.900' }}
                                         >
                                             {item}
-                                        </Box>
+                                        </View>
                                     ))}
-                                </HStack>
+                                </View>
                             ))}
-                        </VStack>
+                        </View>
                     ) : (
                         <Empty width={120} />
                     )}
                 </If>
-            </Box>
-        </Box>
+            </View>
+        </View>
     );
 };
 

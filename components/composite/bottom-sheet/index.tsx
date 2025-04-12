@@ -1,8 +1,8 @@
+import { Text } from '~/components/ui/text';
 import React, { ReactNode } from 'react';
 import { View, ScrollView, StyleSheet, useColorScheme, ColorSchemeName } from 'react-native';
 import { BottomSheet, Divider } from '@rneui/base';
-import TextComponent from '@components/text';
-import Button from '@components/atoms/button';
+import { Button } from '~/components/ui/button';
 
 interface IBottomSheetComponent {
     isVisible: boolean;
@@ -26,12 +26,10 @@ const BottomSheetComponent: React.FC<IBottomSheetComponent> = ({ isVisible, titl
             >
                 <View style={dynamicStyles.contentContainer}>
                     <ScrollView contentContainerStyle={dynamicStyles.scrollContent}>
-                        <TextComponent bold style={dynamicStyles.title}>
-                            {title}
-                        </TextComponent>
-                        <TextComponent style={dynamicStyles.item}>{content}</TextComponent>
+                        <Text className="font-bold">{title}</Text>
+                        <Text>{content}</Text>
                         <Divider orientation="horizontal" width={100} />
-                        <Button backgroundColor="rose.500" onPress={toggleBottomSheet}>
+                        <Button className="bg-rose-500" onPress={toggleBottomSheet}>
                             Close
                         </Button>
                     </ScrollView>

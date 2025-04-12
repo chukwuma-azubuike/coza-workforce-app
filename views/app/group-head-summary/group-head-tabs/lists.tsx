@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
-import { Box } from 'native-base';
 import React, { memo, useMemo } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { IFlatListColumn } from '@components/composite/flat-list';
 import { useGetPermissionsQuery } from '@store/services/permissions';
 import { useGetTicketsQuery } from '@store/services/tickets';
@@ -102,7 +101,7 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
+            <View mb={2} className="px-2">
                 <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
                     {sortedServices?.map((service, index) => (
                         <SelectItemComponent
@@ -113,7 +112,7 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+            </View>
             <FlatListComponent
                 padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}

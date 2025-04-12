@@ -1,6 +1,7 @@
+import { Text } from "~/components/ui/text";
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import StepIndicator from 'react-native-step-indicator';
 import { StepIndicatorStyles } from 'react-native-step-indicator/lib/typescript/src/types';
 import Swiper from 'react-native-swiper';
@@ -64,7 +65,7 @@ const Stepper: React.FC<IStepperProps> = ({ pages, otherProps, navigation, disab
         label: string;
         currentPosition: number;
     }) => {
-        return <Text style={position === currentPosition ? styles.stepLabelSelected : styles.stepLabel}>{label}</Text>;
+        return <Text>{label}</Text>;
     };
 
     return (

@@ -1,7 +1,8 @@
+import { Text } from "~/components/ui/text";
 import { useNavigation } from '@react-navigation/native';
 import uniqBy from 'lodash/uniqBy';
 import React, { memo, useMemo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -44,64 +45,64 @@ export const PermissionListRow: React.FC<IPermissionListRowProps> = memo(props =
 
                 return (
                     <TouchableOpacity activeOpacity={0.6} onPress={handlePress} style={{ flex: 1 }}>
-                        <HStackComponent
-                            style={{ paddingVertical: 12, alignItems: 'center', justifyContent: 'space-between' }}
+                        <View
+                            className="py-12 items-center justify-between"
                         >
-                            <HStackComponent space={6} style={{ alignItems: 'center' }}>
+                            <View space={6} className="items-center">
                                 <AvatarComponent imageUrl={requestor?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <VStackComponent style={{ justifyContent: 'space-between' }}>
+                                <View className="justify-between">
                                     {type === 'own' && (
                                         <>
-                                            <TextComponent bold>{categoryName}</TextComponent>
-                                            <TextComponent size="sm">{description}</TextComponent>
+                                            <Text className="font-bold">{categoryName}</Text>
+                                            <Text size="sm">{description}</Text>
                                         </>
                                     )}
                                     {type === 'team' && (
                                         <>
-                                            <TextComponent bold>
+                                            <Text className="font-bold">
                                                 {`${Utils.capitalizeFirstChar(
                                                     requestor?.firstName
                                                 )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
-                                            </TextComponent>
-                                            <TextComponent bold size="sm">
+                                            </Text>
+                                            <Text size="sm" className="font-bold">
                                                 {categoryName}
-                                            </TextComponent>
+                                            </Text>
                                         </>
                                     )}
                                     {type === 'campus' && (
                                         <>
-                                            <TextComponent bold>
+                                            <Text className="font-bold">
                                                 {`${Utils.capitalizeFirstChar(
                                                     requestor?.firstName
                                                 )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
-                                            </TextComponent>
-                                            <TextComponent bold size="sm">
+                                            </Text>
+                                            <Text size="sm" className="font-bold">
                                                 {departmentName}
-                                            </TextComponent>
-                                            <TextComponent bold size="sm">
+                                            </Text>
+                                            <Text size="sm" className="font-bold">
                                                 {categoryName}
-                                            </TextComponent>
+                                            </Text>
                                         </>
                                     )}
 
                                     {type === 'grouphead' && (
                                         <>
-                                            <TextComponent bold>
+                                            <Text className="font-bold">
                                                 {`${Utils.capitalizeFirstChar(
                                                     requestor?.firstName
                                                 )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
-                                            </TextComponent>
-                                            <TextComponent bold size="sm">
+                                            </Text>
+                                            <Text size="sm" className="font-bold">
                                                 {campus.campusName ?? ''}
-                                            </TextComponent>
-                                            <TextComponent size="sm">{departmentName}</TextComponent>
-                                            <TextComponent size="sm">{categoryName}</TextComponent>
+                                            </Text>
+                                            <Text size="sm">{departmentName}</Text>
+                                            <Text size="sm">{categoryName}</Text>
                                         </>
                                     )}
-                                </VStackComponent>
-                            </HStackComponent>
+                                </View>
+                            </View>
                             <StatusTag>{status}</StatusTag>
-                        </HStackComponent>
+                        </View>
                     </TouchableOpacity>
                 );
             })}
