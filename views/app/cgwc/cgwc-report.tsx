@@ -1,3 +1,4 @@
+import { View } from "react-native";
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { StatCardComponent } from '@components/composite/card';
 import { BarChart, IStackedHistogramData, PieChart, StackedHistogram } from '@components/composite/chart';
@@ -14,7 +15,6 @@ import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
 import flattenedObject from '@utils/flattenObject';
 import dayjs from 'dayjs';
-import { HStack, Stack } from 'native-base';
 import React from 'react';
 
 const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
@@ -172,9 +172,9 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                     onValueChange={handleUserCategory}
                     w={isMobile ? ScreenWidth : ScreenWidth / 3.5}
                     dropdownIcon={
-                        <HStack mr={2} space={2}>
+                        <View mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
-                        </HStack>
+                        </View>
                     }
                 >
                     {userCategories?.map((campus, index) => (
@@ -191,9 +191,9 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                     onValueChange={handleCampusChange}
                     w={isMobile ? ScreenWidth - 36 : ScreenWidth / 3.5}
                     dropdownIcon={
-                        <HStack mr={2} space={2}>
+                        <View mr={2} space={2}>
                             <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
-                        </HStack>
+                        </View>
                     }
                 >
                     <SelectItemComponent value={undefined as unknown as string} label={'All Campuses'} />
@@ -232,7 +232,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
             </ResponsiveGrid>
             <ResponsiveGrid>
                 <GridItem flexBasis="40%">
-                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                    <View flexDirection="row" flexWrap="wrap" justifyContent="space-between">
                         <StatCardComponent
                             label="Present"
                             iconName="groups"
@@ -261,8 +261,8 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
                             }}
                         />
-                    </Stack>
-                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                    </View>
+                    <View flexDirection="row" flexWrap="wrap" justifyContent="space-between">
                         <StatCardComponent
                             label="Early"
                             iconName="groups"
@@ -290,8 +290,8 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
                             }}
                         />
-                    </Stack>
-                    <Stack flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                    </View>
+                    <View flexDirection="row" flexWrap="wrap" justifyContent="space-between">
                         <StatCardComponent
                             label="Number of Tickets"
                             iconType="material-community"
@@ -306,7 +306,7 @@ const CGWCReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, na
                                 _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
                             }}
                         />
-                    </Stack>
+                    </View>
                 </GridItem>
                 <GridItem flexBasis="60%">
                     <StackedHistogram

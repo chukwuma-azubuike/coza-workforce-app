@@ -1,9 +1,10 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
-import { Box, Button, Center, Pressable, Spinner, Text, VStack } from 'native-base';
+import { Button, Pressable, Spinner } from 'native-base';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import { Icon } from '@rneui/themed';
 import LottieView from 'lottie-react-native';
-import { Alert, TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import useModal from '@hooks/modal/useModal';
 import dayjs from 'dayjs';
 import ModalAlertComponent from '@components/composite/modal-alert';
@@ -236,7 +237,7 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
                     loop
                 />
             )}
-            <Box alignItems="center" shadow={7}>
+            <View alignItems="center" shadow={7}>
                 <Button
                     w={200}
                     h={200}
@@ -253,22 +254,22 @@ const ThirdPartyClockButton: React.FC<IThirdPartyClockButton> = ({
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <Center>
+                        <View>
                             <If condition={isLoading || clockOutLoading}>
                                 <Spinner color="white" size="lg" />
                             </If>
                             <If condition={!isLoading && !clockOutLoading}>
-                                <VStack alignItems="center" space={4}>
+                                <View alignItems="center" space={4}>
                                     <Icon type="materialicons" name="touch-app" color="white" size={110} />
                                     <Text fontWeight="light" fontSize="md" color="white">
                                         {disabled ? '' : canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
                                     </Text>
-                                </VStack>
+                                </View>
                             </If>
-                        </Center>
+                        </View>
                     </TouchableOpacity>
                 </Button>
-            </Box>
+            </View>
         </Pressable>
     );
 };

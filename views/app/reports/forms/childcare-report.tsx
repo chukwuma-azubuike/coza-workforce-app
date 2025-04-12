@@ -1,11 +1,12 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IChildCareReportPayload } from '@store/types';
 import { useCreateChildCareReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, HStack, VStack, Text, Divider } from 'native-base';
-import { InputComponent } from '@components/atoms/input';
+import { FormControl, Divider } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
@@ -105,12 +106,12 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         >
             {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <VStack pb={10}>
+                    <View pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
-                        <HStack px={4} flex={1} justifyContent="space-between">
-                            <VStack space={4} mt={12}>
+                        <View flex={1} justifyContent="space-between" className="px-4">
+                            <View space={4} mt={12}>
                                 <Text my={4} color="gray.600">
                                     Age 1 - 2
                                 </Text>
@@ -126,8 +127,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                 <Text my={4} color="gray.600">
                                     Sub Total
                                 </Text>
-                            </VStack>
-                            <VStack alignItems="center" space={4} w="30%">
+                            </View>
+                            <View alignItems="center" space={4} w="30%">
                                 <FormControl.Label>Male</FormControl.Label>
                                 <FormControl isRequired isInvalid={errors?.age1_2?.male ? true : false}>
                                     <InputComponent
@@ -247,8 +248,8 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         {errors?.subTotal?.male}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                            </VStack>
-                            <VStack alignItems="center" space={4} w="30%">
+                            </View>
+                            <View alignItems="center" space={4} w="30%">
                                 <FormControl.Label>Female</FormControl.Label>
                                 <FormControl isRequired isInvalid={errors?.age1_2?.female ? true : false}>
                                     <InputComponent
@@ -340,11 +341,11 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         onChangeText={handleChange('subTotal.female')}
                                     />
                                 </FormControl>
-                            </VStack>
-                        </HStack>
-                        <VStack space={4} mt={4} px={4}>
+                            </View>
+                        </View>
+                        <View space={4} mt={4} className="px-4">
                             <FormControl>
-                                <HStack style={{ justifyContent: 'space-between', alignItems: 'center' }} space={12}>
+                                <View space={12} className="justify-between items-center">
                                     <FormControl.Label>Grand Total</FormControl.Label>
                                     <InputComponent
                                         isDisabled
@@ -353,7 +354,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         value={addGrandTotal(values)}
                                         onChangeText={handleChange('grandTotal')}
                                     />
-                                </HStack>
+                                </View>
                             </FormControl>
                             <Divider />
                             <FormControl>
@@ -387,7 +388,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </FormControl>
-                                <HStack space={4} justifyContent="space-between" w="95%">
+                                <View space={4} justifyContent="space-between" w="95%">
                                     <ButtonComponent
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
@@ -405,10 +406,10 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                     >
                                         Approve
                                     </ButtonComponent>
-                                </HStack>
+                                </View>
                             </If>
-                        </VStack>
-                    </VStack>
+                        </View>
+                    </View>
                 </ViewWrapper>
             )}
         </Formik>

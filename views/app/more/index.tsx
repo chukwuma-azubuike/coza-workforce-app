@@ -1,10 +1,11 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { Box, HStack, List, Text, VStack } from 'native-base';
+import { List } from 'native-base';
 import { AppRoutes, IAppRoute } from '@config/navigation';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
@@ -57,7 +58,7 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
 
     return (
         <ViewWrapper scroll style={{ paddingTop: 10 }} refreshing={isLoading} onRefresh={refetch}>
-            <VStack>
+            <View>
                 <List mx={4} borderWidth={0}>
                     {filteredRoutes?.map((route, idx) => (
                         <List.Item
@@ -74,8 +75,8 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                                 style={{ width: '100%' }}
                                 onPress={handlePress(route)}
                             >
-                                <HStack px={3} w="full" alignItems="center" justifyContent="space-between">
-                                    <Box flexDirection="row" justifyContent="flex-start">
+                                <View w="full" alignItems="center" justifyContent="space-between" className="px-3">
+                                    <View flexDirection="row" justifyContent="flex-start">
                                         <Icon
                                             size={22}
                                             name={route.icon.name}
@@ -90,19 +91,19 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
                                         >
                                             {route.name}
                                         </Text>
-                                    </Box>
+                                    </View>
                                     <Icon
                                         size={22}
                                         type="entypo"
                                         name="chevron-small-right"
                                         color={THEME_CONFIG.lightGray}
                                     />
-                                </HStack>
+                                </View>
                             </TouchableOpacity>
                         </List.Item>
                     ))}
                 </List>
-            </VStack>
+            </View>
         </ViewWrapper>
     );
 };

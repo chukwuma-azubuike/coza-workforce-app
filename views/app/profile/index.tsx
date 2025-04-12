@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import { Icon } from '@rneui/themed';
 import dayjs from 'dayjs';
 import { Heading } from 'native-base';
@@ -137,8 +138,8 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
             refreshing={newUserDataLoading}
             style={{ paddingVertical: 20, paddingHorizontal: 20 }}
         >
-            <VStackComponent style={{ paddingBottom: 32 }}>
-                <VStackComponent style={{ paddingBottom: 8, alignItems: 'center' }}>
+            <View className="pb-32">
+                <View className="pb-8 items-center">
                     <TouchableOpacity
                         activeOpacity={0.7}
                         onPress={handleProfilePicture}
@@ -153,19 +154,11 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                             isLoading={loading || newUserDataLoading || isProfilePictureLoading}
                             imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         />
-                        <TextComponent
-                            style={{
-                                bottom: 14,
-                                left: 18,
-                                position: 'absolute',
-                                color: THEME_CONFIG.veryVeryLightGray,
-                                backgroundColor: THEME_CONFIG.transparentGray,
-                            }}
-                        >
+                        <Text>
                             {user?.pictureUrl ? 'Edit' : 'Add'} photo
-                        </TextComponent>
+                        </Text>
                     </TouchableOpacity>
-                    <VStackComponent space={4}>
+                    <View space={4}>
                         <View
                             style={{
                                 justifyContent: 'space-around',
@@ -196,40 +189,29 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                             </Heading>
                             <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
                         </View>
-                        <TextComponent bold style={{ textAlign: 'center' }}>
+                        <Text className="font-bold text-center">
                             {user?.campus?.campusName}
-                        </TextComponent>
-                        <TextComponent style={{ textAlign: 'center' }}>
+                        </Text>
+                        <Text className="text-center">
                             {isGlobalPastor ? 'Global Senior Pastor' : user?.department?.departmentName}
-                        </TextComponent>
-                    </VStackComponent>
-                </VStackComponent>
-                <HStackComponent
-                    style={{
-                        marginBottom: 8,
-                        paddingVertical: 8,
-                        borderRadius: 12,
-                        borderWidth: 0.2,
-                        borderColor: THEME_CONFIG.lightGray,
-                        backgroundColor: backgroundColor,
-                    }}
+                        </Text>
+                    </View>
+                </View>
+                <View
+                    className="mb-8 py-8 rounded-12 border-0.2"
                 >
-                    <HStackComponent style={{ padding: 6, justifyContent: 'flex-start' }}>
+                    <View className="p-6 justify-start">
                         <Icon size={22} name="person" type="Ionicons" color={THEME_CONFIG.lightGray} />
-                        <TextComponent style={{ marginLeft: 4 }}>User Info</TextComponent>
-                    </HStackComponent>
-                </HStackComponent>
+                        <Text className="ml-4">User Info</Text>
+                    </View>
+                </View>
                 <View style={{ marginHorizontal: 4 }}>
-                    <HStackComponent
-                        style={{
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            marginVertical: 2,
-                        }}
+                    <View
+                        className="items-center justify-between my-2"
                     >
-                        <TextComponent bold>CGWC Status</TextComponent>
+                        <Text className="font-bold">CGWC Status</Text>
                         <StatusTag w={24}>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
-                    </HStackComponent>
+                    </View>
                     <UserInfo heading="Role" name="role" value={user?.role.name} />
                     <UserInfo heading="Address" name="address" value={user?.address} />
                     <UserInfo heading="Email" isEditable={false} name="email" value={user?.email} />
@@ -246,25 +228,19 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                     <UserInfo heading="Birthday" name="birthDay" value={dayjs(user?.birthDay).format('DD MMM')} />
                 </View>
                 <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
-                    <HStackComponent
-                        style={{
-                            marginVertical: 6,
-                            paddingVertical: 16,
-                            borderRadius: 12,
-                            borderWidth: 0.2,
-                            backgroundColor: backgroundColor,
-                        }}
+                    <View
+                        className="my-6 py-16 rounded-12 border-0.2"
                     >
                         <View style={{ paddingHorizontal: 10, flexDirection: 'row', justifyContent: 'flex-start' }}>
                             <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
-                            <TextComponent style={{ marginLeft: 4 }}>Logout</TextComponent>
+                            <Text className="ml-4">Logout</Text>
                         </View>
-                    </HStackComponent>
+                    </View>
                 </TouchableOpacity>
-                <TextComponent style={{ paddingVertical: 8, textAlign: 'center' }}>
+                <Text className="py-8 text-center">
                     Version {DeviceInfo.getVersion()} ({APP_ENV.ENV})
-                </TextComponent>
-            </VStackComponent>
+                </Text>
+            </View>
         </ViewWrapper>
     );
 };

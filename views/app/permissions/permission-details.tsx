@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -5,7 +6,7 @@ import dayjs from 'dayjs';
 import VStackComponent from '@components/layout/v-stack';
 import HStackComponent from '@components/layout/h-stack';
 import TextComponent from '@components/text';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
 import StatusTag from '@components/atoms/status-tag';
@@ -199,7 +200,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             }}
         >
             <CardComponent style={{ paddingVertical: 20 }} isLoading={permissionLoading || permissionIsFetching}>
-                <VStackComponent space={8}>
+                <View space={8}>
                     <AvatarComponent
                         size="xl"
                         shadow={9}
@@ -207,153 +208,108 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                         firstName={permission?.requestor?.firstName}
                         imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
-                    <HStackComponent
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 4,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-4 justify-between"
                     >
-                        <TextComponent bold>Requester</TextComponent>
-                        <TextComponent>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</TextComponent>
-                    </HStackComponent>
-                    <HStackComponent
+                        <Text className="font-bold">Requester</Text>
+                        <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
+                    </View>
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 4,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-4 justify-between"
                     >
-                        <TextComponent bold>Department</TextComponent>
-                        <TextComponent>{permission?.department?.departmentName}</TextComponent>
-                    </HStackComponent>
-                    <HStackComponent
+                        <Text className="font-bold">Department</Text>
+                        <Text>{permission?.department?.departmentName}</Text>
+                    </View>
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 4,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-4 justify-between"
                     >
-                        <TextComponent bold>Category</TextComponent>
-                        <TextComponent>{permission?.category.name}</TextComponent>
-                    </HStackComponent>
-                    <HStackComponent
+                        <Text className="font-bold">Category</Text>
+                        <Text>{permission?.category.name}</Text>
+                    </View>
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 4,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-4 justify-between"
                     >
-                        <TextComponent bold>Date Requested</TextComponent>
-                        <TextComponent>{dayjs(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</TextComponent>
-                    </HStackComponent>
+                        <Text className="font-bold">Date Requested</Text>
+                        <Text>{dayjs(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</Text>
+                    </View>
 
                     {permission?.dateApproved ? (
-                        <HStackComponent
+                        <View
                             space={4}
-                            style={{
-                                paddingBottom: 4,
-                                borderBottomWidth: 0.2,
-                                justifyContent: 'space-between',
-                                borderColor: THEME_CONFIG.lightGray,
-                            }}
+                            className="pb-4 justify-between"
                         >
-                            <TextComponent bold>Date Approved</TextComponent>
-                            <TextComponent>{dayjs(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</TextComponent>
-                        </HStackComponent>
+                            <Text className="font-bold">Date Approved</Text>
+                            <Text>{dayjs(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</Text>
+                        </View>
                     ) : null}
 
                     {permission?.rejectedOn ? (
-                        <HStackComponent
+                        <View
                             space={4}
-                            style={{
-                                paddingBottom: 4,
-                                borderBottomWidth: 0.2,
-                                justifyContent: 'space-between',
-                                borderColor: THEME_CONFIG.lightGray,
-                            }}
+                            className="pb-4 justify-between"
                         >
-                            <TextComponent bold>Date Rejected</TextComponent>
-                            <TextComponent>{dayjs(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</TextComponent>
-                        </HStackComponent>
+                            <Text className="font-bold">Date Rejected</Text>
+                            <Text>{dayjs(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</Text>
+                        </View>
                     ) : null}
 
-                    <HStackComponent
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 4,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-4 justify-between"
                     >
-                        <TextComponent bold>Start Date</TextComponent>
-                        <TextComponent>{dayjs(permission?.startDate).format('Do MMM, YYYY')}</TextComponent>
-                    </HStackComponent>
+                        <Text className="font-bold">Start Date</Text>
+                        <Text>{dayjs(permission?.startDate).format('Do MMM, YYYY')}</Text>
+                    </View>
 
-                    <HStackComponent
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 4,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-4 justify-between"
                     >
-                        <TextComponent bold>End Date</TextComponent>
-                        <TextComponent>{dayjs(permission?.endDate).format('Do MMM, YYYY')}</TextComponent>
-                    </HStackComponent>
+                        <Text className="font-bold">End Date</Text>
+                        <Text>{dayjs(permission?.endDate).format('Do MMM, YYYY')}</Text>
+                    </View>
 
-                    <VStackComponent style={{ paddingBottom: 4 }} space={8}>
-                        <TextComponent bold>Description</TextComponent>
+                    <View space={8} className="pb-4">
+                        <Text className="font-bold">Description</Text>
                         {!permission?.description && (
                             <TextAreaComponent value={permission?.description} isDisabled={Platform.OS !== 'android'} />
                         )}
                         {permission?.description && (
-                            <TextComponent numberOfLines={undefined} size="md" flexWrap="wrap">
+                            <Text numberOfLines={undefined} size="md" flexWrap="wrap">
                                 {permission?.description}
-                            </TextComponent>
+                            </Text>
                         )}
-                    </VStackComponent>
-                    <HStackComponent
+                    </View>
+                    <View
                         space={4}
-                        style={{
-                            paddingBottom: 8,
-                            borderBottomWidth: 0.2,
-                            justifyContent: 'space-between',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="pb-8 justify-between"
                     >
-                        <TextComponent bold>Status</TextComponent>
+                        <Text className="font-bold">Status</Text>
                         <StatusTag>{permission?.status as any}</StatusTag>
-                    </HStackComponent>
-                    <VStackComponent style={{ paddingBottom: 4 }} space={8}>
-                        <TextComponent bold>
+                    </View>
+                    <View space={8} className="pb-4">
+                        <Text className="font-bold">
                             {!isHOD && !isAHOD && !isCampusPastor
                                 ? "Leader's comment"
                                 : (isAHOD || isHOD) && requestorId === user.userId
                                   ? "Pastor's comment"
                                   : 'Comment'}
-                        </TextComponent>
+                        </Text>
                         {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
                         {permission?.comment && (
-                            <TextComponent numberOfLines={undefined} flexWrap="wrap">
+                            <Text numberOfLines={undefined} flexWrap="wrap">
                                 {permission?.comment}
-                            </TextComponent>
+                            </Text>
                         )}
-                    </VStackComponent>
+                    </View>
                     <If condition={takePermissionAction}>
-                        <HStackComponent style={{ justifyContent: 'space-between' }}>
+                        <View className="justify-between">
                             <ButtonComponent
                                 isDisabled={!permissionComment || approveIsLoading}
                                 isLoading={declineIsLoading}
@@ -373,9 +329,9 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
                             >
                                 Approve
                             </ButtonComponent>
-                        </HStackComponent>
+                        </View>
                     </If>
-                </VStackComponent>
+                </View>
             </CardComponent>
         </ViewWrapper>
     );

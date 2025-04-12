@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import useRole from '@hooks/role';
 import { ParamListBase } from '@react-navigation/native';
@@ -7,7 +8,7 @@ import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
 import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View, SafeAreaView } from 'react-native';
-import { Box, Divider, Stack, Text } from 'native-base';
+import { Divider } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
 import ScrollContainer from '@components/composite/scroll-container';
@@ -60,8 +61,8 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <Image resizeMode="cover" style={styles.backgroundImage} source={{ uri: item.imageUrl }} />
                         <View style={styles.imageOverlay} />
                         <View style={styles.itemTextContainer}>
-                            <Text style={styles.itemText}>{item.title}</Text>
-                            <Text italic style={styles.itemTextMessage}>
+                            <Text>{item.title}</Text>
+                            <Text italic>
                                 {item.message}
                             </Text>
                         </View>
@@ -149,7 +150,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 <If condition={!isLoading && !isFetching && !!cgwc}>
                     <CGWCHeader title={cgwc?.name || ''} navigation={navigation} scrollOffsetY={scrollOffsetY} />
                     <ScrollContainer scrollOffsetY={scrollOffsetY}>
-                        <Box mt={2}>
+                        <View mt={2}>
                             <Carousel<ICGWCInstantMessage>
                                 loop={true}
                                 autoplay={true}
@@ -161,10 +162,10 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 itemWidth={ScreenWidth * 0.8}
                                 style={{ minHeight: carouselHeight }}
                             />
-                        </Box>
-                        <Box px={1}>
+                        </View>
+                        <View className="px-1">
                             <Divider mt={6} mb={1} />
-                            <Stack flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
+                            <View flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
                                 <View style={{ width: isMobile ? '100%' : '50%' }}>
                                     <MyCGWCAttendance sessions={sessions || []} CGWCId={CGWCId} userId={userId} />
                                 </View>
@@ -179,11 +180,11 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         />
                                     </If>
                                 </View>
-                            </Stack>
+                            </View>
                             <Divider mt={6} mb={1} />
-                        </Box>
-                        <Box mt={6}>
-                            <Text bold px={3} fontSize="lg">
+                        </View>
+                        <View mt={6}>
+                            <Text fontSize="lg" className="font-bold px-3">
                                 Give Feedback
                             </Text>
                             <View style={{ marginBottom: 60, width: '100%' }}>
@@ -191,7 +192,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <RatingComponent isDisabled defaultRating={params?.rating || 0} />
                                 </TouchableOpacity>
                             </View>
-                        </Box>
+                        </View>
                     </ScrollContainer>
                 </If>
             </ViewWrapper>

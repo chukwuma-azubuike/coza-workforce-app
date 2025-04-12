@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import If from '@components/composite/if-container';
@@ -15,7 +16,6 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import { FlatListSkeleton } from '@components/layout/skeleton';
 import useScreenFocus from '@hooks/focus';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import { HStack } from 'native-base';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
@@ -48,20 +48,20 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
                 style={{ width: '100%' }}
                 accessibilityRole="button"
             >
-                <HStack
+                <View
                     p={2}
-                    px={4}
                     my={1.5}
                     borderRadius={10}
                     alignItems="center"
                     _dark={{ bg: 'gray.900' }}
                     _light={{ bg: 'gray.50' }}
                     justifyContent="space-between"
+                    className="px-4"
                 >
-                    <TextComponent>{dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</TextComponent>
-                    <TextComponent bold>Departmental</TextComponent>
+                    <Text>{dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</Text>
+                    <Text className="font-bold">Departmental</Text>
                     <StatusTag>{props?.status as any}</StatusTag>
-                </HStack>
+                </View>
             </TouchableOpacity>
         );
     });
@@ -82,27 +82,25 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStack
+            <View
                 p={2}
-                px={4}
                 my={1.5}
-                py={3}
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
-            >
+                className="px-4 py-3">
                 <View style={{ width: '25%' }}>
-                    <TextComponent>{dayjs(props.createdAt).format('DD/MM/YYYY')}</TextComponent>
+                    <Text>{dayjs(props.createdAt).format('DD/MM/YYYY')}</Text>
                 </View>
                 <View style={{ width: '25%' }}>
-                    <TextComponent bold>Incident</TextComponent>
+                    <Text className="font-bold">Incident</Text>
                 </View>
                 <View style={{ width: '50%' }}>
-                    <TextComponent>{props.details}</TextComponent>
+                    <Text>{props.details}</Text>
                 </View>
-            </HStack>
+            </View>
         </TouchableOpacity>
     );
 });

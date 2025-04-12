@@ -277,7 +277,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             </SelectComponent>
                         </FormControl>
                     </If>
-                    <HStackComponent style={{ flex: 0 }}>
+                    <View className="flex-0">
                         <FormControl w="1/2">
                             <DateTimePickerComponent
                                 label="Start date"
@@ -292,7 +292,7 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 onSelectDate={handleEndDate}
                             />
                         </FormControl>
-                    </HStackComponent>
+                    </View>
                     <FormControl isRequired>
                         <FormControl.Label>Department</FormControl.Label>
                         <SelectComponent

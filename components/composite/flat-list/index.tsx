@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableOpacity, View } from 'react-native';
 import If from '../if-container';
@@ -119,18 +120,15 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                             ListHeaderComponent={() =>
                                 titles[0] ? (
                                     <View style={{ paddingVertical: 6, flex: 1, width: '100%' }}>
-                                        <HStackComponent
-                                            style={{
-                                                justifyContent: 'space-between',
-                                                paddingHorizontal: padding ? 3 : 0,
-                                            }}
+                                        <View
+                                            className="justify-between"
                                         >
                                             {titles.map((title, idx) => (
-                                                <TextComponent bold key={`title-${idx}`}>
+                                                <Text key={`title-${idx}`} className="font-bold">
                                                     {title}
-                                                </TextComponent>
+                                                </Text>
                                             ))}
-                                        </HStackComponent>
+                                        </View>
                                     </View>
                                 ) : null
                             }
@@ -176,15 +174,15 @@ const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }
                 }}
             >
                 {showHeader ? (
-                    <TextComponent className="pb-3" style={{ borderColor: textColor }}>
+                    <Text className="pb-3">
                         {dayjs(item[0]).format() !== 'Invalid date'
                             ? dayjs(item[0]).format('Do MMMM, YYYY')
                             : Utils.capitalizeFirstChar(item[0])}
-                    </TextComponent>
+                    </Text>
                 ) : null}
-                <VStackComponent style={{ paddingHorizontal: 1 }}>
+                <View className="px-1">
                     {columns?.map((column, idx) => column.render(item, idx))}
-                </VStackComponent>
+                </View>
             </View>
         );
     }
@@ -216,16 +214,16 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                         paddingHorizontal: padding ? 6 : 0,
                     }}
                 >
-                    <HStackComponent style={{ alignItems: 'center', justifyContent: 'space-between' }} space={6}>
+                    <View space={6} className="items-center justify-between">
                         {columns?.map((column, idx) => {
                             if (column.render) return column.render(item, idx);
                             return (
-                                <TextComponent key={idx} style={{ textAlign: 'left', flex: 1, width: '100%' }}>
+                                <Text key={idx} className="text-left flex-1 w-100%">
                                     {item[column.dataIndex as never]}
-                                </TextComponent>
+                                </Text>
                             );
                         })}
-                    </HStackComponent>
+                    </View>
                 </View>
             </TouchableOpacity>
         );

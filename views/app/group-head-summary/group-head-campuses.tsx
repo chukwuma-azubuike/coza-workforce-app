@@ -1,6 +1,6 @@
+import { View } from "react-native";
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Stack } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -41,8 +41,8 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
     return (
         <ErrorBoundary>
             <ViewWrapper scroll>
-                <Center>
-                    <Stack py={3} mb={4} flexDirection="row" flex={1} flexWrap="wrap">
+                <View>
+                    <View mb={4} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (
@@ -57,8 +57,8 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
                                 ))}
                             </>
                         )}
-                    </Stack>
-                </Center>
+                    </View>
+                </View>
             </ViewWrapper>
         </ErrorBoundary>
     );

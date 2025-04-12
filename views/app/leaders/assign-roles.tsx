@@ -1,8 +1,9 @@
+import { Text } from "~/components/ui/text";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, CloseIcon, FormControl, Text, VStack } from 'native-base';
+import { CloseIcon, FormControl } from 'native-base';
 import React, { useState } from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -15,7 +16,7 @@ import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { useGetRolesQuery } from '@store/services/role';
 import { IAssignGroupHead } from '@store/types';
 import { AssignGroupHeadSchema } from '@utils/schemas';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import Utils from '@utils/index';
 import HStackComponent from '@components/layout/h-stack';
 
@@ -134,8 +135,8 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
     };
     return (
         <ViewWrapper scroll noPadding style={{ paddingTop: 10 }}>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<IAssignGroupHead>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -149,7 +150,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                             };
 
                             return (
-                                <VStack w="100%" space={4}>
+                                <View w="100%" space={4}>
                                     <FormControl isRequired isInvalid={!!errors?.campus && touched.campus}>
                                         <FormControl.Label>Campus</FormControl.Label>
                                         <SelectComponent
@@ -281,42 +282,39 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             {errors?.role}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-                                    <VStack>
+                                    <View>
                                         {campusDept?.map((item, key) => (
-                                            <Box
+                                            <View
                                                 key={key}
                                                 _dark={{ bgColor: 'gray.800', borderColor: 'gray.600' }}
                                                 _light={{ bgColor: 'gray.100', borderColor: 'gray.600' }}
                                                 borderColor={THEME_CONFIG.veryLightGray}
                                                 borderRadius={6}
-                                                py={2}
-                                                px={3}
                                                 mb="2"
                                                 borderWidth={1}
                                                 flexDirection="row"
                                                 alignItems="center"
                                                 justifyContent="space-between"
-                                            >
-                                                <Box>
+                                                className="py-2 px-3">
+                                                <View>
                                                     <Text>Campus: {item.campusName}</Text>
                                                     <Text>Department: {item.departmentName}</Text>
-                                                </Box>
+                                                </View>
                                                 <TouchableOpacity onPress={() => handleRemoveCampusDept(item)}>
                                                     <CloseIcon />
                                                 </TouchableOpacity>
-                                            </Box>
+                                            </View>
                                         ))}
-                                    </VStack>
+                                    </View>
                                     {isGroupHead && (
-                                        <Box>
+                                        <View>
                                             <ButtonComponent secondary size="md" onPress={AddNewDept}>
                                                 {isOpen ? 'Done' : '+ Add a Campus Department'}
                                             </ButtonComponent>
-                                        </Box>
+                                        </View>
                                     )}
-
                                     {isOpen && (
-                                        <VStack space={2}>
+                                        <View space={2}>
                                             <FormControl>
                                                 <FormControl.Label>Campus</FormControl.Label>
                                                 <SelectComponent
@@ -359,7 +357,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 </SelectComponent>
                                             </FormControl>
 
-                                            <HStackComponent space={4}>
+                                            <View space={4}>
                                                 <ButtonComponent
                                                     secondary
                                                     size="md"
@@ -375,8 +373,8 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 >
                                                     Add
                                                 </ButtonComponent>
-                                            </HStackComponent>
-                                        </VStack>
+                                            </View>
+                                        </View>
                                     )}
                                     <FormControl>
                                         <ButtonComponent
@@ -387,12 +385,12 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             Submit
                                         </ButtonComponent>
                                     </FormControl>
-                                </VStack>
+                                </View>
                             );
                         }}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

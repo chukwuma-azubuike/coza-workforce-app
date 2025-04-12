@@ -1,8 +1,8 @@
+import { Text } from "~/components/ui/text";
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
-import { HStack, Text, VStack } from 'native-base';
 import React, { memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 // import useFetchMoreData from '@hooks/fetch-more-data';
@@ -29,19 +29,19 @@ const CGWCListRow: React.FC<ICGWC> = memo(cgwc => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStack p={2} flex={1} alignItems="center" justifyContent="space-between">
-                <HStack space={3} alignItems="center">
-                    <VStack justifyContent="space-between">
-                        <Text bold>{cgwc?.name}</Text>
+            <View p={2} flex={1} alignItems="center" justifyContent="space-between">
+                <View space={3} alignItems="center">
+                    <View justifyContent="space-between">
+                        <Text className="font-bold">{cgwc?.name}</Text>
                         <Text fontSize="sm" color="gray.400">
                             {`${dayjs(cgwc?.startDate).format('DD MMM, YYYY')} - ${dayjs(cgwc?.endDate).format(
                                 'DD MMM, YYYY'
                             )}`}
                         </Text>
-                    </VStack>
-                </HStack>
+                    </View>
+                </View>
                 <StatusTag>{status}</StatusTag>
-            </HStack>
+            </View>
         </TouchableOpacity>
     );
 });

@@ -1,8 +1,8 @@
-import React, { memo, useEffect, useState } from 'react';
+import { Text } from "~/components/ui/text";
 
+import React, { memo, useEffect, useState } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
 import { View } from 'react-native';
-import { Text } from '~/components/ui/text';
 
 const Timer: React.FC = () => {
     const [time, setTime] = useState<Dayjs>(dayjs());

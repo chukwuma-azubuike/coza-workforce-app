@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import Loading from '@components/atoms/loading';
 import If from '@components/composite/if-container';
 import TextComponent from '@components/text';
@@ -166,7 +167,7 @@ const GHClocker: React.FC<IGHClockerProps> = ({
                                         type="ionicon"
                                         size={18}
                                     />
-                                    <TextComponent>Group reports submitted</TextComponent>
+                                    <Text>Group reports submitted</Text>
                                     <Ionicons
                                         color={THEME_CONFIG.primary}
                                         name="link-outline"

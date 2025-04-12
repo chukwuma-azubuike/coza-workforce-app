@@ -1,9 +1,9 @@
+import { Text } from "~/components/ui/text";
 import React, { memo } from 'react';
 import { View, Pressable, Image } from 'react-native';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
 import { Progress } from '~/components/ui/progress';
-import { Text } from '~/components/ui/text';
 import useUploader, { FilePickerUploaderProps } from '~/hooks/use-uploader';
 
 // ForwardRef to properly pass ref

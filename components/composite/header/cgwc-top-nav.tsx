@@ -1,14 +1,14 @@
 import React, { ReactNode } from 'react';
-import { HStack } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import AvatarComponent from '@components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { Linking, TouchableOpacity } from 'react-native';
+import { Linking, TouchableOpacity, View } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { ScreenWidth } from '@rneui/base';
+import { router } from 'expo-router';
 
 const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
     const { navigate } = useNavigation();
@@ -17,21 +17,19 @@ const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
         Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
     };
 
-    const handlePress = () => navigate('Profile');
+    const handlePress = () => router.push('/profile');
 
     const { user } = useRole();
     const { isLightMode } = useAppColorMode();
 
     return (
-        <HStack h="100%" zIndex={20} px={2} w={ScreenWidth} alignItems="center" justifyContent="space-between">
+        <View style={{ width: ScreenWidth }} className="px-2 h-full z-20 items-center justify-center">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
-                    size="xs"
-                    shadow={4}
+                    alt="profle-pic"
                     lastName={user?.lastName}
-                    _dark={{ bg: 'gray.900' }}
-                    _light={{ bg: 'gray.100' }}
+                    className="w-8 h-8 shadow-sm"
                     firstName={user?.firstName}
                     imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
@@ -48,7 +46,7 @@ const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
                     color={isLightMode ? THEME_CONFIG.gray : THEME_CONFIG.lightGray}
                 />
             </TouchableOpacity>
-        </HStack>
+        </View>
     );
 };
 

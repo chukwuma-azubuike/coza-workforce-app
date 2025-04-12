@@ -1,14 +1,15 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IAttendanceReportPayload } from '@store/types';
 import { useCreateAttendanceReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, VStack, Text, Divider, WarningOutlineIcon, HStack } from 'native-base';
+import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
-import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
@@ -85,11 +86,11 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <VStack pb={10}>
+                    <View pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
-                        <VStack space={4} mt={4} px={4}>
+                        <View space={4} mt={4} className="px-4">
                             <FormControl isRequired>
                                 <FormControl.Label>Number of Male Guests</FormControl.Label>
                                 <InputComponent
@@ -173,7 +174,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </FormControl>
-                                <HStack space={4} justifyContent="space-between" w="95%">
+                                <View space={4} justifyContent="space-between" w="95%">
                                     <ButtonComponent
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
@@ -191,10 +192,10 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                     >
                                         Approve
                                     </ButtonComponent>
-                                </HStack>
+                                </View>
                             </If>
-                        </VStack>
-                    </VStack>
+                        </View>
+                    </View>
                 </ViewWrapper>
             )}
         </Formik>

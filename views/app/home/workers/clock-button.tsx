@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import LottieView from 'lottie-react-native';
 import { View } from 'react-native';
@@ -16,7 +17,6 @@ import openLocationSettings from '~/utils/openLocationSettings';
 import { Button } from '~/components/ui/button';
 import { cn } from '~/lib/utils';
 import Loading from '~/components/atoms/loading';
-import { Text } from '~/components/ui/text';
 import { Icon } from '@rneui/themed';
 
 interface IClockButtonProps {

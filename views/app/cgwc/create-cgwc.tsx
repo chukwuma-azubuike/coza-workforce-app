@@ -1,11 +1,11 @@
+import { View } from "react-native";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, FormControl, HStack, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
-import { InputComponent } from '@components/atoms/input';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -60,8 +60,8 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
 
     return (
         <ViewWrapper scroll noPadding>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICGWCPayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -69,7 +69,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                         validationSchema={CreateCGWCSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => (
-                            <VStack w="100%" space={4}>
+                            <View w="100%" space={4}>
                                 <FormControl isRequired isInvalid={!!errors?.name && touched.name}>
                                     <FormControl.Label>Name</FormControl.Label>
                                     <InputComponent
@@ -92,7 +92,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                         {errors?.name}
                                     </FormControl.ErrorMessage>
                                 </FormControl>
-                                <HStack justifyContent="space-between">
+                                <View justifyContent="space-between">
                                     <FormControl
                                         isRequired
                                         w={ScreenWidth / 2}
@@ -143,7 +143,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             {errors?.endDate}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-                                </HStack>
+                                </View>
 
                                 <FormControl>
                                     <ButtonComponent
@@ -154,11 +154,11 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                         Create CGWC 🚀
                                     </ButtonComponent>
                                 </FormControl>
-                            </VStack>
+                            </View>
                         )}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

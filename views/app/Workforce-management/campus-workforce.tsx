@@ -1,6 +1,7 @@
+import { Text } from "~/components/ui/text";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Heading, Stack } from 'native-base';
+import { Heading } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -189,37 +190,23 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     isLoading ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <HStackComponent
+                        <View
                             key={index}
-                            style={{
-                                marginVertical: 12,
-                                paddingHorizontal: 6,
-                                justifyContent: 'flex-start',
-                            }}
+                            className="my-12 px-6 justify-start"
                         >
-                            <TextComponent>{item.name}</TextComponent>
-                            <TextComponent bold size="lg" style={{ marginLeft: 10 }}>
+                            <Text>{item.name}</Text>
+                            <Text size="lg" className="font-bold ml-10">
                                 {item.value}
-                            </TextComponent>
-                        </HStackComponent>
+                            </Text>
+                        </View>
                     )
                 )}
 
                 {isLoading ? (
                     <FlatListSkeleton count={1} />
                 ) : (
-                    <HStackComponent
-                        style={{
-                            marginVertical: 16,
-                            padding: 8,
-                            flex: 1,
-                            justifyContent: 'space-evenly',
-                            width: '100%',
-                            borderWidth: 0.4,
-                            borderRadius: 8,
-                            flexWrap: 'wrap',
-                            borderColor: textColor,
-                        }}
+                    <View
+                        className="my-16 p-8 flex-1 justify-evenly w-100% border-0.4 rounded-8"
                     >
                         {summaryList.map((item, index) => (
                             <View
@@ -232,17 +219,17 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                                     marginVertical: 2,
                                 }}
                             >
-                                <TextComponent size="lg">{item.title}</TextComponent>
+                                <Text size="lg">{item.title}</Text>
                                 <Heading size="xl" _dark={{ color: item.color }} _light={{ color: item.color }}>
                                     {item.value || 0}
                                 </Heading>
                             </View>
                         ))}
-                    </HStackComponent>
+                    </View>
                 )}
 
-                <Center>
-                    <Stack py={3} mb={4} flexDirection="row" flex={1} flexWrap="wrap">
+                <View>
+                    <View mb={4} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
                         {isLoading ? (
                             <FlatListSkeleton count={6} />
                         ) : (
@@ -257,8 +244,8 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                                 ))}
                             </>
                         )}
-                    </Stack>
-                </Center>
+                    </View>
+                </View>
             </ViewWrapper>
             <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin || isInternshipHOD}>
                 <StaggerButtonComponent buttons={filteredButtons as unknown as any} />

@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { THEME_CONFIG } from '@config/appConfig';
 import { CountUp } from 'use-count-up';
@@ -5,7 +6,6 @@ import Loading from '@components/atoms/loading';
 import { TouchableOpacity, View } from 'react-native';
 import { ROLES } from '@hooks/role';
 import { Ionicons } from '@expo/vector-icons';
-import { Text } from '~/components/ui/text';
 import { router } from 'expo-router';
 import { Icon } from '@rneui/themed';
 

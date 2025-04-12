@@ -1,5 +1,6 @@
+import { View } from "react-native";
 import React from 'react';
-import { Box, FormControl, HStack, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import useModal from '@hooks/modal/useModal';
@@ -12,7 +13,6 @@ import { CreateDepartmentSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '@components/atoms/input';
 import TextAreaComponent from '@components/atoms/text-area';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { useGetCampusesQuery } from '@store/services/campus';
@@ -90,8 +90,8 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
 
     return (
         <ViewWrapper scroll noPadding onRefresh={refresh} refreshing={campusIsFetching}>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICreateDepartmentPayload>
                         validateOnChange
                         onSubmit={submitForm}
@@ -99,7 +99,7 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                         validationSchema={CreateDepartmentSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit }) => (
-                            <VStack w="100%" space={1}>
+                            <View w="100%" space={1}>
                                 <If condition={isGlobalPastor || isSuperAdmin}>
                                     <FormControl isRequired>
                                         <FormControl.Label>Campus</FormControl.Label>
@@ -107,13 +107,13 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                             onValueChange={handleCampus}
                                             selectedValue={values.campusId}
                                             dropdownIcon={
-                                                <HStack mr={2} space={2}>
+                                                <View mr={2} space={2}>
                                                     <Icon
                                                         type="entypo"
                                                         name="chevron-small-down"
                                                         color={THEME_CONFIG.lightGray}
                                                     />
-                                                </HStack>
+                                                </View>
                                             }
                                         >
                                             {campuses?.map((campus, index) => (
@@ -190,11 +190,11 @@ const CreateDepartment: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                         Submit
                                     </ButtonComponent>
                                 </FormControl>
-                            </VStack>
+                            </View>
                         )}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

@@ -1,5 +1,6 @@
+import { View } from "react-native";
 import React from 'react';
-import { Box, FormControl, HStack, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import useModal from '@hooks/modal/useModal';
@@ -11,7 +12,6 @@ import { CreateCampusSchema } from '@utils/schemas';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { InputComponent } from '@components/atoms/input';
 import TextAreaComponent from '@components/atoms/text-area';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -79,8 +79,8 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <ViewWrapper scroll noPadding>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={20}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={20} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICreateCampusPayload>
                         validateOnChange
                         onSubmit={submitForm}
@@ -95,7 +95,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             };
 
                             return (
-                                <VStack w="100%" space={1}>
+                                <View w="100%" space={1}>
                                     <FormControl isRequired isInvalid={!!errors?.campusName}>
                                         <FormControl.Label>Campus Name</FormControl.Label>
                                         <InputComponent
@@ -138,7 +138,6 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {errors?.description}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
                                     <FormControl isRequired isInvalid={!!errors?.country}>
                                         <FormControl.Label>Country</FormControl.Label>
                                         <SelectComponent
@@ -173,7 +172,6 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {errors?.country}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
                                     <FormControl isRequired isInvalid={!!errors?.state}>
                                         <FormControl.Label>State</FormControl.Label>
                                         <SelectComponent
@@ -240,7 +238,6 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {errors?.LGA}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
                                     <FormControl isRequired isInvalid={!!errors?.address}>
                                         <FormControl.Label>Address</FormControl.Label>
                                         <TextAreaComponent
@@ -284,8 +281,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             {errors?.dateOfBirth}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
-                                    <HStack justifyContent="space-between">
+                                    <View justifyContent="space-between">
                                         <FormControl width={160} isRequired isInvalid={!!errors?.coordinates?.lat}>
                                             <FormControl.Label>Latitude</FormControl.Label>
                                             <InputComponent
@@ -329,8 +325,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 {errors?.coordinates?.long}
                                             </FormControl.ErrorMessage>
                                         </FormControl>
-                                    </HStack>
-
+                                    </View>
                                     <FormControl>
                                         <ButtonComponent
                                             mt={4}
@@ -341,12 +336,12 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             Submit
                                         </ButtonComponent>
                                     </FormControl>
-                                </VStack>
+                                </View>
                             );
                         }}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

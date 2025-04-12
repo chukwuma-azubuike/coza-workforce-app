@@ -1,5 +1,7 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
-import { Alert, CloseIcon, HStack, IconButton, Text, VStack, useToast } from 'native-base';
+import { Alert, CloseIcon, IconButton, useToast } from 'native-base';
 import { ResponsiveValue } from 'native-base/lib/typescript/components/types';
 
 interface IToastProps {
@@ -27,9 +29,9 @@ const ToastUI = ({ id, status, variant, title, description, isClosable, ...rest 
             variant={variant}
             {...rest}
         >
-            <VStack space={1} flexShrink={1} w="100%">
-                <HStack flexShrink={1} alignItems="center" justifyContent="space-between">
-                    <HStack space={2} flexShrink={1} alignItems="center">
+            <View space={1} flexShrink={1} w="100%">
+                <View flexShrink={1} alignItems="center" justifyContent="space-between">
+                    <View space={2} flexShrink={1} alignItems="center">
                         <Alert.Icon />
                         <Text
                             fontSize="md"
@@ -39,7 +41,7 @@ const ToastUI = ({ id, status, variant, title, description, isClosable, ...rest 
                         >
                             {title}
                         </Text>
-                    </HStack>
+                    </View>
                     {isClosable ? (
                         <IconButton
                             variant="unstyled"
@@ -50,11 +52,12 @@ const ToastUI = ({ id, status, variant, title, description, isClosable, ...rest 
                             onPress={handlePress}
                         />
                     ) : null}
-                </HStack>
-                <Text px="6" color={variant === 'solid' ? 'lightText' : variant !== 'outline' ? 'darkText' : null}>
+                </View>
+                <Text
+                    color={variant === 'solid' ? 'lightText' : variant !== 'outline' ? 'darkText' : null}>
                     {description}
                 </Text>
-            </VStack>
+            </View>
         </Alert>
     );
 };

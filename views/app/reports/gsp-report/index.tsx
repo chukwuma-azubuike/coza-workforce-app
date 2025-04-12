@@ -1,6 +1,5 @@
+import { Text } from '~/components/ui/text';
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { Box, Divider, FormControl, HStack, VStack } from 'native-base';
 import { GlobalReportContext } from './context';
 import { TouchableOpacity, View } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -15,25 +14,21 @@ import Utils from '@utils/index';
 import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
 import CampusReportDetails from './campusReportDetails';
-import TextComponent from '@components/text';
-import VStackComponent from '@components/layout/v-stack';
 import { useGetGHSubmittedReportsByServiceIdQuery } from '@store/services/grouphead';
 import BottomSheetComponent from '@components/composite/bottom-sheet';
+import { router } from 'expo-router';
+import { Separator } from '~/components/ui/separator';
 
 export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
-    const navigation = useNavigation();
     const { isMobile } = useMediaQuery();
-    const { serviceId, setCampusId, setCampusName } = React.useContext(GlobalReportContext);
+    const { setCampusId, setCampusName } = React.useContext(GlobalReportContext);
 
     const handlePress = () => {
         setCampusId(props?.campusId);
         setCampusName(props?.campusName);
 
         if (isMobile) {
-            navigation.navigate(
-                'Campus Report' as never,
-                { ...props, serviceId, campusName: props?.campusName } as never
-            );
+            router.push('/reports/campus-report');
         }
     };
 
@@ -41,24 +36,15 @@ export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
         <TouchableOpacity
             disabled={false}
             delayPressIn={0}
+            className="w-full"
             activeOpacity={0.6}
             onPress={handlePress}
-            style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStack
-                p={2}
-                px={4}
-                my={1}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-            >
-                <TextComponent>{props?.campusName.replace('Campus', '')}</TextComponent>
+            <View className="px-4 justify-between bg-gray-50 dark:bg-gray-900 items-center rounded-md my-1 p-2">
+                <Text>{props?.campusName.replace('Campus', '')}</Text>
                 <StatusTag>{props?.status as any}</StatusTag>
-            </HStack>
+            </View>
         </TouchableOpacity>
     );
 };
@@ -87,19 +73,10 @@ export const GHSubmittedReportListRowForGSP: React.FC<IGHSubmittedReportForGSP> 
                 toggleBottomSheet={handlePress}
                 content={props.submittedReport}
             />
-            <HStack
-                p={2}
-                px={4}
-                my={1}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-            >
-                <TextComponent>{ghName}</TextComponent>
+            <View className="px-4 py-2 my-1 rounded-md bg-gray-50 dark:bg-gray-900 items-center justify-between">
+                <Text>{ghName}</Text>
                 <StatusTag>{props?.status as any}</StatusTag>
-            </HStack>
+            </View>
         </TouchableOpacity>
     );
 };
@@ -178,32 +155,28 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
     const { campusId, campusName } = React.useContext(GlobalReportContext);
 
     return (
-        <ViewWrapper py={0} px={2} noPadding refreshing={isLoading || servicesLoading || isFetching}>
-            <HStack flex={1}>
-                <VStack w={isMobile ? '100%' : '33%'} flex={1} space={3} pt={4}>
-                    <FormControl isRequired>
-                        <SelectComponent
-                            valueKey="_id"
-                            selectedValue={serviceId}
-                            placeholder="Select Service"
-                            onValueChange={setService as any}
-                            displayKey={['name', 'clockInStartTime']}
-                            items={sortedServices || []}
-                        >
-                            {sortedServices?.map((service, index) => (
-                                <SelectItemComponent
-                                    value={service._id}
-                                    key={`service-${index}`}
-                                    label={`${service.name} - ${dayjs(service.clockInStartTime).format(
-                                        'Do MMM YYYY'
-                                    )}`}
-                                />
-                            ))}
-                        </SelectComponent>
-                    </FormControl>
-                    <VStackComponent>
+        <ViewWrapper className="py-0 px-2" noPadding refreshing={isLoading || servicesLoading || isFetching}>
+            <View className="flex-1">
+                <View className="w-100 md:h-1/3 flex-1 gap-3 pt-4">
+                    <SelectComponent
+                        valueKey="_id"
+                        selectedValue={serviceId}
+                        placeholder="Select Service"
+                        onValueChange={setService as any}
+                        displayKey={['name', 'clockInStartTime']}
+                        items={sortedServices || []}
+                    >
+                        {sortedServices?.map((service, index) => (
+                            <SelectItemComponent
+                                value={service._id}
+                                key={`service-${index}`}
+                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            />
+                        ))}
+                    </SelectComponent>
+                    <View>
                         <View style={{ height: '65%' }}>
-                            <TextComponent bold>Campus Reports</TextComponent>
+                            <Text className="font-bold">Campus Reports</Text>
                             <FlatListComponent
                                 refreshing={isFetching}
                                 columns={reportColumns}
@@ -212,11 +185,9 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                                 data={campusReports as IGlobalReportList}
                             />
                         </View>
-                        <Divider orientation="horizontal" />
+                        <Separator orientation="horizontal" />
                         <>
-                            <TextComponent bold style={{ marginTop: 10 }}>
-                                Group Head Reports
-                            </TextComponent>
+                            <Text className="font-bold mt-10">Group Head Reports</Text>
                             <FlatListComponent
                                 refreshing={isFetching}
                                 onRefresh={handleRefresh}
@@ -225,15 +196,15 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                                 data={ghReports as Array<IGHSubmittedReportForGSP>}
                             />
                         </>
-                    </VStackComponent>
-                </VStack>
+                    </View>
+                </View>
                 <If condition={isTablet}>
-                    <Divider orientation="vertical" height="100%" m={4} />
-                    <Box w="67%">
+                    <Separator orientation="vertical" className="h-full m-4" />
+                    <View className="w-4/6">
                         <CampusReportDetails serviceId={serviceId} campusId={campusId} campusName={campusName} />
-                    </Box>
+                    </View>
                 </If>
-            </HStack>
+            </View>
         </ViewWrapper>
     );
 };
