@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import {
     useGetDepartmentCGWCAttendanceReportQuery,
@@ -8,7 +9,7 @@ import useRole from '@hooks/role';
 import { IService } from '@store/types';
 import dayjs from 'dayjs';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { Box, Center, Flex, HStack, Text } from 'native-base';
+import { Flex } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import Loading from '@components/atoms/loading';
@@ -96,16 +97,12 @@ export const CGWCReportSummary: React.FC<{
 
     return (
         <View>
-            <HStackComponent
-                style={{
-                    paddingTop: 12,
-                    paddingHorizontal: 4,
-                    justifyContent: 'space-between',
-                }}
+            <View
+                className="pt-12 px-4 justify-between"
             >
-                <TextComponent style={{ textAlign: 'center', paddingTop: 8, paddingBottom: 8 }} size="lg" bold>
+                <Text size="lg" className="text-center pt-8 pb-8 font-bold">
                     {title}
-                </TextComponent>
+                </Text>
                 <SelectComponent
                     valueKey="_id"
                     items={sessions}
@@ -124,8 +121,8 @@ export const CGWCReportSummary: React.FC<{
                         />
                     ))}
                 </SelectComponent>
-            </HStackComponent>
-            <Center py={6}>
+            </View>
+            <View className="py-6">
                 {attendanceReportLoading || leadersReportLoading ? (
                     <Loading h={20} w={20} />
                 ) : (
@@ -144,8 +141,8 @@ export const CGWCReportSummary: React.FC<{
                                 style={{ width: '50%' }}
                                 accessibilityRole="button"
                             >
-                                <Center width="100%">
-                                    <HStack alignItems="baseline" flexDirection="row">
+                                <View width="100%">
+                                    <View alignItems="baseline" flexDirection="row">
                                         <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
                                             <CountUp isCounting duration={2} end={leadersAttendance?.attendance || 0} />
                                         </Text>
@@ -162,8 +159,8 @@ export const CGWCReportSummary: React.FC<{
                                                 end={leadersAttendance?.leaderUsers || 0}
                                             />
                                         </Text>
-                                    </HStack>
-                                    <HStack alignItems="center" flexDirection="row">
+                                    </View>
+                                    <View alignItems="center" flexDirection="row">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
@@ -178,8 +175,8 @@ export const CGWCReportSummary: React.FC<{
                                         >
                                             Leaders
                                         </Text>
-                                    </HStack>
-                                </Center>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
                         </If>
                         <If condition={isCampusPastor || isSuperAdmin}>
@@ -190,8 +187,8 @@ export const CGWCReportSummary: React.FC<{
                                 onPress={goToAttendance}
                                 accessibilityRole="button"
                             >
-                                <Center width="100%">
-                                    <HStack alignItems="baseline" flexDirection="row">
+                                <View width="100%">
+                                    <View alignItems="baseline" flexDirection="row">
                                         <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
                                             <CountUp isCounting duration={2} end={workersAttendance?.attendance || 0} />
                                         </Text>
@@ -208,8 +205,8 @@ export const CGWCReportSummary: React.FC<{
                                                 end={workersAttendance?.workerUsers || 0}
                                             />
                                         </Text>
-                                    </HStack>
-                                    <HStack alignItems="center" flexDirection="row">
+                                    </View>
+                                    <View alignItems="center" flexDirection="row">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
@@ -224,8 +221,8 @@ export const CGWCReportSummary: React.FC<{
                                         >
                                             Workers
                                         </Text>
-                                    </HStack>
-                                </Center>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
                         </If>
                         <If condition={isHOD || isAHOD}>
@@ -236,8 +233,8 @@ export const CGWCReportSummary: React.FC<{
                                 onPress={goToAttendance}
                                 accessibilityRole="button"
                             >
-                                <Center width="100%">
-                                    <HStack alignItems="baseline" flexDirection="row">
+                                <View width="100%">
+                                    <View alignItems="baseline" flexDirection="row">
                                         <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
                                             <CountUp isCounting duration={2} end={attendanceReport?.attendance || 0} />
                                         </Text>
@@ -254,8 +251,8 @@ export const CGWCReportSummary: React.FC<{
                                                 end={attendanceReport?.departmentUsers || 0}
                                             />
                                         </Text>
-                                    </HStack>
-                                    <HStack alignItems="center" flexDirection="row">
+                                    </View>
+                                    <View alignItems="center" flexDirection="row">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
@@ -270,22 +267,22 @@ export const CGWCReportSummary: React.FC<{
                                         >
                                             Members clocked in
                                         </Text>
-                                    </HStack>
-                                </Center>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
                         </If>
-                        <Box width={isCampusPastor || isSuperAdmin ? '100%' : 'auto'}>
+                        <View width={isCampusPastor || isSuperAdmin ? '100%' : 'auto'}>
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
                                 onPress={goToTickets}
                                 accessibilityRole="button"
                             >
-                                <Center width={180} mx="auto">
+                                <View width={180} mx="auto">
                                     <Text fontWeight="semibold" color="gray.400" fontSize="4xl" ml={1}>
                                         <CountUp isCounting duration={2} end={attendanceReport?.tickets || 0} />
                                     </Text>
-                                    <HStack alignItems="center" flexDirection="row">
+                                    <View alignItems="center" flexDirection="row">
                                         <Icon
                                             name="ticket-confirmation-outline"
                                             color={THEME_CONFIG.rose}
@@ -300,13 +297,13 @@ export const CGWCReportSummary: React.FC<{
                                         >
                                             Tickets
                                         </Text>
-                                    </HStack>
-                                </Center>
+                                    </View>
+                                </View>
                             </TouchableOpacity>
-                        </Box>
+                        </View>
                     </Flex>
                 )}
-            </Center>
+            </View>
         </View>
     );
 });

@@ -1,3 +1,4 @@
+import { View } from "react-native";
 import React from 'react';
 import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -220,7 +221,7 @@ We love & celebrate you!` as any,
                 />
             </If>
             <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20 }}>
-                <VStackComponent style={{ marginBottom: 20, paddingHorizontal: 12, gap: 20 }}>
+                <View className="mb-20 px-12 gap-20">
                     <Formik<ICreateTicketPayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -302,7 +303,7 @@ We love & celebrate you!` as any,
                             };
 
                             return (
-                                <VStackComponent style={{ gap: 10 }}>
+                                <View className="gap-10">
                                     <FormControl
                                         isRequired
                                         justifyContent="space-between"
@@ -546,11 +547,11 @@ We love & celebrate you!` as any,
                                             Submit
                                         </ButtonComponent>
                                     </FormControl>
-                                </VStackComponent>
+                                </View>
                             );
                         }}
                     </Formik>
-                </VStackComponent>
+                </View>
             </ViewWrapper>
         </>
     );

@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react';
 import { ViewProps, Animated, StyleSheet, TouchableOpacity } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { View } from 'react-native';
-import TextComponent from '@components/text';
+import { Text } from '~/components/ui/text';
 
 interface IModalProps extends ViewProps {
     isOpen?: boolean;
@@ -63,7 +63,7 @@ const ModalComponent: React.FC<IModalProps> = props => {
                     <View style={[styles.headerContainer, { backgroundColor: backgroundColor }]}>
                         {header}
                         <TouchableOpacity onPress={handleClose}>
-                            <TextComponent size="lg">Close</TextComponent>
+                            <Text className="text-3xl">Close</Text>
                         </TouchableOpacity>
                     </View>
                     <View>{children}</View>

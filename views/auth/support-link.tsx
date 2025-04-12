@@ -1,9 +1,9 @@
+import { Text } from "~/components/ui/text";
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { Linking, TouchableOpacity } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { THEME_CONFIG } from '@config/appConfig';
-import { Text } from '~/components/ui/text';
 
 const SupportLink = () => {
     const handleNotificationPress = () => {

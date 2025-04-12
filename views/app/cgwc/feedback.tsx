@@ -1,11 +1,11 @@
+import { View } from "react-native";
 import React from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, FormControl, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
-import { InputComponent } from '@components/atoms/input';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -57,8 +57,8 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
 
     return (
         <ViewWrapper scroll noPadding pt={4}>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICGWCFeedbackPayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -71,7 +71,7 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
                             };
 
                             return (
-                                <VStack w="100%" space={4}>
+                                <View w="100%" space={4}>
                                     <FormControl isRequired isInvalid={!!errors?.rating && touched.rating}>
                                         <FormControl.Label>Overall rating</FormControl.Label>
                                         <RatingComponent defaultRating={params?.rating} onFinishRating={handleRating} />
@@ -90,7 +90,6 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
                                             {errors?.rating}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
                                     <FormControl isRequired isInvalid={!!errors?.comment && touched.comment}>
                                         <FormControl.Label>Comment</FormControl.Label>
                                         <TextAreaComponent
@@ -113,7 +112,6 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
                                             {errors?.comment}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
                                     <FormControl>
                                         <ButtonComponent
                                             mt={4}
@@ -124,12 +122,12 @@ const CGWCFeedback: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigat
                                             Submit Feedback
                                         </ButtonComponent>
                                     </FormControl>
-                                </VStack>
+                                </View>
                             );
                         }}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

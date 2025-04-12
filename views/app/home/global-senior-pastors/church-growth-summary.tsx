@@ -1,6 +1,8 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import { Col, Row } from '@components/composite/row';
 import { THEME_CONFIG } from '@config/appConfig';
-import { Alert, HStack, Text, VStack } from 'native-base';
+import { Alert } from 'native-base';
 import React from 'react';
 
 const ChurchGrowthSummary: React.FC = () => {
@@ -37,22 +39,22 @@ const ChurchGrowthSummary: React.FC = () => {
             }}
             borderRadius={THEME_CONFIG.borderRadius}
         >
-            <VStack space={4} alignItems="center">
-                <VStack>
+            <View space={4} alignItems="center">
+                <View>
                     <Text fontSize="lg" fontWeight="medium" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1}>
                         Celebrate you, sir!
                     </Text>
                     <Text ellipsizeMode="tail" numberOfLines={1} fontSize="md" fontWeight="medium" color="coolGray.600">
                         Look how God has been faithful to COZA Global!
                     </Text>
-                </VStack>
+                </View>
                 <Row gutter={16}>
                     <Col sm={24} md={12} lg={24}>
-                        <HStack alignItems="center" justifyContent="space-between" space={2}>
-                            <Text fontSize="4xl" bold color="coolGray.800" ellipsizeMode="tail" numberOfLines={1}>
+                        <View alignItems="center" justifyContent="space-between" space={2}>
+                            <Text fontSize="4xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
                                 {souls}
                             </Text>
-                            <VStack flex={1}>
+                            <View flex={1}>
                                 <Text
                                     ellipsizeMode="tail"
                                     numberOfLines={1}
@@ -71,22 +73,22 @@ const ChurchGrowthSummary: React.FC = () => {
                                 >
                                     that's
                                     <Text
-                                        bold
                                         color={isSoulIncreased ? 'success.600' : 'rose.600'}
                                         ellipsizeMode="tail"
                                         numberOfLines={1}
+                                        className="font-bold"
                                     >{` ${soulDifference}% `}</Text>
                                     {isSoulIncreased ? 'more' : 'less'} than last week!
                                 </Text>
-                            </VStack>
-                        </HStack>
+                            </View>
+                        </View>
                     </Col>
                     <Col sm={24} md={12} lg={24}>
-                        <HStack alignItems="center" justifyContent="space-between" space={2}>
-                            <Text fontSize="4xl" bold color="coolGray.800" ellipsizeMode="tail" numberOfLines={1}>
+                        <View alignItems="center" justifyContent="space-between" space={2}>
+                            <Text fontSize="4xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
                                 {attendance}
                             </Text>
-                            <VStack flex={1}>
+                            <View flex={1}>
                                 <Text
                                     ellipsizeMode="tail"
                                     numberOfLines={1}
@@ -105,22 +107,22 @@ const ChurchGrowthSummary: React.FC = () => {
                                 >
                                     that's
                                     <Text
-                                        bold
                                         color={isAttendanceIncreased ? 'success.600' : 'rose.600'}
                                         ellipsizeMode="tail"
                                         numberOfLines={1}
+                                        className="font-bold"
                                     >{` ${attendanceDifference}% `}</Text>
                                     {isAttendanceIncreased ? 'more' : 'less'} than last week!
                                 </Text>
-                            </VStack>
-                        </HStack>
+                            </View>
+                        </View>
                     </Col>
                     <Col sm={24} md={12} lg={24}>
-                        <VStack alignItems="center" justifyContent="space-between">
-                            <Text fontSize="xl" bold color="coolGray.800" ellipsizeMode="tail" numberOfLines={1}>
+                        <View alignItems="center" justifyContent="space-between">
+                            <Text fontSize="xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
                                 {currentPeriodHighestCampusAttendance}
                             </Text>
-                            <VStack alignItems="center">
+                            <View alignItems="center">
                                 <Text
                                     ellipsizeMode="tail"
                                     numberOfLines={1}
@@ -139,21 +141,21 @@ const ChurchGrowthSummary: React.FC = () => {
                                 >
                                     Last week, it was
                                     <Text
-                                        bold
                                         ellipsizeMode="tail"
                                         numberOfLines={1}
+                                        className="font-bold"
                                     >{` ${lastPeriodHighestCampusAttendance} `}</Text>
                                 </Text>
-                            </VStack>
-                        </VStack>
+                            </View>
+                        </View>
                     </Col>
 
                     <Col sm={24} md={12} lg={24}>
-                        <VStack alignItems="center" justifyContent="space-between">
-                            <Text fontSize="xl" bold color="coolGray.800" ellipsizeMode="tail" numberOfLines={1}>
+                        <View alignItems="center" justifyContent="space-between">
+                            <Text fontSize="xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
                                 {currentHighestGrowingCampus}
                             </Text>
-                            <VStack alignItems="center">
+                            <View alignItems="center">
                                 <Text
                                     ellipsizeMode="tail"
                                     numberOfLines={1}
@@ -163,9 +165,9 @@ const ChurchGrowthSummary: React.FC = () => {
                                 >
                                     recorded the highest percentage increase today at
                                     <Text
-                                        bold
                                         ellipsizeMode="tail"
                                         numberOfLines={1}
+                                        className="font-bold"
                                     >{` ${currentHighestCampusAttendanceGrowthPercentage}%.`}</Text>
                                 </Text>
                                 <Text
@@ -177,27 +179,27 @@ const ChurchGrowthSummary: React.FC = () => {
                                 >
                                     Last week, it was
                                     <Text
-                                        bold
                                         ellipsizeMode="tail"
                                         numberOfLines={1}
+                                        className="font-bold"
                                     >{` ${lastPeriodHighestGrowingCampus} `}</Text>
                                     with
                                     <Text
-                                        bold
                                         ellipsizeMode="tail"
                                         numberOfLines={1}
+                                        className="font-bold"
                                     >{` ${lastPeriodHighestCampusAttendanceGrowthPercentage}%.`}</Text>
                                 </Text>
-                            </VStack>
-                        </VStack>
+                            </View>
+                        </View>
                     </Col>
 
                     <Col sm={24} md={24} lg={24} style={{ width: '100%' }}>
-                        <VStack alignItems="center" justifyContent="space-between">
-                            <Text fontSize="xl" bold color="coolGray.800" ellipsizeMode="tail" numberOfLines={1}>
+                        <View alignItems="center" justifyContent="space-between">
+                            <Text fontSize="xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
                                 {pendingCampusReports} Campuses
                             </Text>
-                            <VStack alignItems="center">
+                            <View alignItems="center">
                                 <Text
                                     ellipsizeMode="tail"
                                     numberOfLines={1}
@@ -215,14 +217,14 @@ const ChurchGrowthSummary: React.FC = () => {
                                     color="coolGray.600"
                                 >
                                     are
-                                    <Text bold ellipsizeMode="tail" numberOfLines={1}>{` yet tosend `}</Text>in their
+                                    <Text ellipsizeMode="tail" numberOfLines={1} className="font-bold">{` yet tosend `}</Text>in their
                                     Service report today!
                                 </Text>
-                            </VStack>
-                        </VStack>
+                            </View>
+                        </View>
                     </Col>
                 </Row>
-            </VStack>
+            </View>
         </Alert>
     );
 };

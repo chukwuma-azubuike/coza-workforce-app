@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { memo } from 'react';
@@ -10,7 +11,7 @@ import HStackComponent from '@components/layout/h-stack';
 import VStackComponent from '@components/layout/v-stack';
 import TextComponent from '@components/text';
 import StatusTag from '@components/atoms/status-tag';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import dayjs from 'dayjs';
 import { useGetGhReportsQuery } from '@store/services/grouphead';
 
@@ -33,26 +34,19 @@ export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
             accessibilityRole="button"
             style={{ flex: 1 }}
         >
-            <HStackComponent
-                style={{
-                    paddingVertical: 12,
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    paddingHorizontal: 12,
-                    borderBottomColor: '#e1e4dd',
-                    borderBottomWidth: 1,
-                }}
+            <View
+                className="py-12 items-center justify-between px-12"
             >
-                <HStackComponent space={6} style={{ alignItems: 'center' }}>
-                    <VStackComponent style={{ justifyContent: 'space-between' }}>
+                <View space={6} className="items-center">
+                    <View className="justify-between">
                         <>
-                            <TextComponent>{serviceName}</TextComponent>
-                            <TextComponent>{dayjs(createdAt).format('MMMM Do, YYYY')}</TextComponent>
+                            <Text>{serviceName}</Text>
+                            <Text>{dayjs(createdAt).format('MMMM Do, YYYY')}</Text>
                         </>
-                    </VStackComponent>
-                </HStackComponent>
+                    </View>
+                </View>
                 <StatusTag>{status}</StatusTag>
-            </HStackComponent>
+            </View>
         </TouchableOpacity>
     );
 });

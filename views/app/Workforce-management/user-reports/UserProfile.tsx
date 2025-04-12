@@ -1,6 +1,6 @@
-import { Heading, HStack, VStack } from 'native-base';
+import { Heading } from 'native-base';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import If from '@components/composite/if-container';
 import { ProfileSkeletonMini } from '@components/layout/skeleton';
@@ -17,15 +17,15 @@ const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean 
     const { data: user, isLoading, isFetching } = useGetUserByIdQuery(userId);
 
     return (
-        <HStack pb={8} mb={4} px={isAndroid ? 4 : undefined}>
+        <View pb={8} mb={4} className="px-undefined">
             <If condition={isLoading || isFetching}>
                 <ProfileSkeletonMini />
             </If>
             <If condition={!!user && !isLoading && !isFetching}>
-                <HStack space={6} alignItems="center">
+                <View space={6} alignItems="center">
                     <AvatarComponent mt={4} size="2xl" shadow={9} imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                    <VStack mt="4" width="80%" space={2}>
-                        <HStack space={2}>
+                    <View mt="4" width="80%" space={2}>
+                        <View space={2}>
                             <Heading
                                 flexWrap="wrap"
                                 numberOfLines={1}
@@ -37,7 +37,7 @@ const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean 
                                 {user && Utils.capitalizeFirstChar(user?.firstName)}{' '}
                                 {user && Utils.capitalizeFirstChar(user?.lastName)}
                             </Heading>
-                        </HStack>
+                        </View>
                         <Heading
                             _dark={{ color: 'gray.300' }}
                             _light={{ color: 'gray.700' }}
@@ -59,10 +59,10 @@ const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean 
                         >
                             {user?.phoneNumber}
                         </Heading>
-                    </VStack>
-                </HStack>
+                    </View>
+                </View>
             </If>
-        </HStack>
+        </View>
     );
 };
 

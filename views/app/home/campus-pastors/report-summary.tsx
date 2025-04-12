@@ -1,3 +1,4 @@
+import { Text } from "~/components/ui/text";
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -6,8 +7,8 @@ import useScreenFocus from '@hooks/focus';
 import useRole from '@hooks/role';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from '@rneui/themed';
 
+import { Icon } from '@rneui/themed';
 import { useGetGhReportByIdQuery } from '@store/services/grouphead';
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '@store/services/reports';
 import Utils from '@utils/index';
@@ -15,7 +16,6 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
 import { Separator } from '~/components/ui/separator';
-import { Text } from '~/components/ui/text';
 const isAndroid = Platform.OS === 'android';
 
 interface ReportSummaryListRowProps {

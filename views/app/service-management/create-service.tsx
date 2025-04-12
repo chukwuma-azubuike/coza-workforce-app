@@ -1,11 +1,11 @@
+import { View } from "react-native";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig, FormikProps } from 'formik';
-import { Box, FormControl, HStack, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
-import { InputComponent } from '@components/atoms/input';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -217,8 +217,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
 
     return (
         <ViewWrapper scroll noPadding style={{ paddingTop: 8 }}>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICreateServicePayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -241,7 +241,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                             };
 
                             return (
-                                <VStack w="100%" space={4}>
+                                <View w="100%" space={4}>
                                     <FormControl isRequired isInvalid={!!errors?.serviceTag && touched.serviceTag}>
                                         <FormControl.Label>Service Tag</FormControl.Label>
                                         <SelectComponent
@@ -275,7 +275,6 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             {errors?.serviceTag}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-
                                     <FormControl isRequired isInvalid={!!errors?.serviceType && touched.serviceType}>
                                         <FormControl.Label>Service Type</FormControl.Label>
                                         <SelectComponent
@@ -330,7 +329,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             {errors?.serviceName}
                                         </FormControl.ErrorMessage>
                                     </FormControl>
-                                    <HStack justifyContent="space-between">
+                                    <View justifyContent="space-between">
                                         <DateTimePickerComponent
                                             label="Date"
                                             mode="date"
@@ -354,9 +353,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.serviceTime && touched.serviceTime,
                                             }}
                                         />
-                                    </HStack>
-
-                                    <HStack justifyContent="space-between">
+                                    </View>
+                                    <View justifyContent="space-between">
                                         <DateTimePickerComponent
                                             label="Clock-in Time"
                                             mode="time"
@@ -379,9 +377,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.leaderLateTime && touched.leaderLateTime,
                                             }}
                                         />
-                                    </HStack>
-
-                                    <HStack justifyContent="space-between">
+                                    </View>
+                                    <View justifyContent="space-between">
                                         <DateTimePickerComponent
                                             label="Workers Late Time"
                                             mode="time"
@@ -404,8 +401,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.endTime && touched.endTime,
                                             }}
                                         />
-                                    </HStack>
-
+                                    </View>
                                     <FormControl>
                                         <ButtonComponent
                                             mt={4}
@@ -416,12 +412,12 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             Create service
                                         </ButtonComponent>
                                     </FormControl>
-                                </VStack>
+                                </View>
                             );
                         }}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

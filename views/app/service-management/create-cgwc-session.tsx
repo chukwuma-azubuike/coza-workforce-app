@@ -1,11 +1,11 @@
+import { View } from "react-native";
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { Box, FormControl, HStack, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
-import { InputComponent } from '@components/atoms/input';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { DateTimePickerComponent } from '@components/composite/date-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -85,8 +85,8 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
 
     return (
         <ViewWrapper scroll noPadding>
-            <VStack space="lg" alignItems="flex-start" w="100%" px={4} mb={24}>
-                <Box alignItems="center" w="100%">
+            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
+                <View alignItems="center" w="100%">
                     <Formik<ICreateServicePayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -94,7 +94,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                         validationSchema={CreateServiceSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => (
-                            <VStack w="100%" space={4}>
+                            <View w="100%" space={4}>
                                 <FormControl isRequired isInvalid={!!errors?.serviceName && touched.serviceName}>
                                     <FormControl.Label>Session Name</FormControl.Label>
                                     <InputComponent
@@ -173,7 +173,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                     </FormControl.ErrorMessage>
                                 </FormControl>
 
-                                <HStack justifyContent="space-between">
+                                <View justifyContent="space-between">
                                     <DateTimePickerComponent
                                         label="Date"
                                         mode="date"
@@ -189,9 +189,9 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         onSelectDate={setFieldValue}
                                         value={values.serviceTime}
                                     />
-                                </HStack>
+                                </View>
 
-                                <HStack justifyContent="space-between">
+                                <View justifyContent="space-between">
                                     <DateTimePickerComponent
                                         label="Clock-in Time"
                                         mode="time"
@@ -206,9 +206,9 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         onSelectDate={setFieldValue}
                                         value={values.leaderLateTime}
                                     />
-                                </HStack>
+                                </View>
 
-                                <HStack justifyContent="space-between">
+                                <View justifyContent="space-between">
                                     <DateTimePickerComponent
                                         label="Workers Late Time"
                                         mode="time"
@@ -223,7 +223,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         onSelectDate={setFieldValue}
                                         value={values.endTime}
                                     />
-                                </HStack>
+                                </View>
 
                                 <FormControl>
                                     <ButtonComponent
@@ -234,11 +234,11 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         Create Session
                                     </ButtonComponent>
                                 </FormControl>
-                            </VStack>
+                            </View>
                         )}
                     </Formik>
-                </Box>
-            </VStack>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

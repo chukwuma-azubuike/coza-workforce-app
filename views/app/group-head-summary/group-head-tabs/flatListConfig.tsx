@@ -1,8 +1,8 @@
+import { Text } from "~/components/ui/text";
 import { Icon } from '@rneui/base';
 import dayjs from 'dayjs';
-import { HStack, Text, VStack } from 'native-base';
 import React from 'react';
-import { Appearance } from 'react-native';
+import { Appearance, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import { IFlatListColumn } from '@components/composite/flat-list';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -29,29 +29,29 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: 'Name',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
+            <View key={`name-${key}`} alignItems="center" flex={1} textAlign="left" w="full" minWidth={45}>
                 <AvatarComponent
                     mr={4}
                     size="md"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <VStack justifyContent="center">
+                <View justifyContent="center">
                     <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.firstName)}
                     </Text>
                     <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'} ml={2}>
                         {Utils.capitalizeFirstChar(elm.lastName)}
                     </Text>
-                </VStack>
-            </HStack>
+                </View>
+            </View>
         ),
     },
     {
         title: '                     Clock In',
         dataIndex: 'clockIn',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockin-${key}`} minWidth={0} justifyContent="center" flex={1} textAlign="left" w="full">
+            <View key={`clockin-${key}`} minWidth={0} justifyContent="center" flex={1} textAlign="left" w="full">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text
                     _dark={{
@@ -62,14 +62,14 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                 >
                     {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
                 </Text>
-            </HStack>
+            </View>
         ),
     },
     {
         title: 'Clock Out',
         dataIndex: 'clockOut',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <HStack key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
+            <View key={`clockout-${key}`} justifyContent="center" flex={1} textAlign="left" w="full">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text
                     color="gray.500"
@@ -79,7 +79,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                 >
                     {elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}
                 </Text>
-            </HStack>
+            </View>
         ),
     },
 ];

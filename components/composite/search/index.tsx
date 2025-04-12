@@ -1,22 +1,19 @@
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { FloatButton } from '@components/atoms/button';
-import { InputComponent } from '@components/atoms/input';
 import { IPermission, ITicket, IUser } from '@store/types';
-import { Alert, ListRenderItemInfo, Text, View } from 'react-native';
+import { Alert, ListRenderItemInfo, View, FlatList, TouchableOpacity } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import Utils from '@utils/index';
 import dynamicSearch from '@utils/dynamicSearch';
-import { FlatList } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useAppColorMode from '@hooks/theme/colorMode';
 import debounce from 'lodash/debounce';
-import HStackComponent from '@components/layout/h-stack';
-import VStackComponent from '@components/layout/v-stack';
-import { TouchableOpacity } from 'react-native';
 import ModalComponent from '../modal';
 import { THEME_CONFIG } from '@config/appConfig';
 import Loading from '@components/atoms/loading';
+import { Input } from '~/components/ui/input';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
@@ -75,16 +72,16 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 isOpen={openSearchBar}
                 onClose={handleCancel}
                 header={
-                    <InputComponent
+                    <Input
                         autoFocus
-                        flex={1}
-                        ref={inputRef}
-                        variant="outline"
+                        // ref={inputRef} TODO: TBD
+
                         clearButtonMode="always"
                         leftIcon={{
                             name: 'search1',
                             type: 'antdesign',
                         }}
+                        className="flex-1"
                         onChangeText={handleTextChange}
                         style={{
                             flex: 1,
@@ -104,15 +101,10 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                     ListEmptyComponent={
                         <View style={{ padding: 16 }}>
                             <Text
-                                style={{
-                                    fontSize: 18,
-                                    width: '100%',
-                                    color: textColor,
-                                    textAlign: 'center',
-                                }}
                                 numberOfLines={1}
                                 lineBreakMode="tail"
                                 ellipsizeMode="tail"
+                                className="text-18 w-100% text-center"
                             >
                                 No data found
                             </Text>
@@ -145,61 +137,57 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                                     borderBottomColor: THEME_CONFIG.transparentGray,
                                 }}
                             >
-                                <HStackComponent>
-                                    <HStackComponent space={12}>
+                                <View>
+                                    <View className="gap-12">
                                         <AvatarComponent
-                                            size="md"
+                                            alt="avatar"
+                                            className="w-8 h-8"
                                             imageUrl={elm?.pictureUrl || elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
                                         />
-                                        <VStackComponent>
+                                        <View>
                                             <Text
-                                                style={{
-                                                    color: textColor,
-                                                    fontSize: 18,
-                                                    fontWeight: '700',
-                                                }}
                                                 numberOfLines={1}
                                                 lineBreakMode="tail"
                                                 ellipsizeMode="tail"
+                                                className="text-18 font-bold"
                                             >
                                                 {`${Utils.capitalizeFirstChar(
                                                     elm?.firstName || elm?.user?.firstName
                                                 )} ${Utils.capitalizeFirstChar(elm?.lastName || elm?.user?.lastName)}`}
                                             </Text>
                                             <Text
-                                                style={{
-                                                    color: textColor,
-                                                    fontSize: 16,
-                                                }}
                                                 numberOfLines={1}
                                                 lineBreakMode="tail"
                                                 ellipsizeMode="tail"
+                                                className="text-16"
                                             >
                                                 {elm?.departmentName}
                                             </Text>
                                             <Text
-                                                style={{
-                                                    color: textColor,
-                                                    fontSize: 14,
-                                                }}
                                                 numberOfLines={1}
                                                 lineBreakMode="tail"
                                                 ellipsizeMode="tail"
+                                                className="text-14"
                                             >
                                                 {elm?.categoryName || elm?.email || elm?.user?.email}
                                             </Text>
-                                        </VStackComponent>
-                                    </HStackComponent>
+                                        </View>
+                                    </View>
                                     <StatusTag>
                                         {elm?.status || ((elm?.gender === 'M' ? 'Male' : 'Female') as any)}
                                     </StatusTag>
-                                </HStackComponent>
+                                </View>
                             </TouchableOpacity>
                         );
                     }}
                 />
             </ModalComponent>
-            <FloatButton shadow={6} buttom={16} iconName="search1" iconType="ant-design" onPress={handleSearchBar} />
+            <FloatButton
+                iconName="search1"
+                iconType="ant-design"
+                onPress={handleSearchBar}
+                className="bottom-16 shadow-md "
+            />
         </>
     );
 }

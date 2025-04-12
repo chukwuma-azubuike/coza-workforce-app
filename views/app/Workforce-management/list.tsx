@@ -1,6 +1,7 @@
+import { Text } from "~/components/ui/text";
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
@@ -23,18 +24,18 @@ const UserListRow: React.FC<IUser> = memo(user => {
 
     return (
         <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
-            <HStackComponent style={{ padding: 2 }}>
-                <HStackComponent space={6} style={{ alignItems: 'center' }}>
+            <View className="p-2">
+                <View space={6} className="items-center">
                     <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                    <VStackComponent>
-                        <TextComponent bold>
+                    <View>
+                        <Text className="font-bold">
                             {Utils.capitalizeFirstChar(user?.firstName)} {Utils.capitalizeFirstChar(user?.lastName)}
-                        </TextComponent>
-                        <TextComponent fontSize="sm">{user?.email}</TextComponent>
-                    </VStackComponent>
-                </HStackComponent>
+                        </Text>
+                        <Text fontSize="sm">{user?.email}</Text>
+                    </View>
+                </View>
                 <StatusTag>{user?.status || 'ACTIVE'}</StatusTag>
-            </HStackComponent>
+            </View>
         </TouchableOpacity>
     );
 });
@@ -67,24 +68,24 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <HStackComponent style={{ padding: 2, paddingVertical: 6 }}>
-                            <HStackComponent space={6} style={{ alignItems: 'center' }}>
+                        <View className="p-2 py-6">
+                            <View space={6} className="items-center">
                                 <AvatarComponent size="sm" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <VStackComponent space={2}>
-                                    <TextComponent bold>
+                                <View space={2}>
+                                    <Text className="font-bold">
                                         {Utils.capitalizeFirstChar(user?.firstName)}{' '}
                                         {Utils.capitalizeFirstChar(user?.lastName)}
-                                    </TextComponent>
-                                    <TextComponent size="sm">{user?.email}</TextComponent>
-                                </VStackComponent>
-                            </HStackComponent>
+                                    </Text>
+                                    <Text size="sm">{user?.email}</Text>
+                                </View>
+                            </View>
                             {(isHOD || isAHOD) && (
                                 <StatusTag capitalise={false} style={{ marginRight: 8 }}>
                                     {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
                                 </StatusTag>
                             )}
                             <StatusTag>{user?.status}</StatusTag>
-                        </HStackComponent>
+                        </View>
                     </TouchableOpacity>
                 );
             })}

@@ -1,6 +1,7 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
-import { Box, FormControl, Heading, HStack, Stack, Text, VStack } from 'native-base';
-import { InputComponent } from '@components/atoms/input';
+import { FormControl, Heading } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { Icon } from '@rneui/themed';
@@ -57,11 +58,11 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     return (
         <ViewWrapper>
-            <Box w="100%" h="full" justifyContent="space-between" pb={4}>
-                <VStack space={6} pb={5} px={4} pt={20} alignItems="center" justifyContent="space-around">
+            <View w="100%" h="full" justifyContent="space-between" pb={4}>
+                <View space={6} pb={5} pt={20} alignItems="center" justifyContent="space-around" className="px-4">
                     {/* <Logo /> */}
                     <Heading>Reset password</Heading>
-                    <Box alignItems="center" w="100%">
+                    <View alignItems="center" w="100%">
                         <Formik<{ email: string; password: string }>
                             validateOnChange
                             onSubmit={onSubmit}
@@ -77,7 +78,7 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 'values' | 'errors' | 'handleChange' | 'handleSubmit' | 'setFieldError'
                             >) => {
                                 return (
-                                    <Stack w="100%" space={1}>
+                                    <View w="100%" space={1}>
                                         <FormControl isRequired isInvalid={errors?.password ? true : false}>
                                             <FormControl.Label>Password</FormControl.Label>
                                             <InputComponent
@@ -150,13 +151,13 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                                 Save
                                             </ButtonComponent>
                                         </FormControl>
-                                    </Stack>
+                                    </View>
                                 );
                             }}
                         </Formik>
-                    </Box>
+                    </View>
 
-                    <HStack alignItems="center" justifyContent="center">
+                    <View alignItems="center" justifyContent="center">
                         <Text fontSize="md" color="gray.400">
                             Remember your password?
                         </Text>
@@ -169,12 +170,12 @@ const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                 Login
                             </Text>
                         </TouchableRipple>
-                    </HStack>
-                </VStack>
-                <Box w="full" justifyContent="center" justifyItems="center" alignItems="center">
+                    </View>
+                </View>
+                <View w="full" justifyContent="center" justifyItems="center" alignItems="center">
                     <SupportLink />
-                </Box>
-            </Box>
+                </View>
+            </View>
         </ViewWrapper>
     );
 };

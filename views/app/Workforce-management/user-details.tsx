@@ -1,11 +1,12 @@
+import { Text } from "~/components/ui/text";
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import dayjs from 'dayjs';
-import { FormControl, HStack, Text, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import React from 'react';
-import { Alert, Switch } from 'react-native';
+import { Alert, Switch, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -226,12 +227,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         );
 
                         return (
-                            <VStackComponent space={8}>
+                            <View space={8}>
                                 <CenterComponent>
                                     <AvatarComponent size="2xl" imageUrl={data?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 </CenterComponent>
                                 <If condition={canEdit}>
-                                    <HStackComponent style={{ marginVertical: 6, justifyContent: 'space-between' }}>
+                                    <View className="my-6 justify-between">
                                         <ButtonComponent
                                             style={{ paddingHorizontal: 6, backgroundColor: THEME_CONFIG.info }}
                                             size="md"
@@ -261,10 +262,10 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         >
                                             Delete
                                         </ButtonComponent>
-                                    </HStackComponent>
+                                    </View>
                                 </If>
                                 <If condition={canApproveForCGWC}>
-                                    <HStackComponent style={{ marginHorizontal: 2 }}>
+                                    <View className="mx-2">
                                         <FormControl flexDirection="row" justifyContent="space-between">
                                             <FormControl.Label>
                                                 {data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC
@@ -280,9 +281,9 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 />
                                             )}
                                         </FormControl>
-                                    </HStackComponent>
+                                    </View>
                                 </If>
-                                <HStack
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -290,12 +291,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Role
                                     </Text>
                                     <Text>{data?.role.name}</Text>
-                                </HStack>
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -303,12 +304,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         First name
                                     </Text>
                                     <Text>{data?.firstName}</Text>
-                                </HStack>
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -316,13 +317,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Last name
                                     </Text>
                                     <Text>{data?.lastName}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -330,13 +330,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Phone number
                                     </Text>
                                     <Text>{data?.phoneNumber}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -345,13 +344,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Email
                                     </Text>
                                     <Text>{data?.email}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -360,13 +358,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Address
                                     </Text>
                                     <Text>{data?.address}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -374,12 +371,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Status
                                     </Text>
                                     <StatusTag>{data?.status}</StatusTag>
-                                </HStack>
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -387,13 +384,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Gender
                                     </Text>
                                     <Text>{data?.gender}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -401,13 +397,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Marital Status
                                     </Text>
                                     <Text>{data?.maritalStatus}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -415,13 +410,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Birthday
                                     </Text>
                                     <Text>{dayjs(data?.birthDay).format('Do MMMM')}</Text>
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     pb={2}
                                     w="full"
                                     space={2}
@@ -430,7 +424,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     justifyContent="space-between"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Campus
                                     </Text>
                                     <If condition={!isEditMode}>
@@ -460,9 +454,8 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             </SelectComponent>
                                         </FormControl>
                                     ) : null}
-                                </HStack>
-
-                                <HStack
+                                </View>
+                                <View
                                     pb={2}
                                     w="full"
                                     space={2}
@@ -471,7 +464,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     justifyContent="space-between"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Department
                                     </Text>
 
@@ -503,10 +496,9 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             </SelectComponent>
                                         </FormControl>
                                     ) : null}
-                                </HStack>
-
+                                </View>
                                 <If condition={isEditMode}>
-                                    <HStack
+                                    <View
                                         pb={2}
                                         w="full"
                                         space={2}
@@ -515,7 +507,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                         borderBottomWidth={0.2}
                                         justifyContent="space-between"
                                     >
-                                        <Text alignSelf="flex-start" bold>
+                                        <Text alignSelf="flex-start" className="font-bold">
                                             Role
                                         </Text>
                                         <FormControl mb={3} h={12} maxW={200} flexDirection="row-reverse">
@@ -537,9 +529,9 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 ))}
                                             </SelectComponent>
                                         </FormControl>
-                                    </HStack>
+                                    </View>
                                 </If>
-                                <HStack
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -548,12 +540,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text flexWrap="wrap" alignSelf="flex-start" bold>
+                                    <Text flexWrap="wrap" alignSelf="flex-start" className="font-bold">
                                         Occupation
                                     </Text>
                                     <Text>{data?.occupation}</Text>
-                                </HStack>
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -562,12 +554,12 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Place of work
                                     </Text>
                                     <Text>{data?.placeOfWork}</Text>
-                                </HStack>
-                                <HStack
+                                </View>
+                                <View
                                     space={2}
                                     pb={2}
                                     w="full"
@@ -575,15 +567,15 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     borderBottomWidth={0.2}
                                     borderColor="gray.300"
                                 >
-                                    <Text alignSelf="flex-start" bold>
+                                    <Text alignSelf="flex-start" className="font-bold">
                                         Next of Kin
                                     </Text>
-                                    <VStack>
+                                    <View>
                                         <Text>{data?.nextOfKin}</Text>
                                         <Text>{data?.nextOfKinPhoneNo}</Text>
-                                    </VStack>
-                                </HStack>
-                            </VStackComponent>
+                                    </View>
+                                </View>
+                            </View>
                         );
                     }}
                 </Formik>

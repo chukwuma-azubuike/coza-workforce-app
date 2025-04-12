@@ -1,9 +1,10 @@
+import { Text } from "~/components/ui/text";
+
 import React from 'react';
 import Logo from '@components/atoms/logo';
 import SupportLink from '../support-link';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native';
-import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { router } from 'expo-router';
 import APP_ENV from '~/config/envConfig';
