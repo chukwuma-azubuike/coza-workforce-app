@@ -17,7 +17,6 @@ import { useAppDispatch } from '@store/hooks';
 // import ConnectionStatusBar from '@components/atoms/status-bar';
 import { useAuth } from '@hooks/auth';
 import useRole from '@hooks/role';
-import { useNotifications } from '@hooks/notifications';
 
 const colorScheme = Appearance.getColorScheme();
 const RootStack = createNativeStackNavigator();
@@ -65,8 +64,6 @@ const Views: React.FC<IAppState> = ({ isLoggedIn }) => {
     React.useEffect(() => {
         // setColorMode(scheme);
     }, [colorScheme, scheme]);
-
-    useNotifications(user);
 
     return (
         <>
