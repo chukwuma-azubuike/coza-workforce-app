@@ -10,6 +10,8 @@ import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { NavButton } from './NavButton';
 import { AppRoutes, IAppRoute } from '~/config/navigation';
+// import { usePushNotifications } from '~/hooks/push-notifications';
+import { IUser } from '~/store/types';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -75,9 +77,11 @@ const Routing: React.FC = () => {
         }
     }, [isLoggedIn]);
 
+    // usePushNotifications(isLoggedIn as IUser);
+
     return (
         <View className="flex-1">
-            {/* <NotificationModal /> */}
+            <NotificationModal />
             {/* Unauthenticated Screens */}
             {!isLoggedIn ? (
                 <Stack>
