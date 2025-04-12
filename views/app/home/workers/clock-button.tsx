@@ -45,7 +45,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
     } = React.useContext(HomeContext);
 
     const { user } = useRole();
-    // const { setModalState } = useModal();
+    const { setModalState } = useModal();
     const [clockedOut, setClockedOut] = React.useState<boolean>(false);
     const [clockIn, { data: clockinData, error, isLoading }] = useClockInMutation();
     const [clockOut, { isLoading: clockOutLoading, error: clockOutError }] = useClockOutMutation();
@@ -66,25 +66,25 @@ const ClockButton: React.FC<IClockButtonProps> = ({
         });
 
         if ('data' in result) {
-            // setModalState({
-            //     duration: 3,
-            //     render: (
-            //         <ModalAlertComponent
-            //             description={`You clocked in at ${dayjs().format('h:mm A')}`}
-            //             status={isInRange ? 'success' : 'warning'}
-            //             icon={Timer}
-            //         />
-            //     ),
-            // });
+            setModalState({
+                duration: 3,
+                render: (
+                    <ModalAlertComponent
+                        description={`You clocked in at ${dayjs().format('h:mm A')}`}
+                        status={isInRange ? 'success' : 'warning'}
+                        iconName={'timer-outline'}
+                    />
+                ),
+            });
             onSuccess && onSuccess();
         }
 
         if ('error' in result) {
-            // setModalState({
-            //     defaultRender: true,
-            //     status: 'warning',
-            //     message: (error as any)?.data?.message || 'Oops something went wrong',
-            // });
+            setModalState({
+                defaultRender: true,
+                status: 'warning',
+                message: (error as any)?.data?.message || 'Oops something went wrong',
+            });
         }
     };
 
@@ -94,23 +94,24 @@ const ClockButton: React.FC<IClockButtonProps> = ({
 
             if ('data' in result) {
                 setClockedOut(true);
-                // setModalState({
-                //     render: (
-                //         <ModalAlertComponent
-                //             description={`You clocked out at ${dayjs().format('h:mm A')}`}
-                //             status={isInRange ? 'success' : 'warning'}
-                //             icon={Timer}
-                //         />
-                //     ),
-                // });
+                setModalState({
+                    render: (
+                        <ModalAlertComponent
+                            description={`You clocked out at ${dayjs().format('LT')}`}
+                            status={isInRange ? 'success' : 'warning'}
+                            iconType={'material-community'}
+                            iconName={'timer-outline'}
+                        />
+                    ),
+                });
             }
 
             if ('error' in result) {
-                // setModalState({
-                //     defaultRender: true,
-                //     status: 'warning',
-                //     message: (clockOutError as any)?.data?.message || 'Oops something went wrong',
-                // });
+                setModalState({
+                    defaultRender: true,
+                    status: 'warning',
+                    message: (clockOutError as any)?.data?.message || 'Oops something went wrong',
+                });
             }
         }
     };
@@ -139,17 +140,18 @@ const ClockButton: React.FC<IClockButtonProps> = ({
         if (canClockOut) {
             verifyRangeBeforeAction(
                 () => handleClockOut(),
-                () => ''
-                // setModalState({
-                //     duration: 6,
-                //     render: (
-                //         <ModalAlertComponent
-                //             description={'You are not within range of any campus!'}
-                //             icon={LocateOffIcon}
-                //             status={'warning'}
-                //         />
-                //     ),
-                // })
+                () =>
+                    setModalState({
+                        duration: 6,
+                        render: (
+                            <ModalAlertComponent
+                                description={'You are not within range of any campus!'}
+                                iconName={'warning-outline'}
+                                iconType={'ionicon'}
+                                status={'warning'}
+                            />
+                        ),
+                    })
             );
             return;
         }
@@ -181,18 +183,19 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                     return;
                 }
                 if (!isInRange && (res === RESULTS.GRANTED || res === RESULTS.LIMITED)) {
-                    // setModalState({
-                    //     duration: 6,
-                    //     render: (
-                    //         <ModalAlertComponent
-                    //             description={
-                    //                 'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
-                    //             }
-                    //             icon={LocateOffIcon}
-                    //             status={'warning'}
-                    //         />
-                    //     ),
-                    // });
+                    setModalState({
+                        duration: 6,
+                        render: (
+                            <ModalAlertComponent
+                                description={
+                                    'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
+                                }
+                                iconName={'warning-outline'}
+                                iconType={'ionicon'}
+                                status={'warning'}
+                            />
+                        ),
+                    });
                     return;
                 }
 

@@ -7,6 +7,7 @@ import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import hardSet from 'redux-persist/es/stateReconciler/hardSet';
 import userStateSlice from './actions/users';
+import appStateSlice from './actions/app';
 
 const middlewares: Middleware[] = [];
 
@@ -14,7 +15,7 @@ const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {
     key: 'root',
     storage: AsyncStorage,
     stateReconciler: hardSet,
-    whitelist: [userStateSlice.reducerPath],
+    whitelist: [userStateSlice.reducerPath, appStateSlice.reducerPath],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

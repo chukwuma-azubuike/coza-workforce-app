@@ -41,7 +41,7 @@ export const TeamAttendanceSummary: React.FC<ITeamAttendanceSummary> = React.mem
                         </View>
 
                         <View className="items-baseline flex-row">
-                            <Text className="font-bold text-primary/70 text-5xl ml-1">
+                            <Text className="font-bold text-primary/70 dark:text-purple-600 text-5xl ml-1">
                                 <CountUp isCounting duration={2} end={attendance || 0} />
                             </Text>
                             <Text className="font-semibold text-muted-foreground">
