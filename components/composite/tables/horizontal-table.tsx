@@ -1,4 +1,5 @@
-import { Box, HStack, Text, VStack } from 'native-base';
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
 import Empty from '../../atoms/empty';
 import If from '../if-container';
@@ -15,7 +16,7 @@ type Props = {
 
 const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
     return (
-        <Box>
+        <View>
             <Text fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
                 {title}
             </Text>
@@ -24,19 +25,19 @@ const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
             </If>
             <If condition={!isLoading}>
                 {tableData.column ? (
-                    <Box w="100%">
-                        <HStack space={'2px'}>
-                            <VStack space={'2px'} w="40%">
+                    <View w="100%">
+                        <View space={'2px'}>
+                            <View space={'2px'} w="40%">
                                 {tableData?.headers?.map((item, index) => (
-                                    <Box key={`${item}-${index}`} alignItems="flex-start" bg="primary.600" p={3}>
+                                    <View key={`${item}-${index}`} alignItems="flex-start" bg="primary.600" p={3}>
                                         <Text color="white">{item}</Text>
-                                    </Box>
+                                    </View>
                                 ))}
-                            </VStack>
+                            </View>
 
-                            <VStack space={'2px'} w={'59%'}>
+                            <View space={'2px'} w={'59%'}>
                                 {Object.values(tableData?.column)?.map((item, index) => (
-                                    <Box
+                                    <View
                                         _light={{ color: 'gray.700', bgColor: 'gray.200' }}
                                         _dark={{ color: 'gray.300', bgColor: 'gray.900' }}
                                         key={`${item}-${index}`}
@@ -45,16 +46,16 @@ const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
                                         p={3}
                                     >
                                         {item}
-                                    </Box>
+                                    </View>
                                 ))}
-                            </VStack>
-                        </HStack>
-                    </Box>
+                            </View>
+                        </View>
+                    </View>
                 ) : (
                     <Empty width={120} />
                 )}
             </If>
-        </Box>
+        </View>
     );
 };
 

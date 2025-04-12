@@ -1,18 +1,14 @@
 import React from 'react';
-import { TextInput, TouchableOpacity, View, ViewProps } from 'react-native';
-import { IInputProps } from 'native-base/lib/typescript/components/primitives/Input/types';
+import { TextInput, TextInputProps, TouchableOpacity, View, ViewProps } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { IIconTypes } from '@utils/types';
 import useAppColorMode from '@hooks/theme/colorMode';
 import useDevice from '@hooks/device';
-export interface IInputComponentProps extends IInputProps {
-    leftIcon?: { name: string; type?: IIconTypes };
-    rightIcon?: { name: string; type?: IIconTypes };
-    onIconPress?: () => void;
-}
+import { ITextInputProps } from '~/components/ui/input';
 
-interface IInputContainerProps extends ViewProps, Pick<IInputProps, 'leftIcon' | 'rightIcon'> {
+export type IInputComponentProps = ITextInputProps & TextInputProps;
+
+interface IInputContainerProps extends ViewProps, Pick<ITextInputProps, 'leftIcon' | 'rightIcon'> {
     onIconPress?: () => void;
     isActive: boolean;
 }
@@ -85,7 +81,7 @@ const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
                 autoCapitalize="none"
                 editable={!props?.isDisabled}
                 selectTextOnFocus={!props?.isDisabled}
-                secureTextEntry={props.type === 'password'}
+                secureTextEntry={props.isPassword}
                 returnKeyType={isIOS ? 'done' : 'default'}
                 {...(props as any)}
                 style={{

@@ -1,4 +1,5 @@
-import { HStack, Text, Center } from 'native-base';
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
 interface IPermissionsStats {
     total: number;
@@ -20,48 +21,48 @@ const PermissionStats: React.FC<IPermissionsStats> = props => {
 
     return (
         <>
-            <HStack
-                py={2}
+            <View
                 borderTopWidth={0.2}
                 borderColor="gray.300"
                 borderBottomWidth={0.2}
                 _light={{ bg: 'gray.50' }}
                 _dark={{ bg: 'gray.950' }}
                 justifyContent="space-evenly"
+                className="py-2"
             >
-                <Center>
+                <View>
                     <Text color="primary.600" fontSize="sm">
                         Total
                     </Text>
-                    <Text bold color="primary.600" fontSize="3xl">
+                    <Text color="primary.600" fontSize="3xl" className="font-bold">
                         {total}
                     </Text>
-                </Center>
-                <Center>
+                </View>
+                <View>
                     <Text color="green.500" fontSize="sm">
                         Approved
                     </Text>
-                    <Text bold color="green.500" fontSize="3xl">
+                    <Text color="green.500" fontSize="3xl" className="font-bold">
                         {approved}
                     </Text>
-                </Center>
-                <Center>
+                </View>
+                <View>
                     <Text color="red.600" fontSize="sm">
                         Declined
                     </Text>
-                    <Text bold color="red.600" fontSize="3xl">
+                    <Text color="red.600" fontSize="3xl" className="font-bold">
                         {declined}
                     </Text>
-                </Center>
-                <Center>
+                </View>
+                <View>
                     <Text color="gray.500" fontSize="sm">
                         Pending
                     </Text>
-                    <Text bold color="gray.500" fontSize="3xl">
+                    <Text color="gray.500" fontSize="3xl" className="font-bold">
                         {pending}
                     </Text>
-                </Center>
-            </HStack>
+                </View>
+            </View>
         </>
     );
 };

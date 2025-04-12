@@ -1,3 +1,4 @@
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { Picker, PickerItemProps, PickerProps } from '@react-native-picker/picker';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -5,8 +6,6 @@ import { Icon } from '@rneui/themed';
 import { IIconTypes } from '@utils/types';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { Button, Modal, Platform, StyleProp, TouchableOpacity, View, ViewStyle } from 'react-native';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
 import getDeepField from '@utils/getDeepField';
 import dayjs from 'dayjs';
 import isValidDate from '@utils/isValidDate';
@@ -46,22 +45,10 @@ const SelectButton: React.FC<ISelectButtonProps> = React.memo(
                 onPress={togglePicker}
                 style={{ opacity: !enabled ? 0.6 : 1, ...(style as {}) }}
             >
-                <HStackComponent
-                    style={{
-                        backgroundColor: backgroundColor,
-                        borderRadius: 8,
-                        borderWidth: 0.1,
-                        flex: 0,
-                        paddingVertical: 6,
-                        paddingRight: 10,
-                        paddingLeft: 16,
-                    }}
-                >
-                    <TextComponent size="lg" style={{ flex: 1, paddingVertical: 10 }}>
-                        {isLoading ? 'Loading...' : label}
-                    </TextComponent>
+                <View className="rounded-8 border-0.1 flex-0 py-6 pr-10 pl-16">
+                    <Text className="flex-1 py-10 text-3xl">{isLoading ? 'Loading...' : label}</Text>
                     <Icon size={22} type="ant-design" style={{ marginLeft: 10 }} name="down" color={textColor} />
-                </HStackComponent>
+                </View>
             </TouchableOpacity>
         );
     }

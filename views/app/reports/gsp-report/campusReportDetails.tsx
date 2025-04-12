@@ -1,8 +1,10 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Formik } from 'formik';
 import dayjs from 'dayjs';
-import { VStack, Text, HStack, Divider, FormControl } from 'native-base';
+import { Divider, FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -284,10 +286,10 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
 
     return (
         <ViewWrapper py={10} scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
-            <Text bold fontSize="3xl" mb={4} ml={4}>
+            <Text fontSize="3xl" mb={4} ml={4} className="font-bold">
                 {campusName}
             </Text>
-            <VStack px={4} space={10}>
+            <View space={10} className="px-4">
                 <Divider />
                 <VerticalTable
                     isLoading={isLoading || isFetching}
@@ -317,7 +319,7 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                     isLoading={isLoading || isFetching}
                     title="Service Programme Observation"
                 >
-                    <HStack
+                    <View
                         marginBottom={3}
                         paddingBottom={2}
                         borderBottomWidth={1}
@@ -325,26 +327,26 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                         justifyContent={'space-between'}
                     >
                         <Text>Start Time:</Text>
-                        <Text color="primary.500" bold>
+                        <Text color="primary.500" className="font-bold">
                             {serviceTime?.start ? dayjs(serviceTime?.start).format('h:mm A') : '--:--'}
                         </Text>
                         <Text>End Time:</Text>
-                        <Text color="primary.500" bold>
+                        <Text color="primary.500" className="font-bold">
                             {serviceTime?.end ? dayjs(serviceTime?.end).format('h:mm A') : '--:--'}
                         </Text>
-                    </HStack>
+                    </View>
                 </VerticalTable>
                 <Divider />
                 <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
                 <Divider />
                 <If condition={isGlobalPastor}>
                     {data?.campusCoordinatorComment && (
-                        <VStack pb={10} w="full" space={2}>
-                            <Text alignSelf="flex-start" bold>
+                        <View pb={10} w="full" space={2}>
+                            <Text alignSelf="flex-start" className="font-bold">
                                 For the GSP's attention
                             </Text>
                             <Text flexWrap="wrap">{data?.campusCoordinatorComment}</Text>
-                        </VStack>
+                        </View>
                     )}
                 </If>
                 <If condition={isCampusPastor}>
@@ -355,7 +357,7 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                     >
                         {({ errors, handleChange, handleSubmit, isValid }) => {
                             return (
-                                <VStack space={2}>
+                                <View space={2}>
                                     <FormControl
                                         isRequired
                                         minHeight={210}
@@ -391,12 +393,12 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                                             Submit to GSP
                                         </ButtonComponent>
                                     </FormControl>
-                                </VStack>
+                                </View>
                             );
                         }}
                     </Formik>
                 </If>
-            </VStack>
+            </View>
         </ViewWrapper>
     );
 };

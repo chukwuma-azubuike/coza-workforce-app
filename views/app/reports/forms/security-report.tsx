@@ -1,21 +1,21 @@
+import { Text } from "~/components/ui/text";
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { ISecurityReportPayload } from '@store/types';
 import { useCreateSecurityReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, VStack, HStack, Text, Divider, WarningOutlineIcon } from 'native-base';
+import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
-import { InputComponent } from '@components/atoms/input';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 
 const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as ISecurityReportPayload;
@@ -89,16 +89,16 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <VStack pb={10} mt={4} px={4}>
+                    <View pb={10} mt={4} className="px-4">
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
                             {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
                         </Text>
                         <FieldArray
                             name="locations"
                             render={arrayHelpers => (
-                                <VStack>
+                                <View>
                                     {values.locations.map((location, idx) => (
-                                        <HStack mb={4} key={idx} space={2} alignItems="flex-end">
+                                        <View mb={4} key={idx} space={2} alignItems="flex-end">
                                             <FormControl isRequired w="41%">
                                                 <FormControl.Label>Location</FormControl.Label>
                                                 <InputComponent
@@ -136,10 +136,10 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     size="sm"
                                                 />
                                             </FormControl>
-                                        </HStack>
+                                        </View>
                                     ))}
 
-                                    <HStack mb={4}>
+                                    <View mb={4}>
                                         <ButtonComponent
                                             leftIcon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             onPress={() =>
@@ -155,17 +155,17 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                         >
                                             Add Location
                                         </ButtonComponent>
-                                    </HStack>
-                                </VStack>
+                                    </View>
+                                </View>
                             )}
                         />
 
-                        <HStack space={4} mb={4}>
+                        <View space={4} mb={4}>
                             <FormControl>
                                 <FormControl.Label>Total Car Count</FormControl.Label>
                                 <InputComponent isDisabled placeholder="0" value={`${addValues(values)}`} />
                             </FormControl>
-                        </HStack>
+                        </View>
 
                         <Divider />
 
@@ -198,7 +198,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     value={values?.pastorComment ? values?.pastorComment : ''}
                                 />
                             </FormControl>
-                            <HStack space={4} justifyContent="space-between" w="95%">
+                            <View space={4} justifyContent="space-between" w="95%">
                                 <ButtonComponent
                                     onPress={() => onRequestReview(values)}
                                     isLoading={isLoading}
@@ -210,9 +210,9 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 <ButtonComponent onPress={() => onApprove(values)} isLoading={isLoading} size="md">
                                     Approve
                                 </ButtonComponent>
-                            </HStack>
+                            </View>
                         </If>
-                    </VStack>
+                    </View>
                 </ViewWrapper>
             )}
         </Formik>

@@ -3,13 +3,14 @@ import { IButtonProps, IconButton } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
-import { PermissionsAndroid, StyleSheet, TouchableOpacity, useColorScheme } from 'react-native';
+import { PermissionsAndroid, TouchableOpacity, useColorScheme } from 'react-native';
 import { generateExcelFile } from '@utils/generateFile';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { InterfaceIconButtonProps } from 'native-base/lib/typescript/components/composites/IconButton/types';
 import { View } from 'react-native';
 import { Text } from 'react-native';
 import Loading from '../loading';
+import { Button, ButtonProps } from '~/components/ui/button';
 interface IButtonComponent extends IButtonProps {
     size?: ThemeComponentSizeType<'Button'>;
     secondary?: boolean;
@@ -89,9 +90,9 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
 
 export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props => {
     return (
-        <ButtonComponent
+        <Button
             {...props}
-            shadow={6}
+            className="shadow-md"
             style={{
                 right: 20,
                 bottom: 24,
@@ -102,7 +103,7 @@ export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props =
             }}
         >
             <Icon name="plus" type="entypo" size={36} color="white" />
-        </ButtonComponent>
+        </Button>
     );
 });
 
@@ -149,22 +150,24 @@ export const DownloadButton: React.FC<IDownloadButton> = React.memo(({ data, typ
     };
 
     return (
-        <ButtonComponent
+        <Button
             size="md"
-            right={6}
-            bottom={6}
-            shadow={6}
-            width={60}
-            height={60}
-            borderRadius="full"
-            position="absolute"
-            alignItems="center"
-            justifyContent="center"
+            className="shadow-md"
+            style={{
+                right: 6,
+                bottom: 6,
+                width: 60,
+                height: 60,
+                borderRadius: 'full',
+                position: 'absolute',
+                alignItems: 'center',
+                justifyContent: 'center',
+            }}
             {...props}
             onPress={handleDownload}
         >
             <Icon name="download-outline" type="ionicon" size={36} color="white" />
-        </ButtonComponent>
+        </Button>
     );
 });
 
@@ -188,11 +191,10 @@ export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = React.me
     );
 });
 
-export const FloatButton: React.FC<IButtonComponent & { iconName: string; iconType: string }> = React.memo(
-    ({ iconName, iconType, ...props }) => {
+export const FloatButton: React.FC<ButtonProps & { iconName: string; iconType: string; className: string }> =
+    React.memo(({ iconName, iconType, className, ...props }) => {
         return (
-            <ButtonComponent
-                size="md"
+            <Button
                 style={{
                     right: 20,
                     bottom: 100,
@@ -202,18 +204,12 @@ export const FloatButton: React.FC<IButtonComponent & { iconName: string; iconTy
                     borderRadius: 32,
                     position: 'absolute',
                 }}
+                className={className}
                 {...props}
             >
                 <Icon name={iconName} type={iconType} size={28} color="white" />
-            </ButtonComponent>
+            </Button>
         );
-    }
-);
-
-const styles = StyleSheet.create({
-    disabledView: {
-        opacity: 0.5, // Reduce opacity to indicate disabled state
-    },
-});
+    });
 
 export default React.memo(ButtonComponent);

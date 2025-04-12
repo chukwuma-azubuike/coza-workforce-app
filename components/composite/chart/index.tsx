@@ -1,3 +1,4 @@
+import { Text } from '~/components/ui/text';
 import Loading from '@components/atoms/loading';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -5,7 +6,7 @@ import useMediaQuery from '@hooks/media-query';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { ScreenHeight, ScreenWidth } from '@rneui/base';
 import React, { FC } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import {
     VictoryChart,
     VictoryBar,
@@ -77,16 +78,7 @@ export const BarChart: FC<BarChartProps> = React.memo(
 
         return (
             <View style={[styles.container, isMobile && { width: '100%' }]}>
-                <Text
-                    style={{
-                        fontWeight: 'bold',
-                        fontSize: 20,
-                        textAlign: 'center',
-                        color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                    }}
-                >
-                    {title}
-                </Text>
+                <Text className="font-bold text-20 text-center">{title}</Text>
                 {isLoading ? (
                     <Loading />
                 ) : (
@@ -183,16 +175,7 @@ export const LineChart: FC<LineChartProps> = React.memo(
 
         return (
             <View style={[styles.container, { padding: 2 }, isMobile && { width: '100%' }]}>
-                <Text
-                    style={{
-                        fontWeight: 'bold',
-                        fontSize: 20,
-                        textAlign: 'center',
-                        color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                    }}
-                >
-                    {title}
-                </Text>
+                <Text className="font-bold text-20 text-center">{title}</Text>
                 {isLoading ? (
                     <Loading />
                 ) : (
@@ -292,16 +275,7 @@ export const StackedHistogram: FC<StackedHistogramProps> = React.memo(
 
         return (
             <ViewWrapper style={[styles.container, { height }]}>
-                <Text
-                    style={{
-                        fontSize: 20,
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                    }}
-                >
-                    {title}
-                </Text>
+                <Text className="text-20 font-bold text-center">{title}</Text>
                 {isLoading ? (
                     <Loading />
                 ) : (
@@ -416,16 +390,7 @@ export const PieChart: React.FC<IPieChartProps> = React.memo(props => {
 
     return (
         <View style={[styles.container]}>
-            <Text
-                style={{
-                    fontWeight: 'bold',
-                    fontSize: 20,
-                    textAlign: 'center',
-                    color: isDarkMode ? THEME_CONFIG.lightGray : 'black',
-                }}
-            >
-                {props.title}
-            </Text>
+            <Text className="font-bold text-20 text-center">{props.title}</Text>
             {props.isLoading ? (
                 <Loading />
             ) : (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text } from 'react-native';
+import { Text } from '~/components/ui/text';
 import Loading from '@components/atoms/loading';
 
 interface IListtableProps<C = any, H = any> {
@@ -21,7 +21,7 @@ const ListTable: React.FC<IListtableProps> = ({ data, Column, Header, headerProp
                     return !!Column ? (
                         <Column {...item} />
                     ) : (
-                        <Text key={index} style={{ height: 60, color: '#fff' }}>
+                        <Text key={index} className="h-60 text-white">
                             {item.title}
                         </Text>
                     );

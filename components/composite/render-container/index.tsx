@@ -1,4 +1,4 @@
-import { Box } from 'native-base';
+import { View } from 'react-native';
 import React from 'react';
 import Empty from '../../atoms/empty';
 
@@ -14,9 +14,9 @@ const RenderContainer = (props: IRenderContainer) => {
                 components.map((Component: any, index: number) => {
                     if (index === renderIndex) {
                         return (
-                            <Box flex={1} key={index}>
+                            <View className="flex-1" key={index}>
                                 {Component}
-                            </Box>
+                            </View>
                         );
                     }
                 })

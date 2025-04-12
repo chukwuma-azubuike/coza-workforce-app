@@ -17,8 +17,7 @@ import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { Box } from 'native-base';
-import { Platform } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useGetGHCampusByIdQuery } from '@store/services/campus';
 
 const isAndroid = Platform.OS === 'android';
@@ -140,7 +139,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
+            <View mb={2} className="px-2">
                 <SelectComponent
                     valueKey="_id"
                     selectedValue={serviceId}
@@ -158,7 +157,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+            </View>
             <FlatListComponent
                 padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}
@@ -282,7 +281,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
+            <View mb={2} className="px-2">
                 <SelectComponent
                     valueKey="_id"
                     placeholder="Select Service"
@@ -300,7 +299,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+            </View>
             <FlatListComponent
                 padding={isAndroid ? 3 : true}
                 onRefresh={handleRefetch}
@@ -385,7 +384,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
+            <View mb={2} className="px-2">
                 <SelectComponent
                     valueKey="_id"
                     selectedValue={serviceId}
@@ -403,7 +402,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+            </View>
             <FlatListComponent
                 columns={campusColumns}
                 onRefresh={handleRefetch}
@@ -502,7 +501,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <Box mb={2} px={2}>
+            <View mb={2} className="px-2">
                 <SelectComponent
                     valueKey="_id"
                     selectedValue={serviceId}
@@ -520,7 +519,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
                         />
                     ))}
                 </SelectComponent>
-            </Box>
+            </View>
             <FlatListComponent
                 padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}

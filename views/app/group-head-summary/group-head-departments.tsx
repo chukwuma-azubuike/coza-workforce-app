@@ -1,6 +1,8 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Center, Heading, Stack, Text } from 'native-base';
+import { Heading } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -70,7 +72,7 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
                     isLoading || isFetching ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <Stack key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} px={2}>
+                        <View key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} className="px-2">
                             <Text
                                 flexWrap="wrap"
                                 fontWeight="400"
@@ -82,11 +84,11 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
                             <Heading ml={4} size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
                                 {item.value}
                             </Heading>
-                        </Stack>
+                        </View>
                     )
                 )}
-                <Center>
-                    <Stack py={3} mb={4} flexDirection="row" flex={1} flexWrap="wrap">
+                <View>
+                    <View mb={4} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (
@@ -101,8 +103,8 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
                                 ))}
                             </>
                         )}
-                    </Stack>
-                </Center>
+                    </View>
+                </View>
             </ViewWrapper>
         </ErrorBoundary>
     );

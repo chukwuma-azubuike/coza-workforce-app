@@ -1,6 +1,6 @@
+import { Text } from "~/components/ui/text";
 import useAppColorMode from '@hooks/theme/colorMode';
 import { TextProps } from 'react-native';
-import { Text } from '../ui/text';
 
 interface ITextComponent extends TextProps {
     bold?: boolean;
@@ -18,21 +18,7 @@ export enum TEXT_SIZE {
 const TextComponent: React.FC<ITextComponent> = ({ bold, ...props }) => {
     const { textColor } = useAppColorMode();
 
-    return (
-        <Text
-            numberOfLines={1}
-            lineBreakMode="tail"
-            ellipsizeMode="tail"
-            {...props}
-            style={
-                {
-                    color: textColor,
-                    fontWeight: bold ? '700' : '400',
-                    ...(props.style as {}),
-                } as any
-            }
-        />
-    );
+    return (<Text numberOfLines={1} lineBreakMode="tail" ellipsizeMode="tail" {...props} />);
 };
 
 export default TextComponent;

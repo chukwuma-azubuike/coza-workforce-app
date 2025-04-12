@@ -1,8 +1,8 @@
+import { Text } from "~/components/ui/text";
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
-import { HStack, Text } from 'native-base';
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
@@ -35,24 +35,24 @@ export const DepartmentReportListRow: React.FC<IReportProps> = props => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStack
+            <View
                 p={2}
-                px={4}
                 my={1.5}
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
+                className="px-4"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
                     {dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}
                 </Text>
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} bold>
+                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} className="font-bold">
                     Departmental
                 </Text>
                 <StatusTag>{props?.status as any}</StatusTag>
-            </HStack>
+            </View>
         </TouchableOpacity>
     );
 };
@@ -79,26 +79,26 @@ const IncidentReportListRow: React.FC<IIncidentProps> = props => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStack
+            <View
                 p={2}
-                px={4}
                 my={1.5}
                 borderRadius={10}
                 alignItems="center"
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
+                className="px-4"
             >
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
                     {dayjs(props.createdAt).format('DD/MM/YYYY')}
                 </Text>
-                <Text _dark={{ color: 'rose.400' }} _light={{ color: 'rose.500' }} bold>
+                <Text _dark={{ color: 'rose.400' }} _light={{ color: 'rose.500' }} className="font-bold">
                     Incident
                 </Text>
                 <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
                     {Utils.truncateString(props.details, 10)}
                 </Text>
-            </HStack>
+            </View>
         </TouchableOpacity>
     );
 };

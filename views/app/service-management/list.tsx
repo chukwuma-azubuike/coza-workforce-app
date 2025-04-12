@@ -1,7 +1,8 @@
+import { Text } from "~/components/ui/text";
 import { useIsFocused } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React, { memo } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
@@ -22,19 +23,19 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <HStackComponent style={{ padding: 4, alignItems: 'center', justifyContent: 'space-between' }}>
-                <HStackComponent space={6} style={{ alignItems: 'center' }}>
-                    <VStackComponent style={{ justifyContent: 'space-between' }}>
-                        <TextComponent bold>{service?.name}</TextComponent>
-                        <TextComponent fontSize="sm">
+            <View className="p-4 items-center justify-between">
+                <View space={6} className="items-center">
+                    <View className="justify-between">
+                        <Text className="font-bold">{service?.name}</Text>
+                        <Text fontSize="sm">
                             {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
                                 service?.serviceTime
                             ).format('h:mm A')}`}
-                        </TextComponent>
-                    </VStackComponent>
-                </HStackComponent>
+                        </Text>
+                    </View>
+                </View>
                 <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
-            </HStackComponent>
+            </View>
         </TouchableOpacity>
     );
 });

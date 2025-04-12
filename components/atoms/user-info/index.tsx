@@ -1,11 +1,9 @@
+import { Text } from '~/components/ui/text';
 import React from 'react';
-import { Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { Pressable, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import TextComponent from '@components/text';
-import HStackComponent from '@components/layout/h-stack';
-import { View } from 'react-native';
+import { router } from 'expo-router';
 
 interface IUserInfo {
     heading?: string;
@@ -17,32 +15,26 @@ interface IUserInfo {
 const NON_EDITABLE = ['email', 'role'];
 
 const UserInfo = ({ heading, value, name }: IUserInfo) => {
-    const { navigate } = useNavigation();
-
     const handleEdit = () => {
         let field: any = {};
         field[name] = value;
 
         if (NON_EDITABLE.includes(name)) return;
 
-        navigate('Edit Profile' as never, field as never);
+        router.push('/profile/edit-profile');
     };
 
     return (
         <Pressable onPress={handleEdit}>
-            <HStackComponent style={{ paddingVertical: 8, flex: 1 }}>
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <TextComponent size="lg" bold>
-                        {heading}:{' '}
-                    </TextComponent>
-                    <TextComponent style={{ flex: 1 }} size="lg">
-                        {value}
-                    </TextComponent>
+            <View className="py-8 flex-1">
+                <View className="flex-1 flex-row">
+                    <Text className="font-bold text-3xl">{heading}: </Text>
+                    <Text className="flex-1 text-3xl">{value}</Text>
                 </View>
                 {!NON_EDITABLE.includes(name) && (
                     <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
                 )}
-            </HStackComponent>
+            </View>
         </Pressable>
     );
 };

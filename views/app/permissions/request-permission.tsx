@@ -1,5 +1,7 @@
+import { Text } from "~/components/ui/text";
+import { View } from "react-native";
 import React from 'react';
-import { Box, FormControl, HStack, Text, VStack } from 'native-base';
+import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -100,8 +102,8 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
     return (
         <ErrorBoundary>
             <ViewWrapper avoidKeyboard avoidKeyboardBehavior="height" scroll>
-                <VStack space="lg" alignItems="flex-start" w="100%" px={4}>
-                    <Box alignItems="center" w="100%">
+                <View space="lg" alignItems="flex-start" w="100%" className="px-4">
+                    <View alignItems="center" w="100%">
                         <Formik<IRequestPermissionPayload>
                             onSubmit={handleSubmit}
                             initialValues={INITIAL_VALUES}
@@ -113,8 +115,8 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 };
 
                                 return (
-                                    <VStack w="100%" space={1}>
-                                        <HStack justifyContent="space-between" space={4}>
+                                    <View w="100%" space={1}>
+                                        <View justifyContent="space-between" space={4}>
                                             <FormControl
                                                 w="46%"
                                                 isRequired
@@ -149,7 +151,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                     </Text>
                                                 )}
                                             </FormControl>
-                                        </HStack>
+                                        </View>
                                         <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
                                             <FormControl.Label>Category</FormControl.Label>
                                             <SelectComponent
@@ -217,12 +219,12 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                 Submit for Approval
                                             </ButtonComponent>
                                         </FormControl>
-                                    </VStack>
+                                    </View>
                                 );
                             }}
                         </Formik>
-                    </Box>
-                </VStack>
+                    </View>
+                </View>
             </ViewWrapper>
         </ErrorBoundary>
     );

@@ -1,12 +1,12 @@
-import dayjs from 'dayjs';
+import { Text } from "~/components/ui/text";
 
+import dayjs from 'dayjs';
 import React from 'react';
 import { HomeContext } from '..';
 import { THEME_CONFIG } from '@config/appConfig';
 import Utils from '@utils/index';
 import { IIconTypes } from '@utils/types';
 import { View } from 'react-native';
-import { Text } from '~/components/ui/text';
 import { Icon } from '@rneui/themed';
 
 interface IStatProps {
