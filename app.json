@@ -17,7 +17,8 @@
             "supportsTablet": true,
             "bundleIdentifier": "com.coza.cozaworkforceapp",
             "infoPlist": {
-                "ITSAppUsesNonExemptEncryption": false
+                "ITSAppUsesNonExemptEncryption": false,
+                "UIBackgroundModes": ["remote-notification"]
             },
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
@@ -62,7 +63,25 @@
                 {
                     "ios": ["camera", "location", "microphone", "photo"]
                 }
-            ]
+            ],
+            // [
+            //     "expo-build-properties",
+            //     {
+            //         "ios": {
+            //             "newArchEnabled": false,
+            //             "flipper": false,
+            //             "useFrameworks": "static"
+            //         },
+            //         "android": {
+            //             "newArchEnabled": false,
+            //             "compileSdkVersion": 34,
+            //             "targetSdkVersion": 34,
+            //             "buildToolsVersion": "34.0.0"
+            //         }
+            //     }
+            // ],
+            "@react-native-firebase/app",
+            "@react-native-firebase/messaging"
         ],
         "experiments": {
             "typedRoutes": true
