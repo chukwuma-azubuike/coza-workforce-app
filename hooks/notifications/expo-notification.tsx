@@ -20,7 +20,9 @@ export default function Notifier() {
     const responseListener = useRef<Notifications.EventSubscription>();
 
     useEffect(() => {
-        registerForPushNotificationsAsync().then(token => token && setExpoPushToken(token));
+        registerForPushNotificationsAsync().then(token => {
+            token && setExpoPushToken(token);
+        });
 
         if (Platform.OS === 'android') {
             Notifications.getNotificationChannelsAsync().then(value => setChannels(value ?? []));
