@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import useRole from '@hooks/role';
 import { ParamListBase } from '@react-navigation/native';
@@ -8,7 +8,6 @@ import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import Carousel from 'react-native-snap-carousel';
 import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View, SafeAreaView } from 'react-native';
-import { Divider } from 'native-base';
 import { MyCGWCAttendance } from './attendance';
 import CGWCHeader from './components/header';
 import ScrollContainer from '@components/composite/scroll-container';
@@ -23,6 +22,7 @@ import useScreenFocus from '@hooks/focus';
 import { ICGWCInstantMessage } from '@store/types';
 import RatingComponent from '@components/composite/rating';
 import assertCGWCActive from '@utils/assertCGWCActive';
+import { Separator } from '~/components/ui/separator';
 
 const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const {
@@ -62,9 +62,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         <View style={styles.imageOverlay} />
                         <View style={styles.itemTextContainer}>
                             <Text>{item.title}</Text>
-                            <Text italic>
-                                {item.message}
-                            </Text>
+                            <Text italic>{item.message}</Text>
                         </View>
                     </View>
                 </View>
@@ -164,14 +162,14 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             />
                         </View>
                         <View className="px-1">
-                            <Divider mt={6} mb={1} />
+                            <Separator className="mt-6 mb-1" />
                             <View flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
                                 <View style={{ width: isMobile ? '100%' : '50%' }}>
                                     <MyCGWCAttendance sessions={sessions || []} CGWCId={CGWCId} userId={userId} />
                                 </View>
                                 <View style={{ width: isMobile ? '100%' : '50%', flex: 1 }}>
                                     <If condition={isLeader}>
-                                        {!isMobile && <Divider mt={3} mb={2} orientation="vertical" />}
+                                        {!isMobile && <Separator mt={3} mb={2} orientation="vertical" />}
                                         <CGWCReportSummary
                                             CGWCId={CGWCId}
                                             sessions={sessions || []}
@@ -181,7 +179,7 @@ const CGWCDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </If>
                                 </View>
                             </View>
-                            <Divider mt={6} mb={1} />
+                            <Separator mt={6} mb={1} />
                         </View>
                         <View mt={6}>
                             <Text fontSize="lg" className="font-bold px-3">

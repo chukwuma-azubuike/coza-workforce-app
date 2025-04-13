@@ -6,13 +6,10 @@ import { THEME_CONFIG } from '@config/appConfig';
 import { IFlatListColumn } from '@components/composite/flat-list';
 import { IAttendance, IScoreMapping } from '@store/types';
 import Utils from '@utils/index';
-import { Appearance, View } from 'react-native';
+import { View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-
-const colorScheme = Appearance.getColorScheme();
-
-const isLightMode = colorScheme === 'light';
+import StatusTag from '~/components/atoms/status-tag';
 
 const myAttendanceColumns: IFlatListColumn[] = [
     {
@@ -20,40 +17,26 @@ const myAttendanceColumns: IFlatListColumn[] = [
         dataIndex: 'date',
         render: (elm: IAttendance, key) => {
             return (
-                <View key={key} className="items-center py-4">
+                <View key={key} className="items-center py-1 flex-row w-full gap-4 justify-between">
                     <View
-                        style={{
-                            flex: 1,
-                            padding: 2,
-                            width: 54,
-                            borderWidth: 0.4,
-                            paddingBottom: 4,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            borderColor: THEME_CONFIG.lightGray,
-                        }}
+                        className="border border-border rounded-md !w-min justify-center py-2 px-3 items-center"
                         key={`date-${key}`}
                     >
-                        <Text size="xs" className="font-bold">
-                            {dayjs(elm.createdAt).format('ll').substring(4, 6).split(',').join('')}
-                        </Text>
-                        <Text size="xs" className="font-bold">
-                            {dayjs(elm.createdAt).format('dddd').substring(0, 3).toUpperCase()}
-                        </Text>
-                        <Text size="xs" className="font-bold">
-                            {dayjs(elm.createdAt).format('MMMM').substring(0, 3)} / {dayjs(elm.createdAt).format('YY')}
+                        <Text className="font-bold text-sm">{dayjs(elm.createdAt).format('DD')}</Text>
+                        <Text className="font-bold text-sm">{dayjs(elm.createdAt).format('ddd')}</Text>
+                        <Text className="font-bold text-sm">
+                            {dayjs(elm.createdAt).format('MMM')} / {dayjs(elm.createdAt).format('YY')}
                         </Text>
                     </View>
-                    <View key={`clockin-${key}`} className="justify-center items-center">
+                    <View className="justify-center items-center flex-row gap-2 flex-1">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                         <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
                     </View>
-                    <View key={`clockin-${key}`} className="justify-center items-center">
+                    <View className="justify-center items-center flex-row gap-2 flex-1">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                         <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
                     </View>
-                    <Text key={`hours-${key}`} className="flex-1 text-center">
+                    <Text className="text-center flex-1">
                         {elm?.clockOut ? Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins : '--:--'}
                     </Text>
                 </View>
@@ -81,25 +64,36 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <View space={4} key={key} className="items-center py-4">
+            <View key={key} className="items-center py-3 flex-row w-full gap-4 justify-between">
                 <AvatarComponent
-                    mr={4}
-                    size="md"
+                    alt="pic"
+                    className="h-14 w-14"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
-                <View>
-                    <Text className="font-bold">
-                        {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
-                    </Text>
-                </View>
-                <View key={`clockin-${key}`} className="items-center justify-center">
-                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
-                </View>
-                <View key={`clockin-${key}`} className="items-center justify-center">
-                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                <View className="flex-1 gap-2">
+                    <View className="flex-row justify-between">
+                        <Text className="font-bold truncate">
+                            {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
+                        </Text>
+                        //TODO: Should be attendance status ("LATE", "PRESENT")
+                        {/* <StatusTag>{elm?.status}</StatusTag> */}
+                    </View>
+                    <View className="flex-row justify-between">
+                        <View className="items-center flex-row gap-2 flex-1">
+                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                            <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                        </View>
+                        <View className="items-center flex-row gap-2 flex-1">
+                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                            <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                        </View>
+                        <Text className="text-right flex-1">
+                            {elm?.clockOut
+                                ? Utils.timeDifference(elm.clockOut || '', elm.clockIn || '').hrsMins
+                                : '--:--'}
+                        </Text>
+                    </View>
                 </View>
             </View>
         ),
@@ -111,10 +105,10 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <View space={6} key={key} className="items-center py-4">
+            <View key={key} className="items-center py-4 gap-6">
                 <AvatarComponent
-                    mr={4}
-                    size="md"
+                    alt="pic"
+                    className="h-8 w-8"
                     badge={!!elm.clockIn}
                     imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
                 />
@@ -122,12 +116,7 @@ const teamAttendanceDataColumns_1: IFlatListColumn[] = [
                     <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
                     </Text>
-                    <Text
-                        noOfLines={1}
-                        flexWrap="wrap"
-                        ellipsizeMode="tail"
-                        color={isLightMode ? 'gray.800' : 'gray.100'}
-                    >
+                    <Text className="truncate flex-wrap line-clamp-1 text-muted-foreground">
                         {`Score: ${elm?.score || 0}`}
                     </Text>
                 </View>
@@ -149,19 +138,19 @@ const scoreMappingColumn: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: IScoreMapping & IAttendance, key) => (
-            <View key={`name-${key}`} space={4}>
-                <View key={`name-${key}`} space={6} className="items-center justify-start">
+            <View key={`name-${key}`} className="gap-4">
+                <View key={`name-${key}`} className="items-center justify-start gap-6">
                     <AvatarComponent
-                        mr={4}
-                        size="sm"
+                        alt="pic"
                         badge={!!elm.clockIn}
+                        className="h-8 w-8 mr-4"
                         imageUrl={elm?.user?.pictureUrl || elm?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
                     <View>
-                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'}>
+                        <Text className="flex-wrap text-muted-foreground">
                             {Utils.capitalizeFirstChar(elm?.user?.firstName || elm?.firstName)}
                         </Text>
-                        <Text flexWrap="wrap" color={isLightMode ? 'gray.800' : 'gray.100'}>
+                        <Text className="flex-wrap text-muted-foreground">
                             {Utils.capitalizeFirstChar(elm?.user?.lastName || elm?.lastName)}
                         </Text>
                     </View>
@@ -187,8 +176,13 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <View space={4} key={key} className="items-center py-4">
-                <AvatarComponent size="md" badge={!!elm.clockIn} imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL} />
+            <View key={key} className="items-center py-4 gap-4">
+                <AvatarComponent
+                    alt="pic"
+                    className="h-8 w-8"
+                    badge={!!elm.clockIn}
+                    imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                />
                 <View>
                     <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}
@@ -213,9 +207,10 @@ const campusColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: '',
         render: (elm: IAttendance, key) => (
-            <View space={4} key={key} className="items-center py-4">
+            <View key={key} className="items-center py-4 gap-4">
                 <AvatarComponent
-                    size="md"
+                    alt="pic"
+                    className="h-8 w-8"
                     badge={!!elm.clockIn}
                     imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
@@ -245,8 +240,13 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: ITransformUserAttendanceList, key) => (
-            <View space={4} key={key} className="items-center py-4">
-                <AvatarComponent size="md" badge={!!elm.clockIn} imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL} />
+            <View key={key} className="items-center py-4 gap-4">
+                <AvatarComponent
+                    alt="pic"
+                    className="h-8 w-8"
+                    badge={!!elm.clockIn}
+                    imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                />
                 <View>
                     <Text className="font-bold">
                         {`${Utils.capitalizeFirstChar(elm?.firstName)} ${Utils.capitalizeFirstChar(elm?.lastName)}`}

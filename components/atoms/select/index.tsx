@@ -45,8 +45,8 @@ const SelectButton: React.FC<ISelectButtonProps> = React.memo(
                 onPress={togglePicker}
                 style={{ opacity: !enabled ? 0.6 : 1, ...(style as {}) }}
             >
-                <View className="rounded-8 border-0.1 flex-0 py-6 pr-10 pl-16">
-                    <Text className="flex-1 py-10 text-3xl">{isLoading ? 'Loading...' : label}</Text>
+                <View className="rounded-lg border border-border flex-0 p-4 flex-row items-center justify-between">
+                    <Text className="flex-1 text-xl">{isLoading ? 'Loading...' : label}</Text>
                     <Icon size={22} type="ant-design" style={{ marginLeft: 10 }} name="down" color={textColor} />
                 </View>
             </TouchableOpacity>
@@ -76,7 +76,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
 
     const formatLabel = (value: string | number) => {
         if (isValidDate(value)) {
-            return dayjs(value).format('Do MMM YYYY');
+            return dayjs(value).format('DD MMM YYYY');
         }
         return value;
     };

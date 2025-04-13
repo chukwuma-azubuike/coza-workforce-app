@@ -7,7 +7,7 @@ import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker  from '~/components/composite/date-time-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -174,16 +174,14 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 </FormControl>
 
                                 <View justifyContent="space-between">
-                                    <DateTimePickerComponent
-                                        label="Date"
+                                    <DateTimePicker                                        label="Date"
                                         mode="date"
                                         fieldName="serviceDate"
                                         onSelectDate={setFieldValue}
                                         value={values.serviceDate}
                                         minimumDate={new Date()}
                                     />
-                                    <DateTimePickerComponent
-                                        label="Session Start Time"
+                                    <DateTimePicker                                        label="Session Start Time"
                                         mode="time"
                                         fieldName="serviceTime"
                                         onSelectDate={setFieldValue}
@@ -192,15 +190,13 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 </View>
 
                                 <View justifyContent="space-between">
-                                    <DateTimePickerComponent
-                                        label="Clock-in Time"
+                                    <DateTimePicker                                        label="Clock-in Time"
                                         mode="time"
                                         fieldName="clockinTime"
                                         onSelectDate={setFieldValue}
                                         value={values.clockinTime}
                                     />
-                                    <DateTimePickerComponent
-                                        label="Leaders Late Time"
+                                    <DateTimePicker                                        label="Leaders Late Time"
                                         mode="time"
                                         fieldName="leaderLateTime"
                                         onSelectDate={setFieldValue}
@@ -209,15 +205,13 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 </View>
 
                                 <View justifyContent="space-between">
-                                    <DateTimePickerComponent
-                                        label="Workers Late Time"
+                                    <DateTimePicker                                        label="Workers Late Time"
                                         mode="time"
                                         fieldName="workerLateTime"
                                         onSelectDate={setFieldValue}
                                         value={values.workerLateTime}
                                     />
-                                    <DateTimePickerComponent
-                                        label="Session End Time"
+                                    <DateTimePicker                                        label="Session End Time"
                                         mode="time"
                                         fieldName="endTime"
                                         onSelectDate={setFieldValue}

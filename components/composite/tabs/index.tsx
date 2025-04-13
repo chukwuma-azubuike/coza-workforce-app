@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { TabBar, TabBarProps, TabView, TabViewProps } from 'react-native-tab-view';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -27,9 +27,7 @@ const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = prop
                     inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
                     pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
                     labelStyle={{ color: THEME_CONFIG.primary }}
-                    renderLabel={({ route, focused, color }) => (
-                        <Text>{route.title}</Text>
-                    )}
+                    renderLabel={({ route, focused, color }) => <Text>{route.title}</Text>}
                 />
             )}
         </>
@@ -53,9 +51,7 @@ const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> 
                     labelStyle={{ color: THEME_CONFIG.primary }}
                     inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
                     pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-                    renderLabel={({ route, focused, color }) => (
-                        <Text>{route.title}</Text>
-                    )}
+                    renderLabel={({ route, focused, color }) => <Text>{route.title}</Text>}
                 />
             )}
         </>
