@@ -3,10 +3,8 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -98,8 +96,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                         w={ScreenWidth / 2}
                                         isInvalid={!!errors.startDate && touched.startDate}
                                     >
-                                        <DateTimePickerComponent
-                                            label="Start date"
+                                        <DateTimePicker                                            label="Start date"
                                             fieldName="startDate"
                                             onSelectDate={setFieldValue}
                                         />
@@ -123,8 +120,7 @@ const CreateCGWC: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                         w={ScreenWidth / 2}
                                         isInvalid={!!errors.endDate && touched.endDate}
                                     >
-                                        <DateTimePickerComponent
-                                            label="End date"
+                                        <DateTimePicker                                            label="End date"
                                             fieldName="endDate"
                                             onSelectDate={setFieldValue}
                                         />
