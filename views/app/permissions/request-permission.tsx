@@ -1,12 +1,11 @@
 import { Text } from "~/components/ui/text";
 import { View } from "react-native";
 import React from 'react';
-import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import TextAreaComponent from '@components/atoms/text-area';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker  from '~/components/composite/date-time-picker';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -20,7 +19,6 @@ import useScreenFocus from '@hooks/focus';
 import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ScreenHeight } from '@rneui/base';
 
 const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
     const { user } = useRole();
@@ -117,13 +115,12 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 return (
                                     <View w="100%" space={1}>
                                         <View justifyContent="space-between" space={4}>
-                                            <FormControl
+                                            <View
                                                 w="46%"
                                                 isRequired
                                                 isInvalid={!!errors.startDate && touched.startDate}
                                             >
-                                                <DateTimePickerComponent
-                                                    label="Start date"
+                                                <DateTimePicker                                                    label="Start date"
                                                     fieldName="startDate"
                                                     minimumDate={new Date()}
                                                     onSelectDate={handleDate}
@@ -133,14 +130,13 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                         Please select an end date
                                                     </Text>
                                                 )}
-                                            </FormControl>
-                                            <FormControl
+                                            </View>
+                                            <View
                                                 w="46%"
                                                 isRequired
                                                 isInvalid={!!errors.endDate && touched.endDate}
                                             >
-                                                <DateTimePickerComponent
-                                                    label="End date"
+                                                <DateTimePicker                                                    label="End date"
                                                     fieldName="endDate"
                                                     minimumDate={new Date()}
                                                     onSelectDate={setFieldValue}
@@ -150,10 +146,10 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                         Please select an end date
                                                     </Text>
                                                 )}
-                                            </FormControl>
+                                            </View>
                                         </View>
-                                        <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
-                                            <FormControl.Label>Category</FormControl.Label>
+                                        <View isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
+                                            <View.Label>Category</View.Label>
                                             <SelectComponent
                                                 displayKey="name"
                                                 items={categories || []}
@@ -169,7 +165,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                     />
                                                 ))}
                                             </SelectComponent>
-                                            <FormControl.ErrorMessage
+                                            <View.ErrorMessage
                                                 fontSize="2xl"
                                                 mt={3}
                                                 leftIcon={
@@ -182,20 +178,20 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                 }
                                             >
                                                 {errors?.categoryId}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl
+                                            </View.ErrorMessage>
+                                        </View>
+                                        <View
                                             isRequired
                                             isInvalid={!!errors?.description && touched.description}
                                         >
-                                            <FormControl.Label>Description</FormControl.Label>
+                                            <View.Label>Description</View.Label>
                                             <TextAreaComponent
                                                 isRequired
                                                 value={values.description}
                                                 placeholder="Brief description"
                                                 onChangeText={handleChange('description')}
                                             />
-                                            <FormControl.ErrorMessage
+                                            <View.ErrorMessage
                                                 fontSize="2xl"
                                                 mt={3}
                                                 leftIcon={
@@ -208,9 +204,9 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                                 }
                                             >
                                                 {errors?.description}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl>
+                                            </View.ErrorMessage>
+                                        </View>
+                                        <View>
                                             <ButtonComponent
                                                 mt={4}
                                                 isLoading={isLoading}
@@ -218,7 +214,7 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                             >
                                                 Submit for Approval
                                             </ButtonComponent>
-                                        </FormControl>
+                                        </View>
                                     </View>
                                 );
                             }}

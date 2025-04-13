@@ -1,23 +1,21 @@
 import React from 'react';
-import ViewWrapper from '@components/layout/viewWrapper';
 import { CampusAttendance, GroupAttendance, LeadersAttendance, MyAttendance, TeamAttendance } from './lists';
 import TabComponent from '@components/composite/tabs';
 import { SceneMap } from 'react-native-tab-view';
 import useRole, { ROLES } from '@hooks/role';
 import useMediaQuery from '@hooks/media-query';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '@hooks/focus';
 import If from '@components/composite/if-container';
-import StaggerButtonComponent from '@components/composite/stagger';
+// import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
+import { router, useLocalSearchParams } from 'expo-router';
+import { SafeAreaView } from 'react-native';
 
-const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+const Attendance: React.FC = () => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD, isGroupHead } = useRole();
     const { isMobile } = useMediaQuery();
-    const navigation = props.navigation;
 
-    const params = props.route.params as { role: ROLES; route: string; tabKey: string };
+    const params = useLocalSearchParams<{ role: ROLES; route: string; tabKey: string }>();
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
     const isWorker = params?.role === ROLES.worker;
@@ -39,7 +37,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     });
 
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
+        router.push({ pathname: '/export-data', params: { type: IReportTypes.ATTENDANCE } });
     };
 
     const [index, setIndex] = React.useState(0);
@@ -74,7 +72,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     }, []);
 
     return (
-        <ViewWrapper>
+        <SafeAreaView className="flex-1">
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}
@@ -82,7 +80,7 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 tabBarScroll={allRoutes.length > 2 && isMobile}
             />
             <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                <StaggerButtonComponent
+                {/* <StaggerButtonComponent
                     buttons={[
                         {
                             color: 'green.600',
@@ -91,9 +89,9 @@ const Attendance: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             iconType: 'ionicon',
                         },
                     ]}
-                />
+                /> */}
             </If>
-        </ViewWrapper>
+        </SafeAreaView>
     );
 };
 

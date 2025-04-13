@@ -62,10 +62,12 @@ type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
     VariantProps<typeof buttonVariants> & {
         isLoading?: boolean;
         loadingText?: string;
+        startIcon?: React.ReactNode;
+        icon?: React.ReactNode;
     };
 
 const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
-    ({ className, variant, size, isLoading, loadingText = 'Loading...', children, ...props }, ref) => {
+    ({ className, variant, size, isLoading, loadingText = 'Loading...', startIcon, icon, children, ...props }, ref) => {
         return (
             <TextClassContext.Provider
                 value={cn(props.disabled && 'web:pointer-events-none', buttonTextVariants({ variant, size }))}
@@ -87,7 +89,12 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                                 </Text>
                             </View>
                         ) : typeof children === 'string' ? (
-                            <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>{children}</Text>
+                            <View className="flex-1 w-full items-center flex-row gap-4 justify-center">
+                                {startIcon || icon}
+                                <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>
+                                    {children}
+                                </Text>
+                            </View>
                         ) : (
                             children
                         )
