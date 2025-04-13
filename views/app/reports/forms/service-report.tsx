@@ -7,7 +7,7 @@ import { IServiceReportPayload } from '@store/types';
 import { useCreateServiceReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker  from '~/components/composite/date-time-picker';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -90,16 +90,14 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                         </Text>
                         <View space={4} mt={4} className="px-4">
                             <View justifyContent="space-between">
-                                <DateTimePickerComponent
-                                    mode="time"
+                                <DateTimePicker                                    mode="time"
                                     label="Service Start Time"
                                     fieldName="serviceStartTime"
                                     onSelectDate={setFieldValue}
                                     value={values?.serviceStartTime}
                                     formControlProps={{ isRequired: true, isInvalid: !!errors?.serviceStartTime }}
                                 />
-                                <DateTimePickerComponent
-                                    mode="time"
+                                <DateTimePicker                                    mode="time"
                                     label="Service End Time"
                                     fieldName="serviceEndTime"
                                     onSelectDate={setFieldValue}

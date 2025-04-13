@@ -1,4 +1,3 @@
-import { FormControl } from 'native-base';
 import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
@@ -16,13 +15,13 @@ import { useGetTicketsReportForDownloadQuery } from '@store/services/tickets';
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import useRole from '@hooks/role';
 import { generateCummulativeAttendanceReport } from '@utils/generateCummulativeAttendanceReport';
 import { generateReportName } from '@utils/generateReportName';
 import { IReportDownloadPayload } from '@store/types';
 import Utils from '@utils/index';
-import HStackComponent from '@components/layout/h-stack';
+import { Label } from '~/components/ui/label';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -207,8 +206,8 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         <ViewWrapper style={{ paddingTop: 8 }}>
             <View style={{ alignItems: 'center' }}>
                 <View style={{ gap: 10, width: '100%' }}>
-                    <FormControl isRequired>
-                        <FormControl.Label>Data Type</FormControl.Label>
+                    <View>
+                        <Label>Data Type</Label>
                         <SelectComponent
                             valueKey="value"
                             displayKey="name"
@@ -221,9 +220,9 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 <SelectItemComponent value={data.value} key={`data-${index}`} label={data.name} />
                             ))}
                         </SelectComponent>
-                    </FormControl>
-                    <FormControl isRequired>
-                        <FormControl.Label>Campus</FormControl.Label>
+                    </View>
+                    <View>
+                        <Label>Campus</Label>
                         <SelectComponent
                             valueKey="_id"
                             displayKey="campusName"
@@ -247,10 +246,10 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 />
                             ))}
                         </SelectComponent>
-                    </FormControl>
+                    </View>
                     <If condition={!isPermission}>
-                        <FormControl isRequired>
-                            <FormControl.Label>Service</FormControl.Label>
+                        <View>
+                            <Label>Service</Label>
                             <SelectComponent
                                 valueKey="_id"
                                 selectedValue={serviceId}
@@ -275,26 +274,24 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     />
                                 ))}
                             </SelectComponent>
-                        </FormControl>
+                        </View>
                     </If>
                     <View className="flex-0">
-                        <FormControl w="1/2">
-                            <DateTimePickerComponent
-                                label="Start date"
+                        <View className="w-1/2">
+                            <DateTimePicker                                label="Start date"
                                 fieldName="startDate"
                                 onSelectDate={handleStartDate}
                             />
-                        </FormControl>
-                        <FormControl w="1/2">
-                            <DateTimePickerComponent
-                                label="End date"
+                        </View>
+                        <View className="w-1/2">
+                            <DateTimePicker                                label="End date"
                                 fieldName="endDate"
                                 onSelectDate={handleEndDate}
                             />
-                        </FormControl>
+                        </View>
                     </View>
-                    <FormControl isRequired>
-                        <FormControl.Label>Department</FormControl.Label>
+                    <View>
+                        <Label>Department</Label>
                         <SelectComponent
                             valueKey="_id"
                             displayKey="departmentName"
@@ -320,11 +317,9 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 />
                             ))}
                         </SelectComponent>
-                    </FormControl>
+                    </View>
 
                     <ButtonComponent
-                        mt={4}
-                        type="submit"
                         isLoading={isLoading}
                         onPress={handlePress}
                         startIcon={

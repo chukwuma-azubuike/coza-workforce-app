@@ -1,25 +1,15 @@
 import React, { ReactNode } from 'react';
-import { IButtonProps, IconButton } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
-import { ResponsiveValue, ThemeComponentSizeType } from 'native-base/lib/typescript/components/types';
 import { PermissionsAndroid, TouchableOpacity, useColorScheme } from 'react-native';
 import { generateExcelFile } from '@utils/generateFile';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { InterfaceIconButtonProps } from 'native-base/lib/typescript/components/composites/IconButton/types';
 import { View } from 'react-native';
 import { Text } from 'react-native';
 import Loading from '../loading';
 import { Button, ButtonProps } from '~/components/ui/button';
-interface IButtonComponent extends IButtonProps {
-    size?: ThemeComponentSizeType<'Button'>;
+interface IButtonComponent extends ButtonProps {
     secondary?: boolean;
-    borderRadius?: ResponsiveValue<
-        'lg' | 'md' | 'sm' | 'xs' | 'xl' | '2xl' | (string & {}) | (number & {}) | 'none' | '3xl' | 'full'
-    >;
-    shadow?: ResponsiveValue<
-        (string & {}) | (number & {}) | 'none' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
-    >;
 }
 
 export enum BUTTON_SIZE {
@@ -151,7 +141,6 @@ export const DownloadButton: React.FC<IDownloadButton> = React.memo(({ data, typ
 
     return (
         <Button
-            size="md"
             className="shadow-md"
             style={{
                 right: 6,
@@ -171,11 +160,11 @@ export const DownloadButton: React.FC<IDownloadButton> = React.memo(({ data, typ
     );
 });
 
-export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = React.memo(props => {
+export const NavigationBackButton: React.FC = React.memo(props => {
     const { isDarkMode } = useAppColorMode();
 
     return (
-        <IconButton
+        <Button
             icon={
                 <Icon
                     size={24}
@@ -185,7 +174,7 @@ export const NavigationBackButton: React.FC<InterfaceIconButtonProps> = React.me
                 />
             }
             style={{ marginLeft: 6, padding: 6 }}
-            _pressed={{ _dark: { backgroundColor: 'gray.800' }, _light: { backgroundColor: 'gray.100' } }}
+            className=" active:dark:bg-gray-800 active:bg-gray-100"
             {...props}
         />
     );

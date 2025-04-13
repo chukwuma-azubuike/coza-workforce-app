@@ -13,7 +13,7 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import TextAreaComponent from '@components/atoms/text-area';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker  from '~/components/composite/date-time-picker';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { useAddress } from '@hooks/address';
 
@@ -261,8 +261,7 @@ const CreateCampus: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </FormControl>
                                     <FormControl isRequired isInvalid={!!errors?.dateOfBirth}>
                                         <FormControl.Label>Date of Birth</FormControl.Label>
-                                        <DateTimePickerComponent
-                                            fieldName="dateOfBirth"
+                                        <DateTimePicker                                            fieldName="dateOfBirth"
                                             minimumDate={new Date()}
                                             onSelectDate={setFieldValue}
                                         />

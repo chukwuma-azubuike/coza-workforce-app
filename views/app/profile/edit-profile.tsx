@@ -5,7 +5,7 @@ import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker  from '~/components/composite/date-time-picker';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -305,8 +305,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 </If>
                                 <If condition={!!userData?.birthDay}>
                                     <FormControl isRequired isInvalid={!!errors.birthDay && touched.birthDay}>
-                                        <DateTimePickerComponent
-                                            label="Next Birthday"
+                                        <DateTimePicker                                            label="Next Birthday"
                                             fieldName="birthDay"
                                             onSelectDate={handleDate}
                                         />

@@ -139,7 +139,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View mb={2} className="px-2">
+            <View className="px-2 mb-2">
                 <SelectComponent
                     valueKey="_id"
                     selectedValue={serviceId}
@@ -153,7 +153,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -281,7 +281,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View mb={2} className="px-2">
+            <View className="px-2 mb-2">
                 <SelectComponent
                     valueKey="_id"
                     placeholder="Select Service"
@@ -295,7 +295,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -384,7 +384,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View mb={2} className="px-2">
+            <View className="px-2 mb-2">
                 <SelectComponent
                     valueKey="_id"
                     selectedValue={serviceId}
@@ -398,7 +398,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                             value={service?._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -501,7 +501,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View mb={2} className="px-2">
+            <View className="px-2 mb-2">
                 <SelectComponent
                     valueKey="_id"
                     selectedValue={serviceId}
@@ -515,7 +515,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

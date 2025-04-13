@@ -31,20 +31,20 @@ const StatusTag: React.FC<IStatusTag> = props => {
     return (
         <Badge
             className={cn(
+                blue && 'bg-blue-200',
                 green && 'bg-green-200',
                 gray && 'bg-gray-200',
                 amber && 'bg-amber-200',
-                red && 'bg-red-200',
-                blue && 'bg-blue-200'
+                red && 'bg-red-200'
             )}
         >
             <Text
                 className={cn(
-                    green && 'bg-green-700',
-                    gray && 'bg-gray-700',
-                    amber && 'bg-amber-700',
-                    red && 'bg-red-700',
-                    blue && 'bg-blue-700'
+                    blue && 'text-blue-700',
+                    green && 'text-green-700',
+                    gray && 'text-gray-700',
+                    amber && 'text-amber-700',
+                    red && 'text-red-700'
                 )}
             >
                 {status

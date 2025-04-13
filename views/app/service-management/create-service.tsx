@@ -7,7 +7,7 @@ import { FormControl } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { DateTimePickerComponent } from '@components/composite/date-picker';
+import DateTimePicker  from '~/components/composite/date-time-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -330,8 +330,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         </FormControl.ErrorMessage>
                                     </FormControl>
                                     <View justifyContent="space-between">
-                                        <DateTimePickerComponent
-                                            label="Date"
+                                        <DateTimePicker                                            label="Date"
                                             mode="date"
                                             fieldName="serviceDate"
                                             onSelectDate={setFieldValue}
@@ -342,8 +341,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.serviceDate,
                                             }}
                                         />
-                                        <DateTimePickerComponent
-                                            label="Service Start Time"
+                                        <DateTimePicker                                            label="Service Start Time"
                                             mode="time"
                                             fieldName="serviceTime"
                                             onSelectDate={setFieldValue}
@@ -355,8 +353,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         />
                                     </View>
                                     <View justifyContent="space-between">
-                                        <DateTimePickerComponent
-                                            label="Clock-in Time"
+                                        <DateTimePicker                                            label="Clock-in Time"
                                             mode="time"
                                             fieldName="clockinTime"
                                             onSelectDate={setFieldValue}
@@ -366,8 +363,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.clockinTime && touched.clockinTime,
                                             }}
                                         />
-                                        <DateTimePickerComponent
-                                            label="Leaders Late Time"
+                                        <DateTimePicker                                            label="Leaders Late Time"
                                             mode="time"
                                             fieldName="leaderLateTime"
                                             onSelectDate={setFieldValue}
@@ -379,8 +375,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         />
                                     </View>
                                     <View justifyContent="space-between">
-                                        <DateTimePickerComponent
-                                            label="Workers Late Time"
+                                        <DateTimePicker                                            label="Workers Late Time"
                                             mode="time"
                                             fieldName="workerLateTime"
                                             onSelectDate={setFieldValue}
@@ -390,8 +385,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.workerLateTime && touched.workerLateTime,
                                             }}
                                         />
-                                        <DateTimePickerComponent
-                                            label="Service End Time"
+                                        <DateTimePicker                                            label="Service End Time"
                                             mode="time"
                                             fieldName="endTime"
                                             onSelectDate={setFieldValue}
