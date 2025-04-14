@@ -10,9 +10,11 @@ const ErrorBoundary: React.FC<{
     return (
         <Sentry.ErrorBoundary
             fallback={({ error, resetError }) => (
-                <View className="rounded-20 border-0.2 flex-1 p-10 gap-8 bg-rose-300">
-                    <Text className="font-bold text-center text-2xl">Oops something broke!</Text>
-                    <Button onPress={resetError}>Retry</Button>
+                <View className="rounded-lg max-w-xs mx-auto p-10 gap-8 items-center">
+                    <Text className="font-semibold text-center">Oops something broke!</Text>
+                    <Button size="sm" variant="outline" onPress={resetError} className="!w-min">
+                        Retry
+                    </Button>
                 </View>
             )}
         >

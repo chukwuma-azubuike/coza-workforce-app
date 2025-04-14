@@ -117,7 +117,7 @@ export const CGWCReportSummary: React.FC<{
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={!sessions?.length}
-                            label={`${session.name} | ${dayjs(session.serviceTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

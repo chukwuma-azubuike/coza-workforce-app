@@ -179,7 +179,6 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
                 <View
-                    space={8}
                     className="flex-0 mb-6 px-8 items-baseline"
                 >
                     <SelectComponent
@@ -196,7 +195,7 @@ export const TeamCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGWCI
                                 value={session._id}
                                 key={`session-${index}`}
                                 isLoading={sessionsIsLoading}
-                                label={`${session.name} | ${dayjs(session.clockInStartTime).format('Do MMM YYYY')}`}
+                                label={`${session.name} | ${dayjs(session.clockInStartTime).format('DD MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>
@@ -350,7 +349,7 @@ export const LeadersCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CG
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>
@@ -502,7 +501,7 @@ export const CampusCGWCAttendance: React.FC<ICGWCAttendance> = React.memo(({ CGW
                             value={session._id}
                             key={`session-${index}`}
                             isLoading={sessionsIsLoading}
-                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

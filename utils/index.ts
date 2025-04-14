@@ -239,29 +239,20 @@ class Utils {
      * @returns 'entries' | 'values'
      */
 
-    static groupListByKey = (array: any[] = [], key: string, returnType: 'entries' | 'values' = 'entries') => {
-        const map: any = {};
+    static groupListByKey<T = Record<any, any>>(
+        array: T[] = [],
+        key: string,
+        returnType: 'entries' | 'values' = 'entries'
+    ) {
+        if (!array?.length) return [];
 
-        if (!array?.length || !array) {
-            return [];
-        }
+        const grouped =
+            key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt' || key === 'sortDateKey'
+                ? groupBy(array, (item: any) => dayjs(item[key]).format('MMMM DD, YYYY'))
+                : groupBy(array, key);
 
-        for (let i = 0; i < array.length; i++) {
-            if (typeof array[i] === 'undefined' || !array[i]) continue;
-            let keyInMap = array[i][key];
-
-            if (key === 'createdAt' || key === 'dateCreated' || key === 'updatedAt' || key === 'sortDateKey') {
-                keyInMap = dayjs(array[i][key]).format('MMMM Do, YYYY');
-            }
-
-            if (map[keyInMap]) {
-                map[keyInMap] = [...map[keyInMap], array[i]];
-            } else {
-                map[keyInMap] = [array[i]];
-            }
-        }
-        return Object[returnType](map);
-    };
+        return Object[returnType](grouped);
+    }
 
     /**
      *
@@ -308,10 +299,10 @@ class Utils {
         return date && !time
             ? dayjs(date).subtract(1, 'hour').unix()
             : time && !date
-              ? dayjs(time).subtract(1, 'hour').unix()
-              : time && date
-                ? dayjs(concatedTime).subtract(1, 'hour').unix()
-                : null;
+            ? dayjs(time).subtract(1, 'hour').unix()
+            : time && date
+            ? dayjs(concatedTime).subtract(1, 'hour').unix()
+            : null;
     };
 }
 

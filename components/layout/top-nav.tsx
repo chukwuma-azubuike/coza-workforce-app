@@ -1,13 +1,14 @@
 // TopNav.tsx
 import React from 'react';
 import { Pressable, SafeAreaView } from 'react-native';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { router, usePathname } from 'expo-router';
 import { Icon } from '@rneui/themed';
 import { cn } from '~/lib/utils';
 import capitalize from 'lodash/capitalize';
+import { Text } from '../ui/text';
 
 interface TopNavProps {
     title?: string;
@@ -22,7 +23,9 @@ interface TopNavProps {
 
 const TopNav: React.FC<TopNavProps> = ({ title, onBackPress, rightIcon, onRightPress, className }) => {
     const { isLightMode } = useAppColorMode();
-    const pathname = capitalize(usePathname().replaceAll('/', ''));
+
+    const currentPathName = usePathname().split('/');
+    const pathname = capitalize(currentPathName[currentPathName.length - 1]);
 
     const handleBack = () => {
         if (onBackPress) {
@@ -39,7 +42,7 @@ const TopNav: React.FC<TopNavProps> = ({ title, onBackPress, rightIcon, onRightP
             <View className="flex-row items-center justify-between px-2">
                 {/* Back Button */}
                 <Pressable onPress={handleBack} className="p-2">
-                    <Ionicons name="chevron-back" size={24} color={isLightMode ? 'red' : 'white'} />
+                    <Ionicons name="chevron-back" size={24} color={isLightMode ? '#000' : 'white'} />
                 </Pressable>
 
                 {/* Title */}

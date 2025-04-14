@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { THEME_CONFIG } from '@config/appConfig';
 import { TouchableOpacity, View } from 'react-native';
@@ -11,7 +11,11 @@ const CampusTicketSummary: React.FC<{ tickets?: number }> = React.memo(({ ticket
     };
 
     return (
-        <TouchableOpacity activeOpacity={0.6} onPress={handleNavigation}>
+        <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={handleNavigation}
+            className="w-full justify-center flex-row max-w-[14rem] mx-auto"
+        >
             <View className="items-baseline flex-row justify-center py-2">
                 <View className="items-center flex-row">
                     <Ionicons name="ticket" color={THEME_CONFIG.rose} type="material-community" size={18} />

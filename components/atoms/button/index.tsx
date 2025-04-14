@@ -43,9 +43,9 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
                 borderColor: secondary ? THEME_CONFIG.lightGray : undefined,
                 backgroundColor: secondary ? THEME_CONFIG.transparent : THEME_CONFIG.primary,
                 ...(props?.style as {}),
-                opacity: isLoading || props?.disabled || props?.isDisabled ? 0.5 : 1,
+                opacity: isLoading || props?.disabled ? 0.5 : 1,
             }}
-            disabled={(isLoading || props?.disabled || props?.isDisabled) as boolean}
+            disabled={(isLoading || props?.disabled) as boolean}
         >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 {isLoading && (

@@ -1,11 +1,8 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import VStackComponent from '@components/layout/v-stack';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
 import { Platform, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import ButtonComponent from '@components/atoms/button';
@@ -25,8 +22,8 @@ import {
 } from '@store/services/permissions';
 import { IPermission, IUpdatePermissionPayload } from '@store/types';
 
-import { THEME_CONFIG } from '@config/appConfig';
 import useRoleName from '@hooks/role/useRoleName';
+import { Button } from '~/components/ui/button';
 
 interface PermissionDetailsParamsProps extends IPermission {
     screen: { name: string; value: string } | undefined;
@@ -130,7 +127,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             setModalState({
                 duration: 6,
                 status: 'error',
-                message: approveError?.data?.message || 'Oops something went wrong',
+                message: (approveError as any)?.data?.message || 'Oops something went wrong',
             });
             approveReset();
         }
@@ -163,7 +160,7 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
         if (declineIsError) {
             setModalState({
                 status: 'error',
-                message: declineError?.data?.message || 'Oops something went wrong',
+                message: (declineError as any)?.data?.message || 'Oops something went wrong',
             });
             declineReset();
         }
@@ -200,135 +197,106 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             }}
         >
             <CardComponent style={{ paddingVertical: 20 }} isLoading={permissionLoading || permissionIsFetching}>
-                <View space={8}>
+                <View className="gap-4">
                     <AvatarComponent
-                        size="xl"
-                        shadow={9}
+                        alt="requestor-pic"
+                        className="w-32 h-32"
                         lastName={permission?.requestor?.lastName}
                         firstName={permission?.requestor?.firstName}
                         imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
-                    <View
-                        space={4}
-                        className="pb-4 justify-between"
-                    >
+                    <View className="flex-row gap-2 pb-4 justify-between">
                         <Text className="font-bold">Requester</Text>
                         <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
                     </View>
-                    <View
-                        space={4}
-                        className="pb-4 justify-between"
-                    >
+                    <View className="flex-row gap-2 pb-4 justify-between">
                         <Text className="font-bold">Department</Text>
                         <Text>{permission?.department?.departmentName}</Text>
                     </View>
-                    <View
-                        space={4}
-                        className="pb-4 justify-between"
-                    >
+                    <View className="flex-row gap-2 pb-4 justify-between">
                         <Text className="font-bold">Category</Text>
                         <Text>{permission?.category.name}</Text>
                     </View>
-                    <View
-                        space={4}
-                        className="pb-4 justify-between"
-                    >
+                    <View className="flex-row gap-2 pb-4 justify-between">
                         <Text className="font-bold">Date Requested</Text>
                         <Text>{dayjs(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</Text>
                     </View>
 
                     {permission?.dateApproved ? (
-                        <View
-                            space={4}
-                            className="pb-4 justify-between"
-                        >
+                        <View className="flex-row gap-2 pb-4 justify-between">
                             <Text className="font-bold">Date Approved</Text>
                             <Text>{dayjs(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</Text>
                         </View>
                     ) : null}
 
                     {permission?.rejectedOn ? (
-                        <View
-                            space={4}
-                            className="pb-4 justify-between"
-                        >
+                        <View className="flex-row gap-2 pb-4 justify-between">
                             <Text className="font-bold">Date Rejected</Text>
                             <Text>{dayjs(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</Text>
                         </View>
                     ) : null}
 
-                    <View
-                        space={4}
-                        className="pb-4 justify-between"
-                    >
+                    <View className="flex-row gap-2 pb-4 justify-between">
                         <Text className="font-bold">Start Date</Text>
-                        <Text>{dayjs(permission?.startDate).format('Do MMM, YYYY')}</Text>
+                        <Text>{dayjs(permission?.startDate).format('DD MMM, YYYY')}</Text>
                     </View>
 
-                    <View
-                        space={4}
-                        className="pb-4 justify-between"
-                    >
+                    <View className="flex-row gap-2 pb-4 justify-between">
                         <Text className="font-bold">End Date</Text>
-                        <Text>{dayjs(permission?.endDate).format('Do MMM, YYYY')}</Text>
+                        <Text>{dayjs(permission?.endDate).format('DD MMM, YYYY')}</Text>
                     </View>
 
-                    <View space={8} className="pb-4">
+                    <View className="pb-4 gap-4">
                         <Text className="font-bold">Description</Text>
                         {!permission?.description && (
                             <TextAreaComponent value={permission?.description} isDisabled={Platform.OS !== 'android'} />
                         )}
                         {permission?.description && (
-                            <Text numberOfLines={undefined} size="md" flexWrap="wrap">
+                            <Text numberOfLines={undefined} className="flex-wrap line-clamp-none">
                                 {permission?.description}
                             </Text>
                         )}
                     </View>
-                    <View
-                        space={4}
-                        className="pb-8 justify-between"
-                    >
+                    <View className="pb-8 justify-between flex-row">
                         <Text className="font-bold">Status</Text>
                         <StatusTag>{permission?.status as any}</StatusTag>
                     </View>
-                    <View space={8} className="pb-4">
+                    <View className="pb-4 gap-4">
                         <Text className="font-bold">
                             {!isHOD && !isAHOD && !isCampusPastor
                                 ? "Leader's comment"
                                 : (isAHOD || isHOD) && requestorId === user.userId
-                                  ? "Pastor's comment"
-                                  : 'Comment'}
+                                ? "Pastor's comment"
+                                : 'Comment'}
                         </Text>
                         {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
                         )}
                         {permission?.comment && (
-                            <Text numberOfLines={undefined} flexWrap="wrap">
+                            <Text numberOfLines={undefined} className="flex-wrap line-clamp-none">
                                 {permission?.comment}
                             </Text>
                         )}
                     </View>
                     <If condition={takePermissionAction}>
-                        <View className="justify-between">
-                            <ButtonComponent
-                                isDisabled={!permissionComment || approveIsLoading}
+                        <View className="flex-row gap-4">
+                            <Button
+                                disabled={!permissionComment || approveIsLoading}
                                 isLoading={declineIsLoading}
                                 onPress={handleDecline}
-                                style={{ width: '48%' }}
-                                secondary
-                                size="md"
+                                className="flex-1"
+                                variant="outline"
                             >
                                 Decline
-                            </ButtonComponent>
-                            <ButtonComponent
-                                isDisabled={declineIsLoading}
+                            </Button>
+                            <Button
+                                disabled={declineIsLoading}
                                 isLoading={approveIsLoading}
                                 onPress={handleApprove}
-                                style={{ width: '48%' }}
-                                size="md"
+                                className="flex-1"
                             >
                                 Approve
-                            </ButtonComponent>
+                            </Button>
                         </View>
                     </If>
                 </View>
