@@ -53,7 +53,7 @@ const Profile: React.FC = () => {
 
     return (
         <View className="flex-1">
-            <ScrollView className="px-4 py-6">
+            <ScrollView className="px-4 pt-6 pb-12">
                 <View className="pb-8 items-center">
                     <TouchableOpacity activeOpacity={0.7} onPress={pickImage} disabled={updateIsLoading || isUploading}>
                         <AvatarComponent
@@ -100,7 +100,7 @@ const Profile: React.FC = () => {
                         </Text>
                     </View>
                 </View>
-                <View className="mb-4 px-4 py-4 bg-muted-background rounded-2xl border border-gray-300">
+                <View className="mb-4 px-4 py-4 bg-muted-background rounded-2xl border border-gray-300 dark:border-border">
                     <View className="p-0 justify-start flex-row">
                         <Icon size={22} name="person" type="Ionicons" color={THEME_CONFIG.lightGray} />
                         <Text className="ml-4 text-muted-foreground">User Info</Text>
@@ -124,10 +124,15 @@ const Profile: React.FC = () => {
                         heading="Marital Status"
                         value={Utils.capitalizeFirstChar(user?.maritalStatus || '')}
                     />
-                    <UserInfo heading="Birthday" name="birthDay" value={dayjs(user?.birthDay).format('DD MMM')} />
+                    <UserInfo
+                        name="birthDay"
+                        heading="Birthday"
+                        dateString={user.birthDay}
+                        value={dayjs(user?.birthDay).format('DD MMM')}
+                    />
                 </View>
                 <TouchableOpacity activeOpacity={0.6} onPress={handleLogout}>
-                    <View className="px-4 mt-4 py-4 bg-muted-background rounded-2xl border border-gray-300">
+                    <View className="px-4 mt-4 py-4 bg-muted-background rounded-2xl border border-gray-300 dark:border-border">
                         <View className="flex-row">
                             <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
                             <Text className="ml-4">Logout</Text>

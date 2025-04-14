@@ -1,14 +1,12 @@
 import * as React from 'react';
 import { router, Stack, usePathname } from 'expo-router';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { Colors } from '~/constants/Colors';
 import NotificationModal from '~/components/composite/notification-modal';
 
-import * as Haptics from 'expo-haptics';
 import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
-import { NavButton } from './NavButton';
 import { AppRoutes, IAppRoute } from '~/config/navigation';
 // import { usePushNotifications } from '~/hooks/push-notifications';
 import { IUser } from '~/store/types';
@@ -34,14 +32,6 @@ const Routing: React.FC = () => {
     const { isDarkColorScheme } = useColorScheme();
     const isLoggedIn = useAppSelector(store => userSelectors.selectCurrentUser(store));
 
-    const handleGoBack = () => {
-        if (router.canGoBack()) {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-
-            router.back();
-        }
-    };
-
     const flattenedRoutes = React.useMemo(
         () =>
             flattenNestedRoutes(
@@ -58,26 +48,23 @@ const Routing: React.FC = () => {
         [AppRoutes]
     );
 
-    const pathname = capitalize(usePathname().replaceAll('/', ''));
+    const pathname = usePathname();
 
     const formatTitle = React.useCallback((href: string) => {
-        const formatted = href.replaceAll('(tabs)', '').replace('/', '').replaceAll('/', ' ');
+        const splitRouteArray = href.split('/');
+        const formatted = splitRouteArray[splitRouteArray.length - 1].replaceAll('-', ' ');
         const capitalised = capitalize(formatted);
 
-        return capitalised === '' ? 'Home' : capitalised;
+        return capitalised === '(tabs)' ? 'Home' : capitalised;
     }, []);
 
     const generalScreenOptions = React.useMemo(() => {
         return {
             headerTitle: formatTitle(pathname),
+            headerBackButtonDisplayMode: 'minimal',
             headerStyle: {
                 backgroundColor: isDarkColorScheme ? Colors.dark.background : Colors.light.background,
             },
-            // header: () => (
-            //     <SafeAreaView className="mx-2">
-            //         <NavButton onBack={handleGoBack} />
-            //     </SafeAreaView>
-            // ),
         };
     }, [isDarkColorScheme, pathname]);
 
@@ -112,13 +99,13 @@ const Routing: React.FC = () => {
                         <Stack.Screen
                             key={route.href}
                             name={route.href}
-                            options={props => {
-                                return {
+                            options={
+                                {
                                     gestureEnabled: true,
                                     title: formatTitle(route.href as string),
                                     ...(route.href.includes('(stack)') ? generalScreenOptions : { headerShown: false }),
-                                };
-                            }}
+                                } as any
+                            }
                         />
                     ))}
                 </Stack>

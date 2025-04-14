@@ -1,12 +1,8 @@
-import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import DateTimePicker from '~/components/composite/date-time-picker';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
+import DateTimePicker from '~/components/ui/date-time-picker';
 import useModal from '@hooks/modal/useModal';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
@@ -19,11 +15,20 @@ import { useAppDispatch } from '@store/hooks';
 import dayjs from 'dayjs';
 import { Label } from '~/components/ui/label';
 import FormErrorMessage from '~/components/ui/error-message';
-import { InputComponent } from '~/components/atoms/input';
 import { useLocalSearchParams } from 'expo-router';
+import { Input } from '~/components/ui/input';
+import { PhoneInput } from '~/components/ui/phone-input';
+import { ICountry } from 'react-native-international-phone-number';
+import { Button } from '~/components/ui/button';
 
 const EditProfile: React.FC = () => {
     const userData = useLocalSearchParams<IEditProfilePayload>();
+
+    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+
+    const handleSelectedCountry = (country: ICountry) => {
+        setSelectedCountry(country);
+    };
 
     const { user } = useRole();
     const { goBack } = useNavigation();
@@ -57,169 +62,95 @@ const EditProfile: React.FC = () => {
 
     const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
 
+    console.log(INITIAL_VALUES);
+
     return (
         <ErrorBoundary>
-            <ViewWrapper scroll style={{ paddingHorizontal: 12, paddingVertical: 20 }}>
+            <View className="p-4">
                 <Formik<IEditProfilePayload> onSubmit={onSubmit} initialValues={INITIAL_VALUES}>
-                    {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
-                        const handleDate = (fieldName: string, value: any) => {
-                            setFieldValue(fieldName, dayjs(value).unix());
-                        };
-
+                    {({ errors, touched, values, handleChange, handleSubmit, handleBlur }) => {
                         return (
-                            <View space={1}>
+                            <View className="gap-6">
                                 <If condition={!!userData?.firstName}>
-                                    <View isInvalid={!!errors?.firstName && touched.firstName}>
+                                    <View className="gap-1">
                                         <Label>First name</Label>
-                                        <InputComponent
-                                            isRequired
+                                        <Input
                                             value={values?.firstName}
                                             placeholder="First name"
                                             onChangeText={handleChange('firstName')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.firstName}
-                                        </FormErrorMessage>
+                                        {errors?.firstName && <FormErrorMessage>{errors?.firstName}</FormErrorMessage>}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.lastName}>
-                                    <View isRequired isInvalid={!!errors?.lastName && touched.lastName}>
+                                    <View className="gap-1">
                                         <Label>Last name</Label>
-                                        <InputComponent
-                                            isRequired
+                                        <Input
                                             value={values?.lastName}
                                             placeholder="Last name"
                                             onChangeText={handleChange('lastName')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.lastName}
-                                        </FormErrorMessage>
+                                        {errors?.firstName && <FormErrorMessage>{errors?.firstName}</FormErrorMessage>}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.phoneNumber}>
-                                    <View isRequired isInvalid={!!errors?.phoneNumber && touched.phoneNumber}>
+                                    <View className="gap-1">
                                         <Label>Phone number</Label>
-                                        <InputComponent
-                                            isRequired
-                                            value={values?.phoneNumber}
-                                            placeholder="Eg: +2347012345678"
-                                            onChangeText={handleChange('phoneNumber')}
+                                        <PhoneInput
+                                            defaultCountry="NG"
+                                            error={errors.phoneNumber}
+                                            placeholder="Phone number"
+                                            touched={touched.phoneNumber}
+                                            selectedCountry={selectedCountry}
+                                            onBlur={handleBlur('phoneNumber')}
+                                            value={values.phoneNumber as string}
+                                            onChangeSelectedCountry={handleSelectedCountry}
+                                            onChangePhoneNumber={handleChange('phoneNumber')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.phoneNumber}
-                                        </FormErrorMessage>
+                                        {errors?.phoneNumber && (
+                                            <FormErrorMessage>{errors?.phoneNumber}</FormErrorMessage>
+                                        )}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.address}>
-                                    <View isRequired isInvalid={!!errors?.address && touched.address}>
+                                    <View className="gap-1">
                                         <Label>Address</Label>
-                                        <InputComponent
-                                            isRequired
+                                        <Input
                                             value={values?.address}
-                                            placeholder="Your home address"
+                                            placeholder="Address"
                                             onChangeText={handleChange('address')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.address}
-                                        </FormErrorMessage>
+                                        {errors?.address && <FormErrorMessage>{errors?.address}</FormErrorMessage>}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.occupation}>
-                                    <View isRequired isInvalid={!!errors?.occupation && touched.occupation}>
+                                    <View className="gap-1">
                                         <Label>Occupation</Label>
-                                        <InputComponent
-                                            isRequired
+                                        <Input
+                                            placeholder="Occupation"
                                             value={values?.occupation}
-                                            placeholder="Your occupation"
                                             onChangeText={handleChange('occupation')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.occupation}
-                                        </FormErrorMessage>
+                                        {errors?.occupation && (
+                                            <FormErrorMessage>{errors?.occupation}</FormErrorMessage>
+                                        )}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.placeOfWork}>
-                                    <View isRequired isInvalid={!!errors?.placeOfWork && touched.placeOfWork}>
+                                    <View className="gap-1">
                                         <Label>Place of work</Label>
-                                        <InputComponent
-                                            isRequired
+                                        <Input
                                             value={values?.placeOfWork}
-                                            placeholder="Your place of work"
+                                            placeholder="Place of work"
                                             onChangeText={handleChange('placeOfWork')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.placeOfWork}
-                                        </FormErrorMessage>
+                                        {errors?.placeOfWork && (
+                                            <FormErrorMessage>{errors?.placeOfWork}</FormErrorMessage>
+                                        )}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.gender}>
-                                    <View isRequired isInvalid={!!errors?.gender && touched?.gender}>
+                                    <View className="gap-1">
                                         <Label>Gender</Label>
                                         <SelectComponent
                                             valueKey="_id"
@@ -235,25 +166,12 @@ const EditProfile: React.FC = () => {
                                             <SelectItemComponent label="Male" value="M" />
                                             <SelectItemComponent label="Female" value="F" />
                                         </SelectComponent>
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.gender}
-                                        </FormErrorMessage>
+                                        {errors?.gender && <FormErrorMessage>{errors?.gender}</FormErrorMessage>}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.maritalStatus}>
                                     <ErrorBoundary>
-                                        <View isRequired isInvalid={!!errors?.maritalStatus && touched.maritalStatus}>
+                                        <View className="gap-1">
                                             <Label>Marital Status</Label>
                                             <SelectComponent
                                                 selectedValue={values?.maritalStatus}
@@ -275,101 +193,81 @@ const EditProfile: React.FC = () => {
                                                 <SelectItemComponent label="Separated" value="Separated" />
                                                 <SelectItemComponent label="Divorced" value="Divorced" />
                                             </SelectComponent>
-                                            <FormErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.maritalStatus}
-                                            </FormErrorMessage>
+                                            {errors?.maritalStatus && (
+                                                <FormErrorMessage>{errors?.maritalStatus}</FormErrorMessage>
+                                            )}
                                         </View>
                                     </ErrorBoundary>
                                 </If>
                                 <If condition={!!userData?.birthDay}>
-                                    <View isRequired isInvalid={!!errors.birthDay && touched.birthDay}>
+                                    <View className="gap-1">
                                         <DateTimePicker
-                                            label="Next Birthday"
-                                            fieldName="birthDay"
-                                            onSelectDate={handleDate}
+                                            mode="date"
+                                            error={errors.birthDay}
+                                            touched={touched.birthDay}
+                                            label="Date of birth"
+                                            initialValue={values.birthDay}
+                                            placeholder="Enter your date of birth"
+                                            maximumDate={dayjs().subtract(18, 'years').toDate()}
+                                            minimumDate={dayjs().subtract(120, 'years').toDate()}
+                                            onConfirm={handleChange('birthDay') as unknown as (value: Date) => void}
                                         />
-                                        {errors.birthDay && (
-                                            <Text color="error.400" fontSize="xs">
-                                                Please choose your next birthday
-                                            </Text>
+                                        {!!errors.birthDay && !!touched.birthDay && (
+                                            <FormErrorMessage>{errors.birthDay}</FormErrorMessage>
                                         )}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.nextOfKin}>
-                                    <View isRequired isInvalid={!!errors?.nextOfKin && touched.nextOfKin}>
-                                        <Label>Next Of Kin</Label>
-                                        <InputComponent
-                                            isRequired
+                                    <View className="gap-1">
+                                        <Label>Next of kin</Label>
+                                        <Input
+                                            leftIcon={{
+                                                name: 'person-outline',
+                                                type: 'ionicons',
+                                            }}
                                             value={values?.nextOfKin}
-                                            placeholder="Next of Kin's name"
+                                            placeholder="Enter their name"
+                                            onBlur={handleBlur('nextOfKin')}
                                             onChangeText={handleChange('nextOfKin')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.nextOfKin}
-                                        </FormErrorMessage>
+                                        {!!errors.nextOfKin && !!touched.nextOfKin && (
+                                            <FormErrorMessage>{errors.nextOfKin}</FormErrorMessage>
+                                        )}
                                     </View>
                                 </If>
                                 <If condition={!!userData?.nextOfKinPhoneNo}>
-                                    <View isRequired isInvalid={!!errors?.nextOfKinPhoneNo && touched.nextOfKinPhoneNo}>
-                                        <Label>Next of kin phone number</Label>
-                                        <InputComponent
-                                            isRequired
-                                            value={values?.phoneNumber}
-                                            placeholder="Eg: +2347012345678"
-                                            onChangeText={handleChange('nextOfKinPhoneNo')}
+                                    <View className="gap-1">
+                                        <Label>Next of kin's phone number</Label>
+                                        <PhoneInput
+                                            defaultCountry="NG"
+                                            error={errors.nextOfKinPhoneNo}
+                                            touched={touched.nextOfKinPhoneNo}
+                                            selectedCountry={selectedCountry}
+                                            onBlur={handleBlur('nextOfKinPhoneNo')}
+                                            placeholder="Enter their phone number"
+                                            value={values.nextOfKinPhoneNo as string}
+                                            onChangeSelectedCountry={handleSelectedCountry}
+                                            onChangePhoneNumber={handleChange('nextOfKinPhoneNo')}
                                         />
-                                        <FormErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.nextOfKinPhoneNo}
-                                        </FormErrorMessage>
                                     </View>
                                 </If>
                                 <View>
-                                    <ButtonComponent
+                                    <Button
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
-                                        isDisabled={values[Object.keys(values)[0]] === userData[Object.keys(values)[0]]}
+                                        disabled={
+                                            (values as any)[Object.keys(values)[0]] ===
+                                            (userData as any)[Object.keys(values)[0]]
+                                        }
                                     >
                                         Save
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </View>
                         );
                     }}
                 </Formik>
-            </ViewWrapper>
+            </View>
         </ErrorBoundary>
     );
 };
