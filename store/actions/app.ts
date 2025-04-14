@@ -1,4 +1,4 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, asyncThunkCreator, buildCreateSlice, createSlice } from '@reduxjs/toolkit';
 import { IModalState } from '~/types/app';
 
 export interface IAppState {
@@ -11,7 +11,11 @@ const initialState: IAppState = {
     },
 };
 
-const appStateSlice = createSlice({
+export const createAppSlice = buildCreateSlice({
+    creators: { asyncThunk: asyncThunkCreator },
+});
+
+const appStateSlice = createAppSlice({
     name: 'app_state',
 
     initialState,
@@ -19,15 +23,6 @@ const appStateSlice = createSlice({
     reducers: {
         toast: (state, { payload }: PayloadAction<IAppState['toast']>) => {
             state.toast = payload;
-
-            console.log({ payload });
-
-            setTimeout(
-                () => {
-                    state.toast.open = false;
-                },
-                payload.duration ? payload.duration * 1000 : 3000 // Modal timeout
-            );
         },
     },
 

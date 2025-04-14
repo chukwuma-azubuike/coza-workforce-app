@@ -35,7 +35,7 @@ const useUploader = ({
     const [uploadFailed, setUploadFailed] = useState<boolean>();
 
     const [generateUrl, { isLoading: generateUrlLoading }] = useGenerateUploadUrlMutation();
-    const [uploadMutation, { isLoading: isUploading }] = useUploadMutation();
+    const [uploadMutation, { isLoading: isUploading, error }] = useUploadMutation();
 
     const pickAsset = useCallback(async (asset: DocumentPicker.DocumentPickerAsset) => {
         try {
@@ -130,6 +130,7 @@ const useUploader = ({
         progress,
         pickAsset,
         pickImage,
+        error: error,
         pickDocument,
         uploadFailed,
         uploadSuccessful,

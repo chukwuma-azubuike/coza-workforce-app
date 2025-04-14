@@ -70,6 +70,7 @@ export interface IResetPasswordPayload {
     OTP: string;
     email: string;
     password: string;
+    confirmPassword: string;
 }
 
 interface IVerifyEmailResponseTransform {
@@ -213,7 +214,12 @@ export const accountServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: ['listOfDepartmentUsers', 'CampusSummaryByCampusId', 'globalWorkforceSummary'],
+            invalidatesTags: [
+                'listOfDepartmentUsers',
+                'CampusSummaryByCampusId',
+                'globalWorkforceSummary',
+                'userDetails',
+            ],
         }),
 
         deleteUser: endpoint.mutation<IUser, string>({
@@ -352,7 +358,7 @@ export const {
     useDeleteUserMutation,
     useResetPasswordMutation,
     useValidateEmailOTPMutation,
-    useSendForgotPasswordOTPQuery,
+    useLazySendForgotPasswordOTPQuery,
     useGetUsersByDepartmentIdQuery,
     useGetGlobalWorkForceSummaryQuery,
     useGetCampusSummaryByCampusIdQuery,

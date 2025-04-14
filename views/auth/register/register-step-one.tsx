@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepOne, IRegistrationPageStep } from './types';
@@ -61,6 +61,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Label>First name</Label>
                                                     <Input
                                                         leftIcon={{
+                                                            type: 'ionicons',
                                                             name: 'person-outline',
                                                         }}
                                                         onBlur={handleBlur('firstName')}
@@ -76,6 +77,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Label>Last name</Label>
                                                     <Input
                                                         leftIcon={{
+                                                            type: 'ionicons',
                                                             name: 'person-outline',
                                                         }}
                                                         placeholder="Doe"
@@ -90,6 +92,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Label>Email</Label>
                                                     <Input
                                                         leftIcon={{
+                                                            type: 'ionicons',
                                                             name: 'mail-outline',
                                                         }}
                                                         isDisabled
@@ -115,6 +118,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Input
                                                         leftIcon={{
                                                             name: 'home',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.address}
                                                         onChangeText={handleChange('address')}
@@ -128,6 +132,7 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Label>Department</Label>
                                                     <Input
                                                         leftIcon={{
+                                                            type: 'ionicons',
                                                             name: 'people',
                                                         }}
                                                         isDisabled

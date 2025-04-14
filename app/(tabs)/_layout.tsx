@@ -7,20 +7,14 @@ import { NavTabBackground } from '~/components/NavBackgroundBlur';
 
 import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
-import TopNav from '~/components/layout/top-nav';
-import { usePathname } from 'expo-router';
 
 const TabLayout: React.FC = () => {
     const { isWorker, isQC, isCGWCApproved } = useRole();
 
     const tabRoutes = useMemo(() => AppRoutes.filter(route => route.inMenuBar), [AppRoutes]);
 
-    const pathname = usePathname().replaceAll('/', '');
-
     return (
         <>
-            {/* Do not render top nav for home screen */}
-            {pathname && <TopNav />}
             <Tabs
                 options={{
                     backBehavior: 'order',

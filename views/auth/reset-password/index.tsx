@@ -1,182 +1,134 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { KeyboardAvoidingView, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { FormControl, Heading } from 'native-base';
-import ButtonComponent from '@components/atoms/button';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
+
 import { Formik } from 'formik';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ResetPasswordSchema } from '@utils/schemas';
-import { TouchableRipple } from 'react-native-paper';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+
 import SupportLink from '../support-link';
-import { IRegisterFormProps } from '../register/types';
 import { IResetPasswordPayload, useResetPasswordMutation } from '@store/services/account';
 import useModal from '@hooks/modal/useModal';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Label } from '~/components/ui/label';
+import FormErrorMessage from '~/components/ui/error-message';
+import { DismissKeyboard } from '~/components/DismissKeyboard';
+import { Input } from '~/components/ui/input';
+import { Button } from '~/components/ui/button';
 
-const ResetPassword: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const [showPassword, setShowPassword] = React.useState<boolean>(false);
-    const handleIconPress = () => setShowPassword(prev => !prev);
-
-    const { email, OTP } = props?.route?.params as unknown as IResetPasswordPayload;
+const ResetPassword: React.FC = () => {
+    const { email, OTP } = useLocalSearchParams<IResetPasswordPayload>();
 
     const [resetPassword, { reset, isSuccess, isError, isLoading }] = useResetPasswordMutation();
 
-    const onSubmit = (value: Omit<IResetPasswordPayload, 'OTP' | 'email'>) => {
-        resetPassword({ password: value.password, email, OTP });
-    };
+    const onSubmit = async (value: Omit<IResetPasswordPayload, 'OTP' | 'email'>) => {
+        const response = await resetPassword({ password: value.password, email, OTP } as IResetPasswordPayload);
 
-    const initialValues = {
-        password: '',
-        confirmPassword: '',
-    };
-
-    const { navigate } = useNavigation();
-
-    const navigateToLogin = () => navigate('Login' as never);
-
-    const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (isError) {
+        if ('error' in response) {
             setModalState({
                 status: 'error',
-                message: 'Oops, something went wrong!',
+                message: JSON.stringify(response.error),
             });
             reset();
         }
-        if (isSuccess) {
+        if ('data' in response) {
             setModalState({
                 status: 'success',
                 message: 'Password reset successful',
             });
             navigateToLogin();
         }
-    }, [isError, isSuccess]);
+    };
+
+    const initialValues: IResetPasswordPayload = {
+        OTP: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+    };
+
+    const navigateToLogin = () => router.push('/login');
+
+    const { setModalState } = useModal();
 
     return (
-        <ViewWrapper>
-            <View w="100%" h="full" justifyContent="space-between" pb={4}>
-                <View space={6} pb={5} pt={20} alignItems="center" justifyContent="space-around" className="px-4">
-                    {/* <Logo /> */}
-                    <Heading>Reset password</Heading>
-                    <View alignItems="center" w="100%">
-                        <Formik<{ email: string; password: string }>
-                            validateOnChange
-                            onSubmit={onSubmit}
-                            validationSchema={ResetPasswordSchema}
-                            initialValues={initialValues as unknown as IResetPasswordPayload}
-                        >
-                            {({
-                                errors,
-                                handleChange,
-                                handleSubmit,
-                            }: Pick<
-                                IRegisterFormProps,
-                                'values' | 'errors' | 'handleChange' | 'handleSubmit' | 'setFieldError'
-                            >) => {
-                                return (
-                                    <View w="100%" space={1}>
-                                        <FormControl isRequired isInvalid={errors?.password ? true : false}>
-                                            <FormControl.Label>Password</FormControl.Label>
-                                            <InputComponent
-                                                type={showPassword ? 'text' : 'password'}
-                                                placeholder="password"
-                                                leftIcon={{
-                                                    name: 'lock-closed-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                rightIcon={{
-                                                    name: showPassword ? 'eye-off-outline' : 'eye-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                onIconPress={handleIconPress}
-                                                onChangeText={handleChange('password')}
-                                            />
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.password}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl isRequired isInvalid={errors?.confirmPassword ? true : false}>
-                                            <FormControl.Label>Confirm password</FormControl.Label>
-                                            <InputComponent
-                                                type={showPassword ? 'text' : 'password'}
-                                                placeholder="Repeat password"
-                                                leftIcon={{
-                                                    name: 'lock-closed-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                rightIcon={{
-                                                    name: showPassword ? 'eye-off-outline' : 'eye-outline',
-                                                    type: 'ionicon',
-                                                }}
-                                                onIconPress={handleIconPress}
-                                                onChangeText={handleChange('confirmPassword')}
-                                            />
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.confirmPassword}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
-                                        <FormControl>
-                                            <ButtonComponent
-                                                mt={4}
+        <SafeAreaView className="flex-1">
+            <View className="flex-1 mt-20">
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+                    <DismissKeyboard>
+                        <View className="px-6 gap-6">
+                            <Text className="mt-4 text-2xl font-bold">Reset Password</Text>
+                            <Formik<{ email: string; password: string; confirmPassword: string }>
+                                validateOnChange
+                                onSubmit={onSubmit}
+                                initialValues={initialValues}
+                                validationSchema={ResetPasswordSchema}
+                            >
+                                {({ errors, touched, handleChange, handleSubmit }) => {
+                                    return (
+                                        <View className="gap-4">
+                                            <View className="gap-1">
+                                                <Label>Password</Label>
+                                                <Input
+                                                    isPassword
+                                                    placeholder="Password"
+                                                    onChangeText={handleChange('password')}
+                                                    leftIcon={{ name: 'lock-outline', type: 'MaterialIcons' }}
+                                                />
+                                                {!!errors?.password && !!touched?.password && (
+                                                    <FormErrorMessage>{errors?.password}</FormErrorMessage>
+                                                )}
+                                            </View>
+                                            <View className="gap-1">
+                                                <Label>Confirm password</Label>
+                                                <Input
+                                                    isPassword
+                                                    placeholder="Confirm password"
+                                                    onChangeText={handleChange('confirmPassword')}
+                                                    leftIcon={{ name: 'lock-outline', type: 'MaterialIcons' }}
+                                                />
+                                                {!!errors?.confirmPassword && !!touched?.confirmPassword && (
+                                                    <FormErrorMessage>{errors?.confirmPassword}</FormErrorMessage>
+                                                )}
+                                            </View>
+                                            <Button
+                                                className="mt-2"
                                                 isLoading={isLoading}
-                                                onPress={handleSubmit}
-                                                isLoadingText="Resetting your password..."
+                                                onPress={handleSubmit as () => void}
+                                                loadingText="Resetting your password..."
                                             >
                                                 Save
-                                            </ButtonComponent>
-                                        </FormControl>
-                                    </View>
-                                );
-                            }}
-                        </Formik>
-                    </View>
-
-                    <View alignItems="center" justifyContent="center">
-                        <Text fontSize="md" color="gray.400">
-                            Remember your password?
-                        </Text>
-                        <TouchableRipple
-                            onPress={navigateToLogin}
-                            rippleColor="rgba(255, 255, 255, 0)"
-                            style={{ paddingHorizontal: 6, borderRadius: 10 }}
-                        >
-                            <Text fontSize="md" _dark={{ color: 'primary.400' }} _light={{ color: 'primary.500' }}>
-                                Login
-                            </Text>
-                        </TouchableRipple>
-                    </View>
-                </View>
-                <View w="full" justifyContent="center" justifyItems="center" alignItems="center">
-                    <SupportLink />
-                </View>
+                                            </Button>
+                                        </View>
+                                    );
+                                }}
+                            </Formik>
+                            <View className="gap-2">
+                                <View className="items-center justify-center flex-row">
+                                    <Text className="text-muted-foreground">Remembered your password?</Text>
+                                    <TouchableOpacity
+                                        onPress={navigateToLogin}
+                                        style={{ paddingHorizontal: 6, borderRadius: 10 }}
+                                    >
+                                        <Text className="text-primary">Login</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </DismissKeyboard>
+                </KeyboardAvoidingView>
             </View>
-        </ViewWrapper>
+            <View
+                style={{
+                    bottom: 40,
+                    width: '100%',
+                    position: 'absolute',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}
+            >
+                <SupportLink />
+            </View>
+        </SafeAreaView>
     );
 };
 
