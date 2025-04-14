@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepTwo, IRegistrationPageStep } from './types';
@@ -87,6 +87,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Input
                                                         leftIcon={{
                                                             name: 'briefcase-outline',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.occupation}
                                                         onBlur={handleBlur('occupation')}
@@ -103,6 +104,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Input
                                                         leftIcon={{
                                                             name: 'people',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.placeOfWork}
                                                         onBlur={handleBlur('placeOfWork')}
@@ -119,6 +121,7 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Input
                                                         leftIcon={{
                                                             name: 'person-outline',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.nextOfKin}
                                                         placeholder="Enter their name"

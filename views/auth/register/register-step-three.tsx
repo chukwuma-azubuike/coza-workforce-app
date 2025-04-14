@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepThree, IRegistrationPageStep } from './types';
@@ -87,6 +87,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     <Input
                                                         leftIcon={{
                                                             name: 'logo-facebook',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.socialMedia?.facebook}
                                                         placeholder="Enter your facebook handle"
@@ -106,6 +107,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     <Input
                                                         leftIcon={{
                                                             name: 'logo-instagram',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.socialMedia?.instagram}
                                                         placeholder="Enter your instagram handle"
@@ -125,6 +127,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     <Input
                                                         leftIcon={{
                                                             name: 'logo-twitter',
+                                                            type: 'ionicons',
                                                         }}
                                                         value={values?.socialMedia?.twitter}
                                                         placeholder="Enter your twitter handle"
