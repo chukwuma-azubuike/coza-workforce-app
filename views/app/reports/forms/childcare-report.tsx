@@ -108,7 +108,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
                     <View pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
                         <View flex={1} justifyContent="space-between" className="px-4">
                             <View space={4} mt={12}>

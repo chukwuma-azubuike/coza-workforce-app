@@ -413,7 +413,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <Text alignSelf="flex-start" className="font-bold">
                                         Birthday
                                     </Text>
-                                    <Text>{dayjs(data?.birthDay).format('Do MMMM')}</Text>
+                                    <Text>{dayjs(data?.birthDay).format('DD MMMM')}</Text>
                                 </View>
                                 <View
                                     pb={2}

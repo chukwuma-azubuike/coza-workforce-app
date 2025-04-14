@@ -61,7 +61,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
                     <View pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
                         <View
                             mt={4}

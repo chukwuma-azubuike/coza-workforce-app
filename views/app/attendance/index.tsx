@@ -6,7 +6,7 @@ import useRole, { ROLES } from '@hooks/role';
 import useMediaQuery from '@hooks/media-query';
 import useScreenFocus from '@hooks/focus';
 import If from '@components/composite/if-container';
-// import StaggerButtonComponent from '@components/composite/stagger';
+import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
@@ -73,27 +73,29 @@ const Attendance: React.FC = () => {
     }, []);
 
     return (
-        <View className="flex-1">
-            <TopNav />
-            <TabComponent
-                onIndexChange={setIndex}
-                renderScene={renderScene}
-                navigationState={{ index, routes: allRoutes }}
-                tabBarScroll={allRoutes.length > 2 && isMobile}
-            />
-            <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                {/* <StaggerButtonComponent
-                    buttons={[
-                        {
-                            color: 'green.600',
-                            iconName: 'download-outline',
-                            handleClick: goToExport,
-                            iconType: 'ionicon',
-                        },
-                    ]}
-                /> */}
-            </If>
-        </View>
+        <SafeAreaView className="flex-1">
+            <View className="flex-1">
+                <TopNav />
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    navigationState={{ index, routes: allRoutes }}
+                    tabBarScroll={allRoutes.length > 2 && isMobile}
+                />
+                <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                    <StaggerButtonComponent
+                        buttons={[
+                            {
+                                color: 'bg-green-600',
+                                iconName: 'download-outline',
+                                handleClick: goToExport,
+                                iconType: 'ionicon',
+                            },
+                        ]}
+                    />
+                </If>
+            </View>
+        </SafeAreaView>
     );
 };
 

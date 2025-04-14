@@ -8,10 +8,7 @@ import { FlatListSkeleton } from '../../layout/skeleton';
 import dayjs from 'dayjs';
 import { THEME_CONFIG } from '@config/appConfig';
 import { useNavigation } from '@react-navigation/native';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
 import useAppColorMode from '@hooks/theme/colorMode';
-import VStackComponent from '@components/layout/v-stack';
 
 export interface IFlatListColumn {
     title?: string;
@@ -174,9 +171,9 @@ const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }
                 }}
             >
                 {showHeader ? (
-                    <Text className="pb-3">
-                        {dayjs(item[0]).format() !== 'Invalid date'
-                            ? dayjs(item[0]).format('Do MMMM, YYYY')
+                    <Text className="pb-3 text-lg font-semibold text-muted-foreground">
+                        {dayjs(item[0]).format() !== 'Invalid Date'
+                            ? dayjs(item[0]).format('DD MMMM, YYYY')
                             : Utils.capitalizeFirstChar(item[0])}
                     </Text>
                 ) : null}
@@ -214,7 +211,7 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                         paddingHorizontal: padding ? 6 : 0,
                     }}
                 >
-                    <View space={6} className="items-center justify-between">
+                    <View className="items-center justify-between gap-2">
                         {columns?.map((column, idx) => {
                             if (column.render) return column.render(item, idx);
                             return (
