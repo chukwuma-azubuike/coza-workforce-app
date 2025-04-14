@@ -1,8 +1,8 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
+import ForgotPassword from '~/views/auth/forgot-password';
 
 const ForgotPasswordScreen: React.FC = () => {
-    return <SafeAreaView></SafeAreaView>;
+    return <ForgotPassword />;
 };
 
 export default ForgotPasswordScreen;

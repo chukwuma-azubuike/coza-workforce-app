@@ -9,7 +9,8 @@ import If from '@components/composite/if-container';
 // import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import { router, useLocalSearchParams } from 'expo-router';
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
+import TopNav from '~/components/layout/top-nav';
 
 const Attendance: React.FC = () => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD, isGroupHead } = useRole();
@@ -72,7 +73,8 @@ const Attendance: React.FC = () => {
     }, []);
 
     return (
-        <SafeAreaView className="flex-1">
+        <View className="flex-1">
+            <TopNav />
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}
@@ -91,7 +93,7 @@ const Attendance: React.FC = () => {
                     ]}
                 /> */}
             </If>
-        </SafeAreaView>
+        </View>
     );
 };
 

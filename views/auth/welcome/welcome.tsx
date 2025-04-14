@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 
 import React from 'react';
 import Logo from '@components/atoms/logo';

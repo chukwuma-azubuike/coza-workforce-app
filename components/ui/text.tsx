@@ -12,7 +12,7 @@ const Text = React.forwardRef<TextRef, SlottableTextProps>(({ className, asChild
 
     return (
         <Component
-            className={cn('text-xl text-foreground web:select-text', textClass, className)}
+            className={cn('text-xl text-foreground web:select-text line-clamp-1 truncate', textClass, className)}
             ref={ref}
             {...props}
         />
