@@ -170,7 +170,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                             <SelectItemComponent
                                 value={service._id}
                                 key={`service-${index}`}
-                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
                             />
                         ))}
                     </SelectComponent>

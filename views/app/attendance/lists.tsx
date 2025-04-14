@@ -158,15 +158,17 @@ export const TeamAttendance: React.FC = React.memo(() => {
                     ))}
                 </SelectComponent>
             </View>
-            <FlatListComponent
-                padding={isAndroid ? 3 : 1}
-                onRefresh={handleRefetch}
-                isLoading={isLoading || isFetching}
-                columns={teamAttendanceDataColumns}
-                refreshing={isLoading || isFetching}
-                data={mergedAttendanceWithMemberList}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
-            />
+            <View className="px-2 flex-1">
+                <FlatListComponent
+                    padding={isAndroid ? 3 : 1}
+                    onRefresh={handleRefetch}
+                    isLoading={isLoading || isFetching}
+                    columns={teamAttendanceDataColumns}
+                    refreshing={isLoading || isFetching}
+                    data={mergedAttendanceWithMemberList}
+                    ListFooterComponentStyle={{ marginVertical: 20 }}
+                />
+            </View>
         </ErrorBoundary>
     );
 });
@@ -300,15 +302,17 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                     ))}
                 </SelectComponent>
             </View>
-            <FlatListComponent
-                padding={isAndroid ? 3 : true}
-                onRefresh={handleRefetch}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-                data={mergedAttendanceWithLeaderList}
-                columns={leadersAttendanceDataColumns}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
-            />
+            <View className="px-2 flex-1">
+                <FlatListComponent
+                    padding={isAndroid ? 3 : true}
+                    onRefresh={handleRefetch}
+                    isLoading={isLoading || isFetching}
+                    refreshing={isLoading || isFetching}
+                    data={mergedAttendanceWithLeaderList}
+                    columns={leadersAttendanceDataColumns}
+                    ListFooterComponentStyle={{ marginVertical: 20 }}
+                />
+            </View>
         </ErrorBoundary>
     );
 });
@@ -403,16 +407,18 @@ export const CampusAttendance: React.FC = React.memo(() => {
                     ))}
                 </SelectComponent>
             </View>
-            <FlatListComponent
-                columns={campusColumns}
-                onRefresh={handleRefetch}
-                data={data as IAttendance[]}
-                padding={isAndroid ? 3 : true}
-                // fetchMoreData={fetchMoreData}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
-            />
+            <View className="px-2 flex-1">
+                <FlatListComponent
+                    columns={campusColumns}
+                    onRefresh={handleRefetch}
+                    data={data as IAttendance[]}
+                    padding={isAndroid ? 3 : true}
+                    // fetchMoreData={fetchMoreData}
+                    isLoading={isLoading || isFetching}
+                    refreshing={isLoading || isFetching}
+                    ListFooterComponentStyle={{ marginVertical: 20 }}
+                />
+            </View>
         </ErrorBoundary>
     );
 });
@@ -520,15 +526,17 @@ export const GroupAttendance: React.FC = React.memo(() => {
                     ))}
                 </SelectComponent>
             </View>
-            <FlatListComponent
-                padding={isAndroid ? 3 : 1}
-                onRefresh={handleRefetch}
-                isLoading={isLoading || isFetching}
-                columns={groupAttendanceDataColumns}
-                refreshing={isLoading || isFetching}
-                data={mergedAttendanceWithMemberList}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
-            />
+            <View className="px-2 flex-1">
+                <FlatListComponent
+                    padding={isAndroid ? 3 : 1}
+                    onRefresh={handleRefetch}
+                    isLoading={isLoading || isFetching}
+                    columns={groupAttendanceDataColumns}
+                    refreshing={isLoading || isFetching}
+                    data={mergedAttendanceWithMemberList}
+                    ListFooterComponentStyle={{ marginVertical: 20 }}
+                />
+            </View>
         </ErrorBoundary>
     );
 });

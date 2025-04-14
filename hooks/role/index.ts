@@ -76,10 +76,12 @@ export enum DEPARTMENTS {
 
 const useRole = () => {
     const storedUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
-    const { data: latestUser } = useGetUserByIdQuery(storedUser?.userId as string);
+    const { data: latestUser } = useGetUserByIdQuery(storedUser?.userId as string, {
+        refetchOnMountOrArgChange: false,
+    });
     const currentUser = latestUser || storedUser;
 
-    const { data: roleObjects } = useGetRolesQuery();
+    const { data: roleObjects } = useGetRolesQuery(undefined, { refetchOnMountOrArgChange: false });
     const leaderRoleIds = React.useMemo(
         () =>
             roleObjects

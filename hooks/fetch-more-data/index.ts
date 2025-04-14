@@ -1,31 +1,25 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import uniqBy from 'lodash/uniqBy';
 
-const useFetchMoreData = ({
-    uniqKey = '_id',
-    dataSet,
-    isSuccess,
-}: {
-    dataSet?: any[];
+interface UseFetchMoreDataProps<T> {
+    uniqKey?: keyof T;
+    dataSet?: T[];
     isSuccess: boolean;
-    uniqKey: string | number;
-}) => {
-    const [data, setData] = React.useState<any[] | undefined>(dataSet);
+}
 
-    React.useEffect(() => {
-        if (isSuccess) {
-            setData((prev: any) => {
-                if (dataSet && prev) {
-                    return uniqBy([...prev, ...dataSet], uniqKey);
-                } else if (!prev && dataSet) {
-                    return dataSet;
-                }
-                return prev;
+const useFetchMoreData = <T>({ uniqKey = '_id' as keyof T, dataSet = [], isSuccess }: UseFetchMoreDataProps<T>) => {
+    const [data, setData] = useState<T[]>([]);
+
+    useEffect(() => {
+        if (isSuccess && dataSet.length > 0) {
+            setData(prevData => {
+                if (!prevData.length) return dataSet;
+                return uniqBy([...prevData, ...dataSet], item => item[uniqKey]);
             });
         }
-    }, [isSuccess, dataSet]);
+    }, [dataSet, isSuccess, uniqKey]);
 
-    return { data: (data as any[]) || (dataSet as any[]) };
+    return { data };
 };
 
 export default useFetchMoreData;

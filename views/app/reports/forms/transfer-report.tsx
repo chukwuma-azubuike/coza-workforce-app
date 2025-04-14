@@ -93,7 +93,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                 <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
                     <View pb={10} mt={4}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
 
                         <FieldArray

@@ -1,18 +1,14 @@
 import React from 'react';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import {
     CampusPermissions,
     GroupPermissionsList,
     LeadersPermissionsList,
     MyPermissionsList,
-    MyTeamPermissionsList,
+    TeamPermissionsList,
 } from './permissions-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '@components/composite/tabs';
 import useRole from '@hooks/role';
-import { IPermission } from '@store/types';
 import useMediaQuery from '@hooks/media-query';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { AddButtonComponent } from '@components/atoms/button';
@@ -20,8 +16,9 @@ import If from '@components/composite/if-container';
 import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
 import { useGetRolesQuery } from '@store/services/role';
-import { View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import TopNav from '~/components/layout/top-nav';
+import { router, useLocalSearchParams } from 'expo-router';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -31,28 +28,25 @@ const ROUTES = [
     { key: 'groupPermissions', title: 'Group Permissions' },
 ];
 
-const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { tabKey: string; reload: boolean };
+const Permissions: React.FC = () => {
+    const params = useLocalSearchParams<{ tabKey: string }>();
     useGetRolesQuery();
 
     const { isMobile } = useMediaQuery();
     const gotoRequestPermission = () => {
-        navigation.navigate('Request permission');
+        router.push('/permissions/request-permission');
     };
 
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: IReportTypes.PERMISSIONS });
+        router.push({ pathname: '/export-data', params: { type: IReportTypes.PERMISSIONS } });
     };
 
-    const updatedListItem = route?.params as IPermission;
-    const reload = params?.reload;
-
     const renderScene = SceneMap({
-        myPermissions: () => <MyPermissionsList reload={reload} updatedListItem={updatedListItem} />,
-        teamPermissions: () => <MyTeamPermissionsList reload={reload} updatedListItem={updatedListItem} />,
-        campusPermissions: () => <CampusPermissions reload={reload} updatedListItem={updatedListItem} />,
-        leadersPermissions: () => <LeadersPermissionsList updatedListItem={updatedListItem} />,
-        groupPermissions: () => <GroupPermissionsList reload={reload} updatedListItem={updatedListItem} />,
+        myPermissions: () => <MyPermissionsList />,
+        teamPermissions: () => <TeamPermissionsList />,
+        campusPermissions: () => <CampusPermissions />,
+        leadersPermissions: () => <LeadersPermissionsList />,
+        groupPermissions: () => <GroupPermissionsList />,
     });
 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isGroupHead } = useRole();
@@ -98,8 +92,6 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
         if (params?.tabKey) {
             setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
         }
-        if (params?.reload) {
-        }
     };
 
     useScreenFocus({
@@ -107,22 +99,24 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     });
 
     return (
-        <View>
-            <TopNav />
-            <TabComponent
-                onIndexChange={setIndex}
-                renderScene={renderScene}
-                navigationState={{ index, routes: allRoutes }}
-                tabBarScroll={allRoutes.length > 2 && isMobile}
-            />
-            <If condition={!isCampusPastor && !isGlobalPastor && !isQCHOD}>
-                <AddButtonComponent zIndex={10} onPress={gotoRequestPermission} />
-            </If>
+        <SafeAreaView className="flex-1">
+            <View className="flex-1">
+                <TopNav />
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    navigationState={{ index, routes: allRoutes }}
+                    tabBarScroll={allRoutes.length > 2 && isMobile}
+                />
+                <If condition={!isCampusPastor && !isGlobalPastor && !isQCHOD}>
+                    <AddButtonComponent className="z-10" onPress={gotoRequestPermission} />
+                </If>
 
-            <If condition={isCampusPastor || isGlobalPastor || isQCHOD}>
-                <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
-            </If>
-        </View>
+                <If condition={isCampusPastor || isGlobalPastor || isQCHOD}>
+                    <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
+                </If>
+            </View>
+        </SafeAreaView>
     );
 };
 
