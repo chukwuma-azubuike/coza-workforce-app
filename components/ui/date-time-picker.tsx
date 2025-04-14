@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import RNDatePicker, { DatePickerProps } from 'react-native-date-picker';
 import { Text } from './text';
@@ -53,8 +53,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                               mode === 'date'
                                   ? 'DD MMMM, YYYY'
                                   : mode === 'datetime'
-                                    ? 'dddd, DD MMMM, HH:MM A'
-                                    : 'HH:MM A'
+                                  ? 'dddd, DD MMMM, HH:MM A'
+                                  : 'HH:MM A'
                           )}
                 </Text>
             </Button>

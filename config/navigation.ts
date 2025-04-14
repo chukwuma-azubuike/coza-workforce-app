@@ -105,7 +105,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: false,
         icon: { name: 'notifications-outline', type: 'ionicon' },
-        href: '(tabs)/notifications',
+        href: '(stack)/notifications',
     },
     {
         name: 'Profile',
@@ -126,7 +126,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: false,
         icon: { name: 'person-outline', type: 'ionicon' },
-        href: '(tabs)/profile',
+        href: '(stack)/profile',
     },
     {
         name: 'Reports',
@@ -347,7 +347,7 @@ const AppRoutes: IAppRoute[] = [
         inMenuBar: false,
         inMore: false,
         icon: { name: 'graph', type: 'octicon' },
-        href: '(tabs)/group-head-service-report',
+        href: '(stack)/group-head-service-report',
     },
     {
         name: 'Workforce summary',
