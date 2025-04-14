@@ -1,4 +1,4 @@
-export const ENV = process.env.ENV;
+export const ENV = process.env.EXPO_PUBLIC_ENV;
 
 const APP_ENV = {
     ENV,

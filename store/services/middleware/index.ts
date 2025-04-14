@@ -13,8 +13,10 @@ import { cgwcServiceSlice } from '../cgwc';
 import { scoreMappingServiceSlice } from '../score-mapping';
 import { groupHeadServiceSlice } from '../grouphead';
 import { uploadServiceSlice } from '../upload';
+import { dismissModalListenerMiddleware } from '~/store/listener-middleware/app';
+import { Middleware } from '@reduxjs/toolkit';
 
-const middlewaresSlices = [
+const middlewaresSlices: Array<Middleware> = [
     accountServiceSlice.middleware,
     attendanceServiceSlice.middleware,
     complianceServiceSlice.middleware,
@@ -30,6 +32,7 @@ const middlewaresSlices = [
     scoreMappingServiceSlice.middleware,
     groupHeadServiceSlice.middleware,
     uploadServiceSlice.middleware,
+    dismissModalListenerMiddleware.middleware,
 ];
 
 export default middlewaresSlices;

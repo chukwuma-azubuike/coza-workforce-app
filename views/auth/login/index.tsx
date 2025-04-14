@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { useLoginMutation } from '@store/services/account';
 import { Formik } from 'formik';
@@ -58,10 +58,10 @@ const Login: React.FC = () => {
                                             <View className="gap-1">
                                                 <Label>Email</Label>
                                                 <Input
-                                                    leftIcon={{ name: 'mail-outline' }}
                                                     keyboardType="email-address"
                                                     placeholder="jondoe@gmail.com"
                                                     onChangeText={handleChange('email')}
+                                                    leftIcon={{ name: 'mail', type: 'feather' }}
                                                 />
                                                 {!!errors?.email && !!touched?.email && (
                                                     <FormErrorMessage>{errors?.email}</FormErrorMessage>
@@ -73,7 +73,7 @@ const Login: React.FC = () => {
                                                     isPassword
                                                     placeholder="password"
                                                     onChangeText={handleChange('password')}
-                                                    leftIcon={{ name: 'lock-closed-outline' }}
+                                                    leftIcon={{ name: 'lock-outline', type: 'MaterialIcons' }}
                                                 />
                                                 {!!errors?.password && !!touched?.password && (
                                                     <FormErrorMessage>{errors?.password}</FormErrorMessage>

@@ -20,6 +20,8 @@ import If from '@components/composite/if-container';
 import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
 import { useGetRolesQuery } from '@store/services/role';
+import { View } from 'react-native';
+import TopNav from '~/components/layout/top-nav';
 
 const ROUTES = [
     { key: 'myPermissions', title: 'My Permissions' },
@@ -105,7 +107,8 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
     });
 
     return (
-        <ViewWrapper>
+        <View>
+            <TopNav />
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}
@@ -119,7 +122,7 @@ const Permissions: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigati
             <If condition={isCampusPastor || isGlobalPastor || isQCHOD}>
                 <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
             </If>
-        </ViewWrapper>
+        </View>
     );
 };
 

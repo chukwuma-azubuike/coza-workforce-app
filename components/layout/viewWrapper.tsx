@@ -50,13 +50,12 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                 >
                     <ActiveView
                         {...props}
+                        className="bg-background"
                         refreshControl={
                             onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                         }
                         style={{
                             paddingHorizontal: noPadding ? 0 : 6,
-                            backgroundColor: THEME[scheme],
-                            ...(props.style as {}),
                         }}
                         showsVerticalScrollIndicator={false}
                         showsHorizontalScrollIndicator={false}
@@ -67,14 +66,13 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
             ) : (
                 <ActiveView
                     {...props}
+                    className="bg-background"
                     refreshControl={
                         onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                     }
                     style={{
                         flex: 1,
                         paddingHorizontal: noPadding ? 0 : 6,
-                        backgroundColor: THEME[scheme],
-                        ...(props.style as {}),
                     }}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}

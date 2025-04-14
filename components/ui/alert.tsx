@@ -25,7 +25,7 @@ const Alert = React.forwardRef<
     React.ElementRef<typeof View>,
     ViewProps &
         VariantProps<typeof alertVariants> & {
-            icon: LucideIcon;
+            icon?: LucideIcon;
             iconSize?: number;
             iconClassName?: string;
         }
@@ -34,7 +34,7 @@ const Alert = React.forwardRef<
     return (
         <View ref={ref} role="alert" className={alertVariants({ variant, className })} {...props}>
             <View className="absolute left-3.5 top-4 -translate-y-0.5">
-                <Icon size={iconSize} color={variant === 'destructive' ? colors.notification : colors.text} />
+                {Icon && <Icon size={iconSize} color={variant === 'destructive' ? colors.notification : colors.text} />}
             </View>
             {children}
         </View>
@@ -46,7 +46,10 @@ const AlertTitle = React.forwardRef<React.ElementRef<typeof Text>, React.Compone
     ({ className, ...props }, ref) => (
         <Text
             ref={ref}
-            className={cn('pl-7 mb-1 font-medium text-base leading-none tracking-tight text-foreground', className)}
+            className={cn(
+                'pl-7 mb-1 font-medium text-base leading-none line-clamp-6 tracking-tight text-foreground',
+                className
+            )}
             {...props}
         />
     )
@@ -55,7 +58,11 @@ AlertTitle.displayName = 'AlertTitle';
 
 const AlertDescription = React.forwardRef<React.ElementRef<typeof Text>, React.ComponentPropsWithoutRef<typeof Text>>(
     ({ className, ...props }, ref) => (
-        <Text ref={ref} className={cn('text-center text-xl leading-relaxed text-foreground', className)} {...props} />
+        <Text
+            ref={ref}
+            className={cn('text-center text-xl line-clamp-6 leading-relaxed text-foreground', className)}
+            {...props}
+        />
     )
 );
 AlertDescription.displayName = 'AlertDescription';

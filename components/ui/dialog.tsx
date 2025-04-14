@@ -37,11 +37,11 @@ const DialogOverlayNative = React.forwardRef<DialogPrimitive.OverlayRef, DialogP
         return (
             <DialogPrimitive.Overlay
                 style={StyleSheet.absoluteFill}
-                className={cn('flex bg-black/80 justify-center items-center p-2', className)}
+                className={cn('flex bg-black/50 w-full justify-center items-center p-2', className)}
                 {...props}
                 ref={ref}
             >
-                <Animated.View entering={FadeIn.duration(150)} exiting={FadeOut.duration(150)}>
+                <Animated.View entering={FadeIn.duration(300)} exiting={FadeOut.duration(300)}>
                     <>{children}</>
                 </Animated.View>
             </DialogPrimitive.Overlay>
@@ -58,8 +58,8 @@ const DialogOverlay = Platform.select({
 
 const DialogContent = React.forwardRef<
     DialogPrimitive.ContentRef,
-    DialogPrimitive.ContentProps & { portalHost?: string }
->(({ className, children, portalHost, ...props }, ref) => {
+    DialogPrimitive.ContentProps & { portalHost?: string; showClose?: boolean }
+>(({ className, children, portalHost, showClose = true, ...props }, ref) => {
     const { open } = DialogPrimitive.useRootContext();
     return (
         <DialogPortal hostName={portalHost}>
@@ -67,7 +67,7 @@ const DialogContent = React.forwardRef<
                 <DialogPrimitive.Content
                     ref={ref}
                     className={cn(
-                        'max-w-lg gap-4 web:cursor-default dark:bg-neutral-900 bg-background p-8 shadow-lg web:duration-200 rounded-lg',
+                        'max-w-lg min-w-[80%] gap-4 web:cursor-default bg-background p-8 justify-center shadow-lg web:duration-200 rounded-lg',
                         open
                             ? 'web:animate-in web:fade-in-0 web:zoom-in-95'
                             : 'web:animate-out web:fade-out-0 web:zoom-out-95',
@@ -76,16 +76,18 @@ const DialogContent = React.forwardRef<
                     {...props}
                 >
                     {children}
-                    <DialogPrimitive.Close
-                        className={
-                            'absolute right-4 top-4 p-0.5 web:group rounded-sm opacity-70 web:ring-offset-background web:transition-opacity web:hover:opacity-100 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:disabled:pointer-events-none'
-                        }
-                    >
-                        <X
-                            size={Platform.OS === 'web' ? 16 : 18}
-                            className={cn('text-muted-foreground', open && 'text-accent-foreground')}
-                        />
-                    </DialogPrimitive.Close>
+                    {showClose && (
+                        <DialogPrimitive.Close
+                            className={
+                                'absolute right-4 top-4 p-0.5 web:group rounded-sm opacity-70 web:ring-offset-background web:transition-opacity web:hover:opacity-100 web:focus:outline-none web:focus:ring-2 web:focus:ring-ring web:focus:ring-offset-2 web:disabled:pointer-events-none'
+                            }
+                        >
+                            <X
+                                size={Platform.OS === 'web' ? 16 : 18}
+                                className={cn('text-muted-foreground', open && 'text-accent-foreground')}
+                            />
+                        </DialogPrimitive.Close>
+                    )}
                 </DialogPrimitive.Content>
             </DialogOverlay>
         </DialogPortal>

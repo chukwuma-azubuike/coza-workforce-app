@@ -16,8 +16,8 @@ const NotificationModal: React.FC = () => {
     };
 
     return (
-        <Dialog open={typeof open === 'boolean' ? open : !!(render || message)} onOpenChange={hideModal}>
-            <DialogContent className="w-11/12 h-72">
+        <Dialog open={open || !!render || !!message} onOpenChange={hideModal}>
+            <DialogContent className="w-11/12 h-72" showClose={false}>
                 <View className="justify-center">
                     <View className="w-full gap-2 rounded-2xl bg-transparent">
                         {render ? (
