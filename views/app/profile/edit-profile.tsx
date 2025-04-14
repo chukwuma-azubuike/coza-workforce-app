@@ -1,28 +1,29 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import React from 'react';
-import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import DateTimePicker  from '~/components/composite/date-time-picker';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { IEditProfilePayload } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useAppDispatch } from '@store/hooks';
-import { userActionTypes } from '@store/services/users';
 import dayjs from 'dayjs';
+import { Label } from '~/components/ui/label';
+import FormErrorMessage from '~/components/ui/error-message';
+import { InputComponent } from '~/components/atoms/input';
+import { useLocalSearchParams } from 'expo-router';
 
-const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const userData = props?.route?.params as IEditProfilePayload;
+const EditProfile: React.FC = () => {
+    const userData = useLocalSearchParams<IEditProfilePayload>();
 
     const { user } = useRole();
     const { goBack } = useNavigation();
@@ -56,15 +57,6 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
 
-    React.useEffect(() => {
-        if (newUserData) {
-            dispatch({
-                type: userActionTypes.SET_USER_DATA,
-                payload: newUserData,
-            });
-        }
-    }, [newUserData]);
-
     return (
         <ErrorBoundary>
             <ViewWrapper scroll style={{ paddingHorizontal: 12, paddingVertical: 20 }}>
@@ -75,17 +67,17 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         };
 
                         return (
-                            <View w="100%" space={1}>
+                            <View space={1}>
                                 <If condition={!!userData?.firstName}>
-                                    <FormControl isRequired isInvalid={!!errors?.firstName && touched.firstName}>
-                                        <FormControl.Label>First name</FormControl.Label>
+                                    <View isInvalid={!!errors?.firstName && touched.firstName}>
+                                        <Label>First name</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.firstName}
                                             placeholder="First name"
                                             onChangeText={handleChange('firstName')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -98,19 +90,19 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.firstName}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.lastName}>
-                                    <FormControl isRequired isInvalid={!!errors?.lastName && touched.lastName}>
-                                        <FormControl.Label>Last name</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.lastName && touched.lastName}>
+                                        <Label>Last name</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.lastName}
                                             placeholder="Last name"
                                             onChangeText={handleChange('lastName')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -123,19 +115,19 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.lastName}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.phoneNumber}>
-                                    <FormControl isRequired isInvalid={!!errors?.phoneNumber && touched.phoneNumber}>
-                                        <FormControl.Label>Phone number</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.phoneNumber && touched.phoneNumber}>
+                                        <Label>Phone number</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.phoneNumber}
                                             placeholder="Eg: +2347012345678"
                                             onChangeText={handleChange('phoneNumber')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -148,19 +140,19 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.phoneNumber}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.address}>
-                                    <FormControl isRequired isInvalid={!!errors?.address && touched.address}>
-                                        <FormControl.Label>Address</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.address && touched.address}>
+                                        <Label>Address</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.address}
                                             placeholder="Your home address"
                                             onChangeText={handleChange('address')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -173,19 +165,19 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.address}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.occupation}>
-                                    <FormControl isRequired isInvalid={!!errors?.occupation && touched.occupation}>
-                                        <FormControl.Label>Occupation</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.occupation && touched.occupation}>
+                                        <Label>Occupation</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.occupation}
                                             placeholder="Your occupation"
                                             onChangeText={handleChange('occupation')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -198,19 +190,19 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.occupation}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.placeOfWork}>
-                                    <FormControl isRequired isInvalid={!!errors?.placeOfWork && touched.placeOfWork}>
-                                        <FormControl.Label>Place of work</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.placeOfWork && touched.placeOfWork}>
+                                        <Label>Place of work</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.placeOfWork}
                                             placeholder="Your place of work"
                                             onChangeText={handleChange('placeOfWork')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -223,12 +215,12 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.placeOfWork}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.gender}>
-                                    <FormControl isRequired isInvalid={!!errors?.gender && touched?.gender}>
-                                        <FormControl.Label>Gender</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.gender && touched?.gender}>
+                                        <Label>Gender</Label>
                                         <SelectComponent
                                             valueKey="_id"
                                             displayKey="name"
@@ -243,7 +235,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             <SelectItemComponent label="Male" value="M" />
                                             <SelectItemComponent label="Female" value="F" />
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -256,16 +248,13 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.gender}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.maritalStatus}>
                                     <ErrorBoundary>
-                                        <FormControl
-                                            isRequired
-                                            isInvalid={!!errors?.maritalStatus && touched.maritalStatus}
-                                        >
-                                            <FormControl.Label>Marital Status</FormControl.Label>
+                                        <View isRequired isInvalid={!!errors?.maritalStatus && touched.maritalStatus}>
+                                            <Label>Marital Status</Label>
                                             <SelectComponent
                                                 selectedValue={values?.maritalStatus}
                                                 onValueChange={handleChange('maritalStatus') as any}
@@ -286,7 +275,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 <SelectItemComponent label="Separated" value="Separated" />
                                                 <SelectItemComponent label="Divorced" value="Divorced" />
                                             </SelectComponent>
-                                            <FormControl.ErrorMessage
+                                            <FormErrorMessage
                                                 fontSize="2xl"
                                                 mt={3}
                                                 leftIcon={
@@ -299,13 +288,14 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 }
                                             >
                                                 {errors?.maritalStatus}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
+                                            </FormErrorMessage>
+                                        </View>
                                     </ErrorBoundary>
                                 </If>
                                 <If condition={!!userData?.birthDay}>
-                                    <FormControl isRequired isInvalid={!!errors.birthDay && touched.birthDay}>
-                                        <DateTimePicker                                            label="Next Birthday"
+                                    <View isRequired isInvalid={!!errors.birthDay && touched.birthDay}>
+                                        <DateTimePicker
+                                            label="Next Birthday"
                                             fieldName="birthDay"
                                             onSelectDate={handleDate}
                                         />
@@ -314,18 +304,18 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                 Please choose your next birthday
                                             </Text>
                                         )}
-                                    </FormControl>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.nextOfKin}>
-                                    <FormControl isRequired isInvalid={!!errors?.nextOfKin && touched.nextOfKin}>
-                                        <FormControl.Label>Next Of Kin</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.nextOfKin && touched.nextOfKin}>
+                                        <Label>Next Of Kin</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.nextOfKin}
                                             placeholder="Next of Kin's name"
                                             onChangeText={handleChange('nextOfKin')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -338,22 +328,19 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.nextOfKin}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
                                 <If condition={!!userData?.nextOfKinPhoneNo}>
-                                    <FormControl
-                                        isRequired
-                                        isInvalid={!!errors?.nextOfKinPhoneNo && touched.nextOfKinPhoneNo}
-                                    >
-                                        <FormControl.Label>Next of kin phone number</FormControl.Label>
+                                    <View isRequired isInvalid={!!errors?.nextOfKinPhoneNo && touched.nextOfKinPhoneNo}>
+                                        <Label>Next of kin phone number</Label>
                                         <InputComponent
                                             isRequired
                                             value={values?.phoneNumber}
                                             placeholder="Eg: +2347012345678"
                                             onChangeText={handleChange('nextOfKinPhoneNo')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -366,10 +353,10 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                             }
                                         >
                                             {errors?.nextOfKinPhoneNo}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                 </If>
-                                <FormControl>
+                                <View>
                                     <ButtonComponent
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
@@ -377,7 +364,7 @@ const EditProfile: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     >
                                         Save
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </View>
                         );
                     }}

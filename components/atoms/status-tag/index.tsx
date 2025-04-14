@@ -33,16 +33,17 @@ const StatusTag: React.FC<IStatusTag> = props => {
             className={cn(
                 blue && 'bg-blue-200',
                 green && 'bg-green-200',
-                gray && 'bg-gray-200',
+                gray && 'bg-gray-300 dark:bg-gray-300',
                 amber && 'bg-amber-200',
                 red && 'bg-red-200'
             )}
         >
             <Text
                 className={cn(
+                    'text-sm font-normal',
                     blue && 'text-blue-700',
                     green && 'text-green-700',
-                    gray && 'text-gray-700',
+                    gray && 'text-gray-900',
                     amber && 'text-amber-700',
                     red && 'text-red-700'
                 )}

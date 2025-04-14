@@ -39,11 +39,11 @@ const TopNav: React.FC<TopNavProps> = ({ title, onBackPress, rightIcon, onRightP
             <View className="flex-row items-center justify-between px-2">
                 {/* Back Button */}
                 <Pressable onPress={handleBack} className="p-2">
-                    <Ionicons name="chevron-back" size={24} color={isLightMode ? 'black' : 'white'} />
+                    <Ionicons name="chevron-back" size={24} color={isLightMode ? 'red' : 'white'} />
                 </Pressable>
 
                 {/* Title */}
-                <Text className="text-white text-lg font-bold">{title || pathname}</Text>
+                <Text className="text-xl font-semibold">{title || pathname}</Text>
 
                 {/* Right Icon or Placeholder */}
                 {rightIcon ? (

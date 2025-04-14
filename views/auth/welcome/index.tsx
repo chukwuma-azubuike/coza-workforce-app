@@ -1,9 +1,8 @@
-import { Text } from "~/components/ui/text";
-import React from 'react';
-import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, StyleSheet, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import React, { useEffect } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, View } from 'react-native';
 import { Formik } from 'formik';
 import { EmailSchema } from '@utils/schemas';
-import { OtpInput } from 'react-native-otp-entry';
 import { useLazySendOTPQuery, useValidateEmailOTPMutation } from '@store/services/account';
 import Utils from '@utils/index';
 import Logo from '@components/atoms/logo';
@@ -13,11 +12,9 @@ import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import { Dialog, DialogContent } from '~/components/ui/dialog';
 import { Link, router } from 'expo-router';
-import { Colors } from '~/constants/Colors';
 import APP_ENV from '~/config/envConfig';
-import { THEME_CONFIG } from '~/config/appConfig';
-import FormErrorMessage from '~/components/ui/error-message';
 import Loading from '~/components/atoms/loading';
+import OtpInput from '~/components/OtpInput';
 
 const VerifyEmail: React.FC = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
@@ -88,6 +85,7 @@ const VerifyEmail: React.FC = () => {
                                             <Input
                                                 placeholder="jondoe@gmail.com"
                                                 leftIcon={{
+                                                    type: 'ionicons',
                                                     name: 'mail-outline',
                                                 }}
                                                 value={values.email}
@@ -133,86 +131,13 @@ const VerifyEmail: React.FC = () => {
                                 Please enter the OTP code we sent to your email address
                             </Text>
                         )}
-                        <OtpInput
-                            numberOfDigits={6}
-                            focusColor={Colors.primary}
-                            autoFocus={true}
-                            hideStick={true}
-                            blurOnFilled={true}
-                            disabled={validatingOTP}
-                            type="numeric"
-                            secureTextEntry={false}
-                            focusStickBlinkingDuration={500}
-                            onTextChange={handleValidateOtp}
-                            textInputProps={{
-                                accessibilityLabel: 'One-Time Password',
-                            }}
-                            theme={{
-                                containerStyle: styles.container,
-                                pinCodeContainerStyle: styles.pinCodeContainer,
-                                pinCodeTextStyle: styles.pinCodeText,
-                                focusStickStyle: styles.focusStick,
-                                focusedPinCodeContainerStyle: styles.activePinCodeContainer,
-                                placeholderTextStyle: styles.placeholderText,
-                                filledPinCodeContainerStyle: styles.filledPinCodeContainer,
-                                disabledPinCodeContainerStyle: styles.disabledPinCodeContainer,
-                            }}
-                        />
+                        <OtpInput disabled={validatingOTP} onTextChange={handleValidateOtp} />
                     </View>
                 </DialogContent>
             </Dialog>
         </>
     );
 };
-
-const styles = StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-        backgroundColor: '#f5f5f5',
-    },
-    container: {
-        width: '100%',
-    },
-    pinCodeContainer: {
-        width: 40,
-        height: 50,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 8,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginHorizontal: 5,
-    },
-    pinCodeText: {
-        fontSize: 22,
-        color: '#000',
-    },
-    pinCodeTextDark: {
-        fontSize: 22,
-        color: '#FFF',
-    },
-    focusStick: {
-        width: 2,
-        height: 30,
-        backgroundColor: THEME_CONFIG.primary,
-    },
-    activePinCodeContainer: {
-        borderColor: THEME_CONFIG.primary,
-    },
-    placeholderText: {
-        color: '#ccc',
-    },
-    filledPinCodeContainer: {
-        borderColor: THEME_CONFIG.primary,
-    },
-    disabledPinCodeContainer: {
-        backgroundColor: '#eee',
-        borderColor: '#ddd',
-    },
-});
 
 export default React.memo(VerifyEmail);
 

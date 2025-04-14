@@ -26,11 +26,9 @@ const UserInfo = ({ heading, value, name }: IUserInfo) => {
 
     return (
         <Pressable onPress={handleEdit}>
-            <View className="py-8 flex-1">
-                <View className="flex-1 flex-row">
-                    <Text className="font-bold text-3xl">{heading}: </Text>
-                    <Text className="flex-1 text-3xl">{value}</Text>
-                </View>
+            <View className="py-3 flex-1 flex-row items-center gap-2">
+                <Text className="font-bold text-muted-foreground">{heading}: </Text>
+                <Text className="flex-1 text-muted-foreground">{value}</Text>
                 {!NON_EDITABLE.includes(name) && (
                     <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
                 )}

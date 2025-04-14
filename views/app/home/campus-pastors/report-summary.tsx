@@ -67,8 +67,8 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <View className="p-2 px-4 my-1 w-full rounded-md items-center bg-muted-background justify-between">
-                            <Text className="text-muted-foreground">{`${elm?.departmentName} Report`}</Text>
+                        <View className="p-2 px-4 my-2 py-3 w-full flex-row rounded-2xl items-center bg-muted-background justify-between">
+                            <Text className="text-lg text-muted-foreground">{`${elm?.departmentName} Report`}</Text>
                             <StatusTag>{elm?.report.status as any}</StatusTag>
                         </View>
                     </TouchableOpacity>

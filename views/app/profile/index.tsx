@@ -1,164 +1,75 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import { Icon } from '@rneui/themed';
 import dayjs from 'dayjs';
-import { Heading } from 'native-base';
-import React from 'react';
-import { Alert, TouchableOpacity, View } from 'react-native';
+import React, { useCallback } from 'react';
+import { ScrollView, TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
-import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import Utils from '@utils/index';
 import DeviceInfo from 'react-native-device-info';
 import { AVATAR_FALLBACK_URL, S3_BUCKET_FOLDERS } from '@constants/index';
 import { useAuth } from '@hooks/auth';
-import { ParamListBase } from '@react-navigation/native';
 import { IEditProfilePayload } from '@store/types';
-import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
-import { useAppDispatch } from '@store/hooks';
-import { userActionTypes } from '@store/services/users';
+import { useUpdateUserMutation } from '@store/services/account';
 import StatusTag from '@components/atoms/status-tag';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import VStackComponent from '@components/layout/v-stack';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
-import useAppColorMode from '@hooks/theme/colorMode';
 import APP_ENV from '@config/envConfig';
-import filePicker from '@utils/filePicker';
-import { useGenerateUploadUrlMutation, useUploadMutation } from '@store/services/upload';
-import { AWS_REGION, AWS_S3_BUCKET_NAME } from '@env';
+import { router } from 'expo-router';
+import useUploader from '~/hooks/use-uploader';
+import capitalize from 'lodash/capitalize';
 
-const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const Profile: React.FC = () => {
     const { user, isGlobalPastor } = useRole();
 
     const { logOut } = useAuth();
-    const { navigate } = navigation;
-
-    const dispatch = useAppDispatch();
 
     const handleLogout = () => {
         logOut();
     };
 
-    const handleEdit = (key: string, value: any) => () => {
-        let field: any = {};
-        field[key] = value;
-        navigate('Edit Profile', field);
-    };
+    const handleEdit = useCallback(
+        (key: string, value: any) => () => {
+            let field: any = {};
+            field[key] = value;
+            router.push({ pathname: '/profile/edit-profile', params: { field } });
+        },
+        []
+    );
 
     const [updateUser, { isLoading: updateIsLoading }] = useUpdateUserMutation();
 
-    const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
+    const { pickImage, isUploading, error } = useUploader({
+        user,
+        type: 'gallery',
+        s3Folder: S3_BUCKET_FOLDERS.profile_pictures,
+        onUploadSuccess: async pictureUrl => {
+            await updateUser({ pictureUrl, _id: user?._id } as IEditProfilePayload);
+        },
+        allowedTypes: ['image/*'],
+    });
 
-    const [generateUrl, { isLoading: generateUrlLoading }] = useGenerateUploadUrlMutation();
-    const [upload, { isLoading: isUploading }] = useUploadMutation();
-    const [loading, setLoading] = React.useState<boolean>();
-    // TODO: Reuse when switched back to axios base query
-    // const [progress, setProgress] = React.useState<number>(0);
-    const [uploadError, setUploadError] = React.useState<string>();
-
-    const handleProfilePicture = async () => {
-        const result = await filePicker({});
-
-        if ('error' in result) {
-            setLoading(false);
-            setUploadError(result.errorMessage);
-            return;
-        }
-
-        const asset = result.assets;
-
-        if (asset && asset[0] && asset[0].fileName) {
-            const file = asset[0];
-
-            const lastDot = (file.fileName as string).lastIndexOf('.');
-            const ext = (file.fileName as string).slice(lastDot + 1);
-
-            const objectKey = `${S3_BUCKET_FOLDERS.profile_pictures}/${user?.campus?.campusName}_${user?._id}_${
-                user.firstName
-            }_${user.lastName}_timestamp=${new Date().toISOString()}.${ext}`;
-
-            const pictureUrl = `https://${AWS_S3_BUCKET_NAME}.s3.${AWS_REGION}.amazonaws.com/${objectKey}`;
-
-            const response = await fetch(file.uri as string);
-            const blob = await response.blob();
-
-            try {
-                setLoading(true);
-
-                const urlResponse = await generateUrl({
-                    objectKey,
-                    expirySeconds: 3600,
-                    bucketName: AWS_S3_BUCKET_NAME,
-                });
-
-                if ('data' in urlResponse) {
-                    const response = await upload({
-                        file: blob,
-                        contentType: file.type!,
-                        url: urlResponse?.data,
-                        // setProgress, // TODO: Reuse when switched back to axios base query
-                    });
-
-                    if ('data' in response) {
-                        setLoading(false);
-                        await updateUser({ pictureUrl, _id: user?._id } as IEditProfilePayload);
-                        refetchUser();
-                    }
-                }
-
-                if ('error' in urlResponse) {
-                    setLoading(false);
-                    Alert.alert('Error uploading file', 'Something went wrong in generating upload url.');
-                }
-            } catch (error) {
-                setLoading(false);
-                Alert.alert('Error uploading file', 'Something went wrong during the upload process.');
-            }
-        }
-    };
-
-    React.useEffect(() => {
-        if (newUserData) {
-            dispatch({
-                type: userActionTypes.SET_USER_DATA,
-                payload: newUserData,
-            });
-        }
-    }, [newUserData]);
-
-    const { backgroundColor } = useAppColorMode();
-    const isProfilePictureLoading = updateIsLoading || isUploading || generateUrlLoading;
+    const isProfilePictureLoading = updateIsLoading || isUploading;
 
     return (
-        <ViewWrapper
-            scroll
-            onRefresh={refetchUser}
-            refreshing={newUserDataLoading}
-            style={{ paddingVertical: 20, paddingHorizontal: 20 }}
-        >
-            <View className="pb-32">
+        <View className="flex-1">
+            <ScrollView className="px-4 py-6">
                 <View className="pb-8 items-center">
-                    <TouchableOpacity
-                        activeOpacity={0.7}
-                        onPress={handleProfilePicture}
-                        disabled={newUserDataLoading || updateIsLoading || isUploading}
-                    >
+                    <TouchableOpacity activeOpacity={0.7} onPress={pickImage} disabled={updateIsLoading || isUploading}>
                         <AvatarComponent
-                            size="xl"
-                            shadow={9}
-                            error={uploadError}
+                            alt="current-user-avatar"
                             lastName={user?.lastName}
                             firstName={user?.firstName}
-                            isLoading={loading || newUserDataLoading || isProfilePictureLoading}
+                            error={JSON.stringify(error)}
+                            className="w-32 h-32 shadow-sm"
+                            isLoading={isProfilePictureLoading}
                             imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         />
-                        <Text>
+                        <Text className="absolute bottom-4 left-6 bg-black/50 text-white rounded-lg text-sm px-2">
                             {user?.pictureUrl ? 'Edit' : 'Add'} photo
                         </Text>
                     </TouchableOpacity>
-                    <View space={4}>
+                    <View className="gap-1 py-2">
                         <View
                             style={{
                                 justifyContent: 'space-around',
@@ -168,49 +79,37 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                             }}
                         >
                             <View>
-                                <Heading
-                                    size="md"
-                                    textAlign="center"
-                                    _dark={{ color: 'gray.300' }}
-                                    _light={{ color: 'gray.700' }}
+                                <Text
+                                    className="text-center font-bold text-2xl"
                                     onPress={handleEdit('firstName', user?.firstName)}
                                 >
                                     {user?.firstName}
-                                </Heading>
+                                </Text>
                             </View>
-                            <Heading
-                                size="md"
-                                textAlign="center"
-                                _dark={{ color: 'gray.300' }}
-                                _light={{ color: 'gray.700' }}
+                            <Text
+                                className="text-center font-bold text-2xl"
                                 onPress={handleEdit('lastName', user?.lastName)}
                             >
                                 {user?.lastName}
-                            </Heading>
+                            </Text>
                             <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
                         </View>
-                        <Text className="font-bold text-center">
-                            {user?.campus?.campusName}
-                        </Text>
-                        <Text className="text-center">
+                        <Text className="font-bold text-muted-foreground text-center">{user?.campus?.campusName}</Text>
+                        <Text className="text-center text-muted-foreground">
                             {isGlobalPastor ? 'Global Senior Pastor' : user?.department?.departmentName}
                         </Text>
                     </View>
                 </View>
-                <View
-                    className="mb-8 py-8 rounded-12 border-0.2"
-                >
-                    <View className="p-6 justify-start">
+                <View className="mb-4 px-4 py-4 bg-muted-background rounded-2xl border border-gray-300">
+                    <View className="p-0 justify-start flex-row">
                         <Icon size={22} name="person" type="Ionicons" color={THEME_CONFIG.lightGray} />
-                        <Text className="ml-4">User Info</Text>
+                        <Text className="ml-4 text-muted-foreground">User Info</Text>
                     </View>
                 </View>
                 <View style={{ marginHorizontal: 4 }}>
-                    <View
-                        className="items-center justify-between my-2"
-                    >
-                        <Text className="font-bold">CGWC Status</Text>
-                        <StatusTag w={24}>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
+                    <View className="items-center justify-between my-2 flex-row">
+                        <Text className="font-bold text-muted-foreground">CGWC Status</Text>
+                        <StatusTag>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
                     </View>
                     <UserInfo heading="Role" name="role" value={user?.role.name} />
                     <UserInfo heading="Address" name="address" value={user?.address} />
@@ -227,21 +126,19 @@ const Profile: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }
                     />
                     <UserInfo heading="Birthday" name="birthDay" value={dayjs(user?.birthDay).format('DD MMM')} />
                 </View>
-                <TouchableOpacity activeOpacity={0.4} style={{ width: '100%' }} onPress={handleLogout}>
-                    <View
-                        className="my-6 py-16 rounded-12 border-0.2"
-                    >
-                        <View style={{ paddingHorizontal: 10, flexDirection: 'row', justifyContent: 'flex-start' }}>
+                <TouchableOpacity activeOpacity={0.6} onPress={handleLogout}>
+                    <View className="px-4 mt-4 py-4 bg-muted-background rounded-2xl border border-gray-300">
+                        <View className="flex-row">
                             <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
                             <Text className="ml-4">Logout</Text>
                         </View>
                     </View>
                 </TouchableOpacity>
-                <Text className="py-8 text-center">
-                    Version {DeviceInfo.getVersion()} ({APP_ENV.ENV})
+                <Text className="py-6 text-center text-muted-foreground">
+                    Version {DeviceInfo.getVersion()} ({capitalize(APP_ENV.ENV)})
                 </Text>
-            </View>
-        </ViewWrapper>
+            </ScrollView>
+        </View>
     );
 };
 

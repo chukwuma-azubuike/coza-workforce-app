@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { router, Stack } from 'expo-router';
+import { router, Stack, usePathname } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { Colors } from '~/constants/Colors';
@@ -12,6 +12,7 @@ import { NavButton } from './NavButton';
 import { AppRoutes, IAppRoute } from '~/config/navigation';
 // import { usePushNotifications } from '~/hooks/push-notifications';
 import { IUser } from '~/store/types';
+import { capitalize } from 'lodash';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -57,17 +58,28 @@ const Routing: React.FC = () => {
         [AppRoutes]
     );
 
-    const generalScreenOptions = {
-        headerTitle: '',
-        headerStyle: {
-            backgroundColor: isDarkColorScheme ? Colors.dark.background : Colors.light.background,
-        },
-        header: () => (
-            <SafeAreaView className="mx-2">
-                <NavButton onBack={handleGoBack} />
-            </SafeAreaView>
-        ),
-    };
+    const pathname = capitalize(usePathname().replaceAll('/', ''));
+
+    const formatTitle = React.useCallback((href: string) => {
+        const formatted = href.replaceAll('(tabs)', '').replace('/', '').replaceAll('/', ' ');
+        const capitalised = capitalize(formatted);
+
+        return capitalised === '' ? 'Home' : capitalised;
+    }, []);
+
+    const generalScreenOptions = React.useMemo(() => {
+        return {
+            headerTitle: formatTitle(pathname),
+            headerStyle: {
+                backgroundColor: isDarkColorScheme ? Colors.dark.background : Colors.light.background,
+            },
+            // header: () => (
+            //     <SafeAreaView className="mx-2">
+            //         <NavButton onBack={handleGoBack} />
+            //     </SafeAreaView>
+            // ),
+        };
+    }, [isDarkColorScheme, pathname]);
 
     React.useEffect(() => {
         if (isLoggedIn) {
@@ -100,9 +112,12 @@ const Routing: React.FC = () => {
                         <Stack.Screen
                             key={route.href}
                             name={route.href}
-                            options={{
-                                gestureEnabled: true,
-                                ...(route.href.includes('(stack)') ? generalScreenOptions : { headerShown: false }),
+                            options={props => {
+                                return {
+                                    gestureEnabled: true,
+                                    title: formatTitle(route.href as string),
+                                    ...(route.href.includes('(stack)') ? generalScreenOptions : { headerShown: false }),
+                                };
                             }}
                         />
                     ))}
