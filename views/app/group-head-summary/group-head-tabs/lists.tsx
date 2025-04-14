@@ -108,7 +108,7 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
                             value={service._id}
                             key={`service-${index}`}
                             isLoading={serviceIsLoading}
-                            label={`${service.name} - ${dayjs(service.clockInStartTime).format('Do MMM YYYY')}`}
+                            label={`${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
                         />
                     ))}
                 </SelectComponent>

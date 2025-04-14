@@ -86,7 +86,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                 <ViewWrapper scroll>
                     <View pb={10}>
                         <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
-                            {dayjs(updatedAt || undefined).format('Do MMMM, YYYY')}
+                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
                         <View space={4} mt={4} className="px-4">
                             <View justifyContent="space-between">

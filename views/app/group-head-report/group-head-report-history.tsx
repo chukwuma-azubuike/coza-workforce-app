@@ -41,7 +41,7 @@ export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
                     <View className="justify-between">
                         <>
                             <Text>{serviceName}</Text>
-                            <Text>{dayjs(createdAt).format('MMMM Do, YYYY')}</Text>
+                            <Text>{dayjs(createdAt).format('MMMM DD, YYYY')}</Text>
                         </>
                     </View>
                 </View>

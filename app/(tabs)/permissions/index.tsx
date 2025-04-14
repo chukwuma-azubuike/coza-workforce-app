@@ -1,7 +1,8 @@
 import React from 'react';
+import Permissions from '~/views/app/permissions';
 
 const PermissionsScreen: React.FC = () => {
-    return <></>;
+    return <Permissions />;
 };
 
 export default PermissionsScreen;

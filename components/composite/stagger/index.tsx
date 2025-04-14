@@ -1,82 +1,81 @@
+// StaggerButtonComponent.tsx
+import React, { useRef, useState, useEffect } from 'react';
+import { Animated, Easing, Pressable, View, ViewProps } from 'react-native';
 import { Icon } from '@rneui/themed';
-import { IBoxProps, IconButton, Stagger, useDisclose } from 'native-base';
-import { ColorType } from 'native-base/lib/typescript/components/types';
-import React from 'react';
-import { IIconTypes } from '@utils/types';
-import { View } from 'react-native';
 
-export interface IStaggerButtonComponentProps extends IBoxProps {
+export interface IStaggerButtonComponentProps extends ViewProps {
     buttons: {
         iconName: string;
-        color: ColorType;
-        iconType: IIconTypes;
+        color: string;
+        iconType: string;
         handleClick?: () => void;
     }[];
 }
 
-// You must include this component as the very last component in a view
-
 const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => {
-    const { isOpen, onToggle } = useDisclose();
+    const { buttons, style, ...rest } = props;
+    const [isOpen, setIsOpen] = useState(false);
+
+    // This single animated value drives the appearance of all extra buttons.
+    const animationValue = useRef(new Animated.Value(0)).current;
+
+    const toggleMenu = () => setIsOpen(prev => !prev);
+
+    useEffect(() => {
+        Animated.timing(animationValue, {
+            toValue: isOpen ? 1 : 0,
+            duration: 300,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+        }).start();
+    }, [isOpen, animationValue]);
+
+    // Define the spacing for each extra button (adjust as needed).
+    const spacing = 70;
 
     return (
-        <View style={{ right: 18, bottom: 36, position: 'absolute', zIndex: isOpen ? 12 : 0 }}>
-            <View alignItems="center">
-                <Stagger
-                    visible={isOpen}
-                    initial={{
-                        opacity: 0,
-                        scale: 0,
-                        translateY: 34,
-                    }}
-                    animate={{
-                        translateY: 0,
-                        scale: 1,
-                        opacity: 1,
-                        transition: {
-                            type: 'spring',
-                            mass: 0.8,
-                            stagger: {
-                                offset: 30,
-                                reverse: true,
-                            },
-                        },
-                    }}
-                    exit={{
-                        translateY: 34,
-                        scale: 0.5,
-                        opacity: 0,
-                        transition: {
-                            duration: 100,
-                            stagger: {
-                                offset: 30,
-                                reverse: true,
-                            },
-                        },
-                    }}
-                >
-                    {props?.buttons?.map((elm, idx) => (
-                        <IconButton
-                            mb="4"
+        <View style={[{ position: 'absolute', right: 18, bottom: 36, zIndex: isOpen ? 12 : 0 }, style]} {...rest}>
+            {/* Extra Buttons Container */}
+            <View className="items-center">
+                {buttons.map((btn, idx) => {
+                    // Compute translation for each button based on index.
+                    const translateY = animationValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, -(idx + 1) * spacing],
+                    });
+                    // Animate opacity and scale for a smoother effect.
+                    const opacity = animationValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 1],
+                    });
+                    const scale = animationValue.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 1],
+                    });
+                    return (
+                        <Animated.View
                             key={idx}
-                            size={65}
-                            bg={elm.color}
-                            borderRadius="full"
-                            onPress={elm.handleClick}
-                            icon={<Icon size={28} color="white" name={elm.iconName} type={elm.iconType} />}
-                        />
-                    ))}
-                </Stagger>
+                            style={{ transform: [{ translateY }, { scale }], opacity, marginBottom: 10 }}
+                        >
+                            <Pressable
+                                onPress={btn.handleClick}
+                                style={{ backgroundColor: btn.color }}
+                                className="w-16 h-16 rounded-full justify-center items-center shadow-lg"
+                            >
+                                <Icon size={28} color="white" name={btn.iconName} type={btn.iconType} />
+                            </Pressable>
+                        </Animated.View>
+                    );
+                })}
             </View>
-            <View justifyContent="center">
-                <IconButton
-                    size="lg"
-                    variant="solid"
-                    bg="primary.600"
-                    borderRadius="full"
-                    onPress={onToggle}
-                    icon={<Icon size={38} color="white" type="entypo" name={isOpen ? 'minus' : 'plus'} />}
-                />
+            {/* Main Toggle Button */}
+            <View className="justify-center">
+                <Pressable
+                    onPress={toggleMenu}
+                    className="w-20 h-20 rounded-full justify-center items-center shadow-2xl bg-primary-600"
+                >
+                    <Icon size={38} color="white" name={isOpen ? 'minus' : 'plus'} type="entypo" />
+                </Pressable>
             </View>
         </View>
     );
