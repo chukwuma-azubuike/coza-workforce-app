@@ -8,6 +8,7 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { useGetUserByIdQuery } from '@store/services/account';
 import { IUser } from '@store/types';
 import Utils from '@utils/index';
+import { Text } from '~/components/ui/text';
 const isAndroid = Platform.OS === 'android';
 
 const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean }> = ({
@@ -26,17 +27,10 @@ const UserProfileBrief: React.FC<{ userId: IUser['_id']; isMobileView?: boolean 
                     <AvatarComponent mt={4} size="2xl" shadow={9} imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
                     <View mt="4" width="80%" space={2}>
                         <View space={2}>
-                            <Heading
-                                flexWrap="wrap"
-                                numberOfLines={1}
-                                ellipsizeMode="tail"
-                                _dark={{ color: 'gray.300' }}
-                                _light={{ color: 'gray.700' }}
-                                size={isMobileView ? 'md' : 'lg'}
-                            >
+                            <Text className="font-bold text-2xl">
                                 {user && Utils.capitalizeFirstChar(user?.firstName)}{' '}
                                 {user && Utils.capitalizeFirstChar(user?.lastName)}
-                            </Heading>
+                            </Text>
                         </View>
                         <Heading
                             _dark={{ color: 'gray.300' }}

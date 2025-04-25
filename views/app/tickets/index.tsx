@@ -1,21 +1,18 @@
 import React from 'react';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import useRole from '@hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList, GroupTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '@components/composite/tabs';
-// TODO: Someworth redundant
-// import StaggerButtonComponent, { IStaggerButtonComponentProps } from '@components/composite/stagger';
 import { ITicket } from '@store/types';
 import useMediaQuery from '@hooks/media-query';
 import If from '@components/composite/if-container';
-import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
 import DynamicSearch from '@components/composite/search';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { AddButtonComponent } from '@components/atoms/button';
+import { router, useLocalSearchParams } from 'expo-router';
+import { SafeAreaView, View } from 'react-native';
+import TopNav from '~/components/layout/top-nav';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -27,36 +24,21 @@ const ROUTES = [
 
 export type ITicketType = 'INDIVIDUAL' | 'DEPARTMENTAL' | 'CAMPUS';
 
-const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { tabKey: string; reload: boolean };
+const Tickets: React.FC = () => {
+    const params = useLocalSearchParams<{ tabKey: string }>();
 
     const { isMobile } = useMediaQuery();
-    const updatedListItem = route?.params as ITicket;
 
     const gotoIndividual = () => {
-        navigation.navigate('Issue Ticket', { type: 'INDIVIDUAL' });
+        router.push({ pathname: '/tickets/issue-ticket', params: { type: 'INDIVIDUAL' } });
     };
-
-    const goToDepartmental = () => {
-        navigation.navigate('Issue Ticket', { type: 'DEPARTMENTAL' });
-    };
-
-    const goToCampus = () => {
-        navigation.navigate('Issue Ticket', { type: 'CAMPUS' });
-    };
-
-    const goToExport = () => {
-        navigation.navigate('Export Data', { type: IReportTypes.TICKETS });
-    };
-
-    const reload = params?.reload;
 
     const renderScene = SceneMap({
-        myTickets: () => <MyTicketsList reload={reload} updatedListItem={updatedListItem} />,
-        teamTickets: () => <MyTeamTicketsList reload={reload} updatedListItem={updatedListItem} />,
-        campusTickets: () => <CampusTickets reload={reload} updatedListItem={updatedListItem} />,
-        leadersTickets: () => <LeadersTicketsList updatedListItem={updatedListItem} />,
-        groupTickets: () => <GroupTicketsList reload={reload} updatedListItem={updatedListItem} />,
+        myTickets: () => <MyTicketsList />,
+        teamTickets: () => <MyTeamTicketsList />,
+        campusTickets: () => <CampusTickets />,
+        leadersTickets: () => <LeadersTicketsList />,
+        groupTickets: () => <GroupTicketsList />,
     });
 
     const {
@@ -88,43 +70,6 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
 
     const [index, setIndex] = React.useState(0);
 
-    // TODO: Some worth redundant
-    // const allButtons = [
-    //     {
-    //         color: 'blue.400',
-    //         iconType: 'ionicon',
-    //         iconName: 'person-outline',
-    //         handleClick: gotoIndividual,
-    //     },
-    //     {
-    //         color: 'blue.600',
-    //         iconType: 'ionicon',
-    //         iconName: 'people-outline',
-    //         handleClick: goToDepartmental,
-    //     },
-    //     {
-    //         color: 'blue.800',
-    //         iconName: 'church',
-    //         handleClick: goToCampus,
-    //         iconType: 'material-community',
-    //     },
-    //     {
-    //         color: 'green.600',
-    //         iconName: 'download-outline',
-    //         handleClick: goToExport,
-    //         iconType: 'ionicon',
-    //     },
-    // ];
-
-    // const filteredButtons = React.useMemo(() => {
-    //     // TODO: Uncomment once resolved with IOS
-    //     if (isCampusPastor || isGlobalPastor) return [allButtons[3]];
-    //     if (isQC) return [...allButtons];
-
-    //     return [allButtons[0]];
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []) as IStaggerButtonComponentProps['buttons'];
-
     const routeFocus = () => {
         if (params?.tabKey) {
             setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
@@ -136,32 +81,32 @@ const Tickets: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     });
 
     const handleUserPress = (user: ITicket) => {
-        navigation.navigate('Ticket Details', user);
+        router.push({ pathname: '/tickets/ticket-details', params: user as any });
     };
 
     return (
-        <ViewWrapper>
-            <TabComponent
-                onIndexChange={setIndex}
-                renderScene={renderScene}
-                navigationState={{ index, routes: allRoutes }}
-                tabBarScroll={allRoutes.length > 2 && isMobile}
-            />
-            {/* TODO: Uncomment once reports is resolved with IOS */}
-            <If condition={isQC}>
-                <AddButtonComponent onPress={gotoIndividual} />
-                {/* <StaggerButtonComponent buttons={filteredButtons} /> */}
-            </If>
-            <If condition={canSearch}>
-                <DynamicSearch
-                    data={tickets}
-                    disable={!tickets}
-                    onPress={handleUserPress as any}
-                    loading={isLoadingTickets || isFetchingTickets}
-                    searchFields={['firstName', 'lastName', 'departmentName', 'categoryName', 'status', 'user']}
+        <SafeAreaView className="flex-1">
+            <View className="flex-1">
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    navigationState={{ index, routes: allRoutes }}
+                    tabBarScroll={allRoutes.length > 2 && isMobile}
                 />
-            </If>
-        </ViewWrapper>
+                <If condition={isQC}>
+                    <AddButtonComponent onPress={gotoIndividual} />
+                </If>
+                <If condition={canSearch}>
+                    <DynamicSearch
+                        data={tickets}
+                        disable={!tickets}
+                        onPress={handleUserPress as any}
+                        loading={isLoadingTickets || isFetchingTickets}
+                        searchFields={['firstName', 'lastName', 'departmentName', 'categoryName', 'status', 'user']}
+                    />
+                </If>
+            </View>
+        </SafeAreaView>
     );
 };
 

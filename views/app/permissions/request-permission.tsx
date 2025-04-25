@@ -1,31 +1,28 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import React from 'react';
-import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
-import TextAreaComponent from '@components/atoms/text-area';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import DateTimePicker  from '~/components/composite/date-time-picker';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import useModal from '@hooks/modal/useModal';
-import { ParamListBase } from '@react-navigation/native';
 import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '@store/services/permissions';
 import { Formik, FormikConfig } from 'formik';
-import { IRequestPermissionPayload } from '@store/types';
+import { IPermissionCategory, IRequestPermissionPayload } from '@store/types';
 import useRole from '@hooks/role';
 import { RequestPermissionSchema } from '@utils/schemas';
 import useScreenFocus from '@hooks/focus';
 import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { router } from 'expo-router';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Label } from '~/components/ui/label';
+import { Textarea } from '~/components/ui/textarea';
+import { Button } from '~/components/ui/button';
+import PickerSelect from '~/components/ui/picker-select';
 
-const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
+const RequestPermission: React.FC = () => {
     const { user } = useRole();
-    const { navigate } = navigation;
     const { setModalState } = useModal();
 
-    const { data: categories } = useGetPermissionCategoriesQuery();
+    const { data: categories = [], isLoading: categoriesLoading } = useGetPermissionCategoriesQuery();
     const [requestPermission, { reset, isLoading }] = useRequestPermissionMutation();
 
     const handleSubmit: FormikConfig<IRequestPermissionPayload>['onSubmit'] = async (values, { resetForm }) => {
@@ -41,10 +38,13 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                 status: 'success',
             });
             reset();
-            navigate('Permissions', {
-                ...result?.data,
-                categoryName: categories?.find(category => category._id === values.categoryId)?.name,
-                requestor: user,
+            router.push({
+                pathname: '/permissions',
+                params: {
+                    ...result?.data,
+                    categoryName: categories?.find(category => category._id === values.categoryId)?.name,
+                    requestor: user,
+                } as any,
             });
             resetForm({ values: INITIAL_VALUES });
         }
@@ -99,129 +99,80 @@ const RequestPermission: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
 
     return (
         <ErrorBoundary>
-            <ViewWrapper avoidKeyboard avoidKeyboardBehavior="height" scroll>
-                <View space="lg" alignItems="flex-start" w="100%" className="px-4">
-                    <View alignItems="center" w="100%">
-                        <Formik<IRequestPermissionPayload>
-                            onSubmit={handleSubmit}
-                            initialValues={INITIAL_VALUES}
-                            validationSchema={RequestPermissionSchema}
-                        >
-                            {({ errors, touched, values, handleChange, handleSubmit, setFieldValue }) => {
-                                const handleDate = (fieldName: string, value: any) => {
-                                    setFieldValue(fieldName, value);
-                                };
-
-                                return (
-                                    <View w="100%" space={1}>
-                                        <View justifyContent="space-between" space={4}>
-                                            <View
-                                                w="46%"
-                                                isRequired
-                                                isInvalid={!!errors.startDate && touched.startDate}
-                                            >
-                                                <DateTimePicker                                                    label="Start date"
-                                                    fieldName="startDate"
-                                                    minimumDate={new Date()}
-                                                    onSelectDate={handleDate}
-                                                />
-                                                {errors.startDate && (
-                                                    <Text color="error.400" fontSize="xs">
-                                                        Please select an end date
-                                                    </Text>
-                                                )}
-                                            </View>
-                                            <View
-                                                w="46%"
-                                                isRequired
-                                                isInvalid={!!errors.endDate && touched.endDate}
-                                            >
-                                                <DateTimePicker                                                    label="End date"
-                                                    fieldName="endDate"
-                                                    minimumDate={new Date()}
-                                                    onSelectDate={setFieldValue}
-                                                />
-                                                {errors.endDate && (
-                                                    <Text color="error.400" fontSize="xs">
-                                                        Please select an end date
-                                                    </Text>
-                                                )}
-                                            </View>
-                                        </View>
-                                        <View isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
-                                            <View.Label>Category</View.Label>
-                                            <SelectComponent
-                                                displayKey="name"
-                                                items={categories || []}
-                                                selectedValue={values.categoryId}
-                                                onValueChange={handleChange('categoryId') as any}
-                                            >
-                                                {categories?.map((category, index) => (
-                                                    <SelectItemComponent
-                                                        value={category._id}
-                                                        label={category.name}
-                                                        key={`category-${index}`}
-                                                        icon={iconMap[category.name.toLowerCase()]}
-                                                    />
-                                                ))}
-                                            </SelectComponent>
-                                            <View.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
+            <ScrollView className="px-4 w-full flex-1">
+                <View className="items-center w-full flex-1">
+                    <Formik<IRequestPermissionPayload>
+                        onSubmit={handleSubmit}
+                        initialValues={INITIAL_VALUES}
+                        validationSchema={RequestPermissionSchema}
+                    >
+                        {({ errors, touched, values, handleChange, handleSubmit }) => {
+                            return (
+                                <View className="gap-2 w-full flex-1">
+                                    <View className="justify-between flex-row gap-4">
+                                        <View className="flex-1">
+                                            <DateTimePicker
+                                                mode="date"
+                                                label="Start date"
+                                                minimumDate={new Date()}
+                                                error={errors.startDate}
+                                                touched={touched.startDate}
+                                                placeholder="Enter start date"
+                                                initialValue={new Date().toISOString()}
+                                                onConfirm={
+                                                    handleChange('startDate') as unknown as (value: Date) => void
                                                 }
-                                            >
-                                                {errors?.categoryId}
-                                            </View.ErrorMessage>
-                                        </View>
-                                        <View
-                                            isRequired
-                                            isInvalid={!!errors?.description && touched.description}
-                                        >
-                                            <View.Label>Description</View.Label>
-                                            <TextAreaComponent
-                                                isRequired
-                                                value={values.description}
-                                                placeholder="Brief description"
-                                                onChangeText={handleChange('description')}
                                             />
-                                            <View.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.description}
-                                            </View.ErrorMessage>
                                         </View>
-                                        <View>
-                                            <ButtonComponent
-                                                mt={4}
-                                                isLoading={isLoading}
-                                                onPress={handleSubmit as (event: any) => void}
-                                            >
-                                                Submit for Approval
-                                            </ButtonComponent>
+                                        <View className="flex-1">
+                                            <DateTimePicker
+                                                mode="date"
+                                                label="End date"
+                                                className="flex-1"
+                                                error={errors.endDate}
+                                                touched={touched.endDate}
+                                                placeholder="Enter end date"
+                                                minimumDate={dayjs(values?.startDate || undefined).toDate()}
+                                                onConfirm={handleChange('endDate') as unknown as (value: Date) => void}
+                                            />
                                         </View>
                                     </View>
-                                );
-                            }}
-                        </Formik>
-                    </View>
+                                    <View className="gap-2">
+                                        <Label>Category</Label>
+                                        <PickerSelect<IPermissionCategory>
+                                            valueKey="_id"
+                                            labelKey="name"
+                                            items={categories}
+                                            isLoading={categoriesLoading}
+                                            value={`${values.categoryId}`}
+                                            onValueChange={handleChange('categoryId')}
+                                        />
+                                        {errors.categoryId && touched.categoryId && (
+                                            <FormErrorMessage>{errors.categoryId}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="gap-1">
+                                        <Label>Description</Label>
+                                        <Textarea
+                                            value={values.description}
+                                            placeholder="Brief description"
+                                            onChangeText={handleChange('description')}
+                                        />
+                                        {errors?.description && touched?.description && (
+                                            <FormErrorMessage>{errors?.description}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="mt-2">
+                                        <Button isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
+                                            Submit for Approval
+                                        </Button>
+                                    </View>
+                                </View>
+                            );
+                        }}
+                    </Formik>
                 </View>
-            </ViewWrapper>
+            </ScrollView>
         </ErrorBoundary>
     );
 };

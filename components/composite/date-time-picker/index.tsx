@@ -34,19 +34,19 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     };
 
     return (
-        <View className="gap-4">
+        <View className="gap-2 flex-1">
             <Label>{label}</Label>
             <Button
                 variant="outline"
                 onPress={showPicker}
                 className={cn(
-                    'rounded-2xl !h-16',
+                    'rounded-2xl !h-16 !px-3',
                     `${touched && error && 'border border-destructive'}`,
                     props.className
                 )}
             >
-                <Text className={`text-left w-full ${!initialValue && '!text-base font-normal'}`}>
-                    {!initialValue
+                <Text className={`text-left w-full ${!initialValue && 'font-normal'}`}>
+                    {!initialValue && !date
                         ? placeholder
                         : dayjs(date).format(
                               mode === 'date'

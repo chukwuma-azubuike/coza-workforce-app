@@ -1,16 +1,12 @@
 import { Text } from '~/components/ui/text';
 import React from 'react';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
-import { Platform, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
-import ButtonComponent from '@components/atoms/button';
 import StatusTag from '@components/atoms/status-tag';
 import TextAreaComponent from '@components/atoms/text-area';
 import CardComponent from '@components/composite/card';
 import If from '@components/composite/if-container';
-import ViewWrapper from '@components/layout/viewWrapper';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
@@ -24,21 +20,20 @@ import { IPermission, IUpdatePermissionPayload } from '@store/types';
 
 import useRoleName from '@hooks/role/useRoleName';
 import { Button } from '~/components/ui/button';
+import { router, useLocalSearchParams } from 'expo-router';
+import RefreshControl from '~/components/RefreshControl';
 
 interface PermissionDetailsParamsProps extends IPermission {
     screen: { name: string; value: string } | undefined;
 }
 
-const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const permissionParams = props.route.params as PermissionDetailsParamsProps;
+const PermissionDetails: React.FC = () => {
+    const permissionParams = useLocalSearchParams<PermissionDetailsParamsProps>();
 
-    const {
-        requestor: { _id: requestorId, roleId: requestorRoleId },
-        _id,
-        screen,
-    } = permissionParams;
+    const { requestor, _id, screen } = permissionParams;
 
-    const navigate = props.navigation;
+    const requestorId = requestor?._id;
+    const requestorRoleId = requestor?.roleId;
 
     const { user, isHOD, isAHOD, isGlobalPastor, isCampusPastor, isQC } = useRole();
 
@@ -109,18 +104,21 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             setPermissionComment('');
             approveReset();
             if (screen?.name) {
-                navigate.navigate('Group Head Department Activities', {
-                    permissions: { ...permissionParams, ...approveData, requestor: permissionParams?.requestor },
-                    screenName: screen.name,
-                    _id: screen.value,
-                    tab: 1,
+                router.push({
+                    pathname: '/group-head-campus/group-head-department-activities',
+                    params: {
+                        permissions: {
+                            ...permissionParams,
+                            ...approveData,
+                            requestor: permissionParams?.requestor as any,
+                        },
+                        screenName: screen.name,
+                        _id: screen.value,
+                        tab: 1,
+                    },
                 });
             } else {
-                navigate.navigate('Permissions', {
-                    ...permissionParams,
-                    ...approveData,
-                    requestor: permissionParams?.requestor,
-                });
+                router.back();
             }
         }
         if (approveIsError) {
@@ -143,18 +141,17 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
             declineReset();
 
             if (!!screen?.name) {
-                navigate.navigate('Group Head Department Activities', {
-                    permissions: { ...permissionParams, ...declineData, requestor: permissionParams?.requestor },
-                    screenName: screen.name,
-                    _id: screen.value,
-                    tab: 1,
+                router.push({
+                    pathname: '/group-head-campus/group-head-department-activities',
+                    params: {
+                        permissions: { ...permissionParams, ...declineData, requestor: permissionParams?.requestor },
+                        screenName: screen.name,
+                        _id: screen.value,
+                        tab: 1,
+                    },
                 });
             } else {
-                navigate.navigate('Permissions', {
-                    ...permissionParams,
-                    ...declineData,
-                    requestor: permissionParams?.requestor,
-                });
+                router.back();
             }
         }
         if (declineIsError) {
@@ -186,122 +183,120 @@ const PermissionDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props
     }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
-        <ViewWrapper
-            avoidKeyboard
-            scroll
-            onRefresh={refetch}
-            refreshing={isFetching}
-            style={{
-                paddingVertical: 20,
-                paddingHorizontal: 10,
-            }}
-        >
-            <CardComponent style={{ paddingVertical: 20 }} isLoading={permissionLoading || permissionIsFetching}>
-                <View className="gap-4">
-                    <AvatarComponent
-                        alt="requestor-pic"
-                        className="w-32 h-32"
-                        lastName={permission?.requestor?.lastName}
-                        firstName={permission?.requestor?.firstName}
-                        imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
-                    />
-                    <View className="flex-row gap-2 pb-4 justify-between">
-                        <Text className="font-bold">Requester</Text>
-                        <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
-                    </View>
-                    <View className="flex-row gap-2 pb-4 justify-between">
-                        <Text className="font-bold">Department</Text>
-                        <Text>{permission?.department?.departmentName}</Text>
-                    </View>
-                    <View className="flex-row gap-2 pb-4 justify-between">
-                        <Text className="font-bold">Category</Text>
-                        <Text>{permission?.category.name}</Text>
-                    </View>
-                    <View className="flex-row gap-2 pb-4 justify-between">
-                        <Text className="font-bold">Date Requested</Text>
-                        <Text>{dayjs(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</Text>
-                    </View>
-
-                    {permission?.dateApproved ? (
-                        <View className="flex-row gap-2 pb-4 justify-between">
-                            <Text className="font-bold">Date Approved</Text>
-                            <Text>{dayjs(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</Text>
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'height'}>
+            <ScrollView refreshControl={<RefreshControl refreshing={permissionLoading} />} className="px-2 py-10">
+                <CardComponent className="p-2 py-8 pb-12" isLoading={permissionLoading || permissionIsFetching}>
+                    <View className="gap-4">
+                        <AvatarComponent
+                            alt="requestor-pic"
+                            className="w-32 h-32 mx-auto"
+                            lastName={permission?.requestor?.lastName}
+                            firstName={permission?.requestor?.firstName}
+                            imageUrl={permission?.requestor?.pictureUrl || AVATAR_FALLBACK_URL}
+                        />
+                        <View className="flex-row gap-2 pb-2 justify-between border-b border-b-border">
+                            <Text className="font-bold">Requester</Text>
+                            <Text>{`${permission?.requestor?.firstName} ${permission?.requestor?.lastName}`}</Text>
                         </View>
-                    ) : null}
-
-                    {permission?.rejectedOn ? (
-                        <View className="flex-row gap-2 pb-4 justify-between">
-                            <Text className="font-bold">Date Rejected</Text>
-                            <Text>{dayjs(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</Text>
+                        <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                            <Text className="font-bold">Department</Text>
+                            <Text>{permission?.department?.departmentName}</Text>
                         </View>
-                    ) : null}
+                        <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                            <Text className="font-bold">Category</Text>
+                            <Text>{permission?.category.name}</Text>
+                        </View>
+                        <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                            <Text className="font-bold">Date Requested</Text>
+                            <Text>{dayjs(permission?.createdAt).format('DD/MM/YYYY - h:mm A')}</Text>
+                        </View>
 
-                    <View className="flex-row gap-2 pb-4 justify-between">
-                        <Text className="font-bold">Start Date</Text>
-                        <Text>{dayjs(permission?.startDate).format('DD MMM, YYYY')}</Text>
-                    </View>
+                        {permission?.dateApproved ? (
+                            <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                                <Text className="font-bold">Date Approved</Text>
+                                <Text>{dayjs(permission?.dateApproved).format('DD/MM/YYYY - h:mm A')}</Text>
+                            </View>
+                        ) : null}
 
-                    <View className="flex-row gap-2 pb-4 justify-between">
-                        <Text className="font-bold">End Date</Text>
-                        <Text>{dayjs(permission?.endDate).format('DD MMM, YYYY')}</Text>
-                    </View>
+                        {permission?.rejectedOn ? (
+                            <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                                <Text className="font-bold">Date Rejected</Text>
+                                <Text>{dayjs(permission?.rejectedOn).format('DD/MM/YYYY - h:mm A')}</Text>
+                            </View>
+                        ) : null}
 
-                    <View className="pb-4 gap-4">
-                        <Text className="font-bold">Description</Text>
-                        {!permission?.description && (
-                            <TextAreaComponent value={permission?.description} isDisabled={Platform.OS !== 'android'} />
-                        )}
-                        {permission?.description && (
-                            <Text numberOfLines={undefined} className="flex-wrap line-clamp-none">
-                                {permission?.description}
+                        <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                            <Text className="font-bold">Start Date</Text>
+                            <Text>{dayjs(permission?.startDate).format('DD MMM, YYYY')}</Text>
+                        </View>
+
+                        <View className="flex-row gap-2 pb-2 border-b border-b-border justify-between">
+                            <Text className="font-bold">End Date</Text>
+                            <Text>{dayjs(permission?.endDate).format('DD MMM, YYYY')}</Text>
+                        </View>
+
+                        <View className="pb-2 border-b border-b-border gap-4">
+                            <Text className="font-bold">Description</Text>
+                            {!permission?.description && (
+                                <TextAreaComponent
+                                    value={permission?.description}
+                                    isDisabled={Platform.OS !== 'android'}
+                                />
+                            )}
+                            {permission?.description && (
+                                <Text numberOfLines={undefined} className="flex-wrap line-clamp-none">
+                                    {permission?.description}
+                                </Text>
+                            )}
+                        </View>
+                        <View className="pb-4 border-b border-b-border justify-between flex-row">
+                            <Text className="font-bold">Status</Text>
+                            <StatusTag>{permission?.status as any}</StatusTag>
+                        </View>
+                        <View className="pb-2 gap-4">
+                            <Text className="font-bold">
+                                {!isHOD && !isAHOD && !isCampusPastor
+                                    ? "Leader's comment"
+                                    : (isAHOD || isHOD) && requestorId === user.userId
+                                    ? "Pastor's comment"
+                                    : 'Comment'}
                             </Text>
-                        )}
-                    </View>
-                    <View className="pb-8 justify-between flex-row">
-                        <Text className="font-bold">Status</Text>
-                        <StatusTag>{permission?.status as any}</StatusTag>
-                    </View>
-                    <View className="pb-4 gap-4">
-                        <Text className="font-bold">
-                            {!isHOD && !isAHOD && !isCampusPastor
-                                ? "Leader's comment"
-                                : (isAHOD || isHOD) && requestorId === user.userId
-                                ? "Pastor's comment"
-                                : 'Comment'}
-                        </Text>
-                        {!permission?.comment && (
-                            <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
-                        )}
-                        {permission?.comment && (
-                            <Text numberOfLines={undefined} className="flex-wrap line-clamp-none">
-                                {permission?.comment}
-                            </Text>
-                        )}
-                    </View>
-                    <If condition={takePermissionAction}>
-                        <View className="flex-row gap-4">
-                            <Button
-                                disabled={!permissionComment || approveIsLoading}
-                                isLoading={declineIsLoading}
-                                onPress={handleDecline}
-                                className="flex-1"
-                                variant="outline"
-                            >
-                                Decline
-                            </Button>
-                            <Button
-                                disabled={declineIsLoading}
-                                isLoading={approveIsLoading}
-                                onPress={handleApprove}
-                                className="flex-1"
-                            >
-                                Approve
-                            </Button>
+                            {!permission?.comment && (
+                                <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
+                            )}
+                            {permission?.comment && (
+                                <Text numberOfLines={undefined} className="flex-wrap line-clamp-none">
+                                    {permission?.comment}
+                                </Text>
+                            )}
                         </View>
-                    </If>
-                </View>
-            </CardComponent>
-        </ViewWrapper>
+                        <If condition={takePermissionAction}>
+                            <View className="flex-row gap-4">
+                                <Button
+                                    disabled={!permissionComment || approveIsLoading}
+                                    isLoading={declineIsLoading}
+                                    onPress={handleDecline}
+                                    className="flex-1"
+                                    variant="outline"
+                                    size="sm"
+                                >
+                                    Decline
+                                </Button>
+                                <Button
+                                    disabled={declineIsLoading}
+                                    isLoading={approveIsLoading}
+                                    onPress={handleApprove}
+                                    className="flex-1"
+                                    size="sm"
+                                >
+                                    Approve
+                                </Button>
+                            </View>
+                        </If>
+                    </View>
+                </CardComponent>
+            </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 

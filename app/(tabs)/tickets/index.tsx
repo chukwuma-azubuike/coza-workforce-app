@@ -1,7 +1,8 @@
 import React from 'react';
+import Tickets from '~/views/app/tickets';
 
-const ProfileScreen: React.FC = () => {
-    return <></>;
+const TicketsScreen: React.FC = () => {
+    return <Tickets />;
 };
 
-export default ProfileScreen;
+export default TicketsScreen;

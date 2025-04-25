@@ -1,12 +1,9 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import React from 'react';
-import { FormControl } from 'native-base';
 import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
 import TextAreaComponent from '@components/atoms/text-area';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import useModal from '@hooks/modal/useModal';
-import { ParamListBase } from '@react-navigation/native';
 import useRole from '@hooks/role';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
@@ -14,9 +11,6 @@ import { ICampus, ICreateTicketPayload, IDepartment, IUser } from '@store/types'
 import { useCreateTicketMutation, useGetTicketCategoriesQuery } from '@store/services/tickets';
 import { Formik, FormikConfig } from 'formik';
 import { CreateCampusTicketSchema, CreateDepartmentalTicketSchema, CreateIndividualTicketSchema } from '@utils/schemas';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Utils from '@utils/index';
 import If from '@components/composite/if-container';
 import { useGetLatestServiceQuery } from '@store/services/services';
@@ -24,15 +18,36 @@ import { useGetCampusesQuery } from '@store/services/campus';
 import useScreenFocus from '@hooks/focus';
 import DynamicSearch from '@components/composite/search';
 import UserListItem from '@components/composite/user-list-item';
-import VStackComponent from '@components/layout/v-stack';
 import RadioButton from '@components/composite/radio-button';
+import { Label } from '~/components/ui/label';
+import RadioButtonGroup from '@components/composite/radio-button';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
+import { router, useNavigation } from 'expo-router';
 
-const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { setOptions, navigate } = props.navigation;
-
+const ticketTypes = [
+    {
+        id: '1',
+        label: 'Individual',
+        value: 'INDIVIDUAL',
+    },
+    {
+        id: '2',
+        label: 'Departmental',
+        value: 'DEPARTMENTAL',
+    },
+    {
+        id: '3',
+        label: 'Campus',
+        value: 'CAMPUS',
+    },
+];
+const IssueTicket: React.FC = props => {
     const {
         user: { campus, userId },
     } = useRole();
+
+    const { setOptions } = useNavigation();
 
     const [campusId, setCampusId] = React.useState<ICampus['_id']>(campus?._id);
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
@@ -114,7 +129,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         issuedBy: '',
                     } as ICreateTicketPayload,
                 });
-                navigate('Tickets', data);
+                router.push({ pathname: '/tickets', params: data as any });
                 setSearchedUser(undefined);
                 setDepartmentId(undefined);
             }
@@ -143,7 +158,7 @@ const IssueTicket: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         
 QC/M&E is issuing you this ticket BECAUSE ... 
         
-#GreaterHonour`,
+#Dominion`,
         verbose = `We celebrate you,
 
 We appreciate what you do in the house and we know you are committed to serving God.
@@ -231,8 +246,8 @@ We love & celebrate you!` as any,
                             isDepartment
                                 ? CreateDepartmentalTicketSchema
                                 : isCampus
-                                  ? CreateCampusTicketSchema
-                                  : CreateIndividualTicketSchema
+                                ? CreateCampusTicketSchema
+                                : CreateIndividualTicketSchema
                         }
                     >
                         {({
@@ -304,55 +319,23 @@ We love & celebrate you!` as any,
 
                             return (
                                 <View className="gap-10">
-                                    <FormControl
-                                        isRequired
-                                        justifyContent="space-between"
-                                        isInvalid={!!errors?.ticketType && touched?.ticketType}
-                                    >
-                                        <FormControl.Label>Ticket Type</FormControl.Label>
-                                        <RadioButton
-                                            defaultSelected="1"
-                                            value={values?.ticketType}
-                                            onChange={handleTicketType as any}
-                                            containerStyle={{
-                                                justifyContent: 'flex-start',
-                                                flexDirection: 'row',
-                                            }}
-                                            radioButtons={[
-                                                {
-                                                    id: '1',
-                                                    label: 'Individual',
-                                                    value: 'INDIVIDUAL',
-                                                },
-                                                {
-                                                    id: '2',
-                                                    label: 'Departmental',
-                                                    value: 'DEPARTMENTAL',
-                                                },
-                                                {
-                                                    id: '3',
-                                                    label: 'Campus',
-                                                    value: 'CAMPUS',
-                                                },
-                                            ]}
-                                        />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.ticketType}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.campusId && touched.campusId}>
-                                        <FormControl.Label>Campus</FormControl.Label>
+                                    <View className="justify-between">
+                                        <Label>Ticket Type</Label>
+                                        <View className="flex-1 justify-center items-center p-6">
+                                            <RadioButtonGroup
+                                                className="gap-3"
+                                                defaultSelected="1"
+                                                value={values?.ticketType}
+                                                onValueChange={handleTicketType}
+                                                radioButtons={ticketTypes}
+                                            />
+                                        </View>
+                                        {errors?.ticketType && (
+                                            <FormErrorMessage>{errors?.ticketType}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View>
+                                        <Label>Campus</Label>
                                         <SelectComponent
                                             valueKey="_id"
                                             items={campuses || []}
@@ -370,27 +353,11 @@ We love & celebrate you!` as any,
                                                 />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.campusId}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        {errors?.ticketType && <FormErrorMessage>{errors?.campusId}</FormErrorMessage>}
+                                    </View>
                                     <If condition={!isCampus}>
-                                        <FormControl
-                                            isRequired
-                                            isInvalid={!!errors?.departmentId && touched.departmentId}
-                                        >
-                                            <FormControl.Label>Department</FormControl.Label>
+                                        <View>
+                                            <Label>Department</Label>
                                             <SelectComponent
                                                 valueKey="_id"
                                                 displayKey="departmentName"
@@ -413,25 +380,14 @@ We love & celebrate you!` as any,
                                                     />
                                                 ))}
                                             </SelectComponent>
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.departmentId}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
+                                            {!!errors?.departmentId && touched.departmentId && (
+                                                <FormErrorMessage>{errors.departmentId}</FormErrorMessage>
+                                            )}
+                                        </View>
                                     </If>
                                     <If condition={isIndividual}>
-                                        <FormControl isRequired isInvalid={!!errors?.userId}>
-                                            <FormControl.Label>Worker</FormControl.Label>
+                                        <View>
+                                            <Label>Worker</Label>
                                             <SelectComponent
                                                 valueKey="_id"
                                                 items={workers || []}
@@ -452,25 +408,12 @@ We love & celebrate you!` as any,
                                                     />
                                                 ))}
                                             </SelectComponent>
-                                            <FormControl.ErrorMessage
-                                                fontSize="2xl"
-                                                mt={3}
-                                                leftIcon={
-                                                    <Icon
-                                                        size={16}
-                                                        name="warning"
-                                                        type="antdesign"
-                                                        color={THEME_CONFIG.error}
-                                                    />
-                                                }
-                                            >
-                                                {errors?.userId}
-                                            </FormControl.ErrorMessage>
-                                        </FormControl>
+                                            {errors?.userId && <FormErrorMessage>{errors?.userId}</FormErrorMessage>}
+                                        </View>
                                         {!!searchedUser && <UserListItem style={{ marginTop: 10 }} {...searchedUser} />}
                                     </If>
-                                    <FormControl isRequired isInvalid={!!errors?.categoryId && touched.categoryId}>
-                                        <FormControl.Label>Category</FormControl.Label>
+                                    <View>
+                                        <Label>Category</Label>
                                         <SelectComponent
                                             placeholder="Choose Category"
                                             isDisabled={!ticketCategories}
@@ -489,64 +432,35 @@ We love & celebrate you!` as any,
                                                 />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.categoryId}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl>
-                                        <FormControl.Label>Description Template</FormControl.Label>
+                                        {errors?.categoryId && touched.categoryId && (
+                                            <FormErrorMessage>{errors?.categoryId}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View>
+                                        <Label>Description Template</Label>
                                         <RadioButton
                                             defaultSelected="1"
                                             radioButtons={ticketSummaryTemplates}
                                             onChange={handleChange('ticketSummary') as any}
                                         />
-                                    </FormControl>
-                                    <FormControl
-                                        isRequired
-                                        isInvalid={!!errors?.ticketSummary && touched.ticketSummary}
-                                    >
-                                        <FormControl.Label>Description</FormControl.Label>
+                                    </View>
+                                    <View>
+                                        <Label>Description</Label>
                                         <TextAreaComponent
                                             returnKeyType="done"
                                             placeholder="Details"
                                             value={values.ticketSummary}
                                             onChangeText={handleChange('ticketSummary')}
                                         />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.ticketSummary}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl>
-                                        <ButtonComponent
-                                            mt={4}
-                                            isLoading={isLoading}
-                                            onPress={handleSubmit as (event: any) => void}
-                                        >
+                                        {errors?.ticketSummary && touched.ticketSummary && (
+                                            <FormErrorMessage>{errors?.ticketSummary}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View>
+                                        <Button isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
                                             Submit
-                                        </ButtonComponent>
-                                    </FormControl>
+                                        </Button>
+                                    </View>
                                 </View>
                             );
                         }}
