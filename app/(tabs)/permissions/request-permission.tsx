@@ -1,7 +1,8 @@
 import React from 'react';
+import RequestPermission from '~/views/app/permissions/request-permission';
 
-const RequestpermissionScreen: React.FC = () => {
-    return <></>;
+const RequestPermissionScreen: React.FC = () => {
+    return <RequestPermission />;
 };
 
-export default RequestpermissionScreen;
+export default RequestPermissionScreen;

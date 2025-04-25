@@ -1,5 +1,5 @@
 import { Text } from '~/components/ui/text';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, View } from 'react-native';
 import { Formik } from 'formik';
 import { EmailSchema } from '@utils/schemas';
@@ -15,8 +15,9 @@ import { Link, router } from 'expo-router';
 import APP_ENV from '~/config/envConfig';
 import Loading from '~/components/atoms/loading';
 import OtpInput from '~/components/OtpInput';
+import FormErrorMessage from '~/components/ui/error-message';
 
-const VerifyEmail: React.FC = () => {
+const WelcomeVerifyEmail: React.FC = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
     const [email, setEmail] = React.useState<string>('');
 
@@ -54,7 +55,7 @@ const VerifyEmail: React.FC = () => {
                     Alert.alert('OTP validation failed', `${(response.error as any)?.data?.message}`);
                 }
                 if (response.data) {
-                    router.replace({ pathname: '/(auth)/register', params: response.data as any });
+                    router.replace({ pathname: '/register', params: response.data as any });
                 }
             } catch (error) {}
         }
@@ -139,6 +140,6 @@ const VerifyEmail: React.FC = () => {
     );
 };
 
-export default React.memo(VerifyEmail);
+export default React.memo(WelcomeVerifyEmail);
 
-VerifyEmail.displayName = 'VerifyEmail';
+WelcomeVerifyEmail.displayName = 'WelcomeVerifyEmail';

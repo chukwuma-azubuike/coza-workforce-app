@@ -1,6 +1,5 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React, { memo } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
@@ -9,292 +8,194 @@ import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants/index
 import useFetchMoreData from '@hooks/fetch-more-data';
 import useRole from '@hooks/role';
 import { useGetTicketsQuery } from '@store/services/tickets';
-import { ITicket } from '@store/types';
+import { IDefaultQueryParams, ITicket } from '@store/types';
 import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
-import TextComponent from '@components/text';
-import HStackComponent from '@components/layout/h-stack';
-import VStackComponent from '@components/layout/v-stack';
+import { router } from 'expo-router';
+import SectionListComponent from '~/components/composite/section-list';
+import ErrorBoundary from '~/components/composite/error-boundary';
+import useInfiniteData from '~/hooks/fetch-more-data/use-infinite-data';
 
 const ITEM_HEIGHT = 60;
 export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus' | 'grouphead';
-    '0'?: string;
-    '1'?: ITicket[];
 }
 
 export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
-    const navigation = useNavigation();
     const { type } = props;
 
+    const handlePress = () => {
+        router.push({ pathname: '/tickets/ticket-details', params: props as any });
+    };
+
+    const { status, category, isIndividual, isDepartment, user, departmentName, campus } = props;
+
     return (
-        <>
-            {props[1]?.map((elm, index) => {
-                const handlePress = () => {
-                    navigation.navigate('Ticket Details' as never, elm as never);
-                };
+        <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
+            <View className="py-4 px-2 items-center w-full justify-between flex-row">
+                <View className="items-center gap-4 flex-row">
+                    <AvatarComponent
+                        alt="ticket-list"
+                        imageUrl={isIndividual ? user?.pictureUrl || AVATAR_FALLBACK_URL : AVATAR_GROUP_FALLBACK_URL}
+                    />
+                    <View className="justify-between">
+                        {type === 'own' && (
+                            <>
+                                <Text>{Utils.capitalizeFirstChar(category?.categoryName)}</Text>
+                                <Text>{Utils.truncateString(departmentName)}</Text>
+                            </>
+                        )}
+                        {type === 'team' && (
+                            <>
+                                <Text className="font-bold">
+                                    {isDepartment
+                                        ? departmentName
+                                        : `${Utils.capitalizeFirstChar(user?.firstName)} ${Utils.capitalizeFirstChar(
+                                              user?.lastName
+                                          )}`}
+                                </Text>
+                                <Text>{Utils.capitalizeFirstChar(category?.categoryName)}</Text>
+                            </>
+                        )}
+                        {type === 'campus' && (
+                            <>
+                                {isIndividual && (
+                                    <Text className="font-bold">
+                                        {`${Utils.capitalizeFirstChar(user?.firstName)} ${Utils.capitalizeFirstChar(
+                                            user?.lastName
+                                        )}`}
+                                    </Text>
+                                )}
+                                <Text>{departmentName}</Text>
+                                {isDepartment && <Text className="font-bold">Departmental</Text>}
+                                <Text>{Utils.capitalizeFirstChar(category?.categoryName)}</Text>
+                            </>
+                        )}
 
-                const { status, category, isIndividual, isDepartment, user, departmentName, campus } = elm;
+                        {type === 'grouphead' && (
+                            <>
+                                {isIndividual && (
+                                    <>
+                                        <Text className="font-bold">
+                                            {`${Utils.capitalizeFirstChar(user?.firstName)} ${Utils.capitalizeFirstChar(
+                                                user?.lastName
+                                            )}`}
+                                        </Text>
+                                        <Text className="font-bold">{campus?.campusName}</Text>
+                                        <Text>{departmentName || ''}</Text>
+                                    </>
+                                )}
 
-                return (
-                    <TouchableOpacity
-                        key={index}
-                        delayPressIn={0}
-                        activeOpacity={0.6}
-                        onPress={handlePress}
-                        accessibilityRole="button"
-                    >
-                        <View
-                            className="py-12 items-center justify-between"
-                        >
-                            <View space={6} className="items-center">
-                                <AvatarComponent
-                                    size="sm"
-                                    imageUrl={
-                                        isIndividual
-                                            ? user?.pictureUrl || AVATAR_FALLBACK_URL
-                                            : AVATAR_GROUP_FALLBACK_URL
-                                    }
-                                />
-                                <View className="justify-between">
-                                    {type === 'own' && (
-                                        <>
-                                            <Text>
-                                                {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
-                                            <Text>{Utils.truncateString(departmentName)}</Text>
-                                        </>
-                                    )}
-                                    {type === 'team' && (
-                                        <>
-                                            <Text className="font-bold">
-                                                {isDepartment
-                                                    ? departmentName
-                                                    : `${Utils.capitalizeFirstChar(
-                                                          user?.firstName
-                                                      )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                            </Text>
-                                            <Text>
-                                                {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
-                                        </>
-                                    )}
-                                    {type === 'campus' && (
-                                        <>
-                                            {isIndividual && (
-                                                <Text className="font-bold">
-                                                    {`${Utils.capitalizeFirstChar(
-                                                        user?.firstName
-                                                    )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                                </Text>
-                                            )}
-                                            <Text>{departmentName || ''}</Text>
-                                            {isDepartment && (
-                                                <Text className="text-14 font-bold">
-                                                    Departmental
-                                                </Text>
-                                            )}
-                                            <Text className="text-14">
-                                                {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
-                                        </>
-                                    )}
-
-                                    {type === 'grouphead' && (
-                                        <>
-                                            {isIndividual && (
-                                                <>
-                                                    <Text className="font-bold">
-                                                        {`${Utils.capitalizeFirstChar(
-                                                            user?.firstName
-                                                        )} ${Utils.capitalizeFirstChar(user?.lastName)}`}
-                                                    </Text>
-                                                    <Text className="text-14 font-bold">
-                                                        {campus?.campusName}
-                                                    </Text>
-                                                    <Text>{departmentName || ''}</Text>
-                                                </>
-                                            )}
-
-                                            {isDepartment && (
-                                                <>
-                                                    <Text className="text-14 font-bold">
-                                                        {campus?.campusName}
-                                                    </Text>
-                                                    <Text className="text-14 font-bold">
-                                                        {departmentName}
-                                                    </Text>
-                                                </>
-                                            )}
-                                            <Text className="text-14">
-                                                {Utils.capitalizeFirstChar(category?.categoryName)}
-                                            </Text>
-                                        </>
-                                    )}
-                                </View>
-                            </View>
-                            <StatusTag>{status}</StatusTag>
-                        </View>
-                    </TouchableOpacity>
-                );
-            })}
-        </>
+                                {isDepartment && (
+                                    <>
+                                        <Text className="font-bold">{campus?.campusName}</Text>
+                                        <Text className="font-bold">{departmentName}</Text>
+                                    </>
+                                )}
+                                <Text>{Utils.capitalizeFirstChar(category?.categoryName)}</Text>
+                            </>
+                        )}
+                    </View>
+                </View>
+                <StatusTag>{status}</StatusTag>
+            </View>
+        </TouchableOpacity>
     );
 });
 
-const MyTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(({ updatedListItem, reload }) => {
-    const myTicketsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="own" {..._} key={key} />,
-        },
-    ];
-
+const MyTicketsList: React.FC = memo(() => {
     const {
         user: { userId },
         isCampusPastor,
         isGlobalPastor,
     } = useRole();
-
-    const [page, setPage] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
-        { userId, limit: 20, page },
-        { refetchOnMountOrArgChange: true }
-    );
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
-
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
-    const sortedData = React.useMemo(() => Utils.sortByDate(moreData || [], 'createdAt'), [moreData]);
-    const groupedData = React.useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'createdAt'
-            ),
-        [updatedListItem?._id, sortedData]
-    );
-
-    useScreenFocus({
-        onFocus: () => {
-            if (reload && !isUninitialized) refetch();
+    const {
+        data = [],
+        isLoading,
+        isFetchingNextPage,
+        fetchNextPage,
+        refetch,
+        hasNextPage,
+    } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
+        {
+            // limit: 100, // TODO: Restore after backend is fixed
+            userId,
         },
-    });
+        useGetTicketsQuery as any,
+        '_id',
+        !userId
+    );
 
     return (
-        <FlatListComponent
-            data={groupedData}
-            columns={myTicketsColumns}
-            fetchMoreData={fetchMoreData}
-            isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
-            emptyMessage={
-                isCampusPastor || isGlobalPastor
-                    ? 'There are no tickets issued sir'
-                    : "Nothing here, let's keep it that way 😇"
-            }
-            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-        />
+        <ErrorBoundary>
+            <SectionListComponent
+                data={data}
+                field="createdAt"
+                refetch={refetch}
+                itemHeight={66.7}
+                isLoading={isLoading}
+                column={TicketListRow}
+                hasNextPage={hasNextPage}
+                extraProps={{ type: 'own' }}
+                fetchNextPage={fetchNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                emptyMessage={
+                    isCampusPastor || isGlobalPastor
+                        ? 'There are no tickets issued sir'
+                        : "Nothing here, let's keep it that way 😇"
+                }
+            />
+        </ErrorBoundary>
     );
 });
 
-const MyTeamTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(
-    ({ updatedListItem, reload }) => {
-        const teamTicketsColumns: IFlatListColumn[] = [
-            {
-                dataIndex: 'createdAt',
-                render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
-            },
-        ];
+const MyTeamTicketsList: React.FC = memo(() => {
+    const {
+        user: { department },
+        isCampusPastor,
+        isGlobalPastor,
+    } = useRole();
 
-        const {
-            user: { department },
-            isCampusPastor,
-            isGlobalPastor,
-        } = useRole();
-
-        const [page, setPage] = React.useState<number>(1);
-        const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
-            {
-                departmentId: department._id,
-                limit: 20,
-                page,
-            },
-            { refetchOnMountOrArgChange: true }
-        );
-
-        const fetchMoreData = () => {
-            if (!isFetching && !isLoading) {
-                if (data?.length) {
-                    setPage(prev => prev + 1);
-                } else {
-                    setPage(prev => prev - 1);
-                }
-            }
-        };
-
-        const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
-
-        const preparedForSortData = React.useMemo(
-            () =>
-                moreData?.map((ticket: ITicket) => {
-                    return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
-                }),
-            [moreData]
-        );
-
-        const sortedData = React.useMemo(
-            () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-            [preparedForSortData]
-        );
-
-        const groupedData = React.useMemo(
-            () =>
-                Utils.groupListByKey(
-                    !!updatedListItem?._id
-                        ? Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, [
-                              '_id',
-                              updatedListItem?._id,
-                          ])
-                        : sortedData,
-                    'sortDateKey'
-                ),
-            [updatedListItem?._id, sortedData]
-        );
-
-        useScreenFocus({
-            onFocus: () => {
-                if (reload && !isUninitialized) refetch();
-            },
-        });
-
-        return (
-            <FlatListComponent
-                data={groupedData}
-                columns={teamTicketsColumns}
-                fetchMoreData={fetchMoreData}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
+    const {
+        data = [],
+        isLoading,
+        isFetchingNextPage,
+        fetchNextPage,
+        refetch,
+        hasNextPage,
+    } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
+        {
+            limit: 100, // TODO: Restore after backend is fixed
+            departmentId: department?._id,
+        },
+        useGetTicketsQuery as any,
+        '_id',
+        !department?._id
+    );
+    return (
+        <ErrorBoundary>
+            <SectionListComponent
+                data={data}
+                field="createdAt"
+                refetch={refetch}
+                itemHeight={66.7}
+                isLoading={isLoading}
+                column={TicketListRow}
+                hasNextPage={hasNextPage}
+                extraProps={{ type: 'team' }}
+                fetchNextPage={fetchNextPage}
+                isFetchingNextPage={isFetchingNextPage}
                 emptyMessage={
                     isCampusPastor || isGlobalPastor
-                        ? 'There are no tickets issued'
+                        ? 'There are no tickets issued sir'
                         : "Nothing here, let's keep it that way 😇"
                 }
-                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
             />
-        );
-    }
-);
+        </ErrorBoundary>
+    );
+});
 
-const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updatedListItem }) => {
+const LeadersTicketsList: React.FC = memo(() => {
     const leadersTicketsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
@@ -306,8 +207,6 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
         user: { campus },
         leaderRoleIds,
     } = useRole();
-
-    const [page, setPage] = React.useState<number>(1);
 
     const {
         data: hodsTickets,
@@ -343,20 +242,7 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
 
     const isLoading = hodLoading || ahodLoading;
     const isFetching = hodIsFetching || ahodIsFetching;
-    const isSuccess = hodIsSuccess && ahodIsSuccess;
     const data = ahodsTickets && hodsTickets ? [...ahodsTickets, ...hodsTickets] : [];
-
-    // const fetchMoreData = () => {
-    //     if (!isFetching && !isLoading) {
-    //         if (data?.length) {
-    //             setPage(prev => prev + 1);
-    //         } else {
-    //             setPage(prev => prev - 1);
-    //         }
-    //     }
-    // };
-
-    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
     const preparedForSortData = React.useMemo(
         () =>
@@ -371,15 +257,6 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
         [preparedForSortData]
     );
 
-    const groupedData = React.useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'sortDateKey'
-            ),
-        [updatedListItem?._id, sortedData]
-    );
-
     const handleRefetch = () => {
         hodRefetch();
         ahodRefetch();
@@ -387,7 +264,7 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
 
     return (
         <FlatListComponent
-            data={groupedData}
+            data={sortedData}
             isLoading={isLoading}
             onRefresh={handleRefetch}
             // fetchMoreData={fetchMoreData}
@@ -399,7 +276,7 @@ const LeadersTicketsList: React.FC<{ updatedListItem: ITicket }> = memo(({ updat
     );
 });
 
-const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(({ updatedListItem, reload }) => {
+const CampusTickets: React.FC = memo(() => {
     const teamTicketsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
@@ -448,24 +325,15 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
         [preparedForSortData]
     );
 
-    const groupedData = React.useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'sortDateKey'
-            ),
-        [updatedListItem?._id, sortedData]
-    );
-
     useScreenFocus({
         onFocus: () => {
-            if (reload && !isUninitialized) refetch();
+            if (!isUninitialized) refetch();
         },
     });
 
     return (
         <FlatListComponent
-            data={groupedData}
+            data={sortedData}
             columns={teamTicketsColumns}
             fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
@@ -480,82 +348,66 @@ const CampusTickets: React.FC<{ updatedListItem: ITicket; reload: boolean }> = m
     );
 });
 
-const GroupTicketsList: React.FC<{ updatedListItem: ITicket; reload: boolean }> = memo(
-    ({ updatedListItem, reload }) => {
-        const groupTicketsColumns: IFlatListColumn[] = [
-            {
-                dataIndex: 'createdAt',
-                render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
-            },
-        ];
+const GroupTicketsList: React.FC = memo(() => {
+    const groupTicketsColumns: IFlatListColumn[] = [
+        {
+            dataIndex: 'createdAt',
+            render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
+        },
+    ];
 
-        const [page, setPage] = React.useState<number>(1);
-        const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
-            {
-                isGH: true,
-                limit: 20,
-                page,
-            },
-            { refetchOnMountOrArgChange: true }
-        );
+    const [page, setPage] = React.useState<number>(1);
+    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
+        {
+            isGH: true,
+            limit: 20,
+            page,
+        },
+        { refetchOnMountOrArgChange: true }
+    );
 
-        const fetchMoreData = () => {
-            if (!isFetching && !isLoading) {
-                if (data?.length) {
-                    setPage(prev => prev + 1);
-                } else {
-                    setPage(prev => prev - 1);
-                }
+    const fetchMoreData = () => {
+        if (!isFetching && !isLoading) {
+            if (data?.length) {
+                setPage(prev => prev + 1);
+            } else {
+                setPage(prev => prev - 1);
             }
-        };
+        }
+    };
 
-        const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
+    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
 
-        const preparedForSortData = React.useMemo(
-            () =>
-                moreData?.map((ticket: ITicket) => {
-                    return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
-                }),
-            [moreData]
-        );
+    const preparedForSortData = React.useMemo(
+        () =>
+            moreData?.map((ticket: ITicket) => {
+                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
+            }),
+        [moreData]
+    );
 
-        const sortedData = React.useMemo(
-            () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-            [preparedForSortData]
-        );
+    const sortedData = React.useMemo(
+        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
+        [preparedForSortData]
+    );
 
-        const groupedData = React.useMemo(
-            () =>
-                Utils.groupListByKey(
-                    !!updatedListItem?._id
-                        ? Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, [
-                              '_id',
-                              updatedListItem?._id,
-                          ])
-                        : sortedData,
-                    'sortDateKey'
-                ),
-            [updatedListItem?._id, sortedData]
-        );
+    useScreenFocus({
+        onFocus: () => {
+            if (!isUninitialized) refetch();
+        },
+    });
 
-        useScreenFocus({
-            onFocus: () => {
-                if (reload && !isUninitialized) refetch();
-            },
-        });
-
-        return (
-            <FlatListComponent
-                data={groupedData}
-                columns={groupTicketsColumns}
-                fetchMoreData={fetchMoreData}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-                emptyMessage="There are no tickets issued"
-                getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-            />
-        );
-    }
-);
+    return (
+        <FlatListComponent
+            data={sortedData}
+            columns={groupTicketsColumns}
+            fetchMoreData={fetchMoreData}
+            isLoading={isLoading || isFetching}
+            refreshing={isLoading || isFetching}
+            emptyMessage="There are no tickets issued"
+            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
+        />
+    );
+});
 
 export { MyTicketsList, MyTeamTicketsList, LeadersTicketsList, CampusTickets, GroupTicketsList };

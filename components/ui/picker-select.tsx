@@ -81,7 +81,7 @@ function PickerSelect<T = any>({
             }}
             {...props}
         >
-            <View className="rounded-2xl !h-16 justify-between items-center flex-row !px-3 border border-input">
+            <View className="rounded-xl !h-16 justify-between items-center flex-row !px-3 border border-input">
                 {isLoading ? (
                     <ActivityIndicator />
                 ) : (

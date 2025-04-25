@@ -1,5 +1,5 @@
 import React from 'react';
-import Welcome from '~/views/auth/welcome';
+import Welcome from '~/views/auth/welcome/welcome-verify-email';
 
 const WelcomeScreen: React.FC = () => {
     return <Welcome />;

@@ -17,7 +17,6 @@ import { IReportTypes } from '../export';
 import useScreenFocus from '@hooks/focus';
 import { useGetRolesQuery } from '@store/services/role';
 import { SafeAreaView, View } from 'react-native';
-import TopNav from '~/components/layout/top-nav';
 import { router, useLocalSearchParams } from 'expo-router';
 
 const ROUTES = [
@@ -101,7 +100,6 @@ const Permissions: React.FC = () => {
     return (
         <SafeAreaView className="flex-1">
             <View className="flex-1">
-                <TopNav />
                 <TabComponent
                     onIndexChange={setIndex}
                     renderScene={renderScene}
