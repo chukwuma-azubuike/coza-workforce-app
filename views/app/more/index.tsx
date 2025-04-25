@@ -1,29 +1,19 @@
-import { Text } from "~/components/ui/text";
 import React from 'react';
+import { Text } from '~/components/ui/text';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { List } from 'native-base';
-import { AppRoutes, IAppRoute } from '@config/navigation';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { TouchableOpacity, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
-import { useCustomBackNavigation } from '@hooks/navigation';
+import useRole from '@hooks/role';
+// import { useCustomBackNavigation } from '@hooks/navigation';
 import { useGetUserByIdQuery } from '@store/services/account';
 import useScreenFocus from '@hooks/focus';
+import { Href, Link, router } from 'expo-router';
+import useMoreRoutes from '~/hooks/more-routes';
 
-const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
-    const handlePress = (route: IAppRoute) => () => navigation.navigate(route.name);
+const More: React.FC = () => {
     const {
-        user: {
-            userId,
-            role: { name: roleName },
-            department: { departmentName },
-        },
-        isSuperAdmin,
-        isCampusPastor,
-        isCGWCApproved,
+        user: { userId },
     } = useRole();
 
     const { refetch, isLoading } = useGetUserByIdQuery(userId);
@@ -31,78 +21,45 @@ const More: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) =
         onFocus: refetch,
     });
 
-    const filteredRoutes = React.useMemo(
-        () =>
-            AppRoutes.filter(route => {
-                if (!route.inMore) {
-                    return;
-                }
-                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGLS') {
-                    return;
-                }
-                if (!route.users?.length) {
-                    return route;
-                }
-                const rolesAndDepartments = route.users;
-                if (
-                    rolesAndDepartments.includes(roleName as ROLES) ||
-                    rolesAndDepartments.includes(departmentName as DEPARTMENTS)
-                ) {
-                    return route;
-                }
-            }),
-        [AppRoutes, isCGWCApproved, isSuperAdmin, roleName, departmentName]
-    );
+    const filteredRoutes = useMoreRoutes();
 
-    useCustomBackNavigation({ targetRoute: 'Home' });
+    const handlePress = (href: Href) => () => {
+        router.push(href);
+    };
+
+    // useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper scroll style={{ paddingTop: 10 }} refreshing={isLoading} onRefresh={refetch}>
-            <View>
-                <List mx={4} borderWidth={0}>
-                    {filteredRoutes?.map((route, idx) => (
-                        <List.Item
-                            mb={2}
-                            py={4}
+        <ViewWrapper scroll style={{ paddingTop: 10, flex: 1 }} refreshing={isLoading} onRefresh={refetch}>
+            <View className="mx-2 gap-3">
+                {filteredRoutes?.map((route, idx) => (
+                    <Link key={idx} href={route.href}>
+                        <TouchableOpacity
                             key={idx}
-                            borderRadius={6}
-                            borderColor="gray.400"
-                            _dark={{ bg: 'gray.900' }}
-                            _light={{ bg: 'gray.100' }}
+                            activeOpacity={0.6}
+                            onPress={handlePress(route.href)}
+                            className="bg-muted-background mb-2 px-6 w-full rounded-xl h-[4.5rem] justify-center"
                         >
-                            <TouchableOpacity
-                                activeOpacity={0.6}
-                                style={{ width: '100%' }}
-                                onPress={handlePress(route)}
-                            >
-                                <View w="full" alignItems="center" justifyContent="space-between" className="px-3">
-                                    <View flexDirection="row" justifyContent="flex-start">
-                                        <Icon
-                                            size={22}
-                                            name={route.icon.name}
-                                            type={route.icon.type}
-                                            color={THEME_CONFIG.lightGray}
-                                        />
-                                        <Text
-                                            ml={4}
-                                            fontSize="md"
-                                            _light={{ color: 'gray.600' }}
-                                            _dark={{ color: 'gray.400' }}
-                                        >
-                                            {route.name}
-                                        </Text>
-                                    </View>
+                            <View className="justify-between items-center w-full flex-row gap-4">
+                                <View className="flex-row justify-start gap-4 items-center">
                                     <Icon
                                         size={22}
-                                        type="entypo"
-                                        name="chevron-small-right"
+                                        name={route.icon.name}
+                                        type={route.icon.type}
                                         color={THEME_CONFIG.lightGray}
                                     />
+                                    <Text className="text-muted-foreground">{route.name}</Text>
                                 </View>
-                            </TouchableOpacity>
-                        </List.Item>
-                    ))}
-                </List>
+                                <Icon
+                                    size={22}
+                                    type="entypo"
+                                    name="chevron-small-right"
+                                    color={THEME_CONFIG.lightGray}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    </Link>
+                ))}
             </View>
         </ViewWrapper>
     );

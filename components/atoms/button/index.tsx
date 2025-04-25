@@ -20,7 +20,7 @@ export enum BUTTON_SIZE {
 }
 
 const ButtonComponent: React.FC<IButtonComponent> = props => {
-    const { isLoadingText, isLoading, children, secondary, leftIcon, rightIcon } = props;
+    const { loadingText, isLoading, children, secondary, icon } = props;
     const scheme = useColorScheme();
 
     const OUTLINE_THEME = {
@@ -53,7 +53,7 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
                         <Loading />
                     </View>
                 )}
-                {leftIcon}
+                {icon}
                 {
                     (typeof children === 'string' ? (
                         <Text
@@ -66,13 +66,13 @@ const ButtonComponent: React.FC<IButtonComponent> = props => {
                                 } as any
                             }
                         >
-                            {isLoading ? isLoadingText || 'Loading...' : children}
+                            {isLoading ? loadingText || 'Loading...' : children}
                         </Text>
                     ) : (
                         children
                     )) as ReactNode
                 }
-                {rightIcon}
+                {icon}
             </View>
         </TouchableOpacity>
     );
@@ -82,17 +82,14 @@ export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props =
     return (
         <Button
             {...props}
-            className="shadow-md"
+            className="shadow-md justify-center items-center !rounded-full !p-0 !w-20 !h-20"
             style={{
                 right: 20,
-                bottom: 24,
-                width: 60,
-                height: 60,
-                borderRadius: 200,
+                bottom: 32,
                 position: 'absolute',
             }}
         >
-            <Icon name="plus" type="entypo" size={36} color="white" />
+            <Icon name="plus" type="entypo" size={32} color="white" />
         </Button>
     );
 });
@@ -190,7 +187,6 @@ export const FloatButton: React.FC<ButtonProps & { iconName: string; iconType: s
                     width: 60,
                     height: 60,
                     zIndex: 10,
-                    borderRadius: 32,
                     position: 'absolute',
                 }}
                 className={className}

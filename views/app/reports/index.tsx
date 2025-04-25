@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import If from '@components/composite/if-container';
@@ -25,7 +25,6 @@ import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '@store/types';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
-import TextComponent from '@components/text';
 
 export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>> =
     React.memo(props => {
@@ -90,7 +89,8 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
                 _dark={{ bg: 'gray.900' }}
                 _light={{ bg: 'gray.50' }}
                 justifyContent="space-between"
-                className="px-4 py-3">
+                className="px-4 py-3"
+            >
                 <View style={{ width: '25%' }}>
                     <Text>{dayjs(props.createdAt).format('DD/MM/YYYY')}</Text>
                 </View>

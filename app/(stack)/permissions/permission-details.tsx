@@ -1,8 +1,8 @@
 import React from 'react';
 import PermissionDetails from '~/views/app/permissions/permission-details';
 
-const PermissionsDetailsScreen: React.FC = () => {
+const PermissionDetailsScreen: React.FC = () => {
     return <PermissionDetails />;
 };
 
-export default PermissionsDetailsScreen;
+export default PermissionDetailsScreen;
