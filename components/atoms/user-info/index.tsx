@@ -22,8 +22,6 @@ const UserInfo = ({ heading, value, name, dateString }: IUserInfo) => {
 
         if (NON_EDITABLE.includes(name)) return;
 
-        console.log(dateString)
-
         router.push({ pathname: '/profile/edit-profile', params: { [name]: dateString || value } });
     };
 

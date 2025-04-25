@@ -30,9 +30,7 @@ const Profile: React.FC = () => {
 
     const handleEdit = useCallback(
         (key: string, value: any) => () => {
-            let field: any = {};
-            field[key] = value;
-            router.push({ pathname: '/profile/edit-profile', params: { field } });
+            router.push({ pathname: '/profile/edit-profile', params: { [key]: value } });
         },
         []
     );

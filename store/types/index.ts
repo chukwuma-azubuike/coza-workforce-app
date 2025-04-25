@@ -87,7 +87,7 @@ export interface IDefaultErrorResponse<D = null> {
     data: D;
 }
 
-export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED' | 'REJECTED';
+export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED' | 'REJECTED' | 'SUBMITTED';
 
 export enum IReportStatus {
     PENDING = 'PENDING',

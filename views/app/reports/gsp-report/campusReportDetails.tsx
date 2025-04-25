@@ -1,16 +1,12 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Icon } from '@rneui/themed';
+
 import { Formik } from 'formik';
 import dayjs from 'dayjs';
-import { Divider, FormControl } from 'native-base';
 import React from 'react';
-import ButtonComponent from '@components/atoms/button';
-import TextAreaComponent from '@components/atoms/text-area';
 import If from '@components/composite/if-container';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
@@ -28,6 +24,11 @@ import Utils from '@utils';
 import { GSPReportSchema } from '@utils/schemas';
 import HorizontalTable from '@components/composite/tables/horizontal-table';
 import VerticalTable from '@components/composite/tables/vertical-table';
+import { Separator } from '~/components/ui/separator';
+import { Label } from '~/components/ui/label';
+import { Textarea } from '~/components/ui/textarea';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
 
 interface ICampusReportProps {
     campusId: string;
@@ -278,74 +279,64 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
 
         if ('error' in result) {
             setModalState({
-                message: error?.data?.message || 'Something went wrong',
+                message: (error as any)?.data?.message || 'Something went wrong',
                 status: 'error',
             });
         }
     };
 
     return (
-        <ViewWrapper py={10} scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
-            <Text fontSize="3xl" mb={4} ml={4} className="font-bold">
-                {campusName}
-            </Text>
-            <View space={10} className="px-4">
-                <Divider />
+        <ViewWrapper className="py-6" scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+            <Text className="font-bold text-2xl mb-2 ml-2">{campusName}</Text>
+            <View className="px-4 gap-5">
+                <Separator />
                 <VerticalTable
                     isLoading={isLoading || isFetching}
                     title="Service Attendance"
                     tableData={serviceAttendance}
                 />
-                <Divider />
+                <Separator />
                 <HorizontalTable
                     isLoading={isLoading || isFetching}
                     title="Guests Attendance"
                     tableData={guestsAttendance}
                 />
-                <Divider />
+                <Separator />
                 <VerticalTable
                     isLoading={isLoading || isFetching}
                     title="Childcare Report"
                     tableData={childCareReportData}
                 />
-                <Divider />
+                <Separator />
                 <VerticalTable isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
-                <Divider />
+                <Separator />
                 <VerticalTable isLoading={isLoading || isFetching} title="Bus Count (Pick Up)" tableData={busCount} />
-                <Divider />
+                <Separator />
                 <VerticalTable
                     alignItemsCenter={false}
                     tableData={serviceObservation}
                     isLoading={isLoading || isFetching}
                     title="Service Programme Observation"
                 >
-                    <View
-                        marginBottom={3}
-                        paddingBottom={2}
-                        borderBottomWidth={1}
-                        borderBottomColor="gray.300"
-                        justifyContent={'space-between'}
-                    >
+                    <View className="mb-2 pb-2 border border-border justify-between">
                         <Text>Start Time:</Text>
-                        <Text color="primary.500" className="font-bold">
+                        <Text className="font-bold text-primary">
                             {serviceTime?.start ? dayjs(serviceTime?.start).format('h:mm A') : '--:--'}
                         </Text>
                         <Text>End Time:</Text>
-                        <Text color="primary.500" className="font-bold">
+                        <Text className="font-bold text-primary">
                             {serviceTime?.end ? dayjs(serviceTime?.end).format('h:mm A') : '--:--'}
                         </Text>
                     </View>
                 </VerticalTable>
-                <Divider />
+                <Separator />
                 <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
-                <Divider />
+                <Separator />
                 <If condition={isGlobalPastor}>
                     {data?.campusCoordinatorComment && (
-                        <View pb={10} w="full" space={2}>
-                            <Text alignSelf="flex-start" className="font-bold">
-                                For the GSP's attention
-                            </Text>
-                            <Text flexWrap="wrap">{data?.campusCoordinatorComment}</Text>
+                        <View className="gap-2 w-full pb-5">
+                            <Text className="font-bold items-start">For the GSP's attention</Text>
+                            <Text className="line-clamp-none">{data?.campusCoordinatorComment}</Text>
                         </View>
                     )}
                 </If>
@@ -357,42 +348,26 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                     >
                         {({ errors, handleChange, handleSubmit, isValid }) => {
                             return (
-                                <View space={2}>
-                                    <FormControl
-                                        isRequired
-                                        minHeight={210}
-                                        isInvalid={!!errors?.campusCoordinatorComment}
-                                    >
-                                        <FormControl.Label>For the GSP's attention</FormControl.Label>
-                                        <TextAreaComponent
-                                            minHeight={150}
+                                <View className="gap-1">
+                                    <View>
+                                        <Label>For the GSP's attention</Label>
+                                        <Textarea
                                             placeholder="Comment"
                                             onChangeText={handleChange('campusCoordinatorComment')}
                                         />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.campusCoordinatorComment}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl minHeight={180}>
-                                        <ButtonComponent
-                                            isDisabled={!isValid}
+                                        {!!errors?.campusCoordinatorComment && (
+                                            <FormErrorMessage>{errors?.campusCoordinatorComment}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View>
+                                        <Button
+                                            disabled={!isValid}
                                             isLoading={isSubmitLoading}
                                             onPress={handleSubmit as (event: any) => void}
                                         >
                                             Submit to GSP
-                                        </ButtonComponent>
-                                    </FormControl>
+                                        </Button>
+                                    </View>
                                 </View>
                             );
                         }}
