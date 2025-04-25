@@ -15,6 +15,7 @@ interface SectionListComponentProps<D> extends Partial<SectionListProps<D>> {
     extraProps?: Record<string, any>;
     fetchNextPage?: () => void;
     itemHeight?: number;
+    emptyMessage?: string;
     isFetchingNextPage?: boolean;
 }
 
@@ -31,6 +32,7 @@ function SectionListComponent<D>({
     isLoading,
     extraProps,
     itemHeight,
+    emptyMessage = 'No records',
     ...props
 }: SectionListComponentProps<D>) {
     const sections = useMemo(() => transformToSections(data, field), [data, field]);
@@ -54,17 +56,17 @@ function SectionListComponent<D>({
             {isLoading && sections?.length < 1 ? (
                 <FlatListSkeleton />
             ) : sections?.length < 1 ? (
-                <Empty width={160} isLoading={isLoading} message="No records" refresh={refetch} />
+                <Empty width={160} isLoading={isLoading} message={emptyMessage} refresh={refetch} />
             ) : (
                 <SectionList
                     {...props}
-                    windowSize={5}
+                    windowSize={15}
                     initialNumToRender={15}
                     maxToRenderPerBatch={15}
                     renderItem={renderItem}
                     sections={sections as any[]}
                     stickySectionHeadersEnabled
-                    keyboardShouldPersistTaps='always'
+                    keyboardShouldPersistTaps="always"
                     renderSectionHeader={renderSectionHeader}
                     keyExtractor={(item, index) => (item as any)?._id || `${index}`}
                     onEndReached={() => {

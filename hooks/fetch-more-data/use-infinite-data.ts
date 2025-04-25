@@ -37,7 +37,7 @@ function useInfiniteData<T, TParams>(
         isFetching: boolean;
         refetch: () => void;
     },
-    uniqKey: string = 'id',
+    uniqKey: string = '_id',
     skip?: boolean
 ): InfiniteDataResult<T> {
     const [page, setPage] = useState(1);

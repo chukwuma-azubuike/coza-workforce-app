@@ -154,12 +154,8 @@ export const SummaryListCard: React.FC<{ summaryList: SummaryCardProps[] }> = Re
         <View className="my-6 p-4 border rounded-md flex-row items-center justify-between justify-items-center border-gray-200">
             {summaryList.map((item, index) => (
                 <View key={index} className="items-center justify-center my-2">
-                    <Text className="text-base" _dark={{ color: item.color }} _light={{ color: item.color }}>
-                        {item.title}
-                    </Text>
-                    <Text className="text-2xl" _dark={{ color: item.color }} _light={{ color: item.color }}>
-                        {item.value}
-                    </Text>
+                    <Text className="text-base">{item.title}</Text>
+                    <Text className="text-2xl">{item.value}</Text>
                 </View>
             ))}
         </View>

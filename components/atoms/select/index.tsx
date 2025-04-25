@@ -23,7 +23,7 @@ interface ISelectComponent extends PickerProps {
     displayKey?: string | Array<string | { key: string; path: string }>;
 }
 interface ISelectItemComponent extends PickerItemProps {
-    icon?: { name: string; type: IIconTypes };
+    icon?: { name: string; type: string };
     isLoading?: boolean;
 }
 
@@ -136,7 +136,7 @@ const SelectComponent = React.memo((props: ISelectComponent) => {
             setSelectedId(undefined);
             setSelectedItemLabel(placeholder);
         }
-    }, [(items, valueKey)]);
+    }, [items, valueKey]);
 
     // Initialise button label
     React.useEffect(() => {
