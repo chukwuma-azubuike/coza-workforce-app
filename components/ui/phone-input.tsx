@@ -5,15 +5,22 @@ import RNPhoneInput, { PhoneInputProps } from 'react-native-international-phone-
 
 import { cn } from '~/lib/utils';
 import { useColorScheme } from '~/lib/useColorScheme';
+import formatToE164 from '~/utils/formatToE164';
 
-const PhoneInput: React.FC<PhoneInputProps & { error?: string; touched?: boolean }> = ({
+const PhoneInput: React.FC<PhoneInputProps & { error?: string; touched?: boolean; callingCode?: string }> = ({
     className,
+    selectedCountry,
     placeholderClassName,
     error,
     touched,
     ...props
 }) => {
     const { isDarkColorScheme } = useColorScheme();
+
+    const value = React.useMemo(
+        () => formatToE164((props.value as string) || '', selectedCountry?.callingCode || '+234'),
+        [props.value, selectedCountry?.callingCode]
+    );
 
     return (
         <RNPhoneInput
@@ -23,9 +30,11 @@ const PhoneInput: React.FC<PhoneInputProps & { error?: string; touched?: boolean
                 error && touched && 'border-destructive',
                 className
             )}
+            selectedCountry={selectedCountry as any}
             phoneInputStyles={isDarkColorScheme ? PhoneInputStylesDark : PhoneInputStylesLight}
             theme={isDarkColorScheme ? 'dark' : 'light'}
             placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
+            value={value as any}
             {...props}
         />
     );

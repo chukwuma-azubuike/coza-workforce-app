@@ -1,8 +1,8 @@
 import React from 'react';
-import { ActivityIndicator } from 'react-native';
+import WorkforceManagement from '~/views/app/Workforce-management';
 
 const WorkforcesummaryScreen: React.FC = () => {
-    return <ActivityIndicator />;
+    return <WorkforceManagement />;
 };
 
 export default WorkforcesummaryScreen;

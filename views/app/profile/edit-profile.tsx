@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 import React, { useState } from 'react';
-import ViewWrapper from '@components/layout/viewWrapper';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import DateTimePicker from '~/components/ui/date-time-picker';
 import useModal from '@hooks/modal/useModal';
@@ -11,7 +10,6 @@ import ErrorBoundary from '@components/composite/error-boundary';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
-import { useAppDispatch } from '@store/hooks';
 import dayjs from 'dayjs';
 import { Label } from '~/components/ui/label';
 import FormErrorMessage from '~/components/ui/error-message';
@@ -20,9 +18,10 @@ import { Input } from '~/components/ui/input';
 import { PhoneInput } from '~/components/ui/phone-input';
 import { ICountry } from 'react-native-international-phone-number';
 import { Button } from '~/components/ui/button';
+import formatToE164 from '~/utils/formatToE164';
 
 const EditProfile: React.FC = () => {
-    const userData = useLocalSearchParams<IEditProfilePayload>();
+    const userData = useLocalSearchParams() as unknown as IEditProfilePayload;
 
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
 
@@ -32,14 +31,22 @@ const EditProfile: React.FC = () => {
 
     const { user } = useRole();
     const { goBack } = useNavigation();
-    const dispatch = useAppDispatch();
 
     const { setModalState } = useModal();
 
     const [updateUser, { reset, isLoading, isError, isSuccess, error }] = useUpdateUserMutation();
 
     const onSubmit = (value: IEditProfilePayload) => {
-        updateUser({ ...value, _id: user?._id });
+        updateUser({
+            ...value,
+            phoneNumber: value.phoneNumber
+                ? formatToE164(value.phoneNumber, selectedCountry?.callingCode as string)
+                : undefined,
+            nextOfKinPhoneNo: value.nextOfKinPhoneNo
+                ? formatToE164(value.nextOfKinPhoneNo, selectedCountry?.callingCode as string)
+                : undefined,
+            _id: user?._id,
+        });
     };
 
     React.useEffect(() => {
@@ -60,9 +67,7 @@ const EditProfile: React.FC = () => {
 
     const INITIAL_VALUES = (userData || {}) as IEditProfilePayload;
 
-    const { data: newUserData, refetch: refetchUser, isFetching: newUserDataLoading } = useGetUserByIdQuery(user?._id);
-
-    console.log(INITIAL_VALUES);
+    const { refetch: refetchUser } = useGetUserByIdQuery(user?._id);
 
     return (
         <ErrorBoundary>
@@ -104,6 +109,7 @@ const EditProfile: React.FC = () => {
                                             selectedCountry={selectedCountry}
                                             onBlur={handleBlur('phoneNumber')}
                                             value={values.phoneNumber as string}
+                                            defaultValue={userData.phoneNumber as string}
                                             onChangeSelectedCountry={handleSelectedCountry}
                                             onChangePhoneNumber={handleChange('phoneNumber')}
                                         />

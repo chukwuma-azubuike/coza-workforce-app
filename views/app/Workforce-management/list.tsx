@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { Text } from '~/components/ui/text';
+import { useIsFocused } from '@react-navigation/native';
 import React, { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -10,28 +10,24 @@ import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
 import { IUser } from '@store/types';
 import Utils from '@utils/index';
-import TextComponent from '@components/text';
-import VStackComponent from '@components/layout/v-stack';
-import HStackComponent from '@components/layout/h-stack';
 import ViewWrapper from '@components/layout/viewWrapper';
+import { router } from 'expo-router';
 
 const UserListRow: React.FC<IUser> = memo(user => {
-    const navigation = useNavigation();
-
     const handlePress = () => {
-        navigation.navigate('User Profile' as never, user as never);
+        router.push({ pathname: '/workforce-summary/user-profile', params: user as any });
     };
 
     return (
         <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
-            <View className="p-2">
-                <View space={6} className="items-center">
-                    <AvatarComponent imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
+            <View className="p-2 flex-row">
+                <View className="items-center gap-4">
+                    <AvatarComponent alt="profile-pic" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
                     <View>
                         <Text className="font-bold">
                             {Utils.capitalizeFirstChar(user?.firstName)} {Utils.capitalizeFirstChar(user?.lastName)}
                         </Text>
-                        <Text fontSize="sm">{user?.email}</Text>
+                        <Text className="text-sm">{user?.email}</Text>
                     </View>
                 </View>
                 <StatusTag>{user?.status || 'ACTIVE'}</StatusTag>
@@ -46,14 +42,13 @@ interface CampusUserList {
 }
 
 const CampusListRow: React.FC<CampusUserList> = memo(user => {
-    const navigation = useNavigation();
     const { leaderRoleIds } = useRole();
 
     return (
         <>
             {user[1]?.map((user, index) => {
                 const handlePress = () => {
-                    navigation.navigate('User Profile' as never, user as never);
+                    router.push({ pathname: '/workforce-summary/user-profile', params: user as any });
                 };
 
                 const isHOD = leaderRoleIds && user.roleId === leaderRoleIds[1];
@@ -68,19 +63,19 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <View className="p-2 py-6">
-                            <View space={6} className="items-center">
-                                <AvatarComponent size="sm" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <View space={2}>
+                        <View className="p-2 py-3 flex-row w-full justify-between items-center gap-3">
+                            <View className="items-center gap-2 flex-row flex-1">
+                                <AvatarComponent alt="profile-pic" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                <View className="flex-1">
                                     <Text className="font-bold">
                                         {Utils.capitalizeFirstChar(user?.firstName)}{' '}
                                         {Utils.capitalizeFirstChar(user?.lastName)}
                                     </Text>
-                                    <Text size="sm">{user?.email}</Text>
+                                    <Text className="text-base text-muted-foreground">{user?.email}</Text>
                                 </View>
                             </View>
                             {(isHOD || isAHOD) && (
-                                <StatusTag capitalise={false} style={{ marginRight: 8 }}>
+                                <StatusTag capitalise={false}>
                                     {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
                                 </StatusTag>
                             )}
@@ -148,11 +143,10 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
     };
 
     return (
-        <ViewWrapper scroll onRefresh={refresh} refreshing={isRefreshing}>
+        <ViewWrapper onRefresh={refresh} refreshing={isRefreshing}>
             <FlatListComponent
                 showHeader={false}
                 refreshing={isFetching}
-                style={{ marginTop: 16 }}
                 columns={departmentColumns}
                 data={sortedGroupedData || []}
                 isLoading={isLoading || isFetching}

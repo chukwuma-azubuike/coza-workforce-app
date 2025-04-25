@@ -1,9 +1,12 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import messaging from '@react-native-firebase/messaging';
+// import messaging from '@react-native-firebase/messaging';
 import { Alert } from 'react-native';
 import { extractIncomingNotifications } from '@utils/extractIncomingNotifications';
 import { NavigationBackButton } from '@components/atoms/button';
+import { router } from 'expo-router';
+import { Href } from 'expo-router';
+import ScreenHeader from '~/components/ScreenHeader';
 
 const usePreventGoBack = () => {
     const navigation = useNavigation().addListener;
@@ -15,16 +18,16 @@ const usePreventGoBack = () => {
     }, [navigation]);
 };
 
-const useCustomBackNavigation = ({ targetRoute, params }: { targetRoute: string; params?: any }) => {
+const useCustomBackNavigation = ({ targetRoute, params }: { targetRoute: Href; params?: any }) => {
     const navigation = useNavigation();
 
     const handleGoBack = () => {
-        navigation.navigate(targetRoute as never, params as never);
+        router.replace({ pathname: targetRoute as any, params });
     };
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            headerLeft: () => <NavigationBackButton onPress={handleGoBack} />,
+            header: (props: any) => <ScreenHeader onBack={handleGoBack} name={props.route.name} />,
         });
     }, [navigation, params, targetRoute]);
 };
@@ -51,49 +54,45 @@ const useDeepLinkNavigation = () => {
 
     // Background Notifications handler
     React.useEffect(() => {
-        messaging().onNotificationOpenedApp(remoteMessage => {
-            const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
-
-            setTabKey(tabKey);
-            handleNavigation(deepLink as unknown as IDeepLink, tabKey as any);
-        });
-
+        // messaging().onNotificationOpenedApp(remoteMessage => {
+        //     const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
+        //     setTabKey(tabKey);
+        //     handleNavigation(deepLink as unknown as IDeepLink, tabKey as any);
+        // });
         // Check whether an initial notification is available
-        messaging()
-            .getInitialNotification()
-            .then(remoteMessage => {
-                if (remoteMessage) {
-                    const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
-                    setTabKey(tabKey);
-                    setInitialRoute(deepLink as unknown as string);
-                }
-            });
+        // messaging()
+        //     .getInitialNotification()
+        //     .then(remoteMessage => {
+        //         if (remoteMessage) {
+        //             const { deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
+        //             setTabKey(tabKey);
+        //             setInitialRoute(deepLink as unknown as string);
+        //         }
+        //     });
     }, []);
 
     // Foreground Notifications handler
     React.useEffect(() => {
-        const unsubscribe = messaging().onMessage(async remoteMessage => {
-            const { title, body, deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
-
-            Alert.alert(
-                title as string,
-                body,
-                !!deepLink
-                    ? [
-                          { text: 'Cancel', style: 'cancel' },
-                          {
-                              text: 'View',
-                              onPress: () => {
-                                  setTabKey(tabKey);
-                                  handleNavigation(deepLink as unknown as IDeepLink, tabKey as any);
-                              },
-                          },
-                      ]
-                    : undefined
-            );
-        });
-
-        return unsubscribe;
+        // const unsubscribe = messaging().onMessage(async remoteMessage => {
+        //     const { title, body, deepLink, tabKey } = extractIncomingNotifications(remoteMessage);
+        //     Alert.alert(
+        //         title as string,
+        //         body,
+        //         !!deepLink
+        //             ? [
+        //                   { text: 'Cancel', style: 'cancel' },
+        //                   {
+        //                       text: 'View',
+        //                       onPress: () => {
+        //                           setTabKey(tabKey);
+        //                           handleNavigation(deepLink as unknown as IDeepLink, tabKey as any);
+        //                       },
+        //                   },
+        //               ]
+        //             : undefined
+        //     );
+        // });
+        // return unsubscribe;
     }, []);
 
     return { tabKey, initialRoute };
