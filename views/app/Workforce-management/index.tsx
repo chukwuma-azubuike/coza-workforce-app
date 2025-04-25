@@ -1,23 +1,23 @@
 import React from 'react';
 import useRole from '@hooks/role';
-import { useNavigation } from '@react-navigation/native';
 import useScreenFocus from '@hooks/focus';
 import ViewWrapper from '@components/layout/viewWrapper';
+import { router, useNavigation } from 'expo-router';
 
 const WorkforceSummary: React.FC = () => {
     const { isHOD, isAHOD, isSuperAdmin, isCampusPastor, isGlobalPastor, isQC, isInternshipHOD } = useRole();
-    const { navigate } = useNavigation();
+    const history = useNavigation();
 
     const handleReroute = () => {
         // QC condition comes first as QC can also be HOD or AHOD
         if (isCampusPastor || isQC || isInternshipHOD) {
-            return navigate('Campus workforce' as never);
+            return router.push('/workforce-summary/campus-workforce');
         }
         if (isHOD || isAHOD) {
-            return navigate('Workforce management' as never);
+            return router.push('/workforce-summary/workforce-management');
         }
         if (isGlobalPastor || isSuperAdmin) {
-            return navigate('Global workforce' as never);
+            return router.push('/workforce-summary/global-workforce');
         }
     };
 

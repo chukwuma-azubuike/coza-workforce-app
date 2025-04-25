@@ -4,7 +4,6 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import StaggerButtonComponent from '@components/composite/stagger';
-import { useNavigation } from '@react-navigation/native';
 import useModal from '@hooks/modal/useModal';
 import CampusReport from './campus-report';
 import {
@@ -25,17 +24,17 @@ import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '@store/types';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
+import { router } from 'expo-router';
+import { Separator } from '~/components/ui/separator';
 
 export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>> =
     React.memo(props => {
-        const navigation = useNavigation();
-
         const {
             user: { department },
         } = useRole();
 
         const handlePress = () => {
-            navigation.navigate(ReportRouteIndex[department?.departmentName] as never, props as never);
+            router.push({ pathname: ReportRouteIndex[department?.departmentName] as any, params: props });
         };
 
         return (
@@ -47,16 +46,7 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
                 style={{ width: '100%' }}
                 accessibilityRole="button"
             >
-                <View
-                    p={2}
-                    my={1.5}
-                    borderRadius={10}
-                    alignItems="center"
-                    _dark={{ bg: 'gray.900' }}
-                    _light={{ bg: 'gray.50' }}
-                    justifyContent="space-between"
-                    className="px-4"
-                >
+                <View className="px-4 p-2 my-1 rounded-xl items-center bg-muted-background justify-between">
                     <Text>{dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</Text>
                     <Text className="font-bold">Departmental</Text>
                     <StatusTag>{props?.status as any}</StatusTag>
@@ -66,10 +56,8 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
     });
 
 const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' | 'details'>> = React.memo(props => {
-    const navigation = useNavigation();
-
     const handlePress = () => {
-        navigation.navigate('Incident Report' as never, props as never);
+        router.push({ pathname: '/reports/incident-report', params: props });
     };
 
     return (
@@ -81,24 +69,15 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <View
-                p={2}
-                my={1.5}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-                className="px-4 py-3"
-            >
-                <View style={{ width: '25%' }}>
+            <View className="px-4 py-3 my-1 rounded-xl items-center bg-muted-background justify-between flex-row gap-3">
+                <View>
                     <Text>{dayjs(props.createdAt).format('DD/MM/YYYY')}</Text>
                 </View>
-                <View style={{ width: '25%' }}>
+                <View>
                     <Text className="font-bold">Incident</Text>
                 </View>
-                <View style={{ width: '50%' }}>
-                    <Text>{props.details}</Text>
+                <View className="flex-1">
+                    <Text className="text-muted-foreground">{props.details}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -162,7 +141,6 @@ const Reports: React.FC = () => {
         },
     });
 
-    const { navigate } = useNavigation();
     const { setModalState } = useModal();
 
     const goToReportRoute = () => {
@@ -187,15 +165,15 @@ const Reports: React.FC = () => {
     };
 
     const goToIncidentReport = () => {
-        navigate(
-            'Incident Report' as unknown as never,
-            {
+        router.push({
+            pathname: '/reports/incident-report',
+            params: {
                 departmentId: user?.department._id,
                 serviceId: latestServiceData?._id,
                 campusId: user?.campus._id,
                 userId: user?.userId,
-            } as never
-        );
+            },
+        });
     };
 
     const goToDepartmentReport = () => {
@@ -206,22 +184,22 @@ const Reports: React.FC = () => {
                 message: 'No reports available for submission.',
             });
         } else {
-            navigate(
-                goToReportRoute() as unknown as never,
-                {
+            router.push({
+                pathname: goToReportRoute() as any,
+                params: {
                     _id: data?.departmentalReport.report._id,
                     departmentId: user?.department._id,
                     serviceId: latestServiceData?._id,
                     campusId: user?.campus._id,
                     userId: user?.userId,
-                } as never
-            );
+                },
+            });
         }
     };
 
     return (
         <ErrorBoundary>
-            <ViewWrapper>
+            <ViewWrapper className="flex-1">
                 <If condition={!user}>
                     <FlatListSkeleton count={9} />
                 </If>
@@ -229,6 +207,8 @@ const Reports: React.FC = () => {
                     <CampusReport campusId={user?.campus?._id} serviceId={latestServiceData?._id} />
                 </If>
                 <If condition={isHOD || isAHOD}>
+                    <Text className="text-muted-foreground font-semibold">Departmental Reports</Text>
+                    <Separator />
                     <FlatListComponent
                         columns={reportColumns}
                         onRefresh={reportsRefetch}
@@ -236,9 +216,13 @@ const Reports: React.FC = () => {
                         refreshing={reportsIsLoading || reportsIsFetching}
                         data={departmentAndIncidentReport?.departmentalReport || []}
                     />
+                    <Text className="text-muted-foreground font-semibold">Incident Reports</Text>
+                    <Separator />
                     <FlatListComponent
                         showEmpty={false}
+                        onRefresh={reportsRefetch}
                         columns={incidentReportColumns}
+                        refreshing={reportsIsLoading || reportsIsFetching}
                         data={departmentAndIncidentReport?.incidentReport || []}
                     />
                 </If>

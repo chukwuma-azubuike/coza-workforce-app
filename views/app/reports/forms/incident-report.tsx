@@ -1,20 +1,22 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
 import * as React from 'react';
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IIncidentReportPayload } from '@store/types';
 import { useCreateIncidentReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl } from 'native-base';
-import ButtonComponent from '@components/atoms/button';
+
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
-const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IIncidentReportPayload;
+import { useLocalSearchParams } from 'expo-router';
+import { Label } from '~/components/ui/label';
+import { Button } from '~/components/ui/button';
+
+const IncidentReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IIncidentReportPayload;
 
     const { status, updatedAt, details } = params;
 
@@ -42,7 +44,7 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: error?.data.message || 'Something went wrong',
+                message: (error as any)?.data.message || 'Something went wrong',
             });
             reset();
         }
@@ -57,37 +59,31 @@ const IncidentReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >
-            {({ handleChange, errors, handleSubmit }) => (
+            {({ handleChange, handleSubmit }) => (
                 <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
-                    <View pb={10}>
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
+                    <View className="pb-4">
+                        <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View
-                            mt={4}
-                            space={4}
-                            minHeight={details?.length ? (details?.length * 7) / 8 : undefined}
-                            className="px-4"
-                        >
-                            <FormControl isRequired mb={2}>
-                                <FormControl.Label mb={4}>Details of Incident</FormControl.Label>
+                        <View className="px-4 mt-2 gap-4">
+                            <View>
+                                <Label className="mb-2">Details of Incident</Label>
                                 <TextAreaComponent
                                     value={details}
                                     isDisabled={!!details}
                                     placeholder="Enter details"
                                     onChangeText={handleChange('details')}
-                                    minHeight={details?.length ? (details?.length * 3) / 4 : undefined}
                                 />
-                            </FormControl>
-                            <FormControl>
-                                <ButtonComponent
+                            </View>
+                            <View>
+                                <Button
+                                    disabled={!!details}
                                     isLoading={isLoading}
-                                    isDisabled={!!details}
                                     onPress={handleSubmit as (event: any) => void}
                                 >
                                     {`${!status ? 'Submit' : 'Update'}`}
-                                </ButtonComponent>
-                            </FormControl>
+                                </Button>
+                            </View>
                         </View>
                     </View>
                 </ViewWrapper>

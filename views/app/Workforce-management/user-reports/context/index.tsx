@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 export interface IUserReportContext {
     userId: string;
@@ -7,7 +7,7 @@ export interface IUserReportContext {
 
 const UserReportContext = React.createContext({} as IUserReportContext);
 
-const UserReportProvider: React.FC = ({ children }) => {
+const UserReportProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const [userId, setUserId] = React.useState<string>();
 
     const initialValues: IUserReportContext = {
