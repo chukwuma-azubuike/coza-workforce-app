@@ -1,8 +1,7 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { Divider, FormControl } from 'native-base';
 import { UserReportContext, UserReportProvider } from './context';
 import { TouchableOpacity, View } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -20,6 +19,8 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '@hooks/focus';
+import { Separator } from '~/components/ui/separator';
+import { router } from 'expo-router';
 
 const userReportColumns: IFlatListColumn[] = [
     {
@@ -44,7 +45,10 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
                     if (isMobile) {
-                        navigation.navigate('User Report Details' as never, { userId: elm?.user._id } as never);
+                        router.push({
+                            pathname: '/workforce-summary/user-report-details',
+                            params: { userId: elm?.user._id },
+                        });
                     }
                     setUserId(elm?.user._id);
                 };
@@ -58,10 +62,13 @@ const UserReportListRow: React.FC<IUserReportListRowProps> = props => {
                         style={{ width: '100%' }}
                         accessibilityRole="button"
                     >
-                        <View p={2} alignItems="center" justifyContent="space-between">
-                            <View space={3} alignItems="center" w="85%">
-                                <AvatarComponent imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <Text ellipsizeMode="tail" numberOfLines={1} w="72%" className="font-bold">
+                        <View className="p-2 items-center justify-between">
+                            <View className="gap-2 items-center">
+                                <AvatarComponent
+                                    alt="profile-pic"
+                                    imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
+                                />
+                                <Text className="font-bold">
                                     {Utils.capitalizeFirstChar(elm?.user?.firstName)}{' '}
                                     {Utils.capitalizeFirstChar(elm?.user?.lastName)}
                                 </Text>
@@ -95,7 +102,10 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const sortedcampuses = React.useMemo<ICampus[] | undefined>(
         () =>
-            campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
+            campuses && [
+                { _id: 'global', campusName: 'Global' } as any,
+                ...Utils.sortStringAscending(campuses, 'campusName'),
+            ],
         [campuses]
     );
 
@@ -155,10 +165,10 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     return (
         <UserReportProvider>
-            <ViewWrapper py={0} px={2} noPadding refreshing={isLoadingAttendance || isLoadingTickets}>
-                <View flex={1}>
-                    <View w={isMobile ? '100%' : '40%'} flex={1} space={3} pt={4}>
-                        <FormControl isRequired>
+            <ViewWrapper className="!py-0 !px-2" noPadding refreshing={isLoadingAttendance || isLoadingTickets}>
+                <View className="flex-1">
+                    <View className="flex-1 gap-2 pt-2">
+                        <View>
                             <SelectComponent
                                 valueKey="_id"
                                 displayKey="campusName"
@@ -175,7 +185,7 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     />
                                 ))}
                             </SelectComponent>
-                        </FormControl>
+                        </View>
                         <FlatListComponent
                             columns={userReportColumns}
                             isLoading={isLoadingAttendance || isLoadingTickets}
@@ -184,8 +194,8 @@ const UserReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         />
                     </View>
                     <If condition={isTablet}>
-                        <Divider orientation="vertical" height="100%" m={4} />
-                        <View w="60%">
+                        <Separator orientation="vertical" className="m-2" />
+                        <View>
                             <UserReportDetails userId={userId} />
                         </View>
                     </If>

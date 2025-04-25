@@ -1,36 +1,38 @@
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import useRole from '@hooks/role';
 import { Department } from './list';
 import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { ICampusUserData } from '@store/types';
+
 import useScreenFocus from '@hooks/focus';
 import { useCustomBackNavigation } from '@hooks/navigation';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { ICampusUserData } from '~/store/types';
 
-const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const campusUsersData = route?.params as ICampusUserData['departmentCount'][0] & { campusId: string };
+const WorkforceManagement: React.FC = () => {
+    const campusUsersData = useLocalSearchParams() as unknown as ICampusUserData['departmentCount'][0] & {
+        campusId: string;
+    };
     const { isCampusPastor, isQC, isGlobalPastor, isSuperAdmin, isInternshipHOD, isQcHOD, user } = useRole();
 
-    const { setOptions } = navigation;
+    const { setOptions } = useNavigation();
 
     useScreenFocus({
         onFocus: () => setOptions({ title: `${campusUsersData?.departmentName || 'Workforce Management'}` }),
     });
 
     const gotoCreateWorker = () => {
-        navigation.navigate('Create User');
+        router.push('/workforce-summary/create-user');
     };
 
     const gotoCreateCampus = () => {
-        navigation.navigate('Create Campus');
+        router.push('/workforce-summary/create-campus');
     };
 
     const gotoCreateDepartment = () => {
-        navigation.navigate('Create Department');
+        router.push('/workforce-summary/create-department');
     };
 
     const allButtons = [
@@ -66,12 +68,10 @@ const WorkforceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ 
         return [allButtons[0]];
     }, []);
 
-    {
-        useCustomBackNavigation({
-            targetRoute: isCampusPastor || isQC || isGlobalPastor ? 'Campus workforce' : 'More',
-            params: { _id: campusUsersData?.campusId },
-        });
-    }
+    useCustomBackNavigation({
+        targetRoute: isCampusPastor || isQC || isGlobalPastor ? '/workforce-summary/campus-workforce' : '/more',
+        params: { _id: campusUsersData?.campusId },
+    });
 
     return (
         <ErrorBoundary>
