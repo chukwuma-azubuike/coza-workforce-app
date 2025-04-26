@@ -1,7 +1,7 @@
 import React from 'react';
 
-const CreateCGWCsessionScreen: React.FC = () => {
+const CreateCongresssessionScreen: React.FC = () => {
     return <></>;
 };
 
-export default CreateCGWCsessionScreen;
+export default CreateCongresssessionScreen;

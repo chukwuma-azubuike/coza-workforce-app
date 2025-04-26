@@ -106,7 +106,7 @@ const Profile: React.FC = () => {
                 </View>
                 <View style={{ marginHorizontal: 4 }}>
                     <View className="items-center justify-between my-2 flex-row">
-                        <Text className="font-bold text-muted-foreground">CGWC Status</Text>
+                        <Text className="font-bold text-muted-foreground">Congress Status</Text>
                         <StatusTag>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
                     </View>
                     <UserInfo heading="Role" name="role" value={user?.role.name} />

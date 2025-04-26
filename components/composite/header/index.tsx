@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Animated, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
-import CgwcTopNav from '@components/composite/header/cgwc-top-nav';
+import CgwcTopNav from '@components/composite/header/congress-top-nav';
 import useAppColorMode from '@hooks/theme/colorMode';
 
 const MIN_HEADER_HEIGHT = 50;
