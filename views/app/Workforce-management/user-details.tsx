@@ -1,10 +1,8 @@
-import { Text } from "~/components/ui/text";
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Text } from '~/components/ui/text';
+import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import dayjs from 'dayjs';
-import { FormControl } from 'native-base';
 import React from 'react';
 import { Alert, Switch, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
@@ -25,13 +23,13 @@ import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser } from '@stor
 import Utils from '@utils/index';
 import compareObjectValueByKey from '@utils/compareObjectValuesByKey';
 import Loading from '@components/atoms/loading';
-import VStackComponent from '@components/layout/v-stack';
-import HStackComponent from '@components/layout/h-stack';
 import CenterComponent from '@components/layout/center';
-import { THEME_CONFIG } from '@config/appConfig';
+import { useLocalSearchParams } from 'expo-router';
+import { Button } from '~/components/ui/button';
+import { Label } from '~/components/ui/label';
 
-const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { _id } = props.route.params as IUser;
+const UserDetails: React.FC = () => {
+    const { _id } = useLocalSearchParams() as unknown as IUser;
     const { setModalState } = useModal();
     const { goBack } = useNavigation();
     const { isHOD, isAHOD, isSuperAdmin, isGlobalPastor, isCampusPastor, isInternshipHOD, rolesPermittedToCreate } =
@@ -52,7 +50,6 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { data: campuses, isLoading: campusesIsLoading } = useGetCampusesQuery();
     const {
         data: campusDepartments,
-        refetch: refetchDepartments,
         isFetching: isFetchingDepartments,
         isLoading: campusDepartmentsLoading,
     } = useGetDepartmentsByCampusIdQuery(campusId || (data?.campus._id as string), { refetchOnMountOrArgChange: true });
@@ -95,7 +92,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
             if ('error' in result) {
                 setModalState({
-                    message: `${deleteUserResults?.error?.data.message}` || 'Oops, something went wrong!',
+                    message: `${(deleteUserResults?.error as any)?.data.message}` || 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 6,
@@ -140,7 +137,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
             if ('error' in result) {
                 setModalState({
-                    message: `${updateResults?.error?.data?.message}` || 'Oops, something went wrong!',
+                    message: `${(updateResults?.error as any)?.data?.message}` || 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 6,
@@ -157,7 +154,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         }
     };
 
-    const approveForCGWC = async (event: boolean) => {
+    const handleApproveCGWC = async (event: boolean) => {
         try {
             const result = await updateUser({ isCGWCApproved: event, _id });
 
@@ -172,7 +169,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
             if ('error' in result) {
                 setModalState({
-                    message: `${updateResults?.error?.data?.message}` || 'Oops, something went wrong!',
+                    message: `${(updateResults?.error as any)?.data?.message}` || 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 6,
@@ -194,14 +191,6 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         },
     });
 
-    const handleApproveCGWC = async (event: boolean) => {
-        await approveForCGWC(event)
-            .then(() => {
-                refetch();
-            })
-            .catch(() => {});
-    };
-
     const rolesPermitted = React.useMemo(() => rolesPermittedToCreate(), []);
 
     return (
@@ -213,7 +202,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 paddingHorizontal: 10,
             }}
         >
-            <CardComponent isLoading={isLoading || isFetching} style={{ paddingVertical: 20, marginTop: 20 }}>
+            <CardComponent isLoading={isLoading} style={{ paddingVertical: 20, marginTop: 20 }}>
                 <Formik<IReAssignUserPayload> validateOnChange onSubmit={submitForm} initialValues={INITIAL_VALUES}>
                     {({ values, handleChange, handleSubmit }) => {
                         const handleCampusIdChange = (value: string) => {
@@ -227,15 +216,19 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                         );
 
                         return (
-                            <View space={8}>
+                            <View className="ga!py-4 !py-4">
                                 <CenterComponent>
-                                    <AvatarComponent size="2xl" imageUrl={data?.pictureUrl || AVATAR_FALLBACK_URL} />
+                                    <AvatarComponent
+                                        alt="profile-pic"
+                                        className="w-32 h-32"
+                                        imageUrl={data?.pictureUrl || AVATAR_FALLBACK_URL}
+                                    />
                                 </CenterComponent>
                                 <If condition={canEdit}>
                                     <View className="my-6 justify-between">
-                                        <ButtonComponent
-                                            style={{ paddingHorizontal: 6, backgroundColor: THEME_CONFIG.info }}
-                                            size="md"
+                                        <Button
+                                            size="sm"
+                                            variant="outline"
                                             startIcon={
                                                 <Icon
                                                     size={18}
@@ -244,20 +237,20 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                     name={isEditMode ? 'save' : 'loop'}
                                                 />
                                             }
-                                            isDisabled={isEditMode && disableSave}
+                                            disabled={isEditMode && disableSave}
                                             isLoading={updateResults.isLoading}
                                             onPress={isEditMode ? (handleSubmit as () => void) : handleEditMode}
                                         >
                                             {isEditMode ? 'Done' : 'Reassign'}
-                                        </ButtonComponent>
+                                        </Button>
                                         <ButtonComponent
-                                            style={{ paddingHorizontal: 6, backgroundColor: THEME_CONFIG.rose }}
-                                            size="md"
+                                            size="sm"
+                                            variant="destructive"
                                             startIcon={
                                                 <Icon size={18} color="white" name={'delete'} type="material-icon" />
                                             }
                                             onPress={handleDelete}
-                                            isDisabled={!canDelete}
+                                            disabled={!canDelete}
                                             isLoading={deleteUserResults.isLoading}
                                         >
                                             Delete
@@ -265,174 +258,68 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     </View>
                                 </If>
                                 <If condition={canApproveForCGWC}>
-                                    <View className="mx-2">
-                                        <FormControl flexDirection="row" justifyContent="space-between">
-                                            <FormControl.Label>
-                                                {data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC
-                                            </FormControl.Label>
+                                    <View className="flex-row justify-between">
+                                        <Label>{data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC</Label>
 
-                                            {updateResults?.isLoading ? (
-                                                <Loading w={7} h={7} />
-                                            ) : (
-                                                <Switch
-                                                    value={data?.isCGWCApproved}
-                                                    onValueChange={handleApproveCGWC}
-                                                    disabled={updateResults?.isLoading}
-                                                />
-                                            )}
-                                        </FormControl>
+                                        {updateResults?.isLoading ? (
+                                            <Loading />
+                                        ) : (
+                                            <Switch
+                                                value={data?.isCGWCApproved}
+                                                onValueChange={handleApproveCGWC}
+                                                disabled={updateResults?.isLoading}
+                                            />
+                                        )}
                                     </View>
                                 </If>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Role
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold items-start">Role</Text>
                                     <Text>{data?.role.name}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        First name
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold items-start">First name</Text>
                                     <Text>{data?.firstName}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Last name
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Last name</Text>
                                     <Text>{data?.lastName}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Phone number
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Phone number</Text>
                                     <Text>{data?.phoneNumber}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    flexWrap="wrap"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Email
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Email</Text>
                                     <Text>{data?.email}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    flexWrap="wrap"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Address
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Address</Text>
                                     <Text>{data?.address}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Status
-                                    </Text>
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Status</Text>
                                     <StatusTag>{data?.status}</StatusTag>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Gender
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Gender</Text>
                                     <Text>{data?.gender}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Marital Status
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Marital Status</Text>
                                     <Text>{data?.maritalStatus}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Birthday
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Birthday</Text>
                                     <Text>{dayjs(data?.birthDay).format('DD MMMM')}</Text>
                                 </View>
-                                <View
-                                    pb={2}
-                                    w="full"
-                                    space={2}
-                                    alignItems="center"
-                                    borderColor="gray.300"
-                                    borderBottomWidth={0.2}
-                                    justifyContent="space-between"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Campus
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Campus</Text>
                                     <If condition={!isEditMode}>
                                         <Text>{data?.campus.campusName}</Text>
                                     </If>
 
                                     {isEditMode && canEdit ? (
-                                        <FormControl mb={3} h={12} maxW={200} flexDirection="row-reverse">
+                                        <View className="flex-row-reverse">
                                             <SelectComponent
                                                 valueKey="_id"
                                                 items={sortedCampuses}
@@ -452,28 +339,18 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                     />
                                                 ))}
                                             </SelectComponent>
-                                        </FormControl>
+                                        </View>
                                     ) : null}
                                 </View>
-                                <View
-                                    pb={2}
-                                    w="full"
-                                    space={2}
-                                    flexWrap="wrap"
-                                    borderColor="gray.300"
-                                    borderBottomWidth={0.2}
-                                    justifyContent="space-between"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Department
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Department</Text>
 
                                     <If condition={!isEditMode}>
                                         <Text>{data?.department?.departmentName}</Text>
                                     </If>
 
                                     {isEditMode && canEdit ? (
-                                        <FormControl mb={3} h={12} maxW={200} flex={1} flexDirection="row-reverse">
+                                        <View className="flex-row-reverse">
                                             <SelectComponent
                                                 valueKey="_id"
                                                 style={{ width: 200 }}
@@ -494,23 +371,13 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                     />
                                                 ))}
                                             </SelectComponent>
-                                        </FormControl>
+                                        </View>
                                     ) : null}
                                 </View>
                                 <If condition={isEditMode}>
-                                    <View
-                                        pb={2}
-                                        w="full"
-                                        space={2}
-                                        flexWrap="wrap"
-                                        borderColor="gray.300"
-                                        borderBottomWidth={0.2}
-                                        justifyContent="space-between"
-                                    >
-                                        <Text alignSelf="flex-start" className="font-bold">
-                                            Role
-                                        </Text>
-                                        <FormControl mb={3} h={12} maxW={200} flexDirection="row-reverse">
+                                    <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                        <Text className="font-bold">Role</Text>
+                                        <View className="flex-row-reverse">
                                             <SelectComponent
                                                 valueKey="_id"
                                                 displayKey="name"
@@ -528,48 +395,19 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                                     />
                                                 ))}
                                             </SelectComponent>
-                                        </FormControl>
+                                        </View>
                                     </View>
                                 </If>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    flexWrap="wrap"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text flexWrap="wrap" alignSelf="flex-start" className="font-bold">
-                                        Occupation
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Occupation</Text>
                                     <Text>{data?.occupation}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    flexWrap="wrap"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Place of work
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold">Place of work</Text>
                                     <Text>{data?.placeOfWork}</Text>
                                 </View>
-                                <View
-                                    space={2}
-                                    pb={2}
-                                    w="full"
-                                    justifyContent="space-between"
-                                    borderBottomWidth={0.2}
-                                    borderColor="gray.300"
-                                >
-                                    <Text alignSelf="flex-start" className="font-bold">
-                                        Next of Kin
-                                    </Text>
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row !py-4">
+                                    <Text className="font-bold">Next of Kin</Text>
                                     <View>
                                         <Text>{data?.nextOfKin}</Text>
                                         <Text>{data?.nextOfKinPhoneNo}</Text>
