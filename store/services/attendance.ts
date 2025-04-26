@@ -2,7 +2,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import {
     IAttendance,
-    ICGWCParams,
+    ICongressParams,
     ICampus,
     IDefaultQueryParams,
     IDefaultResponse,
@@ -124,16 +124,16 @@ export const attendanceServiceSlice = createApi({
             ) => res.data,
         }),
 
-        getDepartmentCGWCAttendanceReport: endpoint.query<
+        getDepartmentCongressAttendanceReport: endpoint.query<
             {
                 tickets?: number;
                 attendance: number;
                 departmentUsers: number;
             },
-            { serviceId: string; departmentId: string } & Partial<ICGWCParams>
+            { serviceId: string; departmentId: string } & Partial<ICongressParams>
         >({
-            query: ({ serviceId, departmentId, isCGWC, CGWCId }) => ({
-                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}/${isCGWC}/${CGWCId}`,
+            query: ({ serviceId, departmentId, isCongress, CongressId }) => ({
+                url: `${SERVICE_URL}/departmentReport/${serviceId}/${departmentId}/${isCongress}/${CongressId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -165,15 +165,15 @@ export const attendanceServiceSlice = createApi({
             ) => res.data,
         }),
 
-        getLeadersCGWCAttendanceReport: endpoint.query<
+        getLeadersCongressAttendanceReport: endpoint.query<
             {
                 attendance: number;
                 leaderUsers: number;
             },
-            { serviceId: string; campusId: string } & Partial<ICGWCParams>
+            { serviceId: string; campusId: string } & Partial<ICongressParams>
         >({
-            query: ({ serviceId, campusId, isCGWC, CGWCId }) => ({
-                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId}/${isCGWC}/${CGWCId}`,
+            query: ({ serviceId, campusId, isCongress, CongressId }) => ({
+                url: `${SERVICE_URL}/leaderAttendanceReport/${serviceId}/${campusId}/${isCongress}/${CongressId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -205,15 +205,15 @@ export const attendanceServiceSlice = createApi({
             ) => res.data,
         }),
 
-        getWorkersCGWCAttendanceReport: endpoint.query<
+        getWorkersCongressAttendanceReport: endpoint.query<
             {
                 attendance: number;
                 workerUsers: number;
             },
-            { serviceId: string; campusId: string } & Partial<ICGWCParams>
+            { serviceId: string; campusId: string } & Partial<ICongressParams>
         >({
-            query: ({ serviceId, campusId, isCGWC, CGWCId }) => ({
-                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}/${isCGWC}/${CGWCId}`,
+            query: ({ serviceId, campusId, isCongress, CongressId }) => ({
+                url: `${SERVICE_URL}/workersAttendanceReport/${serviceId}/${campusId}/${isCongress}/${CongressId}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -250,7 +250,7 @@ export const {
     useGetLeadersAttendanceReportQuery,
     useGetDepartmentAttendanceReportQuery,
     useGetAttendanceReportForDownloadQuery,
-    useGetWorkersCGWCAttendanceReportQuery,
-    useGetLeadersCGWCAttendanceReportQuery,
-    useGetDepartmentCGWCAttendanceReportQuery,
+    useGetWorkersCongressAttendanceReportQuery,
+    useGetLeadersCongressAttendanceReportQuery,
+    useGetDepartmentCongressAttendanceReportQuery,
 } = attendanceServiceSlice;

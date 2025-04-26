@@ -9,7 +9,7 @@ import { departmentServiceSlice } from '../department';
 import { ticketServiceSlice } from '../tickets';
 import { campusServiceSlice } from '../campus';
 import { roleServiceSlice } from '../role';
-import { cgwcServiceSlice } from '../cgwc';
+import { congressServiceSlice } from '../congress';
 import { scoreMappingServiceSlice } from '../score-mapping';
 import { groupHeadServiceSlice } from '../grouphead';
 import { uploadServiceSlice } from '../upload';
@@ -28,7 +28,7 @@ const middlewaresSlices: Array<Middleware> = [
     campusServiceSlice.middleware,
     scoreServiceSlice.middleware,
     roleServiceSlice.middleware,
-    cgwcServiceSlice.middleware,
+    congressServiceSlice.middleware,
     scoreMappingServiceSlice.middleware,
     groupHeadServiceSlice.middleware,
     uploadServiceSlice.middleware,

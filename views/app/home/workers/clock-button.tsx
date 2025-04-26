@@ -160,9 +160,9 @@ const ClockButton: React.FC<IClockButtonProps> = ({
     const handlePress = async () => {
         if (!assertClockinStartTime) {
             return Alert.alert(
-                `${!!latestServiceData?.CGWCId ? 'Session' : 'Service'} Not Started`,
+                `${!!latestServiceData?.CongressId ? 'Session' : 'Service'} Not Started`,
                 `Clock in for this ${
-                    !!latestServiceData?.CGWCId ? 'session' : 'service'
+                    !!latestServiceData?.CongressId ? 'session' : 'service'
                 } has not yet started, kindly try again ${
                     !!latestServiceData ? `by ${dayjs(latestServiceData?.clockInStartTime).format('h:mm A')}` : 'later'
                 }.`

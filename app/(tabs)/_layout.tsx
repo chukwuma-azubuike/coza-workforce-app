@@ -32,7 +32,7 @@ const TabLayout: React.FC = () => {
                     {tabRoutes.map((route, index) => {
                         // Roles and permissions filter
                         if (isWorker && !isQC && route.name === 'More') return;
-                        if (isWorker && isQC && route.name === 'CGLS' && !isCGWCApproved) return;
+                        if (isWorker && isQC && route.name === 'Congress' && !isCGWCApproved) return;
 
                         return (
                             <TabTrigger

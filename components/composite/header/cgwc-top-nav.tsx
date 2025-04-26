@@ -10,7 +10,7 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { ScreenWidth } from '@rneui/base';
 import { router } from 'expo-router';
 
-const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
+const CongressTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
     const { navigate } = useNavigation();
 
     const handleSupportPress = () => {
@@ -50,4 +50,4 @@ const CGWCTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
     );
 };
 
-export default React.memo(CGWCTopNav);
+export default React.memo(CongressTopNav);

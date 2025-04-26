@@ -227,21 +227,21 @@ export const CreateCampusSchema = Yup.object().shape({
     }),
 });
 
-// CGWC forms
+// Congress forms
 
-export const CreateCGWCSchema = Yup.object().shape({
+export const CreateCongressSchema = Yup.object().shape({
     name: Yup.string().required('You are required to enter a name'),
     startDate: Yup.string().required('A start date is required'),
     endDate: Yup.string().required('An end date is required'),
 });
 
-export const CreateCGWCInstantMessageSchema = Yup.object().shape({
+export const CreateCongressInstantMessageSchema = Yup.object().shape({
     title: Yup.string().required('You are required to enter a title'),
     message: Yup.string().required('You are required to enter a message'),
     messageLink: Yup.string(),
 });
 
-export const SubmitCGWCFeedbackSchema = Yup.object().shape({
+export const SubmitCongressFeedbackSchema = Yup.object().shape({
     comment: Yup.string().required('You are required to enter a comment'),
     rating: Yup.number()
         .required('You are required to give a rating')
