@@ -29,15 +29,15 @@ export const SERVICE_TAGS = [
     { id: '7DG', value: '7DG' },
 ];
 
-export const CGWC_SESSION_TAGS = [
-    { id: 'CGWC_MORNING_SESSION', value: 'Morning Session' },
-    { id: 'CGWC_EVENING_SESSION', value: 'Evening Session' },
-    { id: 'CGWC_AFTERNOON_SESSION', value: 'Afternoon Session' },
-    { id: 'CGWC_HANGOUT_SESSION', value: 'Hangout Session' },
-    { id: 'CGWC_DINNER_SESSION', value: 'Dinner Session' },
-    { id: 'CGWC_LADIES_SESSION', value: 'Ladies Session' },
-    { id: 'CGWC_EVANGELISM_SESSION', value: 'Evangelism Session' },
-    { id: 'CGWC_BREAKOUT_SESSION', value: 'Breakout Session' },
+export const Congress_SESSION_TAGS = [
+    { id: 'Congress_MORNING_SESSION', value: 'Morning Session' },
+    { id: 'Congress_EVENING_SESSION', value: 'Evening Session' },
+    { id: 'Congress_AFTERNOON_SESSION', value: 'Afternoon Session' },
+    { id: 'Congress_HANGOUT_SESSION', value: 'Hangout Session' },
+    { id: 'Congress_DINNER_SESSION', value: 'Dinner Session' },
+    { id: 'Congress_LADIES_SESSION', value: 'Ladies Session' },
+    { id: 'Congress_EVANGELISM_SESSION', value: 'Evangelism Session' },
+    { id: 'Congress_BREAKOUT_SESSION', value: 'Breakout Session' },
 ];
 
 export enum IAttendanceStatus {
@@ -65,7 +65,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
-    CGWCId?: string;
+    CongressId?: string;
     cgwcId?: string;
     limit?: number;
     page?: number;
@@ -206,7 +206,7 @@ export interface IAttendance extends ILog {
     user: IUser;
     score?: number;
     service: IService;
-    CGWCId?: string;
+    CongressId?: string;
     name: string;
     campus: Pick<ICampus, '_id' | 'campusName'>;
 }
@@ -225,7 +225,7 @@ export interface ITicket extends ILog {
     remarks: string;
     issuedBy?: string;
     createdAt: string;
-    CGWCId?: string;
+    CongressId?: string;
     isRetracted: boolean;
     ticketSummary: string;
     status: ITicketStatus;
@@ -281,8 +281,8 @@ export interface ICreateServicePayload {
     serviceTime: string | Date;
     serviceDate: string | Date;
     endTime: string | Date;
-    isCGWC?: boolean;
-    CGWCId?: string;
+    isCongress?: boolean;
+    CongressId?: string;
     clockinTime: string | Date;
     leaderLateTime: string | Date;
     workerLateTime: string | Date;
@@ -300,7 +300,7 @@ export type ITicketStatus = 'ISSUED' | 'CONTESTED' | 'RETRACTED' | 'ACKNOWLEGDED
 // Permissions
 export interface IPermission extends ILog {
     _id: string;
-    CGWCId?: string;
+    CongressId?: string;
     startDate: string;
     endDate: string;
     dateCreated: string;
@@ -463,8 +463,8 @@ export interface IService {
     serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
-    CGWCId?: string;
-    isCGWC?: boolean;
+    CongressId?: string;
+    isCongress?: boolean;
     isGlobalService: boolean;
     __v: number;
     campus: {
@@ -482,12 +482,12 @@ export interface IService {
     };
 }
 
-export interface ICGWCParams {
-    isCGWC: boolean;
-    CGWCId: string;
+export interface ICongressParams {
+    isCongress: boolean;
+    CongressId: string;
 }
 
-export interface ICGWC {
+export interface ICongress {
     _id: string;
     name: string;
     startDate: string;
@@ -495,16 +495,16 @@ export interface ICGWC {
     createdAt: string;
 }
 
-export interface ICGWCPayload {
+export interface ICongressPayload {
     name: string;
     endDate: number;
     startDate: number;
 }
 
-export interface ICGWCInstantMessage {
+export interface ICongressInstantMessage {
     _id: string;
     title: string;
-    CGWCId: string;
+    CongressId: string;
     message: string;
     status: IStatus;
     imageUrl: string;
@@ -512,19 +512,19 @@ export interface ICGWCInstantMessage {
     messageLink: string;
 }
 
-export interface ICGWCFeedbackPayload {
+export interface ICongressFeedbackPayload {
     userId: string;
-    CGWCId: string;
+    CongressId: string;
     rating: number;
     comment: string;
 }
-export interface ICGWCFeedback extends ICGWCFeedbackPayload {
+export interface ICongressFeedback extends ICongressFeedbackPayload {
     _id: string;
 }
 
-export interface ICGWCInstantMessagePayload {
+export interface ICongressInstantMessagePayload {
     title: string;
-    CGWCId?: string;
+    CongressId?: string;
     cgwcId: string;
     message: string;
     status: IStatus;
@@ -537,8 +537,8 @@ export interface ICreateService {
         long: number;
         lat: number;
     };
-    CGWCId?: string;
-    isCGWC?: boolean;
+    CongressId?: string;
+    isCongress?: boolean;
     tag: string[];
     serviceTime: number | null;
     clockInStartTime: number | null;

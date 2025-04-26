@@ -19,7 +19,7 @@ const useMoreRoutes = () => {
                 if (!route.inMore) {
                     return;
                 }
-                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'CGLS') {
+                if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'Congress') {
                     return;
                 }
                 if (!route.users?.length) {

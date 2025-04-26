@@ -37,7 +37,7 @@ const UserDetails: React.FC = () => {
 
     const canEdit = isSuperAdmin || isGlobalPastor || isCampusPastor || isInternshipHOD;
     const canDelete = isSuperAdmin || isGlobalPastor || isCampusPastor;
-    const canApproveForCGWC = isHOD || isAHOD || isCampusPastor || isGlobalPastor || isSuperAdmin;
+    const canApproveForCongress = isHOD || isAHOD || isCampusPastor || isGlobalPastor || isSuperAdmin;
 
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
     const handleEditMode = () => {
@@ -154,13 +154,14 @@ const UserDetails: React.FC = () => {
         }
     };
 
-    const handleApproveCGWC = async (event: boolean) => {
+    const handleApproveCongress = async (event: boolean) => {
         try {
+            console.log({ event });
             const result = await updateUser({ isCGWCApproved: event, _id });
 
             if ('data' in result) {
                 setModalState({
-                    message: `User ${event ? 'Approved' : 'Unapproved'} for CGWC`,
+                    message: `User ${event ? 'Approved' : 'Unapproved'} for Congress`,
                     defaultRender: true,
                     status: 'success',
                     duration: 3,
@@ -257,16 +258,16 @@ const UserDetails: React.FC = () => {
                                         </ButtonComponent>
                                     </View>
                                 </If>
-                                <If condition={canApproveForCGWC}>
+                                <If condition={canApproveForCongress}>
                                     <View className="flex-row justify-between">
-                                        <Label>{data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC</Label>
+                                        <Label>{data?.isCGWCApproved ? 'Approved' : 'Approve'} for Congress</Label>
 
                                         {updateResults?.isLoading ? (
                                             <Loading />
                                         ) : (
                                             <Switch
                                                 value={data?.isCGWCApproved}
-                                                onValueChange={handleApproveCGWC}
+                                                onValueChange={handleApproveCongress}
                                                 disabled={updateResults?.isLoading}
                                             />
                                         )}

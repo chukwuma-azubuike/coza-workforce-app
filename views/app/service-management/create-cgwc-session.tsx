@@ -12,15 +12,15 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { useCreateServiceMutation } from '@store/services/services';
-import { CGWC_SESSION_TAGS, CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
+import { Congress_SESSION_TAGS, CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
 import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
 
 const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { CGWCId: string };
+    const params = route.params as { CongressId: string };
     const { navigate } = navigation;
     const { setModalState } = useModal();
-    const CGWCId = params?.CGWCId;
+    const CongressId = params?.CongressId;
 
     const [createSession, { isLoading, error, data, reset }] = useCreateServiceMutation();
 
@@ -39,9 +39,9 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
         const workersLateStartTime = Utils.concatDateTimeToEpoc(values.serviceDate, values.workerLateTime);
 
         const result = await createSession({
-            CGWCId,
+            CongressId,
             name,
-            isCGWC: !!CGWCId,
+            isCongress: !!CongressId,
             clockInStartTime,
             coordinates,
             isGlobalService,
@@ -149,7 +149,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         selectedValue={values.serviceTag}
                                         onValueChange={handleChange('serviceTag')}
                                     >
-                                        {CGWC_SESSION_TAGS?.map((tag: any, index: any) => (
+                                        {Congress_SESSION_TAGS?.map((tag: any, index: any) => (
                                             <SelectItemComponent
                                                 value={tag.id}
                                                 key={`campus-${index}`}
