@@ -166,7 +166,7 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                         alt="pic"
                         className="h-14 w-14"
                         badge={!!elm.clockIn}
-                        imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                        imageUrl={elm?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
                     <View className="flex-1 gap-2">
                         <View className="flex-row justify-between">
@@ -178,10 +178,10 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                             //TODO: Should be attendance status ("LATE", "PRESENT")
                             {/* <StatusTag>{elm?.status}</StatusTag> */}
                         </View>
-                        <View className="flex-row gap-2">
+                        <View className="flex-row gap-2 flex-1">
                             <Text className="flex-1 text-muted-foreground">{elm?.departmentName}</Text>
-                            <View className="flex-row flex-1 gap-2">
-                                <View className="items-center flex-row gap-2 flex-1">
+                            <View className="flex-row flex-1 gap-4">
+                                <View className="items-center flex-row gap-2 flex-1 justify-center">
                                     <Icon
                                         color={THEME_CONFIG.primaryLight}
                                         name="arrow-down-right"
@@ -190,7 +190,7 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                                     />
                                     <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
                                 </View>
-                                <View className="items-center flex-row gap-2 text-right flex-1 justify-end">
+                                <View className="items-center flex-row gap-2 text-right flex-1 justify-center">
                                     <Icon
                                         color={THEME_CONFIG.primaryLight}
                                         name="arrow-up-right"
