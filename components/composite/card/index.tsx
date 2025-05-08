@@ -94,7 +94,7 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
                     <View className="justify-between border-none w-full">
                         <View className="w-full justify-between h-28">
                             <View className="justify-between w-full items-center">
-                                <Text className="font-bold text-5xl text-primary dark:text-purple-500">
+                                <Text className="font-bold text-5xl text-primary ">
                                     <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
                                 </Text>
                                 <Text className={cn('font-light text-green-500')} style={{ color: iconColor }}>

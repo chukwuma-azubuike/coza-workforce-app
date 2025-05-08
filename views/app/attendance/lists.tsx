@@ -16,9 +16,9 @@ import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Platform, View } from 'react-native';
 import { useGetGHCampusByIdQuery } from '@store/services/campus';
+import PickerSelect from '~/components/ui/picker-select';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -140,23 +140,16 @@ export const TeamAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <View className="px-2 mb-2">
-                <SelectComponent
+                <PickerSelect
                     valueKey="_id"
-                    selectedValue={serviceId}
-                    placeholder="Select Service"
-                    onValueChange={setService as any}
-                    displayKey={['name', 'clockInStartTime']}
+                    labelKey="name"
+                    value={serviceId}
                     items={sortedServices || []}
-                >
-                    {sortedServices?.map((service, index) => (
-                        <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
+                    isLoading={serviceIsLoading}
+                    placeholder="Select Session"
+                    onValueChange={setService}
+                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
@@ -284,23 +277,16 @@ export const LeadersAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <View className="px-2 mb-2">
-                <SelectComponent
+                <PickerSelect
                     valueKey="_id"
-                    placeholder="Select Service"
-                    selectedValue={serviceId}
+                    labelKey="name"
+                    value={serviceId}
                     items={sortedServices || []}
-                    onValueChange={setService as any}
-                    displayKey={['name', 'clockInStartTime']}
-                >
-                    {sortedServices?.map((service, index) => (
-                        <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
+                    isLoading={serviceIsLoading}
+                    placeholder="Select Session"
+                    onValueChange={setService}
+                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
@@ -389,23 +375,16 @@ export const CampusAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <View className="px-2 mb-2">
-                <SelectComponent
+                <PickerSelect
                     valueKey="_id"
-                    selectedValue={serviceId}
-                    placeholder="Select Service"
+                    labelKey="name"
+                    value={serviceId}
                     items={sortedServices || []}
-                    onValueChange={setService as any}
-                    displayKey={['name', 'clockInStartTime']}
-                >
-                    {sortedServices?.map((service, index) => (
-                        <SelectItemComponent
-                            value={service?._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
+                    isLoading={serviceIsLoading}
+                    placeholder="Select Session"
+                    onValueChange={setService}
+                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
@@ -508,23 +487,16 @@ export const GroupAttendance: React.FC = React.memo(() => {
     return (
         <ErrorBoundary>
             <View className="px-2 mb-2">
-                <SelectComponent
+                <PickerSelect
                     valueKey="_id"
-                    selectedValue={serviceId}
-                    placeholder="Select Service"
-                    onValueChange={setService as any}
-                    displayKey={['name', 'clockInStartTime']}
+                    labelKey="name"
+                    value={serviceId}
                     items={sortedServices || []}
-                >
-                    {sortedServices?.map((service, index) => (
-                        <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} | ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
+                    isLoading={serviceIsLoading}
+                    placeholder="Select Session"
+                    onValueChange={setService}
+                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent

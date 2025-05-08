@@ -15,7 +15,7 @@ const Loading: React.FC<ILoadingProps> = ({ bootUp, spinnerProps, ...props }) =>
 
     return (
         <View {...props}>
-            <View className="justify-center">
+            <View className="justify-center flex-1">
                 {bootUp ? (
                     <View>
                         <Image alt="startuplogo" source={isLightColorScheme ? logoBlack : logoWhite} />

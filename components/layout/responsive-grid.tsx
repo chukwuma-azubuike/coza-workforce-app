@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
 interface IGridItem {
     flexBasis?: string;
     padding?: number;
+    children: ReactNode;
 }
 
 export const GridItem: React.FC<IGridItem> = React.memo(({ children, flexBasis, padding = 10 }) => {

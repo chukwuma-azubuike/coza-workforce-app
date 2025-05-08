@@ -235,14 +235,14 @@ const Reports: React.FC = () => {
                     <StaggerButtonComponent
                         buttons={[
                             {
-                                color: 'rose.400',
+                                color: 'bg-rose-400',
                                 iconName: 'warning',
                                 iconType: 'antdesign',
                                 handleClick: goToIncidentReport,
                             },
                             {
                                 iconName: 'graph',
-                                color: 'green.400',
+                                color: 'bg-green-400',
                                 iconType: 'octicon',
                                 handleClick: goToDepartmentReport,
                             },

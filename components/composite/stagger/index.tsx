@@ -1,7 +1,9 @@
 // StaggerButtonComponent.tsx
 import React, { useRef, useState, useEffect } from 'react';
-import { Animated, Easing, Pressable, View, ViewProps } from 'react-native';
+import { Animated, Easing, View, ViewProps } from 'react-native';
 import { Icon } from '@rneui/themed';
+import { Button } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 
 export interface IStaggerButtonComponentProps extends ViewProps {
     buttons: {
@@ -31,10 +33,10 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
     }, [isOpen, animationValue]);
 
     // Define the spacing for each extra button (adjust as needed).
-    const spacing = 70;
+    const spacing = 90;
 
     return (
-        <View style={[{ position: 'absolute', right: 18, bottom: 36, zIndex: isOpen ? 12 : 0 }, style]} {...rest}>
+        <View style={[{ position: 'absolute', right: 24, bottom: 56, zIndex: isOpen ? 12 : 0 }, style]} {...rest}>
             {/* Extra Buttons Container */}
             <View className="items-center">
                 {buttons.map((btn, idx) => {
@@ -55,27 +57,29 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
                     return (
                         <Animated.View
                             key={idx}
-                            style={{ transform: [{ translateY }, { scale }], opacity, marginBottom: 10 }}
+                            style={{ transform: [{ translateY }, { scale }], opacity, marginBottom: -70 }}
                         >
-                            <Pressable
+                            <Button
                                 onPress={btn.handleClick}
-                                style={{ backgroundColor: btn.color }}
-                                className="w-16 h-16 rounded-full justify-center items-center shadow-lg"
+                                className={cn(
+                                    '!w-20 !h-20 !px-0 !rounded-full justify-center items-center shadow-lg',
+                                    btn.color
+                                )}
                             >
                                 <Icon size={28} color="white" name={btn.iconName} type={btn.iconType} />
-                            </Pressable>
+                            </Button>
                         </Animated.View>
                     );
                 })}
             </View>
             {/* Main Toggle Button */}
             <View className="justify-center">
-                <Pressable
+                <Button
                     onPress={toggleMenu}
-                    className="w-20 h-20 rounded-full justify-center items-center shadow-2xl bg-primary-600"
+                    className="!w-20 !h-20 !px-0 !rounded-full justify-center items-center"
                 >
                     <Icon size={38} color="white" name={isOpen ? 'minus' : 'plus'} type="entypo" />
-                </Pressable>
+                </Button>
             </View>
         </View>
     );

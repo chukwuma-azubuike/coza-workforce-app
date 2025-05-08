@@ -3,15 +3,17 @@ import { Dimensions, StyleSheet, View } from 'react-native';
 import Pdf from 'react-native-pdf';
 import Loading from '@components/atoms/loading';
 import useScreenFocus from '@hooks/focus';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ICongressInstantMessage } from '@store/types';
+import { useNavigation } from '@react-navigation/native';
+import { useLocalSearchParams } from 'expo-router';
+import ScreenHeader from '~/components/ScreenHeader';
 
-const CongressResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
-    const params = route.params as ICongressInstantMessage;
-    const { setOptions } = navigation;
+const CongressResources: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as ICongressInstantMessage;
+    const { setOptions } = useNavigation();
+
     setOptions({
-        title: params.title || 'Congress Resource',
+        header: () => <ScreenHeader bypassFormat name={params.title} />,
     });
 
     const handleLoad = () => {
@@ -22,7 +24,6 @@ const CongressResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ ro
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
     const reloadPDF = async () => {
-        setIsLoading(true);
         if (!pdfRef.current) {
             return;
         }
@@ -38,13 +39,16 @@ const CongressResources: React.FC<NativeStackScreenProps<ParamListBase>> = ({ ro
 
     return (
         <View style={styles.container}>
-            {isLoading && <Loading />}
-            <Pdf
-                style={styles.pdf}
-                trustAllCerts={false}
-                onLoadComplete={handleLoad}
-                source={{ uri: params.messageLink, cache: true }}
-            />
+            {isLoading ? (
+                <Loading className="flex-1" spinnerProps={{ className: 'flex-1 justify-center mx-auto' }} />
+            ) : (
+                <Pdf
+                    style={styles.pdf}
+                    trustAllCerts={false}
+                    onLoadComplete={handleLoad}
+                    source={{ uri: params.messageLink, cache: true }}
+                />
+            )}
         </View>
     );
 };

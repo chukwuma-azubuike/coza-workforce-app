@@ -5,7 +5,6 @@ import NotificationModal from '~/components/composite/notification-modal';
 
 import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
-import ScreenHeader from './ScreenHeader';
 import useMoreRoutes from '~/hooks/more-routes';
 // import { usePushNotifications } from '~/hooks/push-notifications';
 // import { IUser } from '~/store/types';

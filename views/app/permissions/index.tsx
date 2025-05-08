@@ -62,14 +62,14 @@ const Permissions: React.FC = () => {
 
     const allButtons = [
         {
-            color: 'blue.600',
+            color: 'bg-blue-600',
             iconType: 'ionicon',
             iconName: 'create-outline',
             handleClick: gotoRequestPermission,
         },
         // TODO: Uncomment once resolved with IOS
         {
-            color: 'green.600',
+            color: 'bg-green-600',
             iconType: 'ionicon',
             iconName: 'download-outline',
             handleClick: goToExport,
