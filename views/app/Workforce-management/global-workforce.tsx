@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Heading } from 'native-base';
@@ -85,19 +85,19 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     const allButtons = [
         {
-            color: 'blue.400',
+            color: 'bg-blue-400',
             iconType: 'ionicon',
             iconName: 'person-outline',
             handleClick: gotoCreateWorker,
         },
         {
-            color: 'blue.600',
+            color: 'bg-blue-600',
             iconType: 'ionicon',
             iconName: 'people-outline',
             handleClick: gotoCreateDepartment,
         },
         {
-            color: 'blue.800',
+            color: 'bg-blue-800',
             iconName: 'church',
             iconType: 'material-community',
             handleClick: gotoCreateCampus,

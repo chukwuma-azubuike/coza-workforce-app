@@ -14,8 +14,8 @@ const PermissionsScreenLayout: React.FC = () => {
                 }}
             >
                 <Stack.Screen name="index" />
-                <Stack.Screen name="(stack)/permissions/permission-details" />
-                <Stack.Screen name="(stack)/permissions/request-permission" />
+                <Stack.Screen name="/permissions/permission-details" />
+                <Stack.Screen name="/permissions/request-permission" />
             </Stack>
         </SafeAreaView>
     );

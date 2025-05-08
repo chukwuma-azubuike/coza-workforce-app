@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { StatCardComponent } from '@components/composite/card';
 import { BarChart, IStackedHistogramData, PieChart, StackedHistogram } from '@components/composite/chart';
@@ -7,8 +7,6 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useMediaQuery from '@hooks/media-query';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon, ScreenWidth } from '@rneui/base';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
@@ -16,21 +14,23 @@ import { useGetServicesQuery } from '@store/services/services';
 import flattenedObject from '@utils/flattenObject';
 import dayjs from 'dayjs';
 import React from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import PickerSelect from '~/components/ui/picker-select';
 
-const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route, navigation }) => {
-    const params = route.params as { CongressId: string };
-    const CongressId = params?.CongressId;
+const CongressReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as { CongressId: string };
+    const CGWCId = params?.CongressId;
 
     const [campusId, setCampusId] = React.useState<string>();
     const [serviceId, setServiceId] = React.useState<string>();
     const [userCategory, setUserCategory] = React.useState<string>('WORKERS');
-    const { data: campuses, isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
+    const { data: campuses = [], isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
     const {
         data: services,
         isLoading: servicesLoading,
         refetch: refetchServices,
         isUninitialized: servicesIsUninitialized,
-    } = useGetServicesQuery({ CongressId }, { skip: !CongressId });
+    } = useGetServicesQuery({ CGWCId }, { skip: !CGWCId });
 
     const {
         data: attendanceReport,
@@ -38,7 +38,7 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
         refetch: attendanceReportRefetch,
         isFetching: attendanceReportFetching,
     } = useGetGraphAttendanceReportsQuery({
-        CongressId, //TODO: Restore after test
+        CGWCId, //TODO: Restore after test
         serviceId,
         campusId,
     });
@@ -165,11 +165,21 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
     });
 
     return (
-        <ViewWrapper pt={6} scroll onRefresh={handleRefresh} refreshing={false}>
+        <ViewWrapper scroll onRefresh={handleRefresh} refreshing={false}>
             <ResponsiveGrid rowCount={3}>
-                <SelectComponent
-                    selectedValue={userCategory}
+                <PickerSelect
+                    valueKey="key"
+                    labelKey="label"
+                    value={userCategory}
+                    items={userCategories}
+                    placeholder="Select User Category"
                     onValueChange={handleUserCategory}
+                    isLoading={campusLoading || campusIsFetching}
+                />
+
+                {/* <SelectComponent
+                    selectedValue={userCategory}
+                    onValueChange={userCategories}
                     w={isMobile ? ScreenWidth : ScreenWidth / 3.5}
                     dropdownIcon={
                         <View mr={2} space={2}>
@@ -185,8 +195,17 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             isLoading={campusLoading || campusIsFetching}
                         />
                     ))}
-                </SelectComponent>
-                <SelectComponent
+                </SelectComponent> */}
+                <PickerSelect
+                    valueKey="_id"
+                    value={campusId}
+                    items={campuses}
+                    labelKey="campusName"
+                    placeholder="Select Campus"
+                    onValueChange={handleCampusChange}
+                    isLoading={campusLoading || campusIsFetching}
+                />
+                {/* <SelectComponent
                     selectedValue={campusId}
                     onValueChange={handleCampusChange}
                     w={isMobile ? ScreenWidth - 36 : ScreenWidth / 3.5}
@@ -205,8 +224,17 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             isLoading={campusLoading || campusIsFetching}
                         />
                     ))}
-                </SelectComponent>
-                <SelectComponent
+                </SelectComponent> */}
+                <PickerSelect
+                    valueKey="_id"
+                    labelKey="name"
+                    items={pastServices || []}
+                    isLoading={servicesLoading}
+                    placeholder="Select Session"
+                    onValueChange={handleService}
+                    value={undefined as unknown as string}
+                />
+                {/* <SelectComponent
                     selectedValue={serviceId}
                     placeholder="Choose session"
                     onValueChange={handleService}
@@ -228,11 +256,11 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             isLoading={servicesLoading}
                         />
                     ))}
-                </SelectComponent>
+                </SelectComponent> */}
             </ResponsiveGrid>
             <ResponsiveGrid>
                 <GridItem flexBasis="40%">
-                    <View flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                    <View className="flex-row flex-wrap justify-between">
                         <StatCardComponent
                             label="Present"
                             iconName="groups"
@@ -243,9 +271,6 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             width="48%"
                             iconColor={THEME_CONFIG.primary}
                             marginActive={false}
-                            cardProps={{
-                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                            }}
                         />
                         <StatCardComponent
                             label="Late"
@@ -257,12 +282,9 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             width="48%"
                             iconColor="orange"
                             marginActive={false}
-                            cardProps={{
-                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                            }}
                         />
                     </View>
-                    <View flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                    <View className="flex-row flex-wrap justify-between">
                         <StatCardComponent
                             label="Early"
                             iconName="groups"
@@ -272,9 +294,6 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             width="48%"
                             bold
                             marginActive={false}
-                            cardProps={{
-                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                            }}
                         />
                         <StatCardComponent
                             label="Absent"
@@ -286,12 +305,9 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             width="48%"
                             iconColor={THEME_CONFIG.rose}
                             marginActive={false}
-                            cardProps={{
-                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                            }}
                         />
                     </View>
-                    <View flexDirection="row" flexWrap="wrap" justifyContent="space-between">
+                    <View className="flex-row flex-wrap justify-between">
                         <StatCardComponent
                             label="Number of Tickets"
                             iconType="material-community"
@@ -302,9 +318,6 @@ const CongressReport: React.FC<NativeStackScreenProps<ParamListBase>> = ({ route
                             bold
                             width={['96%', '50%']}
                             marginActive={false}
-                            cardProps={{
-                                _dark: { backgroundColor: 'black', borderColor: 'gray.800', borderWidth: '1' },
-                            }}
                         />
                     </View>
                 </GridItem>

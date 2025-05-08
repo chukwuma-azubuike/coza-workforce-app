@@ -12,6 +12,7 @@ import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView, View } from 'react-native';
 import { useAuth } from '~/hooks/auth';
+import { StyleSheet } from 'react-native';
 // import GhClocker from './workers/gh-clocker';
 
 interface IInitialHomeState {
@@ -101,9 +102,9 @@ const Home: React.FC = () => {
 
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            <SafeAreaView className="flex-1">
+            <SafeAreaView style={styles.container}>
                 <View
-                    className="flex-1"
+                    style={styles.container}
                     // refreshing={isLoading}
                     // onRefresh={handleRefresh}
                 >
@@ -144,5 +145,11 @@ const Home: React.FC = () => {
         </HomeContext.Provider>
     );
 };
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});
 
 export default React.memo(Home);

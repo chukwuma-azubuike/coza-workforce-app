@@ -1,5 +1,4 @@
-import { Text } from "~/components/ui/text";
-import { useNavigation } from '@react-navigation/native';
+import { Text } from '~/components/ui/text';
 import dayjs from 'dayjs';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -7,16 +6,13 @@ import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useFetchMoreData from '@hooks/fetch-more-data';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { ICampusReport, useGetCampusReportListQuery } from '@store/services/reports';
 import Utils from '@utils/index';
+import { router } from 'expo-router';
 
 export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
-    const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
-
     const handlePress = () => {
-        navigation.navigate('Campus Report' as never, props as never);
+        router.push({ pathname: '/reports/campus-report', params: props as any });
     };
 
     return (
@@ -28,22 +24,9 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <View
-                p={2}
-                my={1.5}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-                className="px-4"
-            >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {dayjs(props?.serviceTime).format('DD/MM/YYYY')}
-                </Text>
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} className="font-bold">
-                    {Utils.truncateString(props?.serviceName)}
-                </Text>
+            <View className="px-4 my-1 items-center bg-muted-background justify-between rounded-md">
+                <Text className="text-muted-foreground">{dayjs(props?.serviceTime).format('DD/MM/YYYY')}</Text>
+                <Text className="font-bold">{Utils.truncateString(props?.serviceName)}</Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </View>
         </TouchableOpacity>
@@ -94,7 +77,7 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
     };
 
     return (
-        <ViewWrapper mb={4} noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+        <ViewWrapper className="mb-4" noPadding refreshing={isLoading} onRefresh={handleRefresh}>
             <FlatListComponent
                 onRefresh={refetch}
                 data={moreData as any}

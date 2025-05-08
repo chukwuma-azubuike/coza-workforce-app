@@ -8,6 +8,7 @@ import { NavTabBackground } from '~/components/NavBackgroundBlur';
 import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
 import { cn } from '~/lib/utils';
+import { View } from 'react-native';
 
 const TabLayout: React.FC = () => {
     const { isWorker, isQC, isCGWCApproved } = useRole();
@@ -24,10 +25,12 @@ const TabLayout: React.FC = () => {
                     },
                 },
             }}
-            className="shadow-lg shadow-black/5"
+            className="shadow-lg shadow-black/5 flex-1"
         >
-            <TabSlot />
-            <TabList asChild className={cn('!bg-transparent overflow-x-auto')}>
+            <View style={{ flex: 1, marginBottom: 90 }}>
+                <TabSlot />
+            </View>
+            <TabList asChild className={cn('absolute !bg-background bottom-0 left-0 right-0 z-10 overflow-x-auto')}>
                 <NavTabBackground>
                     {tabRoutes.map((route, index) => {
                         // Roles and permissions filter

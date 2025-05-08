@@ -2,7 +2,6 @@ import { View } from 'react-native';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import TextAreaComponent from '@components/atoms/text-area';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
@@ -24,6 +23,7 @@ import RadioButtonGroup from '@components/composite/radio-button';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { router, useNavigation } from 'expo-router';
+import PickerSelect from '~/components/ui/picker-select';
 
 const ticketTypes = [
     {
@@ -79,7 +79,7 @@ const IssueTicket: React.FC = props => {
     const { data: latestService, refetch: refetchLatestService } = useGetLatestServiceQuery(campus?._id as string, {
         refetchOnMountOrArgChange: true,
     });
-    const { data: ticketCategories } = useGetTicketCategoriesQuery();
+    const { data: ticketCategories, isLoading: categoriesLoading } = useGetTicketCategoriesQuery();
     const [issueTicket, { data, isLoading, error, reset }] = useCreateTicketMutation();
 
     const sortedCampusDepartments = React.useMemo(
@@ -336,50 +336,32 @@ We love & celebrate you!` as any,
                                     </View>
                                     <View>
                                         <Label>Campus</Label>
-                                        <SelectComponent
+                                        <PickerSelect
                                             valueKey="_id"
+                                            value={campusId}
+                                            labelKey="campusName"
                                             items={campuses || []}
-                                            displayKey="campusName"
-                                            selectedValue={campusId}
                                             placeholder="Choose campus"
-                                            onValueChange={handleCampus as any}
-                                        >
-                                            {campuses?.map((campus, index) => (
-                                                <SelectItemComponent
-                                                    value={campus._id}
-                                                    key={`campus-${index}`}
-                                                    label={campus.campusName}
-                                                    isLoading={campusesIsLoading || campusesIsFetching}
-                                                />
-                                            ))}
-                                        </SelectComponent>
+                                            onValueChange={handleCampus}
+                                            isLoading={campusesIsLoading || campusesIsFetching}
+                                        />
                                         {errors?.ticketType && <FormErrorMessage>{errors?.campusId}</FormErrorMessage>}
                                     </View>
                                     <If condition={!isCampus}>
                                         <View>
                                             <Label>Department</Label>
-                                            <SelectComponent
+                                            <PickerSelect
                                                 valueKey="_id"
-                                                displayKey="departmentName"
-                                                selectedValue={departmentId}
+                                                value={departmentId}
+                                                labelKey="departmentName"
                                                 placeholder="Choose department"
+                                                onValueChange={(value: string) => {
+                                                    handleDepartment(value);
+                                                    setFieldValue('departmentId', value);
+                                                }}
                                                 items={sortedCampusDepartments || []}
-                                                setFieldValue={setFieldValue}
-                                                formFieldKey="departmentId"
-                                                onValueChange={handleDepartment as any}
                                                 isLoading={campusDepartmentsLoading || campusDepartmentsIsFetching}
-                                            >
-                                                {sortedCampusDepartments?.map((department, index) => (
-                                                    <SelectItemComponent
-                                                        value={department._id}
-                                                        key={`department-${index}`}
-                                                        label={department.departmentName}
-                                                        isLoading={
-                                                            campusDepartmentsLoading || campusDepartmentsIsFetching
-                                                        }
-                                                    />
-                                                ))}
-                                            </SelectComponent>
+                                            />
                                             {!!errors?.departmentId && touched.departmentId && (
                                                 <FormErrorMessage>{errors.departmentId}</FormErrorMessage>
                                             )}
@@ -388,50 +370,35 @@ We love & celebrate you!` as any,
                                     <If condition={isIndividual}>
                                         <View>
                                             <Label>Worker</Label>
-                                            <SelectComponent
+                                            <PickerSelect
                                                 valueKey="_id"
+                                                labelKey="lastName"
                                                 items={workers || []}
+                                                value={searchedUser?._id}
                                                 placeholder="Choose Worker"
-                                                formFieldKey="userId"
-                                                setFieldValue={setFieldValue}
-                                                selectedValue={searchedUser?._id}
-                                                displayKey={['firstName', 'lastName']}
-                                                onValueChange={handleUserChange as any}
+                                                onValueChange={(value: string) => {
+                                                    handleUserChange(value);
+                                                    setFieldValue('userId', value);
+                                                }}
                                                 isLoading={workersIsFetching || workersLoading}
-                                            >
-                                                {workers?.map((worker, index) => (
-                                                    <SelectItemComponent
-                                                        value={worker._id}
-                                                        key={`worker-${index}`}
-                                                        isLoading={workersLoading || workersIsFetching}
-                                                        label={`${worker.firstName} ${worker.lastName}`}
-                                                    />
-                                                ))}
-                                            </SelectComponent>
+                                                customLabel={user => `${user.firstName} ${user.lastName}`}
+                                            />
                                             {errors?.userId && <FormErrorMessage>{errors?.userId}</FormErrorMessage>}
                                         </View>
                                         {!!searchedUser && <UserListItem style={{ marginTop: 10 }} {...searchedUser} />}
                                     </If>
                                     <View>
                                         <Label>Category</Label>
-                                        <SelectComponent
-                                            placeholder="Choose Category"
-                                            isDisabled={!ticketCategories}
-                                            onValueChange={handleChange('categoryId') as any}
-                                            selectedValue={values.categoryId}
+
+                                        <PickerSelect
                                             valueKey="_id"
+                                            labelKey="categoryName"
                                             items={ticketCategories || []}
-                                            displayKey="categoryName"
-                                        >
-                                            {ticketCategories?.map((categories, index) => (
-                                                <SelectItemComponent
-                                                    value={categories._id}
-                                                    key={`category-${index}`}
-                                                    isLoading={workersLoading}
-                                                    label={categories.categoryName}
-                                                />
-                                            ))}
-                                        </SelectComponent>
+                                            value={values.categoryId}
+                                            placeholder="Choose Category"
+                                            onValueChange={handleChange('categoryId')}
+                                            isLoading={categoriesLoading}
+                                        />
                                         {errors?.categoryId && touched.categoryId && (
                                             <FormErrorMessage>{errors?.categoryId}</FormErrorMessage>
                                         )}

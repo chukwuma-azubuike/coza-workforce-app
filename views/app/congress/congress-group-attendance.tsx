@@ -4,19 +4,23 @@ import TabComponent from '@components/composite/tabs';
 import { SceneMap } from 'react-native-tab-view';
 import useRole, { ROLES } from '@hooks/role';
 import useMediaQuery from '@hooks/media-query';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '@hooks/focus';
 import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
-import { CampusCongressAttendance, LeadersCongressAttendance, TeamCongressAttendance } from './attendance';
+import { CampusCongressAttendance, LeadersCongressAttendance, TeamCongressAttendance } from './congress-attendance';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const CongressGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+const CongressGroupAttendance: React.FC = () => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD } = useRole();
     const { isMobile } = useMediaQuery();
-    const { navigate } = navigation;
-    const params = route.params as { role: ROLES; route: string; tabKey: string; CongressId: string };
+
+    const params = useLocalSearchParams() as unknown as {
+        role: ROLES;
+        route: string;
+        tabKey: string;
+        CongressId: string;
+    };
 
     const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
 
@@ -33,7 +37,7 @@ const CongressGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> =
     });
 
     const goToExport = () => {
-        navigate('Export Data', { type: IReportTypes.ATTENDANCE });
+        router.push({ pathname: '/export-data', params: { type: IReportTypes.ATTENDANCE } });
     };
 
     const [index, setIndex] = React.useState(0);
@@ -80,7 +84,7 @@ const CongressGroupAttendance: React.FC<NativeStackScreenProps<ParamListBase>> =
                 <StaggerButtonComponent
                     buttons={[
                         {
-                            color: 'green.600',
+                            color: 'bg-green-600',
                             iconName: 'download-outline',
                             handleClick: goToExport,
                             iconType: 'ionicon',

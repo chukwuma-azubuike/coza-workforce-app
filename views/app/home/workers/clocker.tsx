@@ -21,6 +21,8 @@ import ErrorBoundary from '@components/composite/error-boundary';
 import { View } from 'react-native';
 import TopNav from '../top-nav';
 import { cn } from '~/lib/utils';
+import ViewWrapper from '~/components/layout/viewWrapper';
+import { ScreenHeight } from '@rneui/base';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -119,46 +121,51 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className={cn('gap-8 pb-8', !isCampusPastor && 'flex-1')}>
+        <View className={cn('gap', !isCampusPastor && 'flex-1')}>
             <TopNav />
-            <Timer />
-            <If condition={isCampusPastor}>
-                <View className="gap-5">
-                    <CampusAttendanceSummary
-                        leadersAttendance={leadersAttendance?.attendance}
-                        workersAttendance={workersAttendance?.attendance}
-                        leaderUsers={leadersAttendance?.leaderUsers}
-                        workerUsers={workersAttendance?.workerUsers}
-                    />
-                    <CampusTicketSummary tickets={tickets} />
-                </View>
-            </If>
-            {!userId ? (
-                <Loading />
-            ) : (
-                <If condition={!isCampusPastor}>
-                    <View className="flex-1 items-center justify-between pt-12">
-                        <ErrorBoundary>
-                            <ClockButton
-                                isInRange={!!isInRange}
-                                refreshLocation={refreshLocation}
-                                onSuccess={attendanceReportRefetch}
-                                deviceCoordinates={deviceCoordinates}
-                                verifyRangeBeforeAction={verifyRangeBeforeAction}
-                            />
-                        </ErrorBoundary>
-                        <CampusLocation />
-                        <If condition={isAHOD || isHOD}>
-                            <TeamAttendanceSummary
-                                isLoading={attendanceReportLoading}
-                                attendance={attendanceReport?.attendance}
-                                departmentUsers={attendanceReport?.departmentUsers}
-                            />
-                        </If>
-                        <ClockStatistics />
+            <ViewWrapper scroll onRefresh={refreshData} refreshing={false} className='pt-6' >
+                <Timer />
+                <If condition={isCampusPastor}>
+                    <View className="gap-5">
+                        <CampusAttendanceSummary
+                            leadersAttendance={leadersAttendance?.attendance}
+                            workersAttendance={workersAttendance?.attendance}
+                            leaderUsers={leadersAttendance?.leaderUsers}
+                            workerUsers={workersAttendance?.workerUsers}
+                        />
+                        <CampusTicketSummary tickets={tickets} />
                     </View>
                 </If>
-            )}
+                {!userId ? (
+                    <Loading />
+                ) : (
+                    <If condition={!isCampusPastor}>
+                        <View
+                            className="flex-1 items-center justify-between pt-12"
+                            style={{ height: ScreenHeight - 300 }}
+                        >
+                            <ErrorBoundary>
+                                <ClockButton
+                                    isInRange={!!isInRange}
+                                    refreshLocation={refreshLocation}
+                                    onSuccess={attendanceReportRefetch}
+                                    deviceCoordinates={deviceCoordinates}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </ErrorBoundary>
+                            <CampusLocation />
+                            <If condition={isAHOD || isHOD}>
+                                <TeamAttendanceSummary
+                                    isLoading={attendanceReportLoading}
+                                    attendance={attendanceReport?.attendance}
+                                    departmentUsers={attendanceReport?.departmentUsers}
+                                />
+                            </If>
+                            <ClockStatistics />
+                        </View>
+                    </If>
+                )}
+            </ViewWrapper>
         </View>
     );
 };

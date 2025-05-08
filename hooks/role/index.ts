@@ -1,8 +1,8 @@
 import React from 'react';
-import { useAppSelector } from '@store/hooks';
+import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useGetRolesQuery } from '@store/services/role';
 import { useAuth } from '../auth';
-import { userSelectors } from '~/store/actions/users';
+import { userActions, userSelectors } from '~/store/actions/users';
 import { IUser } from '~/store/types';
 import { useGetUserByIdQuery } from '~/store/services/account';
 
@@ -75,6 +75,7 @@ export enum DEPARTMENTS {
 }
 
 const useRole = () => {
+    const dispatch = useAppDispatch();
     const storedUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
     const { data: latestUser } = useGetUserByIdQuery(storedUser?.userId as string, {
         refetchOnMountOrArgChange: false,
@@ -129,6 +130,12 @@ const useRole = () => {
             logOut();
         }
     }, []);
+
+    React.useEffect(() => {
+        if (latestUser) {
+            dispatch(userActions.updateSession(latestUser));
+        }
+    }, [latestUser]);
 
     return {
         // User Object
