@@ -27,6 +27,7 @@ import CenterComponent from '@components/layout/center';
 import { useLocalSearchParams } from 'expo-router';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
+import PickerSelect from '~/components/ui/picker-select';
 
 const UserDetails: React.FC = () => {
     const { _id } = useLocalSearchParams() as unknown as IUser;
@@ -226,36 +227,38 @@ const UserDetails: React.FC = () => {
                                     />
                                 </CenterComponent>
                                 <If condition={canEdit}>
-                                    <View className="my-6 justify-between">
+                                    <View className="my-6 gap-4 flex-row">
                                         <Button
                                             size="sm"
                                             variant="outline"
                                             startIcon={
                                                 <Icon
-                                                    size={18}
+                                                    size={20}
                                                     color="white"
                                                     type="material-icon"
                                                     name={isEditMode ? 'save' : 'loop'}
                                                 />
                                             }
+                                            className="flex-1"
                                             disabled={isEditMode && disableSave}
                                             isLoading={updateResults.isLoading}
                                             onPress={isEditMode ? (handleSubmit as () => void) : handleEditMode}
                                         >
                                             {isEditMode ? 'Done' : 'Reassign'}
                                         </Button>
-                                        <ButtonComponent
+                                        <Button
                                             size="sm"
                                             variant="destructive"
                                             startIcon={
-                                                <Icon size={18} color="white" name={'delete'} type="material-icon" />
+                                                <Icon size={20} color="white" name={'delete'} type="material-icon" />
                                             }
+                                            className="flex-1"
                                             onPress={handleDelete}
                                             disabled={!canDelete}
                                             isLoading={deleteUserResults.isLoading}
                                         >
                                             Delete
-                                        </ButtonComponent>
+                                        </Button>
                                     </View>
                                 </If>
                                 <If condition={canApproveForCongress}>
@@ -313,89 +316,63 @@ const UserDetails: React.FC = () => {
                                     <Text className="font-bold">Birthday</Text>
                                     <Text>{dayjs(data?.birthDay).format('DD MMMM')}</Text>
                                 </View>
-                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
-                                    <Text className="font-bold">Campus</Text>
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <Text className="font-bold flex-1">Campus</Text>
                                     <If condition={!isEditMode}>
                                         <Text>{data?.campus.campusName}</Text>
                                     </If>
 
                                     {isEditMode && canEdit ? (
-                                        <View className="flex-row-reverse">
-                                            <SelectComponent
+                                        <View className="flex-row-reverse flex-1">
+                                            <PickerSelect
                                                 valueKey="_id"
-                                                items={sortedCampuses}
-                                                displayKey="campusName"
-                                                style={{ width: 200 }}
+                                                className="w-full"
+                                                labelKey="campusName"
+                                                value={values.campusId}
+                                                items={sortedCampuses || []}
+                                                isLoading={campusesIsLoading}
                                                 placeholder="Choose campus"
-                                                selectedValue={values.campusId}
-                                                onValueChange={handleCampusIdChange as any}
-                                                isDisabled={isInternshipHOD || isCampusPastor}
-                                            >
-                                                {sortedCampuses?.map((campus, index) => (
-                                                    <SelectItemComponent
-                                                        value={campus._id}
-                                                        key={`campus-${index}`}
-                                                        label={campus.campusName}
-                                                        isLoading={campusesIsLoading}
-                                                    />
-                                                ))}
-                                            </SelectComponent>
+                                                onValueChange={handleCampusIdChange}
+                                            />
                                         </View>
                                     ) : null}
                                 </View>
                                 <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
-                                    <Text className="font-bold">Department</Text>
+                                    <Text className="font-bold flex-1">Department</Text>
 
                                     <If condition={!isEditMode}>
                                         <Text>{data?.department?.departmentName}</Text>
                                     </If>
 
                                     {isEditMode && canEdit ? (
-                                        <View className="flex-row-reverse">
-                                            <SelectComponent
+                                        <View className="flex-row-reverse flex-1">
+                                            <PickerSelect
                                                 valueKey="_id"
-                                                style={{ width: 200 }}
-                                                displayKey="departmentName"
+                                                className="w-full"
+                                                labelKey="departmentName"
+                                                value={values.departmentId}
                                                 placeholder="Choose department"
                                                 items={sortedCampusDepartments || []}
-                                                selectedValue={values.departmentId}
-                                                onValueChange={handleChange('departmentId') as any}
                                                 isLoading={campusDepartmentsLoading || isFetchingDepartments}
-                                                isDisabled={campusDepartmentsLoading || isFetchingDepartments}
-                                            >
-                                                {sortedCampusDepartments?.map((department, index) => (
-                                                    <SelectItemComponent
-                                                        value={department._id}
-                                                        key={`department-${index}`}
-                                                        label={department.departmentName}
-                                                        isLoading={campusDepartmentsLoading || isFetchingDepartments}
-                                                    />
-                                                ))}
-                                            </SelectComponent>
+                                                onValueChange={handleChange('departmentId') as any}
+                                            />
                                         </View>
                                     ) : null}
                                 </View>
                                 <If condition={isEditMode}>
                                     <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
-                                        <Text className="font-bold">Role</Text>
-                                        <View className="flex-row-reverse">
-                                            <SelectComponent
+                                        <Text className="font-bold flex-1">Role</Text>
+                                        <View className="flex-row-reverse flex-1">
+                                            <PickerSelect
                                                 valueKey="_id"
-                                                displayKey="name"
+                                                className="w-full"
+                                                labelKey="name"
+                                                value={values.roleId}
                                                 placeholder="Choose role"
-                                                style={{ width: 200 }}
                                                 items={rolesPermitted || []}
-                                                selectedValue={values.roleId}
                                                 onValueChange={handleChange('roleId') as any}
-                                            >
-                                                {rolesPermitted?.map((role, index) => (
-                                                    <SelectItemComponent
-                                                        value={role._id}
-                                                        label={role.name}
-                                                        key={`role-${index}`}
-                                                    />
-                                                ))}
-                                            </SelectComponent>
+                                                isLoading={campusDepartmentsLoading || isFetchingDepartments}
+                                            />
                                         </View>
                                     </View>
                                 </If>
