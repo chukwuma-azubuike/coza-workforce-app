@@ -122,7 +122,7 @@ const ForgotPassword: React.FC = () => {
                                                 style={{ paddingHorizontal: 6, borderRadius: 10 }}
                                                 onPress={() => router.push('/login')}
                                             >
-                                                <Text className="text-primary dark:text-purple-500">Login</Text>
+                                                <Text className="text-primary ">Login</Text>
                                             </TouchableOpacity>
                                         </View>
                                     </View>

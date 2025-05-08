@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Empty from '../atoms/empty';
 import { View } from 'react-native';
+import { cn } from '~/lib/utils';
 
 interface IViewWrapper
     extends ScrollViewProps,
@@ -50,7 +51,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
                 >
                     <ActiveView
                         {...props}
-                        className="bg-background"
+                        className={cn('bg-background', props.className)}
                         refreshControl={
                             onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                         }
@@ -66,7 +67,7 @@ const ViewWrapper: React.FC<IViewWrapper> = props => {
             ) : (
                 <ActiveView
                     {...props}
-                    className="bg-background"
+                    className={cn('bg-background', props.className)}
                     refreshControl={
                         onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                     }

@@ -1,12 +1,11 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IChildCareReportPayload } from '@store/types';
 import { useCreateChildCareReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, Divider } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
@@ -17,6 +16,11 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { isIOS } from '@rneui/base';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Separator } from '~/components/ui/separator';
+import { Button } from '~/components/ui/button';
 
 const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IChildCareReportPayload;
@@ -59,7 +63,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: error?.data?.message || 'Something went wrong!',
+                message: (error as any)?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -84,7 +88,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 +values.age1_2?.male +
                 +values.age3_5?.male +
                 +values.age6_11?.male +
-                +values.age12_above?.male ?? 0
+                +values.age12_above?.male || 0
         }`;
     };
 
@@ -93,7 +97,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
             +values.age1_2?.[field] +
                 +values.age3_5?.[field] +
                 +values.age6_11?.[field] +
-                +values.age12_above?.[field] ?? 0
+                +values.age12_above?.[field] || 0
         }`;
     };
 
@@ -106,248 +110,128 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         >
             {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <View pb={10}>
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
+                    <View className="pb-4">
+                        <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View flex={1} justifyContent="space-between" className="px-4">
-                            <View space={4} mt={12}>
-                                <Text my={4} color="gray.600">
-                                    Age 1 - 2
-                                </Text>
-                                <Text my={4} color="gray.600">
-                                    Age 3 - 5
-                                </Text>
-                                <Text my={4} color="gray.600">
-                                    Age 6 - 11
-                                </Text>
-                                <Text my={4} color="gray.600">
-                                    Age 12 & Above
-                                </Text>
-                                <Text my={4} color="gray.600">
-                                    Sub Total
-                                </Text>
+                        <View className="px-4 flex-1 justify-between">
+                            <View className="gap-2 mt-6">
+                                <Text className="text-muted-foreground">Age 1 - 2</Text>
+                                <Text className="text-muted-foreground">Age 3 - 5</Text>
+                                <Text className="text-muted-foreground">Age 6 - 11</Text>
+                                <Text className="text-muted-foreground">Age 12 & Above</Text>
+                                <Text className="text-muted-foreground">Sub Total</Text>
                             </View>
-                            <View alignItems="center" space={4} w="30%">
-                                <FormControl.Label>Male</FormControl.Label>
-                                <FormControl isRequired isInvalid={errors?.age1_2?.male ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                            <View className="items-center gap-2">
+                                <Label>Male</Label>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age1_2?.male}`}
                                         onChangeText={handleChange('age1_2.male')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age1_2?.male}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={errors?.age3_5?.male ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                                    {errors?.age1_2?.male && (
+                                        <FormErrorMessage>{errors?.age1_2?.male}</FormErrorMessage>
+                                    )}
+                                </View>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age3_5?.male}`}
                                         onChangeText={handleChange('age3_5.male')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age3_5?.male}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={errors?.age6_11?.male ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                                    {errors?.age3_5?.male && (
+                                        <FormErrorMessage>{errors?.age3_5?.male}</FormErrorMessage>
+                                    )}
+                                </View>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age6_11?.male}`}
                                         onChangeText={handleChange('age6_11.male')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age6_11?.male}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={errors?.age12_above?.male ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                                    <FormErrorMessage>{errors?.age6_11?.male}</FormErrorMessage>
+                                </View>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age12_above?.male}`}
                                         onChangeText={handleChange('age12_above.male')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age12_above?.male}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isDisabled>
-                                    <InputComponent
-                                        w="100%"
+                                    <FormErrorMessage>{errors?.age12_above?.male}</FormErrorMessage>
+                                </View>
+                                <View>
+                                    <Input
                                         keyboardType="numeric"
                                         value={addSubTotal(values, 'male')}
                                         onChangeText={handleChange('subTotal.male')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.subTotal?.male}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
+                                    <FormErrorMessage>{errors?.subTotal?.male}</FormErrorMessage>
+                                </View>
                             </View>
-                            <View alignItems="center" space={4} w="30%">
-                                <FormControl.Label>Female</FormControl.Label>
-                                <FormControl isRequired isInvalid={errors?.age1_2?.female ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                            <View className="items-center gap-2">
+                                <Label>Female</Label>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age1_2?.female}`}
                                         onChangeText={handleChange('age1_2.female')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age1_2?.female}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={errors?.age3_5?.female ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                                    <FormErrorMessage>{errors?.age1_2?.female}</FormErrorMessage>
+                                </View>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age3_5?.female}`}
                                         onChangeText={handleChange('age3_5.female')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age3_5?.female}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={errors?.age6_11?.female ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                                    <FormErrorMessage>{errors?.age3_5?.female}</FormErrorMessage>
+                                </View>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age6_11?.female}`}
                                         onChangeText={handleChange('age6_11.female')}
                                     />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.age6_11?.female}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={errors?.age12_above?.female ? true : false}>
-                                    <InputComponent
-                                        w="100%"
+                                    <FormErrorMessage>{errors?.age6_11?.female}</FormErrorMessage>
+                                </View>
+                                <View>
+                                    <Input
                                         placeholder="0"
                                         keyboardType="numeric"
                                         isDisabled={isCampusPastor}
                                         value={`${values?.age12_above?.female}`}
                                         onChangeText={handleChange('age12_above.female')}
                                     />
-                                </FormControl>
-                                <FormControl isDisabled>
-                                    <InputComponent
-                                        w="100%"
+                                </View>
+                                <View>
+                                    <Input
                                         keyboardType="numeric"
                                         value={addSubTotal(values, 'female')}
                                         onChangeText={handleChange('subTotal.female')}
                                     />
-                                </FormControl>
+                                </View>
                             </View>
                         </View>
-                        <View space={4} mt={4} className="px-4">
-                            <FormControl>
-                                <View space={12} className="justify-between items-center">
-                                    <FormControl.Label>Grand Total</FormControl.Label>
-                                    <InputComponent
+                        <View className="px-4 gap-2 mt-2">
+                            <View>
+                                <View className="justify-between items-center gap-6">
+                                    <Label>Grand Total</Label>
+                                    <Input
                                         isDisabled
                                         style={{ flex: 1 }}
                                         keyboardType="numeric"
@@ -355,17 +239,17 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         onChangeText={handleChange('grandTotal')}
                                     />
                                 </View>
-                            </FormControl>
-                            <Divider />
-                            <FormControl>
+                            </View>
+                            <Separator />
+                            <View>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
                                     placeholder="Any other information"
                                     value={!!values?.otherInfo ? values?.otherInfo : undefined}
                                 />
-                            </FormControl>
+                            </View>
                             <If condition={!isCampusPastor}>
-                                <FormControl>
+                                <View>
                                     <ButtonComponent
                                         isLoading={isLoading}
                                         onPress={() => {
@@ -377,32 +261,32 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                     >
                                         {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </If>
                             <If condition={isCampusPastor}>
-                                <FormControl mb={6}>
+                                <View className="mb-2">
                                     <TextAreaComponent
                                         isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
-                                </FormControl>
-                                <View space={4} justifyContent="space-between" w="95%">
-                                    <ButtonComponent
+                                </View>
+                                <View className="justify-between gap-4">
+                                    <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
-                                        width="1/2"
-                                        secondary
-                                        size="md"
+                                        className="flex-1"
+                                        variant="outline"
+                                        size="sm"
                                     >
                                         Request Review
-                                    </ButtonComponent>
+                                    </Button>
                                     <ButtonComponent
                                         onPress={() => onApprove(values)}
                                         isLoading={isLoading}
-                                        width="1/2"
-                                        size="md"
+                                        size="sm"
+                                        className="flex-1"
                                     >
                                         Approve
                                     </ButtonComponent>

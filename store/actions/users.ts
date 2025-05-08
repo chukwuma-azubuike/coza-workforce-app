@@ -1,7 +1,8 @@
-import { asyncThunkCreator, buildCreateSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { asyncThunkCreator, buildCreateSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { router } from 'expo-router';
 import { ILoginResponse } from '../services/account';
 import Utils from '~/utils';
+import { IUser } from '../types';
 
 export interface UserStoreState {
     currentUser: ILoginResponse['data'] | null;
@@ -38,12 +39,18 @@ const userStateSlice = createUserSlice({
                 await Utils.removeUserSession();
             },
             {
-                fulfilled: (state, action) => {
+                fulfilled: state => {
                     state.currentUser = null;
                     router.replace('/(auth)/login');
                 },
             }
         ),
+
+        updateSession: create.reducer((state, { payload }: PayloadAction<IUser>) => {
+            if (state.currentUser) {
+                state.currentUser.profile = payload;
+            }
+        }),
     }),
 
     extraReducers: builder => {

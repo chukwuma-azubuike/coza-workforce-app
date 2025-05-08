@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Heading } from 'native-base';
@@ -130,19 +130,19 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     const allButtons = [
         {
-            color: 'blue.400',
+            color: 'bg-blue-400',
             iconType: 'ionicon',
             iconName: 'person-outline',
             handleClick: gotoCreateWorker,
         },
         {
-            color: 'blue.600',
+            color: 'bg-blue-600',
             iconType: 'ionicon',
             iconName: 'people-outline',
             handleClick: gotoCreateDepartment,
         },
         {
-            color: 'blue.800',
+            color: 'bg-blue-800',
             iconName: 'church',
             iconType: 'material-community',
             handleClick: gotoCreateCampus,
@@ -190,10 +190,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                     isLoading ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <View
-                            key={index}
-                            className="my-12 px-6 justify-start"
-                        >
+                        <View key={index} className="my-12 px-6 justify-start">
                             <Text>{item.name}</Text>
                             <Text size="lg" className="font-bold ml-10">
                                 {item.value}
@@ -205,9 +202,7 @@ const CampusWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
                 {isLoading ? (
                     <FlatListSkeleton count={1} />
                 ) : (
-                    <View
-                        className="my-16 p-8 flex-1 justify-evenly w-100% border-0.4 rounded-8"
-                    >
+                    <View className="my-16 p-8 flex-1 justify-evenly w-100% border-0.4 rounded-8">
                         {summaryList.map((item, index) => (
                             <View
                                 key={index}

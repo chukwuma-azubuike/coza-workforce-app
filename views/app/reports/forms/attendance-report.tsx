@@ -1,12 +1,11 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IAttendanceReportPayload } from '@store/types';
 import { useCreateAttendanceReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -15,6 +14,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import { isIOS } from '@rneui/base';
+import { Input } from '~/components/ui/input';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Separator } from '~/components/ui/separator';
+import { Button } from '~/components/ui/button';
 
 const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const params = props.route.params as IAttendanceReportPayload;
@@ -57,7 +60,7 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: error?.data?.message || 'Something went wrong!',
+                message: (error as any)?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -84,76 +87,68 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
         >
-            {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
+            {({ handleChange, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <View pb={10}>
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
+                    <View className="pb-4">
+                        <Text className="text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View space={4} mt={4} className="px-4">
-                            <FormControl isRequired>
-                                <FormControl.Label>Number of Male Guests</FormControl.Label>
-                                <InputComponent
+                        <View className="px-2 gap-2 mt-2">
+                            <View>
+                                <View>Number of Male Guests</View>
+                                <Input
                                     placeholder="0"
                                     keyboardType="numeric"
                                     isDisabled={isCampusPastor}
                                     value={`${values.maleGuestCount}`}
                                     onChangeText={handleChange('maleGuestCount')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormControl.Label>Number of Female Guests</FormControl.Label>
-                                <InputComponent
+                                <FormErrorMessage>This field cannot be empty</FormErrorMessage>
+                            </View>
+                            <View>
+                                <View>Number of Female Guests</View>
+                                <Input
                                     placeholder="0"
                                     keyboardType="numeric"
                                     isDisabled={isCampusPastor}
                                     value={`${values.femaleGuestCount}`}
                                     onChangeText={handleChange('femaleGuestCount')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormControl.Label>Number of Infant Guests</FormControl.Label>
-                                <InputComponent
+                                <FormErrorMessage>This field cannot be empty</FormErrorMessage>
+                            </View>
+                            <View>
+                                <View>Number of Infant Guests</View>
+                                <Input
                                     placeholder="0"
                                     keyboardType="numeric"
                                     isDisabled={isCampusPastor}
                                     value={`${values.infants}`}
                                     onChangeText={handleChange('infants')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl>
-                                <FormControl.Label>Total</FormControl.Label>
-                                <InputComponent
+                                <FormErrorMessage>This field cannot be empty</FormErrorMessage>
+                            </View>
+                            <View>
+                                <View>Total</View>
+                                <Input
                                     isDisabled
                                     placeholder="0"
                                     keyboardType="numeric"
                                     value={addValues(values)}
                                     onChangeText={handleChange('total')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <Divider />
-                            <FormControl>
+                                <FormErrorMessage>This field cannot be empty</FormErrorMessage>
+                            </View>
+                            <Separator />
+                            <View>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                     value={!!values?.otherInfo ? values?.otherInfo : undefined}
                                 />
-                            </FormControl>
+                            </View>
                             <If condition={!isCampusPastor}>
-                                <FormControl mt={2}>
+                                <View className="mt-1">
                                     <ButtonComponent
                                         isLoading={isLoading}
                                         onPress={() => {
@@ -163,32 +158,32 @@ const AttendanceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props 
                                     >
                                         {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </If>
                             <If condition={isCampusPastor}>
-                                <FormControl mb={6}>
+                                <View className="mb-3">
                                     <TextAreaComponent
                                         isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
-                                </FormControl>
-                                <View space={4} justifyContent="space-between" w="95%">
-                                    <ButtonComponent
+                                </View>
+                                <View className="gap-4 justify-between">
+                                    <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
-                                        width="1/2"
-                                        secondary
-                                        size="md"
+                                        className="flex-1"
+                                        variant="outline"
+                                        size="sm"
                                     >
                                         Request Review
-                                    </ButtonComponent>
+                                    </Button>
                                     <ButtonComponent
                                         onPress={() => onApprove(values)}
                                         isLoading={isLoading}
-                                        width="1/2"
-                                        size="md"
+                                        className="flex-1"
+                                        size="sm"
                                     >
                                         Approve
                                     </ButtonComponent>

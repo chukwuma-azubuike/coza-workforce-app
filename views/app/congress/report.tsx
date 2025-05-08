@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import {
     useGetDepartmentCongressAttendanceReportQuery,
@@ -8,8 +8,6 @@ import {
 import useRole from '@hooks/role';
 import { IService } from '@store/types';
 import dayjs from 'dayjs';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { Flex } from 'native-base';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import Loading from '@components/atoms/loading';
@@ -18,6 +16,8 @@ import { CountUp } from 'use-count-up';
 import { useNavigation } from '@react-navigation/native';
 import useScreenFocus from '@hooks/focus';
 import If from '@components/composite/if-container';
+import PickerSelect from '~/components/ui/picker-select';
+import { router } from 'expo-router';
 
 export const CongressReportSummary: React.FC<{
     latestService?: IService;
@@ -39,15 +39,16 @@ export const CongressReportSummary: React.FC<{
         setServiceId(value);
     };
 
-    const { data: attendanceReport, isLoading: attendanceReportLoading } = useGetDepartmentCongressAttendanceReportQuery(
-        {
-            CongressId,
-            isCongress: true,
-            departmentId: department?._id,
-            serviceId: serviceId as string,
-        },
-        { skip: !serviceId, refetchOnMountOrArgChange: true }
-    );
+    const { data: attendanceReport, isLoading: attendanceReportLoading } =
+        useGetDepartmentCongressAttendanceReportQuery(
+            {
+                CongressId,
+                isCongress: true,
+                departmentId: department?._id,
+                serviceId: serviceId as string,
+            },
+            { skip: !serviceId, refetchOnMountOrArgChange: true }
+        );
 
     const { data: leadersAttendance, isLoading: leadersReportLoading } = useGetLeadersCongressAttendanceReportQuery(
         {
@@ -69,14 +70,12 @@ export const CongressReportSummary: React.FC<{
         { skip: !serviceId, refetchOnMountOrArgChange: true }
     );
 
-    const navigation = useNavigation();
-
     const goToAttendance = () => {
-        navigation.navigate('Congress Attendance' as never, { CongressId } as never);
+        router.push({ pathname: '/congress/congress-attendance', params: { CongressId } });
     };
 
     const goToTickets = () => {
-        navigation.navigate('Tickets' as never);
+        router.push('/tickets');
     };
 
     useScreenFocus({
@@ -95,42 +94,24 @@ export const CongressReportSummary: React.FC<{
 
     return (
         <View>
-            <View
-                className="pt-12 px-4 justify-between"
-            >
-                <Text size="lg" className="text-center pt-8 pb-8 font-bold">
-                    {title}
-                </Text>
-                <SelectComponent
-                    valueKey="_id"
-                    items={sessions}
-                    displayKey="name"
-                    style={{ width: 200 }}
-                    selectedValue={serviceId}
-                    placeholder="Select Service"
-                    onValueChange={setService as any}
-                >
-                    {sessions?.map((session, index) => (
-                        <SelectItemComponent
-                            value={session._id}
-                            key={`session-${index}`}
-                            isLoading={!sessions?.length}
-                            label={`${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
+            <View className="px-2 justify-between flex-row items-center gap-8">
+                <Text className="pt-8 pb-8 font-bold">{title}</Text>
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        labelKey="name"
+                        items={sessions}
+                        onValueChange={setService}
+                        placeholder="Select Service"
+                        customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                    />
+                </View>
             </View>
-            <View className="py-6">
+            <View className="p-6">
                 {attendanceReportLoading || leadersReportLoading ? (
-                    <Loading h={20} w={20} />
+                    <Loading />
                 ) : (
-                    <Flex
-                        px={0}
-                        wrap="wrap"
-                        alignItems="center"
-                        flexDirection="row"
-                        style={{ columnGap: 0, rowGap: 20 }}
-                    >
+                    <View className="flex-row gap-x-10 flex-wrap items-center">
                         <If condition={isCampusPastor || isSuperAdmin}>
                             <TouchableOpacity
                                 delayPressIn={0}
@@ -139,17 +120,12 @@ export const CongressReportSummary: React.FC<{
                                 style={{ width: '50%' }}
                                 accessibilityRole="button"
                             >
-                                <View width="100%">
-                                    <View alignItems="baseline" flexDirection="row">
-                                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                <View className="w-full">
+                                    <View className="items-baseline flex-row">
+                                        <Text className="text-primary text-3xl font-semibold">
                                             <CountUp isCounting duration={2} end={leadersAttendance?.attendance || 0} />
                                         </Text>
-                                        <Text
-                                            fontSize="md"
-                                            fontWeight="semibold"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
+                                        <Text className="text-muted-foreground font-semibold">
                                             /
                                             <CountUp
                                                 isCounting
@@ -158,21 +134,14 @@ export const CongressReportSummary: React.FC<{
                                             />
                                         </Text>
                                     </View>
-                                    <View alignItems="center" flexDirection="row">
+                                    <View className="items-center flex-row">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
                                             type="ionicon"
                                             size={18}
                                         />
-                                        <Text
-                                            ml={2}
-                                            fontSize="md"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
-                                            Leaders
-                                        </Text>
+                                        <Text className="text-muted-foreground">Leaders</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -185,17 +154,12 @@ export const CongressReportSummary: React.FC<{
                                 onPress={goToAttendance}
                                 accessibilityRole="button"
                             >
-                                <View width="100%">
-                                    <View alignItems="baseline" flexDirection="row">
-                                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                <View>
+                                    <View className="flex-row items-baseline">
+                                        <Text className="text-primary text-3xl font-semibold">
                                             <CountUp isCounting duration={2} end={workersAttendance?.attendance || 0} />
                                         </Text>
-                                        <Text
-                                            fontSize="md"
-                                            fontWeight="semibold"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
+                                        <Text className="text-muted-foreground font-semibold">
                                             /
                                             <CountUp
                                                 isCounting
@@ -204,21 +168,14 @@ export const CongressReportSummary: React.FC<{
                                             />
                                         </Text>
                                     </View>
-                                    <View alignItems="center" flexDirection="row">
+                                    <View className="flex-row items-center">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
                                             type="ionicon"
                                             size={18}
                                         />
-                                        <Text
-                                            ml={2}
-                                            fontSize="md"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
-                                            Workers
-                                        </Text>
+                                        <Text className="ml-1 text-muted-foreground">Workers</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -227,21 +184,16 @@ export const CongressReportSummary: React.FC<{
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
-                                style={{ width: '50%' }}
                                 onPress={goToAttendance}
                                 accessibilityRole="button"
+                                className="flex-1"
                             >
-                                <View width="100%">
-                                    <View alignItems="baseline" flexDirection="row">
-                                        <Text fontWeight="semibold" color="primary.500" fontSize="4xl" ml={1}>
+                                <View>
+                                    <View className="items-baseline flex-row justify-center">
+                                        <Text className="text-primary !text-5xl font-semibold">
                                             <CountUp isCounting duration={2} end={attendanceReport?.attendance || 0} />
                                         </Text>
-                                        <Text
-                                            fontSize="md"
-                                            fontWeight="semibold"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
+                                        <Text className="text-muted-foreground font-semibold !text-2xl text-center">
                                             /
                                             <CountUp
                                                 isCounting
@@ -250,56 +202,42 @@ export const CongressReportSummary: React.FC<{
                                             />
                                         </Text>
                                     </View>
-                                    <View alignItems="center" flexDirection="row">
+                                    <View className="items-center flex-row gap-2">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
                                             type="ionicon"
                                             size={18}
                                         />
-                                        <Text
-                                            ml={2}
-                                            fontSize="md"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
-                                            Members clocked in
-                                        </Text>
+                                        <Text className="text-muted-foreground font-semibold">Members clocked in</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
                         </If>
-                        <View width={isCampusPastor || isSuperAdmin ? '100%' : 'auto'}>
+                        <View className="flex-1">
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
                                 onPress={goToTickets}
                                 accessibilityRole="button"
                             >
-                                <View width={180} mx="auto">
-                                    <Text fontWeight="semibold" color="gray.400" fontSize="4xl" ml={1}>
+                                <View className="mx-auto">
+                                    <Text className="text-rose-400 font-semibold !text-5xl text-center">
                                         <CountUp isCounting duration={2} end={attendanceReport?.tickets || 0} />
                                     </Text>
-                                    <View alignItems="center" flexDirection="row">
+                                    <View className="items-center flex-row gap-1">
                                         <Icon
                                             name="ticket-confirmation-outline"
                                             color={THEME_CONFIG.rose}
                                             type="material-community"
                                             size={18}
                                         />
-                                        <Text
-                                            ml={2}
-                                            fontSize="md"
-                                            _dark={{ color: 'gray.400' }}
-                                            _light={{ color: 'gray.600' }}
-                                        >
-                                            Tickets
-                                        </Text>
+                                        <Text className="ml-1 text-muted-foreground">Tickets</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
                         </View>
-                    </Flex>
+                    </View>
                 )}
             </View>
         </View>

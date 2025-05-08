@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Animated, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
-import CgwcTopNav from '@components/composite/header/congress-top-nav';
+import CgwcTopNav from './congress-top-nav';
 import useAppColorMode from '@hooks/theme/colorMode';
 
 const MIN_HEADER_HEIGHT = 50;
@@ -50,7 +50,7 @@ const DynamicHeader: React.FC<IDynamicHeader> = React.memo(({ animHeaderValue, t
                 styles.header,
                 {
                     height: animatedHeaderHeight,
-                    backgroundColor: animateHeaderBackgroundColor,
+                    // backgroundColor: animateHeaderBackgroundColor,
                     paddingTop: 0,
                 },
             ]}
@@ -65,9 +65,10 @@ const DynamicHeader: React.FC<IDynamicHeader> = React.memo(({ animHeaderValue, t
                                     {
                                         fontSize: animateHeaderTextsize,
                                         bottom: animateHeaderTextPosition,
-                                        color: isDarkMode ? '#fff' : '#000',
+                                        // color: isDarkMode ? '#fff' : '#000',
                                     },
                                 ]}
+                                className="text-foreground"
                             >
                                 {title}
                             </Animated.Text>

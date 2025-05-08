@@ -27,7 +27,7 @@ export const congressServiceSlice = createApi({
     endpoints: endpoint => ({
         createCongress: endpoint.mutation<ICongress, ICongressPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/createCongress`,
+                url: `/${SERVICE_URL}/createCGWC`,
                 method: REST_API_VERBS.POST,
                 body,
             }),
@@ -35,7 +35,7 @@ export const congressServiceSlice = createApi({
 
         updateCongress: endpoint.mutation<void, ICreateService>({
             query: args => ({
-                url: `/${SERVICE_URL}/updateCongress${args._id}`,
+                url: `/${SERVICE_URL}/updateCGWC${args._id}`,
                 method: REST_API_VERBS.PUT,
                 body: args,
             }),
@@ -43,7 +43,7 @@ export const congressServiceSlice = createApi({
 
         getCongressById: endpoint.query<ICongress, string>({
             query: id => ({
-                url: `/${SERVICE_URL}/getCongressByID/${id}`,
+                url: `/${SERVICE_URL}/getCGWCByID/${id}`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -52,7 +52,7 @@ export const congressServiceSlice = createApi({
 
         getCongresss: endpoint.query<ICongress[], Partial<IDefaultQueryParams>>({
             query: params => ({
-                url: `/${SERVICE_URL}/getAllCongress`,
+                url: `/${SERVICE_URL}/getAllCGWC`,
                 method: REST_API_VERBS.GET,
                 params,
             }),

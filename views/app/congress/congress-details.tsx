@@ -1,20 +1,17 @@
 import { Text } from '~/components/ui/text';
 import React from 'react';
 import useRole from '@hooks/role';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, { ICarouselInstance } from 'react-native-reanimated-carousel';
 import { Alert, Animated, Dimensions, Image, StyleSheet, TouchableOpacity, View, SafeAreaView } from 'react-native';
-import { MyCongressAttendance } from './attendance';
-import CongressHeader from './components/header';
+import { MyCongressAttendance } from './congress-attendance';
 import ScrollContainer from '@components/composite/scroll-container';
 import Loading from '@components/atoms/loading';
 import { CongressReportSummary } from './report';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
-import { ScreenHeight, ScreenWidth } from '@rneui/base';
+import { ScreenHeight } from '@rneui/base';
 import useMediaQuery from '@hooks/media-query';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
@@ -23,8 +20,13 @@ import RatingComponent from '@components/composite/rating';
 import assertCongressActive from '@utils/assertCongressActive';
 import { Separator } from '~/components/ui/separator';
 import { useGetCongressByIdQuery, useGetCongressInstantMessagesQuery } from '~/store/services/congress';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
+import ScreenHeader from '~/components/ScreenHeader';
 
-const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+const width = Dimensions.get('window').width;
+
+const CongressDetails: React.FC = () => {
     const {
         isCampusPastor,
         isGlobalPastor,
@@ -36,21 +38,35 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         user: { _id: userId, campus },
     } = useRole();
     const { isMobile } = useMediaQuery();
-    const navigation = props.navigation;
-    const params = props.route.params as { CongressId: string; rating: number };
-    const CongressId = params?.CongressId;
+
+    const params = useLocalSearchParams() as unknown as { congressId: string; rating: number; name: string };
+    const CGWCId = params?.congressId;
+
+    const { setOptions } = useNavigation();
+
+    setOptions({
+        header: () => (
+            <View>
+                <ScreenHeader bypassFormat name={params.name} />
+                //TODO: Suspended for now
+                {/* <CongressHeader title={congress?.name || ''} scrollOffsetY={scrollOffsetY} /> */}
+            </View>
+        ),
+    });
 
     const isLeader = isCampusPastor || isGlobalPastor || isHOD || isAHOD || isSuperAdmin || isGroupHead;
     const goToExport = () => {
-        navigation.navigate('Export Data', { type: IReportTypes.ATTENDANCE });
+        router.push({ pathname: '/export-data', params: { type: IReportTypes.ATTENDANCE } });
     };
 
     const carouselHeight = isMobile ? ScreenHeight / 4 : ScreenHeight / 3;
 
+    const ref = React.useRef<ICarouselInstance>(null);
+
     const CarouselItem: React.FC<{ item: ICongressInstantMessage; index: number }> = ({ item, index }) => {
         const handlePress = () => {
             if (!!item?.messageLink) {
-                navigation.navigate('Congress Resources', item);
+                router.push({ pathname: '/congress/congress-resources', params: item as any });
             }
         };
 
@@ -62,7 +78,7 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                         <View style={styles.imageOverlay} />
                         <View style={styles.itemTextContainer}>
                             <Text>{item.title}</Text>
-                            <Text className="italic">{item.message}</Text>
+                            <Text className="italic line-clamp-4">{item.message}</Text>
                         </View>
                     </View>
                 </View>
@@ -70,7 +86,6 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         );
     };
 
-    const { width } = Dimensions.get('window');
     const scrollOffsetY = React.useRef<Animated.Value>(new Animated.Value(0)).current;
 
     const { data: latestService } = useGetLatestServiceQuery(campus?._id as string, {
@@ -80,7 +95,7 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
 
     const { data: sessions, refetch: refetchSessions } = useGetServicesQuery(
         {
-            CongressId,
+            CGWCId,
             page: 1,
             limit: 30,
         },
@@ -89,20 +104,24 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         }
     );
 
-    const { data: congress, isLoading, isFetching } = useGetCongressByIdQuery(CongressId, { refetchOnMountOrArgChange: true });
+    const {
+        data: congress,
+        isLoading,
+        isFetching,
+    } = useGetCongressByIdQuery(CGWCId, { refetchOnMountOrArgChange: true });
 
     const {
-        data: messages,
+        data: messages = [],
         refetch: refetchMessages,
         isLoading: messagesIsLoading,
-    } = useGetCongressInstantMessagesQuery({ cgwcId: CongressId });
+    } = useGetCongressInstantMessagesQuery({ cgwcId: CGWCId });
 
     const gotoCreateInstantMessage = () => {
-        navigation.navigate('Create Instant Message', { CongressId });
+        router.push({ pathname: '/congress/create-instant-message', params: { CGWCId } });
     };
 
     const gotoCreateSession = () => {
-        navigation.navigate('Create Congress session', { CongressId });
+        router.push({ pathname: '/(stack)/service-management/create-congress-session', params: { CGWCId } });
     };
 
     const allButtons = [
@@ -123,7 +142,7 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     useScreenFocus({
         onFocus: () => {
             if (isGlobalPastor) {
-                return navigation.navigate('Congress Report', { CongressId });
+                return router.push({ pathname: '/congress/congress-report', params: { CGWCId } });
             }
             refetchSessions();
             refetchMessages();
@@ -133,7 +152,7 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
     const handleFeedbackPress = () => {
         if (!!congress) {
             if (!assertCongressActive(congress)) {
-                return navigation.navigate('Congress Feedback', { CongressId });
+                return router.push({ pathname: '/congress/congress-feedback', params: { CGWCId } });
             }
             Alert.alert('Congress Feedback', 'You will only be able to give your feedback on the last day of Congress');
         }
@@ -146,32 +165,33 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                     <Loading />
                 </If>
                 <If condition={!isLoading && !isFetching && !!congress}>
-                    <CongressHeader title={congress?.name || ''} navigation={navigation} scrollOffsetY={scrollOffsetY} />
                     <ScrollContainer scrollOffsetY={scrollOffsetY}>
-                        <View mt={2}>
-                            <Carousel<ICongressInstantMessage>
-                                loop={true}
-                                autoplay={true}
-                                sliderWidth={width}
-                                data={messages || []}
-                                autoplayInterval={3000}
-                                renderItem={CarouselItem}
-                                inactiveSlideOpacity={0.6}
-                                itemWidth={ScreenWidth * 0.8}
-                                style={{ minHeight: carouselHeight }}
+                        <View className="min-w-[5rem] min-h-[4rem] ">
+                            <Carousel
+                                ref={ref}
+                                width={width}
+                                data={messages}
+                                height={width / 1.8}
+                                autoPlayInterval={3000}
+                                autoPlay={messages.length > 1}
+                                renderItem={CarouselItem as any}
                             />
                         </View>
                         <View className="px-1">
                             <Separator className="mt-6 mb-1" />
-                            <View flexDirection={['column', 'row']} justifyContent="space-between" flex={1}>
-                                <View style={{ width: isMobile ? '100%' : '50%' }}>
-                                    <MyCongressAttendance sessions={sessions || []} CongressId={CongressId} userId={userId} />
+                            <View className="md:flex-row justify-between flex-1">
+                                <View>
+                                    <MyCongressAttendance
+                                        sessions={sessions || []}
+                                        CongressId={CGWCId}
+                                        userId={userId}
+                                    />
                                 </View>
-                                <View style={{ width: isMobile ? '100%' : '50%', flex: 1 }}>
+                                <View>
                                     <If condition={isLeader}>
-                                        {!isMobile && <Separator mt={3} mb={2} orientation="vertical" />}
+                                        {!isMobile && <Separator orientation="vertical" className="mt-3 mb-2" />}
                                         <CongressReportSummary
-                                            CongressId={CongressId}
+                                            CongressId={CGWCId}
                                             sessions={sessions || []}
                                             latestService={latestService}
                                             title={isCampusPastor ? 'Campus Report' : 'Team Report'}
@@ -179,12 +199,10 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                     </If>
                                 </View>
                             </View>
-                            <Separator mt={6} mb={1} />
+                            <Separator className="mt-3 mb-1" />
                         </View>
-                        <View mt={6}>
-                            <Text fontSize="lg" className="font-bold px-3">
-                                Give Feedback
-                            </Text>
+                        <View className="mt-3">
+                            <Text className="font-bold px-3 text-xl">Give Feedback</Text>
                             <View style={{ marginBottom: 60, width: '100%' }}>
                                 <TouchableOpacity onPress={handleFeedbackPress} activeOpacity={0.9}>
                                     <RatingComponent isDisabled defaultRating={params?.rating || 0} />
@@ -201,7 +219,7 @@ const CongressDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 <StaggerButtonComponent
                     buttons={[
                         {
-                            color: 'green.600',
+                            color: 'bg-green-600',
                             iconType: 'ionicon',
                             handleClick: goToExport,
                             iconName: 'download-outline',
@@ -221,7 +239,9 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    itemContainer: {},
+    itemContainer: {
+        padding: 4,
+    },
     item: {
         elevation: 5,
         backgroundColor: 'transparent',
@@ -237,7 +257,8 @@ const styles = StyleSheet.create({
     },
     itemTextContainer: {
         bottom: 20,
-        width: '80%',
+        width: '90%',
+        paddingLeft: 20,
         position: 'absolute',
     },
     itemText: {

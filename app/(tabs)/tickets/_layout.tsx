@@ -13,8 +13,8 @@ const TicketsScreensLayout: React.FC = () => {
                 }}
             >
                 <Stack.Screen name="index" />
-                <Stack.Screen name="(stack)/tickets/ticket-details" />
-                <Stack.Screen name="(stack)/tickets/issue-ticket" />
+                <Stack.Screen name="/tickets/ticket-details" />
+                <Stack.Screen name="/tickets/issue-ticket" />
             </Stack>
         </SafeAreaView>
     );
