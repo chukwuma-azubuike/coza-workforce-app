@@ -6,12 +6,14 @@ import { ActivityIndicator, View } from 'react-native';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { Colors } from '~/constants/Colors';
 import { THEME_CONFIG } from '~/config/appConfig';
+import { cn } from '~/lib/utils';
 
 interface PickerSelectComponentProps<T> extends Omit<PickerSelectProps, 'items'> {
     items: T[];
     value?: string;
     labelKey: keyof T;
     valueKey: keyof T;
+    className?: string;
     customLabel?: (arg: T) => string;
     isLoading?: boolean;
 }
@@ -23,6 +25,7 @@ function PickerSelect<T = any>({
     isLoading,
     customLabel,
     onValueChange,
+    className,
     value: inputValue,
     placeholder = 'Select',
     ...props
@@ -86,7 +89,12 @@ function PickerSelect<T = any>({
             }}
             {...props}
         >
-            <View className="rounded-xl !h-16 justify-between items-center flex-row !px-3 border border-input">
+            <View
+                className={cn(
+                    'rounded-xl !h-16 justify-between items-center flex-row !px-3 border border-input',
+                    className
+                )}
+            >
                 {isLoading ? (
                     <ActivityIndicator />
                 ) : (
