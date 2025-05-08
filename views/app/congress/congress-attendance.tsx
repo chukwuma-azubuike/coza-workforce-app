@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React, { ReactNode } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import { scoreMappingColumn } from '../attendance/flatListConfig';
@@ -8,19 +8,17 @@ import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
 import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
-// import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
 import ListTable from '@components/composite/list/list-table';
-import { ScreenWidth } from '@rneui/base';
 import If from '@components/composite/if-container';
 import useScreenFocus from '@hooks/focus';
 import { useGetCummulativeScoresQuery } from '@store/services/score-mapping';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
+import { cn } from '~/lib/utils';
+import PickerSelect from '~/components/ui/picker-select';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -34,7 +32,7 @@ export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(({
         isLoading,
         refetch: refetchAttendance,
     } = useGetAttendanceQuery({
-        CongressId,
+        CGWCId: CongressId,
         userId,
     });
 
@@ -65,12 +63,12 @@ export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(({
 
     const cumulativeAttendance = React.useMemo(() => {
         if (!!data?.length) {
-            return data?.map(data => data.score)?.reduce((a, b) => a + b);
+            return data?.map(data => data.score)?.reduce((a = 0, b = 0) => a + b);
         }
         return 0;
     }, [data]);
 
-    const totalAttendance = Math.round((cumulativeAttendance / TOTAL_ATTAINABLE_SCORE) * 100);
+    const totalAttendance = Math.round(((cumulativeAttendance as number) / TOTAL_ATTAINABLE_SCORE) * 100);
 
     useScreenFocus({
         onFocus: refetchAttendance,
@@ -91,7 +89,7 @@ export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(({
     );
 });
 
-export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId }) => {
+export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId: CGWCId }) => {
     const { user } = useRole();
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
@@ -101,7 +99,7 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
         refetch: refetchSessions,
         isLoading: sessionsIsLoading,
         isSuccess: sessionsIsSuccess,
-    } = useGetServicesQuery({ CongressId }, { refetchOnMountOrArgChange: true });
+    } = useGetServicesQuery({ CGWCId }, { refetchOnMountOrArgChange: true });
 
     const setService = (value: IService['_id']) => {
         setServiceId(value);
@@ -119,7 +117,7 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
         refetch: refetchAttendance,
         data: membersClockedIn,
     } = useGetAttendanceQuery({
-        CongressId,
+        CGWCId,
         serviceId,
         departmentId: user?.department?._id,
     });
@@ -130,7 +128,7 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
         refetch,
         data: scoreMappingAttendance,
     } = useGetCummulativeScoresQuery({
-        CongressId,
+        CGWCId,
         serviceId,
         departmentId: user?.department?._id,
     });
@@ -178,40 +176,21 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
     return (
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
-                <View
-                    className="flex-0 mb-6 px-8 items-baseline"
-                >
-                    <SelectComponent
-                        valueKey="_id"
-                        displayKey="name"
-                        items={sessions || []}
-                        style={{ width: 200 }}
-                        selectedValue={serviceId}
-                        placeholder="Select Session"
-                        onValueChange={setService as any}
-                    >
-                        {sessions?.map((session, index) => (
-                            <SelectItemComponent
-                                value={session._id}
-                                key={`session-${index}`}
-                                isLoading={sessionsIsLoading}
-                                label={`${session.name} | ${dayjs(session.clockInStartTime).format('DD MMM YYYY')}`}
-                            />
-                        ))}
-                    </SelectComponent>
-                    <View
-                        style={{
-                            flexDirection: 'row',
-                            alignItems: 'baseline',
-                            justifyContent: 'space-between',
-                        }}
-                    >
-                        <Text size="lg" className="font-bold">
-                            Eligible:{'  '}
-                        </Text>
-                        <Text size="2xl" className="font-bold">
-                            {eligible || 0}
-                        </Text>
+                <View className="flex-0 mb-6 items-baseline flex-row gap-6">
+                    <View className="flex-1">
+                        <PickerSelect
+                            valueKey="_id"
+                            labelKey="name"
+                            value={serviceId}
+                            items={sessions || []}
+                            isLoading={sessionsIsLoading}
+                            placeholder="Select Session"
+                            onValueChange={setService}
+                        />
+                    </View>
+                    <View className="flex-row items-baseline justify-between">
+                        <Text className="font-bold text-2xl">Eligible:{'  '}</Text>
+                        <Text className="font-bold text-3xl">{eligible || 0}</Text>
                     </View>
                 </View>
             </AttendanceContainer>
@@ -228,7 +207,7 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
     );
 });
 
-export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId }) => {
+export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId: CGWCId }) => {
     const { leaderRoleIds, user } = useRole();
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
@@ -237,7 +216,7 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
         refetch: refetchServices,
         isLoading: serviceIsLoading,
         isSuccess: servicesIsSuccess,
-    } = useGetServicesQuery({ CongressId }, { refetchOnMountOrArgChange: true });
+    } = useGetServicesQuery({ CGWCId }, { refetchOnMountOrArgChange: true });
 
     const setService = (value: IService['_id']) => {
         setServiceId(value);
@@ -264,7 +243,7 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
         isFetching: hodFetching,
     } = useGetAttendanceQuery(
         {
-            CongressId,
+            CGWCId,
             serviceId,
             campusId: user?.campus?._id,
             roleId: leaderRoleIds && (leaderRoleIds[0] as string),
@@ -279,7 +258,7 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
         isFetching: ahodFetching,
     } = useGetAttendanceQuery(
         {
-            CongressId,
+            CGWCId,
             serviceId,
             campusId: user?.campus?._id,
             roleId: leaderRoleIds && (leaderRoleIds[1] as string),
@@ -291,11 +270,11 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
     const isFetching = hodFetching || ahodFetching;
 
     const { data: HODProfiles } = useGetCummulativeScoresQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id, CongressId, serviceId },
+        { roleId: leaderRoleIds && leaderRoleIds[0], campusId: user?.campus?._id, CGWCId, serviceId },
         { skip: !leaderRoleIds?.length }
     );
     const { data: AHODProfiles } = useGetCummulativeScoresQuery(
-        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id, CongressId, serviceId },
+        { roleId: leaderRoleIds && leaderRoleIds[1], campusId: user?.campus?._id, CGWCId, serviceId },
         { skip: !leaderRoleIds?.length }
     );
 
@@ -331,10 +310,7 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
 
     return (
         <ErrorBoundary>
-            <View
-                space={8}
-                className="flex-0 mb-6 px-8 items-baseline"
-            >
+            <View className="flex-0 mb-6 px-8 items-baseline gap-4">
                 <SelectComponent
                     valueKey="_id"
                     displayKey="name"
@@ -360,12 +336,8 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Text size="lg" className="font-bold">
-                        Eligible:{'  '}
-                    </Text>
-                    <Text size="2xl" className="font-bold">
-                        {eligible || 0}
-                    </Text>
+                    <Text className="font-bold text-2xl">Eligible:{'  '}</Text>
+                    <Text className="font-bold text-4xl">{eligible || 0}</Text>
                 </View>
             </View>
             <FlatListComponent
@@ -381,7 +353,7 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
     );
 });
 
-export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId }) => {
+export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId: CGWCId }) => {
     const { user } = useRole();
     const [page, setPage] = React.useState<number>(1);
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
@@ -391,7 +363,7 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
         isLoading: sessionsIsLoading,
         isSuccess: sessionsIsSuccess,
     } = useGetServicesQuery(
-        { CongressId },
+        { CGWCId },
         {
             refetchOnMountOrArgChange: true,
         }
@@ -417,7 +389,7 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
 
     const { data: campusAttendance, isLoading: campusIsLoading } = useGetAttendanceQuery({
         page,
-        CongressId,
+        CGWCId,
         serviceId,
         campusId: user?.campus._id,
     });
@@ -430,7 +402,7 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
         isFetching,
     } = useGetCummulativeScoresQuery(
         {
-            CongressId,
+            CGWCId,
             serviceId,
             campusId: user?.campus._id,
         },
@@ -465,28 +437,13 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
         [scoreMappingAttendance]
     );
 
-    // const fetchMoreData = () => {
-    //     if (!isFetching && !isLoading) {
-    //         if (data?.length) {
-    //             setPage(prev => prev + 1);
-    //         } else {
-    //             setPage(prev => prev - 1);
-    //         }
-    //     }
-    // };
-
-    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
-
     const handleRefetch = () => {
         refetch();
     };
 
     return (
         <ErrorBoundary>
-            <View
-                space={8}
-                className="flex-0 mb-6 px-8 items-baseline"
-            >
+            <View className="flex-0 mb-6 px-8 items-baseline gap-4">
                 <SelectComponent
                     valueKey="_id"
                     displayKey="name"
@@ -512,12 +469,8 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
                         justifyContent: 'space-between',
                     }}
                 >
-                    <Text size="lg" className="font-bold">
-                        Eligible:{'  '}
-                    </Text>
-                    <Text size="2xl" className="font-bold">
-                        {eligible || 0}
-                    </Text>
+                    <Text className="font-bold text-2xl">Eligible:{'  '}</Text>
+                    <Text className="font-bold text-4xl">{eligible || 0}</Text>
                 </View>
             </View>
             <FlatListComponent
@@ -547,14 +500,21 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
         return (
             <View style={{ paddingHorizontal: 4 }}>
                 <If condition={showTitle}>
-                    <View
-                        className="py-10 justify-between items-baseline"
-                    >
-                        <Text size="lg" className="font-bold text-center pt-3 pb-4">
-                            {title}
-                        </Text>
+                    <View className="py-4 justify-between items-baseline flex-row">
+                        <Text className="font-bold text-center pt-3 pb-4">{title}</Text>
                         {!!score && (
-                            <Text fontSize="lg" className="font-bold pt-3 pb-4 text-center">
+                            <Text
+                                className={cn(
+                                    'font-bold pt-3 pb-4 text-center text-xl',
+                                    +score <= 30
+                                        ? 'text-destructive'
+                                        : +score <= 60
+                                        ? 'text-orange-400'
+                                        : +score < 70
+                                        ? 'text-blue-500'
+                                        : +score >= 70 && 'text-green-500'
+                                )}
+                            >
                                 {score || 0}
                                 {scoreType === 'percent' && '%'}
                             </Text>
@@ -570,24 +530,18 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
 export const AttendanceListRow: React.FC<IAttendance> = React.memo(
     ({ name, clockIn, clockOut, score = 0, ...props }) => {
         return (
-            <View
-                className="py-10 items-center justify-between"
-            >
-                <Text className="w-40%">{name}</Text>
-                <View className="justify-center">
+            <View className="py-4 items-center justify-between gap-4 flex-row border-b border-b-border">
+                <Text className="flex-1">{name}</Text>
+                <View className="justify-center flex-row w-24 items-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <Text className="text-right">
-                        {clockIn ? dayjs(clockIn).format('h:mm A') : '--:--'}
-                    </Text>
+                    <Text className="text-right">{clockIn ? dayjs(clockIn).format('h:mm A') : '--:--'}</Text>
                 </View>
-                <View className="justify-center">
+                <View className="justify-center flex-row w-24 items-center">
                     <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <Text className="text-right">
-                        {!!clockOut ? dayjs(clockOut).format('h:mm A') : '--:--'}
-                    </Text>
+                    <Text className="text-right">{!!clockOut ? dayjs(clockOut).format('h:mm A') : '--:--'}</Text>
                 </View>
                 {typeof score === 'number' && (
-                    <View className="justify-center">
+                    <View className="justify-center flex-row w-12 items-center">
                         <Text className="text-center">{score}</Text>
                     </View>
                 )}
@@ -598,25 +552,12 @@ export const AttendanceListRow: React.FC<IAttendance> = React.memo(
 
 export const AttendanceHeader: React.FC<{ titles: string[] }> = React.memo(({ titles }) => {
     return (
-        <View>
+        <View className="flex-row gap-4">
             {titles?.map((title, index) => (
-                <View key={index} style={{ minWidth: index === 0 ? '40%' : index === 3 ? '15%' : '23%' }}>
-                    <Text className="font-bold">
-                        {title}
-                    </Text>
+                <View key={index} className={cn(index === 0 && 'flex-1', index === 1 && 'w-28 items-center')}>
+                    <Text className="font-bold">{title}</Text>
                 </View>
             ))}
         </View>
     );
-});
-
-const styles = StyleSheet.create({
-    dateTime: {},
-    title: {},
-    listRow: {
-        padding: 10,
-    },
-    listRowItem: {
-        flexWrap: 'wrap',
-    },
 });

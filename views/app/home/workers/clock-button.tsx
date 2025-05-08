@@ -97,7 +97,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 setModalState({
                     render: (
                         <ModalAlertComponent
-                            description={`You clocked out at ${dayjs().format('LT')}`}
+                            description={`You clocked out at ${dayjs().format('hh:mm A')}`}
                             status={isInRange ? 'success' : 'warning'}
                             iconType={'material-community'}
                             iconName={'timer-outline'}
@@ -160,9 +160,9 @@ const ClockButton: React.FC<IClockButtonProps> = ({
     const handlePress = async () => {
         if (!assertClockinStartTime) {
             return Alert.alert(
-                `${!!latestServiceData?.CongressId ? 'Session' : 'Service'} Not Started`,
+                `${!!latestServiceData?.CGWCId ? 'Session' : 'Service'} Not Started`,
                 `Clock in for this ${
-                    !!latestServiceData?.CongressId ? 'session' : 'service'
+                    !!latestServiceData?.CGWCId ? 'session' : 'service'
                 } has not yet started, kindly try again ${
                     !!latestServiceData ? `by ${dayjs(latestServiceData?.clockInStartTime).format('h:mm A')}` : 'later'
                 }.`

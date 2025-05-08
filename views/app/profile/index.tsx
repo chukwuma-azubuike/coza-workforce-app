@@ -63,7 +63,7 @@ const Profile: React.FC = () => {
                             isLoading={isProfilePictureLoading}
                             imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         />
-                        <Text className="absolute bottom-4 left-6 bg-black/50 text-white rounded-lg text-sm px-2">
+                        <Text className="absolute bottom-4 left-[19px] bg-black/50 text-white rounded-md text-sm px-2">
                             {user?.pictureUrl ? 'Edit' : 'Add'} photo
                         </Text>
                     </TouchableOpacity>

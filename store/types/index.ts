@@ -65,7 +65,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
-    CongressId?: string;
+    CGWCId?: string;
     cgwcId?: string;
     limit?: number;
     page?: number;
@@ -463,7 +463,7 @@ export interface IService {
     serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
-    CongressId?: string;
+    CGWCId?: string;
     isCongress?: boolean;
     isGlobalService: boolean;
     __v: number;

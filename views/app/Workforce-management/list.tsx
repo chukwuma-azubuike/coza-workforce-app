@@ -63,7 +63,7 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                         onPress={handlePress}
                         accessibilityRole="button"
                     >
-                        <View className="p-2 py-3 flex-row w-full justify-between items-center gap-3">
+                        <View className="py-3 flex-row w-full justify-between items-center gap-3">
                             <View className="items-center gap-2 flex-row flex-1">
                                 <AvatarComponent alt="profile-pic" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
                                 <View className="flex-1">

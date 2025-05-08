@@ -1,5 +1,4 @@
 import React, { ReactNode } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import AvatarComponent from '@components/atoms/avatar';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -9,10 +8,9 @@ import { Linking, TouchableOpacity, View } from 'react-native';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { ScreenWidth } from '@rneui/base';
 import { router } from 'expo-router';
+import { Text } from '~/components/ui/text';
 
 const CongressTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
-    const { navigate } = useNavigation();
-
     const handleSupportPress = () => {
         Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
     };
@@ -23,7 +21,7 @@ const CongressTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
     const { isLightMode } = useAppColorMode();
 
     return (
-        <View style={{ width: ScreenWidth }} className="px-2 h-full z-20 items-center justify-center">
+        <View style={{ width: ScreenWidth }} className="px-4 h-full z-20 items-center justify-center flex-row gap-4">
             <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                 <AvatarComponent
                     badge
@@ -34,7 +32,7 @@ const CongressTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
                     imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
-            {title}
+            <Text className="flex-1">{title}</Text>
             <TouchableOpacity onPress={handleSupportPress} activeOpacity={0.6}>
                 <Icon
                     size={16}

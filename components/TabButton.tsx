@@ -1,6 +1,6 @@
 import { Ref, forwardRef } from 'react';
 
-import { Pressable, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { TabTriggerSlotProps } from 'expo-router/ui';
 import { Text } from './ui/text';
 import useAppColorMode from '~/hooks/theme/colorMode';
@@ -17,7 +17,12 @@ const TabButton = forwardRef(
         const { isLightMode } = useAppColorMode();
 
         return (
-            <Pressable ref={ref} {...props} className="gap-1 !flex-col items-center justify-between w-24">
+            <TouchableOpacity
+                ref={ref}
+                activeOpacity={0.6}
+                {...(props as any)}
+                className="gap-1 !flex-col items-center justify-between w-24"
+            >
                 <Icon
                     size={22}
                     name={iconName}
@@ -35,7 +40,7 @@ const TabButton = forwardRef(
                 >
                     {children}
                 </Text>
-            </Pressable>
+            </TouchableOpacity>
         );
     }
 );

@@ -37,20 +37,20 @@ const WorkforceManagement: React.FC = () => {
 
     const allButtons = [
         {
-            color: 'blue.400',
+            color: 'bg-blue-400',
             iconType: 'ionicon',
             iconName: 'person-outline',
             handleClick: gotoCreateWorker,
         },
         {
-            color: 'blue.600',
+            color: 'bg-blue-600',
             iconType: 'ionicon',
             iconName: 'people-outline',
             handleClick: gotoCreateDepartment,
         },
         {
-            color: 'blue.800',
             iconName: 'church',
+            color: 'bg-blue-800',
             iconType: 'material-community',
             handleClick: gotoCreateCampus,
         },

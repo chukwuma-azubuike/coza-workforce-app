@@ -115,12 +115,12 @@ const scoreMappingColumn: IFlatListColumn[] = [
         title: '',
         dataIndex: 'name',
         render: (elm: IScoreMapping & IAttendance, key) => (
-            <View key={`name-${key}`} className="gap-4">
-                <View key={`name-${key}`} className="items-center justify-start gap-6">
+            <View key={`name-${key}`} className="gap-4 flex-row w-full">
+                <View key={`name-${key}`} className="items-center justify-start gap-4 flex-row flex-1">
                     <AvatarComponent
                         alt="pic"
                         badge={!!elm.clockIn}
-                        className="h-8 w-8 mr-4"
+                        className="h-12 w-12"
                         imageUrl={elm?.user?.pictureUrl || elm?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
                     <View>
@@ -132,16 +132,18 @@ const scoreMappingColumn: IFlatListColumn[] = [
                         </Text>
                     </View>
                 </View>
-                <View key={`clockin-${key}`} className="w-20% flex-0">
-                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
-                </View>
-                <View key={`clockout-${key}`} className="w-20% flex-0">
-                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                    <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
-                </View>
-                <View key={`score-${key}`} className="w-10% flex-0 justify-center">
-                    <Text>{!!elm.score ? `${elm.score}` : `${0}`}</Text>
+                <View className="flex-row justify-between">
+                    <View key={`clockin-${key}`} className="flex-row items-center w-24 justify-center">
+                        <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                        <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                    </View>
+                    <View key={`clockout-${key}`} className="flex-row items-center w-24 justify-center">
+                        <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
+                        <Text>{elm.clockOut ? dayjs(elm.clockOut).format('h:mm A') : '--:--'}</Text>
+                    </View>
+                    <View key={`score-${key}`} className="flex-row items-center w-8 justify-center">
+                        <Text>{!!elm.score ? `${elm.score}` : `${0}`}</Text>
+                    </View>
                 </View>
             </View>
         ),

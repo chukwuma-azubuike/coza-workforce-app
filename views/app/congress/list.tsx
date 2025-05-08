@@ -1,21 +1,18 @@
-import { Text } from "~/components/ui/text";
-import { useIsFocused, useNavigation } from '@react-navigation/native';
-import dayjs from 'dayjs';
 import React, { memo } from 'react';
+import dayjs from 'dayjs';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-// import useFetchMoreData from '@hooks/fetch-more-data';
 import useScreenFocus from '@hooks/focus';
+import { Text } from '~/components/ui/text';
 import { ICongress, IUserStatus } from '@store/types';
-// import Utils from '@utils';
 import { useGetCongresssQuery } from '@store/services/congress';
 import assertCongressActive from '~/utils/assertCongressActive';
+import { router } from 'expo-router';
 
 const CongressListRow: React.FC<ICongress> = memo(congress => {
-    const navigation = useNavigation();
     const handlePress = () => {
-        navigation.navigate('Congress Details', { CongressId: congress._id } as unknown as never);
+        router.push({ pathname: '/congress/congress-details', params: { congressId: congress._id, name: congress.name } });
     };
 
     const status = React.useMemo(() => (assertCongressActive(congress) ? 'ACTIVE' : 'INACTIVE'), []) as IUserStatus;
@@ -29,16 +26,13 @@ const CongressListRow: React.FC<ICongress> = memo(congress => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <View p={2} flex={1} alignItems="center" justifyContent="space-between">
-                <View space={3} alignItems="center">
-                    <View justifyContent="space-between">
-                        <Text className="font-bold">{congress?.name}</Text>
-                        <Text fontSize="sm" color="gray.400">
-                            {`${dayjs(congress?.startDate).format('DD MMM, YYYY')} - ${dayjs(congress?.endDate).format(
-                                'DD MMM, YYYY'
-                            )}`}
-                        </Text>
-                    </View>
+            <View className="items-center justify-between gap-4 flex-row p-2 px-4 rounded-xl border border-border">
+                <View className="gap-2 flex-1">
+                    <Text className="font-bold">{congress?.name}</Text>
+                    <Text className="text-muted-foreground">
+                        {dayjs(congress?.startDate).format('DD MMM, YYYY')} -{' '}
+                        {dayjs(congress?.endDate).format('DD MMM, YYYY')}
+                    </Text>
                 </View>
                 <StatusTag>{status}</StatusTag>
             </View>
@@ -54,22 +48,7 @@ const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(({ updatedLi
         },
     ];
 
-    const isScreenFocused = useIsFocused();
-    const [page, setPage] = React.useState<number>(1);
-
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetCongresssQuery({});
-
-    // const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
-
-    // const fetchMoreData = () => {
-    //     if (!isFetching && !isLoading) {
-    //         if (data?.length) {
-    //             setPage(prev => prev + 1);
-    //         } else {
-    //             setPage(prev => prev - 1);
-    //         }
-    //     }
-    // };
+    const { data, isLoading, refetch, isFetching } = useGetCongresssQuery({});
 
     useScreenFocus({ onFocus: refetch });
 
@@ -78,8 +57,7 @@ const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(({ updatedLi
             data={data || []}
             columns={congressColumns}
             refreshing={isFetching}
-            emptyMessage="No Congress Created"
-            // fetchMoreData={fetchMoreData}
+            emptyMessage="No congress created"
             isLoading={isLoading || isFetching}
         />
     );

@@ -50,7 +50,7 @@ const IncidentReport: React.FC = () => {
         }
     }, [isSuccess, isError]);
 
-    const INITIAL_VALUES = { ...params, imageUrl: params.imageUrl || '' };
+    const INITIAL_VALUES = { ...params, imageUrl: params.imageUrl || '', details };
 
     return (
         <Formik<IIncidentReportPayload>
@@ -59,7 +59,7 @@ const IncidentReport: React.FC = () => {
             onSubmit={onSubmit}
             initialValues={INITIAL_VALUES}
         >
-            {({ handleChange, handleSubmit }) => (
+            {({ handleChange, handleSubmit, values }) => (
                 <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
                     <View className="pb-4">
                         <Text className="mb-2 text-muted-foreground text-center">
@@ -69,7 +69,7 @@ const IncidentReport: React.FC = () => {
                             <View>
                                 <Label className="mb-2">Details of Incident</Label>
                                 <TextAreaComponent
-                                    value={details}
+                                    defaultValue={details}
                                     isDisabled={!!details}
                                     placeholder="Enter details"
                                     onChangeText={handleChange('details')}
@@ -77,8 +77,8 @@ const IncidentReport: React.FC = () => {
                             </View>
                             <View>
                                 <Button
-                                    disabled={!!details}
                                     isLoading={isLoading}
+                                    disabled={!values.details}
                                     onPress={handleSubmit as (event: any) => void}
                                 >
                                     {`${!status ? 'Submit' : 'Update'}`}

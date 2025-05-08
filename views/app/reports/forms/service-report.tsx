@@ -6,7 +6,6 @@ import useModal from '@hooks/modal/useModal';
 import { IServiceReportPayload } from '@store/types';
 import { useCreateServiceReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
 import DateTimePicker  from '~/components/composite/date-time-picker';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
@@ -59,7 +58,7 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             setModalState({
                 defaultRender: true,
                 status: 'error',
-                message: error?.data?.message || 'Something went wrong!',
+                message: (error as any)?.data?.message || 'Something went wrong!',
             });
             reset();
         }
@@ -84,8 +83,8 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll>
-                    <View pb={10}>
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
+                    <View className="pb-4">
+                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center"  >
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
                         <View space={4} mt={4} className="px-4">

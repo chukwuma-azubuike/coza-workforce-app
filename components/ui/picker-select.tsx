@@ -12,14 +12,16 @@ interface PickerSelectComponentProps<T> extends Omit<PickerSelectProps, 'items'>
     value?: string;
     labelKey: keyof T;
     valueKey: keyof T;
+    customLabel?: (arg: T) => string;
     isLoading?: boolean;
 }
 
 function PickerSelect<T = any>({
-    items,
+    items = [],
     labelKey,
     valueKey,
     isLoading,
+    customLabel,
     onValueChange,
     value: inputValue,
     placeholder = 'Select',
@@ -34,7 +36,10 @@ function PickerSelect<T = any>({
     const options = useMemo(
         () =>
             items?.map(item => {
-                return { label: item[labelKey] as string, value: item[valueKey] };
+                return {
+                    label: customLabel ? customLabel(item) : (item[labelKey] as string),
+                    value: item[valueKey],
+                };
             }) || [],
         [items, value, valueKey]
     );
@@ -67,10 +72,10 @@ function PickerSelect<T = any>({
                     backgroundColor: Colors.dark.background,
                 },
                 done: {
-                    color: THEME_CONFIG.primary,
+                    color: THEME_CONFIG.black,
                 },
                 doneDark: {
-                    color: THEME_CONFIG.primary,
+                    color: THEME_CONFIG.white,
                 },
                 chevron: {
                     display: 'none',
@@ -85,16 +90,20 @@ function PickerSelect<T = any>({
                 {isLoading ? (
                     <ActivityIndicator />
                 ) : (
-                    <Text className="!text-lg">
-                        {(!!selectedItem ? (selectedItem || {})[labelKey as string] : placeholder) as string}
+                    <Text className="!text-lg flex-1">
+                        {customLabel && selectedItem
+                            ? customLabel((selectedItem || {}) as T)
+                            : ((!!selectedItem ? (selectedItem || {})[labelKey as string] : placeholder) as string)}
                     </Text>
                 )}
-                <ChevronDown
-                    size={16}
-                    color={THEME_CONFIG.lightGray}
-                    aria-hidden={true}
-                    className="text-foreground opacity-50"
-                />
+                <View className="pl-1">
+                    <ChevronDown
+                        size={16}
+                        color={THEME_CONFIG.lightGray}
+                        aria-hidden={true}
+                        className="text-foreground opacity-50"
+                    />
+                </View>
             </View>
         </RNPickerSelect>
     );
