@@ -110,6 +110,7 @@ export const permissionsServiceSlice = createApi({
 // Use exported hook in relevant components
 export const {
     useGetPermissionsQuery,
+    useLazyGetPermissionsQuery,
     useGetPermissionByIdQuery,
     useRequestPermissionMutation,
     useApprovePermissionMutation,

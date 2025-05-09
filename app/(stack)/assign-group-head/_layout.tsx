@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stack } from 'expo-router';
+import { NavButton } from '~/components/NavButton';
 
 const AssignGroupHeadScreens: React.FC = () => {
     return (
@@ -8,7 +9,7 @@ const AssignGroupHeadScreens: React.FC = () => {
                 headerBackButtonDisplayMode: 'minimal',
             }}
         >
-            <Stack.Screen name="(stack)/assign-group-head/index" options={{ title: 'Assign group head' }} />
+            <Stack.Screen name="index" options={{ title: 'Assign group head', headerLeft: () => <NavButton /> }} />
         </Stack>
     );
 };
