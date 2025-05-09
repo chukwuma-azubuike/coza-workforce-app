@@ -6,6 +6,7 @@ import { cn } from '~/lib/utils';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { router } from 'expo-router';
+import { TouchableOpacity } from 'react-native';
 
 interface NavButtonProps {
     onBack?: () => void;
@@ -26,9 +27,9 @@ const NavButton: React.FC<NavButtonProps> = ({ onBack, className }) => {
     };
 
     return (
-        <Button onPress={handleGoBack} className={cn('rounded-full bg-accent-light h-12 w-12', className)}>
+        <TouchableOpacity onPress={handleGoBack} className={cn('-left-5', className)}>
             <ChevronLeft color={isDarkColorScheme ? THEME_CONFIG.white : THEME_CONFIG.black} size={32} />
-        </Button>
+        </TouchableOpacity>
     );
 };
 

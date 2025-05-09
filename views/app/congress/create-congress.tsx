@@ -1,22 +1,20 @@
-import { View } from "react-native";
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Icon } from '@rneui/themed';
+import { View } from 'react-native';
+import ViewWrapper from '~/components/layout/viewWrapper';
 import { Formik, FormikConfig } from 'formik';
 import React from 'react';
-import ButtonComponent from '@components/atoms/button';
-import ViewWrapper from '@components/layout/viewWrapper';
-import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { ICongressPayload } from '@store/types';
 import { CreateCongressSchema } from '@utils/schemas';
 import dayjs from 'dayjs';
 import { useCreateCongressMutation } from '@store/services/congress';
-import { ScreenWidth } from '@rneui/base';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import FormErrorMessage from '~/components/ui/error-message';
+import DateTimePicker from '~/components/composite/date-time-picker';
+import { Button } from '~/components/ui/button';
+import { router } from 'expo-router';
 
-const CreateCongress: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
-    const { navigate } = navigation;
-
+const CreateCongress: React.FC = () => {
     const { setModalState } = useModal();
 
     const [createCongress, { isLoading, data, reset }] = useCreateCongressMutation();
@@ -38,7 +36,7 @@ const CreateCongress: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
                 status: 'success',
             });
             reset();
-            navigate('Congress', data);
+            router.push({ pathname: '/congress', params: data as any });
             resetForm({ values: INITIAL_VALUES });
         }
 
@@ -58,102 +56,69 @@ const CreateCongress: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navig
 
     return (
         <ViewWrapper scroll noPadding>
-            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
-                <View alignItems="center" w="100%">
-                    <Formik<ICongressPayload>
-                        validateOnChange
-                        onSubmit={onSubmit}
-                        initialValues={INITIAL_VALUES}
-                        validationSchema={CreateCongressSchema}
-                    >
-                        {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => (
-                            <View w="100%" space={4}>
-                                <FormControl isRequired isInvalid={!!errors?.name && touched.name}>
-                                    <FormControl.Label>Name</FormControl.Label>
-                                    <InputComponent
-                                        value={values.name}
-                                        placeholder="Service Name"
-                                        onChangeText={handleChange('name')}
-                                    />
-                                    <FormControl.ErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.name}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <View justifyContent="space-between">
-                                    <FormControl
-                                        isRequired
-                                        w={ScreenWidth / 2}
-                                        isInvalid={!!errors.startDate && touched.startDate}
-                                    >
-                                        <DateTimePicker                                            label="Start date"
-                                            fieldName="startDate"
-                                            onSelectDate={setFieldValue}
-                                        />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.startDate}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl
-                                        isRequired
-                                        w={ScreenWidth / 2}
-                                        isInvalid={!!errors.endDate && touched.endDate}
-                                    >
-                                        <DateTimePicker                                            label="End date"
-                                            fieldName="endDate"
-                                            onSelectDate={setFieldValue}
-                                        />
-                                        <FormControl.ErrorMessage
-                                            fontSize="2xl"
-                                            mt={3}
-                                            leftIcon={
-                                                <Icon
-                                                    size={16}
-                                                    name="warning"
-                                                    type="antdesign"
-                                                    color={THEME_CONFIG.error}
-                                                />
-                                            }
-                                        >
-                                            {errors?.endDate}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                </View>
-
-                                <FormControl>
-                                    <ButtonComponent
-                                        mt={4}
-                                        isLoading={isLoading}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
-                                        Create Congress 🚀
-                                    </ButtonComponent>
-                                </FormControl>
+            <View className="px-4 gap-8 items-start w-full py-6">
+                <Formik<ICongressPayload>
+                    validateOnChange
+                    onSubmit={onSubmit}
+                    initialValues={INITIAL_VALUES}
+                    validationSchema={CreateCongressSchema}
+                >
+                    {({ errors, values, handleChange, handleSubmit, touched, isValid, dirty }) => (
+                        <View className="gap-6">
+                            <View className="gap-2">
+                                <Label>Name</Label>
+                                <Input
+                                    value={values.name}
+                                    placeholder="Service Name"
+                                    onChangeText={handleChange('name')}
+                                />
+                                {!!errors?.name && touched.name && <FormErrorMessage>{errors?.name}</FormErrorMessage>}
                             </View>
-                        )}
-                    </Formik>
-                </View>
+                            <View className="justify-between flex-row gap-4 w-full">
+                                <View className="flex-1">
+                                    <DateTimePicker
+                                        mode="date"
+                                        label="Start date"
+                                        className="flex-1"
+                                        error={errors.startDate}
+                                        touched={touched.startDate}
+                                        placeholder="Enter start date"
+                                        onConfirm={handleChange('startDate') as unknown as (value: Date) => void}
+                                    />
+                                    {!!errors.startDate && touched.startDate && (
+                                        <FormErrorMessage>{errors?.startDate}</FormErrorMessage>
+                                    )}
+                                </View>
+                                <View className="flex-1">
+                                    <DateTimePicker
+                                        mode="date"
+                                        label="End date"
+                                        className="flex-1"
+                                        error={errors.endDate}
+                                        touched={touched.endDate}
+                                        placeholder="Enter end date"
+                                        minimumDate={dayjs(values?.startDate || undefined).toDate()}
+                                        onConfirm={handleChange('endDate') as unknown as (value: Date) => void}
+                                    />
+                                    {!!errors.endDate && touched.endDate && (
+                                        <FormErrorMessage>{errors?.endDate}</FormErrorMessage>
+                                    )}
+                                </View>
+                            </View>
+
+                            <View>
+                                <Button
+                                    className="mt-4"
+                                    isLoading={isLoading}
+                                    disabled={!dirty || !isValid}
+                                    onPress={handleSubmit as (event: any) => void}
+                                >
+                                    Create Congress 🚀
+                                </Button>
+                            </View>
+                        </View>
+                    )}
+                </Formik>
             </View>
         </ViewWrapper>
     );
