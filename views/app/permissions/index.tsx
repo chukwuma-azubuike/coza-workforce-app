@@ -99,7 +99,7 @@ const Permissions: React.FC = () => {
 
     return (
         <SafeAreaView className="flex-1">
-            <View className="flex-1">
+            <View className="flex-1 pt-4">
                 <TabComponent
                     onIndexChange={setIndex}
                     renderScene={renderScene}

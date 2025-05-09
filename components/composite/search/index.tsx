@@ -64,7 +64,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
         return Utils.sortStringAscending(searchText === '' ? data : searchResults, 'firstName');
     }, [data, searchResults, searchText]);
 
-    const { textColor, backgroundColor } = useAppColorMode();
+    const { backgroundColor } = useAppColorMode();
 
     return (
         <>
@@ -74,24 +74,13 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 header={
                     <Input
                         autoFocus
-                        // ref={inputRef} TODO: TBD
-
                         clearButtonMode="always"
                         leftIcon={{
                             name: 'search1',
                             type: 'antdesign',
                         }}
-                        className="flex-1"
+                        className="w-full"
                         onChangeText={handleTextChange}
-                        style={{
-                            flex: 1,
-                            height: 40,
-                            padding: 0,
-                            fontSize: 18,
-                            paddingTop: 0,
-                            color: textColor,
-                            paddingVertical: 0,
-                        }}
                         placeholder="Search"
                     />
                 }
@@ -100,14 +89,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                     data={sortedSearchResults}
                     ListEmptyComponent={
                         <View style={{ padding: 16 }}>
-                            <Text
-                                numberOfLines={1}
-                                lineBreakMode="tail"
-                                ellipsizeMode="tail"
-                                className="text-18 w-100% text-center"
-                            >
-                                No data found
-                            </Text>
+                            <Text className="text-18 w-100% text-center text-muted-foreground">No data found</Text>
                         </View>
                     }
                     keyExtractor={item => item?._id}
@@ -137,38 +119,21 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                                     borderBottomColor: THEME_CONFIG.transparentGray,
                                 }}
                             >
-                                <View>
-                                    <View className="gap-12">
+                                <View className="flex-row justify-between">
+                                    <View className="gap-6 flex-row items-center">
                                         <AvatarComponent
                                             alt="avatar"
-                                            className="w-8 h-8"
+                                            className="w-20 h-20"
                                             imageUrl={elm?.pictureUrl || elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
                                         />
                                         <View>
-                                            <Text
-                                                numberOfLines={1}
-                                                lineBreakMode="tail"
-                                                ellipsizeMode="tail"
-                                                className="text-18 font-bold"
-                                            >
+                                            <Text className="text-18 font-bold text-foreground">
                                                 {`${Utils.capitalizeFirstChar(
                                                     elm?.firstName || elm?.user?.firstName
                                                 )} ${Utils.capitalizeFirstChar(elm?.lastName || elm?.user?.lastName)}`}
                                             </Text>
-                                            <Text
-                                                numberOfLines={1}
-                                                lineBreakMode="tail"
-                                                ellipsizeMode="tail"
-                                                className="text-16"
-                                            >
-                                                {elm?.departmentName}
-                                            </Text>
-                                            <Text
-                                                numberOfLines={1}
-                                                lineBreakMode="tail"
-                                                ellipsizeMode="tail"
-                                                className="text-14"
-                                            >
+                                            <Text className="text-16 text-muted-foreground">{elm?.departmentName}</Text>
+                                            <Text className="text-14 text-muted-foreground">
                                                 {elm?.categoryName || elm?.email || elm?.user?.email}
                                             </Text>
                                         </View>

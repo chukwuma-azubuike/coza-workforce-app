@@ -111,21 +111,21 @@ export const CongressReportSummary: React.FC<{
                 {attendanceReportLoading || leadersReportLoading ? (
                     <Loading />
                 ) : (
-                    <View className="flex-row gap-x-10 flex-wrap items-center">
+                    <View className="flex-row gap-x-10 flex-wrap items-center justify-center">
                         <If condition={isCampusPastor || isSuperAdmin}>
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
                                 onPress={goToAttendance}
-                                style={{ width: '50%' }}
                                 accessibilityRole="button"
+                                className="flex-1"
                             >
-                                <View className="w-full">
-                                    <View className="items-baseline flex-row">
-                                        <Text className="text-primary text-3xl font-semibold">
+                                <View>
+                                    <View className="items-baseline flex-row justify-center">
+                                        <Text className="text-primary !text-5xl font-semibold">
                                             <CountUp isCounting duration={2} end={leadersAttendance?.attendance || 0} />
                                         </Text>
-                                        <Text className="text-muted-foreground font-semibold">
+                                        <Text className="text-muted-foreground font-semibold !text-2xl text-center">
                                             /
                                             <CountUp
                                                 isCounting
@@ -134,14 +134,14 @@ export const CongressReportSummary: React.FC<{
                                             />
                                         </Text>
                                     </View>
-                                    <View className="items-center flex-row">
+                                    <View className="items-center flex-row gap-2">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
                                             type="ionicon"
                                             size={18}
                                         />
-                                        <Text className="text-muted-foreground">Leaders</Text>
+                                        <Text className="text-muted-foreground font-semibold">Leaders</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>
@@ -150,16 +150,16 @@ export const CongressReportSummary: React.FC<{
                             <TouchableOpacity
                                 delayPressIn={0}
                                 activeOpacity={0.6}
-                                style={{ width: '50%' }}
                                 onPress={goToAttendance}
                                 accessibilityRole="button"
+                                className="flex-1"
                             >
                                 <View>
-                                    <View className="flex-row items-baseline">
-                                        <Text className="text-primary text-3xl font-semibold">
+                                    <View className="items-baseline flex-row justify-center">
+                                        <Text className="text-primary !text-5xl font-semibold">
                                             <CountUp isCounting duration={2} end={workersAttendance?.attendance || 0} />
                                         </Text>
-                                        <Text className="text-muted-foreground font-semibold">
+                                        <Text className="text-muted-foreground font-semibold !text-2xl text-center">
                                             /
                                             <CountUp
                                                 isCounting
@@ -168,14 +168,14 @@ export const CongressReportSummary: React.FC<{
                                             />
                                         </Text>
                                     </View>
-                                    <View className="flex-row items-center">
+                                    <View className="items-center flex-row gap-2">
                                         <Icon
                                             color={THEME_CONFIG.primaryLight}
                                             name="people-outline"
                                             type="ionicon"
                                             size={18}
                                         />
-                                        <Text className="ml-1 text-muted-foreground">Workers</Text>
+                                        <Text className="text-muted-foreground font-semibold">Workers</Text>
                                     </View>
                                 </View>
                             </TouchableOpacity>

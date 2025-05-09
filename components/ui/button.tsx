@@ -1,6 +1,6 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
+import { Pressable, TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 import { Text, TextClassContext } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 import Loading from '../atoms/loading';
@@ -72,35 +72,31 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
             <TextClassContext.Provider
                 value={cn(props.disabled && 'web:pointer-events-none', buttonTextVariants({ variant, size }))}
             >
-                <Pressable
+                <TouchableOpacity
                     className={cn(
                         props.disabled && 'opacity-50 web:pointer-events-none',
                         buttonVariants({ variant, size, className })
                     )}
                     ref={ref}
                     role="button"
-                    disabled={isLoading || props.disabled}
-                    children={
-                        isLoading ? (
-                            <View className="flex flex-row items-center justify-center gap-2">
-                                <Loading />
-                                <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>
-                                    {loadingText}
-                                </Text>
-                            </View>
-                        ) : typeof children === 'string' ? (
-                            <View className="flex-1 w-full items-center flex-row gap-4 justify-center">
-                                {startIcon || icon}
-                                <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>
-                                    {children}
-                                </Text>
-                            </View>
-                        ) : (
-                            children
-                        )
-                    }
-                    {...props}
-                />
+                    activeOpacity={0.6}
+                    disabled={(isLoading || props.disabled) as any}
+                    {...(props as TouchableOpacityProps)}
+                >
+                    {isLoading ? (
+                        <View className="flex flex-row items-center justify-center gap-2">
+                            <Loading />
+                            <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>{loadingText}</Text>
+                        </View>
+                    ) : typeof children === 'string' ? (
+                        <View className="flex-1 w-full items-center flex-row gap-4 justify-center">
+                            {startIcon || icon}
+                            <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>{children}</Text>
+                        </View>
+                    ) : (
+                        (children as any)
+                    )}
+                </TouchableOpacity>
             </TextClassContext.Provider>
         );
     }
