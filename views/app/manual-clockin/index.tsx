@@ -1,12 +1,8 @@
-import { View } from "react-native";
-import { Icon } from '@rneui/themed';
+import { View } from 'react-native';
 import { Formik } from 'formik';
-import { FormControl } from 'native-base';
-import React from 'react';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import React, { useEffect } from 'react';
 import ErrorBoundary from '@components/composite/error-boundary';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import useRole from '@hooks/role';
@@ -21,6 +17,9 @@ import ThirdPartyClockButton from './clock-button';
 import DynamicSearch from '@components/composite/search';
 import Utils from '@utils/index';
 import UserListItem from '@components/composite/user-list-item';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Label } from '~/components/ui/label';
+import PickerSelect from '~/components/ui/picker-select';
 
 export interface IThirdPartyUserDetails {
     userId: string;
@@ -91,7 +90,7 @@ const ManualClockin: React.FC = () => {
         isFetching,
     } = useGetLatestServiceQuery(campus._id);
 
-    const { isInRange, refresh, deviceCoordinates } = useGeoLocation({
+    const { isInRange, refresh, deviceCoordinates, verifyRangeBeforeAction } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
     });
 
@@ -127,7 +126,7 @@ const ManualClockin: React.FC = () => {
                 loading={isLoadingUsers || isFetchingUsers}
                 searchFields={['firstName', 'lastName', 'departmentName', 'email']}
             />
-            <ViewWrapper scroll onRefresh={handleRefresh} refreshing={isFetching}>
+            <ViewWrapper scroll onRefresh={handleRefresh} refreshing={isFetching} className="pt-4">
                 <Formik<IClockInPayload>
                     enableReinitialize
                     onSubmit={handleSubmit}
@@ -163,119 +162,63 @@ const ManualClockin: React.FC = () => {
                         };
 
                         return (
-                            <View space="sm" alignItems="flex-start" w="100%" className="px-2">
-                                <FormControl isRequired>
-                                    <FormControl.Label>Campus</FormControl.Label>
-                                    <SelectComponent
-                                        valueKey="_id"
-                                        items={sortedCampuses}
-                                        displayKey="campusName"
-                                        placeholder="Choose campus"
-                                        onValueChange={onCampusChange as any}
-                                        selectedValue={values.campusId || campus?._id}
-                                    >
-                                        {sortedCampuses?.map((campus, index) => (
-                                            <SelectItemComponent
-                                                value={campus._id}
-                                                key={`campus-${index}`}
-                                                label={campus.campusName}
-                                                isLoading={campusLoading || campusIsFetching}
-                                            />
-                                        ))}
-                                    </SelectComponent>
-                                    <FormControl.ErrorMessage
-                                        mt={3}
-                                        fontSize="2xl"
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.campusId}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <FormControl.Label>Department</FormControl.Label>
-                                    <SelectComponent
-                                        valueKey="_id"
-                                        items={sortedDepartments}
-                                        displayKey="departmentName"
-                                        placeholder="Choose department"
-                                        selectedValue={values.departmentId}
-                                        onValueChange={onDepartmentChange as any}
-                                    >
-                                        {sortedDepartments?.map((department, index) => (
-                                            <SelectItemComponent
-                                                value={department._id}
-                                                key={`department-${index}`}
-                                                label={department.departmentName}
-                                                isLoading={departmentsLoading || departmentIsFetching}
-                                            />
-                                        ))}
-                                    </SelectComponent>
-                                    <FormControl.ErrorMessage
-                                        mt={3}
-                                        fontSize="2xl"
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.departmentId}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired>
-                                    <FormControl.Label>Users</FormControl.Label>
-                                    <SelectComponent
-                                        valueKey="_id"
-                                        items={sortedUsers}
-                                        labelSeparator=" "
-                                        placeholder="Choose user"
-                                        onValueChange={onUserChange as any}
-                                        displayKey={['firstName', 'lastName']}
-                                        selectedValue={thirdPartyUser?._id as unknown as string}
-                                    >
-                                        {sortedUsers?.map((user, index) => (
-                                            <SelectItemComponent
-                                                key={`department-${index}`}
-                                                isLoading={usersLoading || usersIsFetching}
-                                                label={`${user.firstName} ${user.lastName}`}
-                                                value={(user._id || user.userId) as unknown as string}
-                                            />
-                                        ))}
-                                    </SelectComponent>
-                                    <FormControl.ErrorMessage
-                                        mt={3}
-                                        fontSize="2xl"
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.userId}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                {!!thirdPartyUser && <UserListItem {...thirdPartyUser} />}
-                                <View w="full" mt={10} height={280}>
+                            <View className="px-2 w-full gap-8">
+                                <View className="gap-3 w-full">
+                                    <View className="w-full gap-2">
+                                        <Label>Campus</Label>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="campusName"
+                                            placeholder="Choose campus"
+                                            items={sortedCampuses || []}
+                                            onValueChange={onCampusChange}
+                                            value={values.campusId || campus?._id}
+                                            isLoading={campusLoading || campusIsFetching}
+                                        />
+                                        {errors?.campusId && <FormErrorMessage>{errors?.campusId}</FormErrorMessage>}
+                                    </View>
+                                    <View className="w-full gap-2">
+                                        <Label>Department</Label>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="departmentName"
+                                            placeholder="Choose department"
+                                            items={sortedDepartments || []}
+                                            onValueChange={onDepartmentChange}
+                                            value={values.departmentId}
+                                            isLoading={departmentsLoading || departmentIsFetching}
+                                        />
+                                        {errors?.departmentId && (
+                                            <FormErrorMessage>{errors?.departmentId}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="w-full gap-2">
+                                        <Label>Users</Label>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="firstName"
+                                            placeholder="Choose user"
+                                            items={sortedUsers || []}
+                                            onValueChange={value => {
+                                                value && handleChange('userId')(value);
+                                                onUserChange(value);
+                                            }}
+                                            isLoading={usersLoading || usersIsFetching}
+                                            value={thirdPartyUser?._id as unknown as string}
+                                            customLabel={user => `${user.firstName} ${user.lastName}`}
+                                        />
+                                        {errors?.userId && <FormErrorMessage>{errors?.userId}</FormErrorMessage>}
+                                    </View>
+                                    {!!thirdPartyUser && <UserListItem {...thirdPartyUser} />}
+                                </View>
+                                <View className="flex-1 w-full">
                                     <ThirdPartyClockButton
-                                        isInRangeProp={isInRange}
-                                        campusId={campusId as string}
+                                        campusId={campusId}
+                                        isInRange={isInRange}
+                                        refreshLocation={refresh}
+                                        user={thirdPartyUser as IUser}
                                         deviceCoordinates={deviceCoordinates}
-                                        departmentId={departmentId as string}
-                                        userId={thirdPartyUser?._id as string}
-                                        roleId={thirdPartyUser?.roleId as string}
+                                        verifyRangeBeforeAction={verifyRangeBeforeAction}
                                     />
                                 </View>
                             </View>
