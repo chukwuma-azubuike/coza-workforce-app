@@ -1,7 +1,6 @@
 import { View } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Heading } from 'native-base';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -14,10 +13,13 @@ import useRole from '@hooks/role';
 import { useGetGlobalWorkForceSummaryQuery } from '@store/services/account';
 import Utils from '@utils/index';
 import useScreenFocus from '@hooks/focus';
+import { Text } from '~/components/ui/text';
+import { router } from 'expo-router';
+import { cn } from '~/lib/utils';
 
-const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation: { navigate } }) => {
+const GlobalWorkforceSummary: React.FC = () => {
     const handlePress = (elm: any) => {
-        navigate('Campus workforce', elm);
+        router.push({ pathname: '/workforce-summary/campus-workforce', params: elm });
     };
 
     const { isQcHOD, isSuperAdmin, isGlobalPastor, isInternshipHOD, isCampusPastor } = useRole();
@@ -27,32 +29,32 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     const summaryList = [
         {
             title: 'Total',
-            color: 'purple.700',
+            color: 'text-primary',
             value: data?.totalUsers || 0,
         },
         {
             title: 'Active',
-            color: 'green.700',
+            color: 'text-green-700',
             value: data?.activeUser || 0,
         },
         {
             title: 'Inactive',
-            color: 'red.700',
+            color: 'text-red-700',
             value: data?.inactiveUser || 0,
         },
         {
             title: 'Dormant',
-            color: 'orange.400',
+            color: 'text-orange-400',
             value: data?.dormantUsers || 0,
         },
         {
             title: 'Blacklisted',
-            color: 'orange.700',
+            color: 'text-orange-700',
             value: data?.blacklistedUsers || 0,
         },
         {
             title: 'Campuses',
-            color: 'green.700',
+            color: 'text-green-700',
             value: data?.campusCount || 0,
         },
     ];
@@ -72,15 +74,15 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
     );
 
     const gotoCreateWorker = () => {
-        navigate('Create User');
+        router.push('/workforce-summary/create-user');
     };
 
     const gotoCreateCampus = () => {
-        navigate('Create Campus');
+        router.push('/workforce-summary/create-campus');
     };
 
     const gotoCreateDepartment = () => {
-        navigate('Create Department');
+        router.push('/workforce-summary/create-department');
     };
 
     const allButtons = [
@@ -116,74 +118,42 @@ const GlobalWorkforceSummary: React.FC<NativeStackScreenProps<ParamListBase>> = 
         return [allButtons[0]];
     }, []);
 
-    useCustomBackNavigation({ targetRoute: 'More' });
+    useCustomBackNavigation({ targetRoute: '/more' });
     useScreenFocus({
         onFocus: globalSummaryRefetch,
     });
 
     return (
         <ErrorBoundary>
-            <ViewWrapper scroll>
+            <ViewWrapper scroll className="py-4">
                 {isLoading || isFetching ? (
                     <FlatListSkeleton count={1} />
                 ) : (
-                    <View
-                        my={2}
-                        mx={2}
-                        padding={4}
-                        flexWrap="wrap"
-                        borderWidth={1}
-                        borderRadius={8}
-                        flexDirection="row"
-                        alignItems="center"
-                        justifyItems="center"
-                        justifyContent="space-evenly"
-                        _dark={{ borderColor: 'gray.600' }}
-                        _light={{ borderColor: 'gray.200' }}
-                    >
+                    <View className="mx-1 p-2 flex-row flex-wrap gap-4 border rounded-xl items-center justify-evenly border-border">
                         {summaryList.map((item, index) => (
-                            <View
-                                key={index}
-                                flexDirection="column"
-                                alignItems="center"
-                                flexWrap="wrap"
-                                justifyItems="center"
-                                minWidth="20%"
-                                my={2}
-                            >
-                                <Heading
-                                    size="xs"
-                                    fontWeight="400"
-                                    _dark={{ color: item.color }}
-                                    _light={{ color: item.color }}
-                                >
-                                    {item.title}
-                                </Heading>
-                                <Heading size="xl" _dark={{ color: item.color }} _light={{ color: item.color }}>
-                                    {item.value || 0}
-                                </Heading>
+                            <View key={index} className="flex-col items-center flex-wrap justify-center my-1">
+                                <Text className="">{item.title}</Text>
+                                <Text className={cn('text-4xl font-semibold', item.color)}>{item.value || 0}</Text>
                             </View>
                         ))}
                     </View>
                 )}
 
-                <View>
-                    <View mb={6} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
-                        {isLoading || isFetching ? (
-                            <FlatListSkeleton count={6} />
-                        ) : (
-                            <>
-                                {campuslist?.map((item, index) => (
-                                    <SmallCardComponent
-                                        onPress={() => handlePress(item)}
-                                        key={index}
-                                        label={item.title}
-                                        value={item.value}
-                                    />
-                                ))}
-                            </>
-                        )}
-                    </View>
+                <View className="my-4 flex-row flex-wrap flex-1 gap-4">
+                    {isLoading || isFetching ? (
+                        <FlatListSkeleton count={6} />
+                    ) : (
+                        campuslist?.map((item, index) => (
+                            <View className="flex-auto flex-grow">
+                                <SmallCardComponent
+                                    onPress={() => handlePress(item)}
+                                    key={index}
+                                    label={item.title}
+                                    value={item.value}
+                                />
+                            </View>
+                        ))
+                    )}
                 </View>
             </ViewWrapper>
             <If condition={isCampusPastor || isQcHOD || isGlobalPastor || isSuperAdmin}>
