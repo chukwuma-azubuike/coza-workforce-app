@@ -17,7 +17,6 @@ import { useGetCampusesQuery } from '@store/services/campus';
 import useScreenFocus from '@hooks/focus';
 import DynamicSearch from '@components/composite/search';
 import UserListItem from '@components/composite/user-list-item';
-import RadioButton from '@components/composite/radio-button';
 import { Label } from '~/components/ui/label';
 import RadioButtonGroup from '@components/composite/radio-button';
 import FormErrorMessage from '~/components/ui/error-message';
@@ -209,18 +208,18 @@ We love & celebrate you!` as any,
     const ticketSummaryTemplates = [
         {
             id: '1',
-            label: 'Verbose',
-            value: TICKET_TEMPLATE.verbose as string,
+            value: 'Verbose',
+            content: TICKET_TEMPLATE.verbose as string,
         },
         {
             id: '2',
-            label: 'Minimal',
-            value: TICKET_TEMPLATE.minimal as string,
+            value: 'Minimal',
+            content: TICKET_TEMPLATE.minimal as string,
         },
         {
             id: '3',
-            label: 'Blank',
-            value: '',
+            value: 'Blank',
+            content: '',
         },
     ];
 
@@ -236,7 +235,7 @@ We love & celebrate you!` as any,
                 />
             </If>
             <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20 }}>
-                <View className="mb-20 px-12 gap-20">
+                <View className="mb-4 px-4 gap-8 w-full">
                     <Formik<ICreateTicketPayload>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -318,18 +317,16 @@ We love & celebrate you!` as any,
                             };
 
                             return (
-                                <View className="gap-10">
+                                <View className="gap-4 py-4">
                                     <View className="justify-between">
                                         <Label>Ticket Type</Label>
-                                        <View className="flex-1 justify-center items-center p-6">
-                                            <RadioButtonGroup
-                                                className="gap-3"
-                                                defaultSelected="1"
-                                                value={values?.ticketType}
-                                                onValueChange={handleTicketType}
-                                                radioButtons={ticketTypes}
-                                            />
-                                        </View>
+                                        <RadioButtonGroup
+                                            className="gap-3 flex-row"
+                                            defaultSelected="1"
+                                            value={values?.ticketType}
+                                            onValueChange={handleTicketType}
+                                            radioButtons={ticketTypes}
+                                        />
                                         {errors?.ticketType && (
                                             <FormErrorMessage>{errors?.ticketType}</FormErrorMessage>
                                         )}
@@ -405,10 +402,17 @@ We love & celebrate you!` as any,
                                     </View>
                                     <View>
                                         <Label>Description Template</Label>
-                                        <RadioButton
+                                        {/* <RadioButton
                                             defaultSelected="1"
                                             radioButtons={ticketSummaryTemplates}
                                             onChange={handleChange('ticketSummary') as any}
+                                        /> */}
+                                        <RadioButtonGroup
+                                            defaultSelected="1"
+                                            // value={values.}
+                                            className="gap-3 w-full items-start px-0 flex-row"
+                                            radioButtons={ticketSummaryTemplates}
+                                            onValueChange={handleChange('ticketSummary') as any}
                                         />
                                     </View>
                                     <View>
