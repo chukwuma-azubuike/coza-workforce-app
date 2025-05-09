@@ -23,7 +23,7 @@ const Loading: React.FC<ILoadingProps> = ({ bootUp, spinnerProps, cover, ...prop
                         <Image alt="startuplogo" source={isLightColorScheme ? logoBlack : logoWhite} />
                     </View>
                 ) : (
-                    <ActivityIndicator {...spinnerProps} className={cn(cover && 'mx-auto')} />
+                    <ActivityIndicator {...spinnerProps} className={cn('text-white', cover && 'mx-auto')} />
                 )}
             </View>
         </View>

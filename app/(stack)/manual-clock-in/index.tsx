@@ -1,7 +1,8 @@
 import React from 'react';
+import ManualClockin from '~/views/app/manual-clockin';
 
 const ManualclockinScreen: React.FC = () => {
-    return <></>;
+    return <ManualClockin />;
 };
 
 export default ManualclockinScreen;
