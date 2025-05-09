@@ -122,19 +122,17 @@ export const SmallCardComponent: React.FC<IStatCardComponentProps> = React.memo(
     return (
         <>
             {isLoading ? (
-                <FlatListSkeleton count={1} />
+                <FlatListSkeleton count={6} />
             ) : (
-                <View className=" items-center justify-center my-2 w-1/2">
-                    <View className="gap-2 w-full dark:bg-gray-900 rounded-sm flex-1 justify-center">
-                        <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
-                            <View className="gap-1 items-center justify-center p-3">
-                                <Text className="font-semibold text-center">{props.label}</Text>
-                                <Text className="font-bold text-4xl">
-                                    <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
-                                </Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
+                <View className="w-full items-center justify-center px-4 gap-2 bg-muted-background rounded-xl border border-border">
+                    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
+                        <View className="gap-1 items-center justify-center p-3">
+                            <Text className="font-semibold text-center">{props.label}</Text>
+                            <Text className="font-bold text-4xl">
+                                <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
             )}
         </>

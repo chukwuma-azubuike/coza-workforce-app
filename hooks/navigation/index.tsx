@@ -7,6 +7,7 @@ import { NavigationBackButton } from '@components/atoms/button';
 import { router } from 'expo-router';
 import { Href } from 'expo-router';
 import ScreenHeader from '~/components/ScreenHeader';
+import { NavButton } from '~/components/NavButton';
 
 const usePreventGoBack = () => {
     const navigation = useNavigation().addListener;
@@ -27,7 +28,7 @@ const useCustomBackNavigation = ({ targetRoute, params }: { targetRoute: Href; p
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            header: (props: any) => <ScreenHeader onBack={handleGoBack} name={props.route.name} />,
+            headerLeft: () => <NavButton onBack={handleGoBack} />,
         });
     }, [navigation, params, targetRoute]);
 };
