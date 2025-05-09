@@ -176,7 +176,7 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
     return (
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
-                <View className="flex-0 mb-6 items-baseline flex-row gap-6">
+                <View className="flex-0 items-baseline flex-row gap-6">
                     <View className="flex-1">
                         <PickerSelect
                             valueKey="_id"
@@ -310,34 +310,21 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
 
     return (
         <ErrorBoundary>
-            <View className="flex-0 mb-6 px-8 items-baseline gap-4">
-                <SelectComponent
-                    valueKey="_id"
-                    displayKey="name"
-                    items={sessions || []}
-                    style={{ width: 200 }}
-                    selectedValue={serviceId}
-                    placeholder="Select Session"
-                    onValueChange={setService as any}
-                >
-                    {sessions?.map((session, index) => (
-                        <SelectItemComponent
-                            value={session._id}
-                            key={`session-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'baseline',
-                        justifyContent: 'space-between',
-                    }}
-                >
+            <View className="flex-0 items-baseline flex-row gap-6">
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        labelKey="name"
+                        value={serviceId}
+                        items={sessions || []}
+                        isLoading={serviceIsLoading}
+                        placeholder="Select Session"
+                        onValueChange={setService}
+                    />
+                </View>
+                <View className="flex-row items-baseline justify-between">
                     <Text className="font-bold text-2xl">Eligible:{'  '}</Text>
-                    <Text className="font-bold text-4xl">{eligible || 0}</Text>
+                    <Text className="font-bold text-3xl">{eligible || 0}</Text>
                 </View>
             </View>
             <FlatListComponent
@@ -443,34 +430,21 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
 
     return (
         <ErrorBoundary>
-            <View className="flex-0 mb-6 px-8 items-baseline gap-4">
-                <SelectComponent
-                    valueKey="_id"
-                    displayKey="name"
-                    items={sessions || []}
-                    style={{ width: 200 }}
-                    selectedValue={serviceId}
-                    placeholder="Select Session"
-                    onValueChange={setService as any}
-                >
-                    {sessions?.map((session, index) => (
-                        <SelectItemComponent
-                            value={session._id}
-                            key={`session-${index}`}
-                            isLoading={sessionsIsLoading}
-                            label={`${session.name} | ${dayjs(session.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
-                <View
-                    style={{
-                        flexDirection: 'row',
-                        alignItems: 'baseline',
-                        justifyContent: 'space-between',
-                    }}
-                >
+            <View className="flex-0 items-baseline flex-row gap-6">
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        labelKey="name"
+                        value={serviceId}
+                        items={sessions || []}
+                        isLoading={sessionsIsLoading}
+                        placeholder="Select Session"
+                        onValueChange={setService}
+                    />
+                </View>
+                <View className="flex-row items-baseline justify-between">
                     <Text className="font-bold text-2xl">Eligible:{'  '}</Text>
-                    <Text className="font-bold text-4xl">{eligible || 0}</Text>
+                    <Text className="font-bold text-3xl">{eligible || 0}</Text>
                 </View>
             </View>
             <FlatListComponent

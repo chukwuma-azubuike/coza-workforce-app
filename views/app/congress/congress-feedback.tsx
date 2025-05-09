@@ -22,7 +22,7 @@ const CongressFeedback: React.FC = () => {
         user: { userId },
     } = useRole();
 
-    const [submitFeedback, { isLoading, error, data, reset }] = useSubmitCongressFeedbackMutation();
+    const [submitFeedback, { isLoading, reset }] = useSubmitCongressFeedbackMutation();
 
     const onSubmit: FormikConfig<ICongressFeedbackPayload>['onSubmit'] = async (values, { resetForm }) => {
         const result = await submitFeedback(values);
@@ -61,16 +61,15 @@ const CongressFeedback: React.FC = () => {
                     initialValues={INITIAL_VALUES}
                     validationSchema={SubmitCongressFeedbackSchema}
                 >
-                    {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => {
-                        const handleRating = (value: number) => {
-                            setFieldValue('rating', value);
-                        };
-
+                    {({ errors, values, handleChange, handleSubmit, touched }) => {
                         return (
                             <View className="gap-6 w-full">
                                 <View>
                                     <Label>Overall rating</Label>
-                                    <RatingComponent defaultRating={params?.rating} onFinishRating={handleRating} />
+                                    <RatingComponent
+                                        defaultRating={params?.rating}
+                                        onFinishRating={handleChange('rating')}
+                                    />
                                     {!!errors?.rating && touched.rating && (
                                         <FormErrorMessage>{errors?.rating}</FormErrorMessage>
                                     )}
