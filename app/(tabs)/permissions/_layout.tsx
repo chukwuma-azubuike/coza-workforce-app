@@ -2,20 +2,17 @@ import React from 'react';
 import { Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native';
 
-import ScreenHeader from '~/components/ScreenHeader';
-
 const PermissionsScreenLayout: React.FC = () => {
     return (
         <SafeAreaView className="flex-1">
             <Stack
                 screenOptions={{
                     headerBackButtonDisplayMode: 'minimal',
-                    header: props => <ScreenHeader name={props.route.name} />,
                 }}
             >
-                <Stack.Screen name="index" />
-                <Stack.Screen name="/permissions/permission-details" />
-                <Stack.Screen name="/permissions/request-permission" />
+                <Stack.Screen name="index" options={{ title: 'Permissions' }} />
+                <Stack.Screen name="permission-details" options={{ title: 'Permission details' }} />
+                <Stack.Screen name="request-permission" options={{ title: 'Request permission' }} />
             </Stack>
         </SafeAreaView>
     );

@@ -61,9 +61,9 @@ const ModalComponent: React.FC<IModalProps> = props => {
             <Animated.View style={modalStyle as any}>
                 <View style={{ flex: 1 }}>
                     <View style={[styles.headerContainer, { backgroundColor: backgroundColor }]}>
-                        {header}
+                        <View className="flex-1">{header}</View>
                         <TouchableOpacity onPress={handleClose}>
-                            <Text className="text-3xl">Close</Text>
+                            <Text className="text-xl text-muted-foreground">Close</Text>
                         </TouchableOpacity>
                     </View>
                     <View>{children}</View>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        paddingHorizontal: 6,
+        paddingRight: 12,
     },
 });
 

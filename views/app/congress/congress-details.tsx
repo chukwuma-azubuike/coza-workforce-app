@@ -22,7 +22,6 @@ import { Separator } from '~/components/ui/separator';
 import { useGetCongressByIdQuery, useGetCongressInstantMessagesQuery } from '~/store/services/congress';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
-import ScreenHeader from '~/components/ScreenHeader';
 
 const width = Dimensions.get('window').width;
 
@@ -45,13 +44,7 @@ const CongressDetails: React.FC = () => {
     const { setOptions } = useNavigation();
 
     setOptions({
-        header: () => (
-            <View>
-                <ScreenHeader bypassFormat name={params.name} />
-                //TODO: Suspended for now
-                {/* <CongressHeader title={congress?.name || ''} scrollOffsetY={scrollOffsetY} /> */}
-            </View>
-        ),
+        title: params.name,
     });
 
     const isLeader = isCampusPastor || isGlobalPastor || isHOD || isAHOD || isSuperAdmin || isGroupHead;
@@ -162,11 +155,11 @@ const CongressDetails: React.FC = () => {
         <SafeAreaView style={{ flex: 1 }}>
             <ViewWrapper noPadding>
                 <If condition={isLoading || isFetching || messagesIsLoading}>
-                    <Loading />
+                    <Loading cover />
                 </If>
                 <If condition={!isLoading && !isFetching && !!congress}>
                     <ScrollContainer scrollOffsetY={scrollOffsetY}>
-                        <View className="min-w-[5rem] min-h-[4rem] ">
+                        <View className="min-w-[5rem] min-h-[4rem]">
                             <Carousel
                                 ref={ref}
                                 width={width}
@@ -204,8 +197,12 @@ const CongressDetails: React.FC = () => {
                         <View className="mt-3">
                             <Text className="font-bold px-3 text-xl">Give Feedback</Text>
                             <View style={{ marginBottom: 60, width: '100%' }}>
-                                <TouchableOpacity onPress={handleFeedbackPress} activeOpacity={0.9}>
-                                    <RatingComponent isDisabled defaultRating={params?.rating || 0} />
+                                <TouchableOpacity onPress={handleFeedbackPress} activeOpacity={0.6}>
+                                    <RatingComponent
+                                        isDisabled
+                                        defaultRating={params?.rating || 0}
+                                        onFinishRating={handleFeedbackPress}
+                                    />
                                 </TouchableOpacity>
                             </View>
                         </View>

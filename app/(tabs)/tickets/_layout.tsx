@@ -1,7 +1,6 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native';
-import ScreenHeader from '~/components/ScreenHeader';
 
 const TicketsScreensLayout: React.FC = () => {
     return (
@@ -9,12 +8,11 @@ const TicketsScreensLayout: React.FC = () => {
             <Stack
                 screenOptions={{
                     headerBackButtonDisplayMode: 'minimal',
-                    header: props => <ScreenHeader name={props.route.name} />,
                 }}
             >
-                <Stack.Screen name="index" />
-                <Stack.Screen name="/tickets/ticket-details" />
-                <Stack.Screen name="/tickets/issue-ticket" />
+                <Stack.Screen name="index" options={{ title: 'Tickets' }} />
+                <Stack.Screen name="ticket-details" options={{ title: 'Ticket details' }} />
+                <Stack.Screen name="issue-ticket" options={{ title: 'Issue ticket' }} />
             </Stack>
         </SafeAreaView>
     );

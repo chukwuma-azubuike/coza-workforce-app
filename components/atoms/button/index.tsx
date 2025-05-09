@@ -8,6 +8,7 @@ import { View } from 'react-native';
 import { Text } from 'react-native';
 import Loading from '../loading';
 import { Button, ButtonProps } from '~/components/ui/button';
+import { cn } from '~/lib/utils';
 interface IButtonComponent extends ButtonProps {
     secondary?: boolean;
 }
@@ -183,13 +184,11 @@ export const FloatButton: React.FC<ButtonProps & { iconName: string; iconType: s
             <Button
                 style={{
                     right: 20,
-                    bottom: 100,
-                    width: 60,
-                    height: 60,
+                    bottom: 120,
                     zIndex: 10,
                     position: 'absolute',
                 }}
-                className={className}
+                className={cn('!h-20 !w-20 px-0', className)}
                 {...props}
             >
                 <Icon name={iconName} type={iconType} size={28} color="white" />

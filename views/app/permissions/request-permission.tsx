@@ -1,6 +1,5 @@
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import React from 'react';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import DateTimePicker from '~/components/composite/date-time-picker';
 import useModal from '@hooks/modal/useModal';
 import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '@store/services/permissions';

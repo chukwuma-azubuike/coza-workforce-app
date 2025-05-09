@@ -1,12 +1,12 @@
 import React from 'react';
-import { SafeAreaView } from 'react-native';
+import { View } from 'react-native';
 import More from '~/views/app/more';
 
 const MoreScreen: React.FC = () => {
     return (
-        <SafeAreaView className="flex-1">
+        <View className="flex-1 pt-6">
             <More />
-        </SafeAreaView>
+        </View>
     );
 };
 
