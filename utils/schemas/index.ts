@@ -27,10 +27,7 @@ export const RegisterSchema = Yup.object().shape({
     placeOfWork: Yup.string().required('Your place of work is required.'),
     gender: Yup.string().required('Your gender is required.'),
     maritalStatus: Yup.string().required('Your marital status is required.'),
-    birthDay: Yup.date()
-        .nullable()
-        .min(new Date(1900, 0, 1))
-        .required('Your birthday is required.'),
+    birthDay: Yup.date().nullable().min(new Date(1900, 0, 1)).required('Your birthday is required.'),
     socialMedia: Yup.object().shape({
         facebook: Yup.string(),
         instagram: Yup.string(),
@@ -157,12 +154,9 @@ export const RequestPermissionSchema = Yup.object().shape({
 });
 
 export const WorkforceClockinSchema = Yup.object().shape({
-    userId: Yup.string().required('You are required to select a category.'),
-    clockIn: Yup.string().required('You are required to select a category.'),
-    clockOut: Yup.string().required('You are required to select a category.'),
-    serviceId: Yup.string().required('You are required to select a category.'),
-    campusId: Yup.string().required('You are required to select a category.'),
-    departmentId: Yup.string().required('You are required to select a category.'),
+    userId: Yup.string().required('You are required to select a user.'),
+    campusId: Yup.string().required('You are required to select a campus.'),
+    departmentId: Yup.string().required('You are required to select a department.'),
 });
 
 export const ResetPasswordSchema = Yup.object().shape({

@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import LottieView from 'lottie-react-native';
 import { View } from 'react-native';
@@ -70,8 +70,9 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 duration: 3,
                 render: (
                     <ModalAlertComponent
-                        description={`You clocked in at ${dayjs().format('h:mm A')}`}
+                        description={`You clocked in at ${dayjs().format('hh:mm A')}`}
                         status={isInRange ? 'success' : 'warning'}
+                        iconType={'material-community'}
                         iconName={'timer-outline'}
                     />
                 ),
