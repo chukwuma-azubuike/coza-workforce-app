@@ -1,17 +1,13 @@
 import React from 'react';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { ParamListBase } from '@react-navigation/native';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { useGetCampusesQuery } from '@store/services/campus';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetServicesQuery } from '@store/services/services';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import { downloadFile } from '@utils/downloadFile';
-import { useGetAttendanceReportForDownloadQuery } from '@store/services/attendance';
-import { useGetPermissionsReportForDownloadQuery } from '@store/services/permissions';
-import { useGetTicketsReportForDownloadQuery } from '@store/services/tickets';
+import { useLazyGetAttendanceQuery } from '@store/services/attendance';
+import { useLazyGetPermissionsQuery } from '@store/services/permissions';
+import { useLazyGetTicketsQuery } from '@store/services/tickets';
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
@@ -22,6 +18,9 @@ import { generateReportName } from '@utils/generateReportName';
 import { IReportDownloadPayload } from '@store/types';
 import Utils from '@utils/index';
 import { Label } from '~/components/ui/label';
+import { useLocalSearchParams } from 'expo-router';
+import PickerSelect from '~/components/ui/picker-select';
+import { Button } from '~/components/ui/button';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -31,17 +30,33 @@ export enum IReportTypes {
     PERMISSIONS = 'permissions',
 }
 
-const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props?.route?.params as { type: IExportType };
+const dataTypes = [
+    {
+        name: 'Attendance',
+        value: IReportTypes.ATTENDANCE,
+    },
+    {
+        name: 'Tickets',
+        value: IReportTypes.TICKETS,
+    },
+    {
+        name: 'Permissions',
+        value: IReportTypes.PERMISSIONS,
+    },
+];
+
+const Export: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as { type: IExportType };
     const type = params?.type;
 
-    const { isCampusPastor, isQC, user } = useRole();
-    const cannotSwitchCampus = isCampusPastor || isQC;
+    const { isCampusPastor, isQC, isSuperAdmin, user } = useRole();
+    const cannotSwitchCampus = isCampusPastor || (isQC && !isSuperAdmin);
 
-    const [campusId, setCampusId] = React.useState<string | undefined>(cannotSwitchCampus ? user?.campus?._id : '');
+    const [campusId, setCampusId] = React.useState<string | undefined>(
+        cannotSwitchCampus ? user?.campus?._id : undefined
+    );
     const [departmentId, setDepartmentId] = React.useState<string>();
-    const [serviceId, setServiceId] = React.useState<string | undefined>('all-services');
-    const [triggerFetch, setTriggerFetch] = React.useState<boolean>(false);
+    const [serviceId, setServiceId] = React.useState<string>();
     const [dataType, setDataType] = React.useState<IExportType>(type);
     const [startDate, setStartDate] = React.useState<IReportDownloadPayload['startDate']>();
     const [endDate, setEndDate] = React.useState<IReportDownloadPayload['endDate']>();
@@ -72,94 +87,150 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         [services]
     );
 
-    const {
-        data: attendance,
-        isSuccess: attendanceIsSuccess,
-        isLoading: attendanceIsLoading,
-        isFetching: attendanceIsFetching,
-    } = useGetAttendanceReportForDownloadQuery(
-        { endDate, startDate, campusId, serviceId: serviceId === 'all-services' ? undefined : serviceId, departmentId },
-        { skip: !triggerFetch, refetchOnMountOrArgChange: true }
-    );
-    const {
-        data: permissions,
-        isSuccess: permissionsIsSuccess,
-        isLoading: permissionsIsLoading,
-        isFetching: permissionIsFetching,
-    } = useGetPermissionsReportForDownloadQuery(
+    const [
+        getTickets,
+        { data: tickets, isLoading: ticketsIsLoading, isFetching: ticketsIsFetching, reset: resetTickets },
+    ] = useLazyGetTicketsQuery();
+    const [
+        getAttendance,
+        { data: attendance, isLoading: attendanceIsLoading, reset: resetAttendance, isFetching: attendanceIsFetching },
+    ] = useLazyGetAttendanceQuery();
+    const [
+        getPermissions,
         {
-            endDate,
-            campusId,
-            startDate,
-            departmentId,
+            data: permissions,
+            reset: resetPermissions,
+            isLoading: permissionsIsLoading,
+            isFetching: permissionIsFetching,
         },
-        { skip: !triggerFetch, refetchOnMountOrArgChange: true }
-    );
-    const {
-        data: tickets,
-        isSuccess: ticketsIsSuccess,
-        isLoading: ticketsIsLoading,
-        isFetching: ticketsIsFetching,
-    } = useGetTicketsReportForDownloadQuery(
-        {
-            endDate,
-            startDate,
-            campusId: campusId === 'all-campuses' ? undefined : campusId,
-            serviceId: serviceId === 'all-services' ? undefined : serviceId,
-            departmentId: departmentId === 'all-departments' ? undefined : departmentId,
-        },
-        { skip: !triggerFetch, refetchOnMountOrArgChange: true }
-    );
+    ] = useLazyGetPermissionsQuery();
 
     const handleDataType = (value: IExportType) => {
         setDataType(value);
     };
 
     const handleCampus = (value: string) => {
-        setCampusId(value);
+        setCampusId(value !== 'null' ? value : undefined);
     };
 
     const handleDepartment = (value: string) => {
-        setDepartmentId(value);
+        setDepartmentId(value !== 'null' ? value : undefined);
     };
 
     const handleService = (value: string) => {
-        setServiceId(value);
+        setServiceId(value !== 'null' ? value : undefined);
     };
 
-    const handlePress = () => {
-        if (!triggerFetch) {
-            return setTriggerFetch(true);
-        }
-        if (readyForDownload && triggerFetch) {
-            handleDownload();
-        }
+    const handleStartDate = (value: string) => {
+        setStartDate(dayjs(value).unix() as any);
     };
 
-    const handleDownload = async () => {
-        setTriggerFetch(false);
+    const handleEndDate = (value: string) => {
+        setEndDate(dayjs(value).unix() as any);
+    };
 
-        if (reportData[dataType]?.length) {
-            try {
-                return downloadFile(
-                    dataType === 'attendance'
-                        ? generateCummulativeAttendanceReport(reportData[dataType])
-                        : reportData[dataType],
-                    generateReportName({
+    const handlePress = async () => {
+        switch (dataType) {
+            case 'attendance':
+                try {
+                    const res = await getAttendance({
+                        endDate,
+                        startDate,
                         campusId,
-                        dataType,
-                        services,
                         serviceId,
                         departmentId,
-                        campusDepartments,
-                        campuses: allCampuses,
-                    })
-                );
-            } catch (err) {
-                Alert.alert(JSON.stringify(err));
-            }
+                    });
+
+                    if (res.data) {
+                        if (res.data?.length > 0) {
+                            await downloadFile(
+                                res.data,
+                                generateReportName({
+                                    campusId,
+                                    dataType,
+                                    services,
+                                    serviceId,
+                                    departmentId,
+                                    campusDepartments,
+                                    campuses: allCampuses,
+                                })
+                            );
+                            resetAttendance();
+                        } else {
+                            Alert.alert('Empty report', 'No records found.');
+                        }
+                    }
+                } catch (error) {}
+
+                break;
+
+            case 'tickets':
+                try {
+                    const res = await getTickets({
+                        endDate,
+                        startDate,
+                        campusId,
+                        serviceId,
+                        departmentId,
+                    });
+
+                    if (res.data) {
+                        if (res.data?.length > 0) {
+                            await downloadFile(
+                                res.data,
+                                generateReportName({
+                                    campusId,
+                                    dataType,
+                                    services,
+                                    serviceId,
+                                    departmentId,
+                                    campusDepartments,
+                                    campuses: allCampuses,
+                                })
+                            );
+                            resetTickets();
+                        } else {
+                            Alert.alert('Empty report', 'No records found.');
+                        }
+                    }
+                } catch (error) {}
+
+            case 'permissions':
+                try {
+                    const res = await getPermissions({
+                        endDate,
+                        startDate,
+                        campusId,
+                        serviceId,
+                        departmentId,
+                    });
+
+                    if (res.data) {
+                        if (res.data?.length > 0) {
+                            await downloadFile(
+                                res.data,
+                                generateReportName({
+                                    campusId,
+                                    dataType,
+                                    services,
+                                    serviceId,
+                                    departmentId,
+                                    campusDepartments,
+                                    campuses: allCampuses,
+                                })
+                            );
+                            resetPermissions();
+                        } else {
+                            Alert.alert('Empty report', 'No records found.');
+                        }
+                    }
+                } catch (error) {}
+
+                break;
+
+            default:
+                break;
         }
-        Alert.alert('Empty report', 'No records to download.');
     };
 
     const reportData = {
@@ -176,163 +247,93 @@ const Export: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         permissionsIsLoading ||
         permissionIsFetching;
 
-    const dataTypes = [
-        {
-            name: 'Attendance',
-            value: IReportTypes.ATTENDANCE,
-        },
-        {
-            name: 'Tickets',
-            value: IReportTypes.TICKETS,
-        },
-        {
-            name: 'Permissions',
-            value: IReportTypes.PERMISSIONS,
-        },
-    ];
-
-    const readyForDownload = attendanceIsSuccess || ticketsIsSuccess || permissionsIsSuccess;
     const isPermission = dataType === 'permissions';
 
-    const handleStartDate = (fieldName: string, value: number) => {
-        setStartDate(dayjs(value).unix());
-    };
-
-    const handleEndDate = (fieldName: string, value: number) => {
-        setEndDate(dayjs(value).unix());
-    };
-
     return (
-        <ViewWrapper style={{ paddingTop: 8 }}>
+        <ViewWrapper scroll className="pt-4">
             <View style={{ alignItems: 'center' }}>
-                <View style={{ gap: 10, width: '100%' }}>
+                <View style={{ gap: 16, width: '100%' }}>
                     <View>
                         <Label>Data Type</Label>
-                        <SelectComponent
+                        <PickerSelect
                             valueKey="value"
-                            displayKey="name"
+                            labelKey="name"
+                            value={dataType}
                             items={dataTypes}
-                            selectedValue={dataType}
                             placeholder="Choose data type"
-                            onValueChange={handleDataType as any}
-                        >
-                            {dataTypes?.map((data, index) => (
-                                <SelectItemComponent value={data.value} key={`data-${index}`} label={data.name} />
-                            ))}
-                        </SelectComponent>
+                            onValueChange={handleDataType}
+                        />
                     </View>
                     <View>
                         <Label>Campus</Label>
-                        <SelectComponent
+                        <PickerSelect
                             valueKey="_id"
-                            displayKey="campusName"
+                            labelKey="campusName"
+                            items={allCampuses || []}
+                            disabled={cannotSwitchCampus}
                             placeholder="Choose campus"
-                            isDisabled={cannotSwitchCampus}
-                            onValueChange={handleCampus as any}
-                            selectedValue={cannotSwitchCampus ? user?.campus?._id : campusId}
-                            items={[{ _id: 'all-campuses', campusName: 'All Campuses' }, ...(allCampuses || [])]}
-                        >
-                            <SelectItemComponent
-                                key="all-campuses"
-                                label="All Campuses"
-                                value={'all-campuses' as unknown as string}
-                            />
-                            {allCampuses?.map((campus, index) => (
-                                <SelectItemComponent
-                                    value={campus._id}
-                                    key={`campus-${index}`}
-                                    label={campus.campusName}
-                                    isLoading={allCampusesLoading}
-                                />
-                            ))}
-                        </SelectComponent>
+                            onValueChange={handleCampus}
+                            isLoading={allCampusesLoading}
+                            value={cannotSwitchCampus ? user?.campus?._id : campusId}
+                        />
                     </View>
                     <If condition={!isPermission}>
                         <View>
                             <Label>Service</Label>
-                            <SelectComponent
+                            <PickerSelect
                                 valueKey="_id"
-                                selectedValue={serviceId}
+                                labelKey="name"
+                                value={serviceId}
+                                isLoading={servicesLoading}
+                                items={pastServices || []}
                                 placeholder="Choose service"
-                                displayKey={['name', 'serviceTime']}
-                                onValueChange={handleService as any}
-                                items={[{ _id: 'all-services', name: 'All Services' }, ...(pastServices || [])]}
-                            >
-                                <SelectItemComponent
-                                    key="all-services"
-                                    label="All Services"
-                                    value={'all-services' as unknown as string}
-                                />
-                                {pastServices?.map((service, index) => (
-                                    <SelectItemComponent
-                                        value={service._id}
-                                        key={`service-${index}`}
-                                        label={`${service.name} - ${
-                                            service?.serviceTime ? dayjs(service?.serviceTime).format('DD-MM-YYYY') : ''
-                                        }`}
-                                        isLoading={servicesLoading}
-                                    />
-                                ))}
-                            </SelectComponent>
-                        </View>
-                    </If>
-                    <View className="flex-0">
-                        <View className="w-1/2">
-                            <DateTimePicker                                label="Start date"
-                                fieldName="startDate"
-                                onSelectDate={handleStartDate}
+                                onValueChange={handleService}
+                                customLabel={service =>
+                                    `${service.name} | ${
+                                        service?.serviceTime ? dayjs(service?.serviceTime).format('DD-MM-YYYY') : ''
+                                    }`
+                                }
                             />
                         </View>
-                        <View className="w-1/2">
-                            <DateTimePicker                                label="End date"
-                                fieldName="endDate"
-                                onSelectDate={handleEndDate}
+                    </If>
+                    <View className="w-full flex-row gap-4">
+                        <View className="flex-1">
+                            <DateTimePicker
+                                mode="date"
+                                label="Start date"
+                                placeholder="Enter start date"
+                                onConfirm={handleStartDate as unknown as (value: Date) => void}
+                            />
+                        </View>
+                        <View className="flex-1">
+                            <DateTimePicker
+                                mode="date"
+                                label="End date"
+                                placeholder="Enter end date"
+                                onConfirm={handleEndDate as unknown as (value: Date) => void}
                             />
                         </View>
                     </View>
                     <View>
                         <Label>Department</Label>
-                        <SelectComponent
+                        <PickerSelect
                             valueKey="_id"
-                            displayKey="departmentName"
-                            selectedValue={departmentId}
+                            labelKey="departmentName"
+                            value={departmentId}
+                            items={sortedCampusDepartments || []}
+                            isLoading={campusDepartmentsLoading}
                             placeholder="Choose department"
-                            onValueChange={handleDepartment as any}
-                            items={[
-                                { _id: 'all-departments', departmentName: 'All Departments' },
-                                ...(sortedCampusDepartments || []),
-                            ]}
-                        >
-                            <SelectItemComponent
-                                key="all-departments"
-                                label="All Departments"
-                                value="all-departments"
-                            />
-                            {sortedCampusDepartments?.map((department, index) => (
-                                <SelectItemComponent
-                                    value={department._id}
-                                    key={`department-${index}`}
-                                    label={department.departmentName}
-                                    isLoading={campusDepartmentsLoading}
-                                />
-                            ))}
-                        </SelectComponent>
+                            onValueChange={handleDepartment}
+                        />
                     </View>
-
-                    <ButtonComponent
+                    <Button
                         isLoading={isLoading}
                         onPress={handlePress}
-                        startIcon={
-                            <Icon
-                                size={28}
-                                color="white"
-                                type={!triggerFetch ? 'evilicon' : 'ionicon'}
-                                name={!triggerFetch ? 'refresh' : 'download-outline'}
-                            />
-                        }
+                        disabled={!dataType}
+                        startIcon={<Icon size={28} color="white" type="ionicon" name="download-outline" />}
                     >
-                        {!triggerFetch ? 'Fetch report' : 'Download'}
-                    </ButtonComponent>
+                        Fetch report
+                    </Button>
                 </View>
             </View>
         </ViewWrapper>
