@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { ChevronLeft } from 'lucide-react-native';
-import { Button } from './ui/button';
 import { cn } from '~/lib/utils';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { useColorScheme } from '~/lib/useColorScheme';
