@@ -19,7 +19,7 @@ const RadioButtonGroup: React.FC<Partial<IRadioButtonProps>> = ({
     ...props
 }) => {
     return (
-        <View className="flex-1 justify-center items-center p-6">
+        <View className="flex-1 justify-center items-center py-4">
             <RadioGroup
                 className="gap-3"
                 onValueChange={props.onValueChange as () => void}

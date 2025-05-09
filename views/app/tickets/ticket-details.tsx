@@ -252,7 +252,7 @@ const TicketDetails: React.FC = () => {
     }, [ticket?.department?._id, userId, ticket?.user?._id, ticket?.isDepartment, department?._id]);
 
     return (
-        <View className="pb-16">
+        <View>
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'height'}>
                 <ScrollView refreshControl={<RefreshControl refreshing={isLoading} />} className="px-2 py-10">
                     <CardComponent
