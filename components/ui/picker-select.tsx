@@ -30,7 +30,7 @@ function PickerSelect<T = any>({
     placeholder = 'Select',
     ...props
 }: PickerSelectComponentProps<T>) {
-    const [value, setValue] = useState(`${inputValue}` || '');
+    const [value, setValue] = useState<string | undefined>(`${inputValue}` || '');
     const selectedItem = useMemo(
         () => items?.find(item => `${item[valueKey]}` === `${inputValue ?? value}`),
         [items, value, valueKey]
@@ -51,8 +51,8 @@ function PickerSelect<T = any>({
 
     const handleValueChange = useCallback(
         (value: any, index: number) => {
-            setValue(`${value}`);
-            onValueChange(`${value}`, index);
+            setValue(value ? `${value}` : undefined);
+            onValueChange(value ? `${value}` : undefined, index);
         },
         [setValue, onValueChange]
     );

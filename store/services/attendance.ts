@@ -244,6 +244,7 @@ export const {
     useClockInMutation,
     useClockOutMutation,
     useGetAttendanceQuery,
+    useLazyGetAttendanceQuery,
     useGetAttendanceByUserIdQuery,
     useGetAttendanceByCampusIdQuery,
     useGetWorkersAttendanceReportQuery,

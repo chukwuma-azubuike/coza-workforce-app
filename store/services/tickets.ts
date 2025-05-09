@@ -166,6 +166,7 @@ export const ticketServiceSlice = createApi({
 
 export const {
     useGetTicketsQuery,
+    useLazyGetTicketsQuery,
     useGetTicketByIdQuery,
     useGetUserTicketsQuery,
     useCreateTicketMutation,
