@@ -119,6 +119,17 @@ export const CreateServiceSchema = Yup.object().shape({
     workerLateTime: Yup.date().required('Field required'),
 });
 
+export const UpdateServiceSchema = Yup.object().shape({
+    tag: Yup.string().required('You are required to select the service tag'),
+    name: Yup.string().required('Service name is required'),
+    serviceDate: Yup.date().required('Service date is required'),
+    clockInStartTime: Yup.string().required('Clock in time is required'),
+    isGlobalService: Yup.string().required('Service type is required'),
+    leadersLateStartTime: Yup.string().required('Leaders late time is required'),
+    serviceEndTime: Yup.string().required('Service end time is required'),
+    workersLateStartTime: Yup.string().required('Workers late time is required'),
+});
+
 export const AssignGroupHeadSchema = Yup.object().shape({
     worker: Yup.string().required('You are required to select a worker.'),
     role: Yup.string().required('You are required to select a role.'),

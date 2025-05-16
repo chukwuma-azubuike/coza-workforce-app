@@ -9,17 +9,22 @@ import useScreenFocus from '@hooks/focus';
 import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
 import Utils from '@utils/index';
+import { router } from 'expo-router';
 
 const ServiceListRow: React.FC<IService> = React.memo(service => {
+    const handleUpdate = () => {
+        router.push({ pathname: '/service-management/update-service', params: service as any });
+    };
+
     return (
         <TouchableOpacity
-            disabled={false}
+            onPress={handleUpdate}
             delayPressIn={0}
             activeOpacity={0.6}
-            style={{ width: '100%' }}
             accessibilityRole="button"
+            className="w-full"
         >
-            <View className="p-4 items-center justify-between">
+            <View className="px-2 py-1 items-center justify-between flex-row">
                 <View className="items-center gap-3">
                     <View className="justify-between">
                         <Text className="font-bold">{service?.name}</Text>
