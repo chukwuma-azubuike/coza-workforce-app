@@ -1,4 +1,5 @@
 import { IReportFormProps } from '@views/app/reports/forms/types';
+import { string } from 'yup';
 
 // General types
 export interface ILog {
@@ -23,6 +24,7 @@ export const SERVICE_TAGS = [
     { id: 'COZA_TUESDAYS', value: 'COZA Tuesdays' },
     { id: 'COZA_WEDNESDAYS', value: 'COZA Wednesdays' },
     { id: 'DPE', value: 'DPE' },
+    { id: 'DOMINION_HOUR', value: 'Dominion Hour' },
     { id: 'HOME_TRAINING', value: 'Home Training' },
     { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
     { id: '12DG', value: '12DG' },
@@ -275,17 +277,25 @@ export interface ICreateTicketPayload {
 }
 
 export interface ICreateServicePayload {
-    serviceType: string;
-    serviceName: string;
-    serviceTag: string;
-    serviceTime: string | Date;
-    serviceDate: string | Date;
-    endTime: string | Date;
-    isCongress?: boolean;
-    CongressId?: string;
-    clockinTime: string | Date;
-    leaderLateTime: string | Date;
-    workerLateTime: string | Date;
+    serviceType: 'global' | 'local';
+    serviceDate: Date | string;
+    clockInStartTime: string;
+    coordinates: {
+        long: number;
+        lat: number;
+    };
+    isGlobalService: boolean;
+    leadersLateStartTime: string;
+    name: string;
+    rangeToClockIn: number;
+    serviceEndTime: string;
+    serviceTime: string;
+    tag: string;
+    workersLateStartTime: string;
+}
+
+export interface IUpdateServicePayload extends ICreateServicePayload {
+    _id: string;
 }
 
 export interface IAssignGroupHead {
@@ -531,7 +541,6 @@ export interface ICongressInstantMessagePayload {
     messageLink: string;
 }
 export interface ICreateService {
-    _id?: string;
     name: string;
     coordinates: {
         long: number;
@@ -540,13 +549,17 @@ export interface ICreateService {
     CongressId?: string;
     isCongress?: boolean;
     tag: string[];
-    serviceTime: number | null;
-    clockInStartTime: number | null;
-    workersLateStartTime: number | null;
-    leadersLateStartTime: number | null;
-    serviceEndTime: number | null;
+    serviceTime: string | null;
+    clockInStartTime: string | null;
+    workersLateStartTime: string | null;
+    leadersLateStartTime: string | null;
+    serviceEndTime: string | null;
     rangeToClockIn: number;
     isGlobalService: boolean;
+}
+
+export interface IUpdateService extends ICreateService {
+    _id: string;
 }
 
 // Score

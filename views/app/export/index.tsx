@@ -250,7 +250,7 @@ const Export: React.FC = () => {
     const isPermission = dataType === 'permissions';
 
     return (
-        <ViewWrapper scroll className="pt-4">
+        <ViewWrapper scroll className="p-4">
             <View style={{ alignItems: 'center' }}>
                 <View style={{ gap: 16, width: '100%' }}>
                     <View>

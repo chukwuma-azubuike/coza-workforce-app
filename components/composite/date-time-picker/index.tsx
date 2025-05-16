@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import RNDatePicker, { DatePickerProps } from 'react-native-date-picker';
 
@@ -33,6 +33,12 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         setOpen(true);
     };
 
+    useEffect(() => {
+        if (initialValue) {
+            setDate(dayjs(initialValue).toDate());
+        }
+    }, [initialValue]);
+
     return (
         <View className="gap-2 flex-1">
             <Label>{label}</Label>
@@ -52,12 +58,12 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                               mode === 'date'
                                   ? 'DD MMMM, YYYY'
                                   : mode === 'datetime'
-                                  ? 'dddd, DD MMMM, HH:MM A'
-                                  : 'HH:MM A'
+                                  ? 'dddd, DD MMMM, hh:mm A'
+                                  : 'hh:mm A'
                           )}
                 </Text>
             </Button>
-            {error && touched && <Text className="text-destructive">{error}</Text>}
+            {error && <Text className="text-destructive text-base">{error}</Text>}
             <RNDatePicker
                 {...props}
                 modal
