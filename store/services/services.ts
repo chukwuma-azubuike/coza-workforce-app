@@ -1,5 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { ICreateService, IDefaultQueryParams, IDefaultResponse, IService, REST_API_VERBS } from '../types';
+import {
+    ICreateService,
+    IDefaultQueryParams,
+    IDefaultResponse,
+    IService,
+    IUpdateService,
+    REST_API_VERBS,
+} from '../types';
 import { fetchUtils } from './fetch-utils';
 
 const SERVICE_URL = 'service';
@@ -11,7 +18,7 @@ export const servicesServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
-    tagTypes: ['latestService'],
+    tagTypes: ['latestService', 'service-list'],
 
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -24,14 +31,18 @@ export const servicesServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+
+            invalidatesTags: ['service-list'],
         }),
 
-        updateService: endpoint.mutation<void, ICreateService>({
-            query: args => ({
-                url: `${SERVICE_URL}/service/updateService${args._id}`,
-                method: REST_API_VERBS.PUT,
+        updateService: endpoint.mutation<void, IUpdateService>({
+            query: ({ _id, ...args }) => ({
+                url: `${SERVICE_URL}/updateService/${_id}`,
+                method: REST_API_VERBS.PATCH,
                 body: args,
             }),
+
+            invalidatesTags: ['service-list'],
         }),
 
         getLatestService: endpoint.query<IService, string>({
@@ -48,6 +59,8 @@ export const servicesServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
                 params,
             }),
+
+            providesTags: ['service-list'],
 
             transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
         }),

@@ -85,11 +85,11 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                 >
                     {isLoading ? (
                         <View className="flex flex-row items-center justify-center gap-2">
-                            <Loading />
+                            <Loading spinnerProps={{ className: 'text-white' }} />
                             <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>{loadingText}</Text>
                         </View>
                     ) : typeof children === 'string' ? (
-                        <View className="flex-1 w-full items-center flex-row gap-4 justify-center">
+                        <View className="flex-1 w-full items-center flex-row gap-2 justify-center">
                             {startIcon || icon}
                             <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>{children}</Text>
                         </View>
