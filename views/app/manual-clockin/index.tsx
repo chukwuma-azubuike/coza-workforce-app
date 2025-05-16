@@ -1,6 +1,6 @@
 import { View } from 'react-native';
-import { Formik } from 'formik';
-import React, { useEffect } from 'react';
+import { Formik, useFormik } from 'formik';
+import React from 'react';
 import ErrorBoundary from '@components/composite/error-boundary';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
@@ -105,7 +105,7 @@ const ManualClockin: React.FC = () => {
         onFocus: refresh,
     });
 
-    let INITIAL_VALUES = {} as IClockInPayload;
+    let INITIAL_VALUES = { campusId: campus?._id } as IClockInPayload;
 
     const handleUserPress = (user: IUser) => {
         INITIAL_VALUES = {
@@ -113,9 +113,18 @@ const ManualClockin: React.FC = () => {
             campusId: user?.campusId,
             userId: user?._id || user?.userId,
         } as IClockInPayload;
-        setDepartmentId(user?.departmentId);
         setThirdPartyUserId(user);
+        setDepartmentId(user?.departmentId);
+        formik.setFieldValue('userId', user._id);
+        formik.setFieldValue('departmentId', user?.departmentId);
     };
+
+    const formik = useFormik<IClockInPayload>({
+        enableReinitialize: true,
+        onSubmit: handleSubmit,
+        initialValues: INITIAL_VALUES,
+        validationSchema: WorkforceClockinSchema,
+    });
 
     return (
         <ErrorBoundary>
@@ -127,12 +136,7 @@ const ManualClockin: React.FC = () => {
                 searchFields={['firstName', 'lastName', 'departmentName', 'email']}
             />
             <ViewWrapper scroll onRefresh={handleRefresh} refreshing={isFetching} className="pt-4">
-                <Formik<IClockInPayload>
-                    enableReinitialize
-                    onSubmit={handleSubmit}
-                    initialValues={INITIAL_VALUES}
-                    validationSchema={WorkforceClockinSchema}
-                >
+                <Formik<IClockInPayload> onSubmit={handleSubmit} {...formik}>
                     {({ errors, values, handleChange }) => {
                         const onCampusChange = (value: string) => {
                             refresh();
@@ -204,7 +208,7 @@ const ManualClockin: React.FC = () => {
                                                 onUserChange(value);
                                             }}
                                             isLoading={usersLoading || usersIsFetching}
-                                            value={thirdPartyUser?._id as unknown as string}
+                                            value={values.userId || (thirdPartyUser?._id as unknown as string)}
                                             customLabel={user => `${user.firstName} ${user.lastName}`}
                                         />
                                         {errors?.userId && <FormErrorMessage>{errors?.userId}</FormErrorMessage>}

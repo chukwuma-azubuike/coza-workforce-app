@@ -6,7 +6,7 @@ import useAppColorMode from '@hooks/theme/colorMode';
 import useDevice from '@hooks/device';
 import { ITextInputProps } from '~/components/ui/input';
 
-export type IInputComponentProps = ITextInputProps & TextInputProps;
+export type IInputProps = ITextInputProps & TextInputProps;
 
 interface IInputContainerProps extends ViewProps, Pick<ITextInputProps, 'leftIcon' | 'rightIcon'> {
     onIconPress?: () => void;
@@ -58,7 +58,7 @@ const InputContainer: React.FC<IInputContainerProps> = props => {
     );
 };
 
-const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
+const Input: React.FC<IInputProps> = React.memo(props => {
     const { backgroundColor, textColor } = useAppColorMode();
     const [isActive, setIsActive] = React.useState(false);
     const { isIOS } = useDevice();
@@ -97,7 +97,7 @@ const InputComponent: React.FC<IInputComponentProps> = React.memo(props => {
     );
 });
 
-const NumberInputComponent: React.FC<IInputComponentProps> = React.memo(props => {
+const NumberInput: React.FC<IInputProps> = React.memo(props => {
     const [isActive, setIsActive] = React.useState(false);
     const { isIOS } = useDevice();
     const { backgroundColor, textColor } = useAppColorMode();
@@ -112,7 +112,7 @@ const NumberInputComponent: React.FC<IInputComponentProps> = React.memo(props =>
 
     return (
         <InputContainer {...(props as IInputContainerProps)} isActive={isActive}>
-            <InputComponent
+            <Input
                 {...props}
                 borderRadius={THEME_CONFIG.borderRadius}
                 _ios={{ returnKeyType: 'done' }}
@@ -135,4 +135,4 @@ const NumberInputComponent: React.FC<IInputComponentProps> = React.memo(props =>
     );
 });
 
-export { InputComponent, NumberInputComponent };
+export { Input, NumberInput };
