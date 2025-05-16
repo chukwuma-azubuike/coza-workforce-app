@@ -94,56 +94,56 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     fieldName="serviceStartTime"
                                     onSelectDate={setFieldValue}
                                     value={values?.serviceStartTime}
-                                    formControlProps={{ isRequired: true, isInvalid: !!errors?.serviceStartTime }}
+                                    ViewProps={{ : true, isInvalid: !!errors?.serviceStartTime }}
                                 />
                                 <DateTimePicker                                    mode="time"
                                     label="Service End Time"
                                     fieldName="serviceEndTime"
                                     onSelectDate={setFieldValue}
                                     value={values?.serviceEndTime}
-                                    formControlProps={{ isRequired: true, isInvalid: !!errors?.serviceEndTime }}
+                                    ViewProps={{ : true, isInvalid: !!errors?.serviceEndTime }}
                                 />
                             </View>
-                            <FormControl isRequired>
-                                <FormControl.Label>Link to Service Report</FormControl.Label>
-                                <InputComponent
+                            <View >
+                                <Label>Link to Service Report</Label>
+                                <Input
                                     keyboardType="url"
                                     value={values.serviceReportLink}
                                     placeholder="https://www.link-to-report.com"
                                     onChangeText={handleChange('serviceReportLink')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
+                                </FormErrorMessage>
+                            </View>
                             <Divider />
-                            <FormControl mb={2}>
+                            <View mb={2}>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
                                     placeholder="Service Observations"
                                     onChangeText={handleChange('observations')}
                                     value={!!values?.observations ? values?.observations : undefined}
                                 />
-                            </FormControl>
+                            </View>
                             <If condition={!isCampusPastor}>
-                                <FormControl>
+                                <View>
                                     <ButtonComponent
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
                                         {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </If>
                             <If condition={isCampusPastor}>
-                                <FormControl mb={6}>
+                                <View mb={6}>
                                     <TextAreaComponent
                                         isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
-                                </FormControl>
+                                </View>
                                 <View space={4} justifyContent="space-between" w="95%">
                                     <ButtonComponent
                                         onPress={() => onRequestReview(values)}

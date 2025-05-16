@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import React, { useMemo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl } from 'native-base';
+import { View } from 'native-base';
 import { Formik } from 'formik';
 import TextAreaComponent from '@components/atoms/text-area';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -81,8 +81,8 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                     {({ errors, handleChange, handleSubmit, values }) => {
                         return (
                             <View space={2}>
-                                <FormControl isRequired isInvalid={!!errors?.submittedReport}>
-                                    <FormControl.Label>For the GSP's attention</FormControl.Label>
+                                <View  isInvalid={!!errors?.submittedReport}>
+                                    <Label>For the GSP's attention</Label>
                                     <TextAreaComponent
                                         minHeight={150}
                                         placeholder="Comment"
@@ -90,7 +90,7 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         isDisabled={!!params?.submittedReport}
                                         onChangeText={handleChange('submittedReport')}
                                     />
-                                    <FormControl.ErrorMessage
+                                    <FormErrorMessage
                                         fontSize="2xl"
                                         mt={3}
                                         leftIcon={
@@ -103,17 +103,17 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                         }
                                     >
                                         {errors?.submittedReport}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
+                                    </FormErrorMessage>
+                                </View>
                                 {!params?.submittedReport && (
-                                    <FormControl minHeight={180}>
+                                    <View minHeight={180}>
                                         <ButtonComponent
                                             isLoading={isSubmitLoading}
                                             onPress={handleSubmit as (event: any) => void}
                                         >
                                             Submit to GSP
                                         </ButtonComponent>
-                                    </FormControl>
+                                    </View>
                                 )}
                             </View>
                         );

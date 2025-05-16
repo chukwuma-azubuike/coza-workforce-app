@@ -6,7 +6,7 @@ import useModal from '@hooks/modal/useModal';
 import { IGuestReportPayload } from '@store/types';
 import { useCreateGuestReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
+import { View, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -83,60 +83,60 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
                         <View space={4} mt={4} className="px-4">
-                            <FormControl isRequired>
-                                <FormControl.Label>Number of First Timers</FormControl.Label>
-                                <InputComponent
+                            <View >
+                                <Label>Number of First Timers</Label>
+                                <Input
                                     placeholder="0"
                                     keyboardType="numeric"
                                     isDisabled={isCampusPastor}
                                     value={`${values.firstTimersCount}`}
                                     onChangeText={handleChange('firstTimersCount')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
-                            <FormControl isRequired>
-                                <FormControl.Label>Number of New Converts</FormControl.Label>
-                                <InputComponent
+                                </FormErrorMessage>
+                            </View>
+                            <View >
+                                <Label>Number of New Converts</Label>
+                                <Input
                                     placeholder="0"
                                     keyboardType="numeric"
                                     isDisabled={isCampusPastor}
                                     value={`${values.newConvertsCount}`}
                                     onChangeText={handleChange('newConvertsCount')}
                                 />
-                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                     This field cannot be empty
-                                </FormControl.ErrorMessage>
-                            </FormControl>
+                                </FormErrorMessage>
+                            </View>
                             <Divider />
-                            <FormControl mb={2}>
+                            <View mb={2}>
                                 <TextAreaComponent
                                     isDisabled={isCampusPastor}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
                                     value={!!values?.otherInfo ? values?.otherInfo : undefined}
                                 />
-                            </FormControl>
+                            </View>
                             <If condition={!isCampusPastor}>
-                                <FormControl>
+                                <View>
                                     <ButtonComponent
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
                                         {`${!status ? 'Submit' : 'Update'}`}
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </If>
                             <If condition={isCampusPastor}>
-                                <FormControl mb={6}>
+                                <View mb={6}>
                                     <TextAreaComponent
                                         isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
-                                </FormControl>
+                                </View>
                                 <View space={4} justifyContent="space-between" w="95%">
                                     <ButtonComponent
                                         onPress={() => onRequestReview(values)}

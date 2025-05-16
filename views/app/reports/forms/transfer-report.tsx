@@ -5,7 +5,7 @@ import useModal from '@hooks/modal/useModal';
 import { ITransferReportPayload } from '@store/types';
 import { useCreateTransferReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { FormControl, Divider, WarningOutlineIcon } from 'native-base';
+import { View, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -105,11 +105,11 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                             key={idx}
                                             className="mb-12 items-center"
                                         >
-                                            <FormControl isRequired w="36%">
-                                                <FormControl.Label>
+                                            <View  w="36%">
+                                                <Label>
                                                     <Text className="flex-1">Location</Text>
-                                                </FormControl.Label>
-                                                <InputComponent
+                                                </Label>
+                                                <Input
                                                     style={{
                                                         padding: 0,
                                                         fontSize: 14,
@@ -119,15 +119,15 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     isDisabled={isCampusPastor}
                                                     onChangeText={handleChange(`locations[${idx}].name`)}
                                                 />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                                     This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl isRequired w="22%">
-                                                <FormControl.Label>
+                                                </FormErrorMessage>
+                                            </View>
+                                            <View  w="22%">
+                                                <Label>
                                                     <Text className="flex-1">Adults</Text>
-                                                </FormControl.Label>
-                                                <InputComponent
+                                                </Label>
+                                                <Input
                                                     style={{
                                                         fontSize: 14,
                                                     }}
@@ -137,15 +137,15 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     value={`${location.adultCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].adultCount`)}
                                                 />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                                     This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl isRequired w="22%">
-                                                <FormControl.Label>
+                                                </FormErrorMessage>
+                                            </View>
+                                            <View  w="22%">
+                                                <Label>
                                                     <Text className="flex-1">Children/Teens</Text>
-                                                </FormControl.Label>
-                                                <InputComponent
+                                                </Label>
+                                                <Input
                                                     style={{
                                                         fontSize: 14,
                                                     }}
@@ -155,11 +155,11 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     value={`${location.minorCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].minorCount`)}
                                                 />
-                                                <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
+                                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
                                                     This field cannot be empty
-                                                </FormControl.ErrorMessage>
-                                            </FormControl>
-                                            <FormControl
+                                                </FormErrorMessage>
+                                            </View>
+                                            <View
                                                 w="10%"
                                                 style={{
                                                     marginTop: 0,
@@ -180,7 +180,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     secondary
                                                     size="md"
                                                 />
-                                            </FormControl>
+                                            </View>
                                         </View>
                                     ))}
 
@@ -207,35 +207,35 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         />
 
                         <View space={4} mb={4}>
-                            <FormControl w="48%">
-                                <FormControl.Label>Total Adults</FormControl.Label>
-                                <InputComponent
+                            <View w="48%">
+                                <Label>Total Adults</Label>
+                                <Input
                                     isDisabled
                                     placeholder="0"
                                     value={`${addValues(values, 'adultCount')}`}
                                 />
-                            </FormControl>
-                            <FormControl w="48%">
-                                <FormControl.Label>Total Children/Teens</FormControl.Label>
-                                <InputComponent
+                            </View>
+                            <View w="48%">
+                                <Label>Total Children/Teens</Label>
+                                <Input
                                     isDisabled
                                     placeholder="0"
                                     value={`${addValues(values, 'minorCount')}`}
                                 />
-                            </FormControl>
+                            </View>
                         </View>
 
                         <Divider />
-                        <FormControl my={4}>
+                        <View my={4}>
                             <TextAreaComponent
                                 isDisabled={isCampusPastor}
                                 value={`${values.otherInfo}`}
                                 placeholder="Any other information"
                                 onChangeText={handleChange('otherInfo')}
                             />
-                        </FormControl>
+                        </View>
                         <If condition={!isCampusPastor}>
-                            <FormControl>
+                            <View>
                                 <ButtonComponent
                                     isLoading={isLoading}
                                     onPress={() => {
@@ -246,17 +246,17 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                 >
                                     {`${!status ? 'Submit' : 'Update'}`}
                                 </ButtonComponent>
-                            </FormControl>
+                            </View>
                         </If>
                         <If condition={isCampusPastor}>
-                            <FormControl mb={6}>
+                            <View mb={6}>
                                 <TextAreaComponent
                                     isDisabled={!isCampusPastor}
                                     placeholder="Pastor's comment"
                                     onChangeText={handleChange('pastorComment')}
                                     value={values?.pastorComment ? values?.pastorComment : ''}
                                 />
-                            </FormControl>
+                            </View>
                             <View space={4} justifyContent="space-between" w="95%">
                                 <ButtonComponent
                                     onPress={() => onRequestReview(values)}
