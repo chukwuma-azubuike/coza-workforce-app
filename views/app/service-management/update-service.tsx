@@ -4,27 +4,27 @@ import { Formik, FormikConfig, FormikProps } from 'formik';
 import DateTimePicker from '~/components/composite/date-time-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useModal from '@hooks/modal/useModal';
-import { useCreateServiceMutation } from '@store/services/services';
-import { CREATE_SERVICE_ENUM, ICreateServicePayload, SERVICE_TAGS } from '@store/types';
+import { useUpdateServiceMutation } from '@store/services/services';
+import { CREATE_SERVICE_ENUM, IUpdateServicePayload, IService, SERVICE_TAGS } from '@store/types';
 import Utils from '@utils/index';
-import { CreateServiceSchema } from '@utils/schemas';
+import { UpdateServiceSchema } from '@utils/schemas';
 import { router } from 'expo-router';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import PickerSelect from '~/components/ui/picker-select';
+import { useNavigation } from '@react-navigation/native';
+import dayjs from 'dayjs';
+import { Icon } from '@rneui/themed';
 
-const SERVICE_TYPES = [
-    { id: 'local', label: 'Local' },
-    { id: 'global', label: 'Global' },
-];
-
-const CreateServiceManagement: React.FC = () => {
+const UpdateServiceManagement: React.FC<IService> = props => {
     const { setModalState } = useModal();
-    const [createService, { isLoading, data, reset }] = useCreateServiceMutation();
+    const [updateService, { isLoading, reset }] = useUpdateServiceMutation();
+    const { setOptions } = useNavigation();
+    setOptions({ title: `${props.name}, ${dayjs(props.serviceTime).format('DD MMM YYYY - hh:mm A')}` });
 
-    const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
+    const onSubmit: FormikConfig<IUpdateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTime(values.serviceDate, values.clockInStartTime);
         const coordinates = {
             long: CREATE_SERVICE_ENUM.LONG,
@@ -33,12 +33,13 @@ const CreateServiceManagement: React.FC = () => {
         const name = values.name;
         const isGlobalService = values.serviceType === 'global';
         const leadersLateStartTime = Utils.concatDateTime(values.serviceDate, values.leadersLateStartTime);
-        const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN;
+        const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN as number;
         const serviceEndTime = Utils.concatDateTime(values.serviceDate, values.serviceEndTime);
         const serviceTime = Utils.concatDateTime(values.serviceDate, values.serviceTime);
         const workersLateStartTime = Utils.concatDateTime(values.serviceDate, values.workersLateStartTime);
 
-        const result = await createService({
+        const result = await updateService({
+            _id: props?._id,
             clockInStartTime,
             coordinates,
             isGlobalService,
@@ -58,12 +59,12 @@ const CreateServiceManagement: React.FC = () => {
             });
             reset();
             resetForm({ values: INITIAL_VALUES });
-            router.push({ pathname: '/service-management', params: data as any });
+            router.back();
         }
 
         if ('error' in result) {
             setModalState({
-                message: 'Oops something went wrong',
+                message: (result.error as any)?.data?.message || 'Oops something went wrong',
                 status: 'error',
             });
         }
@@ -71,8 +72,8 @@ const CreateServiceManagement: React.FC = () => {
 
     const setDefaultTimes = (
         tag: string,
-        validateField: FormikProps<ICreateServicePayload>['validateField'],
-        resetForm: FormikProps<ICreateServicePayload>['resetForm']
+        validateField: FormikProps<IUpdateServicePayload>['validateField'],
+        resetForm: FormikProps<IUpdateServicePayload>['resetForm']
     ) => {
         switch (tag) {
             case 'COZA_SUNDAYS':
@@ -86,7 +87,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'COZA Sunday',
                         tag: 'COZA_SUNDAYS',
                         serviceType: 'local',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -101,7 +102,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'COZA Tuesday',
                         tag: 'COZA_TUESDAYS',
                         serviceType: 'global',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -116,7 +117,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'COZA Wednesday',
                         tag: 'COZA_WEDNESDAYS',
                         serviceType: 'local',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -131,7 +132,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'DPE',
                         tag: 'DPE',
                         serviceType: 'global',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -146,7 +147,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'Dominion Hour',
                         tag: 'DOMINION_HOUR',
                         serviceType: 'global',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -161,7 +162,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'Home Training',
                         tag: 'HOME_TRAINING',
                         serviceType: 'global',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -176,7 +177,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: 'Leaders Meeting',
                         tag: 'LEADERS_MEETING',
                         serviceType: 'global',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -191,7 +192,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: '12DG',
                         tag: '12DG',
                         serviceType: 'local',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -206,7 +207,7 @@ const CreateServiceManagement: React.FC = () => {
                         name: '7DG',
                         tag: '7DG',
                         serviceType: 'local',
-                    } as ICreateServicePayload,
+                    } as IUpdateServicePayload,
                 });
 
                 break;
@@ -216,36 +217,26 @@ const CreateServiceManagement: React.FC = () => {
         validateField('serviceDate');
     };
 
-    const INITIAL_VALUES: ICreateServicePayload = {
-        serviceDate: undefined as unknown as Date,
-        serviceTime: undefined as unknown as Date,
-        clockInStartTime: undefined as unknown as Date,
-        serviceEndTime: undefined as unknown as Date,
-        leadersLateStartTime: undefined as unknown as Date,
-        workersLateStartTime: undefined as unknown as Date,
-        name: '',
-        tag: '',
-        serviceType: '',
-    } as unknown as ICreateServicePayload;
+    const INITIAL_VALUES: IUpdateServicePayload = props as unknown as IUpdateServicePayload;
 
     return (
         <ViewWrapper scroll noPadding style={{ paddingTop: 8 }}>
             <View className="px-4 gap-6 items-start w-full mb-12">
                 <View className="items-center w-full">
-                    <Formik<ICreateServicePayload>
+                    <Formik<IUpdateServicePayload>
                         validateOnChange
                         onSubmit={onSubmit}
                         initialValues={INITIAL_VALUES}
-                        validationSchema={CreateServiceSchema}
+                        validationSchema={UpdateServiceSchema}
                     >
                         {({
                             errors,
                             values,
+                            touched,
+                            resetForm,
                             handleChange,
                             handleSubmit,
-                            touched,
                             setFieldValue,
-                            resetForm,
                             validateField,
                         }) => {
                             const handleServiceTag = (serviceTag: string) => {
@@ -298,18 +289,16 @@ const CreateServiceManagement: React.FC = () => {
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker
                                             mode="date"
-                                            className="flex-1"
                                             label="Service date"
                                             minimumDate={new Date()}
                                             error={errors.serviceDate}
                                             touched={touched.serviceDate}
                                             placeholder="Select service date"
-                                            initialValue={values.serviceDate as string}
+                                            initialValue={values.serviceTime as string}
                                             onConfirm={handleChange('serviceDate') as unknown as (value: Date) => void}
                                         />
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Service Start Time"
                                             error={errors.serviceTime}
                                             touched={touched.serviceTime}
@@ -321,7 +310,6 @@ const CreateServiceManagement: React.FC = () => {
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Clock-in Time"
                                             error={errors.clockInStartTime}
                                             touched={touched.clockInStartTime}
@@ -333,7 +321,6 @@ const CreateServiceManagement: React.FC = () => {
                                         />
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Leaders Late Time"
                                             error={errors.leadersLateStartTime}
                                             touched={touched.leadersLateStartTime}
@@ -347,7 +334,6 @@ const CreateServiceManagement: React.FC = () => {
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Workers Late Time"
                                             error={errors.workersLateStartTime}
                                             touched={touched.workersLateStartTime}
@@ -359,7 +345,6 @@ const CreateServiceManagement: React.FC = () => {
                                         />
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Service End Time"
                                             error={errors.serviceEndTime}
                                             touched={touched.serviceEndTime}
@@ -374,10 +359,11 @@ const CreateServiceManagement: React.FC = () => {
                                         <Button
                                             className="mt-2"
                                             isLoading={isLoading}
-                                            loadingText="Creating Service..."
+                                            loadingText="Updating Service..."
                                             onPress={handleSubmit as (event: any) => void}
+                                            icon={<Icon name="save" type="ionicons" color="white" />}
                                         >
-                                            Create service
+                                            Save changes
                                         </Button>
                                     </View>
                                 </View>
@@ -390,6 +376,6 @@ const CreateServiceManagement: React.FC = () => {
     );
 };
 
-export default React.memo(CreateServiceManagement);
+export default React.memo(UpdateServiceManagement);
 
-CreateServiceManagement.displayName = 'CreateServiceManagement';
+UpdateServiceManagement.displayName = 'UpdateServiceManagement';
