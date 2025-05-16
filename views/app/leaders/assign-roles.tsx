@@ -3,7 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { CloseIcon, FormControl } from 'native-base';
+import { CloseIcon, View } from 'native-base';
 import React, { useState } from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -151,8 +151,8 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
 
                             return (
                                 <View w="100%" space={4}>
-                                    <FormControl isRequired isInvalid={!!errors?.campus && touched.campus}>
-                                        <FormControl.Label>Campus</FormControl.Label>
+                                    <View  isInvalid={!!errors?.campus && touched.campus}>
+                                        <Label>Campus</Label>
                                         <SelectComponent
                                             valueKey="_id"
                                             items={sortedCampuses}
@@ -169,7 +169,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -182,10 +182,10 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             }
                                         >
                                             {errors?.campus}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.department && touched.department}>
-                                        <FormControl.Label>Department</FormControl.Label>
+                                        </FormErrorMessage>
+                                    </View>
+                                    <View  isInvalid={!!errors?.department && touched.department}>
+                                        <Label>Department</Label>
                                         <SelectComponent
                                             valueKey="_id"
                                             items={sortedDepartments}
@@ -203,7 +203,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -216,10 +216,10 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             }
                                         >
                                             {errors?.department}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.worker && touched.worker}>
-                                        <FormControl.Label>Worker</FormControl.Label>
+                                        </FormErrorMessage>
+                                    </View>
+                                    <View  isInvalid={!!errors?.worker && touched.worker}>
+                                        <Label>Worker</Label>
                                         <SelectComponent
                                             valueKey="_id"
                                             items={sortedUsers}
@@ -237,7 +237,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -250,10 +250,10 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             }
                                         >
                                             {errors?.worker}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.role && touched.role}>
-                                        <FormControl.Label>Role</FormControl.Label>
+                                        </FormErrorMessage>
+                                    </View>
+                                    <View  isInvalid={!!errors?.role && touched.role}>
+                                        <Label>Role</Label>
                                         <SelectComponent
                                             valueKey="_id"
                                             displayKey="name"
@@ -267,7 +267,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 <SelectItemComponent key={key} value={item._id} label={item.name} />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -280,8 +280,8 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             }
                                         >
                                             {errors?.role}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                     <View>
                                         {campusDept?.map((item, key) => (
                                             <View
@@ -315,8 +315,8 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                     )}
                                     {isOpen && (
                                         <View space={2}>
-                                            <FormControl>
-                                                <FormControl.Label>Campus</FormControl.Label>
+                                            <View>
+                                                <Label>Campus</Label>
                                                 <SelectComponent
                                                     valueKey="_id"
                                                     placeholder="Campus"
@@ -333,9 +333,9 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                         />
                                                     ))}
                                                 </SelectComponent>
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormControl.Label>Department</FormControl.Label>
+                                            </View>
+                                            <View>
+                                                <Label>Department</Label>
                                                 <SelectComponent
                                                     valueKey="_id"
                                                     items={sortedDepartments}
@@ -355,7 +355,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                         />
                                                     ))}
                                                 </SelectComponent>
-                                            </FormControl>
+                                            </View>
 
                                             <View space={4}>
                                                 <ButtonComponent
@@ -376,7 +376,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             </View>
                                         </View>
                                     )}
-                                    <FormControl>
+                                    <View>
                                         <ButtonComponent
                                             mt={4}
                                             isLoading={isLoading}
@@ -384,7 +384,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                         >
                                             Submit
                                         </ButtonComponent>
-                                    </FormControl>
+                                    </View>
                                 </View>
                             );
                         }}

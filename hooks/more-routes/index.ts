@@ -3,15 +3,10 @@ import useRole, { DEPARTMENTS, ROLES } from '../role';
 import { AppRoutes } from '~/config/navigation';
 
 const useMoreRoutes = () => {
-    const {
-        user: {
-            role: { name: roleName },
-            department: { departmentName },
-        },
-        isSuperAdmin,
-        isCampusPastor,
-        isCGWCApproved,
-    } = useRole();
+    const { user, isSuperAdmin, isCampusPastor, isCGWCApproved } = useRole();
+
+    const roleName = user?.role?.name;
+    const departmentName = user?.departmentName;
 
     const filteredRoutes = useMemo(
         () =>

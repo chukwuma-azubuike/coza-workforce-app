@@ -51,8 +51,8 @@ function PickerSelect<T = any>({
 
     const handleValueChange = useCallback(
         (value: any, index: number) => {
-            setValue(value ? `${value}` : undefined);
-            onValueChange(value ? `${value}` : undefined, index);
+            setValue && setValue(value ? `${value}` : undefined);
+            onValueChange && onValueChange(value ? `${value}` : undefined, index);
         },
         [setValue, onValueChange]
     );

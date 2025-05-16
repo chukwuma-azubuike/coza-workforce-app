@@ -3,7 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { FormControl } from 'native-base';
+import { View } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -63,14 +63,14 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
                     >
                         {({ errors, values, handleChange, handleSubmit, touched }) => (
                             <View w="100%" space={4}>
-                                <FormControl isRequired isInvalid={!!errors?.title && touched.title}>
-                                    <FormControl.Label>Title</FormControl.Label>
-                                    <InputComponent
+                                <View  isInvalid={!!errors?.title && touched.title}>
+                                    <Label>Title</Label>
+                                    <Input
                                         placeholder="Title"
                                         value={values.title}
                                         onChangeText={handleChange('title')}
                                     />
-                                    <FormControl.ErrorMessage
+                                    <FormErrorMessage
                                         fontSize="2xl"
                                         mt={3}
                                         leftIcon={
@@ -83,17 +83,17 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
                                         }
                                     >
                                         {errors?.title}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
+                                    </FormErrorMessage>
+                                </View>
 
-                                <FormControl isRequired isInvalid={!!errors?.message && touched.message}>
-                                    <FormControl.Label>Message</FormControl.Label>
+                                <View  isInvalid={!!errors?.message && touched.message}>
+                                    <Label>Message</Label>
                                     <TextAreaComponent
                                         value={values.message}
                                         placeholder="Message"
                                         onChangeText={handleChange('message')}
                                     />
-                                    <FormControl.ErrorMessage
+                                    <FormErrorMessage
                                         fontSize="2xl"
                                         mt={3}
                                         leftIcon={
@@ -106,10 +106,10 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
                                         }
                                     >
                                         {errors?.message}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
+                                    </FormErrorMessage>
+                                </View>
 
-                                <FormControl>
+                                <View>
                                     <ButtonComponent
                                         mt={4}
                                         isLoading={isLoading}
@@ -117,7 +117,7 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
                                     >
                                         Post Instant Message
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </View>
                         )}
                     </Formik>
