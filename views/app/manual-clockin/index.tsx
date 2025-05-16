@@ -3,7 +3,6 @@ import { Formik, useFormik } from 'formik';
 import React from 'react';
 import ErrorBoundary from '@components/composite/error-boundary';
 import ViewWrapper from '@components/layout/viewWrapper';
-import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
 import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
@@ -100,10 +99,6 @@ const ManualClockin: React.FC = () => {
         campusUsersIsUninitialized && refetchCampusUsers();
         campusesIsUninitialized && refetchCampuses();
     };
-
-    useScreenFocus({
-        onFocus: refresh,
-    });
 
     let INITIAL_VALUES = { campusId: campus?._id } as IClockInPayload;
 

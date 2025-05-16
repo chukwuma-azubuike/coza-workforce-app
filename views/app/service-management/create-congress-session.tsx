@@ -1,13 +1,12 @@
-import { View } from "react-native";
+import React from 'react';
+import { View } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { View } from 'native-base';
-import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import DateTimePicker  from '~/components/composite/date-time-picker';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -15,10 +14,10 @@ import { useCreateServiceMutation } from '@store/services/services';
 import { Congress_SESSION_TAGS, CREATE_SERVICE_ENUM, ICreateServicePayload } from '@store/types';
 import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const params = route.params as { CongressId: string };
-    const { navigate } = navigation;
+const CreateCGWGSession: React.FC = () => {
+    const params = useLocalSearchParams() as any as { CongressId: string };
     const { setModalState } = useModal();
     const CongressId = params?.CongressId;
 
@@ -59,7 +58,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                 status: 'success',
             });
             reset();
-            navigate('Service management', data);
+            router.push({ pathname: '/service-management', params: data as any });
             resetForm({ values: INITIAL_VALUES });
         }
 
@@ -95,7 +94,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                     >
                         {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => (
                             <View w="100%" space={4}>
-                                <View  isInvalid={!!errors?.serviceName && touched.serviceName}>
+                                <View isInvalid={!!errors?.serviceName && touched.serviceName}>
                                     <Label>Session Name</Label>
                                     <Input
                                         value={values.serviceName}
@@ -117,7 +116,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         {errors?.serviceName}
                                     </FormErrorMessage>
                                 </View>
-                                <View  isInvalid={!!errors?.serviceType && touched.serviceType}>
+                                <View isInvalid={!!errors?.serviceType && touched.serviceType}>
                                     <Label>Session Type</Label>
                                     <SelectComponent
                                         selectedValue={values.serviceType}
@@ -142,7 +141,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         {errors?.serviceType}
                                     </FormErrorMessage>
                                 </View>
-                                <View  isInvalid={!!errors?.serviceTag && touched.serviceTag}>
+                                <View isInvalid={!!errors?.serviceTag && touched.serviceTag}>
                                     <Label>Session Tag</Label>
                                     <SelectComponent
                                         placeholder="Session Tags"
@@ -174,14 +173,16 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 </View>
 
                                 <View justifyContent="space-between">
-                                    <DateTimePicker                                        label="Date"
+                                    <DateTimePicker
+                                        label="Date"
                                         mode="date"
                                         fieldName="serviceDate"
                                         onSelectDate={setFieldValue}
                                         value={values.serviceDate}
                                         minimumDate={new Date()}
                                     />
-                                    <DateTimePicker                                        label="Session Start Time"
+                                    <DateTimePicker
+                                        label="Session Start Time"
                                         mode="time"
                                         fieldName="serviceTime"
                                         onSelectDate={setFieldValue}
@@ -190,13 +191,15 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 </View>
 
                                 <View justifyContent="space-between">
-                                    <DateTimePicker                                        label="Clock-in Time"
+                                    <DateTimePicker
+                                        label="Clock-in Time"
                                         mode="time"
                                         fieldName="clockinTime"
                                         onSelectDate={setFieldValue}
                                         value={values.clockinTime}
                                     />
-                                    <DateTimePicker                                        label="Leaders Late Time"
+                                    <DateTimePicker
+                                        label="Leaders Late Time"
                                         mode="time"
                                         fieldName="leaderLateTime"
                                         onSelectDate={setFieldValue}
@@ -205,13 +208,15 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                 </View>
 
                                 <View justifyContent="space-between">
-                                    <DateTimePicker                                        label="Workers Late Time"
+                                    <DateTimePicker
+                                        label="Workers Late Time"
                                         mode="time"
                                         fieldName="workerLateTime"
                                         onSelectDate={setFieldValue}
                                         value={values.workerLateTime}
                                     />
-                                    <DateTimePicker                                        label="Session End Time"
+                                    <DateTimePicker
+                                        label="Session End Time"
                                         mode="time"
                                         fieldName="endTime"
                                         onSelectDate={setFieldValue}
