@@ -18,7 +18,7 @@ const TopNav: React.FC = () => {
         Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
     };
 
-    const handlePress = () => router.push('/(stack)/profile');
+    const handlePress = () => router.push('/profile');
 
     const { user } = useRole();
     const { isLightMode } = useAppColorMode();

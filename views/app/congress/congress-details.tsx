@@ -114,7 +114,7 @@ const CongressDetails: React.FC = () => {
     };
 
     const gotoCreateSession = () => {
-        router.push({ pathname: '/(stack)/service-management/create-congress-session', params: { CGWCId } });
+        router.push({ pathname: '/service-management/create-congress-session', params: { CGWCId } });
     };
 
     const allButtons = [

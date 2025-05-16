@@ -1,5 +1,4 @@
-import { Text } from "~/components/ui/text";
-import { useIsFocused } from '@react-navigation/native';
+import { Text } from '~/components/ui/text';
 import dayjs from 'dayjs';
 import React, { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -10,9 +9,6 @@ import useScreenFocus from '@hooks/focus';
 import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
 import Utils from '@utils/index';
-import HStackComponent from '@components/layout/h-stack';
-import VStackComponent from '@components/layout/v-stack';
-import TextComponent from '@components/text';
 
 const ServiceListRow: React.FC<IService> = React.memo(service => {
     return (
@@ -24,10 +20,10 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
             accessibilityRole="button"
         >
             <View className="p-4 items-center justify-between">
-                <View space={6} className="items-center">
+                <View className="items-center gap-3">
                     <View className="justify-between">
                         <Text className="font-bold">{service?.name}</Text>
-                        <Text fontSize="sm">
+                        <Text className="text-sm">
                             {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
                                 service?.serviceTime
                             ).format('h:mm A')}`}
@@ -48,13 +44,9 @@ const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListI
         },
     ];
 
-    const isScreenFocused = useIsFocused();
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetServicesQuery(
-        { limit: 20, page },
-        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
-    );
+    const { data, isLoading, isSuccess, refetch, isFetching } = useGetServicesQuery({ limit: 20, page });
 
     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
