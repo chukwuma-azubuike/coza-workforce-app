@@ -3,7 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig, FormikProps } from 'formik';
-import { FormControl } from 'native-base';
+import { View } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -242,8 +242,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
 
                             return (
                                 <View w="100%" space={4}>
-                                    <FormControl isRequired isInvalid={!!errors?.serviceTag && touched.serviceTag}>
-                                        <FormControl.Label>Service Tag</FormControl.Label>
+                                    <View  isInvalid={!!errors?.serviceTag && touched.serviceTag}>
+                                        <Label>Service Tag</Label>
                                         <SelectComponent
                                             valueKey="id"
                                             displayKey="value"
@@ -260,7 +260,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -273,10 +273,10 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             }
                                         >
                                             {errors?.serviceTag}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.serviceType && touched.serviceType}>
-                                        <FormControl.Label>Service Type</FormControl.Label>
+                                        </FormErrorMessage>
+                                    </View>
+                                    <View  isInvalid={!!errors?.serviceType && touched.serviceType}>
+                                        <Label>Service Type</Label>
                                         <SelectComponent
                                             valueKey="id"
                                             displayKey="label"
@@ -292,7 +292,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 <SelectItemComponent value={type.id} label={type.label} />
                                             ))}
                                         </SelectComponent>
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -305,16 +305,16 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             }
                                         >
                                             {errors?.serviceType}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
-                                    <FormControl isRequired isInvalid={!!errors?.serviceName && touched.serviceName}>
-                                        <FormControl.Label>Service Name</FormControl.Label>
-                                        <InputComponent
+                                        </FormErrorMessage>
+                                    </View>
+                                    <View  isInvalid={!!errors?.serviceName && touched.serviceName}>
+                                        <Label>Service Name</Label>
+                                        <Input
                                             value={values.serviceName}
                                             placeholder="Service Name"
                                             onChangeText={handleChange('serviceName')}
                                         />
-                                        <FormControl.ErrorMessage
+                                        <FormErrorMessage
                                             fontSize="2xl"
                                             mt={3}
                                             leftIcon={
@@ -327,8 +327,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             }
                                         >
                                             {errors?.serviceName}
-                                        </FormControl.ErrorMessage>
-                                    </FormControl>
+                                        </FormErrorMessage>
+                                    </View>
                                     <View justifyContent="space-between">
                                         <DateTimePicker                                            label="Date"
                                             mode="date"
@@ -337,7 +337,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             value={values.serviceDate}
                                             minimumDate={new Date()}
                                             errorMessage={errors?.serviceDate}
-                                            formControlProps={{
+                                            ViewProps={{
                                                 isInvalid: !!errors?.serviceDate,
                                             }}
                                         />
@@ -347,7 +347,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             onSelectDate={setFieldValue}
                                             value={values.serviceTime}
                                             errorMessage={errors?.serviceTime}
-                                            formControlProps={{
+                                            ViewProps={{
                                                 isInvalid: !!errors?.serviceTime && touched.serviceTime,
                                             }}
                                         />
@@ -359,7 +359,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             onSelectDate={setFieldValue}
                                             value={values.clockinTime}
                                             errorMessage={errors?.clockinTime}
-                                            formControlProps={{
+                                            ViewProps={{
                                                 isInvalid: !!errors?.clockinTime && touched.clockinTime,
                                             }}
                                         />
@@ -369,7 +369,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             onSelectDate={setFieldValue}
                                             value={values.leaderLateTime}
                                             errorMessage={errors?.leaderLateTime}
-                                            formControlProps={{
+                                            ViewProps={{
                                                 isInvalid: !!errors?.leaderLateTime && touched.leaderLateTime,
                                             }}
                                         />
@@ -381,7 +381,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             onSelectDate={setFieldValue}
                                             value={values.workerLateTime}
                                             errorMessage={errors?.workerLateTime}
-                                            formControlProps={{
+                                            ViewProps={{
                                                 isInvalid: !!errors?.workerLateTime && touched.workerLateTime,
                                             }}
                                         />
@@ -391,12 +391,12 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             onSelectDate={setFieldValue}
                                             value={values.endTime}
                                             errorMessage={errors?.endTime}
-                                            formControlProps={{
+                                            ViewProps={{
                                                 isInvalid: !!errors?.endTime && touched.endTime,
                                             }}
                                         />
                                     </View>
-                                    <FormControl>
+                                    <View>
                                         <ButtonComponent
                                             mt={4}
                                             isLoading={isLoading}
@@ -405,7 +405,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         >
                                             Create service
                                         </ButtonComponent>
-                                    </FormControl>
+                                    </View>
                                 </View>
                             );
                         }}

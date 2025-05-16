@@ -32,6 +32,7 @@ const Routing: React.FC = () => {
                 <Stack.Screen name="index" options={{ headerShown: false }} />
                 <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(stack)" options={{ headerShown: false }} />
                 <Stack.Screen name="(stack)/profile" options={{ headerShown: false }} />
                 {filteredRoutes.map(route => (
                     <Stack.Screen key={route.href} options={{ headerShown: false }} name={`(stack)${route.href}`} />

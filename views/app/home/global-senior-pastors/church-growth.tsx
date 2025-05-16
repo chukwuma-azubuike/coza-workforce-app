@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { FormControl } from 'native-base';
+import { View } from 'native-base';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetGraphAttendanceReportsQuery, useGetGSPReportQuery } from '@store/services/reports';
@@ -93,21 +93,21 @@ const ChurchGrowth: React.FC = () => {
     return (
         <>
             <View justifyContent="space-around" w="100%" mb={4} space={10} position="static" top={3} className="px-4">
-                <FormControl isRequired w="30%">
+                <View  w="30%">
                     <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
                         {sortedCampuses?.map((campus, index) => (
                             <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
                         ))}
                     </SelectComponent>
-                </FormControl>
-                <FormControl isRequired w="30%">
+                </View>
+                <View  w="30%">
                     <SelectComponent placeholder="Select Time Range" selectedValue={campusId}>
                         {TIME_RANGES?.map((timeRange, index) => (
                             <SelectItemComponent key={`timeRange_${index}`} label={timeRange} value={timeRange} />
                         ))}
                     </SelectComponent>
-                </FormControl>
-                <FormControl isRequired w="30%">
+                </View>
+                <View  w="30%">
                     <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
                         {sortedServices?.map((service, index) => (
                             <SelectItemComponent
@@ -117,7 +117,7 @@ const ChurchGrowth: React.FC = () => {
                             />
                         ))}
                     </SelectComponent>
-                </FormControl>
+                </View>
             </View>
             <Row style={{ marginVertical: 4, height: ScreenHeight / 2 }}>
                 <Col sm={24} lg={10}>

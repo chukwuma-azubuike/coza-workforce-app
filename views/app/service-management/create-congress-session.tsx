@@ -3,7 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { FormControl } from 'native-base';
+import { View } from 'native-base';
 import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
@@ -95,14 +95,14 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                     >
                         {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => (
                             <View w="100%" space={4}>
-                                <FormControl isRequired isInvalid={!!errors?.serviceName && touched.serviceName}>
-                                    <FormControl.Label>Session Name</FormControl.Label>
-                                    <InputComponent
+                                <View  isInvalid={!!errors?.serviceName && touched.serviceName}>
+                                    <Label>Session Name</Label>
+                                    <Input
                                         value={values.serviceName}
                                         placeholder="Session Name"
                                         onChangeText={handleChange('serviceName')}
                                     />
-                                    <FormControl.ErrorMessage
+                                    <FormErrorMessage
                                         fontSize="2xl"
                                         mt={3}
                                         leftIcon={
@@ -115,10 +115,10 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         }
                                     >
                                         {errors?.serviceName}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={!!errors?.serviceType && touched.serviceType}>
-                                    <FormControl.Label>Session Type</FormControl.Label>
+                                    </FormErrorMessage>
+                                </View>
+                                <View  isInvalid={!!errors?.serviceType && touched.serviceType}>
+                                    <Label>Session Type</Label>
                                     <SelectComponent
                                         selectedValue={values.serviceType}
                                         placeholder="Session Type"
@@ -127,7 +127,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         <SelectItemComponent value="global" label="Global" />
                                         <SelectItemComponent value="local" label="Local" />
                                     </SelectComponent>
-                                    <FormControl.ErrorMessage
+                                    <FormErrorMessage
                                         fontSize="2xl"
                                         mt={3}
                                         leftIcon={
@@ -140,10 +140,10 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         }
                                     >
                                         {errors?.serviceType}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
-                                <FormControl isRequired isInvalid={!!errors?.serviceTag && touched.serviceTag}>
-                                    <FormControl.Label>Session Tag</FormControl.Label>
+                                    </FormErrorMessage>
+                                </View>
+                                <View  isInvalid={!!errors?.serviceTag && touched.serviceTag}>
+                                    <Label>Session Tag</Label>
                                     <SelectComponent
                                         placeholder="Session Tags"
                                         selectedValue={values.serviceTag}
@@ -157,7 +157,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                             />
                                         ))}
                                     </SelectComponent>
-                                    <FormControl.ErrorMessage
+                                    <FormErrorMessage
                                         fontSize="2xl"
                                         mt={3}
                                         leftIcon={
@@ -170,8 +170,8 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                         }
                                     >
                                         {errors?.serviceTag}
-                                    </FormControl.ErrorMessage>
-                                </FormControl>
+                                    </FormErrorMessage>
+                                </View>
 
                                 <View justifyContent="space-between">
                                     <DateTimePicker                                        label="Date"
@@ -219,7 +219,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                     />
                                 </View>
 
-                                <FormControl>
+                                <View>
                                     <ButtonComponent
                                         mt={4}
                                         isLoading={isLoading}
@@ -227,7 +227,7 @@ const CreateCGWGSession: React.FC<NativeStackScreenProps<ParamListBase>> = ({ na
                                     >
                                         Create Session
                                     </ButtonComponent>
-                                </FormControl>
+                                </View>
                             </View>
                         )}
                     </Formik>

@@ -109,7 +109,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     return (
         <>
             <View justifyContent="space-around" w="100%" mb={3} space={10} position="static" className="px-4">
-                <FormControl isRequired w="50%">
+                <View  w="50%">
                     <SelectComponent
                         valueKey="_id"
                         displayKey="campusName"
@@ -122,8 +122,8 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
                         ))}
                     </SelectComponent>
-                </FormControl>
-                <FormControl isRequired w="50%">
+                </View>
+                <View  w="50%">
                     <SelectComponent
                         valueKey="_id"
                         displayKey={['name', 'clockInStartTime']}
@@ -140,7 +140,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                             />
                         ))}
                     </SelectComponent>
-                </FormControl>
+                </View>
             </View>
             <ViewWrapper mt={4} scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
                 <ListItem.Accordion
