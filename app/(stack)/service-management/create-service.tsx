@@ -1,7 +1,8 @@
 import React from 'react';
+import CreateService from '~/views/app/service-management/create-service';
 
-const CreateserviceScreen: React.FC = () => {
-    return <></>;
+const CreateServiceScreen: React.FC = () => {
+    return <CreateService />;
 };
 
-export default CreateserviceScreen;
+export default CreateServiceScreen;
