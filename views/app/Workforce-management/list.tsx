@@ -1,6 +1,5 @@
-import { Text } from '~/components/ui/text';
-import { useIsFocused } from '@react-navigation/native';
 import React, { memo } from 'react';
+import { Text } from '~/components/ui/text';
 import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
@@ -100,12 +99,7 @@ const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
         user: { department },
     } = useRole();
 
-    const isScreenFocused = useIsFocused();
-
-    const { data, isLoading, isFetching } = useGetUsersQuery(
-        { departmentId: department._id },
-        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
-    );
+    const { data, isLoading, isFetching } = useGetUsersQuery({ departmentId: department._id });
 
     return (
         <FlatListComponent
@@ -125,12 +119,7 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
         },
     ];
 
-    const isScreenFocused = useIsFocused();
-
-    const { data, isLoading, isFetching, isUninitialized, refetch } = useGetUsersQuery(
-        { departmentId },
-        { skip: !isScreenFocused, refetchOnMountOrArgChange: true }
-    );
+    const { data, isLoading, isFetching, isUninitialized, refetch } = useGetUsersQuery({ departmentId });
     const isRefreshing = isLoading || isFetching;
 
     const sortedGroupedData = React.useMemo(

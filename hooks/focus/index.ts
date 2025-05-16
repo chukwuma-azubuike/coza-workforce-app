@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFocusEffect, useIsFocused } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 
 interface IUseScreenFocusProps {
     onFocus?: () => void;
@@ -7,30 +7,15 @@ interface IUseScreenFocusProps {
 }
 
 const useScreenFocus = (props: IUseScreenFocusProps) => {
-    const { onFocus, onFocusExit } = props;
-
-    const isScreenFocused = useIsFocused();
-    const isScreenNotFocused = !isScreenFocused;
+    const { onFocus } = props;
 
     useFocusEffect(
         React.useCallback(() => {
-            if (isScreenFocused && onFocus) onFocus();
+            if (onFocus) onFocus();
 
             return () => {};
-        }, [isScreenFocused])
+        }, [])
     );
-
-    useFocusEffect(
-        React.useCallback(() => {
-            if (isScreenNotFocused && onFocusExit) onFocusExit();
-
-            return () => {};
-        }, [isScreenNotFocused])
-    );
-
-    return {
-        isScreenFocused,
-    };
 };
 
 export default useScreenFocus;

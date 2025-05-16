@@ -1,13 +1,12 @@
-import { View } from "react-native";
+import React from 'react';
+import { View } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig, FormikProps } from 'formik';
-import { View } from 'native-base';
-import React from 'react';
 import ButtonComponent from '@components/atoms/button';
 import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
-import DateTimePicker  from '~/components/composite/date-time-picker';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
@@ -15,14 +14,14 @@ import { useCreateServiceMutation } from '@store/services/services';
 import { CREATE_SERVICE_ENUM, ICreateServicePayload, SERVICE_TAGS } from '@store/types';
 import Utils from '@utils/index';
 import { CreateServiceSchema } from '@utils/schemas';
+import { router } from 'expo-router';
 
 const SERVICE_TYPES = [
     { id: 'local', label: 'Local' },
     { id: 'global', label: 'Global' },
 ];
 
-const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
-    const { navigate } = navigation;
+const CreateServiceManagement: React.FC = () => {
     const { setModalState } = useModal();
     const [createService, { isLoading, data, reset }] = useCreateServiceMutation();
 
@@ -60,7 +59,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
             });
             reset();
             resetForm({ values: INITIAL_VALUES });
-            navigate('Service management', data);
+            router.push({ pathname: '/service-management', params: data as any });
         }
 
         if ('error' in result) {
@@ -242,7 +241,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
 
                             return (
                                 <View w="100%" space={4}>
-                                    <View  isInvalid={!!errors?.serviceTag && touched.serviceTag}>
+                                    <View isInvalid={!!errors?.serviceTag && touched.serviceTag}>
                                         <Label>Service Tag</Label>
                                         <SelectComponent
                                             valueKey="id"
@@ -275,7 +274,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             {errors?.serviceTag}
                                         </FormErrorMessage>
                                     </View>
-                                    <View  isInvalid={!!errors?.serviceType && touched.serviceType}>
+                                    <View isInvalid={!!errors?.serviceType && touched.serviceType}>
                                         <Label>Service Type</Label>
                                         <SelectComponent
                                             valueKey="id"
@@ -307,7 +306,7 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                             {errors?.serviceType}
                                         </FormErrorMessage>
                                     </View>
-                                    <View  isInvalid={!!errors?.serviceName && touched.serviceName}>
+                                    <View isInvalid={!!errors?.serviceName && touched.serviceName}>
                                         <Label>Service Name</Label>
                                         <Input
                                             value={values.serviceName}
@@ -330,7 +329,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         </FormErrorMessage>
                                     </View>
                                     <View justifyContent="space-between">
-                                        <DateTimePicker                                            label="Date"
+                                        <DateTimePicker
+                                            label="Date"
                                             mode="date"
                                             fieldName="serviceDate"
                                             onSelectDate={setFieldValue}
@@ -341,7 +341,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.serviceDate,
                                             }}
                                         />
-                                        <DateTimePicker                                            label="Service Start Time"
+                                        <DateTimePicker
+                                            label="Service Start Time"
                                             mode="time"
                                             fieldName="serviceTime"
                                             onSelectDate={setFieldValue}
@@ -353,7 +354,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         />
                                     </View>
                                     <View justifyContent="space-between">
-                                        <DateTimePicker                                            label="Clock-in Time"
+                                        <DateTimePicker
+                                            label="Clock-in Time"
                                             mode="time"
                                             fieldName="clockinTime"
                                             onSelectDate={setFieldValue}
@@ -363,7 +365,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.clockinTime && touched.clockinTime,
                                             }}
                                         />
-                                        <DateTimePicker                                            label="Leaders Late Time"
+                                        <DateTimePicker
+                                            label="Leaders Late Time"
                                             mode="time"
                                             fieldName="leaderLateTime"
                                             onSelectDate={setFieldValue}
@@ -375,7 +378,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                         />
                                     </View>
                                     <View justifyContent="space-between">
-                                        <DateTimePicker                                            label="Workers Late Time"
+                                        <DateTimePicker
+                                            label="Workers Late Time"
                                             mode="time"
                                             fieldName="workerLateTime"
                                             onSelectDate={setFieldValue}
@@ -385,7 +389,8 @@ const CreateServiceManagement: React.FC<NativeStackScreenProps<ParamListBase>> =
                                                 isInvalid: !!errors?.workerLateTime && touched.workerLateTime,
                                             }}
                                         />
-                                        <DateTimePicker                                            label="Service End Time"
+                                        <DateTimePicker
+                                            label="Service End Time"
                                             mode="time"
                                             fieldName="endTime"
                                             onSelectDate={setFieldValue}
