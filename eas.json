@@ -15,10 +15,15 @@
             "distribution": "internal"
         },
         "production": {
-            "autoIncrement": true
+            "autoIncrement": true,
+            "ios": {
+                // "prebuildCommand": "npx pod-install"
+            }
         }
     },
     "submit": {
-        "production": {}
+        "ios": {
+            // "ascAppId": "1667229564"
+        }
     }
 }
