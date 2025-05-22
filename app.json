@@ -2,7 +2,7 @@
     "expo": {
         "name": "Coza Workforce",
         "slug": "coza-workforce-app",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "myapp",
@@ -10,7 +10,7 @@
         "newArchEnabled": true,
         "splash": {
             "image": "./assets/images/splash-black.png",
-            "resizeMode": "contain",
+            "resizeMode": "cover",
             "backgroundColor": "#FFFFFF"
         },
         "ios": {
@@ -63,7 +63,7 @@
                 {
                     "ios": ["camera", "location", "microphone", "photo"]
                 }
-            ],
+            ]
             // [
             //     "expo-build-properties",
             //     {
