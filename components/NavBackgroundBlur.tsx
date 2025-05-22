@@ -20,7 +20,7 @@ const NavTabBackground = forwardRef(({ children, className, ...props }: NavTabBa
                 className
             )}
         >
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} className="flex-1">
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} scrollEnabled={false} className="flex-1">
                 {children}
             </ScrollView>
         </View>

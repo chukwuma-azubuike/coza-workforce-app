@@ -2,6 +2,9 @@
   "name": "coza-workforce-app",
   "main": "index.js",
   "version": "1.0.0",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev:start": "npx expo start --dev-client",
     "clear:cache": "npx expo start --clear",
@@ -10,8 +13,9 @@
     "dev:web": "npx expo start -c --web",
     "clean": "rm -rf .expo node_modules",
     "run:android-build": "eas build:run -p android --latest",
-    "dev:build-ios": "eas build --platform ios --profile development",
-    "dev:build-android": "npx eas build --platform android --profile development",
+    "eas:build-ios-dev": "eas build --platform ios --profile development",
+    "eas:build-android-dev": "npx eas build --platform android --profile development",
+    "eas:build-ios-prod": "eas build --platform ios --profile production",
     "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css",
     "format": "npx prettier . --write",
     "android": "expo run:android",

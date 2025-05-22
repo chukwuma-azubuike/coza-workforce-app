@@ -8,13 +8,20 @@
             "developmentClient": true,
             "distribution": "internal",
             "env": {
-                "EXPO_APPLE_TEAM_ID": "499THBRLGD"
+                "EXPO_APPLE_TEAM_ID": "499THBRLGD",
+                "NODE_VERSION": "20"
             }
         },
         "preview": {
-            "distribution": "internal"
+            "distribution": "internal",
+            "env": {
+                "NODE_VERSION": "20"
+            }
         },
         "production": {
+            "env": {
+                "NODE_VERSION": "20"
+            },
             "autoIncrement": true,
             "ios": {
                 // "prebuildCommand": "npx pod-install"
