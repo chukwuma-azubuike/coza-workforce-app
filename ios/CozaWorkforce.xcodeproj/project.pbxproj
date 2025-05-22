@@ -25,11 +25,15 @@
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 <<<<<<< HEAD
+<<<<<<< HEAD
 		FD21EE492DDF322B004B5F21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD21EE482DDF322B004B5F21 /* GoogleService-Info.plist */; };
 		FD21EE4B2DDF3241004B5F21 /* GoogleService-Info 2.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD21EE4A2DDF3241004B5F21 /* GoogleService-Info 2.plist */; };
 >>>>>>> 7e1f7e3 (fix build)
 =======
 >>>>>>> 6b56ee3 (fix build)
+=======
+		FD21EE4D2DDF4789004B5F21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD21EE4C2DDF4789004B5F21 /* GoogleService-Info.plist */; };
+>>>>>>> 3cf1943 (fix build)
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +63,7 @@
 		EF557AC418C42C755B159207 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = CozaWorkforce/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 >>>>>>> 7e1f7e3 (fix build)
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CozaWorkforce/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
+		FD21EE4C2DDF4789004B5F21 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +81,7 @@
 		13B07FAE1A68108700A75B9A /* CozaWorkforce */ = {
 			isa = PBXGroup;
 			children = (
+				FD21EE4C2DDF4789004B5F21 /* GoogleService-Info.plist */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -236,6 +242,7 @@
 			files = (
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				FD21EE4D2DDF4789004B5F21 /* GoogleService-Info.plist in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 <<<<<<< HEAD
 				CD61BADF2F93411BB7C76700 /* GoogleService-Info.plist in Resources */,
