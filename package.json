@@ -1,7 +1,7 @@
 {
   "name": "coza-workforce-app",
   "main": "index.js",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "engines": {
     "node": "20.x"
   },
@@ -20,7 +20,9 @@
     "format": "npx prettier . --write",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "prebuild": "npx expo prebuild --clean",
+    "submit:ios": "eas submit --platform ios",
+    "prebuild": "npx expo prebuild",
+    "prebuild:clean": "npx expo prebuild --clean",
     "workflow:dev": "eas workflow:run .eas/workflows/create-development-build.yml",
     "workflow:preview": "eas workflow:run .eas/workflows/publish-preview-update.yml",
     "workflow:production": "eas workflow:run .eas/workflows/deploy-to-production.yml",
