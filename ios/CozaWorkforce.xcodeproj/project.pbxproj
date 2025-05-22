@@ -16,8 +16,6 @@
 		96905EF65AED1B983A6B3ABC /* libPods-CozaWorkforce.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-CozaWorkforce.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		FD21EE492DDF322B004B5F21 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD21EE482DDF322B004B5F21 /* GoogleService-Info.plist */; };
-		FD21EE4B2DDF3241004B5F21 /* GoogleService-Info 2.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD21EE4A2DDF3241004B5F21 /* GoogleService-Info 2.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,8 +35,6 @@
 		EF178A746DDA45999D7B53F9 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "CozaWorkforce/noop-file.swift"; sourceTree = "<group>"; };
 		EF557AC418C42C755B159207 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = CozaWorkforce/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-CozaWorkforce/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		FD21EE482DDF322B004B5F21 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		FD21EE4A2DDF3241004B5F21 /* GoogleService-Info 2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info 2.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,7 +52,6 @@
 		13B07FAE1A68108700A75B9A /* CozaWorkforce */ = {
 			isa = PBXGroup;
 			children = (
-				FD21EE4A2DDF3241004B5F21 /* GoogleService-Info 2.plist */,
 				BB2F792B24A3F905000567C9 /* Supporting */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -90,7 +85,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				FD21EE482DDF322B004B5F21 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* CozaWorkforce */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -206,9 +200,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
-				FD21EE4B2DDF3241004B5F21 /* GoogleService-Info 2.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
-				FD21EE492DDF322B004B5F21 /* GoogleService-Info.plist in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
 				92711F110C1A7CD098CFAF62 /* PrivacyInfo.xcprivacy in Resources */,
 			);
