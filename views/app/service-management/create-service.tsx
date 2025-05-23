@@ -25,18 +25,24 @@ const CreateServiceManagement: React.FC = () => {
     const [createService, { isLoading, data, reset }] = useCreateServiceMutation();
 
     const onSubmit: FormikConfig<ICreateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
-        const clockInStartTime = Utils.concatDateTime(values.serviceDate, values.clockInStartTime);
+        const clockInStartTime = Utils.concatDateTime(values.serviceDate, values.clockInStartTime) as unknown as string;
         const coordinates = {
             long: CREATE_SERVICE_ENUM.LONG,
             lat: CREATE_SERVICE_ENUM.LAT,
         };
         const name = values.name;
         const isGlobalService = values.serviceType === 'global';
-        const leadersLateStartTime = Utils.concatDateTime(values.serviceDate, values.leadersLateStartTime);
+        const leadersLateStartTime = Utils.concatDateTime(
+            values.serviceDate,
+            values.leadersLateStartTime
+        ) as unknown as string;
         const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN;
-        const serviceEndTime = Utils.concatDateTime(values.serviceDate, values.serviceEndTime);
-        const serviceTime = Utils.concatDateTime(values.serviceDate, values.serviceTime);
-        const workersLateStartTime = Utils.concatDateTime(values.serviceDate, values.workersLateStartTime);
+        const serviceEndTime = Utils.concatDateTime(values.serviceDate, values.serviceEndTime) as unknown as string;
+        const serviceTime = Utils.concatDateTime(values.serviceDate, values.serviceTime) as unknown as string;
+        const workersLateStartTime = Utils.concatDateTime(
+            values.serviceDate,
+            values.workersLateStartTime
+        ) as unknown as string;
 
         const result = await createService({
             clockInStartTime,

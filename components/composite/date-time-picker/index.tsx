@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/text';
+import FormErrorMessage from '~/components/ui/error-message';
 
 interface DateTimePickerProps extends Partial<DatePickerProps> {
     label?: string;
@@ -63,7 +64,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                           )}
                 </Text>
             </Button>
-            {error && <Text className="text-destructive text-base">{error}</Text>}
+            {error && <FormErrorMessage>{error}</FormErrorMessage>}
             <RNDatePicker
                 {...props}
                 modal

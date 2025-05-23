@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import React from 'react';
 import DateTimePicker from '~/components/composite/date-time-picker';
 import useModal from '@hooks/modal/useModal';
@@ -97,7 +97,7 @@ const RequestPermission: React.FC = () => {
     });
 
     return (
-        <ErrorBoundary>
+        <KeyboardAvoidingView className="flex-1" behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <ScrollView className="px-4 w-full flex-1">
                 <View className="items-center w-full flex-1 pt-4">
                     <Formik<IRequestPermissionPayload>
@@ -107,34 +107,27 @@ const RequestPermission: React.FC = () => {
                     >
                         {({ errors, touched, values, handleChange, handleSubmit }) => {
                             return (
-                                <View className="gap-2 w-full flex-1">
+                                <View className="gap-2 w-full">
                                     <View className="justify-between flex-row gap-4">
-                                        <View className="flex-1">
-                                            <DateTimePicker
-                                                mode="date"
-                                                label="Start date"
-                                                minimumDate={new Date()}
-                                                error={errors.startDate}
-                                                touched={touched.startDate}
-                                                placeholder="Enter start date"
-                                                initialValue={new Date().toISOString()}
-                                                onConfirm={
-                                                    handleChange('startDate') as unknown as (value: Date) => void
-                                                }
-                                            />
-                                        </View>
-                                        <View className="flex-1">
-                                            <DateTimePicker
-                                                mode="date"
-                                                label="End date"
-                                                className="flex-1"
-                                                error={errors.endDate}
-                                                touched={touched.endDate}
-                                                placeholder="Enter end date"
-                                                minimumDate={dayjs(values?.startDate || undefined).toDate()}
-                                                onConfirm={handleChange('endDate') as unknown as (value: Date) => void}
-                                            />
-                                        </View>
+                                        <DateTimePicker
+                                            mode="date"
+                                            label="Start date"
+                                            minimumDate={new Date()}
+                                            error={errors.startDate}
+                                            touched={touched.startDate}
+                                            placeholder="Enter start date"
+                                            initialValue={new Date().toISOString()}
+                                            onConfirm={handleChange('startDate') as unknown as (value: Date) => void}
+                                        />
+                                        <DateTimePicker
+                                            mode="date"
+                                            label="End date"
+                                            error={errors.endDate}
+                                            touched={touched.endDate}
+                                            placeholder="Enter end date"
+                                            minimumDate={dayjs(values?.startDate || undefined).toDate()}
+                                            onConfirm={handleChange('endDate') as unknown as (value: Date) => void}
+                                        />
                                     </View>
                                     <View className="gap-2">
                                         <Label>Category</Label>
@@ -155,7 +148,6 @@ const RequestPermission: React.FC = () => {
                                         <Textarea
                                             value={values.description}
                                             placeholder="Brief description"
-                                            className='flex-1'
                                             onChangeText={handleChange('description')}
                                         />
                                         {errors?.description && touched?.description && (
@@ -173,7 +165,7 @@ const RequestPermission: React.FC = () => {
                     </Formik>
                 </View>
             </ScrollView>
-        </ErrorBoundary>
+        </KeyboardAvoidingView>
     );
 };
 

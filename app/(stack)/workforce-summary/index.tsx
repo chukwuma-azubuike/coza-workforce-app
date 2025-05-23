@@ -1,8 +1,8 @@
 import React from 'react';
-// import WorkforceManagement from '~/views/app/workforce-management';
+import WorkforceManagement from '~/views/app/workforce-management';
 
 const WorkforcesummaryScreen: React.FC = () => {
-    return <></>;
+    return <WorkforceManagement />;
 };
 
 export default WorkforcesummaryScreen;

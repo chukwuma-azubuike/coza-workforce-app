@@ -7,8 +7,8 @@ import { IoniconTypes } from '~/types/app';
 
 const FormErrorMessage: React.FC<SlottableTextProps> = props => {
     return (
-        <View className="flex-row w-full items-center gap-2">
-            <Ionicons size={18} name={'warning-outline' as IoniconTypes} color={THEME_CONFIG.error} />
+        <View className="flex-row w-full items-center gap-1">
+            <Ionicons size={16} name={'warning-outline' as IoniconTypes} color={THEME_CONFIG.error} />
             <Text {...props} className="text-base text-destructive" />;
         </View>
     );

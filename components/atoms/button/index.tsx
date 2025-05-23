@@ -83,14 +83,14 @@ export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props =
     return (
         <Button
             {...props}
-            className="shadow-md justify-center items-center !rounded-full !p-0 !w-20 !h-20"
+            className="shadow-md justify-center items-center !rounded-full !p-0 !w-[4.4rem] !h-[4.4rem]"
             style={{
                 right: 20,
                 bottom: 32,
                 position: 'absolute',
             }}
         >
-            <Icon name="plus" type="entypo" size={32} color="white" />
+            <Icon name="plus" type="entypo" size={28} color="white" />
         </Button>
     );
 });
@@ -172,7 +172,7 @@ export const NavigationBackButton: React.FC = React.memo(props => {
                 />
             }
             style={{ marginLeft: 6, padding: 6 }}
-            className=" active:dark:bg-gray-800 active:bg-gray-100"
+            className="active:dark:bg-gray-800 active:bg-gray-100"
             {...props}
         />
     );
@@ -183,12 +183,12 @@ export const FloatButton: React.FC<ButtonProps & { iconName: string; iconType: s
         return (
             <Button
                 style={{
-                    right: 20,
-                    bottom: 120,
+                    right: 25,
+                    bottom: 128,
                     zIndex: 10,
                     position: 'absolute',
                 }}
-                className={cn('!h-20 !w-20 px-0', className)}
+                className={cn('!w-[4.4rem] !h-[4.4rem] px-0', className)}
                 {...props}
             >
                 <Icon name={iconName} type={iconType} size={28} color="white" />

@@ -10,6 +10,7 @@ import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
 import Utils from '@utils/index';
 import { router } from 'expo-router';
+import ServiceContextMenu from './service-context-menu';
 
 const ServiceListRow: React.FC<IService> = React.memo(service => {
     const handleUpdate = () => {
@@ -17,27 +18,29 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
     };
 
     return (
-        <TouchableOpacity
-            onPress={handleUpdate}
-            delayPressIn={0}
-            activeOpacity={0.6}
-            accessibilityRole="button"
-            className="w-full"
-        >
-            <View className="px-2 py-1 items-center justify-between flex-row">
-                <View className="items-center gap-3">
-                    <View className="justify-between">
-                        <Text className="font-bold">{service?.name}</Text>
-                        <Text className="text-sm">
-                            {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
-                                service?.serviceTime
-                            ).format('h:mm A')}`}
-                        </Text>
+        <ServiceContextMenu service={service}>
+            <TouchableOpacity
+                onPress={handleUpdate}
+                delayPressIn={0}
+                activeOpacity={0.6}
+                accessibilityRole="button"
+                className="w-full"
+            >
+                <View className="px-2 py-1 items-center justify-between flex-row w-full">
+                    <View className="items-center gap-3">
+                        <View className="justify-between">
+                            <Text className="font-bold">{service?.name}</Text>
+                            <Text className="text-sm">
+                                {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
+                                    service?.serviceTime
+                                ).format('h:mm A')}`}
+                            </Text>
+                        </View>
                     </View>
+                    <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
                 </View>
-                <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
-            </View>
-        </TouchableOpacity>
+            </TouchableOpacity>
+        </ServiceContextMenu>
     );
 });
 
@@ -64,11 +67,6 @@ const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListI
             }
         }
     };
-
-    const groupedData = React.useMemo(
-        () => Utils.replaceArrayItemByNestedKey(data || [], updatedListItem, ['createdAt', updatedListItem?._id]),
-        [updatedListItem?._id, data]
-    );
 
     useScreenFocus({ onFocus: refetch });
 

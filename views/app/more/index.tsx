@@ -30,7 +30,7 @@ const More: React.FC = () => {
     // useCustomBackNavigation({ targetRoute: 'Home' });
 
     return (
-        <ViewWrapper scroll style={{ flex: 1 }} refreshing={isLoading} onRefresh={refetch}>
+        <ViewWrapper scroll style={{ flex: 1 }} noPadding refreshing={isLoading} onRefresh={refetch}>
             <View className="mx-2 gap-3">
                 {filteredRoutes?.map((route, idx) => (
                     <Link key={idx} href={route.href}>

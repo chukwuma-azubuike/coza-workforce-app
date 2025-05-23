@@ -128,9 +128,7 @@ export const SmallCardComponent: React.FC<IStatCardComponentProps> = React.memo(
                     <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
                         <View className="gap-1 items-center justify-center p-3">
                             <Text className="font-semibold text-center">{props.label}</Text>
-                            <Text className="font-bold text-4xl">
-                                <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
-                            </Text>
+                            <Text className="font-bold text-4xl">{props?.value}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

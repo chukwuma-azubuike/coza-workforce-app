@@ -110,11 +110,11 @@ const CongressDetails: React.FC = () => {
     } = useGetCongressInstantMessagesQuery({ cgwcId: CGWCId });
 
     const gotoCreateInstantMessage = () => {
-        router.push({ pathname: '/congress/create-instant-message', params: { CGWCId } });
+        router.push({ pathname: '/congress/create-instant-message', params: { CongressId: CGWCId } });
     };
 
     const gotoCreateSession = () => {
-        router.push({ pathname: '/service-management/create-congress-session', params: { CGWCId } });
+        router.push({ pathname: '/service-management/create-congress-session', params: { CongressId: CGWCId } });
     };
 
     const allButtons = [

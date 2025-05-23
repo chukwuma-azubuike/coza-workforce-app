@@ -3,7 +3,7 @@ import { TextInput, type TextInputProps } from 'react-native';
 import { cn } from '~/lib/utils';
 
 const Textarea = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProps & { isDisabled?: boolean }>(
-    ({ className, multiline = true, numberOfLines = 4, placeholderClassName, isDisabled, ...props }, ref) => {
+    ({ className, multiline = true, numberOfLines = 6, placeholderClassName, isDisabled, ...props }, ref) => {
         return (
             <TextInput
                 ref={ref}
