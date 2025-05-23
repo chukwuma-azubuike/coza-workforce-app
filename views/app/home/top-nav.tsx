@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 
 import AvatarComponent from '@components/atoms/avatar';
@@ -34,13 +34,14 @@ const TopNav: React.FC = () => {
                 <AvatarComponent
                     badge
                     alt="profile-pic"
+                    className="w-10 h-10"
                     lastName={user?.lastName}
                     firstName={user?.firstName}
                     badgeColor={STATUS_COLORS[user?.status]}
                     imageUrl={user.pictureUrl ?? AVATAR_FALLBACK_URL}
                 />
             </TouchableOpacity>
-            <Text className="text-xl font-light text-center justify-center text-muted-foreground">
+            <Text className="text-xl font-light text-center justify-center text-muted-foreground px-6 flex-1">
                 {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
             </Text>
             {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>

@@ -1,26 +1,27 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
-import { View } from 'native-base';
 import React from 'react';
-import ButtonComponent from '@components/atoms/button';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { THEME_CONFIG } from '@config/appConfig';
 import useModal from '@hooks/modal/useModal';
 import { ICongressInstantMessage } from '@store/types';
 import { CreateCongressInstantMessageSchema } from '@utils/schemas';
 import { useCreateCongressInstantMessagesMutation } from '@store/services/congress';
 import TextAreaComponent from '@components/atoms/text-area';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
-    const { navigate } = navigation;
-    const params = route.params as { CongressId: string };
+const CreateCongressInstantMessage: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as { CongressId: string };
     const CongressId = params?.CongressId;
     const { setModalState } = useModal();
 
-    const [createCongressInstantMessage, { isLoading, error, data, reset }] = useCreateCongressInstantMessagesMutation();
+    const [createCongressInstantMessage, { isLoading, error, data, reset }] =
+        useCreateCongressInstantMessagesMutation();
 
     const onSubmit: FormikConfig<ICongressInstantMessage>['onSubmit'] = async (values, { resetForm }) => {
         const result = await createCongressInstantMessage({ ...values, cgwcId: CongressId });
@@ -32,7 +33,7 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
             });
             reset();
             resetForm({ values: INITIAL_VALUES });
-            navigate('Congress Details', data);
+            router.push({ pathname: '/congress/congress-details', params: data as any });
         }
 
         if ('error' in result) {
@@ -53,8 +54,8 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
 
     return (
         <ViewWrapper scroll noPadding>
-            <View space="lg" alignItems="flex-start" w="100%" mb={24} className="px-4">
-                <View alignItems="center" w="100%">
+            <View className="items-center w-full gap-6 px-4">
+                <View className="items-center w-full">
                     <Formik<ICongressInstantMessage>
                         validateOnChange
                         onSubmit={onSubmit}
@@ -62,61 +63,35 @@ const CreateCongressInstantMessage: React.FC<NativeStackScreenProps<ParamListBas
                         validationSchema={CreateCongressInstantMessageSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit, touched }) => (
-                            <View w="100%" space={4}>
-                                <View  isInvalid={!!errors?.title && touched.title}>
+                            <View className="w-full gap-2">
+                                <View>
                                     <Label>Title</Label>
                                     <Input
                                         placeholder="Title"
                                         value={values.title}
                                         onChangeText={handleChange('title')}
                                     />
-                                    <FormErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.title}
-                                    </FormErrorMessage>
+                                    {!!errors?.title && touched.title && (
+                                        <FormErrorMessage>{errors?.title}</FormErrorMessage>
+                                    )}
                                 </View>
 
-                                <View  isInvalid={!!errors?.message && touched.message}>
+                                <View>
                                     <Label>Message</Label>
                                     <TextAreaComponent
                                         value={values.message}
                                         placeholder="Message"
                                         onChangeText={handleChange('message')}
                                     />
-                                    <FormErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.message}
-                                    </FormErrorMessage>
+                                    {!!errors?.message && touched.message && (
+                                        <FormErrorMessage>{errors?.message}</FormErrorMessage>
+                                    )}
                                 </View>
 
                                 <View>
-                                    <ButtonComponent
-                                        mt={4}
-                                        isLoading={isLoading}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
+                                    <Button isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
                                         Post Instant Message
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </View>
                         )}

@@ -176,7 +176,7 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
     return (
         <ErrorBoundary>
             <AttendanceContainer showTitle={false} title="Team Attendance" score={3} scoreType="count">
-                <View className="flex-0 items-baseline flex-row gap-6">
+                <View className="flex-0 items-baseline flex-row gap-6 mt-4">
                     <View className="flex-1">
                         <PickerSelect
                             valueKey="_id"
@@ -310,7 +310,7 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
 
     return (
         <ErrorBoundary>
-            <View className="flex-0 items-baseline flex-row gap-6">
+            <View className="flex-0 items-baseline flex-row gap-6 mt-4">
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
@@ -430,7 +430,7 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
 
     return (
         <ErrorBoundary>
-            <View className="flex-0 items-baseline flex-row gap-6">
+            <View className="flex-0 items-baseline flex-row gap-6 mt-4">
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"

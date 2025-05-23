@@ -139,7 +139,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View className="px-2 mb-2">
+            <View className="px-2 mb-2 pt-4">
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"
@@ -276,7 +276,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View className="px-2 mb-2">
+            <View className="px-2 mb-2 pt-4">
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"
@@ -374,7 +374,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View className="px-2 mb-2">
+            <View className="px-2 mb-2 pt-4">
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"
@@ -486,7 +486,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View className="px-2 mb-2">
+            <View className="px-2 mb-2 pt-4">
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"

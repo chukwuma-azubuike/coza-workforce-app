@@ -106,6 +106,7 @@
     "react-native-blob-util": "0.21.2",
     "react-native-date-picker": "5.0.12",
     "react-native-device-info": "14.0.4",
+    "react-native-fast-image": "8.6.3",
     "react-native-fs": "2.20.0",
     "react-native-geolocation-service": "5.3.1",
     "react-native-gesture-handler": "~2.20.2",

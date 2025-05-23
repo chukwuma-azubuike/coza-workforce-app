@@ -298,7 +298,6 @@ const CreateServiceManagement: React.FC = () => {
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker
                                             mode="date"
-                                            className="flex-1"
                                             label="Service date"
                                             minimumDate={new Date()}
                                             error={errors.serviceDate}
@@ -309,7 +308,6 @@ const CreateServiceManagement: React.FC = () => {
                                         />
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Service Start Time"
                                             error={errors.serviceTime}
                                             touched={touched.serviceTime}
@@ -321,7 +319,6 @@ const CreateServiceManagement: React.FC = () => {
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Clock-in Time"
                                             error={errors.clockInStartTime}
                                             touched={touched.clockInStartTime}
@@ -333,7 +330,6 @@ const CreateServiceManagement: React.FC = () => {
                                         />
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Leaders Late Time"
                                             error={errors.leadersLateStartTime}
                                             touched={touched.leadersLateStartTime}
@@ -347,7 +343,6 @@ const CreateServiceManagement: React.FC = () => {
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Workers Late Time"
                                             error={errors.workersLateStartTime}
                                             touched={touched.workersLateStartTime}
@@ -359,7 +354,6 @@ const CreateServiceManagement: React.FC = () => {
                                         />
                                         <DateTimePicker
                                             mode="time"
-                                            className="flex-1"
                                             label="Service End Time"
                                             error={errors.serviceEndTime}
                                             touched={touched.serviceEndTime}

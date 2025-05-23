@@ -6,14 +6,13 @@ import useScreenFocus from '@hooks/focus';
 import { ICongressInstantMessage } from '@store/types';
 import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
-import ScreenHeader from '~/components/ScreenHeader';
 
 const CongressResources: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ICongressInstantMessage;
     const { setOptions } = useNavigation();
 
     setOptions({
-        header: () => <ScreenHeader bypassFormat name={params.title} />,
+        title: params.title,
     });
 
     const handleLoad = () => {
