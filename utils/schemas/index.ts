@@ -1,6 +1,7 @@
 import * as Yup from 'yup';
 import 'yup-phone-lite';
 import { countryCodeIso } from '../countryCodeIso';
+import { ICreateServicePayload } from '~/store/types';
 
 // Form validation
 
@@ -107,16 +108,16 @@ export const LoginSchema = Yup.object().shape({
     password: Yup.string().required('Password is required'),
 });
 
-export const CreateServiceSchema = Yup.object().shape({
-    serviceTag: Yup.string().required('You are required to select the service tag.'),
+export const CreateServiceSchema = Yup.object<ICreateServicePayload>().shape({
+    tag: Yup.string().required('You are required to select the service tag.'),
     serviceType: Yup.string().required('You are required to select the service type.'),
-    serviceName: Yup.string().required('Service name is required.'),
+    name: Yup.string().required('Service name is required.'),
     serviceDate: Yup.date().required('Field required.'),
     serviceTime: Yup.date().required('Field required'),
-    clockinTime: Yup.date().required('Field required'),
-    endTime: Yup.date().required('Field required'),
-    leaderLateTime: Yup.date().required('Field required'),
-    workerLateTime: Yup.date().required('Field required'),
+    clockInStartTime: Yup.date().required('Field required'),
+    serviceEndTime: Yup.date().required('Field required'),
+    leadersLateStartTime: Yup.date().required('Field required'),
+    workersLateStartTime: Yup.date().required('Field required'),
 });
 
 export const UpdateServiceSchema = Yup.object().shape({

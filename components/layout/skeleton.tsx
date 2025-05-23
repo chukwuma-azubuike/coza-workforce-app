@@ -21,7 +21,7 @@ export const FlatListSkeleton: React.FC<{
     count?: number;
 }> = React.memo(({ count = 6 }) => {
     return (
-        <View className="items-center w-full">
+        <View className="items-center w-full flex-1">
             {Array.from(Array(count).keys()).map((elm, idx) => (
                 <Skeleton className="overflow-hidden my-3 h-8 w-11/12" key={`elm-${idx}`} />
             ))}

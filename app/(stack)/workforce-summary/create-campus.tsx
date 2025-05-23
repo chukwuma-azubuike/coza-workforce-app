@@ -1,8 +1,8 @@
 import React from 'react';
-// import CreateCampus from '~/views/app/workforce-management/create-campus';
+import CreateCampus from '~/views/app/workforce-management/create-campus';
 
 const CreateCampusScreen: React.FC = () => {
-    return <></>;
+    return <CreateCampus />;
 };
 
 export default CreateCampusScreen;

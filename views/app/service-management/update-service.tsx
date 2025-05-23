@@ -25,18 +25,24 @@ const UpdateServiceManagement: React.FC<IService> = props => {
     setOptions({ title: `${props.name}, ${dayjs(props.serviceTime).format('DD MMM YYYY - hh:mm A')}` });
 
     const onSubmit: FormikConfig<IUpdateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
-        const clockInStartTime = Utils.concatDateTime(values.serviceDate, values.clockInStartTime);
+        const clockInStartTime = Utils.concatDateTime(values.serviceDate, values.clockInStartTime) as unknown as string;
         const coordinates = {
             long: CREATE_SERVICE_ENUM.LONG,
             lat: CREATE_SERVICE_ENUM.LAT,
         };
         const name = values.name;
         const isGlobalService = values.serviceType === 'global';
-        const leadersLateStartTime = Utils.concatDateTime(values.serviceDate, values.leadersLateStartTime);
+        const leadersLateStartTime = Utils.concatDateTime(
+            values.serviceDate,
+            values.leadersLateStartTime
+        ) as unknown as string;
         const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN as number;
-        const serviceEndTime = Utils.concatDateTime(values.serviceDate, values.serviceEndTime);
-        const serviceTime = Utils.concatDateTime(values.serviceDate, values.serviceTime);
-        const workersLateStartTime = Utils.concatDateTime(values.serviceDate, values.workersLateStartTime);
+        const serviceEndTime = Utils.concatDateTime(values.serviceDate, values.serviceEndTime) as unknown as string;
+        const serviceTime = Utils.concatDateTime(values.serviceDate, values.serviceTime) as unknown as string;
+        const workersLateStartTime = Utils.concatDateTime(
+            values.serviceDate,
+            values.workersLateStartTime
+        ) as unknown as string;
 
         const result = await updateService({
             _id: props?._id,
@@ -64,7 +70,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
 
         if ('error' in result) {
             setModalState({
-                message: (result.error as any)?.data?.message || 'Oops something went wrong',
+                message: (result.error as any)?.data?.data || 'Oops something went wrong',
                 status: 'error',
             });
         }

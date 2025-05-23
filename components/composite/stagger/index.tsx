@@ -33,7 +33,7 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
     }, [isOpen, animationValue]);
 
     // Define the spacing for each extra button (adjust as needed).
-    const spacing = 90;
+    const spacing = 78;
 
     return (
         <View style={[{ position: 'absolute', right: 24, bottom: 56, zIndex: isOpen ? 12 : 0 }, style]} {...rest}>
@@ -62,7 +62,7 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
                             <Button
                                 onPress={btn.handleClick}
                                 className={cn(
-                                    '!w-20 !h-20 !px-0 !rounded-full justify-center items-center shadow-lg',
+                                    '!w-[4.4rem] !h-[4.4rem] !px-0 !rounded-full justify-center items-center shadow-lg',
                                     btn.color
                                 )}
                             >
@@ -76,9 +76,9 @@ const StaggerButtonComponent: React.FC<IStaggerButtonComponentProps> = props => 
             <View className="justify-center">
                 <Button
                     onPress={toggleMenu}
-                    className="!w-20 !h-20 !px-0 !rounded-full justify-center items-center"
+                    className="!w-[4.4rem] !h-[4.4rem] !px-0 !rounded-full justify-center items-center"
                 >
-                    <Icon size={38} color="white" name={isOpen ? 'minus' : 'plus'} type="entypo" />
+                    <Icon size={28} color="white" name={isOpen ? 'minus' : 'plus'} type="entypo" />
                 </Button>
             </View>
         </View>

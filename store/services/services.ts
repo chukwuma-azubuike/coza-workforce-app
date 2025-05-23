@@ -32,7 +32,7 @@ export const servicesServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: ['service-list'],
+            invalidatesTags: ['service-list', 'latestService'],
         }),
 
         updateService: endpoint.mutation<void, IUpdateService>({
@@ -42,7 +42,16 @@ export const servicesServiceSlice = createApi({
                 body: args,
             }),
 
-            invalidatesTags: ['service-list'],
+            invalidatesTags: ['service-list', 'latestService'],
+        }),
+
+        deleteService: endpoint.mutation<void, string>({
+            query: _id => ({
+                url: `${SERVICE_URL}/deletService/${_id}`,
+                method: REST_API_VERBS.DELETE,
+            }),
+
+            invalidatesTags: ['service-list', 'latestService'],
         }),
 
         getLatestService: endpoint.query<IService, string>({
@@ -77,6 +86,7 @@ export const servicesServiceSlice = createApi({
 export const {
     useCreateServiceMutation,
     useUpdateServiceMutation,
+    useDeleteServiceMutation,
     useGetLatestServiceQuery,
     useGetServiceByIdQuery,
     useGetServicesQuery,
