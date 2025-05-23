@@ -13,7 +13,6 @@ import { Icon } from '@rneui/themed';
 import Loading from '@components/atoms/loading';
 import { TouchableOpacity, View } from 'react-native';
 import { CountUp } from 'use-count-up';
-import { useNavigation } from '@react-navigation/native';
 import useScreenFocus from '@hooks/focus';
 import If from '@components/composite/if-container';
 import PickerSelect from '~/components/ui/picker-select';

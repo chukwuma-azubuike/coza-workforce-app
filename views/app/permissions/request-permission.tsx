@@ -99,7 +99,7 @@ const RequestPermission: React.FC = () => {
     return (
         <ErrorBoundary>
             <ScrollView className="px-4 w-full flex-1">
-                <View className="items-center w-full flex-1">
+                <View className="items-center w-full flex-1 pt-4">
                     <Formik<IRequestPermissionPayload>
                         onSubmit={handleSubmit}
                         initialValues={INITIAL_VALUES}
@@ -155,6 +155,7 @@ const RequestPermission: React.FC = () => {
                                         <Textarea
                                             value={values.description}
                                             placeholder="Brief description"
+                                            className='flex-1'
                                             onChangeText={handleChange('description')}
                                         />
                                         {errors?.description && touched?.description && (

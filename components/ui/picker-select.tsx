@@ -52,7 +52,12 @@ function PickerSelect<T = any>({
     const handleValueChange = useCallback(
         (value: any, index: number) => {
             setValue && setValue(value ? `${value}` : undefined);
-            onValueChange && onValueChange(value ? `${value}` : undefined, index);
+            if (typeof value === 'number' || typeof value === 'string' || typeof value === 'undefined') {
+                onValueChange(value ? `${value}` : undefined, index);
+            }
+            if (typeof value === 'object' || value === 'null') {
+                onValueChange('null', index);
+            }
         },
         [setValue, onValueChange]
     );

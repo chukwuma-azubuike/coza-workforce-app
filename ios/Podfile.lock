@@ -290,6 +290,9 @@ PODS:
   - FBLazyVector (0.76.9)
   - fmt (11.0.2)
   - glog (0.3.5)
+  - hermes-engine (0.76.9):
+    - hermes-engine/Pre-built (= 0.76.9)
+  - hermes-engine/Pre-built (0.76.9)
   - lottie-ios (4.5.0)
   - lottie-react-native (7.1.0):
     - DoubleConversion
@@ -2060,6 +2063,10 @@ PODS:
     - Yoga
   - RNDeviceInfo (14.0.4):
     - React-Core
+  - RNFastImage (8.6.3):
+    - React-Core
+    - SDWebImage (~> 5.11.1)
+    - SDWebImageWebPCoder (~> 0.8.4)
   - RNFlashList (1.7.3):
     - DoubleConversion
     - glog
@@ -2300,6 +2307,12 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageWebPCoder (0.8.5):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.7.1)
   - UMAppLoader (5.0.1)
   - Yoga (0.0.0)
@@ -2413,6 +2426,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFlashList (from `../node_modules/@shopify/flash-list`)"
   - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
@@ -2425,7 +2439,10 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - libwebp
     - lottie-ios
+    - SDWebImage
+    - SDWebImageWebPCoder
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -2639,6 +2656,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-picker/picker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNFastImage:
+    :path: "../node_modules/react-native-fast-image"
   RNFlashList:
     :path: "../node_modules/@shopify/flash-list"
   RNFS:
@@ -2697,6 +2716,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 7605ea4810e0e10ae4815292433c09bf4324ba45
   fmt: 01b82d4ca6470831d1cc0852a1af644be019e8f6
   glog: 08b301085f15bcbb6ff8632a8ebaf239aae04e6a
+  hermes-engine: 9e868dc7be781364296d6ee2f56d0c1a9ef0bb11
   lottie-ios: a881093fab623c467d3bce374367755c272bdd59
   lottie-react-native: 4b3d74f0e13df174074e51b7700a1a6442f749b0
   RCT-Folly: 7b4f73a92ad9571b9dbdb05bb30fad927fa971e1
@@ -2765,13 +2785,13 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: 3ed6f266b34ff3b14ca4d853e0428aed40a00928
   RNCPicker: 8403a939355dd6e576019a3ae5dcb02964ca4beb
   RNDeviceInfo: feea80a690d2bde1fe51461cf548039258bd03f2
-  RNFlashList: 63cbaa824130a69c5cdf71c428a78476f4b9d943
+  RNFlashList: 11f5b15e49d5c92299682face72bb840ce97b84a
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 0617cd5f39593b2812d036d925cbeca159154999
-  RNPermissions: 197ba4d6fc0ae96f19a50960c3a9c32b2fa4b3b9
-  RNReanimated: ff27010c0c7f4ccb6147a8817f2dcb973ac0c6f9
-  RNScreens: 86e62302435b082d76d4f0a76c4b3a0dba0e4b1d
-  RNSVG: 7f98b6cb499e348bb93052eee193cbcb7a7dbf31
+  RNGestureHandler: 3e17c0c9ceb401041b0e64c8e4c8a057da978a9d
+  RNPermissions: 6ffe6044b04aaa05106fdcbcef941e8847b58d30
+  RNReanimated: 5ed2b66c32cb3d398e4c12591b3053594fe2fcb9
+  RNScreens: 2856a2abe759a5a56946874f76372c9f033af19a
+  RNSVG: 81d52481cde97ce0dcc81a55b0310723817088d0
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   UMAppLoader: 7e7e0eaa7854ffd652c00a68c443afb28c3bedba
   Yoga: 40f19fff64dce86773bf8b602c7070796c007970
