@@ -1,7 +1,5 @@
 import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik } from 'formik';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -34,9 +32,10 @@ import { Separator } from '~/components/ui/separator';
 import { Label } from '~/components/ui/label';
 import { Textarea } from '~/components/ui/textarea';
 import FormErrorMessage from '~/components/ui/error-message';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as ICampusReport & { campusName: string };
+const CampusReport: React.FC = props => {
+    const params = useLocalSearchParams() as unknown as ICampusReport & { campusName: string };
     const { serviceId, campusId } = params;
     const { user, isCampusPastor, isGlobalPastor } = useRole();
 
@@ -272,7 +271,6 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
     const [submitGSPReport, { error, isLoading: isSubmitLoading, reset }] = useSubmitGSPReportMutation();
     const { setModalState } = useModal();
-    const { goBack } = useNavigation();
 
     const onSubmit = async (values: IGSPReportPayload) => {
         if (!!reportsNotApproved) {
@@ -289,7 +287,7 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                 status: 'success',
             });
             reset();
-            goBack();
+            router.back();
         }
 
         if ('error' in result) {
@@ -301,9 +299,9 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     };
 
     return (
-        <ViewWrapper className="py-4" scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+        <ViewWrapper className="py-4" scroll noPadding avoidKeyboard avoidKeyboardOffset={40} refreshing={isLoading} onRefresh={handleRefresh}>
             {isGlobalPastor && <Text className="font-bold text-4xl mb-2">{params?.campusName}</Text>}
-            <View className="px-4 gap-4">
+            <View className="px-4 gap-6">
                 <Separator />
                 <VerticalTable
                     isLoading={isLoading || isFetching}
@@ -333,7 +331,7 @@ const CampusReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                     isLoading={isLoading || isFetching}
                     title="Service Programme Observation"
                 >
-                    <View className="mb-3 pb-2 border-b border-b-border justify-between">
+                    <View className="mb-3 pb-2 border-b border-b-border justify-between flex-row">
                         <Text>Start Time:</Text>
                         <Text className="font-bold text-primary">
                             {serviceTime?.start ? dayjs(serviceTime?.start).format('h:mm A') : '--:--'}

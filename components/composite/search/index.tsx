@@ -14,21 +14,22 @@ import ModalComponent from '../modal';
 import { THEME_CONFIG } from '@config/appConfig';
 import Loading from '@components/atoms/loading';
 import { Input } from '~/components/ui/input';
+import { cn } from '~/lib/utils';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
     loading?: boolean;
     disable?: boolean;
+    className?: string;
     searchFields: Array<string>;
     onPress: (params: IUser) => void;
 }
 
 function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPermission>>(props: IUseSearchProps<D>) {
-    const { data, searchFields, onPress, loading, disable } = props;
+    const { data, searchFields, onPress, loading, className } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
     const [searchText, setSearchText] = React.useState<string>('');
     const [searchResults, setSearchResults] = React.useState<Array<D> | undefined>(data);
-    const inputRef = React.useRef();
 
     const handleSearchBar = () => {
         if (typeof data === 'undefined' && !loading) {
@@ -151,7 +152,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 iconName="search1"
                 iconType="ant-design"
                 onPress={handleSearchBar}
-                className="bottom-16 shadow-md !rounded-full"
+                className={cn('!bottom-32 !right-[1.4rem] shadow-md !rounded-full', className)}
             />
         </>
     );

@@ -5,15 +5,14 @@ import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import If from '@components/composite/if-container';
-// import GSPView from './global-senior-pastors';
+import GSPView from './global-senior-pastors';
 import Utils from '@utils/index';
 import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
-import { Platform, SafeAreaView, View } from 'react-native';
-import { useAuth } from '~/hooks/auth';
+import { SafeAreaView, View } from 'react-native';
 import { StyleSheet } from 'react-native';
-// import GhClocker from './workers/gh-clocker';
+import GhClocker from './workers/gh-clocker';
 
 interface IInitialHomeState {
     latestService: {
@@ -94,8 +93,6 @@ const Home: React.FC = () => {
         Utils.checkLocationPermission(refresh);
     };
 
-    // useAuth().logOut()
-
     React.useEffect(() => {
         Utils.checkLocationPermission(refresh);
     }, []);
@@ -120,17 +117,17 @@ const Home: React.FC = () => {
                             />
                         </If>
                         <If condition={isGroupHead}>
-                            {/* <GhClocker
-                            isInRange={isInRange}
-                            refreshLocation={refresh}
-                            refreshTrigger={refreshTrigger}
-                            setRefreshTrigger={setRefreshTrigger}
-                            deviceCoordinates={deviceCoordinates}
-                            verifyRangeBeforeAction={verifyRangeBeforeAction}
-                        /> */}
+                            <GhClocker
+                                isInRange={isInRange}
+                                refreshLocation={refresh}
+                                refreshTrigger={refreshTrigger}
+                                setRefreshTrigger={setRefreshTrigger}
+                                deviceCoordinates={deviceCoordinates}
+                                verifyRangeBeforeAction={verifyRangeBeforeAction}
+                            />
                         </If>
                         <If condition={isGlobalPastor}>
-                            {/* <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} /> */}
+                            <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
                         </If>
                     </If>
                     <If condition={isCampusPastor}>

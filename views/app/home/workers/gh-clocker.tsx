@@ -1,7 +1,6 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import Loading from '@components/atoms/loading';
 import If from '@components/composite/if-container';
-import TextComponent from '@components/text';
 import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useRole from '@hooks/role';
