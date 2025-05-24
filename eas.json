@@ -10,13 +10,15 @@
             "env": {
                 "EXPO_APPLE_TEAM_ID": "499THBRLGD",
                 "NODE_VERSION": "20"
-            }
+            },
+            "channel": "development"
         },
         "preview": {
             "distribution": "internal",
             "env": {
                 "NODE_VERSION": "20"
-            }
+            },
+            "channel": "preview"
         },
         "production": {
             "env": {
@@ -25,7 +27,8 @@
             "autoIncrement": true,
             "ios": {
                 // "prebuildCommand": "npx pod-install"
-            }
+            },
+            "channel": "production"
         }
     },
     "submit": {
