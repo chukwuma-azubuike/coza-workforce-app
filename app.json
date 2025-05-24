@@ -2,7 +2,7 @@
     "expo": {
         "name": "Coza Workforce",
         "slug": "coza-workforce-app",
-        "version": "2.0.1",
+        "version": "2.0.2",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "myapp",
@@ -24,7 +24,7 @@
             "entitlements": {
                 "aps-environment": "production"
             },
-            "runtimeVersion": "2.0.1"
+            "runtimeVersion": "2.0.2"
         },
         "android": {
             "adaptiveIcon": {
