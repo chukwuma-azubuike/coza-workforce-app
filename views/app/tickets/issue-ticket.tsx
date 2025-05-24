@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import TextAreaComponent from '@components/atoms/text-area';
@@ -23,6 +23,7 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { router, useNavigation } from 'expo-router';
 import PickerSelect from '~/components/ui/picker-select';
+import { Textarea } from '~/components/ui/textarea';
 
 const ticketTypes = [
     {
@@ -208,18 +209,18 @@ We love & celebrate you!` as any,
     const ticketSummaryTemplates = [
         {
             id: '1',
-            value: 'Verbose',
-            content: TICKET_TEMPLATE.verbose as string,
+            label: 'VERBOSE',
+            value: TICKET_TEMPLATE.verbose as string,
         },
         {
             id: '2',
-            value: 'Minimal',
-            content: TICKET_TEMPLATE.minimal as string,
+            label: 'MINIMAL',
+            value: TICKET_TEMPLATE.minimal as string,
         },
         {
             id: '3',
-            value: 'Blank',
-            content: '',
+            label: 'BLANK',
+            value: '',
         },
     ];
 
@@ -234,7 +235,7 @@ We love & celebrate you!` as any,
                     searchFields={['firstName', 'lastName', 'departmentName', 'email']}
                 />
             </If>
-            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20 }}>
+            <ViewWrapper avoidKeyboardOffset={60} avoidKeyboard scroll noPadding style={{ paddingTop: 20, flex: 1 }}>
                 <View className="mb-4 px-4 gap-8 w-full">
                     <Formik<ICreateTicketPayload>
                         validateOnChange
@@ -320,13 +321,15 @@ We love & celebrate you!` as any,
                                 <View className="gap-4 py-4">
                                     <View className="justify-between">
                                         <Label>Ticket Type</Label>
-                                        <RadioButtonGroup
-                                            className="gap-3 flex-row"
-                                            defaultSelected="1"
-                                            value={values?.ticketType}
-                                            onValueChange={handleTicketType}
-                                            radioButtons={ticketTypes}
-                                        />
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <RadioButtonGroup
+                                                className="gap-3 flex-row"
+                                                defaultSelected="1"
+                                                value={values?.ticketType}
+                                                onValueChange={handleTicketType}
+                                                radioButtons={ticketTypes}
+                                            />
+                                        </ScrollView>
                                         {errors?.ticketType && (
                                             <FormErrorMessage>{errors?.ticketType}</FormErrorMessage>
                                         )}
@@ -402,22 +405,19 @@ We love & celebrate you!` as any,
                                     </View>
                                     <View>
                                         <Label>Description Template</Label>
-                                        {/* <RadioButton
-                                            defaultSelected="1"
-                                            radioButtons={ticketSummaryTemplates}
-                                            onChange={handleChange('ticketSummary') as any}
-                                        /> */}
-                                        <RadioButtonGroup
-                                            defaultSelected="1"
-                                            // value={values.}
-                                            className="gap-3 w-full items-start px-0 flex-row"
-                                            radioButtons={ticketSummaryTemplates}
-                                            onValueChange={handleChange('ticketSummary') as any}
-                                        />
+                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                            <RadioButtonGroup
+                                                defaultSelected="1"
+                                                value={values.ticketSummary}
+                                                radioButtons={ticketSummaryTemplates}
+                                                className="gap-3 w-full items-start px-0 flex-row"
+                                                onValueChange={handleChange('ticketSummary') as any}
+                                            />
+                                        </ScrollView>
                                     </View>
                                     <View>
                                         <Label>Description</Label>
-                                        <TextAreaComponent
+                                        <Textarea
                                             returnKeyType="done"
                                             placeholder="Details"
                                             value={values.ticketSummary}

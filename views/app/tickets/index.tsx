@@ -12,7 +12,6 @@ import { useGetTicketsQuery } from '@store/services/tickets';
 import { AddButtonComponent } from '@components/atoms/button';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
-import TopNav from '~/components/layout/top-nav';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },

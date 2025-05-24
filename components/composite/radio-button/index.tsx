@@ -5,7 +5,7 @@ import { Label } from '~/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group';
 
 interface IRadioButtonProps extends RadioGroupPrimitive.RootProps {
-    radioButtons: Array<RadioGroupPrimitive.ItemProps>;
+    radioButtons: Array<RadioGroupPrimitive.ItemProps & { label?: string }>;
     onChange?: (value?: string) => void;
     defaultSelected?: string;
     onLabelPress: () => void;
@@ -36,12 +36,25 @@ const RadioButtonGroup: React.FC<Partial<IRadioButtonProps>> = ({
 
 export default RadioButtonGroup;
 
-function RadioGroupItemWithLabel({ value, onLabelPress }: { value: string; onLabelPress: () => void }) {
+function RadioGroupItemWithLabel({
+    value,
+    label,
+    onLabelPress,
+}: {
+    value: string;
+    label?: string;
+    onLabelPress: () => void;
+}) {
     return (
         <View className={'flex-row gap-2 items-center'}>
-            <RadioGroupItem aria-labelledby={`label-for-${value}`} value={value} />
-            <Label nativeID={`label-for-${value}`} onPress={onLabelPress}>
-                {value}
+            <RadioGroupItem aria-labelledby={`label-for-${value}`} value={value} id={`label-for-${value}`} />
+            <Label
+                nativeID={`label-for-${value}`}
+                htmlFor={`label-for-${value}`}
+                onPress={onLabelPress}
+                className="text-lg"
+            >
+                {label || value}
             </Label>
         </View>
     );

@@ -24,7 +24,7 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <View className="px-4 my-1 items-center bg-muted-background justify-between rounded-md">
+            <View className="px-4 py-3 my-1 items-center bg-muted-background justify-between rounded-md flex-row">
                 <Text className="text-muted-foreground">{dayjs(props?.serviceTime).format('DD/MM/YYYY')}</Text>
                 <Text className="font-bold">{Utils.truncateString(props?.serviceName)}</Text>
                 <StatusTag>{props?.status as any}</StatusTag>
