@@ -1,5 +1,5 @@
 import React from 'react';
-import UserDetails from '~/views/app/workforce-management/user-details';
+import UserDetails from '~/views/app/Workforce-management/user-details';
 
 const UserProfileScreen: React.FC = () => {
     return <UserDetails />;

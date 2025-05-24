@@ -15,7 +15,7 @@ import Utils from '@utils/index';
 import useRole from '@hooks/role';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useNavigation } from '@react-navigation/native';
-import { IUserReportProps } from '../../workforce-management/user-reports';
+import { IUserReportProps } from '../../Workforce-management/user-reports';
 
 interface WorkforceSummaryProps {
     servicesIsSuccess: boolean;
