@@ -152,7 +152,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 iconName="search1"
                 iconType="ant-design"
                 onPress={handleSearchBar}
-                className={cn('!bottom-32 !right-[1.4rem] shadow-md !rounded-full', className)}
+                className={cn('bottom-16 shadow-md !rounded-full', className)}
             />
         </>
     );

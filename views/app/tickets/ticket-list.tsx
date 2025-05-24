@@ -1,22 +1,18 @@
 import { Text } from '~/components/ui/text';
-import React, { memo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants/index';
-import useFetchMoreData from '@hooks/fetch-more-data';
 import useRole from '@hooks/role';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { IDefaultQueryParams, ITicket } from '@store/types';
 import Utils from '@utils/index';
-import useScreenFocus from '@hooks/focus';
 import { router } from 'expo-router';
 import SectionListComponent from '~/components/composite/section-list';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import useInfiniteData from '~/hooks/fetch-more-data/use-infinite-data';
 
-const ITEM_HEIGHT = 60;
 export interface TicketListRowProps extends ITicket {
     type: 'own' | 'team' | 'campus' | 'grouphead';
 }
@@ -118,7 +114,7 @@ const MyTicketsList: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             userId,
         },
         useGetTicketsQuery as any,
@@ -196,217 +192,162 @@ const MyTeamTicketsList: React.FC = memo(() => {
 });
 
 const LeadersTicketsList: React.FC = memo(() => {
-    const leadersTicketsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
-        },
-    ];
-
     const {
         user: { campus },
         leaderRoleIds,
     } = useRole();
 
     const {
-        data: hodsTickets,
-        refetch: hodRefetch,
+        data: hodsTickets = [],
         isLoading: hodLoading,
-        isSuccess: hodIsSuccess,
-        isFetching: hodIsFetching,
-    } = useGetTicketsQuery(
+        isFetchingNextPage: hodIsFetching,
+        fetchNextPage: hodFetchNextPage,
+        refetch: hodRefetch,
+        hasNextPage: hodHasNextPage,
+    } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // page,
-            // limit: 20,
-            campusId: campus._id,
+            limit: 50, // TODO: Restore after backend is fixed
+            campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[0],
         },
-        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+        useGetTicketsQuery as any,
+        '_id',
+        !leaderRoleIds?.length
     );
 
     const {
-        data: ahodsTickets,
-        refetch: ahodRefetch,
+        data: ahodsTickets = [],
         isLoading: ahodLoading,
-        isSuccess: ahodIsSuccess,
-        isFetching: ahodIsFetching,
-    } = useGetTicketsQuery(
+        isFetchingNextPage: ahodIsFetching,
+        fetchNextPage: ahodFetchNextPage,
+        refetch: ahodRefetch,
+        hasNextPage: ahodHasNextPage,
+    } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // page,
-            // limit: 20,
-            campusId: campus._id,
+            limit: 50, // TODO: Restore after backend is fixed
+            campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[1],
         },
-        { refetchOnMountOrArgChange: true, skip: !leaderRoleIds?.length }
+        useGetTicketsQuery as any,
+        '_id',
+        !leaderRoleIds?.length
     );
 
     const isLoading = hodLoading || ahodLoading;
     const isFetching = hodIsFetching || ahodIsFetching;
-    const data = ahodsTickets && hodsTickets ? [...ahodsTickets, ...hodsTickets] : [];
 
-    const preparedForSortData = React.useMemo(
-        () =>
-            data?.map((ticket: ITicket) => {
-                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
-            }),
-        [data]
+    const data = useMemo(
+        () => (ahodsTickets && hodsTickets ? [...ahodsTickets, ...hodsTickets] : []),
+        [ahodsTickets, hodsTickets]
     );
 
-    const sortedData = React.useMemo(
-        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-        [preparedForSortData]
-    );
+    const hasNextPage = hodHasNextPage || ahodHasNextPage;
 
     const handleRefetch = () => {
         hodRefetch();
         ahodRefetch();
     };
 
+    const fetchNextPage = useCallback(() => {
+        hodFetchNextPage();
+        ahodFetchNextPage();
+    }, []);
+
     return (
-        <FlatListComponent
-            data={sortedData}
-            isLoading={isLoading}
-            onRefresh={handleRefetch}
-            // fetchMoreData={fetchMoreData}
-            columns={leadersTicketsColumns}
-            refreshing={isLoading || isFetching}
-            emptyMessage="There are no tickets issued"
-            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-        />
+        <ErrorBoundary>
+            <SectionListComponent
+                data={data}
+                field="createdAt"
+                itemHeight={66.7}
+                isLoading={isLoading}
+                column={TicketListRow}
+                refetch={handleRefetch}
+                hasNextPage={hasNextPage}
+                extraProps={{ type: 'team' }}
+                fetchNextPage={fetchNextPage}
+                isFetchingNextPage={isFetching}
+                emptyMessage="There are no tickets issued"
+            />
+        </ErrorBoundary>
     );
 });
 
 const CampusTickets: React.FC = memo(() => {
-    const teamTicketsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="campus" {..._} key={key} />,
-        },
-    ];
-    const [page, setPage] = React.useState<number>(1);
-
     const {
         user: { campus },
         isCampusPastor,
         isGlobalPastor,
     } = useRole();
 
-    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
+    const {
+        data = [],
+        isLoading,
+        isFetchingNextPage,
+        fetchNextPage,
+        refetch,
+        hasNextPage,
+    } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            campusId: campus._id,
-            limit: 20,
-            page,
+            limit: 20, // TODO: Restore after backend is fixed
+            campusId: campus?._id,
         },
-        { refetchOnMountOrArgChange: true }
+        useGetTicketsQuery as any,
+        '_id',
+        !campus?._id
     );
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
-
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
-
-    const preparedForSortData = React.useMemo(
-        () =>
-            moreData?.map((data: ITicket) => {
-                return { ...data, sortDateKey: data?.updatedAt || data?.createdAt };
-            }),
-        [moreData]
-    );
-
-    const sortedData = React.useMemo(
-        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-        [preparedForSortData]
-    );
-
-    useScreenFocus({
-        onFocus: () => {
-            if (!isUninitialized) refetch();
-        },
-    });
 
     return (
-        <FlatListComponent
-            data={sortedData}
-            columns={teamTicketsColumns}
-            fetchMoreData={fetchMoreData}
-            isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
-            emptyMessage={
-                isCampusPastor || isGlobalPastor
-                    ? 'There are no tickets issued'
-                    : "Nothing here, let's keep it that way 😇"
-            }
-            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-        />
+        <ErrorBoundary>
+            <SectionListComponent
+                data={data}
+                field="createdAt"
+                itemHeight={66.7}
+                isLoading={isLoading}
+                column={TicketListRow}
+                refetch={refetch}
+                hasNextPage={hasNextPage}
+                extraProps={{ type: 'campus' }}
+                fetchNextPage={fetchNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                emptyMessage={
+                    isCampusPastor || isGlobalPastor
+                        ? 'There are no tickets issued'
+                        : "Nothing here, let's keep it that way 😇"
+                }
+            />
+        </ErrorBoundary>
     );
 });
 
 const GroupTicketsList: React.FC = memo(() => {
-    const groupTicketsColumns: IFlatListColumn[] = [
+    const { data, isLoading, isFetchingNextPage, fetchNextPage, refetch, hasNextPage } = useInfiniteData<
+        ITicket,
+        Omit<IDefaultQueryParams, 'userId'>
+    >(
         {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="grouphead" {..._} key={key} />,
-        },
-    ];
-
-    const [page, setPage] = React.useState<number>(1);
-    const { data, isLoading, isSuccess, isFetching, refetch, isUninitialized } = useGetTicketsQuery(
-        {
+            limit: 20, // TODO: Restore after backend is fixed
             isGH: true,
-            limit: 20,
-            page,
         },
-        { refetchOnMountOrArgChange: true }
+        useGetTicketsQuery as any,
+        '_id'
     );
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
-
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
-
-    const preparedForSortData = React.useMemo(
-        () =>
-            moreData?.map((ticket: ITicket) => {
-                return { ...ticket, sortDateKey: ticket?.updatedAt || ticket?.createdAt };
-            }),
-        [moreData]
-    );
-
-    const sortedData = React.useMemo(
-        () => Utils.sortByDate(preparedForSortData || [], 'sortDateKey'),
-        [preparedForSortData]
-    );
-
-    useScreenFocus({
-        onFocus: () => {
-            if (!isUninitialized) refetch();
-        },
-    });
 
     return (
-        <FlatListComponent
-            data={sortedData}
-            columns={groupTicketsColumns}
-            fetchMoreData={fetchMoreData}
-            isLoading={isLoading || isFetching}
-            refreshing={isLoading || isFetching}
-            emptyMessage="There are no tickets issued"
-            getItemLayout={(data, index) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index })}
-        />
+        <ErrorBoundary>
+            <SectionListComponent
+                data={data}
+                field="createdAt"
+                itemHeight={66.7}
+                isLoading={isLoading}
+                column={TicketListRow}
+                refetch={refetch}
+                hasNextPage={hasNextPage}
+                extraProps={{ type: 'campus' }}
+                fetchNextPage={fetchNextPage}
+                isFetchingNextPage={isFetchingNextPage}
+                emptyMessage="There are no tickets issued"
+            />
+        </ErrorBoundary>
     );
 });
 

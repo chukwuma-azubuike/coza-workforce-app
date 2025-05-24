@@ -38,7 +38,8 @@ function useInfiniteData<T, TParams>(
         refetch: () => void;
     },
     uniqKey: string = '_id',
-    skip?: boolean
+    skip?: boolean,
+    refetchOnMountOrArgChange: boolean = true
 ): InfiniteDataResult<T> {
     const [page, setPage] = useState(1);
     const [mergedData, setMergedData] = useState<T[]>([]);
@@ -50,9 +51,12 @@ function useInfiniteData<T, TParams>(
     // }, [params]);
 
     // Invoke your RTK Query hook with the given parameters, and the current page.
-    const { data, isSuccess, isFetching, refetch } = queryHook({ ...params, page }, { skip });
+    const { data, isSuccess, isFetching, refetch } = queryHook(
+        { ...params, page },
+        { skip, refetchOnMountOrArgChange }
+    );
 
-    const hasNextPage = !!(data?.length && params?.limit && data.length === params.limit);
+    const hasNextPage = !!(data?.length && params?.limit && data.length <= params.limit); // Rework logic one backend starts returning `hasMore`
 
     // When a new page is successfully fetched, merge it with the existing data.
     useEffect(() => {

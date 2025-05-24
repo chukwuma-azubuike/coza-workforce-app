@@ -51,6 +51,23 @@ function SectionListComponent<D>({
         [extraProps]
     );
 
+    const handleEndReached = useCallback(() => {
+        if (hasNextPage && fetchNextPage) {
+            fetchNextPage();
+        }
+    }, [hasNextPage, fetchNextPage]);
+
+    const handleItemLayout = useCallback(
+        (_: SectionListData<D, DefaultSectionT>[] | null, index: number) => ({
+            length: itemHeight || ITEM_HEIGHT,
+            offset: (itemHeight || ITEM_HEIGHT) * index,
+            index,
+        }),
+        [ITEM_HEIGHT, itemHeight]
+    );
+
+    const handleKeyExtractor = useCallback((item: D, index: number) => (item as any)?._id || `${index}`, []);
+
     return (
         <View className="px-2 flex-1">
             {isLoading && sections?.length < 1 ? (
@@ -61,30 +78,23 @@ function SectionListComponent<D>({
                 <SectionList
                     {...props}
                     windowSize={15}
+                    onRefresh={refetch}
+                    refreshing={isLoading}
+                    renderItem={renderItem}
                     initialNumToRender={15}
                     maxToRenderPerBatch={15}
-                    renderItem={renderItem}
-                    sections={sections as any[]}
-                    stickySectionHeadersEnabled
-                    keyboardShouldPersistTaps="always"
-                    renderSectionHeader={renderSectionHeader}
-                    keyExtractor={(item, index) => (item as any)?._id || `${index}`}
-                    onEndReached={() => {
-                        if (hasNextPage && fetchNextPage) {
-                            fetchNextPage();
-                        }
-                    }}
                     onEndReachedThreshold={0.5}
-                    refreshing={isLoading}
-                    onRefresh={refetch}
+                    stickySectionHeadersEnabled
+                    sections={sections as any[]}
+                    onEndReached={handleEndReached}
+                    getItemLayout={handleItemLayout}
+                    keyboardShouldPersistTaps="always"
+                    keyExtractor={handleKeyExtractor}
+                    onScrollEndDrag={handleEndReached}
+                    renderSectionHeader={renderSectionHeader}
                     ListFooterComponent={
                         isFetchingNextPage ? <ActivityIndicator size="small" style={{ margin: 10 }} /> : null
                     }
-                    getItemLayout={(_, index) => ({
-                        length: itemHeight || ITEM_HEIGHT,
-                        offset: (itemHeight || ITEM_HEIGHT) * index,
-                        index,
-                    })}
                 />
             )}
         </View>

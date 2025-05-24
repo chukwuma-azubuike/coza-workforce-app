@@ -90,7 +90,7 @@ export const ticketServiceSlice = createApi({
 
         getTickets: endpoint.query<ITicket[], IDefaultQueryParams>({
             query: params => ({
-                url: `/${SERVICE_URL}/filter/`,
+                url: `/${SERVICE_URL}/filter`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
