@@ -12,6 +12,7 @@ import { useGetTicketsQuery } from '@store/services/tickets';
 import { AddButtonComponent } from '@components/atoms/button';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
+import { cn } from '~/lib/utils';
 
 const ROUTES = [
     { key: 'myTickets', title: 'My Tickets' },
@@ -102,6 +103,7 @@ const Tickets: React.FC = () => {
                         onPress={handleUserPress as any}
                         loading={isLoadingTickets || isFetchingTickets}
                         searchFields={['firstName', 'lastName', 'departmentName', 'categoryName', 'status', 'user']}
+                        className={cn('!bottom-32 !right-[1.4rem]', (isCampusPastor || isGlobalPastor) && '!bottom-16')}
                     />
                 </If>
             </View>

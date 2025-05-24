@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns,
@@ -124,7 +124,10 @@ export const TeamAttendance: React.FC = React.memo(() => {
         });
     }, [membersClockedIn]);
 
-    const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
+    const mergedUsers = useMemo(
+        () => [...membersClockedInValid, ...allMembers] as any,
+        [membersClockedInValid, allMembers]
+    );
 
     const mergedAttendanceWithMemberList = React.useMemo(
         () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
@@ -236,8 +239,11 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         { skip: !leaderRoleIds?.length }
     );
 
-    const leadersClockedIn = AHODs && HODs ? [...AHODs, ...HODs] : [];
-    const allLeadersRaw = HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : [];
+    const leadersClockedIn = useMemo(() => (AHODs && HODs ? [...AHODs, ...HODs] : []), [HODs, AHODs]);
+    const allLeadersRaw = useMemo(
+        () => (HODProfiles && AHODProfiles ? [...AHODProfiles, ...HODProfiles] : []),
+        [AHODProfiles, HODProfiles]
+    );
 
     const allLeaders = React.useMemo(() => {
         if (!allLeadersRaw.length) return [];
@@ -261,7 +267,10 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         });
     }, [leadersClockedIn]);
 
-    const mergedLeaders = [...leadersClockedInValid, ...allLeaders] as any;
+    const mergedLeaders = useMemo(
+        () => [...leadersClockedInValid, ...allLeaders] as any,
+        [leadersClockedInValid, allLeaders]
+    );
 
     const mergedAttendanceWithLeaderList = React.useMemo(
         () => Utils.mergeDuplicatesByKey(mergedLeaders, 'userId'),
@@ -355,18 +364,6 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    // const fetchMoreData = () => {
-    //     if (!isFetching && !isLoading) {
-    //         if (data?.length) {
-    //             setPage(prev => prev + 1);
-    //         } else {
-    //             setPage(prev => prev - 1);
-    //         }
-    //     }
-    // };
-
-    // const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: '_id' });
-
     const handleRefetch = () => {
         !attedanceIsUninitialized && refetchAttendance();
         !servicesIsUninitialized && refetchServices();
@@ -392,7 +389,6 @@ export const CampusAttendance: React.FC = React.memo(() => {
                     onRefresh={handleRefetch}
                     data={data as IAttendance[]}
                     padding={isAndroid ? 3 : true}
-                    // fetchMoreData={fetchMoreData}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
@@ -471,7 +467,10 @@ export const GroupAttendance: React.FC = React.memo(() => {
         });
     }, [membersClockedIn]);
 
-    const mergedUsers = [...membersClockedInValid, ...allMembers] as any;
+    const mergedUsers = useMemo(
+        () => [...membersClockedInValid, ...allMembers] as any,
+        [membersClockedInValid, allMembers]
+    );
 
     const mergedAttendanceWithMemberList = React.useMemo(
         () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),

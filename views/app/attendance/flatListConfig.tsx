@@ -9,7 +9,6 @@ import Utils from '@utils/index';
 import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import StatusTag from '~/components/atoms/status-tag';
 import { router } from 'expo-router';
 
 const gotoProfile = (elm: any) => () => {
@@ -73,7 +72,7 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                 key={key}
                 activeOpacity={0.6}
                 onPress={gotoProfile(elm)}
-                className="items-center py-3 flex-row w-full gap-4 justify-between"
+                className="items-center py-3 pr-4 flex-row w-full gap-4 justify-between"
             >
                 <AvatarComponent
                     alt="pic"
@@ -160,7 +159,7 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                     key={key}
                     activeOpacity={0.6}
                     onPress={gotoProfile(elm)}
-                    className="items-center py-3 flex-row w-full gap-4 justify-between"
+                    className="items-center py-3 pr-4 flex-row w-full gap-4 justify-between"
                 >
                     <AvatarComponent
                         alt="pic"
@@ -181,7 +180,7 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                         <View className="flex-row gap-2 flex-1">
                             <Text className="flex-1 text-muted-foreground">{elm?.departmentName}</Text>
                             <View className="flex-row flex-1 gap-4">
-                                <View className="items-center flex-row gap-2 flex-1 justify-center">
+                                <View className="items-center flex-row gap-2 w-5/12 justify-center">
                                     <Icon
                                         color={THEME_CONFIG.primaryLight}
                                         name="arrow-down-right"
@@ -217,7 +216,7 @@ const campusColumns: IFlatListColumn[] = [
                 key={key}
                 activeOpacity={0.6}
                 onPress={gotoProfile(elm)}
-                className="items-center py-3 flex-row w-full gap-4 justify-between"
+                className="items-center py-3 pr-2 flex-row w-full gap-4 justify-between"
             >
                 <AvatarComponent
                     alt="pic"
@@ -236,7 +235,7 @@ const campusColumns: IFlatListColumn[] = [
                         {/* <StatusTag>{elm?.status}</StatusTag> */}
                     </View>
                     <View className="flex-row gap-2">
-                        <Text className="flex-1 text-muted-foreground">{elm?.departmentName}</Text>
+                        <Text className="w-5/12 text-muted-foreground">{elm?.departmentName}</Text>
                         <View className="flex-row flex-1 gap-2">
                             <View className="items-center flex-row gap-2 flex-1 justify-center">
                                 <Icon
@@ -273,7 +272,7 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                 key={key}
                 activeOpacity={0.6}
                 onPress={gotoProfile(elm)}
-                className="items-center py-3 flex-row w-full gap-4 justify-between"
+                className="items-center py-3 pr-4 flex-row w-full gap-4 justify-between"
             >
                 <AvatarComponent
                     alt="pic"
@@ -295,7 +294,7 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                             <Text className="flex-1 text-muted-foreground">{elm?.campusName}</Text>
                         </View>
                         <View className="flex-row flex-1 gap-2">
-                            <View className="items-center flex-row gap-2 flex-1">
+                            <View className="items-center flex-row gap-2 w-5/12">
                                 <Icon
                                     color={THEME_CONFIG.primaryLight}
                                     name="arrow-down-right"

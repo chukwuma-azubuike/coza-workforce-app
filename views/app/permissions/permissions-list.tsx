@@ -180,7 +180,7 @@ const MyPermissionsList: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             requestor: userId,
         },
         useGetPermissionsQuery as any,
@@ -219,7 +219,7 @@ const TeamPermissionsList: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             departmentId: _id,
         },
         useGetPermissionsQuery as any,
@@ -260,7 +260,7 @@ const LeadersPermissionsList: React.FC = memo(() => {
         hasNextPage: hodHasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 50, // TODO: Restore after backend is fixed
             campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[0],
         },
@@ -278,7 +278,7 @@ const LeadersPermissionsList: React.FC = memo(() => {
         hasNextPage: ahodHasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 50, // TODO: Restore after backend is fixed
             campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[1],
         },
@@ -333,7 +333,7 @@ const CampusPermissions: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 50, // TODO: Restore after backend is fixed
             campusId: _id,
         },
         useGetPermissionsQuery as any,
@@ -369,7 +369,7 @@ const GroupPermissionsList: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            // limit: 100, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             isGH: true,
         },
         useGetPermissionsQuery as any,

@@ -26,7 +26,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import RefreshControl from '~/components/RefreshControl';
 
 const TicketDetails: React.FC = () => {
-    const ticketParams = useLocalSearchParams<ITicket>();
+    const ticketParams = useLocalSearchParams() as unknown as ITicket;
 
     const {
         isQC,
