@@ -226,16 +226,17 @@ const ClockButton: React.FC<IClockButtonProps> = ({
         <View className="items-center">
             {canClockIn && !disabled && (
                 <LottieView
-                    source={require('@assets/json/clock-button-animation.json')}
+                    loop
+                    autoPlay
                     resizeMode="cover"
                     style={{
-                        left: Utils.IOS16 ? -13 : -20,
-                        top: Utils.IOS16 ? -13 : -20,
-                        position: 'absolute',
+                        top: -40,
+                        left: -40,
                         width: 320,
+                        height: 320,
+                        position: 'absolute',
                     }}
-                    autoPlay
-                    loop
+                    source={require('~/assets/json/clock-button-animation.json')}
                 />
             )}
 
