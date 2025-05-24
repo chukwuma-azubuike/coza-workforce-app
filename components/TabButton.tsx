@@ -21,7 +21,7 @@ const TabButton = forwardRef(
                 ref={ref}
                 activeOpacity={0.6}
                 {...(props as any)}
-                className="gap-1 !flex-col items-center justify-between w-20 border-2"
+                className="gap-1 !flex-col items-center justify-between w-20"
             >
                 <Icon
                     size={22}
