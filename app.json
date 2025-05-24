@@ -18,12 +18,13 @@
             "bundleIdentifier": "com.cozaworkforceapp",
             "infoPlist": {
                 "ITSAppUsesNonExemptEncryption": false,
-                "UIBackgroundModes": ["remote-notification"]
+                "UIBackgroundModes": ["remote-notification", "remote-notification"]
             },
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
-            }
+            },
+            "runtimeVersion": "2.0.1"
         },
         "android": {
             "adaptiveIcon": {
@@ -32,7 +33,17 @@
             },
             "package": "com.cozaworkforceapp",
             "googleServicesFile": "./google-services.json",
-            "permissions": ["POST_NOTIFICATIONS"]
+            "permissions": [
+                "POST_NOTIFICATIONS",
+                "android.permission.ACCESS_COARSE_LOCATION",
+                "android.permission.ACCESS_FINE_LOCATION",
+                "POST_NOTIFICATIONS",
+                "android.permission.ACCESS_COARSE_LOCATION",
+                "android.permission.ACCESS_FINE_LOCATION"
+            ],
+            "runtimeVersion": {
+                "policy": "appVersion"
+            }
         },
         "web": {
             "bundler": "metro",
@@ -64,24 +75,6 @@
                     "ios": ["camera", "location", "microphone", "photo"]
                 }
             ]
-            // [
-            //     "expo-build-properties",
-            //     {
-            //         "ios": {
-            //             "newArchEnabled": false,
-            //             "flipper": false,
-            //             "useFrameworks": "static"
-            //         },
-            //         "android": {
-            //             "newArchEnabled": false,
-            //             "compileSdkVersion": 34,
-            //             "targetSdkVersion": 34,
-            //             "buildToolsVersion": "34.0.0"
-            //         }
-            //     }
-            // ],
-            // "@react-native-firebase/app",
-            // "@react-native-firebase/messaging"
         ],
         "experiments": {
             "typedRoutes": true
@@ -93,6 +86,9 @@
             "eas": {
                 "projectId": "506eebf2-6601-409a-9b25-5469fb6e6695"
             }
+        },
+        "updates": {
+            "url": "https://u.expo.dev/506eebf2-6601-409a-9b25-5469fb6e6695"
         }
     }
 }
