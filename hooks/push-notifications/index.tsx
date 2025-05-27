@@ -33,7 +33,7 @@ export const usePushNotifications = (user: IUser) => {
                 });
 
                 if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-                    console.warn('Push notification permissions are not granted.');
+                    // console.warn('Push notification permissions are not granted.');
                     return false;
                 }
             }
@@ -45,7 +45,7 @@ export const usePushNotifications = (user: IUser) => {
             authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
         if (!isAuthorized) {
-            console.warn('Push notification permissions are not granted.');
+            // console.warn('Push notification permissions are not granted.');
         }
         return isAuthorized;
     };
@@ -55,24 +55,24 @@ export const usePushNotifications = (user: IUser) => {
             if (Platform.OS === 'ios') {
                 const apnsToken = await messaging().getAPNSToken();
                 if (!apnsToken) {
-                    console.warn('APNs token is null. Check APNs setup.');
+                    // console.warn('APNs token is null. Check APNs setup.');
                     return;
                 }
-                console.log('APNs Token:', apnsToken);
+                // console.log('APNs Token:', apnsToken);
             }
 
             const fcmToken = await messaging().getToken();
-            console.log('FCM Token:', fcmToken);
+            // console.log('FCM Token:', fcmToken);
 
             return fcmToken;
         } catch (error) {
-            console.error('Error fetching push notification token:', error);
+            // console.error('Error fetching push notification token:', error);
         }
     };
 
     const handleForegroundNotification = () => {
         const unsubscribe = messaging().onMessage(async remoteMessage => {
-            console.log('Foreground message received:', remoteMessage);
+            // console.log('Foreground message received:', remoteMessage);
             Alert.alert('New notification', JSON.stringify(remoteMessage.notification));
         });
         return unsubscribe;
@@ -80,18 +80,18 @@ export const usePushNotifications = (user: IUser) => {
 
     const handleBackgroundNotifications = () => {
         messaging().setBackgroundMessageHandler(async remoteMessage => {
-            console.log('Background message received:', remoteMessage);
+            // console.log('Background message received:', remoteMessage);
         });
 
         messaging().onNotificationOpenedApp(remoteMessage => {
-            console.log('Notification opened from background:', remoteMessage);
+            // console.log('Notification opened from background:', remoteMessage);
         });
 
         messaging()
             .getInitialNotification()
             .then(remoteMessage => {
                 if (remoteMessage) {
-                    console.log('Notification opened from quit state:', remoteMessage);
+                    // console.log('Notification opened from quit state:', remoteMessage);
                 }
             });
     };
@@ -139,7 +139,7 @@ export const usePushNotifications = (user: IUser) => {
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
+            // console.log(response);
         });
 
         return () => {
@@ -185,7 +185,7 @@ async function registerForPushNotificationsAsync() {
                     projectId,
                 })
             ).data;
-            console.log(token);
+            // console.log(token);
         } catch (e) {
             token = `${e}`;
         }

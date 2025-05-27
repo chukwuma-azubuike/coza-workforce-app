@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { CampusAttendance, GroupAttendance, LeadersAttendance, MyAttendance, TeamAttendance } from './lists';
 import TabComponent from '@components/composite/tabs';
 import { SceneMap } from 'react-native-tab-view';
@@ -11,22 +11,25 @@ import { IReportTypes } from '../export';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
 
+const ROUTES = [
+    { key: 'myAttendance', title: 'My Attendance' },
+    { key: 'teamAttendance', title: 'Team Attendance' },
+    { key: 'campusAttendance', title: 'Campus Attendance' },
+    { key: 'leadersAttendance', title: 'Leaders Attendance' },
+    { key: 'groupAttendance', title: 'Group Attendance' },
+];
+
 const Attendance: React.FC = () => {
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isQcHOD, isGroupHead } = useRole();
     const { isMobile } = useMediaQuery();
 
     const params = useLocalSearchParams<{ role: ROLES; route: string; tabKey: string }>();
 
-    const isLeader = Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD);
+    const isLeader = useMemo(
+        () => Array.isArray(params?.role) && params?.role.includes(ROLES.HOD || ROLES.AHOD),
+        [params?.role, ROLES.HOD, ROLES.AHOD]
+    );
     const isWorker = params?.role === ROLES.worker;
-
-    const ROUTES = [
-        { key: 'myAttendance', title: 'My Attendance' },
-        { key: 'teamAttendance', title: 'Team Attendance' },
-        { key: 'campusAttendance', title: 'Campus Attendance' },
-        { key: 'leadersAttendance', title: 'Leaders Attendance' },
-        { key: 'groupAttendance', title: 'Group Attendance' },
-    ];
 
     const renderScene = SceneMap({
         myAttendance: MyAttendance,
@@ -36,9 +39,9 @@ const Attendance: React.FC = () => {
         groupAttendance: GroupAttendance,
     });
 
-    const goToExport = () => {
+    const goToExport = useCallback(() => {
         router.push({ pathname: '/export-data', params: { type: IReportTypes.ATTENDANCE } });
-    };
+    }, [IReportTypes.ATTENDANCE]);
 
     const [index, setIndex] = React.useState(0);
 
@@ -51,7 +54,7 @@ const Attendance: React.FC = () => {
         return [ROUTES[0]];
     }, []);
 
-    const routeFocus = () => {
+    const routeFocus = useCallback(() => {
         if (isLeader) {
             setIndex(allRoutes.findIndex(route => route.key === 'leadersAttendance'));
         }
@@ -61,7 +64,7 @@ const Attendance: React.FC = () => {
         if (params?.route || params?.tabKey) {
             setIndex(allRoutes.findIndex(route => route.key === (params?.route || params?.tabKey)));
         }
-    };
+    }, [params, allRoutes, isWorker, isLeader]);
 
     useScreenFocus({
         onFocus: routeFocus,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useGetRolesQuery } from '@store/services/role';
 import { useAuth } from '../auth';
@@ -94,34 +94,37 @@ const useRole = () => {
     const roleName = currentUser?.role?.name;
     const departmentName = currentUser?.department?.departmentName;
 
-    const roleHeirarchy = (roleName: keyof typeof roles, departmentName: keyof typeof departments) => {
-        const roleKey = roles[roleName] as keyof typeof ROLE_HEIRARCHY;
+    const roleHeirarchy = useCallback(
+        (roleName: keyof typeof roles, departmentName: keyof typeof departments) => {
+            const roleKey = roles[roleName] as keyof typeof ROLE_HEIRARCHY;
 
-        if (!roleKey) {
-            return -1;
-        }
-        if (!ROLE_HEIRARCHY[roleKey]) {
-            return -1;
-        }
+            if (!roleKey) {
+                return -1;
+            }
+            if (!ROLE_HEIRARCHY[roleKey]) {
+                return -1;
+            }
 
-        // if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC) {
-        //     return ROLE_HEIRARCHY.qcHOD;
-        // }
+            // if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.QC) {
+            //     return ROLE_HEIRARCHY.qcHOD;
+            // }
 
-        if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship) {
-            return ROLE_HEIRARCHY.internshipHOD;
-        }
+            if (roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship) {
+                return ROLE_HEIRARCHY.internshipHOD;
+            }
 
-        return ROLE_HEIRARCHY[roleKey];
-    };
+            return ROLE_HEIRARCHY[roleKey];
+        },
+        [roles, departments, ROLE_HEIRARCHY, ROLES, DEPARTMENTS]
+    );
 
-    const rolesPermittedToCreate = () => {
+    const rolesPermittedToCreate = useCallback(() => {
         return roleObjects?.filter(
             roleObject =>
                 roleHeirarchy(roleName as keyof typeof roles, departmentName as keyof typeof departments) >
                 ROLE_HEIRARCHY[roles[roleObject.name as keyof typeof roles] as keyof typeof ROLE_HEIRARCHY]
         );
-    };
+    }, [roleObjects, roleName, roles, departmentName, ROLE_HEIRARCHY]);
 
     const { logOut } = useAuth();
 

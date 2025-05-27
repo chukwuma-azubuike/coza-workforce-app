@@ -75,7 +75,6 @@ export const useDownloadFile = (params: DownloadTicketsProps, skip: boolean) => 
                 Alert.alert('File Downloaded Successfully.');
             });
     } catch (error) {
-        console.error('Error downloading Excel file:', error);
     } finally {
         setIsDownloading(false);
     }

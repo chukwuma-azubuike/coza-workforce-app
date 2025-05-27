@@ -19,8 +19,6 @@ interface SectionListComponentProps<D> extends Partial<SectionListProps<D>> {
     isFetchingNextPage?: boolean;
 }
 
-const ITEM_HEIGHT = 80;
-
 function SectionListComponent<D>({
     data,
     field,
@@ -31,7 +29,7 @@ function SectionListComponent<D>({
     isFetchingNextPage,
     isLoading,
     extraProps,
-    itemHeight,
+    itemHeight = 80,
     emptyMessage = 'No records',
     ...props
 }: SectionListComponentProps<D>) {
@@ -59,11 +57,11 @@ function SectionListComponent<D>({
 
     const handleItemLayout = useCallback(
         (_: SectionListData<D, DefaultSectionT>[] | null, index: number) => ({
-            length: itemHeight || ITEM_HEIGHT,
-            offset: (itemHeight || ITEM_HEIGHT) * index,
+            length: itemHeight,
+            offset: itemHeight * index,
             index,
         }),
-        [ITEM_HEIGHT, itemHeight]
+        [itemHeight]
     );
 
     const handleKeyExtractor = useCallback((item: D, index: number) => (item as any)?._id || `${index}`, []);

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
@@ -11,9 +11,12 @@ import assertCongressActive from '~/utils/assertCongressActive';
 import { router } from 'expo-router';
 
 const CongressListRow: React.FC<ICongress> = memo(congress => {
-    const handlePress = () => {
-        router.push({ pathname: '/congress/congress-details', params: { congressId: congress._id, name: congress.name } });
-    };
+    const handlePress = useCallback(() => {
+        router.push({
+            pathname: '/congress/congress-details',
+            params: { congressId: congress._id, name: congress.name },
+        });
+    }, [congress]);
 
     const status = React.useMemo(() => (assertCongressActive(congress) ? 'ACTIVE' : 'INACTIVE'), []) as IUserStatus;
 

@@ -32,7 +32,7 @@ export default function Notifier() {
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log(response);
+            // console.log(response);
         });
 
         return () => {
@@ -120,7 +120,7 @@ async function registerForPushNotificationsAsync() {
                     projectId,
                 })
             ).data;
-            console.log(token);
+            // console.log(token);
         } catch (e) {
             token = `${e}`;
         }
