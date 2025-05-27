@@ -1,4 +1,3 @@
-import { ENV } from '~/config/envConfig';
 import { S3_BUCKET_FOLDERS } from '~/constants';
 import { DocumentPickerAsset } from 'expo-document-picker';
 import { IUser } from '~/store/types';
@@ -19,13 +18,12 @@ const generateAwsObjectKey = ({
     s3Folder: S3_BUCKET_FOLDERS;
     file: ImagePickerAsset | DocumentPickerAsset;
 }) => {
-    const fileName = (file as DocumentPickerAsset)?.name || (file as ImagePickerAsset)?.fileName || '';
-    const lastDot = fileName?.lastIndexOf('.');
-    const ext = fileName?.slice(lastDot + 1);
+    //TODO: Not needed for now
+    // const fileName = (file as DocumentPickerAsset)?.name || (file as ImagePickerAsset)?.fileName || '';
+    // const lastDot = fileName?.lastIndexOf('.');
+    // const ext = fileName?.slice(lastDot + 1);
 
-    const objectKey = `${ENV}/${s3Folder}/${
-        user?.phoneNumber
-    }/${fileName}_timestamp=${new Date().toISOString()}.${ext}`;
+    const objectKey = `${process.env.EXPO_PUBLIC_ENV}/${s3Folder}/${encodeURIComponent(user?.phoneNumber)}`;
 
     return objectKey;
 };

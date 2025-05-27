@@ -90,10 +90,11 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                         </View>
                     ) : typeof children === 'string' ? (
                         <View className="flex-1 w-full items-center flex-row gap-2 justify-center">
-                            {startIcon || icon}
+                            <View className="flex-1 justify-end flex-row">{startIcon || icon}</View>
                             <Text className={cn('!text-xl mx-auto', buttonTextVariants({ variant, size }))}>
                                 {children}
                             </Text>
+                            <View className="flex-1" />
                         </View>
                     ) : (
                         (children as any)

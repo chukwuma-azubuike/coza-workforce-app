@@ -22,7 +22,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
     const { setModalState } = useModal();
     const [updateService, { isLoading, reset }] = useUpdateServiceMutation();
     const { setOptions } = useNavigation();
-    setOptions({ title: `${props.name}, ${dayjs(props.serviceTime).format('DD MMM YYYY - hh:mm A')}` });
+    setOptions({ title: `${props.name} - ${dayjs(props.serviceTime).format('DD MMM YYYY')}` });
 
     const onSubmit: FormikConfig<IUpdateServicePayload>['onSubmit'] = async (values, { resetForm }) => {
         const clockInStartTime = Utils.concatDateTime(values.serviceDate, values.clockInStartTime) as unknown as string;

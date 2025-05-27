@@ -1,18 +1,18 @@
 import React from 'react';
 import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '@store/types';
 import Utils from '@utils/index';
-import { Badge } from '~/components/ui/badge';
+import { Badge, BadgeProps } from '~/components/ui/badge';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 import { View } from 'react-native';
 
-interface IStatusTag {
+interface IStatusTag extends BadgeProps {
     capitalise?: boolean;
     children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;
 }
 
 const StatusTag: React.FC<IStatusTag> = props => {
-    const { children: status, capitalise = true } = props;
+    const { children: status, capitalise = true, className } = props;
 
     const green =
         status === 'ACKNOWLEGDED' ||
@@ -37,7 +37,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
                     green && 'bg-green-100',
                     gray && 'bg-gray-300 dark:bg-gray-300',
                     amber && 'bg-amber-100',
-                    red && 'bg-red-100'
+                    red && 'bg-red-100',
+                    className
                 )}
             >
                 <Text
@@ -47,7 +48,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
                         green && 'text-green-700',
                         gray && 'text-gray-900',
                         amber && 'text-amber-700',
-                        red && 'text-red-700'
+                        red && 'text-red-700',
+                        className
                     )}
                 >
                     {status

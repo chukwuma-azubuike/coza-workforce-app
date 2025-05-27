@@ -33,7 +33,7 @@ function PickerSelect<T = any>({
     const [value, setValue] = useState<string | undefined>(`${inputValue}` || '');
     const selectedItem = useMemo(
         () => items?.find(item => `${item[valueKey]}` === `${inputValue ?? value}`),
-        [items, value, valueKey]
+        [items, value, valueKey, inputValue]
     );
 
     const options = useMemo(
@@ -44,7 +44,7 @@ function PickerSelect<T = any>({
                     value: item[valueKey],
                 };
             }) || [],
-        [items, value, valueKey]
+        [items, value, valueKey, labelKey]
     );
 
     const { isDarkColorScheme } = useColorScheme();

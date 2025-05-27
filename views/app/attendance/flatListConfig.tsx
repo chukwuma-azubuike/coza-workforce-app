@@ -12,7 +12,7 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { router } from 'expo-router';
 
 const gotoProfile = (elm: any) => () => {
-    router.push({ pathname: '/workforce-summary/user-profile', params: elm as any });
+    router.push({ pathname: '/workforce-summary/user-profile', params: (elm?.user as any) || elm });
 };
 
 const myAttendanceColumns: IFlatListColumn[] = [
@@ -34,7 +34,9 @@ const myAttendanceColumns: IFlatListColumn[] = [
                     </View>
                     <View className="justify-center items-center flex-row gap-2 flex-1">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                        <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                        <Text className="text-green-500">
+                            {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
+                        </Text>
                     </View>
                     <View className="justify-center items-center flex-row gap-2 flex-1">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
@@ -91,7 +93,9 @@ const teamAttendanceDataColumns: IFlatListColumn[] = [
                     <View className="flex-row justify-between">
                         <View className="items-center flex-row gap-2 flex-1">
                             <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                            <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                            <Text className="text-green-500">
+                                {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
+                            </Text>
                         </View>
                         <View className="items-center flex-row gap-2 flex-1">
                             <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
@@ -134,7 +138,9 @@ const scoreMappingColumn: IFlatListColumn[] = [
                 <View className="flex-row justify-between">
                     <View key={`clockin-${key}`} className="flex-row items-center w-24 justify-center">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                        <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                        <Text className="text-green-500">
+                            {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
+                        </Text>
                     </View>
                     <View key={`clockout-${key}`} className="flex-row items-center w-24 justify-center">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
@@ -187,7 +193,9 @@ const leadersAttendanceDataColumns: IFlatListColumn[] = [
                                         type="feather"
                                         size={18}
                                     />
-                                    <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                                    <Text className="text-green-500">
+                                        {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
+                                    </Text>
                                 </View>
                                 <View className="items-center flex-row gap-2 text-right flex-1 justify-center">
                                     <Icon
@@ -244,7 +252,9 @@ const campusColumns: IFlatListColumn[] = [
                                     type="feather"
                                     size={18}
                                 />
-                                <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                                <Text className="text-green-500">
+                                    {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
+                                </Text>
                             </View>
                             <View className="items-center flex-row gap-2 text-right flex-1 justify-center">
                                 <Icon
@@ -301,7 +311,9 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                                     type="feather"
                                     size={18}
                                 />
-                                <Text>{elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}</Text>
+                                <Text className="text-green-500">
+                                    {elm.clockIn ? dayjs(elm.clockIn).format('h:mm A') : '--:--'}
+                                </Text>
                             </View>
                             <View className="items-center flex-row gap-2 text-right flex-1 justify-end">
                                 <Icon

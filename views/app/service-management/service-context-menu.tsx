@@ -76,7 +76,7 @@ const ServiceContextMenu: React.FC<{ children: ReactNode; service: IService }> =
                     <ContextMenu.ItemIcon
                         ios={{
                             name: 'pencil', // required
-                            pointSize: 20,
+                            pointSize: 16,
                             weight: 'semibold',
                             scale: 'medium',
                             // can also be a color string. Requires iOS 15+
@@ -93,7 +93,7 @@ const ServiceContextMenu: React.FC<{ children: ReactNode; service: IService }> =
                     <ContextMenu.ItemIcon
                         ios={{
                             name: 'trash', // required
-                            pointSize: 20,
+                            pointSize: 16,
                             scale: 'medium',
                             weight: 'semibold',
                             // can also be a color string. Requires iOS 15+
