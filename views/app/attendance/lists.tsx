@@ -47,15 +47,17 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <FlatListComponent
-                padding={isAndroid ? 3 : true}
-                fetchMoreData={fetchMoreData}
-                columns={myAttendanceColumns}
-                data={moreData as IAttendance[]}
-                isLoading={isLoading || isFetching}
-                refreshing={isLoading || isFetching}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
-            />
+            <View className="mt-4 flex-1">
+                <FlatListComponent
+                    padding={isAndroid ? 3 : true}
+                    fetchMoreData={fetchMoreData}
+                    columns={myAttendanceColumns}
+                    data={moreData as IAttendance[]}
+                    isLoading={isLoading || isFetching}
+                    refreshing={isLoading || isFetching}
+                    ListFooterComponentStyle={{ marginVertical: 20 }}
+                />
+            </View>
         </ErrorBoundary>
     );
 });

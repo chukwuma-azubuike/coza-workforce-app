@@ -29,7 +29,7 @@ export const TicketListRow: React.FC<TicketListRowProps> = memo(props => {
     return (
         <TouchableOpacity delayPressIn={0} activeOpacity={0.6} onPress={handlePress} accessibilityRole="button">
             <View className="py-4 px-2 items-center w-full justify-between flex-row">
-                <View className="items-center gap-4 flex-row">
+                <View className="items-center gap-4 flex-row flex-1">
                     <AvatarComponent
                         alt="ticket-list"
                         imageUrl={isIndividual ? user?.pictureUrl || AVATAR_FALLBACK_URL : AVATAR_GROUP_FALLBACK_URL}

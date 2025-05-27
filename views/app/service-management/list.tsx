@@ -8,9 +8,9 @@ import useFetchMoreData from '@hooks/fetch-more-data';
 import useScreenFocus from '@hooks/focus';
 import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
-import Utils from '@utils/index';
 import { router } from 'expo-router';
 import ServiceContextMenu from './service-context-menu';
+import { cn } from '~/lib/utils';
 
 const ServiceListRow: React.FC<IService> = React.memo(service => {
     const handleUpdate = () => {
@@ -37,7 +37,13 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
                             </Text>
                         </View>
                     </View>
-                    <StatusTag>{service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}</StatusTag>
+                    <StatusTag
+                        className={cn(
+                            service?.isGlobalService ? 'bg-violet-100 text-violet-700' : 'bg-sky-100 text-sky-700'
+                        )}
+                    >
+                        {service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}
+                    </StatusTag>
                 </View>
             </TouchableOpacity>
         </ServiceContextMenu>
