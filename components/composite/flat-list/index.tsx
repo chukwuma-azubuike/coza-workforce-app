@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import React from 'react';
+import { Text } from '~/components/ui/text';
+import React, { useCallback } from 'react';
 import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableOpacity, View } from 'react-native';
 import If from '../if-container';
 import Utils from '@utils/index';
@@ -25,6 +25,7 @@ export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     emptyMessage?: string;
     navLink?: string;
     showHeader?: boolean;
+    itemHeight?: number;
     padding?: boolean | number;
     fetchMoreData?: () => void;
     emptySize?: number;
@@ -44,15 +45,51 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         showEmpty = true,
         emptyMessage,
         fetchMoreData,
+        itemHeight = 60,
         showHeader = true,
     } = props;
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
-    const handleMore = () => {
+    const handleMore = useCallback(() => {
         if (fetchMoreData && !refreshing) {
             fetchMoreData();
         }
-    };
+    }, [refreshing]);
+
+    const handleItemLayout = useCallback(
+        (_: ArrayLike<any> | null | undefined, index: number) => ({
+            length: itemHeight,
+            offset: itemHeight * index,
+            index,
+        }),
+        [itemHeight]
+    );
+
+    const renderItem1 = useCallback(
+        ({ item }: any) => <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />,
+        [showHeader, columns]
+    );
+
+    const renderItem2 = useCallback(
+        ({ item }: any) => <ListComponent_2 item={item} padding={padding} columns={columns} navLink={navLink} />,
+        [padding, navLink, columns]
+    );
+
+    const listHeaderComponent = useCallback(
+        () =>
+            titles[0] ? (
+                <View style={{ paddingVertical: 6, flex: 1, width: '100%' }}>
+                    <View className="justify-between">
+                        {titles.map((title, idx) => (
+                            <Text key={`title-${idx}`} className="font-bold">
+                                {title}
+                            </Text>
+                        ))}
+                    </View>
+                </View>
+            ) : null,
+        [titles]
+    );
 
     return (
         <>
@@ -78,9 +115,8 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 />
                             }
                             keyExtractor={item => item?._id}
-                            renderItem={({ item }) => (
-                                <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />
-                            )}
+                            renderItem={renderItem1}
+                            getItemLayout={handleItemLayout}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                             ListFooterComponentStyle={{ paddingBottom: 20 }}
@@ -114,24 +150,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                             onEndReachedThreshold={0.1}
                             onScrollEndDrag={handleMore}
                             keyExtractor={item => item?._id}
-                            ListHeaderComponent={() =>
-                                titles[0] ? (
-                                    <View style={{ paddingVertical: 6, flex: 1, width: '100%' }}>
-                                        <View
-                                            className="justify-between"
-                                        >
-                                            {titles.map((title, idx) => (
-                                                <Text key={`title-${idx}`} className="font-bold">
-                                                    {title}
-                                                </Text>
-                                            ))}
-                                        </View>
-                                    </View>
-                                ) : null
-                            }
-                            renderItem={({ item }) => (
-                                <ListComponent_2 item={item} padding={padding} columns={columns} navLink={navLink} />
-                            )}
+                            ListHeaderComponent={listHeaderComponent}
+                            renderItem={renderItem2}
+                            getItemLayout={handleItemLayout}
                             ListFooterComponentStyle={{ paddingBottom: 20 }}
                             ListFooterComponent={
                                 <ActivityIndicator
@@ -177,9 +198,7 @@ const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }
                             : Utils.capitalizeFirstChar(item[0])}
                     </Text>
                 ) : null}
-                <View className="px-1">
-                    {columns?.map((column, idx) => column.render(item, idx))}
-                </View>
+                <View className="px-1">{columns?.map((column, idx) => column.render(item, idx))}</View>
             </View>
         );
     }
@@ -190,10 +209,10 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
         const { navigate } = useNavigation();
         const { textColor } = useAppColorMode();
 
-        const navigateTo = () => {
+        const navigateTo = useCallback(() => {
             if (navLink) navigate(navLink as never);
             return;
-        };
+        }, [navLink]);
 
         return (
             <TouchableOpacity

@@ -128,7 +128,7 @@ const MyTicketsList: React.FC = memo(() => {
                 data={data}
                 field="createdAt"
                 refetch={refetch}
-                itemHeight={66.7}
+                itemHeight={77.3}
                 isLoading={isLoading}
                 column={TicketListRow}
                 hasNextPage={hasNextPage}
@@ -161,7 +161,7 @@ const MyTeamTicketsList: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            limit: 100, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             departmentId: department?._id,
         },
         useGetTicketsQuery as any,
@@ -174,7 +174,7 @@ const MyTeamTicketsList: React.FC = memo(() => {
                 data={data}
                 field="createdAt"
                 refetch={refetch}
-                itemHeight={66.7}
+                itemHeight={77.3}
                 isLoading={isLoading}
                 column={TicketListRow}
                 hasNextPage={hasNextPage}
@@ -206,7 +206,7 @@ const LeadersTicketsList: React.FC = memo(() => {
         hasNextPage: hodHasNextPage,
     } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            limit: 50, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[0],
         },
@@ -224,7 +224,7 @@ const LeadersTicketsList: React.FC = memo(() => {
         hasNextPage: ahodHasNextPage,
     } = useInfiniteData<ITicket, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            limit: 50, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[1],
         },
@@ -258,7 +258,7 @@ const LeadersTicketsList: React.FC = memo(() => {
             <SectionListComponent
                 data={data}
                 field="createdAt"
-                itemHeight={66.7}
+                itemHeight={77.3}
                 isLoading={isLoading}
                 column={TicketListRow}
                 refetch={handleRefetch}
@@ -301,7 +301,7 @@ const CampusTickets: React.FC = memo(() => {
             <SectionListComponent
                 data={data}
                 field="createdAt"
-                itemHeight={66.7}
+                itemHeight={77.3}
                 isLoading={isLoading}
                 column={TicketListRow}
                 refetch={refetch}
@@ -337,7 +337,7 @@ const GroupTicketsList: React.FC = memo(() => {
             <SectionListComponent
                 data={data}
                 field="createdAt"
-                itemHeight={66.7}
+                itemHeight={77.3}
                 isLoading={isLoading}
                 column={TicketListRow}
                 refetch={refetch}

@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Text } from '~/components/ui/text';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { TouchableOpacity, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
-// import { useCustomBackNavigation } from '@hooks/navigation';
 import { useGetUserByIdQuery } from '@store/services/account';
 import useScreenFocus from '@hooks/focus';
 import { Href, Link, router } from 'expo-router';
@@ -17,17 +16,19 @@ const More: React.FC = () => {
     } = useRole();
 
     const { refetch, isLoading } = useGetUserByIdQuery(userId);
+
     useScreenFocus({
         onFocus: refetch,
     });
 
     const filteredRoutes = useMoreRoutes();
 
-    const handlePress = (href: Href) => () => {
-        router.push(href);
-    };
-
-    // useCustomBackNavigation({ targetRoute: 'Home' });
+    const handlePress = useCallback(
+        (href: Href) => () => {
+            router.push(href);
+        },
+        []
+    );
 
     return (
         <ViewWrapper scroll style={{ flex: 1 }} noPadding refreshing={isLoading} onRefresh={refetch}>
@@ -66,3 +67,4 @@ const More: React.FC = () => {
 };
 
 export default React.memo(More);
+More.displayName = 'More';

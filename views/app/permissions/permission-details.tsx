@@ -28,7 +28,7 @@ interface PermissionDetailsParamsProps extends IPermission {
 }
 
 const PermissionDetails: React.FC = () => {
-    const permissionParams = useLocalSearchParams<PermissionDetailsParamsProps>();
+    const permissionParams = useLocalSearchParams() as unknown as PermissionDetailsParamsProps;
 
     const { requestor, _id, screen } = permissionParams;
 

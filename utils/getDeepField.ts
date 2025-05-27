@@ -17,7 +17,7 @@ const getDeepField = (item: string | { [key: string]: any }, path: Array<string>
     }
 
     if (path.length === 0) {
-        console.warn('No path provided for getDeepField0. Using default path "label".');
+        // console.warn('No path provided for getDeepField0. Using default path "label".');
         path = ['label']; // Default path if none provided
     }
 
@@ -27,7 +27,7 @@ const getDeepField = (item: string | { [key: string]: any }, path: Array<string>
 
     // Check if the current field exists in the object
     if (!item.hasOwnProperty(currentField)) {
-        console.warn(`Field "${currentField}" not found in object for path "${path.join('.')}".`);
+        // console.warn(`Field "${currentField}" not found in object for path "${path.join('.')}".`);
         return ''; // Handle missing fields gracefully
     }
 

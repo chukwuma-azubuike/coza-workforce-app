@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
     campusColumns,
@@ -35,7 +35,7 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
 
-    const fetchMoreData = () => {
+    const fetchMoreData = useCallback(() => {
         if (!isFetching && !isLoading) {
             if (data?.length) {
                 setPage(prev => prev + 1);
@@ -43,12 +43,13 @@ export const MyAttendance: React.FC = React.memo(() => {
                 setPage(prev => prev - 1);
             }
         }
-    };
+    }, [isFetching, isLoading, data?.length]);
 
     return (
         <ErrorBoundary>
             <View className="mt-4 flex-1">
                 <FlatListComponent
+                    itemHeight={85.3}
                     padding={isAndroid ? 3 : true}
                     fetchMoreData={fetchMoreData}
                     columns={myAttendanceColumns}
@@ -74,13 +75,13 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
-    const setService = (value: IService['_id']) => {
+    const setService = useCallback((value: IService['_id']) => {
         setServiceId(value);
-    };
+    }, []);
 
     const filteredServices = React.useMemo<IService[] | undefined>(
         () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
-        [services, servicesIsSuccess]
+        [services]
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
@@ -136,11 +137,16 @@ export const TeamAttendance: React.FC = React.memo(() => {
         [membersClockedIn, mergedUsers]
     );
 
-    const handleRefetch = () => {
+    const handleRefetch = useCallback(() => {
         usersRefetch();
         refetchServices();
         refetchAttendance();
-    };
+    }, []);
+
+    const handleCustomLabel = useCallback(
+        (session: IService) => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`,
+        []
+    );
 
     return (
         <ErrorBoundary>
@@ -153,13 +159,14 @@ export const TeamAttendance: React.FC = React.memo(() => {
                     isLoading={serviceIsLoading}
                     placeholder="Select Session"
                     onValueChange={setService}
-                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                    customLabel={handleCustomLabel}
                 />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
-                    padding={isAndroid ? 3 : 1}
+                    itemHeight={85.3}
                     onRefresh={handleRefetch}
+                    padding={isAndroid ? 3 : 1}
                     isLoading={isLoading || isFetching}
                     columns={teamAttendanceDataColumns}
                     refreshing={isLoading || isFetching}
@@ -174,22 +181,17 @@ export const TeamAttendance: React.FC = React.memo(() => {
 export const LeadersAttendance: React.FC = React.memo(() => {
     const { leaderRoleIds, user } = useRole();
 
-    const {
-        data: services,
-        refetch: refetchServices,
-        isLoading: serviceIsLoading,
-        isSuccess: servicesIsSuccess,
-    } = useGetServicesQuery({});
+    const { data: services, refetch: refetchServices, isLoading: serviceIsLoading } = useGetServicesQuery({});
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
-    const setService = (value: IService['_id']) => {
+    const setService = useCallback((value: IService['_id']) => {
         setServiceId(value);
-    };
+    }, []);
 
     const filteredServices = React.useMemo<IService[] | undefined>(
         () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
-        [services, servicesIsSuccess]
+        [services]
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
@@ -276,14 +278,19 @@ export const LeadersAttendance: React.FC = React.memo(() => {
 
     const mergedAttendanceWithLeaderList = React.useMemo(
         () => Utils.mergeDuplicatesByKey(mergedLeaders, 'userId'),
-        [leadersClockedIn, mergedLeaders]
+        [mergedLeaders]
     );
 
-    const handleRefetch = () => {
+    const handleRefetch = useCallback(() => {
         refetchHods();
         refetchAHods();
         refetchServices();
-    };
+    }, []);
+
+    const handleCustomLabel = useCallback(
+        (session: IService) => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`,
+        []
+    );
 
     return (
         <ErrorBoundary>
@@ -296,11 +303,12 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                     isLoading={serviceIsLoading}
                     placeholder="Select Session"
                     onValueChange={setService}
-                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                    customLabel={handleCustomLabel}
                 />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
+                    itemHeight={85.3}
                     padding={isAndroid ? 3 : true}
                     onRefresh={handleRefetch}
                     isLoading={isLoading || isFetching}
@@ -316,7 +324,6 @@ export const LeadersAttendance: React.FC = React.memo(() => {
 
 export const CampusAttendance: React.FC = React.memo(() => {
     const { user } = useRole();
-    const [page, setPage] = React.useState<number>(1);
 
     const {
         data: services,
@@ -355,8 +362,6 @@ export const CampusAttendance: React.FC = React.memo(() => {
         refetch: refetchAttendance,
     } = useGetAttendanceQuery(
         {
-            // page,
-            // limit: 20,
             serviceId: serviceId,
             campusId: user?.campus?._id,
         },
@@ -366,10 +371,15 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    const handleRefetch = () => {
+    const handleRefetch = useCallback(() => {
         !attedanceIsUninitialized && refetchAttendance();
         !servicesIsUninitialized && refetchServices();
-    };
+    }, [attedanceIsUninitialized, servicesIsUninitialized]);
+
+    const handleCustomLabel = useCallback(
+        (session: IService) => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`,
+        []
+    );
 
     return (
         <ErrorBoundary>
@@ -382,11 +392,12 @@ export const CampusAttendance: React.FC = React.memo(() => {
                     isLoading={serviceIsLoading}
                     placeholder="Select Session"
                     onValueChange={setService}
-                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                    customLabel={handleCustomLabel}
                 />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
+                    itemHeight={85.3}
                     columns={campusColumns}
                     onRefresh={handleRefetch}
                     data={data as IAttendance[]}
@@ -401,24 +412,17 @@ export const CampusAttendance: React.FC = React.memo(() => {
 });
 
 export const GroupAttendance: React.FC = React.memo(() => {
-    const { user } = useRole();
-
-    const {
-        data: services,
-        refetch: refetchServices,
-        isLoading: serviceIsLoading,
-        isSuccess: servicesIsSuccess,
-    } = useGetServicesQuery({});
+    const { data: services, refetch: refetchServices, isLoading: serviceIsLoading } = useGetServicesQuery({});
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
 
-    const setService = (value: IService['_id']) => {
+    const setService = useCallback((value: IService['_id']) => {
         setServiceId(value);
-    };
+    }, []);
 
     const filteredServices = React.useMemo<IService[] | undefined>(
         () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
-        [services, servicesIsSuccess]
+        [services]
     );
 
     const sortedServices = React.useMemo<IService[] | undefined>(
@@ -476,14 +480,19 @@ export const GroupAttendance: React.FC = React.memo(() => {
 
     const mergedAttendanceWithMemberList = React.useMemo(
         () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
-        [membersClockedIn, mergedUsers]
+        [mergedUsers]
     );
 
-    const handleRefetch = () => {
+    const handleRefetch = useCallback(() => {
         usersRefetch();
         refetchServices();
         refetchAttendance();
-    };
+    }, []);
+
+    const handleCustomLabel = useCallback(
+        (session: IService) => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`,
+        []
+    );
 
     return (
         <ErrorBoundary>
@@ -496,13 +505,14 @@ export const GroupAttendance: React.FC = React.memo(() => {
                     isLoading={serviceIsLoading}
                     placeholder="Select Session"
                     onValueChange={setService}
-                    customLabel={session => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`}
+                    customLabel={handleCustomLabel}
                 />
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
-                    padding={isAndroid ? 3 : 1}
+                    itemHeight={85.3}
                     onRefresh={handleRefetch}
+                    padding={isAndroid ? 3 : 1}
                     isLoading={isLoading || isFetching}
                     columns={groupAttendanceDataColumns}
                     refreshing={isLoading || isFetching}

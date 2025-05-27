@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import useRole from '@hooks/role';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { CongressList } from './list';
@@ -11,9 +11,9 @@ const Congress: React.FC = () => {
     const { isSuperAdmin } = useRole();
     const updatedListItem = useLocalSearchParams() as unknown as ICongress;
 
-    const gotoCreateCongress = () => {
+    const gotoCreateCongress = useCallback(() => {
         router.push('/congress/create-congress');
-    };
+    }, []);
 
     return (
         <ViewWrapper className="pt-4">

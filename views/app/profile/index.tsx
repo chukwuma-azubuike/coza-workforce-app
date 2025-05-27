@@ -42,7 +42,6 @@ const Profile: React.FC = () => {
         type: 'gallery',
         s3Folder: S3_BUCKET_FOLDERS.profile_pictures,
         onUploadSuccess: async pictureUrl => {
-            console.log({ pictureUrl });
             await updateUser({ pictureUrl, _id: user?._id } as IEditProfilePayload);
         },
         allowedTypes: ['image/*'],

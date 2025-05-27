@@ -193,7 +193,7 @@ const MyPermissionsList: React.FC = memo(() => {
             <SectionListComponent
                 data={data}
                 field="createdAt"
-                itemHeight={85}
+                itemHeight={66.7}
                 refetch={refetch}
                 isLoading={isLoading}
                 hasNextPage={hasNextPage}
@@ -260,7 +260,7 @@ const LeadersPermissionsList: React.FC = memo(() => {
         hasNextPage: hodHasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            limit: 50, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[0],
         },
@@ -278,7 +278,7 @@ const LeadersPermissionsList: React.FC = memo(() => {
         hasNextPage: ahodHasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            limit: 50, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             campusId: campus?._id,
             roleId: leaderRoleIds && leaderRoleIds[1],
         },
@@ -333,7 +333,7 @@ const CampusPermissions: React.FC = memo(() => {
         hasNextPage,
     } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
         {
-            limit: 50, // TODO: Restore after backend is fixed
+            limit: 20, // TODO: Restore after backend is fixed
             campusId: _id,
         },
         useGetPermissionsQuery as any,
@@ -347,7 +347,7 @@ const CampusPermissions: React.FC = memo(() => {
                 data={data}
                 field="createdAt"
                 refetch={refetch}
-                itemHeight={87.7}
+                itemHeight={66.7}
                 isLoading={isLoading}
                 hasNextPage={hasNextPage}
                 column={PermissionSectionRow}
