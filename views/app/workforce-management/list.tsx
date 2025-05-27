@@ -11,6 +11,7 @@ import { IUser } from '@store/types';
 import Utils from '@utils/index';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { router } from 'expo-router';
+import UserContextMenu from './components/user-context-menu';
 
 const UserListRow: React.FC<IUser> = memo(user => {
     const handlePress = () => {
@@ -54,33 +55,38 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                 const isAHOD = leaderRoleIds && user.roleId === leaderRoleIds[0];
 
                 return (
-                    <TouchableOpacity
-                        key={index}
-                        disabled={false}
-                        delayPressIn={0}
-                        activeOpacity={0.6}
-                        onPress={handlePress}
-                        accessibilityRole="button"
-                    >
-                        <View className="py-3 flex-row w-full justify-between items-center gap-3">
-                            <View className="items-center gap-2 flex-row flex-1">
-                                <AvatarComponent alt="profile-pic" imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL} />
-                                <View className="flex-1">
-                                    <Text className="font-bold">
-                                        {Utils.capitalizeFirstChar(user?.firstName)}{' '}
-                                        {Utils.capitalizeFirstChar(user?.lastName)}
-                                    </Text>
-                                    <Text className="text-base text-muted-foreground">{user?.email}</Text>
+                    <UserContextMenu user={user}>
+                        <TouchableOpacity
+                            key={index}
+                            disabled={false}
+                            delayPressIn={0}
+                            activeOpacity={0.6}
+                            onPress={handlePress}
+                            accessibilityRole="button"
+                        >
+                            <View className="py-3 flex-row w-full justify-between items-center gap-3">
+                                <View className="items-center gap-2 flex-row flex-1">
+                                    <AvatarComponent
+                                        alt="profile-pic"
+                                        imageUrl={user?.pictureUrl || AVATAR_FALLBACK_URL}
+                                    />
+                                    <View className="flex-1">
+                                        <Text className="font-bold">
+                                            {Utils.capitalizeFirstChar(user?.firstName)}{' '}
+                                            {Utils.capitalizeFirstChar(user?.lastName)}
+                                        </Text>
+                                        <Text className="text-base text-muted-foreground">{user?.email}</Text>
+                                    </View>
                                 </View>
+                                {(isHOD || isAHOD) && (
+                                    <StatusTag capitalise={false}>
+                                        {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
+                                    </StatusTag>
+                                )}
+                                <StatusTag>{user?.status}</StatusTag>
                             </View>
-                            {(isHOD || isAHOD) && (
-                                <StatusTag capitalise={false}>
-                                    {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
-                                </StatusTag>
-                            )}
-                            <StatusTag>{user?.status}</StatusTag>
-                        </View>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                    </UserContextMenu>
                 );
             })}
         </>

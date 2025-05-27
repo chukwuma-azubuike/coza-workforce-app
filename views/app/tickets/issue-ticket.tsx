@@ -1,7 +1,6 @@
 import { ScrollView, View } from 'react-native';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import TextAreaComponent from '@components/atoms/text-area';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
@@ -21,7 +20,7 @@ import { Label } from '~/components/ui/label';
 import RadioButtonGroup from '@components/composite/radio-button';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
-import { router, useNavigation } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import PickerSelect from '~/components/ui/picker-select';
 import { Textarea } from '~/components/ui/textarea';
 
@@ -42,15 +41,16 @@ const ticketTypes = [
         value: 'CAMPUS',
     },
 ];
-const IssueTicket: React.FC = props => {
+const IssueTicket: React.FC = () => {
     const {
         user: { campus, userId },
     } = useRole();
 
     const { setOptions } = useNavigation();
+    const user = useLocalSearchParams() as any as IUser;
 
-    const [campusId, setCampusId] = React.useState<ICampus['_id']>(campus?._id);
-    const [departmentId, setDepartmentId] = React.useState<IDepartment['_id']>(); //Just for 3P testing
+    const [campusId, setCampusId] = React.useState<ICampus['_id']>(user?.campusId || campus?._id);
+    const [departmentId, setDepartmentId] = React.useState<IDepartment['_id'] | undefined>(user?.departmentId); //Just for 3P testing
     const [ticketType, setTicketType] = React.useState<string>('INDIVIDUAL');
 
     const isDepartment = ticketType === 'DEPARTMENTAL';
@@ -151,7 +151,7 @@ const IssueTicket: React.FC = props => {
         }
     };
 
-    const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>();
+    const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>(user?._id ? user : undefined);
 
     enum TICKET_TEMPLATE {
         minimal = `We celebrate you, 
@@ -175,7 +175,7 @@ We love & celebrate you!` as any,
     const [initialValues] = React.useState<ICreateTicketPayload>({
         departmentId,
         campusId,
-        userId: '',
+        userId: user?._id || '',
         categoryId: '',
         isDepartment,
         isIndividual,
