@@ -78,6 +78,7 @@ const useRole = () => {
     const dispatch = useAppDispatch();
     const storedUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
     const { data: latestUser } = useGetUserByIdQuery(storedUser?.userId as string, {
+        skip: !storedUser?.userId,
         refetchOnMountOrArgChange: false,
     });
     const currentUser = latestUser || storedUser;

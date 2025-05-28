@@ -34,11 +34,11 @@ const Tickets: React.FC = () => {
     };
 
     const renderScene = SceneMap({
-        myTickets: () => <MyTicketsList />,
-        teamTickets: () => <MyTeamTicketsList />,
-        campusTickets: () => <CampusTickets />,
-        leadersTickets: () => <LeadersTicketsList />,
-        groupTickets: () => <GroupTicketsList />,
+        myTickets: MyTicketsList,
+        teamTickets: MyTeamTicketsList,
+        campusTickets: CampusTickets,
+        leadersTickets: LeadersTicketsList,
+        groupTickets: GroupTicketsList,
     });
 
     const {
@@ -57,7 +57,7 @@ const Tickets: React.FC = () => {
         data: tickets,
         isLoading: isLoadingTickets,
         isFetching: isFetchingTickets,
-    } = useGetTicketsQuery({ campusId: campus?._id, limit: 500 }, { skip: !canSearch });
+    } = useGetTicketsQuery({ campusId: campus?._id, limit: 100 }, { skip: !canSearch });
 
     const allRoutes = React.useMemo(() => {
         if (isQC) return [ROUTES[0], ROUTES[1], ROUTES[2], ROUTES[3]];

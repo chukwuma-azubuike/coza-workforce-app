@@ -156,11 +156,25 @@ const UserReportDetailsPage: React.FC<NativeStackScreenProps<ParamListBase>> = (
     const params = route.params as { userId: string };
     const userId = params?.userId;
 
-    const renderScene = SceneMap({
-        userTickets: () => <UserTicketsList userId={userId} />,
-        userAttendance: () => <UserAttendanceList userId={userId} />,
-        // userPermissions: () => <UserPermissionsList userId={userId} />,
-    });
+    //TODO: Considering for performance optimisation
+    // const renderScene = SceneMap({
+    //     userTickets: () => <UserTicketsList userId={userId} />,
+    //     userAttendance: () => <UserAttendanceList userId={userId} />,
+    //     // userPermissions: () => <UserPermissionsList userId={userId} />,
+    // });
+
+    const renderScene = ({ route }: any) => {
+        switch (route.key) {
+            case 'userTickets':
+                return <UserTicketsList userId={userId} />;
+            case 'userAttendance':
+                return <UserAttendanceList userId={userId} />;
+            // case 'userPermissions':
+            //     return <UserPermissionsList userId={userId} />;
+            default:
+                return null;
+        }
+    };
 
     const [index, setIndex] = React.useState(0);
 

@@ -1,7 +1,7 @@
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { SceneMap } from 'react-native-tab-view';
+// import { SceneMap } from 'react-native-tab-view';
 import { GroupHeadTeamAttendance, GroupHeadTeamPermissionsList, GroupHeadTeamTicketsList } from './lists';
 import useMediaQuery from '@hooks/media-query';
 import { ROLES } from '@hooks/role';
@@ -38,12 +38,29 @@ const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase
 
     const groupData = { departmentId: params._id, screenName: params.screenName };
     const reportData = { departmentId: params._id, departmentName: params.title, screenName: params.screenName };
-    const renderScene = SceneMap({
-        teamAttendance: () => <GroupHeadTeamAttendance departmentId={params._id} />,
-        teamPermissions: () => <GroupHeadTeamPermissionsList updatedListItem={params.permissions} params={groupData} />,
-        teamTickets: () => <GroupHeadTeamTicketsList updatedListItem={params.tickets} departmentId={params._id} />,
-        teamReports: () => <GroupHeadReports params={reportData} />,
-    });
+
+    //TODO: Considering for performance optimisation
+    // const renderScene = SceneMap({
+    //     teamAttendance: () => <GroupHeadTeamAttendance departmentId={params._id} />,
+    //     teamPermissions: () => <GroupHeadTeamPermissionsList params={groupData} />,
+    //     teamTickets: () => <GroupHeadTeamTicketsList departmentId={params._id} />,
+    //     teamReports: () => <GroupHeadReports params={reportData} />,
+    // });
+
+    const renderScene = ({ route }: any) => {
+        switch (route.key) {
+            case 'teamAttendance':
+                return <GroupHeadTeamAttendance departmentId={params._id} />;
+            case 'teamPermissions':
+                return <GroupHeadTeamPermissionsList params={groupData} />;
+            case 'teamTickets':
+                return <GroupHeadTeamTicketsList departmentId={params._id} />;
+            case 'teamReports':
+                return <GroupHeadReports params={reportData} />;
+            default:
+                return null;
+        }
+    };
 
     const [index, setIndex] = React.useState(0);
 

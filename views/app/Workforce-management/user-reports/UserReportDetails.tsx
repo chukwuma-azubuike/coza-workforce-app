@@ -111,10 +111,22 @@ const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
     const { userId: contextUserId } = React.useContext(UserReportContext);
     const userId = contextUserId || (props?.userId as string);
 
-    const renderScene = SceneMap({
-        userTickets: () => <UserTicketsList userId={userId} />,
-        userAttendance: () => <UserAttendanceList userId={userId} />,
-    });
+    //TODO: Considering for performance optimisation
+    // const renderScene = SceneMap({
+    //     userTickets: () => <UserTicketsList userId={userId} />,
+    //     userAttendance: () => <UserAttendanceList userId={userId} />,
+    // });
+
+    const renderScene = ({ route }: any) => {
+        switch (route.key) {
+            case 'userTickets':
+                return <UserTicketsList userId={userId} />;
+            case 'userAttendance':
+                return <UserAttendanceList userId={userId} />;
+            default:
+                return null;
+        }
+    };
 
     const [index, setIndex] = React.useState(0);
 

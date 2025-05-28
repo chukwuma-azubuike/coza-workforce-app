@@ -71,7 +71,7 @@ function SectionListComponent<D>({
             {isLoading && sections?.length < 1 ? (
                 <FlatListSkeleton />
             ) : sections?.length < 1 ? (
-                <Empty width={160} isLoading={isLoading} message={emptyMessage} refresh={refetch} />
+                <Empty width={320} isLoading={isLoading} message={emptyMessage} refresh={refetch} />
             ) : (
                 <SectionList
                     {...props}
