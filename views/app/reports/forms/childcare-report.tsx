@@ -6,13 +6,7 @@ import useModal from '@hooks/modal/useModal';
 import { IChildCareReportPayload } from '@store/types';
 import { useCreateChildCareReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
-import { THEME_CONFIG } from '@config/appConfig';
-import { Icon } from '@rneui/themed';
 import dayjs from 'dayjs';
-import TextAreaComponent from '@components/atoms/text-area';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { isIOS } from '@rneui/base';
@@ -21,9 +15,11 @@ import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Textarea } from '~/components/ui/textarea';
 
-const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IChildCareReportPayload;
+const ChildcareReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IChildCareReportPayload;
 
     const { status, updatedAt } = params;
 
@@ -32,42 +28,63 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         user: { userId },
     } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateChildCareReportMutation();
+    const [updateReport, { error, isLoading }] = useCreateChildCareReportMutation();
+    const onSubmit = async (values: IChildCareReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
 
-    const onSubmit = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, userId, status: 'SUBMITTED' });
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onRequestReview = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+    const onRequestReview = async (values: IChildCareReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onApprove = (values: IChildCareReportPayload) => {
-        updateReport({ ...values, userId, status: 'APPROVED' });
+    const onApprove = async (values: IChildCareReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
+
+    const onResponse = React.useCallback(
+        (
+            res:
+                | {
+                      data: void;
+                      error?: undefined;
+                  }
+                | {
+                      data?: undefined;
+                      error: any;
+                  }
+        ) => {
+            if (res.data) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'success',
+                    message: 'Report updated',
+                });
+                router.back();
+            }
+            if (res.error) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'error',
+                    message: (error as any)?.data?.message || 'Something went wrong!',
+                });
+            }
+        },
+        []
+    );
 
     const { setModalState } = useModal();
-    const navigation = useNavigation();
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                defaultRender: true,
-                status: 'success',
-                message: 'Report updated',
-            });
-            reset();
-            navigation.goBack();
-        }
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: 'error',
-                message: (error as any)?.data?.message || 'Something went wrong!',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
         ...params,
@@ -79,7 +96,7 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         age12_above: { male: params?.age12_above?.male || '', female: params?.age12_above?.female || '' },
     } as IChildCareReportPayload;
 
-    const addGrandTotal = (values: IChildCareReportPayload) => {
+    const addGrandTotal = React.useCallback((values: IChildCareReportPayload) => {
         return `${
             +values.age1_2?.female +
                 +values.age3_5?.female +
@@ -90,16 +107,16 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 +values.age6_11?.male +
                 +values.age12_above?.male || 0
         }`;
-    };
+    }, []);
 
-    const addSubTotal = (values: IChildCareReportPayload, field: 'male' | 'female') => {
+    const addSubTotal = React.useCallback((values: IChildCareReportPayload, field: 'male' | 'female') => {
         return `${
             +values.age1_2?.[field] +
                 +values.age3_5?.[field] +
                 +values.age6_11?.[field] +
                 +values.age12_above?.[field] || 0
         }`;
-    };
+    }, []);
 
     return (
         <Formik<IChildCareReportPayload>
@@ -110,169 +127,201 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         >
             {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <View className="pb-4">
+                    <View className="pt-4 w-full gap-4 flex-1">
                         <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View className="px-4 flex-1 justify-between">
-                            <View className="gap-2 mt-6">
-                                <Text className="text-muted-foreground">Age 1 - 2</Text>
-                                <Text className="text-muted-foreground">Age 3 - 5</Text>
-                                <Text className="text-muted-foreground">Age 6 - 11</Text>
-                                <Text className="text-muted-foreground">Age 12 & Above</Text>
-                                <Text className="text-muted-foreground">Sub Total</Text>
-                            </View>
-                            <View className="items-center gap-2">
+                        <View className="flex-row w-full">
+                            <View className="w-1/3" />
+                            <View className="flex-1 items-center">
                                 <Label>Male</Label>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age1_2?.male}`}
-                                        onChangeText={handleChange('age1_2.male')}
-                                    />
-                                    {errors?.age1_2?.male && (
-                                        <FormErrorMessage>{errors?.age1_2?.male}</FormErrorMessage>
-                                    )}
-                                </View>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age3_5?.male}`}
-                                        onChangeText={handleChange('age3_5.male')}
-                                    />
-                                    {errors?.age3_5?.male && (
-                                        <FormErrorMessage>{errors?.age3_5?.male}</FormErrorMessage>
-                                    )}
-                                </View>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age6_11?.male}`}
-                                        onChangeText={handleChange('age6_11.male')}
-                                    />
-                                    <FormErrorMessage>{errors?.age6_11?.male}</FormErrorMessage>
-                                </View>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age12_above?.male}`}
-                                        onChangeText={handleChange('age12_above.male')}
-                                    />
-                                    <FormErrorMessage>{errors?.age12_above?.male}</FormErrorMessage>
-                                </View>
-                                <View>
-                                    <Input
-                                        keyboardType="numeric"
-                                        value={addSubTotal(values, 'male')}
-                                        onChangeText={handleChange('subTotal.male')}
-                                    />
-                                    <FormErrorMessage>{errors?.subTotal?.male}</FormErrorMessage>
-                                </View>
                             </View>
-                            <View className="items-center gap-2">
+                            <View className="flex-1 items-center">
                                 <Label>Female</Label>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age1_2?.female}`}
-                                        onChangeText={handleChange('age1_2.female')}
-                                    />
-                                    <FormErrorMessage>{errors?.age1_2?.female}</FormErrorMessage>
+                            </View>
+                        </View>
+                        <View className="justify-between">
+                            <View className="items-center gap-4">
+                                <View className="flex-row gap-4 items-center">
+                                    <Text className="text-muted-foreground w-1/3">Age 1 - 2</Text>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age1_2?.male}`}
+                                            onChangeText={handleChange('age1_2.male')}
+                                        />
+                                        {errors?.age1_2?.male && (
+                                            <FormErrorMessage>{errors?.age1_2?.male}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age1_2?.female}`}
+                                            onChangeText={handleChange('age1_2.female')}
+                                        />
+                                        {errors?.age1_2?.female && (
+                                            <FormErrorMessage>{errors?.age1_2?.female}</FormErrorMessage>
+                                        )}
+                                    </View>
                                 </View>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age3_5?.female}`}
-                                        onChangeText={handleChange('age3_5.female')}
-                                    />
-                                    <FormErrorMessage>{errors?.age3_5?.female}</FormErrorMessage>
+
+                                <View className="flex-row gap-4 items-center">
+                                    <Text className="text-muted-foreground w-1/3">Age 3 - 5</Text>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age3_5?.male}`}
+                                            onChangeText={handleChange('age3_5.male')}
+                                        />
+                                        {errors?.age3_5?.male && (
+                                            <FormErrorMessage>{errors?.age3_5?.male}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age3_5?.female}`}
+                                            onChangeText={handleChange('age3_5.female')}
+                                        />
+                                        {errors?.age3_5?.female && (
+                                            <FormErrorMessage>{errors?.age3_5?.female}</FormErrorMessage>
+                                        )}
+                                    </View>
                                 </View>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age6_11?.female}`}
-                                        onChangeText={handleChange('age6_11.female')}
-                                    />
-                                    <FormErrorMessage>{errors?.age6_11?.female}</FormErrorMessage>
+
+                                <View className="flex-row gap-4 items-center">
+                                    <Text className="text-muted-foreground w-1/3">Age 6 - 11</Text>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age6_11?.male}`}
+                                            onChangeText={handleChange('age6_11.male')}
+                                        />
+                                        {errors?.age6_11?.male && (
+                                            <FormErrorMessage>{errors?.age6_11?.male}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age6_11?.female}`}
+                                            onChangeText={handleChange('age6_11.female')}
+                                        />
+                                        {errors?.age6_11?.female && (
+                                            <FormErrorMessage>{errors?.age6_11?.female}</FormErrorMessage>
+                                        )}
+                                    </View>
                                 </View>
-                                <View>
-                                    <Input
-                                        placeholder="0"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values?.age12_above?.female}`}
-                                        onChangeText={handleChange('age12_above.female')}
-                                    />
+
+                                <View className="flex-row gap-4 items-center">
+                                    <Text className="text-muted-foreground w-1/3">Age 12 & Above</Text>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age12_above?.male}`}
+                                            onChangeText={handleChange('age12_above.male')}
+                                        />
+                                        {errors?.age12_above?.male && (
+                                            <FormErrorMessage>{errors?.age12_above?.male}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="flex-1">
+                                        <Input
+                                            placeholder="0"
+                                            keyboardType="numeric"
+                                            isDisabled={isCampusPastor}
+                                            value={`${values?.age12_above?.female}`}
+                                            onChangeText={handleChange('age12_above.female')}
+                                        />
+                                        {errors?.age12_above?.female && (
+                                            <FormErrorMessage>{errors?.age12_above?.female}</FormErrorMessage>
+                                        )}
+                                    </View>
                                 </View>
-                                <View>
-                                    <Input
-                                        keyboardType="numeric"
-                                        value={addSubTotal(values, 'female')}
-                                        onChangeText={handleChange('subTotal.female')}
-                                    />
+
+                                <View className="flex-row gap-4 items-center">
+                                    <Text className="text-muted-foreground w-1/3">Sub Total</Text>
+                                    <View className="flex-1">
+                                        <Input
+                                            isDisabled
+                                            keyboardType="numeric"
+                                            value={addSubTotal(values, 'male')}
+                                            onChangeText={handleChange('subTotal.male')}
+                                        />
+                                        {errors?.subTotal?.male && (
+                                            <FormErrorMessage>{errors?.subTotal?.male}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                    <View className="flex-1">
+                                        <Input
+                                            isDisabled
+                                            keyboardType="numeric"
+                                            value={addSubTotal(values, 'female')}
+                                            onChangeText={handleChange('subTotal.female')}
+                                        />
+                                        {errors?.subTotal?.male && (
+                                            <FormErrorMessage>{errors?.subTotal?.male}</FormErrorMessage>
+                                        )}
+                                    </View>
+                                </View>
+
+                                <View className="flex-row gap-4 items-center">
+                                    <Text className="text-muted-foreground w-1/3">Grand Total</Text>
+                                    <View className="flex-1">
+                                        <Input
+                                            isDisabled
+                                            style={{ flex: 1 }}
+                                            keyboardType="numeric"
+                                            value={addGrandTotal(values)}
+                                            onChangeText={handleChange('grandTotal')}
+                                        />
+                                    </View>
                                 </View>
                             </View>
                         </View>
-                        <View className="px-4 gap-2 mt-2">
-                            <View>
-                                <View className="justify-between items-center gap-6">
-                                    <Label>Grand Total</Label>
-                                    <Input
-                                        isDisabled
-                                        style={{ flex: 1 }}
-                                        keyboardType="numeric"
-                                        value={addGrandTotal(values)}
-                                        onChangeText={handleChange('grandTotal')}
-                                    />
-                                </View>
-                            </View>
-                            <Separator />
-                            <View>
-                                <TextAreaComponent
-                                    isDisabled={isCampusPastor}
-                                    placeholder="Any other information"
-                                    value={!!values?.otherInfo ? values?.otherInfo : undefined}
-                                />
-                            </View>
+                        <Separator className="my-2" />
+                        <View className="gap-4">
+                            <Textarea
+                                isDisabled={isCampusPastor}
+                                placeholder="Any other information"
+                                value={!!values?.otherInfo ? values?.otherInfo : undefined}
+                            />
                             <If condition={!isCampusPastor}>
-                                <View>
-                                    <ButtonComponent
-                                        isLoading={isLoading}
-                                        onPress={() => {
-                                            setFieldValue('subTotal.male', addSubTotal(values, 'male'));
-                                            setFieldValue('subTotal.female', addSubTotal(values, 'female'));
-                                            setFieldValue('grandTotal', addGrandTotal(values));
-                                            handleSubmit();
-                                        }}
-                                    >
-                                        {`${!status ? 'Submit' : 'Update'}`}
-                                    </ButtonComponent>
-                                </View>
+                                <Button
+                                    isLoading={isLoading}
+                                    onPress={() => {
+                                        setFieldValue('subTotal.male', addSubTotal(values, 'male'));
+                                        setFieldValue('subTotal.female', addSubTotal(values, 'female'));
+                                        setFieldValue('grandTotal', addGrandTotal(values));
+                                        handleSubmit();
+                                    }}
+                                >
+                                    {`${!status ? 'Submit' : 'Update'}`}
+                                </Button>
                             </If>
                             <If condition={isCampusPastor}>
-                                <View className="mb-2">
-                                    <TextAreaComponent
-                                        isDisabled={!isCampusPastor}
-                                        placeholder="Pastor's comment"
-                                        onChangeText={handleChange('pastorComment')}
-                                        value={values?.pastorComment ? values?.pastorComment : ''}
-                                    />
-                                </View>
-                                <View className="justify-between gap-4">
+                                <Textarea
+                                    isDisabled={!isCampusPastor}
+                                    placeholder="Pastor's comment"
+                                    onChangeText={handleChange('pastorComment')}
+                                    value={values?.pastorComment ? values?.pastorComment : ''}
+                                />
+                                <View className="justify-between gap-4 flex-row">
                                     <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
@@ -282,14 +331,14 @@ const ChildcareReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                                     >
                                         Request Review
                                     </Button>
-                                    <ButtonComponent
+                                    <Button
                                         onPress={() => onApprove(values)}
                                         isLoading={isLoading}
-                                        size="sm"
                                         className="flex-1"
+                                        size="sm"
                                     >
                                         Approve
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </If>
                         </View>

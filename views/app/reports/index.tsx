@@ -1,5 +1,5 @@
 import { Text } from '~/components/ui/text';
-import React from 'react';
+import React, { useCallback } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
@@ -24,7 +24,7 @@ import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload } from '@store/types';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
-import { router } from 'expo-router';
+import { Href, router } from 'expo-router';
 import { Separator } from '~/components/ui/separator';
 
 export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>> =
@@ -143,28 +143,28 @@ const Reports: React.FC = () => {
 
     const { setModalState } = useModal();
 
-    const goToReportRoute = () => {
+    const goToReportRoute = (): Href | undefined => {
         if (isCTS) {
-            return 'Transfer Report';
+            return '/reports/transfer-report';
         }
         if (isPCU) {
-            return 'Guest Report';
+            return '/reports/guest-report';
         }
         if (isUshery) {
-            return 'Attendance Report';
+            return '/reports/attendance-report';
         }
         if (isSecurity) {
-            return 'Security Report';
+            return '/reports/security-report';
         }
         if (isPrograms) {
-            return 'Service Report';
+            return '/reports/service-report';
         }
         if (isChildcare) {
-            return 'Childcare Report';
+            return '/reports/childcare-report';
         }
     };
 
-    const goToIncidentReport = () => {
+    const goToIncidentReport = useCallback(() => {
         router.push({
             pathname: '/reports/incident-report',
             params: {
@@ -174,9 +174,9 @@ const Reports: React.FC = () => {
                 userId: user?.userId,
             },
         });
-    };
+    }, [user, latestServiceData?._id]);
 
-    const goToDepartmentReport = () => {
+    const goToDepartmentReport = useCallback(() => {
         if (!goToReportRoute()) {
             setModalState({
                 status: 'info',
@@ -195,7 +195,7 @@ const Reports: React.FC = () => {
                 },
             });
         }
-    };
+    }, [data]);
 
     return (
         <ErrorBoundary>
