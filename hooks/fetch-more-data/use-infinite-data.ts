@@ -77,7 +77,7 @@ function useInfiniteData<T, TParams>(
         setPage(1);
         setMergedData([]);
         refetch();
-    }, [refetch]);
+    }, []);
 
     return {
         data: mergedData,

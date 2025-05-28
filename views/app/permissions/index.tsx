@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
     CampusPermissions,
     GroupPermissionsList,
@@ -32,20 +32,20 @@ const Permissions: React.FC = () => {
     useGetRolesQuery();
 
     const { isMobile } = useMediaQuery();
-    const gotoRequestPermission = () => {
+    const gotoRequestPermission = useCallback(() => {
         router.push('/permissions/request-permission');
-    };
+    }, []);
 
-    const goToExport = () => {
+    const goToExport = useCallback(() => {
         router.push({ pathname: '/export-data', params: { type: IReportTypes.PERMISSIONS } });
-    };
+    }, [IReportTypes.PERMISSIONS]);
 
     const renderScene = SceneMap({
-        myPermissions: () => <MyPermissionsList />,
-        teamPermissions: () => <TeamPermissionsList />,
-        campusPermissions: () => <CampusPermissions />,
-        leadersPermissions: () => <LeadersPermissionsList />,
-        groupPermissions: () => <GroupPermissionsList />,
+        myPermissions: MyPermissionsList,
+        teamPermissions: TeamPermissionsList,
+        campusPermissions: CampusPermissions,
+        leadersPermissions: LeadersPermissionsList,
+        groupPermissions: GroupPermissionsList,
     });
 
     const { isQC, isAHOD, isHOD, isCampusPastor, isGlobalPastor, isGroupHead } = useRole();
@@ -87,11 +87,11 @@ const Permissions: React.FC = () => {
 
     const [index, setIndex] = React.useState(0);
 
-    const routeFocus = () => {
+    const routeFocus = useCallback(() => {
         if (params?.tabKey) {
             setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
         }
-    };
+    }, []);
 
     useScreenFocus({
         onFocus: routeFocus,

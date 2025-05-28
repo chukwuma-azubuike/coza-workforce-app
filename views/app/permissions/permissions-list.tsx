@@ -382,7 +382,7 @@ const GroupPermissionsList: React.FC = memo(() => {
                 data={data}
                 field="createdAt"
                 refetch={refetch}
-                itemHeight={87.7}
+                itemHeight={66.7}
                 isLoading={isLoading}
                 hasNextPage={hasNextPage}
                 column={PermissionSectionRow}

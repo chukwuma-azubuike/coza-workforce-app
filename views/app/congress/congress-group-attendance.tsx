@@ -1,7 +1,7 @@
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import TabComponent from '@components/composite/tabs';
-import { SceneMap } from 'react-native-tab-view';
+// import { SceneMap } from 'react-native-tab-view';
 import useRole, { ROLES } from '@hooks/role';
 import useMediaQuery from '@hooks/media-query';
 import useScreenFocus from '@hooks/focus';
@@ -30,11 +30,25 @@ const CongressGroupAttendance: React.FC = () => {
         { key: 'leadersAttendance', title: 'Leaders Attendance' },
     ];
 
-    const renderScene = SceneMap({
-        teamAttendance: () => <TeamCongressAttendance CongressId={params.CongressId} />,
-        campusAttendance: () => <CampusCongressAttendance CongressId={params.CongressId} />,
-        leadersAttendance: () => <LeadersCongressAttendance CongressId={params.CongressId} />,
-    });
+    //TODO: Considering for performance optimisation
+    // const renderScene = SceneMap({
+    //     teamAttendance: () => <TeamCongressAttendance CongressId={params.CongressId} />,
+    //     campusAttendance: () => <CampusCongressAttendance CongressId={params.CongressId} />,
+    //     leadersAttendance: () => <LeadersCongressAttendance CongressId={params.CongressId} />,
+    // });
+
+    const renderScene = ({ route }: any) => {
+        switch (route.key) {
+            case 'teamAttendance':
+                return <TeamCongressAttendance CongressId={params.CongressId} />;
+            case 'campusAttendance':
+                return <CampusCongressAttendance CongressId={params.CongressId} />;
+            case 'leadersAttendance':
+                return <LeadersCongressAttendance CongressId={params.CongressId} />;
+            default:
+                return null;
+        }
+    };
 
     const goToExport = () => {
         router.push({ pathname: '/export-data', params: { type: IReportTypes.ATTENDANCE } });

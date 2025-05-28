@@ -199,57 +199,60 @@ const Reports: React.FC = () => {
 
     return (
         <ErrorBoundary>
-            <ViewWrapper className="flex-1">
-                <If condition={!user}>
-                    <FlatListSkeleton count={9} />
-                </If>
-                <If condition={isCampusPastor}>
-                    <CampusReport campusId={user?.campus?._id} serviceId={latestServiceData?._id} />
-                </If>
-                <If condition={isHOD || isAHOD}>
-                    <Text className="text-muted-foreground font-semibold">Departmental Reports</Text>
-                    <Separator />
-                    <FlatListComponent
-                        columns={reportColumns}
-                        onRefresh={reportsRefetch}
-                        isLoading={reportsIsLoading || reportsIsFetching}
-                        refreshing={reportsIsLoading || reportsIsFetching}
-                        data={departmentAndIncidentReport?.departmentalReport || []}
-                    />
-                    <Text className="text-muted-foreground font-semibold">Incident Reports</Text>
-                    <Separator />
-                    <FlatListComponent
-                        showEmpty={false}
-                        onRefresh={reportsRefetch}
-                        columns={incidentReportColumns}
-                        refreshing={reportsIsLoading || reportsIsFetching}
-                        data={departmentAndIncidentReport?.incidentReport || []}
-                    />
-                </If>
-                <If condition={isGlobalPastor}>
-                    <GlobalReportProvider>
-                        <GlobalReportDetails />
-                    </GlobalReportProvider>
-                </If>
+            <View className="flex-1">
+                <ViewWrapper scroll className="flex-1">
+                    <If condition={!user}>
+                        <FlatListSkeleton count={9} />
+                    </If>
+                    <If condition={isCampusPastor}>
+                        <CampusReport campusId={user?.campus?._id} serviceId={latestServiceData?._id} />
+                    </If>
+                    <If condition={isHOD || isAHOD}>
+                        <Text className="text-muted-foreground font-semibold">Departmental Reports</Text>
+                        <Separator className="my-2" />
+                        <FlatListComponent
+                            columns={reportColumns}
+                            onRefresh={reportsRefetch}
+                            isLoading={reportsIsLoading || reportsIsFetching}
+                            refreshing={reportsIsLoading || reportsIsFetching}
+                            data={departmentAndIncidentReport?.departmentalReport || []}
+                        />
+                        <Text className="text-muted-foreground font-semibold">Incident Reports</Text>
+                        <Separator className="my-2" />
+                        <FlatListComponent
+                            showEmpty={false}
+                            onRefresh={reportsRefetch}
+                            columns={incidentReportColumns}
+                            refreshing={reportsIsLoading || reportsIsFetching}
+                            data={departmentAndIncidentReport?.incidentReport || []}
+                        />
+                    </If>
+                    <If condition={isGlobalPastor}>
+                        <GlobalReportProvider>
+                            <GlobalReportDetails />
+                        </GlobalReportProvider>
+                    </If>
+                </ViewWrapper>
                 <If condition={!isGlobalPastor && !isCampusPastor}>
                     <StaggerButtonComponent
+                        className="!bottom-32"
                         buttons={[
                             {
-                                color: 'bg-rose-400',
                                 iconName: 'warning',
+                                color: 'bg-rose-400',
                                 iconType: 'antdesign',
                                 handleClick: goToIncidentReport,
                             },
                             {
                                 iconName: 'graph',
-                                color: 'bg-green-400',
                                 iconType: 'octicon',
+                                color: 'bg-green-400',
                                 handleClick: goToDepartmentReport,
                             },
                         ]}
                     />
                 </If>
-            </ViewWrapper>
+            </View>
         </ErrorBoundary>
     );
 };

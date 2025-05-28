@@ -4,8 +4,7 @@ import { Platform, View } from 'react-native';
 import { IFlatListColumn } from '@components/composite/flat-list';
 import { useGetPermissionsQuery } from '@store/services/permissions';
 import { useGetTicketsQuery } from '@store/services/tickets';
-import { IPermission, ITicket } from '@store/types';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
+import { ITicket } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FlatListComponent from '@components/composite/flat-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
@@ -17,6 +16,8 @@ import Utils from '@utils/index';
 import { PermissionListRow } from '../../permissions/permissions-list';
 import { TicketListRow } from '../../tickets/ticket-list';
 import { teamAttendanceDataColumns } from './flatListConfig';
+import SectionListComponent from '~/components/composite/section-list';
+import PickerSelect from '~/components/ui/picker-select';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -101,17 +102,18 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
 
     return (
         <ErrorBoundary>
-            <View mb={2} className="px-2">
-                <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
-                    {sortedServices?.map((service, index) => (
-                        <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            isLoading={serviceIsLoading}
-                            label={`${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                        />
-                    ))}
-                </SelectComponent>
+            <View className="px-2 mb-2">
+                <PickerSelect
+                    labelKey="name"
+                    valueKey="_id"
+                    onValueChange={setService}
+                    placeholder="Select Service"
+                    items={sortedServices || []}
+                    isLoading={serviceIsLoading}
+                    customLabel={service =>
+                        `${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`
+                    }
+                />
             </View>
             <FlatListComponent
                 padding={isAndroid ? 3 : 1}
@@ -127,9 +129,8 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
 });
 
 export const GroupHeadTeamTicketsList: React.FC<{
-    updatedListItem: ITicket;
     departmentId: string;
-}> = memo(({ updatedListItem, departmentId }) => {
+}> = memo(({ departmentId }) => {
     const teamTicketsColumns: IFlatListColumn[] = [
         {
             dataIndex: 'createdAt',
@@ -172,18 +173,9 @@ export const GroupHeadTeamTicketsList: React.FC<{
         [preparedForSortData]
     );
 
-    const groupedData = useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.replaceArrayItemByNestedKey(sortedData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                'sortDateKey'
-            ),
-        [updatedListItem?._id, sortedData]
-    );
-
     return (
         <FlatListComponent
-            data={groupedData}
+            data={sortedData}
             columns={teamTicketsColumns}
             fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
@@ -194,24 +186,12 @@ export const GroupHeadTeamTicketsList: React.FC<{
 });
 
 export const GroupHeadTeamPermissionsList: React.FC<{
-    updatedListItem: IPermission;
     params: { departmentId: string; screenName: string };
-}> = memo(({ updatedListItem, params }) => {
+}> = memo(({ params }) => {
     const { departmentId, screenName } = params;
 
-    const teamPermissionsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'dateCreated',
-            render: (_: IPermission, key) => (
-                <PermissionListRow screen={{ name: screenName, value: departmentId }} type="team" {..._} key={key} />
-            ),
-        },
-    ];
-
-    const [page, setPage] = React.useState<number>(1);
-
-    const { data, isLoading, isFetching, isSuccess } = useGetPermissionsQuery(
-        { departmentId, limit: 20, page },
+    const { data, isLoading, isFetching, isSuccess, refetch } = useGetPermissionsQuery(
+        { departmentId, limit: 20 },
         {
             refetchOnMountOrArgChange: true,
         }
@@ -219,36 +199,16 @@ export const GroupHeadTeamPermissionsList: React.FC<{
 
     const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
 
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
-
-    const memoizedData = useMemo(
-        () =>
-            Utils.groupListByKey(
-                Utils.sortByDate(
-                    Utils.replaceArrayItemByNestedKey(moreData || [], updatedListItem, ['_id', updatedListItem?._id]),
-                    'createdAt'
-                ),
-                'createdAt'
-            ),
-        [updatedListItem?._id, moreData]
-    );
-
     return (
         <ErrorBoundary>
-            {/* <PermissionStats total={21} pending={2} declined={4} approved={15} /> */}
-            <FlatListComponent
-                data={memoizedData}
+            <SectionListComponent
+                data={moreData}
+                field="createdAt"
+                refetch={refetch}
+                itemHeight={66.7}
                 refreshing={isFetching}
-                fetchMoreData={fetchMoreData}
-                columns={teamPermissionsColumns}
+                column={PermissionListRow}
+                extraProps={{ type: 'grouphead' }}
                 isLoading={isLoading || isFetching}
             />
         </ErrorBoundary>

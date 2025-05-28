@@ -1,9 +1,10 @@
 import { Text } from '~/components/ui/text';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TabBar, TabBarProps, TabView, TabViewProps } from 'react-native-tab-view';
 import { THEME_CONFIG } from '@config/appConfig';
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
+import Loading from '~/components/atoms/loading';
 
 interface ITabComponentProps extends TabViewProps<any> {
     tabBarScroll?: boolean;
@@ -26,7 +27,7 @@ const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = prop
                     inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
                     pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
                     labelStyle={{ color: THEME_CONFIG.primary }}
-                    renderLabel={({ route }) => <Text>{route.title}</Text>}
+                    renderLabel={({ route }: any) => <Text>{route.title}</Text>}
                 />
             )}
         </>
@@ -50,7 +51,7 @@ const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> 
                     labelStyle={{ color: THEME_CONFIG.primary }}
                     inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
                     pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-                    renderLabel={({ route, focused, color }) => <Text>{route.title}</Text>}
+                    renderLabel={({ route, focused, color }: any) => <Text>{route.title}</Text>}
                 />
             )}
         </>
@@ -60,10 +61,14 @@ const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> 
 const TabComponent: React.FC<ITabComponentProps> = props => {
     const layout = useWindowDimensions();
 
+    const renderLazyPlaceholder = useCallback(() => <Loading cover spinnerProps={{ size: 'large' }} />, []);
+
     return (
         <TabView
             {...props}
+            lazy
             initialLayout={{ width: layout.width }}
+            renderLazyPlaceholder={renderLazyPlaceholder}
             renderTabBar={props.tabBarScroll ? renderTabBarScroll : renderTabBar}
         />
     );
