@@ -1,22 +1,25 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IGuestReportPayload } from '@store/types';
 import { useCreateGuestReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { View, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
-import TextAreaComponent from '@components/atoms/text-area';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+// import FormErrorMessage from '~/components/ui/error-message';
+import { Separator } from '~/components/ui/separator';
+import { Textarea } from '~/components/ui/textarea';
+import { Button } from '~/components/ui/button';
 
-const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IGuestReportPayload;
+const GuestReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IGuestReportPayload;
 
     const { status, updatedAt } = params;
 
@@ -25,43 +28,64 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         user: { userId },
     } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateGuestReportMutation();
+    const [updateReport, { error, isLoading }] = useCreateGuestReportMutation();
 
-    const onSubmit = (values: IGuestReportPayload) => {
-        updateReport({ ...values, userId, status: 'SUBMITTED' });
+    const onSubmit = async (values: IGuestReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onRequestReview = (values: IGuestReportPayload) => {
-        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+    const onRequestReview = async (values: IGuestReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onApprove = (values: IGuestReportPayload) => {
-        updateReport({ ...values, userId, status: 'APPROVED' });
+    const onApprove = async (values: IGuestReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const navigation = useNavigation();
+    const onResponse = React.useCallback(
+        (
+            res:
+                | {
+                      data: void;
+                      error?: undefined;
+                  }
+                | {
+                      data?: undefined;
+                      error: any;
+                  }
+        ) => {
+            if (res.data) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'success',
+                    message: 'Report updated',
+                });
+                router.back();
+            }
+            if (res.error) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'error',
+                    message: (error as any)?.data?.message || 'Something went wrong!',
+                });
+            }
+        },
+        []
+    );
 
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                defaultRender: true,
-                status: 'success',
-                message: 'Report updated',
-            });
-            reset();
-            navigation.goBack();
-        }
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: 'error',
-                message: error?.data?.message || 'Something went wrong!',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
         ...params,
@@ -78,25 +102,24 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
         >
             {({ handleChange, errors, handleSubmit, values }) => (
                 <ViewWrapper scroll>
-                    <View pb={10}>
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
+                    <View className="pb-4 mt-4 gap-4">
+                        <Text className="text-muted-foreground text-center mb-2">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View space={4} mt={4} className="px-4">
-                            <View >
+                        <View className="px-4 gap-4">
+                            <View>
                                 <Label>Number of First Timers</Label>
                                 <Input
                                     placeholder="0"
+                                    inputMode="numeric"
                                     keyboardType="numeric"
                                     isDisabled={isCampusPastor}
                                     value={`${values.firstTimersCount}`}
                                     onChangeText={handleChange('firstTimersCount')}
                                 />
-                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormErrorMessage>
+                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
                             </View>
-                            <View >
+                            <View>
                                 <Label>Number of New Converts</Label>
                                 <Input
                                     placeholder="0"
@@ -105,13 +128,11 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     value={`${values.newConvertsCount}`}
                                     onChangeText={handleChange('newConvertsCount')}
                                 />
-                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormErrorMessage>
+                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
                             </View>
-                            <Divider />
-                            <View mb={2}>
-                                <TextAreaComponent
+                            <Separator className="my-2" />
+                            <View>
+                                <Textarea
                                     isDisabled={isCampusPastor}
                                     placeholder="Any other information"
                                     onChangeText={handleChange('otherInfo')}
@@ -129,32 +150,26 @@ const GuestReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                 </View>
                             </If>
                             <If condition={isCampusPastor}>
-                                <View mb={6}>
-                                    <TextAreaComponent
+                                <View>
+                                    <Textarea
                                         isDisabled={!isCampusPastor}
                                         placeholder="Pastor's comment"
                                         onChangeText={handleChange('pastorComment')}
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </View>
-                                <View space={4} justifyContent="space-between" w="95%">
-                                    <ButtonComponent
+                                <View className="gap-4 justify-between flex-row">
+                                    <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
-                                        width="1/2"
-                                        secondary
-                                        size="md"
+                                        variant="outline"
+                                        size="sm"
                                     >
                                         Request Review
-                                    </ButtonComponent>
-                                    <ButtonComponent
-                                        onPress={() => onApprove(values)}
-                                        isLoading={isLoading}
-                                        width="1/2"
-                                        size="md"
-                                    >
+                                    </Button>
+                                    <Button onPress={() => onApprove(values)} isLoading={isLoading} size="sm">
                                         Approve
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </If>
                         </View>

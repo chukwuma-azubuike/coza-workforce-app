@@ -1,23 +1,26 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { IServiceReportPayload } from '@store/types';
 import { useCreateServiceReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import DateTimePicker  from '~/components/composite/date-time-picker';
-import ButtonComponent from '@components/atoms/button';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import dayjs from 'dayjs';
-import TextAreaComponent from '@components/atoms/text-area';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import { ServiceReportSchema } from '@utils/schemas';
+import { router, useLocalSearchParams } from 'expo-router';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Separator } from '~/components/ui/separator';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+import { Textarea } from '~/components/ui/textarea';
+import { Button } from '~/components/ui/button';
 
-const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as IServiceReportPayload;
+const ServiceReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IServiceReportPayload;
 
     const { status, updatedAt } = params;
 
@@ -28,41 +31,62 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
 
     const [updateReport, { error, isError, isSuccess, reset, isLoading }] = useCreateServiceReportMutation();
 
-    const onSubmit = (values: IServiceReportPayload) => {
-        updateReport({ ...values, userId, status: 'SUBMITTED' });
+    const onSubmit = async (values: IServiceReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onRequestReview = (values: IServiceReportPayload) => {
-        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+    const onRequestReview = async (values: IServiceReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onApprove = (values: IServiceReportPayload) => {
-        updateReport({ ...values, userId, status: 'APPROVED' });
+    const onApprove = async (values: IServiceReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const navigation = useNavigation();
+    const onResponse = React.useCallback(
+        (
+            res:
+                | {
+                      data: void;
+                      error?: undefined;
+                  }
+                | {
+                      data?: undefined;
+                      error: any;
+                  }
+        ) => {
+            if (res.data) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'success',
+                    message: 'Report updated',
+                });
+                router.back();
+            }
+            if (res.error) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'error',
+                    message: (error as any)?.data?.message || 'Something went wrong!',
+                });
+            }
+        },
+        []
+    );
 
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                defaultRender: true,
-                status: 'success',
-                message: 'Report updated',
-            });
-            navigation.goBack();
-            reset();
-        }
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: 'error',
-                message: (error as any)?.data?.message || 'Something went wrong!',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
         ...params,
@@ -81,30 +105,32 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
             validationSchema={ServiceReportSchema}
             initialValues={INITIAL_VALUES as unknown as IServiceReportPayload}
         >
-            {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll>
-                    <View className="pb-4">
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center"  >
+            {({ handleChange, errors, handleSubmit, values, touched }) => (
+                <ViewWrapper scroll noPadding>
+                    <View className="mt-4 gap-4">
+                        <Text className="w-full text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View space={4} mt={4} className="px-4">
-                            <View justifyContent="space-between">
-                                <DateTimePicker                                    mode="time"
+                        <View className="px-4 gap-4">
+                            <View className="gap-4 flex-row">
+                                <DateTimePicker
+                                    mode="time"
                                     label="Service Start Time"
-                                    fieldName="serviceStartTime"
-                                    onSelectDate={setFieldValue}
-                                    value={values?.serviceStartTime}
-                                    ViewProps={{ : true, isInvalid: !!errors?.serviceStartTime }}
+                                    error={errors.serviceStartTime}
+                                    touched={touched.serviceStartTime}
+                                    placeholder="Select start time"
+                                    onConfirm={handleChange('serviceStartTime') as unknown as (value: Date) => void}
                                 />
-                                <DateTimePicker                                    mode="time"
-                                    label="Service End Time"
-                                    fieldName="serviceEndTime"
-                                    onSelectDate={setFieldValue}
-                                    value={values?.serviceEndTime}
-                                    ViewProps={{ : true, isInvalid: !!errors?.serviceEndTime }}
+                                <DateTimePicker
+                                    mode="time"
+                                    label="Service end Time"
+                                    error={errors.serviceEndTime}
+                                    touched={touched.serviceEndTime}
+                                    placeholder="Select end time"
+                                    onConfirm={handleChange('serviceEndTime') as unknown as (value: Date) => void}
                                 />
                             </View>
-                            <View >
+                            <View>
                                 <Label>Link to Service Report</Label>
                                 <Input
                                     keyboardType="url"
@@ -112,56 +138,45 @@ const ServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => 
                                     placeholder="https://www.link-to-report.com"
                                     onChangeText={handleChange('serviceReportLink')}
                                 />
-                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                    This field cannot be empty
-                                </FormErrorMessage>
+                                {errors.serviceReportLink && touched.serviceReportLink && (
+                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
+                                )}
                             </View>
-                            <Divider />
-                            <View mb={2}>
-                                <TextAreaComponent
-                                    isDisabled={isCampusPastor}
-                                    placeholder="Service Observations"
-                                    onChangeText={handleChange('observations')}
-                                    value={!!values?.observations ? values?.observations : undefined}
-                                />
-                            </View>
+                            <Separator className="my-2" />
+
+                            <Textarea
+                                isDisabled={isCampusPastor}
+                                placeholder="Service Observations"
+                                onChangeText={handleChange('observations')}
+                                value={!!values?.observations ? values?.observations : undefined}
+                            />
+
                             <If condition={!isCampusPastor}>
                                 <View>
-                                    <ButtonComponent
-                                        isLoading={isLoading}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
+                                    <Button isLoading={isLoading} onPress={handleSubmit as (event: any) => void}>
                                         {`${!status ? 'Submit' : 'Update'}`}
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </If>
                             <If condition={isCampusPastor}>
-                                <View mb={6}>
-                                    <TextAreaComponent
-                                        isDisabled={!isCampusPastor}
-                                        placeholder="Pastor's comment"
-                                        onChangeText={handleChange('pastorComment')}
-                                        value={values?.pastorComment ? values?.pastorComment : ''}
-                                    />
-                                </View>
-                                <View space={4} justifyContent="space-between" w="95%">
-                                    <ButtonComponent
+                                <Textarea
+                                    isDisabled={!isCampusPastor}
+                                    placeholder="Pastor's comment"
+                                    onChangeText={handleChange('pastorComment')}
+                                    value={values?.pastorComment ? values?.pastorComment : ''}
+                                />
+                                <View className="justify-between gap-4 flex-row">
+                                    <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
-                                        width="1/2"
-                                        secondary
-                                        size="md"
+                                        variant="outline"
+                                        size="sm"
                                     >
                                         Request Review
-                                    </ButtonComponent>
-                                    <ButtonComponent
-                                        onPress={() => onApprove(values)}
-                                        isLoading={isLoading}
-                                        width="1/2"
-                                        size="md"
-                                    >
+                                    </Button>
+                                    <Button onPress={() => onApprove(values)} isLoading={isLoading} size="sm">
                                         Approve
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </If>
                         </View>

@@ -8,47 +8,42 @@ import { useCreateIncidentReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 
 import dayjs from 'dayjs';
-import TextAreaComponent from '@components/atoms/text-area';
-import { useNavigation } from '@react-navigation/native';
 
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Label } from '~/components/ui/label';
 import { Button } from '~/components/ui/button';
+import { Textarea } from '~/components/ui/textarea';
 
 const IncidentReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as IIncidentReportPayload;
 
     const { status, updatedAt, details } = params;
 
-    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateIncidentReportMutation();
+    const [updateReport, { error, isLoading }] = useCreateIncidentReportMutation();
 
-    const onSubmit = (values: IIncidentReportPayload) => {
-        updateReport({ ...values, status: 'SUBMITTED' });
+    const onSubmit = async (values: IIncidentReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, status: 'SUBMITTED' });
+
+            if (res.data) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'success',
+                    message: 'Report updated',
+                });
+                router.back();
+            }
+            if (res.error) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'error',
+                    message: (error as any)?.data?.message || 'Something went wrong!',
+                });
+            }
+        } catch {}
     };
 
-    const navigation = useNavigation();
-
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                defaultRender: true,
-                status: 'success',
-                message: 'Report updated',
-            });
-            reset();
-            navigation.goBack();
-        }
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: 'error',
-                message: (error as any)?.data.message || 'Something went wrong',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const INITIAL_VALUES = { ...params, imageUrl: params.imageUrl || '', details };
 
@@ -65,10 +60,10 @@ const IncidentReport: React.FC = () => {
                         <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View className="px-4 mt-2 gap-4">
+                        <View className="px-2 mt-2 gap-4">
                             <View>
                                 <Label className="mb-2">Details of Incident</Label>
-                                <TextAreaComponent
+                                <Textarea
                                     defaultValue={details}
                                     isDisabled={!!details}
                                     placeholder="Enter details"

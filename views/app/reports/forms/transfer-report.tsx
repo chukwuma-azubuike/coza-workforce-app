@@ -1,26 +1,28 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { ITransferReportPayload } from '@store/types';
 import { useCreateTransferReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { View, Divider, WarningOutlineIcon } from 'native-base';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import { Platform, View } from 'react-native';
-import HStackComponent from '@components/layout/h-stack';
-import TextComponent from '@components/text';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Label } from '~/components/ui/label';
+import { Input } from '~/components/ui/input';
+// import FormErrorMessage from '~/components/ui/error-message';
+import { Button } from '~/components/ui/button';
+import { Separator } from '~/components/ui/separator';
+import { Textarea } from '~/components/ui/textarea';
 
-const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as ITransferReportPayload;
+const TransferReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as ITransferReportPayload;
 
     const { status, updatedAt } = params;
 
@@ -29,43 +31,64 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         user: { userId },
     } = useRole();
 
-    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateTransferReportMutation();
+    const [updateReport, { error, isError, isSuccess, isLoading }] = useCreateTransferReportMutation();
 
-    const onSubmit = (values: ITransferReportPayload) => {
-        updateReport({ ...values, userId, status: 'SUBMITTED' });
+    const onSubmit = async (values: ITransferReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onRequestReview = (values: ITransferReportPayload) => {
-        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+    const onRequestReview = async (values: ITransferReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onApprove = (values: ITransferReportPayload) => {
-        updateReport({ ...values, userId, status: 'APPROVED' });
+    const onApprove = async (values: ITransferReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const navigation = useNavigation();
+    const onResponse = React.useCallback(
+        (
+            res:
+                | {
+                      data: void;
+                      error?: undefined;
+                  }
+                | {
+                      data?: undefined;
+                      error: any;
+                  }
+        ) => {
+            if (res.data) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'success',
+                    message: 'Report updated',
+                });
+                router.back();
+            }
+            if (res.error) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'error',
+                    message: (error as any)?.data?.message || 'Something went wrong!',
+                });
+            }
+        },
+        []
+    );
 
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                defaultRender: true,
-                status: 'success',
-                message: 'Report updated',
-            });
-            reset();
-            navigation.goBack();
-        }
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: 'error',
-                message: error?.data?.message || 'Something went wrong!',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
         ...params,
@@ -89,23 +112,20 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
             enableReinitialize
             initialValues={INITIAL_VALUES}
         >
-            {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardOffset={0}>
-                    <View pb={10} mt={4}>
-                        <Text mb={4} w="full" fontSize="md" color="gray.400" textAlign="center">
+            {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
+                <ViewWrapper scroll avoidKeyboard={isIOS}>
+                    <View className="pb-4 mt-4 gap-4">
+                        <Text className="text-muted-foreground text-center mb-2">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
 
                         <FieldArray
                             name="locations"
                             render={arrayHelpers => (
-                                <View>
+                                <View className="gap-4">
                                     {values?.locations?.map((location, idx) => (
-                                        <View
-                                            key={idx}
-                                            className="mb-12 items-center"
-                                        >
-                                            <View  w="36%">
+                                        <View key={idx} className="items-center gap-4 flex-row">
+                                            <View className="w-1/3 gap-1">
                                                 <Label>
                                                     <Text className="flex-1">Location</Text>
                                                 </Label>
@@ -119,11 +139,8 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     isDisabled={isCampusPastor}
                                                     onChangeText={handleChange(`locations[${idx}].name`)}
                                                 />
-                                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormErrorMessage>
                                             </View>
-                                            <View  w="22%">
+                                            <View className="flex-1 gap-1">
                                                 <Label>
                                                     <Text className="flex-1">Adults</Text>
                                                 </Label>
@@ -131,62 +148,58 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     style={{
                                                         fontSize: 14,
                                                     }}
+                                                    inputMode="numeric"
                                                     placeholder="0"
                                                     keyboardType="numeric"
                                                     isDisabled={isCampusPastor}
                                                     value={`${location.adultCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].adultCount`)}
                                                 />
-                                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormErrorMessage>
+                                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
                                             </View>
-                                            <View  w="22%">
-                                                <Label>
-                                                    <Text className="flex-1">Children/Teens</Text>
-                                                </Label>
+                                            <View className="flex-1 gap-1">
+                                                <Text className="line-clamp-1 truncate">Children/Teens</Text>
                                                 <Input
                                                     style={{
                                                         fontSize: 14,
                                                     }}
                                                     placeholder="0"
+                                                    inputMode="numeric"
                                                     keyboardType="numeric"
                                                     isDisabled={isCampusPastor}
                                                     value={`${location.minorCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].minorCount`)}
                                                 />
-                                                <FormErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-                                                    This field cannot be empty
-                                                </FormErrorMessage>
+                                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
                                             </View>
                                             <View
-                                                w="10%"
+                                                className="!w-max"
                                                 style={{
                                                     marginTop: 0,
                                                     paddingBottom: 0,
                                                 }}
                                             >
-                                                <ButtonComponent
-                                                    leftIcon={
-                                                        <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
-                                                    }
+                                                <Button
                                                     style={{
                                                         paddingVertical: 8,
                                                         marginVertical: 0,
                                                         marginTop: 31,
                                                     }}
+                                                    className="flex-1"
                                                     onPress={() => arrayHelpers.remove(idx)}
-                                                    isDisabled={isCampusPastor}
-                                                    secondary
-                                                    size="md"
-                                                />
+                                                    disabled={isCampusPastor}
+                                                    variant="outline"
+                                                    size="sm"
+                                                >
+                                                    <Icon name="minus" type="entypo" color="red" />
+                                                </Button>
                                             </View>
                                         </View>
                                     ))}
 
-                                    <View mb={4}>
-                                        <ButtonComponent
-                                            leftIcon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
+                                    <View>
+                                        <Button
+                                            icon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             onPress={() => {
                                                 arrayHelpers.push({
                                                     name: '',
@@ -195,39 +208,32 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                 });
                                             }}
                                             style={{ flex: 1 }}
-                                            isDisabled={isCampusPastor || isLoading}
-                                            secondary
-                                            size="md"
+                                            disabled={isCampusPastor || isLoading}
+                                            variant="outline"
+                                            size="sm"
                                         >
                                             Add Location
-                                        </ButtonComponent>
+                                        </Button>
                                     </View>
                                 </View>
                             )}
                         />
 
-                        <View space={4} mb={4}>
-                            <View w="48%">
+                        <View className="gap-4 mb-2 flex-row">
+                            <View className="flex-1">
                                 <Label>Total Adults</Label>
-                                <Input
-                                    isDisabled
-                                    placeholder="0"
-                                    value={`${addValues(values, 'adultCount')}`}
-                                />
+                                <Input isDisabled placeholder="0" value={`${addValues(values, 'adultCount')}`} />
                             </View>
-                            <View w="48%">
+                            <View className="flex-1">
                                 <Label>Total Children/Teens</Label>
-                                <Input
-                                    isDisabled
-                                    placeholder="0"
-                                    value={`${addValues(values, 'minorCount')}`}
-                                />
+                                <Input isDisabled placeholder="0" value={`${addValues(values, 'minorCount')}`} />
                             </View>
                         </View>
 
-                        <Divider />
-                        <View my={4}>
-                            <TextAreaComponent
+                        <Separator className="my-2" />
+
+                        <View className="my-2">
+                            <Textarea
                                 isDisabled={isCampusPastor}
                                 value={`${values.otherInfo}`}
                                 placeholder="Any other information"
@@ -249,7 +255,7 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                             </View>
                         </If>
                         <If condition={isCampusPastor}>
-                            <View mb={6}>
+                            <View className="mb-4">
                                 <TextAreaComponent
                                     isDisabled={!isCampusPastor}
                                     placeholder="Pastor's comment"
@@ -257,24 +263,18 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     value={values?.pastorComment ? values?.pastorComment : ''}
                                 />
                             </View>
-                            <View space={4} justifyContent="space-between" w="95%">
-                                <ButtonComponent
-                                    onPress={() => onRequestReview(values)}
+                            <View className="gap-2 justify-between flex-row">
+                                <Button
+                                    size="sm"
+                                    variant="outline"
                                     isLoading={isLoading}
-                                    // width="1/2"
-                                    secondary
-                                    size="md"
+                                    onPress={() => onRequestReview(values)}
                                 >
                                     Request Review
-                                </ButtonComponent>
-                                <ButtonComponent
-                                    onPress={() => onApprove(values)}
-                                    isLoading={isLoading}
-                                    // width="1/2"
-                                    size="md"
-                                >
+                                </Button>
+                                <Button size="sm" isLoading={isLoading} onPress={() => onApprove(values)}>
                                     Approve
-                                </ButtonComponent>
+                                </Button>
                             </View>
                         </If>
                     </View>
@@ -284,4 +284,4 @@ const TransferReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
     );
 };
 
-export default TransferReport;
+export default React.memo(TransferReport);

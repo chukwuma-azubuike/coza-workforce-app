@@ -5,25 +5,23 @@ import useModal from '@hooks/modal/useModal';
 import { ISecurityReportPayload } from '@store/types';
 import { useCreateSecurityReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { Platform, View } from 'react-native';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
-import FormErrorMessage from '~/components/ui/error-message';
+// import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Textarea } from '~/components/ui/textarea';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as ISecurityReportPayload;
+const SecurityReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as ISecurityReportPayload;
 
     const { status, updatedAt } = params;
 
@@ -34,41 +32,62 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
 
     const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateSecurityReportMutation();
 
-    const onSubmit = (values: ISecurityReportPayload) => {
-        updateReport({ ...values, userId, status: 'SUBMITTED' });
+    const onSubmit = async (values: ISecurityReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onRequestReview = (values: ISecurityReportPayload) => {
-        updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+    const onRequestReview = async (values: ISecurityReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const onApprove = (values: ISecurityReportPayload) => {
-        updateReport({ ...values, userId, status: 'APPROVED' });
+    const onApprove = async (values: ISecurityReportPayload) => {
+        try {
+            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
+
+            onResponse(res);
+        } catch (error) {}
     };
 
-    const navigation = useNavigation();
+    const onResponse = React.useCallback(
+        (
+            res:
+                | {
+                      data: void;
+                      error?: undefined;
+                  }
+                | {
+                      data?: undefined;
+                      error: any;
+                  }
+        ) => {
+            if (res.data) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'success',
+                    message: 'Report updated',
+                });
+                router.back();
+            }
+            if (res.error) {
+                setModalState({
+                    defaultRender: true,
+                    status: 'error',
+                    message: (error as any)?.data?.message || 'Something went wrong!',
+                });
+            }
+        },
+        []
+    );
 
     const { setModalState } = useModal();
-
-    React.useEffect(() => {
-        if (isSuccess) {
-            setModalState({
-                defaultRender: true,
-                status: 'success',
-                message: 'Report updated',
-            });
-            reset();
-            navigation.goBack();
-        }
-        if (isError) {
-            setModalState({
-                defaultRender: true,
-                status: 'error',
-                message: (error as any)?.data?.message || 'Something went wrong!',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
 
     const INITIAL_VALUES = {
         ...params,
@@ -77,11 +96,11 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         locations: params?.locations?.length ? params?.locations : [{ name: '', carCount: '' }],
     } as ISecurityReportPayload;
 
-    const addValues = (values: ISecurityReportPayload) => {
+    const addValues = React.useCallback((values: ISecurityReportPayload) => {
         return values.locations.length
             ? (values.locations.map(a => a.carCount).reduce((a, b) => +a + +b) as unknown as string)
             : '0';
-    };
+    }, []);
 
     const isIOS = Platform.OS === 'ios';
 
@@ -94,17 +113,17 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
         >
             {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                 <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <View className="px-4 pb-4 mt-2">
-                        <Text className="mb-2 w-full text-muted-foreground text-center">
+                    <View className="px-2 mt-4 gap-4">
+                        <Text className="w-full text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
                         <FieldArray
                             name="locations"
                             render={arrayHelpers => (
-                                <View>
+                                <View className="gap-4">
                                     {values.locations.map((location, idx) => (
-                                        <View key={idx} className="mb-2 gap-1 items-end">
-                                            <View>
+                                        <View key={idx} className="gap-4 flex-row items-center">
+                                            <View className="flex-1 gap-1">
                                                 <Label>Location</Label>
                                                 <Input
                                                     value={location.name}
@@ -112,11 +131,11 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     isDisabled={isCampusPastor}
                                                     onChangeText={handleChange(`locations[${idx}].name`)}
                                                 />
-                                                {(errors.locations as any)[idx].name && (
-                                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                                )}
+                                                {/* {(errors.locations as any)[idx].name && ( */}
+                                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
+                                                {/* )} */}
                                             </View>
-                                            <View>
+                                            <View className="w-1/3 gap-1">
                                                 <Label>Car Counts</Label>
                                                 <Input
                                                     placeholder="0"
@@ -125,19 +144,21 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                                     value={`${location.carCount}`}
                                                     onChangeText={handleChange(`locations[${idx}].carCount`)}
                                                 />
-                                                {(errors.locations as any)[idx].carCount && (
-                                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                                )}
+                                                {/* {(errors?.locations as any)[idx].carCount && ( */}
+                                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
+                                                {/* )} */}
                                             </View>
-                                            <View>
+                                            <View className="!w-max">
+                                                <Label />
                                                 <Button
                                                     size="sm"
                                                     variant="outline"
+                                                    className="flex-1"
                                                     disabled={isCampusPastor}
                                                     style={{ paddingVertical: 10 }}
                                                     onPress={() => arrayHelpers.remove(idx)}
                                                 >
-                                                    <Icon name="minus" type="entypo" color={THEME_CONFIG.primary} />
+                                                    <Icon name="minus" type="entypo" color="red" />
                                                 </Button>
                                             </View>
                                         </View>
@@ -174,7 +195,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         <Separator />
 
                         <View className="my-2">
-                            <TextAreaComponent
+                            <Textarea
                                 value={`${values.otherInfo}`}
                                 placeholder="Any other information"
                                 onChangeText={handleChange('otherInfo')}
@@ -182,7 +203,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                         </View>
                         <If condition={!isCampusPastor}>
                             <View>
-                                <ButtonComponent
+                                <Button
                                     isLoading={isLoading}
                                     onPress={() => {
                                         setFieldValue('totalCarCount', addValues(values));
@@ -190,7 +211,7 @@ const SecurityReport: React.FC<NativeStackScreenProps<ParamListBase>> = props =>
                                     }}
                                 >
                                     {`${!status ? 'Submit' : 'Update'}`}
-                                </ButtonComponent>
+                                </Button>
                             </View>
                         </If>
                         <If condition={isCampusPastor}>
