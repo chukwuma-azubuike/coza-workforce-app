@@ -1,20 +1,20 @@
-import { Text } from '~/components/ui/text';
-import React from 'react';
-import { FloatButton } from '@components/atoms/button';
+import React, { useCallback, useMemo } from 'react';
+import { Alert, ListRenderItemInfo, TouchableOpacity, View, TextInput } from 'react-native';
+import debounce from 'lodash/debounce';
+import Loading from '@components/atoms/loading';
+import { THEME_CONFIG } from '@config/appConfig';
+import dynamicSearch from '@utils/dynamicSearch';
 import { IPermission, ITicket, IUser } from '@store/types';
-import { Alert, ListRenderItemInfo, View, FlatList, TouchableOpacity } from 'react-native';
+import useAppColorMode from '@hooks/theme/colorMode';
+import { Text } from '~/components/ui/text';
 import AvatarComponent from '@components/atoms/avatar';
+import { AVATAR_FALLBACK_URL } from '@constants/index';
 import StatusTag from '@components/atoms/status-tag';
 import Utils from '@utils/index';
-import dynamicSearch from '@utils/dynamicSearch';
-import { AVATAR_FALLBACK_URL } from '@constants/index';
-import useAppColorMode from '@hooks/theme/colorMode';
-import debounce from 'lodash/debounce';
-import ModalComponent from '../modal';
-import { THEME_CONFIG } from '@config/appConfig';
-import Loading from '@components/atoms/loading';
-import { Input } from '~/components/ui/input';
+import { FlatList } from 'react-native';
+import { FloatButton } from '@components/atoms/button';
 import { cn } from '~/lib/utils';
+import ModalComponent from '../modal';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
@@ -25,134 +25,164 @@ interface IUseSearchProps<D> {
     onPress: (params: IUser) => void;
 }
 
+// Separate SearchResult component for better performance
+const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
+    const handlePress = useCallback(() => {
+        onPress(item);
+    }, [item, onPress]);
+
+    return (
+        <TouchableOpacity
+            delayPressIn={0}
+            activeOpacity={0.6}
+            onPress={handlePress}
+            style={{
+                flex: 1,
+                paddingVertical: 10,
+                borderBottomWidth: 1,
+                paddingHorizontal: 10,
+                borderBottomColor: THEME_CONFIG.transparentGray,
+                backgroundColor
+            }}
+        >
+            <View className="flex-row justify-between">
+                <View className="gap-6 flex-row items-center">
+                    <AvatarComponent
+                        alt="avatar"
+                        className="w-20 h-20"
+                        imageUrl={item?.pictureUrl || item?.user?.pictureUrl || AVATAR_FALLBACK_URL}
+                    />
+                    <View>
+                        <Text className="text-18 font-bold text-foreground">
+                            {`${Utils.capitalizeFirstChar(
+                                item?.firstName || item?.user?.firstName
+                            )} ${Utils.capitalizeFirstChar(item?.lastName || item?.user?.lastName)}`}
+                        </Text>
+                        <Text className="text-16 text-muted-foreground">{item?.departmentName}</Text>
+                        <Text className="text-14 text-muted-foreground">
+                            {item?.categoryName || item?.email || item?.user?.email}
+                        </Text>
+                    </View>
+                </View>
+                <StatusTag>
+                    {item?.status || ((item?.gender === 'M' ? 'Male' : 'Female') as any)}
+                </StatusTag>
+            </View>
+        </TouchableOpacity>
+    );
+});
+
 function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPermission>>(props: IUseSearchProps<D>) {
-    const { data, searchFields, onPress, loading, className } = props;
+    const { data, searchFields, onPress, loading, className, disable } = props;
     const [openSearchBar, setSearchBar] = React.useState<boolean>(false);
     const [searchText, setSearchText] = React.useState<string>('');
     const [searchResults, setSearchResults] = React.useState<Array<D> | undefined>(data);
 
-    const handleSearchBar = () => {
+    const { backgroundColor } = useAppColorMode();
+
+    const handleSearchBar = useCallback(() => {
+        if (disable) return;
+        
         if (typeof data === 'undefined' && !loading) {
             Alert.alert('Select a campus', 'Please select a campus to proceed with your search');
             return;
         }
         setSearchBar(true);
-    };
+    }, [data, loading, disable]);
 
-    const handlePress = (id: IUser) => () => {
-        onPress(id);
+    const handleCancel = useCallback(() => {
         setSearchBar(false);
-    };
+    }, []);
 
-    const handleCancel = () => {
-        setSearchBar(false);
-    };
-
-    const handleTextChange = React.useCallback(
-        debounce((searchText: string) => {
-            setSearchText(searchText);
-            if (!!searchText) {
-                setSearchResults(dynamicSearch({ data, searchText, searchFields }));
-            }
-            if (searchText === '') {
-                setSearchResults(data);
-            }
-        }, 500),
+    // Memoize search function
+    const performSearch = useMemo(
+        () => 
+            debounce((searchText: string) => {
+                if (!!searchText) {
+                    setSearchResults(dynamicSearch({ data, searchText, searchFields }));
+                } else {
+                    setSearchResults(data);
+                }
+            }, 300),
         [data, searchFields]
     );
 
-    const sortedSearchResults = React.useMemo(() => {
-        return Utils.sortStringAscending(searchText === '' ? data : searchResults, 'firstName');
+    const handleTextChange = useCallback((text: string) => {
+        setSearchText(text);
+        performSearch(text);
+    }, [performSearch]);
+
+    // Cleanup debounce on unmount
+    React.useEffect(() => {
+        return () => {
+            performSearch.cancel();
+        };
+    }, [performSearch]);
+
+    const sortedSearchResults = useMemo(() => {
+        return searchText === '' ? data : searchResults;
     }, [data, searchResults, searchText]);
 
-    const { backgroundColor } = useAppColorMode();
+    const renderItem = useCallback(({ item }: ListRenderItemInfo<any>) => {
+        return loading ? (
+            <Loading style={{ paddingVertical: 44 }} />
+        ) : (
+            <SearchResult 
+                item={item} 
+                onPress={onPress} 
+                backgroundColor={backgroundColor}
+            />
+        );
+    }, [loading, onPress, backgroundColor]);
 
     return (
         <>
             <ModalComponent
                 isOpen={openSearchBar}
                 onClose={handleCancel}
-                header={
-                    <Input
+                className={cn('w-[95%] max-w-[500px]', className)}
+            >
+                <View className="p-16">
+                    <TextInput
                         autoFocus
                         clearButtonMode="always"
-                        leftIcon={{
-                            name: 'search1',
-                            type: 'antdesign',
-                        }}
-                        className="w-full"
-                        onChangeText={handleTextChange}
                         placeholder="Search"
+                        onChangeText={handleTextChange}
+                        style={{ 
+                            marginBottom: 16, 
+                            padding: 8, 
+                            borderWidth: 1, 
+                            borderColor: THEME_CONFIG.gray 
+                        }}
                     />
-                }
-            >
-                <FlatList
-                    data={sortedSearchResults}
-                    ListEmptyComponent={
-                        <View style={{ padding: 16 }}>
-                            <Text className="text-18 w-100% text-center text-muted-foreground">No data found</Text>
-                        </View>
-                    }
-                    keyExtractor={item => item?._id}
-                    getItemLayout={(data, index) => ({
-                        length: 80,
-                        offset: 80 * index,
-                        index,
-                    })}
-                    windowSize={20}
-                    initialNumToRender={20}
-                    removeClippedSubviews={true}
-                    style={{ backgroundColor: backgroundColor, marginBottom: 36 }}
-                    renderItem={({ item: elm, index: key }: ListRenderItemInfo<any>) => {
-                        return loading ? (
-                            <Loading style={{ paddingVertical: 44 }} />
-                        ) : (
-                            <TouchableOpacity
-                                key={key}
-                                delayPressIn={0}
-                                activeOpacity={0.6}
-                                onPress={handlePress(elm as any)}
-                                style={{
-                                    flex: 1,
-                                    paddingVertical: 10,
-                                    borderBottomWidth: 1,
-                                    paddingHorizontal: 10,
-                                    borderBottomColor: THEME_CONFIG.transparentGray,
-                                }}
-                            >
-                                <View className="flex-row justify-between">
-                                    <View className="gap-6 flex-row items-center">
-                                        <AvatarComponent
-                                            alt="avatar"
-                                            className="w-20 h-20"
-                                            imageUrl={elm?.pictureUrl || elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
-                                        />
-                                        <View>
-                                            <Text className="text-18 font-bold text-foreground">
-                                                {`${Utils.capitalizeFirstChar(
-                                                    elm?.firstName || elm?.user?.firstName
-                                                )} ${Utils.capitalizeFirstChar(elm?.lastName || elm?.user?.lastName)}`}
-                                            </Text>
-                                            <Text className="text-16 text-muted-foreground">{elm?.departmentName}</Text>
-                                            <Text className="text-14 text-muted-foreground">
-                                                {elm?.categoryName || elm?.email || elm?.user?.email}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <StatusTag>
-                                        {elm?.status || ((elm?.gender === 'M' ? 'Male' : 'Female') as any)}
-                                    </StatusTag>
-                                </View>
-                            </TouchableOpacity>
-                        );
-                    }}
-                />
+                    <FlatList
+                        data={sortedSearchResults}
+                        renderItem={renderItem}
+                        keyExtractor={(item: any) => item._id.toString()}
+                        ListEmptyComponent={
+                            <View style={{ padding: 16 }}>
+                                <Text className="text-18 w-100% text-center text-muted-foreground">No data found</Text>
+                            </View>
+                        }
+                        getItemLayout={(data, index) => ({
+                            length: 80,
+                            offset: 80 * index,
+                            index,
+                        })}
+                        windowSize={5}
+                        maxToRenderPerBatch={10}
+                        initialNumToRender={10}
+                        removeClippedSubviews={true}
+                        style={{ backgroundColor: backgroundColor, marginBottom: 36 }}
+                    />
+                </View>
             </ModalComponent>
             <FloatButton
                 iconName="search1"
                 iconType="ant-design"
                 onPress={handleSearchBar}
                 className={cn('bottom-16 shadow-md !rounded-full', className)}
+                disabled={disable}
             />
         </>
     );

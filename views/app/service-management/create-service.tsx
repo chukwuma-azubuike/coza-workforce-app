@@ -64,7 +64,7 @@ const CreateServiceManagement: React.FC = () => {
             });
             reset();
             resetForm({ values: INITIAL_VALUES });
-            router.push({ pathname: '/service-management', params: data as any });
+            router.back();
         }
 
         if ('error' in result) {

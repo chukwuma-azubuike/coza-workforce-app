@@ -3,6 +3,7 @@
         "name": "Coza Workforce",
         "slug": "coza-workforce-app",
         "version": "2.0.3",
+        "runtimeVersion": "2.0.3",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
         "scheme": "myapp",
@@ -23,12 +24,11 @@
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
-            },
-            "runtimeVersion": "2.0.3"
+            }
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
+                "foregroundImage": "./assets/images/icon.png",
                 "backgroundColor": "#FFFFFF"
             },
             "package": "com.cozaglobalworkforceapp",
@@ -40,10 +40,7 @@
                 "POST_NOTIFICATIONS",
                 "android.permission.ACCESS_COARSE_LOCATION",
                 "android.permission.ACCESS_FINE_LOCATION"
-            ],
-            "runtimeVersion": {
-                "policy": "appVersion"
-            }
+            ]
         },
         "web": {
             "bundler": "metro",
@@ -81,7 +78,8 @@
                     "android": {
                         "compileSdkVersion": 35,
                         "targetSdkVersion": 35,
-                        "buildToolsVersion": "35.0.0"
+                        "buildToolsVersion": "35.0.0",
+                        "kotlinVersion": "1.9.25"
                     },
                     "ios": {
                         "deploymentTarget": "15.1"

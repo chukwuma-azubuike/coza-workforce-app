@@ -37,14 +37,7 @@ const RequestPermission: React.FC = () => {
                 status: 'success',
             });
             reset();
-            router.push({
-                pathname: '/permissions',
-                params: {
-                    ...result?.data,
-                    categoryName: categories?.find(category => category._id === values.categoryId)?.name,
-                    requestor: user,
-                } as any,
-            });
+            router.back();
             resetForm({ values: INITIAL_VALUES });
         }
 
@@ -116,7 +109,6 @@ const RequestPermission: React.FC = () => {
                                             error={errors.startDate}
                                             touched={touched.startDate}
                                             placeholder="Enter start date"
-                                            initialValue={new Date().toISOString()}
                                             onConfirm={handleChange('startDate') as unknown as (value: Date) => void}
                                         />
                                         <DateTimePicker

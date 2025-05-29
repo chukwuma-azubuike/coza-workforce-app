@@ -1,30 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import uniqBy from 'lodash/uniqBy';
-import { IDefaultQueryParams } from '~/store/types';
+import { IDefaultQueryParams } from '@store/types';
 
-export interface InfiniteResponse<T> {
-    items: T[];
-}
-
-export interface InfiniteDataResult<T> {
+interface InfiniteDataResult<T> {
     data: T[];
     isLoading: boolean;
     isFetchingNextPage: boolean;
+    hasNextPage: boolean;
     fetchNextPage: () => void;
     refetch: () => void;
-    reset: () => void;
-    hasNextPage: boolean;
-    currentPage: number;
 }
 
 /**
- * useInfiniteData
+ * useInfiniteData - Optimized hook for infinite scrolling with better state management
  *
  * @param params – additional RTK Query parameters (besides paging)
- * @param queryHook – the RTK Query hook that fetches a paginated response.
- *                     It must accept an object parameter with at least a `page` number.
- * @param uniqKey – the key to use for deduplication (default: 'id')
+ * @param queryHook – the RTK Query hook that fetches a paginated response
+ * @param uniqKey – the key to use for deduplication (default: '_id')
  * @param skip – boolean for lazy fetching (default: false)
+ * @param refetchOnMountOrArgChange – whether to refetch on mount or when arguments change
  */
 function useInfiniteData<T, TParams>(
     params: TParams & IDefaultQueryParams,
@@ -32,7 +26,7 @@ function useInfiniteData<T, TParams>(
         arg: TParams & { page: number },
         options?: Record<string | 'skip', any>
     ) => {
-        data?: T[]; //TODO: TBD from backend. Type should be InfiniteResponse<T>
+        data?: T[];
         isSuccess: boolean;
         isFetching: boolean;
         refetch: () => void;
@@ -43,51 +37,95 @@ function useInfiniteData<T, TParams>(
 ): InfiniteDataResult<T> {
     const [page, setPage] = useState(1);
     const [mergedData, setMergedData] = useState<T[]>([]);
+    const [hasNextPage, setHasNextPage] = useState(true);
+    
+    // Use refs to track loading states and prevent race conditions
+    const isFetchingRef = useRef(false);
+    const abortController = useRef<AbortController | null>(null);
 
-    // Reset when parameters change.
-    // useEffect(() => {
-    //     setPage(1);
-    //     setMergedData([]);
-    // }, [params]);
-
-    // Invoke your RTK Query hook with the given parameters, and the current page.
-    const { data, isSuccess, isFetching, refetch } = queryHook(
-        { ...params, page },
-        { skip, refetchOnMountOrArgChange }
-    );
-
-    const hasNextPage = !!(data?.length && params?.limit && data.length <= params.limit); // Rework logic one backend starts returning `hasMore`
-
-    // When a new page is successfully fetched, merge it with the existing data.
+    // Reset when parameters change
     useEffect(() => {
-        if (isSuccess && data && data?.length > 0) {
-            setMergedData(prevData => uniqBy([...prevData, ...data], uniqKey));
-        }
-    }, [data, isSuccess, uniqKey]);
-
-    // Trigger fetching the next page.
-    const fetchNextPage = useCallback(() => {
-        if (!isFetching && hasNextPage && !!params?.limit) {
-            setPage(prevPage => prevPage + 1);
-        }
-    }, [data, isFetching, params?.limit]);
-
-    // Reset the pagination.
-    const reset = useCallback(() => {
         setPage(1);
         setMergedData([]);
-        refetch();
+        setHasNextPage(true);
+        
+        // Cleanup any ongoing requests
+        if (abortController.current) {
+            abortController.current.abort();
+        }
+    }, [JSON.stringify(params)]); // Deep compare params to prevent unnecessary resets
+
+    // Invoke RTK Query hook with current page
+    const { 
+        data, 
+        isSuccess, 
+        isFetching, 
+        refetch 
+    } = queryHook(
+        { ...params, page },
+        { 
+            skip: skip || isFetchingRef.current, 
+            refetchOnMountOrArgChange 
+        }
+    );
+
+    // Update merged data when new data arrives
+    useEffect(() => {
+        if (isSuccess && data) {
+            if (data.length === 0) {
+                setHasNextPage(false);
+            } else {
+                setMergedData(prevData => {
+                    const newData = page === 1 ? data : uniqBy([...prevData, ...data], uniqKey);
+                    return newData;
+                });
+                
+                // Check if we've reached the end
+                if (data.length < (params?.limit || 20)) {
+                    setHasNextPage(false);
+                }
+            }
+            isFetchingRef.current = false;
+        }
+    }, [data, isSuccess, page, uniqKey, params?.limit]);
+
+    // Debounced fetchNextPage to prevent rapid firing
+    const fetchNextPage = useCallback(() => {
+        if (!isFetchingRef.current && hasNextPage && !isFetching) {
+            isFetchingRef.current = true;
+            
+            // Create new abort controller for this request
+            if (abortController.current) {
+                abortController.current.abort();
+            }
+            abortController.current = new AbortController();
+
+            setPage(prevPage => prevPage + 1);
+        }
+    }, [hasNextPage, isFetching]);
+
+    // Cleanup function
+    useEffect(() => {
+        return () => {
+            if (abortController.current) {
+                abortController.current.abort();
+            }
+        };
     }, []);
 
     return {
         data: mergedData,
-        isLoading: isFetching && page === 1,
-        isFetchingNextPage: isFetching && page > 1,
+        isLoading: page === 1 && isFetching,
+        isFetchingNextPage: page > 1 && isFetching,
+        hasNextPage,
         fetchNextPage,
-        refetch,
-        reset,
-        hasNextPage: hasNextPage,
-        currentPage: page,
+        refetch: () => {
+            setPage(1);
+            setMergedData([]);
+            setHasNextPage(true);
+            isFetchingRef.current = false;
+            refetch();
+        }
     };
 }
 

@@ -48,6 +48,8 @@ export const permissionsServiceSlice = createApi({
                 body,
             }),
 
+            invalidatesTags: [],
+
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
