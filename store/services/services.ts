@@ -18,7 +18,13 @@ export const servicesServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
-    tagTypes: ['latestService', 'service-list'],
+    tagTypes: [
+        SERVICE_URL,
+        'Service',
+        'LatestService',
+        'ServiceList',
+        'CampusServices'
+    ],
 
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -32,7 +38,13 @@ export const servicesServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: ['service-list', 'latestService'],
+            invalidatesTags: (result) => [
+                { type: 'Service', id: result?._id },
+                'ServiceList',
+                'LatestService',
+                'CampusServices',
+                SERVICE_URL
+            ],
         }),
 
         updateService: endpoint.mutation<void, IUpdateService>({
@@ -42,7 +54,13 @@ export const servicesServiceSlice = createApi({
                 body: args,
             }),
 
-            invalidatesTags: ['service-list', 'latestService'],
+            invalidatesTags: (result, error, { _id }) => [
+                { type: 'Service', id: _id },
+                'ServiceList',
+                'LatestService',
+                'CampusServices',
+                SERVICE_URL
+            ],
         }),
 
         deleteService: endpoint.mutation<void, string>({
@@ -51,7 +69,13 @@ export const servicesServiceSlice = createApi({
                 method: REST_API_VERBS.DELETE,
             }),
 
-            invalidatesTags: ['service-list', 'latestService'],
+            invalidatesTags: (result, error, _id) => [
+                { type: 'Service', id: _id },
+                'ServiceList',
+                'LatestService',
+                'CampusServices',
+                SERVICE_URL
+            ],
         }),
 
         getLatestService: endpoint.query<IService, string>({
@@ -59,7 +83,12 @@ export const servicesServiceSlice = createApi({
 
             transformResponse: (response: IGetLatestServiceResponse) => response.data,
 
-            providesTags: ['latestService'],
+            providesTags: (result, error, campusId) => [
+                { type: 'Service', id: result?._id },
+                { type: 'CampusServices', id: campusId },
+                'LatestService',
+                SERVICE_URL
+            ],
         }),
 
         getServices: endpoint.query<IService[], IDefaultQueryParams>({
@@ -69,13 +98,25 @@ export const servicesServiceSlice = createApi({
                 params,
             }),
 
-            providesTags: ['service-list'],
+            providesTags: (result = [], error, arg) => [
+                ...result.map(({ _id }) => ({ type: 'Service' as const, id: _id })),
+                arg.campusId ? { type: 'CampusServices', id: arg.campusId } : 'ServiceList',
+                'ServiceList',
+                SERVICE_URL
+            ],
 
             transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
         }),
 
-        getServiceById: endpoint.query<void, void>({
+        getServiceById: endpoint.query<IService, string>({
             query: id => `/${SERVICE_URL}/${id}`,
+
+            providesTags: (result, error, id) => [
+                { type: 'Service', id },
+                SERVICE_URL
+            ],
+
+            transformResponse: (response: IDefaultResponse<IService>) => response.data,
         }),
 
         // Add your endpoints here
