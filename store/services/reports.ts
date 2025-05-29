@@ -168,6 +168,21 @@ export const reportsServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    tagTypes: [
+        SERVICE_URL,
+        'Report',
+        'CampusReport',
+        'DepartmentReport',
+        'ServiceReport',
+        'GlobalReport',
+        'GSPReport',
+        'AttendanceReport',
+        'GuestReport',
+        'SecurityReport',
+        'TransferReport',
+        'ChildCareReport'
+    ],
+
     refetchOnFocus: true,
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
@@ -179,6 +194,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'ChildCareReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         createIncidentReport: endpoint.mutation<void, IIncidentReportPayload>({
@@ -187,6 +209,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'Report',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         createAttendanceReport: endpoint.mutation<void, IAttendanceReportPayload>({
@@ -195,6 +224,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'AttendanceReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         createGuestReport: endpoint.mutation<void, IGuestReportPayload>({
@@ -203,6 +239,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'GuestReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         createSecurityReport: endpoint.mutation<void, ISecurityReportPayload>({
@@ -211,6 +254,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'SecurityReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         createTransferReport: endpoint.mutation<void, ITransferReportPayload>({
@@ -219,6 +269,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'TransferReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         createServiceReport: endpoint.mutation<void, IServiceReportPayload>({
@@ -227,6 +284,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId, _id }) => [
+                { type: 'ServiceReport', id: _id },
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL
+            ],
         }),
 
         getGSPReport: endpoint.query<IGSPReport, { serviceId?: IService['_id']; campusId?: ICampus['_id'] }>({
@@ -235,6 +299,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
                 params,
             }),
+
+            providesTags: (result, error, { serviceId, campusId }) => [
+                'GSPReport',
+                serviceId ? { type: 'ServiceReport', id: serviceId } : 'Report',
+                campusId ? { type: 'CampusReport', id: campusId } : 'Report',
+                SERVICE_URL
+            ],
 
             transformResponse: (res: IDefaultResponse<IGSPReport>) => res.data,
         }),
@@ -245,6 +316,8 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
+            providesTags: ['GlobalReport', 'GSPReport', SERVICE_URL],
+
             transformResponse: (res: IDefaultResponse<IGlobalWorkforceReportSummary>) => res.data,
         }),
 
@@ -253,6 +326,8 @@ export const reportsServiceSlice = createApi({
                 url: `/${SERVICE_URL}/carsReport`,
                 method: REST_API_VERBS.GET,
             }),
+
+            providesTags: ['Report', SERVICE_URL],
 
             transformResponse: (res: IDefaultResponse<ICarsReportSummary>) => res.data,
         }),
@@ -263,6 +338,8 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
+            providesTags: ['AttendanceReport', SERVICE_URL],
+
             transformResponse: (res: IDefaultResponse<IServiceAttendanceReportSummary>) => res.data,
         }),
 
@@ -272,6 +349,8 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
+            providesTags: ['GuestReport', SERVICE_URL],
+
             transformResponse: (res: IDefaultResponse<IGuestReportSummary>) => res.data,
         }),
 
@@ -280,6 +359,8 @@ export const reportsServiceSlice = createApi({
                 url: `/${SERVICE_URL}/busReport`,
                 method: REST_API_VERBS.GET,
             }),
+
+            providesTags: ['Report', SERVICE_URL],
 
             transformResponse: (res: IDefaultResponse<IBusReportSummary>) => res.data,
         }),
@@ -293,6 +374,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
+            providesTags: (result, error, { departmentId, serviceId, campusId }) => [
+                { type: 'DepartmentReport', id: departmentId },
+                { type: 'ServiceReport', id: serviceId },
+                { type: 'CampusReport', id: campusId },
+                SERVICE_URL
+            ],
+
             transformResponse: (res: IDefaultResponse<IDepartmentReportResponse>) => res.data,
         }),
 
@@ -305,6 +393,12 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
+            providesTags: (result, error, { serviceId, campusId }) => [
+                { type: 'ServiceReport', id: serviceId },
+                { type: 'CampusReport', id: campusId },
+                SERVICE_URL
+            ],
+
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
         }),
 
@@ -313,6 +407,11 @@ export const reportsServiceSlice = createApi({
                 url: `/${SERVICE_URL}/getReportByDepartmentID/${departmentId}`,
                 method: REST_API_VERBS.GET,
             }),
+
+            providesTags: (result, error, departmentId) => [
+                { type: 'DepartmentReport', id: departmentId },
+                SERVICE_URL
+            ],
 
             transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => res.data,
         }),
@@ -323,6 +422,13 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+
+            invalidatesTags: (result, error, { campusId }) => [
+                'GSPReport',
+                { type: 'CampusReport', id: campusId },
+                'GlobalReport',
+                SERVICE_URL
+            ],
         }),
 
         getCampusReportList: endpoint.query<ICampusReportList, ICampusReportListPayload>({
@@ -331,6 +437,11 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
                 params,
             }),
+
+            providesTags: (result, error, { campusId }) => [
+                { type: 'CampusReport', id: campusId },
+                SERVICE_URL
+            ],
 
             transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
         }),
@@ -342,6 +453,8 @@ export const reportsServiceSlice = createApi({
                 params,
             }),
 
+            providesTags: ['GlobalReport', SERVICE_URL],
+
             transformResponse: (res: IDefaultResponse<IGlobalReportList>) => res?.data,
         }),
 
@@ -352,10 +465,10 @@ export const reportsServiceSlice = createApi({
                 params,
             }),
 
+            providesTags: ['AttendanceReport', SERVICE_URL],
+
             transformResponse: (res: IDefaultResponse<IGraphAttendanceReports>) => res?.data,
         }),
-
-        // Add your endpoints here
     }),
 });
 
