@@ -5,11 +5,7 @@ import { View } from 'react-native';
 import useModal from '~/hooks/modal/useModal';
 import dayjs from 'dayjs';
 import ModalAlertComponent from '~/components/composite/modal-alert';
-import {
-    useClockInMutation,
-    useClockOutMutation,
-    useGetAttendanceQuery,
-} from '~/store/services/attendance';
+import { useClockInMutation, useClockOutMutation, useGetAttendanceQuery } from '~/store/services/attendance';
 import { GeoCoordinates } from 'react-native-geolocation-service';
 import If from '~/components/composite/if-container';
 import Utils from '~/utils';
@@ -243,8 +239,8 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                     autoPlay
                     resizeMode="cover"
                     style={{
-                        top: -40,
-                        left: -40,
+                        top: -42,
+                        left: 63,
                         width: 320,
                         height: 320,
                         position: 'absolute',
