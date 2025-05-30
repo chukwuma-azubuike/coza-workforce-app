@@ -23,7 +23,8 @@ export const servicesServiceSlice = createApi({
         'Service',
         'LatestService',
         'ServiceList',
-        'CampusServices'
+        'CampusServices',
+        'PaginatedServices'
     ],
 
     refetchOnFocus: true,
@@ -40,6 +41,7 @@ export const servicesServiceSlice = createApi({
 
             invalidatesTags: (result) => [
                 { type: 'Service', id: result?._id },
+                { type: 'PaginatedServices', id: 'LIST' },
                 'ServiceList',
                 'LatestService',
                 'CampusServices',
@@ -100,6 +102,7 @@ export const servicesServiceSlice = createApi({
 
             providesTags: (result = [], error, arg) => [
                 ...result.map(({ _id }) => ({ type: 'Service' as const, id: _id })),
+                { type: 'PaginatedServices', id: 'LIST' },
                 arg.campusId ? { type: 'CampusServices', id: arg.campusId } : 'ServiceList',
                 'ServiceList',
                 SERVICE_URL

@@ -83,7 +83,10 @@ export const AddButtonComponent: React.FC<IButtonComponent> = React.memo(props =
     return (
         <Button
             {...props}
-            className="shadow-md justify-center items-center !rounded-full !p-0 !w-[4.4rem] !h-[4.4rem]"
+            className={cn(
+                'shadow-md justify-center items-center !rounded-full !p-0 !w-[4.4rem] !h-[4.4rem]',
+                props.className
+            )}
             style={{
                 right: 20,
                 bottom: 32,

@@ -9,6 +9,7 @@ import StatusTag from '../../../components/atoms/status-tag';
 import { useDeleteServiceMutation } from '~/store/services/services';
 import useModal from '~/hooks/modal/useModal';
 import ErrorBoundary from '~/components/composite/error-boundary';
+import { cn } from '~/lib/utils';
 
 const ServiceContextMenu: React.FC<{ children: ReactNode; service: IService }> = ({ children, service }) => {
     const [deleteService] = useDeleteServiceMutation();
@@ -57,10 +58,10 @@ const ServiceContextMenu: React.FC<{ children: ReactNode; service: IService }> =
                 <ContextMenu.Trigger className="w-full">{children}</ContextMenu.Trigger>
                 <ContextMenu.Content className="!z-40">
                     <ContextMenu.Preview backgroundColor={{ dark: 'black', light: 'white' }}>
-                        <View className="px-2 py-1 items-center gap-4 justify-between flex-row w-full">
-                            <View className="items-center gap-3 flex-1">
+                        <View className="py-4 my-2 px-4 items-center gap-2 justify-between flex-row w-full rounded-xl border-border border">
+                            <View className="gap-3 flex-1">
                                 <View className="justify-between">
-                                    <Text className="font-bold">{service?.name}</Text>
+                                    <Text className="font-bold ">{service?.name}</Text>
                                     <Text className="text-sm">
                                         {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
                                             service?.serviceTime
@@ -68,7 +69,13 @@ const ServiceContextMenu: React.FC<{ children: ReactNode; service: IService }> =
                                     </Text>
                                 </View>
                             </View>
-                            <StatusTag>
+                            <StatusTag
+                                className={cn(
+                                    service?.isGlobalService
+                                        ? 'bg-violet-100 text-violet-700'
+                                        : 'bg-sky-100 text-sky-700'
+                                )}
+                            >
                                 {service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}
                             </StatusTag>
                         </View>
