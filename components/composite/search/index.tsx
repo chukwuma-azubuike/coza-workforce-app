@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { Alert, ListRenderItemInfo, TouchableOpacity, View, TextInput } from 'react-native';
+import { Alert, ListRenderItemInfo, TouchableOpacity, View } from 'react-native';
 import debounce from 'lodash/debounce';
 import Loading from '@components/atoms/loading';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -15,6 +15,7 @@ import { FlatList } from 'react-native';
 import { FloatButton } from '@components/atoms/button';
 import { cn } from '~/lib/utils';
 import ModalComponent from '../modal';
+import { Input } from '~/components/ui/input';
 
 interface IUseSearchProps<D> {
     data?: Array<D>;
@@ -42,7 +43,7 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                 borderBottomWidth: 1,
                 paddingHorizontal: 10,
                 borderBottomColor: THEME_CONFIG.transparentGray,
-                backgroundColor
+                backgroundColor,
             }}
         >
             <View className="flex-row justify-between">
@@ -64,9 +65,7 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                         </Text>
                     </View>
                 </View>
-                <StatusTag>
-                    {item?.status || ((item?.gender === 'M' ? 'Male' : 'Female') as any)}
-                </StatusTag>
+                <StatusTag>{item?.status || ((item?.gender === 'M' ? 'Male' : 'Female') as any)}</StatusTag>
             </View>
         </TouchableOpacity>
     );
@@ -82,7 +81,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
 
     const handleSearchBar = useCallback(() => {
         if (disable) return;
-        
+
         if (typeof data === 'undefined' && !loading) {
             Alert.alert('Select a campus', 'Please select a campus to proceed with your search');
             return;
@@ -96,7 +95,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
 
     // Memoize search function
     const performSearch = useMemo(
-        () => 
+        () =>
             debounce((searchText: string) => {
                 if (!!searchText) {
                     setSearchResults(dynamicSearch({ data, searchText, searchFields }));
@@ -107,10 +106,13 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
         [data, searchFields]
     );
 
-    const handleTextChange = useCallback((text: string) => {
-        setSearchText(text);
-        performSearch(text);
-    }, [performSearch]);
+    const handleTextChange = useCallback(
+        (text: string) => {
+            setSearchText(text);
+            performSearch(text);
+        },
+        [performSearch]
+    );
 
     // Cleanup debounce on unmount
     React.useEffect(() => {
@@ -123,48 +125,52 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
         return searchText === '' ? data : searchResults;
     }, [data, searchResults, searchText]);
 
-    const renderItem = useCallback(({ item }: ListRenderItemInfo<any>) => {
-        return loading ? (
-            <Loading style={{ paddingVertical: 44 }} />
-        ) : (
-            <SearchResult 
-                item={item} 
-                onPress={onPress} 
-                backgroundColor={backgroundColor}
-            />
-        );
-    }, [loading, onPress, backgroundColor]);
+    const renderItem = useCallback(
+        ({ item }: ListRenderItemInfo<any>) => {
+            const handlePress = () => {
+                onPress(item);
+                handleCancel();
+            };
+            return loading ? (
+                <Loading style={{ paddingVertical: 44 }} />
+            ) : (
+                <SearchResult item={item} onPress={handlePress} backgroundColor={backgroundColor} />
+            );
+        },
+        [loading, onPress, backgroundColor]
+    );
 
     return (
         <>
             <ModalComponent
                 isOpen={openSearchBar}
                 onClose={handleCancel}
-                className={cn('w-[95%] max-w-[500px]', className)}
-            >
-                <View className="p-16">
-                    <TextInput
+                header={
+                    <Input
                         autoFocus
                         clearButtonMode="always"
                         placeholder="Search"
                         onChangeText={handleTextChange}
-                        style={{ 
-                            marginBottom: 16, 
-                            padding: 8, 
-                            borderWidth: 1, 
-                            borderColor: THEME_CONFIG.gray 
+                        style={{
+                            padding: 4,
+                            borderWidth: 1,
+                            borderColor: THEME_CONFIG.primaryLight,
                         }}
                     />
+                }
+                className={cn('w-full h-full pb-2', className)}
+            >
+                <View className="w-full">
                     <FlatList
                         data={sortedSearchResults}
                         renderItem={renderItem}
                         keyExtractor={(item: any) => item._id.toString()}
                         ListEmptyComponent={
                             <View style={{ padding: 16 }}>
-                                <Text className="text-18 w-100% text-center text-muted-foreground">No data found</Text>
+                                <Text className="w-100% text-center text-muted-foreground">No data found</Text>
                             </View>
                         }
-                        getItemLayout={(data, index) => ({
+                        getItemLayout={(_, index) => ({
                             length: 80,
                             offset: 80 * index,
                             index,
