@@ -12,7 +12,7 @@ const ServiceManagement: React.FC = () => {
     return (
         <ViewWrapper>
             <AllService />
-            <AddButtonComponent onPress={gotoService} />
+            <AddButtonComponent className="!bottom-24 !right-8" onPress={gotoService} />
         </ViewWrapper>
     );
 };

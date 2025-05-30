@@ -3,14 +3,14 @@ import dayjs from 'dayjs';
 import React, { memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
-import useFetchMoreData from '@hooks/fetch-more-data';
-import useScreenFocus from '@hooks/focus';
+import useInfiniteData from '@hooks/fetch-more-data/use-infinite-data';
 import { useGetServicesQuery } from '@store/services/services';
 import { IService } from '@store/types';
 import { router } from 'expo-router';
 import ServiceContextMenu from './service-context-menu';
 import { cn } from '~/lib/utils';
+import SectionListComponent from '~/components/composite/section-list';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 const ServiceListRow: React.FC<IService> = React.memo(service => {
     const handleUpdate = () => {
@@ -26,10 +26,10 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
                 accessibilityRole="button"
                 className="w-full"
             >
-                <View className="px-2 py-1 items-center justify-between flex-row w-full">
-                    <View className="items-center gap-3">
+                <View className="py-4 my-2 px-4 items-center gap-2 justify-between flex-row w-full rounded-xl border-border border">
+                    <View className="gap-3 flex-1">
                         <View className="justify-between">
-                            <Text className="font-bold">{service?.name}</Text>
+                            <Text className="font-bold ">{service?.name}</Text>
                             <Text className="text-sm">
                                 {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
                                     service?.serviceTime
@@ -50,40 +50,29 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
     );
 });
 
-const AllService: React.FC<{ updatedListItem: IService }> = memo(({ updatedListItem }) => {
-    const serviceColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: IService, key) => <ServiceListRow {..._} key={key} />,
-        },
-    ];
-
-    const [page, setPage] = React.useState<number>(1);
-
-    const { data, isLoading, isSuccess, refetch, isFetching } = useGetServicesQuery({ limit: 20, page });
-
-    const { data: moreData } = useFetchMoreData({ uniqKey: '_id', dataSet: data, isSuccess });
-
-    const fetchMoreData = () => {
-        if (!isFetching && !isLoading) {
-            if (data?.length) {
-                setPage(prev => prev + 1);
-            } else {
-                setPage(prev => prev - 1);
-            }
-        }
-    };
-
-    useScreenFocus({ onFocus: refetch });
+const AllService: React.FC = memo(() => {
+    const { data, isLoading, isFetchingNextPage, fetchNextPage, refetch, hasNextPage } = useInfiniteData(
+        { limit: 10 },
+        useGetServicesQuery,
+        '_id'
+    );
 
     return (
-        <FlatListComponent
-            data={moreData}
-            refreshing={isFetching}
-            columns={serviceColumns}
-            fetchMoreData={fetchMoreData}
-            isLoading={isLoading || isFetching}
-        />
+        <ErrorBoundary>
+            <SectionListComponent
+                data={data}
+                field="serviceTime"
+                headerDateFormat="MMMM, YYYY"
+                refetch={refetch}
+                itemHeight={72.3}
+                isLoading={isLoading}
+                hasNextPage={hasNextPage}
+                column={ServiceListRow}
+                fetchNextPage={fetchNextPage}
+                extraProps={{ type: 'campus' }}
+                isFetchingNextPage={isFetchingNextPage}
+            />
+        </ErrorBoundary>
     );
 });
 

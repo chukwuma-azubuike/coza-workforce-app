@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import uniqBy from 'lodash/uniqBy';
 import { IDefaultQueryParams } from '@store/types';
+import useScreenFocus from '../focus';
 
 interface InfiniteDataResult<T> {
     data: T[];
@@ -27,9 +28,11 @@ function useInfiniteData<T, TParams>(
         options?: Record<string | 'skip', any>
     ) => {
         data?: T[];
+        isLoading: boolean;
         isSuccess: boolean;
         isFetching: boolean;
         refetch: () => void;
+        isUninitialized: boolean;
     },
     uniqKey: string = '_id',
     skip?: boolean,
@@ -38,94 +41,72 @@ function useInfiniteData<T, TParams>(
     const [page, setPage] = useState(1);
     const [mergedData, setMergedData] = useState<T[]>([]);
     const [hasNextPage, setHasNextPage] = useState(true);
-    
-    // Use refs to track loading states and prevent race conditions
-    const isFetchingRef = useRef(false);
-    const abortController = useRef<AbortController | null>(null);
 
-    // Reset when parameters change
-    useEffect(() => {
-        setPage(1);
-        setMergedData([]);
-        setHasNextPage(true);
-        
-        // Cleanup any ongoing requests
-        if (abortController.current) {
-            abortController.current.abort();
-        }
-    }, [JSON.stringify(params)]); // Deep compare params to prevent unnecessary resets
-
-    // Invoke RTK Query hook with current page
-    const { 
-        data, 
-        isSuccess, 
-        isFetching, 
-        refetch 
+    const {
+        data: queryData,
+        isSuccess,
+        isLoading,
+        isFetching,
+        isUninitialized,
+        refetch: rtkQueryRefetch,
     } = queryHook(
         { ...params, page },
-        { 
-            skip: skip || isFetchingRef.current, 
-            refetchOnMountOrArgChange 
+        {
+            skip: skip,
+            refetchOnMountOrArgChange,
         }
     );
 
-    // Update merged data when new data arrives
+    // Reset page when screen is unfocused to allow cache tag in RTK Query to be invalidated
+    useScreenFocus({
+        onFocusExit: () => {
+            setPage(1);
+        },
+    });
+
     useEffect(() => {
-        if (isSuccess && data) {
-            if (data.length === 0) {
-                setHasNextPage(false);
+        if (isSuccess && queryData) {
+            if (page === 1) {
+                setMergedData(queryData);
             } else {
-                setMergedData(prevData => {
-                    const newData = page === 1 ? data : uniqBy([...prevData, ...data], uniqKey);
-                    return newData;
-                });
-                
-                // Check if we've reached the end
-                if (data.length < (params?.limit || 20)) {
-                    setHasNextPage(false);
+                if (queryData.length > 0) {
+                    setMergedData(prevData => uniqBy([...prevData, ...queryData], uniqKey));
                 }
             }
-            isFetchingRef.current = false;
-        }
-    }, [data, isSuccess, page, uniqKey, params?.limit]);
 
-    // Debounced fetchNextPage to prevent rapid firing
-    const fetchNextPage = useCallback(() => {
-        if (!isFetchingRef.current && hasNextPage && !isFetching) {
-            isFetchingRef.current = true;
-            
-            // Create new abort controller for this request
-            if (abortController.current) {
-                abortController.current.abort();
+            if (queryData.length < (params?.limit || 20)) {
+                setHasNextPage(false);
+            } else {
+                setHasNextPage(true);
             }
-            abortController.current = new AbortController();
+        } else if (isSuccess && !queryData) {
+            if (page === 1) {
+                setMergedData([]);
+            }
+            setHasNextPage(false);
+        }
+    }, [queryData, isSuccess, page, uniqKey]);
 
+    const fetchNextPage = useCallback(() => {
+        if (hasNextPage && !isFetching) {
             setPage(prevPage => prevPage + 1);
         }
     }, [hasNextPage, isFetching]);
 
-    // Cleanup function
-    useEffect(() => {
-        return () => {
-            if (abortController.current) {
-                abortController.current.abort();
-            }
-        };
-    }, []);
+    const performRefetch = useCallback(() => {
+        setPage(1);
+        if (!isUninitialized) {
+            rtkQueryRefetch();
+        }
+    }, [isUninitialized, rtkQueryRefetch]);
 
     return {
+        isLoading,
         data: mergedData,
-        isLoading: page === 1 && isFetching,
         isFetchingNextPage: page > 1 && isFetching,
         hasNextPage,
         fetchNextPage,
-        refetch: () => {
-            setPage(1);
-            setMergedData([]);
-            setHasNextPage(true);
-            isFetchingRef.current = false;
-            refetch();
-        }
+        refetch: performRefetch,
     };
 }
 

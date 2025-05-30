@@ -5,7 +5,11 @@ export interface Section<T> {
     data: T[];
 }
 
-function transformToSections<T>(array: T[] = [], key: string = 'createdAt'): Section<T>[] {
+function transformToSections<T>(
+    array: T[] = [],
+    key: keyof T = 'createdAt' as keyof T,
+    format: string = 'MMMM DD, YYYY'
+): Section<T>[] {
     if (!array || array.length === 0) return [];
 
     const groups = array.reduce((acc, item) => {
@@ -13,7 +17,7 @@ function transformToSections<T>(array: T[] = [], key: string = 'createdAt'): Sec
         let timestamp = (item as any)[key];
 
         // Format it if grouping by "createdAt"
-        let groupKey = key === 'createdAt' ? dayjs(timestamp).format('MMMM DD, YYYY') : String(timestamp);
+        let groupKey = dayjs(timestamp).format(format);
 
         if (!acc[groupKey]) {
             acc[groupKey] = [];

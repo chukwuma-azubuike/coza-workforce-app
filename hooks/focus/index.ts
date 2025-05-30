@@ -7,13 +7,15 @@ interface IUseScreenFocusProps {
 }
 
 const useScreenFocus = (props: IUseScreenFocusProps) => {
-    const { onFocus } = props;
+    const { onFocus, onFocusExit } = props;
 
     useFocusEffect(
         React.useCallback(() => {
             if (onFocus) onFocus();
 
-            return () => {};
+            return () => {
+                if (onFocusExit) onFocusExit();
+            };
         }, [])
     );
 };

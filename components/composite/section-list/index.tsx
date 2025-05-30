@@ -7,7 +7,8 @@ import { Text } from '~/components/ui/text';
 import transformToSections from '~/utils/transformToSections';
 
 interface SectionListComponentProps<D> extends Partial<SectionListProps<D>> {
-    field: string;
+    field: keyof D;
+    headerDateFormat?: string;
     column: React.FC<D>;
     hasNextPage?: boolean;
     isLoading?: boolean;
@@ -22,6 +23,7 @@ interface SectionListComponentProps<D> extends Partial<SectionListProps<D>> {
 function SectionListComponent<D>({
     data,
     field,
+    headerDateFormat,
     column: Column,
     fetchNextPage,
     refetch,
@@ -33,7 +35,7 @@ function SectionListComponent<D>({
     emptyMessage = 'No records',
     ...props
 }: SectionListComponentProps<D>) {
-    const sections = useMemo(() => transformToSections(data, field), [data, field]);
+    const sections = useMemo(() => transformToSections(data, field, headerDateFormat), [data, field, headerDateFormat]);
 
     const renderSectionHeader = useCallback(
         ({ section }: { section: SectionListData<D, DefaultSectionT> }) => (
@@ -81,7 +83,7 @@ function SectionListComponent<D>({
                     renderItem={renderItem}
                     initialNumToRender={15}
                     maxToRenderPerBatch={15}
-                    onEndReachedThreshold={0.5}
+                    onEndReachedThreshold={1}
                     stickySectionHeadersEnabled
                     sections={sections as any[]}
                     onEndReached={handleEndReached}
