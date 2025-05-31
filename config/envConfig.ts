@@ -2,6 +2,7 @@ export const ENV = process.env.EXPO_PUBLIC_ENV;
 
 const APP_ENV = {
     ENV,
+    isProd: ENV === 'production',
     API_KEY: process.env.EXPO_PUBLIC_API_KEY || '',
     API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || '',
     APP_NAME: process.env.EXPO_PUBLIC_APP_NAME || '',

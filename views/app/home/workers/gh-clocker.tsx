@@ -133,7 +133,7 @@ const GHClocker: React.FC<IGHClockerProps> = ({
     };
 
     return (
-        <View>
+        <View className="flex-1 justify-between mt-8">
             {!showReport && <Timer />}
             <If condition={showReport}>
                 <CampusAttendanceSummary
@@ -148,7 +148,7 @@ const GHClocker: React.FC<IGHClockerProps> = ({
                 <Loading />
             ) : (
                 <If condition={!showReport}>
-                    <View className="items-center justify-around">
+                    <View className="items-center justify-around flex-1">
                         {!showReport && (
                             <ClockButton
                                 isInRange={!!isInRange}
@@ -159,7 +159,7 @@ const GHClocker: React.FC<IGHClockerProps> = ({
                         )}
                         {isGroupHead && latestService?._id && (
                             <TouchableOpacity activeOpacity={0.6} onPress={handleNavigateToReports}>
-                                <View className="items-center gap-1 mt-10">
+                                <View className="items-center gap-4 mt-10 flex-row">
                                     <Ionicons
                                         color={THEME_CONFIG.primary}
                                         name="people-outline"
