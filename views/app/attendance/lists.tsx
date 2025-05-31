@@ -17,7 +17,7 @@ import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { Platform, View } from 'react-native';
-import { useGetGHCampusByIdQuery } from '@store/services/campus';
+// import { useGetGHCampusByIdQuery } from '@store/services/campus';
 import PickerSelect from '~/components/ui/picker-select';
 
 const isAndroid = Platform.OS === 'android';
@@ -27,7 +27,7 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const [page, setPage] = React.useState<number>(1);
 
-    const { data, isLoading, isFetching, isSuccess } = useGetAttendanceQuery({
+    const { data, isLoading, isFetching, refetch, isSuccess, isUninitialized } = useGetAttendanceQuery({
         userId: user?._id,
         limit: 10,
         page,
@@ -43,7 +43,7 @@ export const MyAttendance: React.FC = React.memo(() => {
                 setPage(prev => prev - 1);
             }
         }
-    }, [isFetching, isLoading, data?.length]);
+    }, [isFetching, isLoading, data]);
 
     return (
         <ErrorBoundary>
@@ -56,6 +56,7 @@ export const MyAttendance: React.FC = React.memo(() => {
                     data={moreData as IAttendance[]}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
+                    onRefresh={isUninitialized ? refetch : undefined}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
                 />
             </View>
