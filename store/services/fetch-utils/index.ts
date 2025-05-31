@@ -1,10 +1,10 @@
 import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { BaseQueryFn } from '@reduxjs/toolkit/query/react';
-import APP_ENV from '@config/envConfig';
+import APP_VARIANT from '@config/envConfig';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Utils from '@utils/index';
 
-const { API_BASE_URL } = APP_ENV;
+const { API_BASE_URL } = APP_VARIANT;
 export class fetchUtils {
     static baseQuery = fetchBaseQuery({
         baseUrl: API_BASE_URL,

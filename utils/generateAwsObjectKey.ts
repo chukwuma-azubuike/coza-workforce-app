@@ -23,7 +23,7 @@ const generateAwsObjectKey = ({
     // const lastDot = fileName?.lastIndexOf('.');
     // const ext = fileName?.slice(lastDot + 1);
 
-    const objectKey = `${process.env.EXPO_PUBLIC_ENV}/${s3Folder}/${encodeURIComponent(user?.phoneNumber)}`;
+    const objectKey = `${process.env.APP_VARIANT}/${s3Folder}/${encodeURIComponent(user?.phoneNumber)}`;
 
     return objectKey;
 };

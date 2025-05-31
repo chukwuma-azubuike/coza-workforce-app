@@ -10,7 +10,7 @@ import { useGenerateUploadUrlMutation, useUploadMutation } from '~/store/service
 import { IUser } from '~/store/types';
 import { S3_BUCKET_FOLDERS } from '~/constants';
 import generateAwsObjectKey from '~/utils/generateAwsObjectKey';
-import APP_ENV from '~/config/envConfig';
+import APP_VARIANT from '~/config/envConfig';
 
 export interface FilePickerUploaderProps {
     label?: string; // Input label
@@ -95,14 +95,14 @@ const useUploader = ({
                     file: fileResult,
                 });
 
-                const displayUrl = `https://${APP_ENV.AWS_S3_BUCKET_NAME}.s3.${APP_ENV.AWS_REGION}.amazonaws.com/${objectKey}`;
+                const displayUrl = `https://${APP_VARIANT.AWS_S3_BUCKET_NAME}.s3.${APP_VARIANT.AWS_REGION}.amazonaws.com/${objectKey}`;
                 const fetchBlobResponse = await fetch(fileResult.uri);
                 const blob = await fetchBlobResponse.blob();
 
                 const urlResponse = await generateUrl({
                     objectKey,
                     expirySeconds: 3600,
-                    bucketName: APP_ENV.AWS_S3_BUCKET_NAME,
+                    bucketName: APP_VARIANT.AWS_S3_BUCKET_NAME,
                 }).unwrap();
 
                 await uploadMutation({

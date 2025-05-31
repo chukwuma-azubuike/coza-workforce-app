@@ -12,7 +12,7 @@ import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import { Dialog, DialogContent } from '~/components/ui/dialog';
 import { Link, router } from 'expo-router';
-import APP_ENV from '~/config/envConfig';
+import APP_VARIANT from '~/config/envConfig';
 import Loading from '~/components/atoms/loading';
 import OtpInput from '~/components/OtpInput';
 import FormErrorMessage from '~/components/ui/error-message';
@@ -71,8 +71,8 @@ const WelcomeVerifyEmail: React.FC = () => {
                         <View className="px-4 w-full gap-6 pt-20">
                             <View className="px-4 gap-6 w-full items-center justify-center">
                                 <Logo />
-                                <Text className="text-2xl">{APP_ENV.APP_NAME}</Text>
-                                <Text className="text-muted-foreground">{APP_ENV.APP_SLOGAN}</Text>
+                                <Text className="text-2xl">{APP_VARIANT.APP_NAME}</Text>
+                                <Text className="text-muted-foreground">{APP_VARIANT.APP_SLOGAN}</Text>
                             </View>
                             <Formik
                                 onSubmit={handleSubmit}
