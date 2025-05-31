@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Dispatch as ReduxDispatch } from '@reduxjs/toolkit';
 
 import { IDefaultResponse, REST_API_VERBS } from '@store/types';
-import APP_ENV from '@config/envConfig';
+import APP_VARIANT from '@config/envConfig';
 
 type IUploadResponse = IDefaultResponse<{}>; // TODO: Update once upload endpoint is available
 type IGenerateUploadURLResponse = IDefaultResponse<string>;
@@ -26,7 +26,7 @@ interface IGenerateS3UrlPayload {
 
 const SERVICE_URL = 'uploadApi';
 
-const { API_BASE_URL } = APP_ENV;
+const { API_BASE_URL } = APP_VARIANT;
 
 export const uploadServiceSlice = createApi({
     reducerPath: SERVICE_URL,

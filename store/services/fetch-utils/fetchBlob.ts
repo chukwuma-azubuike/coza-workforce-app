@@ -1,11 +1,11 @@
 import RNFetchBlob from 'react-native-blob-util';
-import APP_ENV from '@config/envConfig';
+import APP_VARIANT from '@config/envConfig';
 import { Alert } from 'react-native';
 import React from 'react';
 import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
-const { API_BASE_URL } = APP_ENV;
+const { API_BASE_URL } = APP_VARIANT;
 
 type DownloadTicketsProps = {
     type: string;

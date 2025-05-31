@@ -1,5 +1,5 @@
 import { IReportFormProps } from '@views/app/reports/forms/types';
-import APP_ENV from '~/config/envConfig';
+import APP_VARIANT from '~/config/envConfig';
 
 // General types
 export interface ILog {
@@ -16,7 +16,7 @@ export enum ERROR {
 export enum CREATE_SERVICE_ENUM {
     LONG = 7.505862981744857,
     LAT = 9.005452823370131,
-    RANGE_TO_CLOCKIN = APP_ENV.isProd ? 100 : 100000,
+    RANGE_TO_CLOCKIN = APP_VARIANT.isProd ? 100 : 100000,
 }
 
 export const SERVICE_TAGS = [

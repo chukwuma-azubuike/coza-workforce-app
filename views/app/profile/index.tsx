@@ -14,7 +14,7 @@ import { useAuth } from '@hooks/auth';
 import { IEditProfilePayload } from '@store/types';
 import { useUpdateUserMutation } from '@store/services/account';
 import StatusTag from '@components/atoms/status-tag';
-import APP_ENV from '@config/envConfig';
+import APP_VARIANT from '@config/envConfig';
 import { router } from 'expo-router';
 import useUploader from '~/hooks/use-uploader';
 import capitalize from 'lodash/capitalize';
@@ -138,7 +138,7 @@ const Profile: React.FC = () => {
                     </View>
                 </TouchableOpacity>
                 <Text className="py-6 text-center text-muted-foreground">
-                    Version {DeviceInfo.getVersion()} ({capitalize(APP_ENV.ENV)})
+                    Version {DeviceInfo.getVersion()} ({capitalize(APP_VARIANT.ENV)})
                 </Text>
             </ScrollView>
         </View>

@@ -8,6 +8,8 @@
             "developmentClient": true,
             "distribution": "internal",
             "env": {
+                "APP_VARIANT": "development",
+                "SENTRY_DNS": "SENTRY_DNS",
                 "EXPO_APPLE_TEAM_ID": "499THBRLGD",
                 "NODE_VERSION": "20"
             },
@@ -16,12 +18,16 @@
         "preview": {
             "distribution": "internal",
             "env": {
+                "APP_VARIANT": "preview",
+                "SENTRY_DNS": "SENTRY_DNS",
                 "NODE_VERSION": "20"
             },
             "channel": "preview"
         },
         "production": {
             "env": {
+                "APP_VARIANT": "production",
+                "SENTRY_DNS": "SENTRY_DNS",
                 "NODE_VERSION": "20"
             },
             "autoIncrement": true,
