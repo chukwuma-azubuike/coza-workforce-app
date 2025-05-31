@@ -296,7 +296,6 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                                         <DateTimePicker
                                             mode="date"
                                             label="Service date"
-                                            minimumDate={new Date()}
                                             error={errors.serviceDate}
                                             touched={touched.serviceDate}
                                             placeholder="Select service date"

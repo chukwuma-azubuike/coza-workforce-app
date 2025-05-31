@@ -63,12 +63,11 @@ export default ({ config }) => {
         config.android = { package: getDynamicUniqueIdentifier('android', config) };
     }
 
-    // Add APP_VARIANT to config.extra for runtime access if needed
-    if (config.extra) {
-        config.extra.APP_VARIANT = process.env.APP_VARIANT || 'production';
-    } else {
-        config.extra = { APP_VARIANT: process.env.APP_VARIANT || 'production' };
-    }
+    // Make sure APP_VARIANT is added to extra
+    config.extra = {
+        ...(config.extra || {}),
+        APP_VARIANT: process.env.APP_VARIANT || 'production'
+    };
 
     // The 'config' object has now been modified with your dynamic values.
     // Return the modified config object for Expo to use.
