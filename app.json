@@ -2,7 +2,7 @@
     "expo": {
         "name": "Coza Workforce",
         "slug": "coza-workforce-app",
-        "version": "2.0.3",
+        "version": "2.0.4",
         "runtimeVersion": "2.0.3",
         "orientation": "portrait",
         "icon": "./assets/images/icon.png",
@@ -21,7 +21,7 @@
                 "ITSAppUsesNonExemptEncryption": false,
                 "UIBackgroundModes": ["remote-notification", "remote-notification"]
             },
-            "buildNumber": "46",
+            "buildNumber": "47",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
