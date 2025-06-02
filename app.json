@@ -21,7 +21,7 @@
                 "ITSAppUsesNonExemptEncryption": false,
                 "UIBackgroundModes": ["remote-notification", "remote-notification"]
             },
-            "buildNumber": "48",
+            "buildNumber": "49",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
