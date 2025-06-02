@@ -21,10 +21,10 @@ const getBaseBundleIdentifier = (platform, originalConfig) => {
 const getDynamicUniqueIdentifier = (platform, baseConfig) => {
     const baseIdentifier = getBaseBundleIdentifier(platform, baseConfig);
     if (IS_DEV) {
-        return `${baseIdentifier}.staging`;
+        return `${baseIdentifier}.development`;
     }
     if (IS_PREVIEW) {
-        return `${baseIdentifier}.preview`;
+        return `${baseIdentifier}.staging`;
     }
     return baseIdentifier; // Production uses the base identifier
 };
@@ -32,12 +32,24 @@ const getDynamicUniqueIdentifier = (platform, baseConfig) => {
 const getDynamicAppName = (baseConfig) => {
     const baseName = baseConfig.name || "Coza Workforce"; // Use original name or fallback
     if (IS_DEV) {
-        return `${baseName} Staging`;
+        return `${baseName} Dev`;
     }
     if (IS_PREVIEW) {
-        return `${baseName} Preview`;
+        return `${baseName} Staging`;
     }
     return baseName; // Production uses the base name
+};
+
+// Get version code for Android
+const getAndroidVersionCode = (baseConfig) => {
+    const baseVersionCode = baseConfig.android?.versionCode || 1;
+    return baseVersionCode;
+};
+
+// Get build number for iOS
+const getIOSBuildNumber = (baseConfig) => {
+    const baseBuildNumber = baseConfig.ios?.buildNumber || "1";
+    return baseBuildNumber;
 };
 
 export default ({ config }) => {
@@ -50,17 +62,23 @@ export default ({ config }) => {
     // Dynamically set bundle identifier for iOS
     if (config.ios) {
         config.ios.bundleIdentifier = getDynamicUniqueIdentifier('ios', config);
+        config.ios.buildNumber = getIOSBuildNumber(config);
     } else {
-        // If 'ios' block doesn't exist, create it (though unlikely if based on valid app.json)
-        config.ios = { bundleIdentifier: getDynamicUniqueIdentifier('ios', config) };
+        config.ios = {
+            bundleIdentifier: getDynamicUniqueIdentifier('ios', config),
+            buildNumber: getIOSBuildNumber(config)
+        };
     }
 
     // Dynamically set package for Android
     if (config.android) {
         config.android.package = getDynamicUniqueIdentifier('android', config);
+        config.android.versionCode = getAndroidVersionCode(config);
     } else {
-        // If 'android' block doesn't exist, create it
-        config.android = { package: getDynamicUniqueIdentifier('android', config) };
+        config.android = {
+            package: getDynamicUniqueIdentifier('android', config),
+            versionCode: getAndroidVersionCode(config)
+        };
     }
 
     // Make sure APP_VARIANT is added to extra
