@@ -7,20 +7,24 @@
         "development": {
             "developmentClient": true,
             "distribution": "internal",
+            "environment": "development",
             "env": {
                 "APP_VARIANT": "development",
                 "SENTRY_DNS": "SENTRY_DNS",
                 "EXPO_APPLE_TEAM_ID": "499THBRLGD",
-                "NODE_VERSION": "20"
+                "NODE_VERSION": "20",
+                "ENVIRONMENT": "development"
             },
             "channel": "development"
         },
         "preview": {
             "distribution": "store",
+            "environment": "preview",
             "env": {
                 "APP_VARIANT": "preview",
                 "SENTRY_DNS": "SENTRY_DNS",
-                "NODE_VERSION": "20"
+                "NODE_VERSION": "20",
+                "ENVIRONMENT": "preview"
             },
             "channel": "preview",
             "ios": {
@@ -32,10 +36,12 @@
         },
         "production": {
             "distribution": "store",
+            "environment": "production",
             "env": {
                 "APP_VARIANT": "production",
                 "SENTRY_DNS": "SENTRY_DNS",
-                "NODE_VERSION": "20"
+                "NODE_VERSION": "20",
+                "ENVIRONMENT": "production"
             },
             "autoIncrement": true,
             "channel": "production",
