@@ -16,30 +16,48 @@
             "channel": "development"
         },
         "preview": {
-            "distribution": "internal",
+            "distribution": "store",
             "env": {
                 "APP_VARIANT": "preview",
                 "SENTRY_DNS": "SENTRY_DNS",
                 "NODE_VERSION": "20"
             },
-            "channel": "preview"
+            "channel": "preview",
+            "ios": {
+                "resourceClass": "m-medium"
+            },
+            "android": {
+                "buildType": "apk"
+            }
         },
         "production": {
+            "distribution": "store",
             "env": {
                 "APP_VARIANT": "production",
                 "SENTRY_DNS": "SENTRY_DNS",
                 "NODE_VERSION": "20"
             },
             "autoIncrement": true,
+            "channel": "production",
             "ios": {
-                // "prebuildCommand": "npx pod-install"
-            },
-            "channel": "production"
+                "resourceClass": "m-medium"
+            }
         }
     },
     "submit": {
-        "ios": {
-            // "ascAppId": "1667229564"
+        "production": {
+            "ios": {
+                "appleId": "timilehin.oloruntoba@icloud.com",
+                "ascAppId": "1667229564",
+                "appleTeamId": "499THBRLGD"
+            }
+        },
+        "preview": {
+            "ios": {
+                "appleId": "timilehin.oloruntoba@icloud.com",
+                "ascAppId": "6476398822",
+                "appleTeamId": "499THBRLGD"
+            }
         }
     }
 }

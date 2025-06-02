@@ -21,7 +21,7 @@
                 "ITSAppUsesNonExemptEncryption": false,
                 "UIBackgroundModes": ["remote-notification", "remote-notification"]
             },
-            "buildNumber": "47",
+            "buildNumber": "48",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
@@ -32,7 +32,7 @@
                 "foregroundImage": "./assets/images/icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            // "versionCode": 46,
+            // "versionCode": 48,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
