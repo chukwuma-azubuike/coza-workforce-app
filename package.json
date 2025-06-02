@@ -16,6 +16,7 @@
         "check:fix": "npx expo install --check",
         "run:android-build": "eas build:run -p android --latest",
         "eas:build-ios-dev": "eas build --platform ios --profile development",
+        "eas:build-ios-preview": "eas build --platform ios --profile preview",
         "eas:build-android-dev": "eas build --platform android --profile development",
         "eas:build-ios-prod": "eas build --platform ios --profile production",
         "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css",
