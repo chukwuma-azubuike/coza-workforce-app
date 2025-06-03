@@ -30,7 +30,7 @@ const getDynamicUniqueIdentifier = (platform, baseConfig) => {
 };
 
 const getDynamicAppName = (baseConfig) => {
-    const baseName = baseConfig.name || "Coza Workforce"; // Use original name or fallback
+    const baseName = baseConfig.name || "COZA Workforce"; // Use original name or fallback
     if (IS_DEV) {
         return `${baseName} Dev`;
     }
