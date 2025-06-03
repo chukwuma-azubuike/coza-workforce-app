@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '~/components/ui/button';
 import { Dialog, DialogContent } from '~/components/ui/dialog';
 import { Text } from '~/components/ui/text';
@@ -6,6 +6,7 @@ import If from '../if-container';
 import ModalAlertComponent from '../modal-alert';
 import { View } from 'react-native';
 import useModal from '~/hooks/modal/useModal';
+import * as Haptics from 'expo-haptics';
 
 const NotificationModal: React.FC = () => {
     const { modalState, setModalState } = useModal();
@@ -14,6 +15,22 @@ const NotificationModal: React.FC = () => {
     const hideModal = () => {
         setModalState({ ...modalState, open: false });
     };
+
+    useEffect(() => {
+        switch (status) {
+            case 'error':
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                break;
+            case 'warning':
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+                break;
+            case 'success':
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                break;
+            default:
+                break;
+        }
+    }, [status]);
 
     return (
         <Dialog open={open || !!render || !!message} onOpenChange={hideModal}>
