@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import { Icon } from '@rneui/themed';
 import dayjs from 'dayjs';
 import React, { useCallback } from 'react';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -18,9 +18,10 @@ import APP_VARIANT from '@config/envConfig';
 import { router } from 'expo-router';
 import useUploader from '~/hooks/use-uploader';
 import capitalize from 'lodash/capitalize';
+import Loading from '~/components/atoms/loading';
 
 const Profile: React.FC = () => {
-    const { user, isGlobalPastor } = useRole();
+    const { user, isGlobalPastor, refetch, isFetching } = useRole();
 
     const { logOut } = useAuth();
 
@@ -51,7 +52,10 @@ const Profile: React.FC = () => {
 
     return (
         <View className="flex-1">
-            <ScrollView className="px-4 pt-6 pb-12">
+            <ScrollView
+                className="px-4 pt-6 pb-12"
+                refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
+            >
                 <View className="pb-8 items-center">
                     <TouchableOpacity activeOpacity={0.7} onPress={pickImage} disabled={updateIsLoading || isUploading}>
                         <AvatarComponent

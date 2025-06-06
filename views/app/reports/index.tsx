@@ -46,9 +46,9 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
                 style={{ width: '100%' }}
                 accessibilityRole="button"
             >
-                <View className="px-4 p-2 my-1 rounded-xl items-center bg-muted-background justify-between">
-                    <Text>{dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</Text>
-                    <Text className="font-bold">Departmental</Text>
+                <View className="px-4 p-2 my-1 flex-row rounded-xl items-center bg-muted-background justify-between">
+                    <Text className="flex-1">{dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}</Text>
+                    <Text className="font-bold flex-1">Departmental</Text>
                     <StatusTag>{props?.status as any}</StatusTag>
                 </View>
             </TouchableOpacity>
@@ -200,7 +200,7 @@ const Reports: React.FC = () => {
     return (
         <ErrorBoundary>
             <View className="flex-1">
-                <ViewWrapper scroll className="flex-1">
+                <ViewWrapper className="flex-1">
                     <If condition={!user}>
                         <FlatListSkeleton count={9} />
                     </If>
@@ -208,24 +208,28 @@ const Reports: React.FC = () => {
                         <CampusReport campusId={user?.campus?._id} serviceId={latestServiceData?._id} />
                     </If>
                     <If condition={isHOD || isAHOD}>
-                        <Text className="text-muted-foreground font-semibold">Departmental Reports</Text>
-                        <Separator className="my-2" />
-                        <FlatListComponent
-                            columns={reportColumns}
-                            onRefresh={reportsRefetch}
-                            isLoading={reportsIsLoading || reportsIsFetching}
-                            refreshing={reportsIsLoading || reportsIsFetching}
-                            data={departmentAndIncidentReport?.departmentalReport || []}
-                        />
-                        <Text className="text-muted-foreground font-semibold">Incident Reports</Text>
-                        <Separator className="my-2" />
-                        <FlatListComponent
-                            showEmpty={false}
-                            onRefresh={reportsRefetch}
-                            columns={incidentReportColumns}
-                            refreshing={reportsIsLoading || reportsIsFetching}
-                            data={departmentAndIncidentReport?.incidentReport || []}
-                        />
+                        <View className="flex-1">
+                            <Text className="text-muted-foreground font-semibold">Departmental Reports</Text>
+                            <Separator className="my-2" />
+                            <FlatListComponent
+                                columns={reportColumns}
+                                onRefresh={reportsRefetch}
+                                isLoading={reportsIsLoading || reportsIsFetching}
+                                refreshing={reportsIsLoading || reportsIsFetching}
+                                data={departmentAndIncidentReport?.departmentalReport || []}
+                            />
+                        </View>
+                        <View className="flex-1">
+                            <Text className="text-muted-foreground font-semibold">Incident Reports</Text>
+                            <Separator className="my-2" />
+                            <FlatListComponent
+                                showEmpty={false}
+                                onRefresh={reportsRefetch}
+                                columns={incidentReportColumns}
+                                refreshing={reportsIsLoading || reportsIsFetching}
+                                data={departmentAndIncidentReport?.incidentReport || []}
+                            />
+                        </View>
                     </If>
                     <If condition={isGlobalPastor}>
                         <GlobalReportProvider>

@@ -1,12 +1,7 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import React, { useMemo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { View } from 'native-base';
 import { Formik } from 'formik';
-import TextAreaComponent from '@components/atoms/text-area';
-import { THEME_CONFIG } from '@config/appConfig';
-import { Icon } from '@rneui/themed';
-import ButtonComponent from '@components/atoms/button';
 import { GHReportSchema } from '@utils/schemas';
 import { ICampusReportSummary } from '@store/services/reports';
 import useModal from '@hooks/modal/useModal';
@@ -14,6 +9,11 @@ import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useScreenFocus from '@hooks/focus';
 import { useSubmitGhReportMutation } from '@store/services/grouphead';
+import { Label } from '~/components/ui/label';
+import { Textarea } from '~/components/ui/textarea';
+import FormErrorMessage from '~/components/ui/error-message';
+import { cn } from '~/lib/utils';
+import { Button } from '~/components/ui/button';
 
 const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { setOptions } = props.navigation;
@@ -63,15 +63,15 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
         }
         if ('error' in result) {
             setModalState({
-                message: error?.data?.message || 'Something went wrong',
+                message: (error as any)?.data?.message || 'Something went wrong',
                 status: 'error',
             });
         }
     };
 
     return (
-        <ViewWrapper py={10} noPadding>
-            <View space={10} className="px-4">
+        <ViewWrapper className="py-6" noPadding>
+            <View className="px-4">
                 <Formik<any>
                     onSubmit={onSubmit}
                     validationSchema={GHReportSchema}
@@ -80,39 +80,27 @@ const GHReportSummary: React.FC<NativeStackScreenProps<ParamListBase>> = props =
                 >
                     {({ errors, handleChange, handleSubmit, values }) => {
                         return (
-                            <View space={2}>
-                                <View  isInvalid={!!errors?.submittedReport}>
+                            <View className="space-y-2">
+                                <View className={cn(!!errors?.submittedReport && 'border-red-500')}>
                                     <Label>For the GSP's attention</Label>
-                                    <TextAreaComponent
-                                        minHeight={150}
+                                    <Textarea
                                         placeholder="Comment"
                                         value={values.submittedReport}
                                         isDisabled={!!params?.submittedReport}
                                         onChangeText={handleChange('submittedReport')}
                                     />
-                                    <FormErrorMessage
-                                        fontSize="2xl"
-                                        mt={3}
-                                        leftIcon={
-                                            <Icon
-                                                size={16}
-                                                name="warning"
-                                                type="antdesign"
-                                                color={THEME_CONFIG.error}
-                                            />
-                                        }
-                                    >
-                                        {errors?.submittedReport}
-                                    </FormErrorMessage>
+                                    {errors?.submittedReport && (
+                                        <FormErrorMessage>{errors?.submittedReport as string}</FormErrorMessage>
+                                    )}
                                 </View>
                                 {!params?.submittedReport && (
-                                    <View minHeight={180}>
-                                        <ButtonComponent
+                                    <View>
+                                        <Button
                                             isLoading={isSubmitLoading}
                                             onPress={handleSubmit as (event: any) => void}
                                         >
                                             Submit to GSP
-                                        </ButtonComponent>
+                                        </Button>
                                     </View>
                                 )}
                             </View>

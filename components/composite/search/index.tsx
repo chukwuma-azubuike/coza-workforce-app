@@ -46,8 +46,8 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                 backgroundColor,
             }}
         >
-            <View className="flex-row justify-between">
-                <View className="gap-6 flex-row items-center">
+            <View className="flex-row gap-12 justify-between">
+                <View className="gap-6 flex-row items-center flex-1">
                     <AvatarComponent
                         alt="avatar"
                         className="w-20 h-20"

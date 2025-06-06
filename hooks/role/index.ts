@@ -77,7 +77,11 @@ export enum DEPARTMENTS {
 const useRole = () => {
     const dispatch = useAppDispatch();
     const storedUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
-    const { data: latestUser } = useGetUserByIdQuery(storedUser?.userId as string, {
+    const {
+        data: latestUser,
+        refetch,
+        isFetching,
+    } = useGetUserByIdQuery(storedUser?.userId as string, {
         skip: !storedUser?.userId,
         refetchOnMountOrArgChange: false,
     });
@@ -149,6 +153,9 @@ const useRole = () => {
             _id: currentUser?.userId || currentUser?._id,
             userId: currentUser?.userId || currentUser?._id,
         } as IUser,
+
+        refetch,
+        isFetching,
 
         //Status
         isCGWCApproved: currentUser?.isCGWCApproved,

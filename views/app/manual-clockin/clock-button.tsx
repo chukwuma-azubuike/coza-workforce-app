@@ -18,6 +18,7 @@ import Loading from '~/components/atoms/loading';
 import { Icon } from '@rneui/themed';
 import { useGetLatestServiceQuery } from '~/store/services/services';
 import { IUser } from '~/store/types';
+import * as Haptics from 'expo-haptics';
 
 interface IClockButtonProps {
     isInRange: boolean;
@@ -58,6 +59,8 @@ const ClockButton: React.FC<IClockButtonProps> = ({
 
     const handleClockin = async () => {
         try {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
             const result = await clockIn({
                 userId: user?._id as string,
                 clockIn: `${dayjs().unix()}`,
@@ -74,7 +77,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
 
             if ('data' in result) {
                 setModalState({
-                    duration: 3,
+                    duration: 2,
                     render: (
                         <ModalAlertComponent
                             description={`You clocked in at ${dayjs().format('hh:mm A')}`}
@@ -152,7 +155,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 () => handleClockOut(),
                 () =>
                     setModalState({
-                        duration: 6,
+                        duration: 2,
                         render: (
                             <ModalAlertComponent
                                 description={'You are not within range of any campus!'}
@@ -194,7 +197,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 }
                 if (!isInRange && (res === RESULTS.GRANTED || res === RESULTS.LIMITED)) {
                     setModalState({
-                        duration: 6,
+                        duration: 2,
                         render: (
                             <ModalAlertComponent
                                 description={
