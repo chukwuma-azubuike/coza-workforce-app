@@ -21,7 +21,8 @@ const getBaseBundleIdentifier = (platform, originalConfig) => {
 const getDynamicUniqueIdentifier = (platform, baseConfig) => {
     const baseIdentifier = getBaseBundleIdentifier(platform, baseConfig);
     if (IS_DEV) {
-        return `${baseIdentifier}.development`;
+        // TODO: Add a development identifier with a .development suffix after generating google services file for development
+        return `${baseIdentifier}`;
     }
     if (IS_PREVIEW) {
         return `${baseIdentifier}.staging`;
