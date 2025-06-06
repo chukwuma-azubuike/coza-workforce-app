@@ -123,7 +123,7 @@ const PermissionDetails: React.FC = () => {
         }
         if (approveIsError) {
             setModalState({
-                duration: 6,
+                duration: 2,
                 status: 'error',
                 message: (approveError as any)?.data?.message || 'Oops something went wrong',
             });
