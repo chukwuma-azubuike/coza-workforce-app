@@ -1,8 +1,9 @@
 import React, { useRef } from 'react';
-import { Animated, SafeAreaView, View } from 'react-native';
+import { Animated, View } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ConnectionStatusBar: React.FC = () => {
     const netInfo = useNetInfo();
