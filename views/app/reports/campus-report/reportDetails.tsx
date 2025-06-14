@@ -3,7 +3,6 @@ import { View } from 'react-native';
 import { Formik } from 'formik';
 import dayjs from 'dayjs';
 import React from 'react';
-import ButtonComponent from '@components/atoms/button';
 import If from '@components/composite/if-container';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
@@ -33,6 +32,9 @@ import { Label } from '~/components/ui/label';
 import { Textarea } from '~/components/ui/textarea';
 import FormErrorMessage from '~/components/ui/error-message';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Button } from '~/components/ui/button';
+
+const DEPARTMENTAL_REPORT_COUNT = 6;
 
 const CampusReport: React.FC = props => {
     const params = useLocalSearchParams() as unknown as ICampusReport & { campusName: string };
@@ -246,13 +248,13 @@ const CampusReport: React.FC = props => {
         serviceId && refetch();
     };
 
-    const submittedReports = React.useMemo(
-        () => data?.departmentalReport.filter(report => report?.report?.status === 'SUBMITTED'),
+    const approvedReports = React.useMemo(
+        () => data?.departmentalReport.filter(report => report?.report?.status === IReportStatus.APPROVED),
         [data]
     );
     const submittedReportIds = React.useMemo(
-        () => submittedReports?.map(report => report?.report?._id),
-        [submittedReports]
+        () => approvedReports?.map(report => report?.report?._id),
+        [approvedReports]
     );
     const incidentReportIds = React.useMemo(
         () => data?.incidentReport.map(report => report?.incidentReport?._id),
@@ -273,6 +275,14 @@ const CampusReport: React.FC = props => {
     const { setModalState } = useModal();
 
     const onSubmit = async (values: IGSPReportPayload) => {
+        //Ensure all departmental reports are approved before submitting
+        if (values?.submittedReportIds?.length < DEPARTMENTAL_REPORT_COUNT) {
+            setModalState({
+                message: 'Kindly ensure all departmental reports have been approved',
+                status: 'info',
+            });
+        }
+
         if (!!reportsNotApproved) {
             return setModalState({
                 message: 'All reports need to be approved before submitting',
@@ -299,7 +309,15 @@ const CampusReport: React.FC = props => {
     };
 
     return (
-        <ViewWrapper className="py-4" scroll noPadding avoidKeyboard avoidKeyboardOffset={40} refreshing={isLoading} onRefresh={handleRefresh}>
+        <ViewWrapper
+            className="py-4"
+            scroll
+            noPadding
+            avoidKeyboard
+            avoidKeyboardOffset={40}
+            refreshing={isLoading}
+            onRefresh={handleRefresh}
+        >
             {isGlobalPastor && <Text className="font-bold text-4xl mb-2">{params?.campusName}</Text>}
             <View className="px-4 gap-6">
                 <Separator />
@@ -373,12 +391,12 @@ const CampusReport: React.FC = props => {
                                         )}
                                     </View>
                                     <View>
-                                        <ButtonComponent
+                                        <Button
                                             isLoading={isSubmitLoading}
                                             onPress={handleSubmit as (event: any) => void}
                                         >
                                             Submit to GSP
-                                        </ButtonComponent>
+                                        </Button>
                                     </View>
                                 </View>
                             );

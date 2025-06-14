@@ -20,12 +20,14 @@ import { DismissKeyboard } from '~/components/DismissKeyboard';
 const Login: React.FC = () => {
     const dispatch = useAppDispatch();
 
-    const [login, { isLoading }] = useLoginMutation();
+    const [login, { isLoading, error }] = useLoginMutation();
 
     const INITIAL_VALUES = { email: '', password: '' };
 
     const onSubmit = async (values: ILoginPayload) => {
         const response = await login({ ...values, email: Utils.formatEmail(values.email) });
+
+        console.log(response);
 
         if ('error' in response) {
             Alert.alert((response?.error as any)?.data?.message || (response as any)?.data?.message);
