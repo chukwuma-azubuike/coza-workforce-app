@@ -16,7 +16,8 @@ import { IAttendance, IService } from '@store/types';
 import Utils from '@utils/index';
 import React from 'react';
 import { Platform } from 'react-native';
-import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
+import { GeoCoordinates } from '@hooks/geo-location';
 import { HomeContext } from '../home';
 import { GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
 import GhClocker from '../home/workers/gh-clocker';
@@ -83,16 +84,6 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
         }
     );
 
-    const initialState = {
-        latestService: { data: latestService, isError, isSuccess, isLoading },
-        latestAttendance: {
-            latestAttendanceData,
-            latestAttendanceIsError,
-            latestAttendanceIsSuccess,
-            latestAttendanceIsLoading,
-        },
-    };
-
     const { refresh, isInRange, deviceCoordinates, verifyRangeBeforeAction } = useGeoLocation({
         rangeToClockIn: latestService?.rangeToClockIn as number,
     });
@@ -133,6 +124,25 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     const isIOS = Platform.OS === 'ios';
 
+    const initialState = {
+        latestService: { data: latestService, isError, isSuccess, isLoading },
+        latestAttendance: {
+            latestAttendanceData,
+            latestAttendanceIsError,
+            latestAttendanceIsSuccess,
+            latestAttendanceIsLoading,
+        },
+        currentCoordinate: {
+            latitude: deviceCoordinates?.latitude ?? 0,
+            longitude: deviceCoordinates?.longitude ?? 0,
+            altitude: deviceCoordinates?.altitude ?? null,
+            accuracy: deviceCoordinates?.accuracy ?? null,
+            altitudeAccuracy: deviceCoordinates?.altitudeAccuracy ?? null,
+            heading: deviceCoordinates?.heading ?? null,
+            speed: deviceCoordinates?.speed ?? null,
+        },
+    };
+
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             <ViewWrapper
@@ -148,7 +158,7 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
                         refreshLocation={refresh}
                         refreshTrigger={refreshTrigger}
                         setRefreshTrigger={setRefreshTrigger}
-                        deviceCoordinates={deviceCoordinates}
+                        deviceCoordinates={deviceCoordinates ?? { latitude: 0, longitude: 0 }}
                         verifyRangeBeforeAction={verifyRangeBeforeAction}
                         ghReport={prop}
                     />

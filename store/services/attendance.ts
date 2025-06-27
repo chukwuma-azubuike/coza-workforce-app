@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { GeoCoordinates } from 'react-native-geolocation-service';
+import { GeoCoordinates } from '~/hooks/geo-location';
 import {
     IAttendance,
     ICongressParams,
