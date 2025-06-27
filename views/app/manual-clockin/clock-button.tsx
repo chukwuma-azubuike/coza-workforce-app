@@ -6,7 +6,7 @@ import useModal from '~/hooks/modal/useModal';
 import dayjs from 'dayjs';
 import ModalAlertComponent from '~/components/composite/modal-alert';
 import { useClockInMutation, useClockOutMutation, useGetAttendanceQuery } from '~/store/services/attendance';
-import { GeoCoordinates } from 'react-native-geolocation-service';
+import { GeoCoordinates } from '~/hooks/geo-location';
 import If from '~/components/composite/if-container';
 import Utils from '~/utils';
 import { Alert } from 'react-native';

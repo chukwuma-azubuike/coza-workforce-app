@@ -12,7 +12,7 @@ import { userActionTypes } from '@store/services/users';
 import { useGetUserByIdQuery } from '@store/services/account';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import useGeoLocation from '@hooks/geo-location';
-import Geolocation from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import GhClocker from '../home/workers/gh-clocker';
 
 const GroupHeadReports: React.FC<NativeStackScreenProps<ParamListBase>> = () => {

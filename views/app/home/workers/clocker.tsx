@@ -4,7 +4,7 @@ import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
 import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
-import { GeoCoordinates } from 'react-native-geolocation-service';
+import { GeoCoordinates } from '~/hooks/geo-location';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
 import {

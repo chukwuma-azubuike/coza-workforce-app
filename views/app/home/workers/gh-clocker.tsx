@@ -17,7 +17,7 @@ import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
-import { GeoCoordinates } from 'react-native-geolocation-service';
+import { GeoCoordinates } from '~/hooks/geo-location';
 import { CampusAttendanceSummary } from '../campus-pastors/attendance-summary';
 import { CampusTicketSummary } from '../campus-pastors/ticket-summary';
 import ClockButton from './clock-button';

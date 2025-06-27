@@ -1,7 +1,17 @@
 import React from 'react';
-import Geolocation, { GeoCoordinates } from 'react-native-geolocation-service';
+import Geolocation from '@react-native-community/geolocation';
 import { ICampusCoordinates } from '@store/services/attendance';
 import useClosestCampus from '../closest-campus';
+
+export interface GeoCoordinates {
+    latitude: number;
+    longitude: number;
+    altitude?: number | null;
+    accuracy?: number;
+    altitudeAccuracy?: number | null;
+    heading?: number | null;
+    speed?: number | null;
+}
 
 const distanceBetweenTwoCoordinates = (deviceCoordinates: GeoCoordinates, campusCoordinates: ICampusCoordinates) => {
     let { latitude: deviceLatitude, longitude: deviceLongitude } = deviceCoordinates;
@@ -58,7 +68,6 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
                 timeout: 15000,
                 maximumAge: 10000,
                 distanceFilter: 10,
-                forceRequestLocation: true,
             }
         );
     };
@@ -77,20 +86,21 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
         return result;
     };
 
-    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates>(null as unknown as GeoCoordinates);
+    const [deviceCoordinates, setDeviceCoordinates] = React.useState<GeoCoordinates | null>(null);
 
     const closestCampusCoordinates = useClosestCampus({
-        latitude: deviceCoordinates?.latitude,
-        longitude: deviceCoordinates?.longitude,
+        latitude: deviceCoordinates?.latitude ?? 0,
+        longitude: deviceCoordinates?.longitude ?? 0,
     });
 
     const isInRange = (
-        deviceCoordinatesArg: GeoCoordinates = deviceCoordinates,
+        deviceCoordinatesArg: GeoCoordinates = deviceCoordinates ?? { latitude: 0, longitude: 0 },
         campusCoordinatesArg: ICampusCoordinates = closestCampusCoordinates
     ) => {
         if (deviceCoordinatesArg && campusCoordinatesArg) {
             try {
                 distance = distanceBetweenTwoCoordinates(deviceCoordinatesArg, campusCoordinatesArg);
+
                 if (distance <= +rangeToClockIn) {
                     return true;
                 }
