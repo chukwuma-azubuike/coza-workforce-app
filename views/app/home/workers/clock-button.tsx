@@ -142,20 +142,18 @@ const ClockButton: React.FC<IClockButtonProps> = ({
 
     const handleVerifyBeforeClockout = () => {
         if (canClockOut) {
-            verifyRangeBeforeAction(
-                () => handleClockOut(),
-                () =>
-                    setModalState({
-                        duration: 2,
-                        render: (
-                            <ModalAlertComponent
-                                description={'You are not within range of any campus!'}
-                                iconName={'warning-outline'}
-                                iconType={'ionicon'}
-                                status={'warning'}
-                            />
-                        ),
-                    })
+            verifyRangeBeforeAction(handleClockOut, () =>
+                setModalState({
+                    duration: 2,
+                    render: (
+                        <ModalAlertComponent
+                            description={'You are not within range of any campus!'}
+                            iconName={'warning-outline'}
+                            iconType={'ionicon'}
+                            status={'warning'}
+                        />
+                    ),
+                })
             );
             return;
         }

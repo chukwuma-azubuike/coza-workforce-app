@@ -230,7 +230,7 @@ const campusColumns: IFlatListColumn[] = [
                     alt="pic"
                     className="h-14 w-14"
                     badge={!!elm.clockIn}
-                    imageUrl={elm?.user.pictureUrl || AVATAR_FALLBACK_URL}
+                    imageUrl={elm?.user?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
                 <View className="flex-1 gap-2">
                     <View className="flex-row justify-between">
@@ -287,8 +287,8 @@ const groupAttendanceDataColumns: IFlatListColumn[] = [
                 <AvatarComponent
                     alt="pic"
                     className="h-14 w-14"
-                    badge={!!elm.clockIn}
-                    imageUrl={elm.pictureUrl || AVATAR_FALLBACK_URL}
+                    badge={!!elm?.clockIn}
+                    imageUrl={elm?.pictureUrl || AVATAR_FALLBACK_URL}
                 />
                 <View className="flex-1 gap-1">
                     <View className="flex-row justify-between">
