@@ -43,3 +43,8 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
+
+# google service account key
+firebase-service-account.json
+service-account-key.json
+upload-keystore.jks
