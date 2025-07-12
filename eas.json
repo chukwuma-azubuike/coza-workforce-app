@@ -1,7 +1,7 @@
 {
     "cli": {
         "version": ">= 15.0.6",
-        "appVersionSource": "remote"
+        "appVersionSource": "local"
     },
     "build": {
         "development": {
@@ -19,7 +19,7 @@
         "preview": {
             "distribution": "store",
             "environment": "preview",
-            // "autoIncrement": true,
+            "autoIncrement": true,
             "env": {
                 "APP_VARIANT": "preview",
                 "SENTRY_DNS": "SENTRY_DNS",
@@ -36,7 +36,7 @@
         "production": {
             "distribution": "store",
             "environment": "production",
-            // "autoIncrement": true,
+            "autoIncrement": true,
             "env": {
                 "APP_VARIANT": "production",
                 "SENTRY_DNS": "SENTRY_DNS",
