@@ -23,7 +23,8 @@
             "env": {
                 "APP_VARIANT": "preview",
                 "SENTRY_DNS": "SENTRY_DNS",
-                "NODE_VERSION": "20"
+                "NODE_VERSION": "20",
+                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON_STAGING"
             },
             "channel": "preview",
             "ios": {
@@ -40,7 +41,8 @@
             "env": {
                 "APP_VARIANT": "production",
                 "SENTRY_DNS": "SENTRY_DNS",
-                "NODE_VERSION": "20"
+                "NODE_VERSION": "20",
+                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON_PROD"
             },
             "channel": "production",
             "ios": {
