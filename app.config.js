@@ -60,6 +60,18 @@ const getIOSBuildNumber = (baseConfig) => {
     return `${baseBuildNumber}`;
 };
 
+// Get google service json for android
+const getGoogleServicesJson = () => {
+    // default to production
+    let googleServicesFile = './google-services-prod.json';
+
+    if (IS_PREVIEW || IS_DEV) {
+        googleServicesFile = './google-services-staging.json';
+    }
+
+    return googleServicesFile
+};
+
 export default ({ config }) => {
     // 'config' is the base configuration object, containing all settings
     // from your original app.json's "expo" field.
@@ -82,6 +94,7 @@ export default ({ config }) => {
     if (config.android) {
         config.android.package = getDynamicUniqueIdentifier('android', config);
         config.android.versionCode = getAndroidVersionCode(config);
+        config.android.googleServicesFile = getGoogleServicesJson();
     } else {
         config.android = {
             package: getDynamicUniqueIdentifier('android', config),
