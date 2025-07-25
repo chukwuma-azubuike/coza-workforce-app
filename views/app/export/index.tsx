@@ -201,7 +201,6 @@ const Export: React.FC = () => {
                         endDate,
                         startDate,
                         campusId,
-                        serviceId,
                         departmentId,
                     });
 
