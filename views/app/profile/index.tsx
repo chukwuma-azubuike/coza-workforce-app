@@ -18,7 +18,7 @@ import APP_VARIANT from '@config/envConfig';
 import { router } from 'expo-router';
 import useUploader from '~/hooks/use-uploader';
 import capitalize from 'lodash/capitalize';
-import Loading from '~/components/atoms/loading';
+// import EASUpdates from '~/components/EASUpdates';
 
 const Profile: React.FC = () => {
     const { user, isGlobalPastor, refetch, isFetching } = useRole();
@@ -144,6 +144,7 @@ const Profile: React.FC = () => {
                 <Text className="py-6 text-center text-muted-foreground">
                     Version {DeviceInfo.getVersion()} ({capitalize(APP_VARIANT.ENV)})
                 </Text>
+                {/* <EASUpdates /> */}
             </ScrollView>
         </View>
     );
