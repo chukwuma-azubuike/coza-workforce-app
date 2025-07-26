@@ -14,7 +14,11 @@
                 "EXPO_APPLE_TEAM_ID": "499THBRLGD",
                 "NODE_VERSION": "20"
             },
-            "channel": "development"
+            "channel": "development",
+            "android": {
+                "buildType": "app-bundle",
+                "releaseStatus": "draft"
+            }
         },
         "preview": {
             "distribution": "store",
@@ -31,7 +35,8 @@
                 "resourceClass": "m-medium"
             },
             "android": {
-                "buildType": "app-bundle"
+                "buildType": "app-bundle",
+                "releaseStatus": "draft"
             }
         },
         "production": {
