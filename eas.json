@@ -14,11 +14,7 @@
                 "EXPO_APPLE_TEAM_ID": "499THBRLGD",
                 "NODE_VERSION": "20"
             },
-            "channel": "development",
-            "android": {
-                "buildType": "app-bundle",
-                "releaseStatus": "draft"
-            }
+            "channel": "development"
         },
         "preview": {
             "distribution": "store",
@@ -35,8 +31,7 @@
                 "resourceClass": "m-medium"
             },
             "android": {
-                "buildType": "app-bundle",
-                "releaseStatus": "draft"
+                "buildType": "app-bundle"
             }
         },
         "production": {
@@ -68,6 +63,9 @@
                 "appleId": "timilehin.oloruntoba@icloud.com",
                 "ascAppId": "6476398822",
                 "appleTeamId": "499THBRLGD"
+            },
+            "android": {
+                "releaseStatus": "draft"
             }
         }
     }
