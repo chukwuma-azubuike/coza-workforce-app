@@ -16,7 +16,7 @@ const Congress: React.FC = () => {
     }, []);
 
     return (
-        <ViewWrapper className="pt-4">
+        <ViewWrapper className="pt-4 flex-1">
             <CongressList updatedListItem={updatedListItem} />
             <If condition={isSuperAdmin}>
                 <AddButtonComponent className="z-10" onPress={gotoCreateCongress} />

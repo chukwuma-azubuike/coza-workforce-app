@@ -1,6 +1,4 @@
 import { View } from 'react-native';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik, FormikConfig } from 'formik';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -8,7 +6,7 @@ import useModal from '@hooks/modal/useModal';
 import { ICongressInstantMessage } from '@store/types';
 import { CreateCongressInstantMessageSchema } from '@utils/schemas';
 import { useCreateCongressInstantMessagesMutation } from '@store/services/congress';
-import TextAreaComponent from '@components/atoms/text-area';
+import { Textarea } from '~/components/ui/textarea';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
@@ -53,7 +51,7 @@ const CreateCongressInstantMessage: React.FC = () => {
     } as ICongressInstantMessage;
 
     return (
-        <ViewWrapper scroll noPadding>
+        <ViewWrapper scroll noPadding className="flex-1 pt-4">
             <View className="items-center w-full gap-6 px-4">
                 <View className="items-center w-full">
                     <Formik<ICongressInstantMessage>
@@ -63,7 +61,7 @@ const CreateCongressInstantMessage: React.FC = () => {
                         validationSchema={CreateCongressInstantMessageSchema}
                     >
                         {({ errors, values, handleChange, handleSubmit, touched }) => (
-                            <View className="w-full gap-2">
+                            <View className="w-full gap-4">
                                 <View>
                                     <Label>Title</Label>
                                     <Input
@@ -78,7 +76,7 @@ const CreateCongressInstantMessage: React.FC = () => {
 
                                 <View>
                                     <Label>Message</Label>
-                                    <TextAreaComponent
+                                    <Textarea
                                         value={values.message}
                                         placeholder="Message"
                                         onChangeText={handleChange('message')}

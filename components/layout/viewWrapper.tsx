@@ -1,88 +1,87 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import {
     KeyboardAvoidingView,
     RefreshControl,
+    ScrollView,
+    View,
     ViewProps,
     ScrollViewProps,
     useColorScheme,
-    ScrollView,
     Platform,
     KeyboardAvoidingViewProps,
 } from 'react-native';
 import Empty from '../atoms/empty';
-import { View } from 'react-native';
 import { cn } from '~/lib/utils';
 
-interface IViewWrapper
-    extends ScrollViewProps,
-        ViewProps,
-        Partial<React.ForwardRefExoticComponent<ViewProps & React.RefAttributes<unknown>>> {
+interface IViewWrapperProps extends ViewProps, ScrollViewProps {
     scroll?: boolean;
     noPadding?: boolean;
     refreshing?: boolean;
+    onRefresh?: () => void;
     avoidKeyboard?: boolean;
     avoidKeyboardOffset?: number;
-    onRefresh?: (args?: any) => void;
     avoidKeyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
 }
 
-enum THEME {
-    light = 'white',
-    dark = 'black',
-}
+const THEME = {
+    light: 'white',
+    dark: 'black',
+} as const;
 
-const ViewWrapper: React.FC<IViewWrapper> = props => {
-    const { scroll, onRefresh, refreshing, noPadding, avoidKeyboard, avoidKeyboardOffset, avoidKeyboardBehavior } =
-        props;
-    const ActiveView = scroll ? ScrollView : View;
-    const scheme = useColorScheme() as keyof typeof THEME;
+const ViewWrapper = forwardRef<any, IViewWrapperProps>(
+    (
+        {
+            scroll = false,
+            noPadding = false,
+            refreshing = false,
+            onRefresh,
+            avoidKeyboard = false,
+            avoidKeyboardOffset = 96,
+            avoidKeyboardBehavior = 'position',
+            style,
+            className,
+            children,
+            ...rest
+        },
+        ref
+    ) => {
+        const Container: React.ComponentType<any> = scroll ? ScrollView : View;
+        const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
 
-    return (
-        <>
-            {avoidKeyboard ? (
+        const content = (
+            <Container
+                ref={ref}
+                {...rest}
+                className={cn('bg-background', className)}
+                style={[{ paddingHorizontal: noPadding ? 0 : 6 }, style]}
+                refreshControl={
+                    onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
+                }
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+            >
+                {children ?? <Empty />}
+            </Container>
+        );
+
+        if (avoidKeyboard) {
+            return (
                 <KeyboardAvoidingView
-                    keyboardVerticalOffset={avoidKeyboardOffset}
-                    contentContainerStyle={{ position: 'relative' }}
                     style={{
                         flex: 1,
+                        position: 'relative',
                         backgroundColor: THEME[scheme],
                     }}
-                    behavior={Platform.OS === 'ios' ? avoidKeyboardBehavior || 'position' : undefined}
+                    keyboardVerticalOffset={avoidKeyboardOffset}
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 >
-                    <ActiveView
-                        {...props}
-                        className={cn('bg-background', props.className)}
-                        refreshControl={
-                            onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
-                        }
-                        style={{
-                            paddingHorizontal: noPadding ? 0 : 6,
-                        }}
-                        showsVerticalScrollIndicator={false}
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        {props.children ? props.children : <Empty />}
-                    </ActiveView>
+                    {content}
                 </KeyboardAvoidingView>
-            ) : (
-                <ActiveView
-                    {...props}
-                    className={cn('bg-background', props.className)}
-                    refreshControl={
-                        onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
-                    }
-                    style={{
-                        flex: 1,
-                        paddingHorizontal: noPadding ? 0 : 6,
-                    }}
-                    showsVerticalScrollIndicator={false}
-                    showsHorizontalScrollIndicator={false}
-                >
-                    {props.children ? props.children : <Empty />}
-                </ActiveView>
-            )}
-        </>
-    );
-};
+            );
+        }
+
+        return content;
+    }
+);
 
 export default ViewWrapper;

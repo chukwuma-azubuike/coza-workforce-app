@@ -87,7 +87,7 @@ const CongressGroupAttendance: React.FC = () => {
     }, []);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1 pt-4">
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}
