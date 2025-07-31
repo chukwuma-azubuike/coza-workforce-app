@@ -75,7 +75,7 @@ const WorkforceManagement: React.FC = () => {
 
     return (
         <ErrorBoundary>
-            <ViewWrapper>
+            <ViewWrapper className="flex-1">
                 <Department departmentId={campusUsersData?.departmentId || user?.department?._id} />
                 <If condition={isCampusPastor || isInternshipHOD || isGlobalPastor || isSuperAdmin}>
                     <StaggerButtonComponent buttons={filteredButtons as unknown as any} />
