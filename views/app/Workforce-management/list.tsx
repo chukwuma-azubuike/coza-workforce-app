@@ -138,7 +138,7 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
     };
 
     return (
-        <ViewWrapper onRefresh={refresh} refreshing={isRefreshing}>
+        <ViewWrapper onRefresh={refresh} refreshing={isRefreshing} className="flex-1">
             <FlatListComponent
                 showHeader={false}
                 refreshing={isFetching}
