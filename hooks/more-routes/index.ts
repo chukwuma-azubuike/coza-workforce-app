@@ -6,7 +6,7 @@ const useMoreRoutes = () => {
     const { user, isSuperAdmin, isCampusPastor, isCGWCApproved } = useRole();
 
     const roleName = user?.role?.name;
-    const departmentName = user?.departmentName;
+    const departmentName = user?.department?.departmentName;
 
     const filteredRoutes = useMemo(
         () =>
@@ -21,6 +21,7 @@ const useMoreRoutes = () => {
                     return route;
                 }
                 const rolesAndDepartments = route.users;
+
                 if (
                     rolesAndDepartments.includes(roleName as ROLES) ||
                     rolesAndDepartments.includes(departmentName as DEPARTMENTS)

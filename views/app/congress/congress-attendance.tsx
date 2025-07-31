@@ -9,7 +9,6 @@ import { useGetServicesQuery } from '@store/services/services';
 import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import Utils from '@utils/index';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { Platform, View } from 'react-native';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
