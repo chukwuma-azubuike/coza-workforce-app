@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 
 import React from 'react';
 import Logo from '@components/atoms/logo';
-import SupportLink from '../support-link';
+import SupportLink from '~/components/SupportLink';
 import { View } from 'react-native';
 import { SafeAreaView } from 'react-native';
 import { Button } from '~/components/ui/button';

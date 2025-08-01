@@ -41,7 +41,7 @@ const userStateSlice = createUserSlice({
             {
                 fulfilled: state => {
                     state.currentUser = null;
-                    router.replace('/(auth)/login');
+                    router.replace('/');
                 },
             }
         ),

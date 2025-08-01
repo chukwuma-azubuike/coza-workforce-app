@@ -5,7 +5,7 @@ import ModalAlertComponent from '@components/composite/modal-alert';
 import { Formik } from 'formik';
 import { EmailSchema } from '@utils/schemas';
 import If from '@components/composite/if-container';
-import SupportLink from '../support-link';
+import SupportLink from '~/components/SupportLink';
 import { Dialog, DialogContent } from '~/components/ui/dialog';
 import { router } from 'expo-router';
 import { DismissKeyboard } from '~/components/DismissKeyboard';
