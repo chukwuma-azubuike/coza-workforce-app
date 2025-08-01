@@ -46,14 +46,14 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                 backgroundColor,
             }}
         >
-            <View className="flex-row gap-12 justify-between">
+            <View className="flex-row gap-6 justify-between">
                 <View className="gap-6 flex-row items-center flex-1">
                     <AvatarComponent
                         alt="avatar"
                         className="w-20 h-20"
                         imageUrl={item?.pictureUrl || item?.user?.pictureUrl || AVATAR_FALLBACK_URL}
                     />
-                    <View>
+                    <View className="flex-1">
                         <Text className="text-18 font-bold text-foreground">
                             {`${Utils.capitalizeFirstChar(
                                 item?.firstName || item?.user?.firstName
@@ -65,7 +65,9 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                         </Text>
                     </View>
                 </View>
-                <StatusTag>{item?.status || ((item?.gender === 'M' ? 'Male' : 'Female') as any)}</StatusTag>
+                <View className="w-max">
+                    <StatusTag>{item?.status || ((item?.gender === 'M' ? 'Male' : 'Female') as any)}</StatusTag>
+                </View>
             </View>
         </TouchableOpacity>
     );

@@ -7,15 +7,15 @@ import { Icon, ListItem } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { useGetGSPReportQuery } from '@store/services/reports';
 import useAppColorMode from '@hooks/theme/colorMode';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import dayjs from 'dayjs';
 import { IAttendanceStatus, ICampus, IService, IUserReportType } from '@store/types';
 import Utils from '@utils/index';
 import useRole from '@hooks/role';
 import { useGetCampusesQuery } from '@store/services/campus';
-import { useNavigation } from '@react-navigation/native';
 import { IUserReportProps } from '../../Workforce-management/user-reports';
+import { router } from 'expo-router';
+import PickerSelect from '~/components/ui/picker-select';
 
 interface WorkforceSummaryProps {
     servicesIsSuccess: boolean;
@@ -23,7 +23,6 @@ interface WorkforceSummaryProps {
 }
 
 const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesIsSuccess }) => {
-    const { navigate } = useNavigation();
     const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
     const [expandedAttendance, setExpandedAttendance] = React.useState<boolean>(false);
     const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
@@ -32,7 +31,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     const { user } = useRole();
     const { isDarkMode } = useAppColorMode();
 
-    const { data: campuses, isSuccess: campusIsSuccess } = useGetCampusesQuery();
+    const { data: campuses, isSuccess: campusIsSuccess, isLoading: campusesLoading } = useGetCampusesQuery();
     const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
 
     const [campusId, setCampusId] = React.useState<ICampus['_id']>('global');
@@ -74,7 +73,10 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
 
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
-            campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
+            campuses && [
+                { _id: 'global', campusName: 'Global' } as any,
+                ...Utils.sortStringAscending(campuses, 'campusName'),
+            ],
         [campusIsSuccess]
     );
 
@@ -103,46 +105,40 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                 headerTitle: `User Report - ${Utils.capitalizeFirstChar(service)}`,
             };
 
-            navigate('User Report' as never, reportState as never);
+            router.push({ pathname: '/workforce-summary/user-report', params: reportState as any });
         };
 
     return (
         <>
-            <View justifyContent="space-around" w="100%" mb={3} space={10} position="static" className="px-4">
-                <View w="50%">
-                    <SelectComponent
+            <View className="px-4 justify-around static gap-6 w-full mb-6">
+                <View className="flex-1">
+                    <PickerSelect
                         valueKey="_id"
-                        displayKey="campusName"
-                        selectedValue={campusId}
+                        value={campusId}
+                        labelKey="campusName"
                         placeholder="Select Campus"
+                        onValueChange={setCampus}
+                        isLoading={campusesLoading}
                         items={sortedCampuses || []}
-                        onValueChange={setCampus as any}
-                    >
-                        {sortedCampuses?.map((campus, index) => (
-                            <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
-                        ))}
-                    </SelectComponent>
+                    />
                 </View>
-                <View w="50%">
-                    <SelectComponent
-                        valueKey="_id"
-                        displayKey={['name', 'clockInStartTime']}
-                        selectedValue={serviceId}
-                        placeholder="Select Service"
-                        items={sortedServices || []}
-                        onValueChange={setService as any}
-                    >
-                        {sortedServices?.map((service, index) => (
-                            <SelectItemComponent
-                                value={service._id}
-                                key={`service-${index}`}
-                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                            />
-                        ))}
-                    </SelectComponent>
+                <View className="flex-1">
+                    <View className="flex-1">
+                        <PickerSelect
+                            valueKey="_id"
+                            labelKey="name"
+                            value={serviceId}
+                            customLabel={(service: IService) =>
+                                `${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`
+                            }
+                            onValueChange={setService}
+                            placeholder="Select Service"
+                            items={sortedServices || []}
+                        />
+                    </View>
                 </View>
             </View>
-            <ViewWrapper mt={4} scroll onRefresh={refresh} refreshing={gspReportIsLoading}>
+            <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading} className="flex-1 mt-8">
                 <ListItem.Accordion
                     content={
                         <>
@@ -154,9 +150,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                                 style={{ marginRight: 12 }}
                             />
                             <ListItem.Content>
-                                <Text fontSize="md" _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }}>
-                                    {`${campusName ? campusName : ''} Workforce`}
-                                </Text>
+                                <Text>{`${campusName ? campusName : ''} Workforce`}</Text>
                             </ListItem.Content>
                         </>
                     }
@@ -188,7 +182,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <View flexDirection="row" flexWrap="wrap" className="py-3">
+                    <View className="py-3 flex-row flex-wrap">
                         <StatCardComponent
                             // percent
                             label="Total"
@@ -263,9 +257,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                                 style={{ marginRight: 12 }}
                             />
                             <ListItem.Content>
-                                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                    {campusName || campusId} Service Attendance
-                                </Text>
+                                <Text>{campusName || campusId} Service Attendance</Text>
                             </ListItem.Content>
                         </>
                     }
@@ -297,7 +289,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <View flexDirection="row" flexWrap="wrap" className="py-3">
+                    <View className="py-3 flex-row flex-wrap">
                         <StatCardComponent
                             // percent
                             label="Total"
@@ -356,9 +348,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                                 style={{ marginRight: 12 }}
                             />
                             <ListItem.Content>
-                                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                    {campusName || campusId} Guests Attendance
-                                </Text>
+                                <Text>{campusName || campusId} Guests Attendance</Text>
                             </ListItem.Content>
                         </>
                     }
@@ -390,7 +380,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <View flexDirection="row" flexWrap="wrap" className="py-3">
+                    <View className="py-3 flex-row flex-wrap">
                         <StatCardComponent
                             // percent
                             label="First timers"
@@ -422,9 +412,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                                 style={{ marginRight: 12 }}
                             />
                             <ListItem.Content>
-                                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.600' }} fontSize="md">
-                                    {campusName || campusId} Bus Count (Pick up)
-                                </Text>
+                                <Text>{campusName || campusId} Bus Count (Pick up)</Text>
                             </ListItem.Content>
                         </>
                     }
@@ -456,7 +444,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         />
                     }
                 >
-                    <View flexDirection="row" flexWrap="wrap" className="py-3">
+                    <View className="py-3 flex-row flex-wrap">
                         <StatCardComponent
                             // percent
                             label="Locations"

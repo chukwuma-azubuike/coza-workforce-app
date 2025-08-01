@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import { View } from 'native-base';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetGraphAttendanceReportsQuery, useGetGSPReportQuery } from '@store/services/reports';
@@ -16,18 +15,23 @@ import ChurchGrowthCards from './church-growth-cards';
 import ChurchGrowthSummary from './church-growth-summary';
 import { ScreenHeight } from '@rneui/base';
 import { Col, Row } from '@components/composite/row';
+import PickerSelect from '~/components/ui/picker-select';
+
+const TIME_RANGES = ['Weekly', 'Monthly', 'Quaterly'];
 
 const ChurchGrowth: React.FC = () => {
     const { user } = useRole();
-    const { data: campuses, isSuccess: campusIsSuccess } = useGetCampusesQuery();
+    const { data: campuses, isSuccess: campusIsSuccess, isLoading: campusesLoading } = useGetCampusesQuery();
     const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
-    const { data: services, isSuccess: servicesIsSuccess } = useGetServicesQuery({});
+    const { data: services, isSuccess: servicesIsSuccess, isLoading: servicesLoading } = useGetServicesQuery({});
 
     const handleRefresh = () => {
         attendanceReportRefetch();
     };
 
     const [campusId, setCampusId] = React.useState<ICampus['_id']>('global');
+    const [timeRange, setTimeRange] = React.useState<string>();
+
     const setCampus = (value: ICampus['_id']) => {
         setCampusId(value);
     };
@@ -75,11 +79,12 @@ const ChurchGrowth: React.FC = () => {
 
     const sortedCampuses = React.useMemo<ICampus[] | undefined>(
         () =>
-            campuses && [{ _id: 'global', campusName: 'Global' }, ...Utils.sortStringAscending(campuses, 'campusName')],
+            campuses && [
+                { _id: 'global', campusName: 'Global' } as any,
+                ...Utils.sortStringAscending(campuses, 'campusName'),
+            ],
         [campusIsSuccess]
     );
-
-    const TIME_RANGES = ['Weekly', 'Monthly', 'Quaterly'];
 
     const sortedServices = React.useMemo<IService[] | undefined>(
         () => filteredServices && Utils.sortByDate(filteredServices, 'serviceTime'),
@@ -92,31 +97,39 @@ const ChurchGrowth: React.FC = () => {
 
     return (
         <>
-            <View justifyContent="space-around" w="100%" mb={4} space={10} position="static" top={3} className="px-4">
-                <View w="30%">
-                    <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
-                        {sortedCampuses?.map((campus, index) => (
-                            <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
-                        ))}
-                    </SelectComponent>
+            <View className="px-4 w-full static top-6 gap-6 mb-8">
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        value={campusId}
+                        labelKey="campusName"
+                        onValueChange={setCampus}
+                        placeholder="Select Campus"
+                        isLoading={campusesLoading}
+                        items={sortedCampuses || []}
+                    />
                 </View>
-                <View w="30%">
-                    <SelectComponent placeholder="Select Time Range" selectedValue={campusId}>
-                        {TIME_RANGES?.map((timeRange, index) => (
-                            <SelectItemComponent key={`timeRange_${index}`} label={timeRange} value={timeRange} />
-                        ))}
-                    </SelectComponent>
+                <View className="flex-1">
+                    <PickerSelect
+                        value={timeRange}
+                        items={TIME_RANGES || []}
+                        onValueChange={setTimeRange}
+                        placeholder="Select Time Range"
+                    />
                 </View>
-                <View w="30%">
-                    <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
-                        {sortedServices?.map((service, index) => (
-                            <SelectItemComponent
-                                value={service._id}
-                                key={`service-${index}`}
-                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                            />
-                        ))}
-                    </SelectComponent>
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        labelKey="name"
+                        value={serviceId}
+                        onValueChange={setService}
+                        placeholder="Select Service"
+                        isLoading={servicesLoading}
+                        items={sortedServices || []}
+                        customLabel={(service: IService) =>
+                            `${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`
+                        }
+                    />
                 </View>
             </View>
             <Row style={{ marginVertical: 4, height: ScreenHeight / 2 }}>
