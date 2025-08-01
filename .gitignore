@@ -50,3 +50,4 @@ service-account-key.json
 upload-keystore.jks
 google-services-staging.json
 google-services-prod.json
+google-services.json
