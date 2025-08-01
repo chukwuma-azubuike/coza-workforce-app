@@ -180,7 +180,7 @@ export const reportsServiceSlice = createApi({
         'GuestReport',
         'SecurityReport',
         'TransferReport',
-        'ChildCareReport'
+        'ChildCareReport',
     ],
 
     refetchOnFocus: true,
@@ -199,7 +199,7 @@ export const reportsServiceSlice = createApi({
                 'ChildCareReport',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -214,7 +214,7 @@ export const reportsServiceSlice = createApi({
                 'Report',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -229,7 +229,7 @@ export const reportsServiceSlice = createApi({
                 'AttendanceReport',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -244,7 +244,7 @@ export const reportsServiceSlice = createApi({
                 'GuestReport',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -259,7 +259,7 @@ export const reportsServiceSlice = createApi({
                 'SecurityReport',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -274,7 +274,7 @@ export const reportsServiceSlice = createApi({
                 'TransferReport',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -289,7 +289,7 @@ export const reportsServiceSlice = createApi({
                 { type: 'ServiceReport', id: _id },
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -304,7 +304,7 @@ export const reportsServiceSlice = createApi({
                 'GSPReport',
                 serviceId ? { type: 'ServiceReport', id: serviceId } : 'Report',
                 campusId ? { type: 'CampusReport', id: campusId } : 'Report',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (res: IDefaultResponse<IGSPReport>) => res.data,
@@ -378,7 +378,7 @@ export const reportsServiceSlice = createApi({
                 { type: 'DepartmentReport', id: departmentId },
                 { type: 'ServiceReport', id: serviceId },
                 { type: 'CampusReport', id: campusId },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (res: IDefaultResponse<IDepartmentReportResponse>) => res.data,
@@ -396,7 +396,7 @@ export const reportsServiceSlice = createApi({
             providesTags: (result, error, { serviceId, campusId }) => [
                 { type: 'ServiceReport', id: serviceId },
                 { type: 'CampusReport', id: campusId },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res.data,
@@ -410,7 +410,7 @@ export const reportsServiceSlice = createApi({
 
             providesTags: (result, error, departmentId) => [
                 { type: 'DepartmentReport', id: departmentId },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => res.data,
@@ -427,7 +427,7 @@ export const reportsServiceSlice = createApi({
                 'GSPReport',
                 { type: 'CampusReport', id: campusId },
                 'GlobalReport',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -438,10 +438,7 @@ export const reportsServiceSlice = createApi({
                 params,
             }),
 
-            providesTags: (result, error, { campusId }) => [
-                { type: 'CampusReport', id: campusId },
-                SERVICE_URL
-            ],
+            providesTags: (result, error, { campusId }) => [{ type: 'CampusReport', id: campusId }, SERVICE_URL],
 
             transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
         }),

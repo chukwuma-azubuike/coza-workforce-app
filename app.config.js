@@ -30,8 +30,8 @@ const getDynamicUniqueIdentifier = (platform, baseConfig) => {
     return baseIdentifier; // Production uses the base identifier
 };
 
-const getDynamicAppName = (baseConfig) => {
-    const baseName = baseConfig.name || "COZA Workforce"; // Use original name or fallback
+const getDynamicAppName = baseConfig => {
+    const baseName = baseConfig.name || 'COZA Workforce'; // Use original name or fallback
     if (IS_DEV) {
         return `${baseName} Dev`;
     }
@@ -42,14 +42,14 @@ const getDynamicAppName = (baseConfig) => {
 };
 
 // Get version code for Android
-const getAndroidVersionCode = (baseConfig) => {
+const getAndroidVersionCode = baseConfig => {
     const baseVersionCode = baseConfig.android?.versionCode || 1;
     return baseVersionCode;
 };
 
 // Get build number for iOS
-const getIOSBuildNumber = (baseConfig) => {
-    const baseBuildNumber = parseInt(baseConfig.ios?.buildNumber || "1", 10);
+const getIOSBuildNumber = baseConfig => {
+    const baseBuildNumber = parseInt(baseConfig.ios?.buildNumber || '1', 10);
 
     if (IS_DEV) {
         return `${baseBuildNumber}.0`;
@@ -69,7 +69,7 @@ const getGoogleServicesJson = () => {
         googleServicesFile = './google-services-staging.json';
     }
 
-    return googleServicesFile
+    return googleServicesFile;
 };
 
 export default ({ config }) => {
@@ -86,7 +86,7 @@ export default ({ config }) => {
     } else {
         config.ios = {
             bundleIdentifier: getDynamicUniqueIdentifier('ios', config),
-            buildNumber: getIOSBuildNumber(config)
+            buildNumber: getIOSBuildNumber(config),
         };
     }
 
@@ -98,14 +98,14 @@ export default ({ config }) => {
     } else {
         config.android = {
             package: getDynamicUniqueIdentifier('android', config),
-            versionCode: getAndroidVersionCode(config)
+            versionCode: getAndroidVersionCode(config),
         };
     }
 
     // Make sure APP_VARIANT is added to extra
     config.extra = {
         ...(config.extra || {}),
-        APP_VARIANT: process.env.APP_VARIANT || 'production'
+        APP_VARIANT: process.env.APP_VARIANT || 'production',
     };
 
     // The 'config' object has now been modified with your dynamic values.

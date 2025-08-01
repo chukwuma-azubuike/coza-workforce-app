@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React, { memo } from 'react';
 import { View, Pressable, Image } from 'react-native';
 import { Button } from '~/components/ui/button';

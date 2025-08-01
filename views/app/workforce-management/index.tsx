@@ -28,7 +28,7 @@ const WorkforceSummary: React.FC = () => {
         handleReroute();
     }, []);
 
-    return <ViewWrapper>{null}</ViewWrapper>;
+    return <ViewWrapper className="flex-1">{null}</ViewWrapper>;
 };
 
 export default React.memo(WorkforceSummary);

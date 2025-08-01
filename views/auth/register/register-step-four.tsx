@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepFour, IRegistrationPageStep } from './types';

@@ -12,19 +12,22 @@ function transformToSections<T>(
 ): Section<T>[] {
     if (!array || array.length === 0) return [];
 
-    const groups = array.reduce((acc, item) => {
-        // Get the raw timestamp. You can check for its existence if necessary.
-        let timestamp = (item as any)[key];
+    const groups = array.reduce(
+        (acc, item) => {
+            // Get the raw timestamp. You can check for its existence if necessary.
+            let timestamp = (item as any)[key];
 
-        // Format it if grouping by "createdAt"
-        let groupKey = dayjs(timestamp).format(format);
+            // Format it if grouping by "createdAt"
+            let groupKey = dayjs(timestamp).format(format);
 
-        if (!acc[groupKey]) {
-            acc[groupKey] = [];
-        }
-        acc[groupKey].push(item);
-        return acc;
-    }, {} as Record<string, T[]>);
+            if (!acc[groupKey]) {
+                acc[groupKey] = [];
+            }
+            acc[groupKey].push(item);
+            return acc;
+        },
+        {} as Record<string, T[]>
+    );
 
     // Convert the groups object into an array of sections.
     return Object.entries(groups).map(([title, data]) => ({ title, data }));

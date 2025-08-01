@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import React from 'react';
 import { Alert, CloseIcon, IconButton, useToast } from 'native-base';
 import { ResponsiveValue } from 'native-base/lib/typescript/components/types';
@@ -53,8 +53,7 @@ const ToastUI = ({ id, status, variant, title, description, isClosable, ...rest 
                         />
                     ) : null}
                 </View>
-                <Text
-                    color={variant === 'solid' ? 'lightText' : variant !== 'outline' ? 'darkText' : null}>
+                <Text color={variant === 'solid' ? 'lightText' : variant !== 'outline' ? 'darkText' : null}>
                     {description}
                 </Text>
             </View>

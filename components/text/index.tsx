@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { TextProps } from 'react-native';
 
@@ -18,7 +18,7 @@ export enum TEXT_SIZE {
 const TextComponent: React.FC<ITextComponent> = ({ bold, ...props }) => {
     const { textColor } = useAppColorMode();
 
-    return (<Text numberOfLines={1} lineBreakMode="tail" ellipsizeMode="tail" {...props} />);
+    return <Text numberOfLines={1} lineBreakMode="tail" ellipsizeMode="tail" {...props} />;
 };
 
 export default TextComponent;

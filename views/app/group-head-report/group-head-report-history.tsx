@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { memo } from 'react';
@@ -34,9 +34,7 @@ export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
             accessibilityRole="button"
             style={{ flex: 1 }}
         >
-            <View
-                className="py-12 items-center justify-between px-12"
-            >
+            <View className="py-12 items-center justify-between px-12">
                 <View space={6} className="items-center">
                     <View className="justify-between">
                         <>

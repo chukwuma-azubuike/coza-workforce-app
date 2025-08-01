@@ -4,7 +4,7 @@ import Empty from '@components/atoms/empty';
 
 const Settings: React.FC = () => {
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             <Empty />
         </ViewWrapper>
     );

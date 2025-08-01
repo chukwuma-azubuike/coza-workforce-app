@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import { View } from 'native-base';
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -93,21 +93,21 @@ const ChurchGrowth: React.FC = () => {
     return (
         <>
             <View justifyContent="space-around" w="100%" mb={4} space={10} position="static" top={3} className="px-4">
-                <View  w="30%">
+                <View w="30%">
                     <SelectComponent placeholder="Select Campus" selectedValue={campusId} onValueChange={setCampus}>
                         {sortedCampuses?.map((campus, index) => (
                             <SelectItemComponent key={index} label={campus.campusName} value={campus._id} />
                         ))}
                     </SelectComponent>
                 </View>
-                <View  w="30%">
+                <View w="30%">
                     <SelectComponent placeholder="Select Time Range" selectedValue={campusId}>
                         {TIME_RANGES?.map((timeRange, index) => (
                             <SelectItemComponent key={`timeRange_${index}`} label={timeRange} value={timeRange} />
                         ))}
                     </SelectComponent>
                 </View>
-                <View  w="30%">
+                <View w="30%">
                     <SelectComponent placeholder="Select Service" selectedValue={serviceId} onValueChange={setService}>
                         {sortedServices?.map((service, index) => (
                             <SelectItemComponent

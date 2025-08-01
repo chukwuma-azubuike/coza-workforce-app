@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import { Col, Row } from '@components/composite/row';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Alert } from 'native-base';
@@ -51,7 +51,13 @@ const ChurchGrowthSummary: React.FC = () => {
                 <Row gutter={16}>
                     <Col sm={24} md={12} lg={24}>
                         <View alignItems="center" justifyContent="space-between" space={2}>
-                            <Text fontSize="4xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
+                            <Text
+                                fontSize="4xl"
+                                color="coolGray.800"
+                                ellipsizeMode="tail"
+                                numberOfLines={1}
+                                className="font-bold"
+                            >
                                 {souls}
                             </Text>
                             <View flex={1}>
@@ -85,7 +91,13 @@ const ChurchGrowthSummary: React.FC = () => {
                     </Col>
                     <Col sm={24} md={12} lg={24}>
                         <View alignItems="center" justifyContent="space-between" space={2}>
-                            <Text fontSize="4xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
+                            <Text
+                                fontSize="4xl"
+                                color="coolGray.800"
+                                ellipsizeMode="tail"
+                                numberOfLines={1}
+                                className="font-bold"
+                            >
                                 {attendance}
                             </Text>
                             <View flex={1}>
@@ -119,7 +131,13 @@ const ChurchGrowthSummary: React.FC = () => {
                     </Col>
                     <Col sm={24} md={12} lg={24}>
                         <View alignItems="center" justifyContent="space-between">
-                            <Text fontSize="xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
+                            <Text
+                                fontSize="xl"
+                                color="coolGray.800"
+                                ellipsizeMode="tail"
+                                numberOfLines={1}
+                                className="font-bold"
+                            >
                                 {currentPeriodHighestCampusAttendance}
                             </Text>
                             <View alignItems="center">
@@ -152,7 +170,13 @@ const ChurchGrowthSummary: React.FC = () => {
 
                     <Col sm={24} md={12} lg={24}>
                         <View alignItems="center" justifyContent="space-between">
-                            <Text fontSize="xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
+                            <Text
+                                fontSize="xl"
+                                color="coolGray.800"
+                                ellipsizeMode="tail"
+                                numberOfLines={1}
+                                className="font-bold"
+                            >
                                 {currentHighestGrowingCampus}
                             </Text>
                             <View alignItems="center">
@@ -196,7 +220,13 @@ const ChurchGrowthSummary: React.FC = () => {
 
                     <Col sm={24} md={24} lg={24} style={{ width: '100%' }}>
                         <View alignItems="center" justifyContent="space-between">
-                            <Text fontSize="xl" color="coolGray.800" ellipsizeMode="tail" numberOfLines={1} className="font-bold">
+                            <Text
+                                fontSize="xl"
+                                color="coolGray.800"
+                                ellipsizeMode="tail"
+                                numberOfLines={1}
+                                className="font-bold"
+                            >
                                 {pendingCampusReports} Campuses
                             </Text>
                             <View alignItems="center">
@@ -217,8 +247,12 @@ const ChurchGrowthSummary: React.FC = () => {
                                     color="coolGray.600"
                                 >
                                     are
-                                    <Text ellipsizeMode="tail" numberOfLines={1} className="font-bold">{` yet tosend `}</Text>in their
-                                    Service report today!
+                                    <Text
+                                        ellipsizeMode="tail"
+                                        numberOfLines={1}
+                                        className="font-bold"
+                                    >{` yet tosend `}</Text>
+                                    in their Service report today!
                                 </Text>
                             </View>
                         </View>

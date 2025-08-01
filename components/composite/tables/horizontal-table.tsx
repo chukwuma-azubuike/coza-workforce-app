@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import React from 'react';
 import Empty from '../../atoms/empty';
 import If from '../if-container';

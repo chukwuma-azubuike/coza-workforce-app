@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import { Icon } from '@rneui/base';
 import dayjs from 'dayjs';
 import React from 'react';
