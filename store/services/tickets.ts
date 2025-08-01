@@ -23,14 +23,7 @@ export const ticketServiceSlice = createApi({
     reducerPath: SERVICE_URL,
     baseQuery: fetchUtils.baseQuery,
 
-    tagTypes: [
-        SERVICE_URL,
-        'Ticket',
-        'UserTickets',
-        'DepartmentTickets',
-        'CampusTickets',
-        'TicketCategories'
-    ],
+    tagTypes: [SERVICE_URL, 'Ticket', 'UserTickets', 'DepartmentTickets', 'CampusTickets', 'TicketCategories'],
 
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -49,7 +42,7 @@ export const ticketServiceSlice = createApi({
                 { type: 'DepartmentTickets', id: departmentId },
                 { type: 'CampusTickets', id: campusId },
                 'Ticket',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketResponse) => response.data,
@@ -68,7 +61,7 @@ export const ticketServiceSlice = createApi({
                 { type: 'UserTickets', id: userId },
                 { type: 'DepartmentTickets', id: departmentId },
                 { type: 'CampusTickets', id: campusId },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketResponse) => response.data,
@@ -81,10 +74,7 @@ export const ticketServiceSlice = createApi({
                 body: { userId: payload.userId, comment: payload.comment },
             }),
 
-            invalidatesTags: (result, error, { _id }) => [
-                { type: 'Ticket', id: _id },
-                SERVICE_URL
-            ],
+            invalidatesTags: (result, error, { _id }) => [{ type: 'Ticket', id: _id }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<ITicket>) => response.data,
         }),
@@ -96,10 +86,7 @@ export const ticketServiceSlice = createApi({
                 body: { userId: payload.userId, comment: payload.comment },
             }),
 
-            invalidatesTags: (result, error, { _id }) => [
-                { type: 'Ticket', id: _id },
-                SERVICE_URL
-            ],
+            invalidatesTags: (result, error, { _id }) => [{ type: 'Ticket', id: _id }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<ITicket>) => response.data,
         }),
@@ -110,12 +97,12 @@ export const ticketServiceSlice = createApi({
                 method: REST_API_VERBS.DELETE,
             }),
 
-            invalidatesTags: (result) => [
+            invalidatesTags: result => [
                 { type: 'Ticket', id: result?._id },
                 'UserTickets',
                 'DepartmentTickets',
                 'CampusTickets',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketResponse) => response.data,
@@ -127,12 +114,12 @@ export const ticketServiceSlice = createApi({
                 method: REST_API_VERBS.PATCH,
             }),
 
-            invalidatesTags: (result) => [
+            invalidatesTags: result => [
                 { type: 'Ticket', id: result?._id },
                 'UserTickets',
                 'DepartmentTickets',
                 'CampusTickets',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketResponse) => response.data,
@@ -150,7 +137,7 @@ export const ticketServiceSlice = createApi({
                 arg.userId ? { type: 'UserTickets', id: arg.userId } : 'Ticket',
                 arg.departmentId ? { type: 'DepartmentTickets', id: arg.departmentId } : 'Ticket',
                 arg.campusId ? { type: 'CampusTickets', id: arg.campusId } : 'Ticket',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketListResponse) => response.data,
@@ -165,7 +152,7 @@ export const ticketServiceSlice = createApi({
             providesTags: (result = []) => [
                 ...result.map(({ _id }) => ({ type: 'Ticket' as const, id: _id })),
                 { type: 'UserTickets', id: result[0]?.user?._id },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketListResponse) => response.data,
@@ -177,10 +164,7 @@ export const ticketServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            providesTags: (result) => [
-                { type: 'Ticket', id: result?._id },
-                SERVICE_URL
-            ],
+            providesTags: result => [{ type: 'Ticket', id: result?._id }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<ITicket>) => response.data,
         }),
@@ -194,7 +178,7 @@ export const ticketServiceSlice = createApi({
             providesTags: (result = []) => [
                 ...result.map(({ _id }) => ({ type: 'Ticket' as const, id: _id })),
                 { type: 'DepartmentTickets', id: result[0]?.department?._id },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketListResponse) => response.data,
@@ -209,7 +193,7 @@ export const ticketServiceSlice = createApi({
             providesTags: (result = []) => [
                 ...result.map(({ _id }) => ({ type: 'Ticket' as const, id: _id })),
                 { type: 'CampusTickets', id: result[0]?.campus?._id },
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: ITicketListResponse) => response.data,
@@ -221,10 +205,7 @@ export const ticketServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            providesTags: (result, error, { campusId }) => [
-                { type: 'CampusTickets', id: campusId },
-                SERVICE_URL
-            ],
+            providesTags: (result, error, { campusId }) => [{ type: 'CampusTickets', id: campusId }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<number>) => response.data,
         }),

@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Icon } from '@rneui/themed';
@@ -151,7 +151,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
 
                             return (
                                 <View w="100%" space={4}>
-                                    <View  isInvalid={!!errors?.campus && touched.campus}>
+                                    <View isInvalid={!!errors?.campus && touched.campus}>
                                         <Label>Campus</Label>
                                         <SelectComponent
                                             valueKey="_id"
@@ -184,7 +184,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             {errors?.campus}
                                         </FormErrorMessage>
                                     </View>
-                                    <View  isInvalid={!!errors?.department && touched.department}>
+                                    <View isInvalid={!!errors?.department && touched.department}>
                                         <Label>Department</Label>
                                         <SelectComponent
                                             valueKey="_id"
@@ -218,7 +218,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             {errors?.department}
                                         </FormErrorMessage>
                                     </View>
-                                    <View  isInvalid={!!errors?.worker && touched.worker}>
+                                    <View isInvalid={!!errors?.worker && touched.worker}>
                                         <Label>Worker</Label>
                                         <SelectComponent
                                             valueKey="_id"
@@ -252,7 +252,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                             {errors?.worker}
                                         </FormErrorMessage>
                                     </View>
-                                    <View  isInvalid={!!errors?.role && touched.role}>
+                                    <View isInvalid={!!errors?.role && touched.role}>
                                         <Label>Role</Label>
                                         <SelectComponent
                                             valueKey="_id"
@@ -295,7 +295,8 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                                                 flexDirection="row"
                                                 alignItems="center"
                                                 justifyContent="space-between"
-                                                className="py-2 px-3">
+                                                className="py-2 px-3"
+                                            >
                                                 <View>
                                                     <Text>Campus: {item.campusName}</Text>
                                                     <Text>Department: {item.departmentName}</Text>

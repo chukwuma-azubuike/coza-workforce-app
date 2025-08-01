@@ -4,7 +4,7 @@ import Empty from '@components/atoms/empty';
 
 const Notifications: React.FC = () => {
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             <Empty />
         </ViewWrapper>
     );

@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Heading } from 'native-base';
@@ -72,7 +72,14 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
                     isLoading || isFetching ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <View key={index} flexDirection="row" alignItems="center" justifyItems="center" my={2} className="px-2">
+                        <View
+                            key={index}
+                            flexDirection="row"
+                            alignItems="center"
+                            justifyItems="center"
+                            my={2}
+                            className="px-2"
+                        >
                             <Text
                                 flexWrap="wrap"
                                 fontWeight="400"

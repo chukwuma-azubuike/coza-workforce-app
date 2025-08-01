@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React from 'react';
@@ -141,7 +141,7 @@ const GroupHeadReports: React.FC<{ params: { departmentId: string; departmentNam
 
     return (
         <ErrorBoundary>
-            <ViewWrapper>
+            <ViewWrapper className="flex-1">
                 <FlatListComponent
                     columns={reportColumns}
                     onRefresh={reportsRefetch}

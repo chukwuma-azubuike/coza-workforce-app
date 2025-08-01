@@ -12,7 +12,7 @@ const Leaders: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, 
     };
 
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             <AddButtonComponent zIndex={10} onPress={gotoService} />
         </ViewWrapper>
     );

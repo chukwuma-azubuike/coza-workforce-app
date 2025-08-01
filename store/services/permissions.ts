@@ -34,7 +34,14 @@ export const permissionsServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
-    tagTypes: [SERVICE_URL, 'Permission', 'UserPermissions', 'TeamPermissions', 'CampusPermissions', 'LeaderPermissions'],
+    tagTypes: [
+        SERVICE_URL,
+        'Permission',
+        'UserPermissions',
+        'TeamPermissions',
+        'CampusPermissions',
+        'LeaderPermissions',
+    ],
 
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -54,7 +61,7 @@ export const permissionsServiceSlice = createApi({
                 'TeamPermissions',
                 'LeaderPermissions',
                 'Permission',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
@@ -67,12 +74,12 @@ export const permissionsServiceSlice = createApi({
                 body: patch,
             }),
 
-            invalidatesTags: (result) => [
+            invalidatesTags: result => [
                 { type: 'Permission', id: result?._id },
                 'TeamPermissions',
                 'CampusPermissions',
                 'LeaderPermissions',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
@@ -85,22 +92,22 @@ export const permissionsServiceSlice = createApi({
                 body: { comment },
             }),
 
-            invalidatesTags: (result) => [
+            invalidatesTags: result => [
                 { type: 'Permission', id: result?._id },
                 'TeamPermissions',
                 'CampusPermissions',
                 'LeaderPermissions',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
         getPermissions: endpoint.query<IPermission[], Omit<IDefaultQueryParams, 'userId'>>({
-            query: params => ({ 
-                url: `/${SERVICE_URL}/filter`, 
-                method: REST_API_VERBS.GET, 
-                params 
+            query: params => ({
+                url: `/${SERVICE_URL}/filter`,
+                method: REST_API_VERBS.GET,
+                params,
             }),
 
             providesTags: (result = [], error, arg) => [
@@ -109,30 +116,27 @@ export const permissionsServiceSlice = createApi({
                 arg.departmentId ? 'TeamPermissions' : 'Permission',
                 arg.campusId ? 'CampusPermissions' : 'Permission',
                 arg.roleId ? 'LeaderPermissions' : 'Permission',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: IDefaultResponse<IPermission[]>) => response.data,
         }),
 
         getPermissionById: endpoint.query<IPermission, IPermission['_id']>({
-            query: id => ({ 
-                url: `/${SERVICE_URL}/${id}`, 
-                method: REST_API_VERBS.GET 
+            query: id => ({
+                url: `/${SERVICE_URL}/${id}`,
+                method: REST_API_VERBS.GET,
             }),
 
-            providesTags: (result, error, id) => [
-                { type: 'Permission', id },
-                SERVICE_URL
-            ],
+            providesTags: (result, error, id) => [{ type: 'Permission', id }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<IPermission>) => response.data,
         }),
 
         getPermissionCategories: endpoint.query<IPermissionCategory[], void>({
-            query: () => ({ 
-                url: `/permission-categories`, 
-                method: REST_API_VERBS.GET 
+            query: () => ({
+                url: `/permission-categories`,
+                method: REST_API_VERBS.GET,
             }),
 
             providesTags: [SERVICE_URL],

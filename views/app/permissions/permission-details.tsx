@@ -258,8 +258,8 @@ const PermissionDetails: React.FC = () => {
                                 {!isHOD && !isAHOD && !isCampusPastor
                                     ? "Leader's comment"
                                     : (isAHOD || isHOD) && requestorId === user.userId
-                                    ? "Pastor's comment"
-                                    : 'Comment'}
+                                      ? "Pastor's comment"
+                                      : 'Comment'}
                             </Text>
                             {!permission?.comment && (
                                 <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />

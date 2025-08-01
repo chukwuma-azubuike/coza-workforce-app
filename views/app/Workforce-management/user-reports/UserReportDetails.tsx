@@ -139,7 +139,7 @@ const UserReportDetails: React.FC<{ userId?: string } | undefined> = props => {
     });
 
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             {!userId ? (
                 <Loading />
             ) : (

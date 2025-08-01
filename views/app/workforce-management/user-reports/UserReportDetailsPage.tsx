@@ -179,7 +179,7 @@ const UserReportDetailsPage: React.FC<NativeStackScreenProps<ParamListBase>> = (
     const [index, setIndex] = React.useState(0);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             {!userId ? (
                 <Loading />
             ) : (

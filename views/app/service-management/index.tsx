@@ -10,7 +10,7 @@ const ServiceManagement: React.FC = () => {
     };
 
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             <AllService />
             <AddButtonComponent className="!bottom-24 !right-8" onPress={gotoService} />
         </ViewWrapper>

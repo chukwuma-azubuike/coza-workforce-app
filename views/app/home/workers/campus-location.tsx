@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 import React from 'react';
 import { HomeContext } from '..';
 import { THEME_CONFIG } from '@config/appConfig';

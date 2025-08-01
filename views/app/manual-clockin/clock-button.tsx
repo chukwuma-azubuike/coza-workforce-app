@@ -262,10 +262,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         canClockIn && !disabled
                             ? 'bg-primary'
                             : canClockOut
-                            ? ' bg-rose-400'
-                            : disabled
-                            ? 'bg-gray-400'
-                            : 'bg-gray-400'
+                              ? ' bg-rose-400'
+                              : disabled
+                                ? 'bg-gray-400'
+                                : 'bg-gray-400'
                     )}
                 >
                     <View className="flex-1 justify-center items-center">

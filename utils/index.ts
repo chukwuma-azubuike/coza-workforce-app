@@ -300,10 +300,10 @@ class Utils {
             date && !time
                 ? dayjs(date).subtract(1, 'hour').unix()
                 : time && !date
-                ? dayjs(time).subtract(1, 'hour').unix()
-                : time && date
-                ? dayjs(concatedTime).subtract(1, 'hour').unix()
-                : dayjs(date).unix();
+                  ? dayjs(time).subtract(1, 'hour').unix()
+                  : time && date
+                    ? dayjs(concatedTime).subtract(1, 'hour').unix()
+                    : dayjs(date).unix();
 
         return res;
     };

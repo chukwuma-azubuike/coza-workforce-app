@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { View } from 'react-native';
 import { ParamListBase, useNavigation } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';

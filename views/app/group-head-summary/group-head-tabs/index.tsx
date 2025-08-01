@@ -79,7 +79,7 @@ const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase
     }, []);
 
     return (
-        <ViewWrapper>
+        <ViewWrapper className="flex-1">
             <TabComponent
                 onIndexChange={setIndex}
                 renderScene={renderScene}

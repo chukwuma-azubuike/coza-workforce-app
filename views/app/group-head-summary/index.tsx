@@ -19,7 +19,7 @@ const CampusGroupHeads: React.FC<NativeStackScreenProps<ParamListBase>> = ({ nav
         handleReroute();
     }, []);
 
-    return <ViewWrapper>{null}</ViewWrapper>;
+    return <ViewWrapper className="flex-1">{null}</ViewWrapper>;
 };
 
 export default CampusGroupHeads;

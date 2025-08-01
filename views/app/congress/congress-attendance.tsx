@@ -482,10 +482,10 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
                                     +score <= 30
                                         ? 'text-destructive'
                                         : +score <= 60
-                                        ? 'text-orange-400'
-                                        : +score < 70
-                                        ? 'text-blue-500'
-                                        : +score >= 70 && 'text-green-500'
+                                          ? 'text-orange-400'
+                                          : +score < 70
+                                            ? 'text-blue-500'
+                                            : +score >= 70 && 'text-green-500'
                                 )}
                             >
                                 {score || 0}

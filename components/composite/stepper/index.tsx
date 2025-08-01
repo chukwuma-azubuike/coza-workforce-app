@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 /* eslint-disable react-native/no-inline-styles */
 import * as React from 'react';
 import { StyleSheet, View } from 'react-native';

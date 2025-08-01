@@ -18,14 +18,7 @@ export const servicesServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
-    tagTypes: [
-        SERVICE_URL,
-        'Service',
-        'LatestService',
-        'ServiceList',
-        'CampusServices',
-        'PaginatedServices'
-    ],
+    tagTypes: [SERVICE_URL, 'Service', 'LatestService', 'ServiceList', 'CampusServices', 'PaginatedServices'],
 
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -39,13 +32,13 @@ export const servicesServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: (result) => [
+            invalidatesTags: result => [
                 { type: 'Service', id: result?._id },
                 { type: 'PaginatedServices', id: 'LIST' },
                 'ServiceList',
                 'LatestService',
                 'CampusServices',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -61,7 +54,7 @@ export const servicesServiceSlice = createApi({
                 'ServiceList',
                 'LatestService',
                 'CampusServices',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -76,7 +69,7 @@ export const servicesServiceSlice = createApi({
                 'ServiceList',
                 'LatestService',
                 'CampusServices',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -89,7 +82,7 @@ export const servicesServiceSlice = createApi({
                 { type: 'Service', id: result?._id },
                 { type: 'CampusServices', id: campusId },
                 'LatestService',
-                SERVICE_URL
+                SERVICE_URL,
             ],
         }),
 
@@ -105,7 +98,7 @@ export const servicesServiceSlice = createApi({
                 { type: 'PaginatedServices', id: 'LIST' },
                 arg.campusId ? { type: 'CampusServices', id: arg.campusId } : 'ServiceList',
                 'ServiceList',
-                SERVICE_URL
+                SERVICE_URL,
             ],
 
             transformResponse: (response: IDefaultResponse<IService[]>) => response.data,
@@ -114,10 +107,7 @@ export const servicesServiceSlice = createApi({
         getServiceById: endpoint.query<IService, string>({
             query: id => `/${SERVICE_URL}/${id}`,
 
-            providesTags: (result, error, id) => [
-                { type: 'Service', id },
-                SERVICE_URL
-            ],
+            providesTags: (result, error, id) => [{ type: 'Service', id }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<IService>) => response.data,
         }),

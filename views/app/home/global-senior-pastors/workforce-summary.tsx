@@ -1,5 +1,5 @@
-import { Text } from "~/components/ui/text";
-import { View } from "react-native";
+import { Text } from '~/components/ui/text';
+import { View } from 'react-native';
 import React from 'react';
 import { StatCardComponent } from '@components/composite/card';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -109,7 +109,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     return (
         <>
             <View justifyContent="space-around" w="100%" mb={3} space={10} position="static" className="px-4">
-                <View  w="50%">
+                <View w="50%">
                     <SelectComponent
                         valueKey="_id"
                         displayKey="campusName"
@@ -123,7 +123,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                         ))}
                     </SelectComponent>
                 </View>
-                <View  w="50%">
+                <View w="50%">
                     <SelectComponent
                         valueKey="_id"
                         displayKey={['name', 'clockInStartTime']}

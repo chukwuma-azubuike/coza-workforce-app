@@ -1,4 +1,4 @@
-import { Text } from "~/components/ui/text";
+import { Text } from '~/components/ui/text';
 
 import dayjs from 'dayjs';
 import React from 'react';
@@ -28,8 +28,8 @@ const Stat = React.memo(({ time, label, icon, iconType, difference }: IStatProps
                     label === 'Clock out'
                         ? THEME_CONFIG.rose
                         : label === 'Service hrs'
-                        ? THEME_CONFIG.gray
-                        : THEME_CONFIG.primaryLight
+                          ? THEME_CONFIG.gray
+                          : THEME_CONFIG.primaryLight
                 }
             />
             {difference ? (
