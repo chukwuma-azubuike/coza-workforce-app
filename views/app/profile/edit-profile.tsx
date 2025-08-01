@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 import React, { useState } from 'react';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import DateTimePicker from '~/components/ui/date-time-picker';
 import useModal from '@hooks/modal/useModal';
 import { useNavigation } from '@react-navigation/native';
@@ -19,6 +18,7 @@ import { PhoneInput } from '~/components/ui/phone-input';
 import { ICountry } from 'react-native-international-phone-number';
 import { Button } from '~/components/ui/button';
 import formatToE164 from '~/utils/formatToE164';
+import PickerSelect from '~/components/ui/picker-select';
 
 const EditProfile: React.FC = () => {
     const userData = useLocalSearchParams() as unknown as IEditProfilePayload;
@@ -158,20 +158,17 @@ const EditProfile: React.FC = () => {
                                 <If condition={!!userData?.gender}>
                                     <View className="gap-1">
                                         <Label>Gender</Label>
-                                        <SelectComponent
+                                        <PickerSelect
                                             valueKey="_id"
-                                            displayKey="name"
-                                            selectedValue={values?.gender}
+                                            labelKey="name"
                                             placeholder="Enter your gender"
+                                            value={values?.gender}
                                             items={[
                                                 { _id: 'M', name: 'Male' },
                                                 { _id: 'F', name: 'Female' },
                                             ]}
                                             onValueChange={handleChange('gender') as any}
-                                        >
-                                            <SelectItemComponent label="Male" value="M" />
-                                            <SelectItemComponent label="Female" value="F" />
-                                        </SelectComponent>
+                                        />
                                         {errors?.gender && <FormErrorMessage>{errors?.gender}</FormErrorMessage>}
                                     </View>
                                 </If>
@@ -179,11 +176,10 @@ const EditProfile: React.FC = () => {
                                     <ErrorBoundary>
                                         <View className="gap-1">
                                             <Label>Marital Status</Label>
-                                            <SelectComponent
-                                                selectedValue={values?.maritalStatus}
-                                                onValueChange={handleChange('maritalStatus') as any}
+                                            <PickerSelect
                                                 valueKey="_id"
-                                                displayKey="name"
+                                                labelKey="name"
+                                                value={values?.maritalStatus}
                                                 placeholder="Enter your marital status"
                                                 items={[
                                                     { _id: 'Single', name: 'Single' },
@@ -192,13 +188,8 @@ const EditProfile: React.FC = () => {
                                                     { _id: 'Separated', name: 'Separated' },
                                                     { _id: 'Divorced', name: 'Divorced' },
                                                 ]}
-                                            >
-                                                <SelectItemComponent label="Single" value="Single" />
-                                                <SelectItemComponent label="Married" value="Married" />
-                                                <SelectItemComponent label="Widowed" value="Widowed" />
-                                                <SelectItemComponent label="Separated" value="Separated" />
-                                                <SelectItemComponent label="Divorced" value="Divorced" />
-                                            </SelectComponent>
+                                                onValueChange={handleChange('maritalStatus') as any}
+                                            />
                                             {errors?.maritalStatus && (
                                                 <FormErrorMessage>{errors?.maritalStatus}</FormErrorMessage>
                                             )}

@@ -2,7 +2,6 @@ import { Text } from '~/components/ui/text';
 import React from 'react';
 import { GlobalReportContext } from './context';
 import { TouchableOpacity, View } from 'react-native';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import ViewWrapper from '@components/layout/viewWrapper';
@@ -18,6 +17,7 @@ import { useGetGHSubmittedReportsByServiceIdQuery } from '@store/services/grouph
 import BottomSheetComponent from '@components/composite/bottom-sheet';
 import { router } from 'expo-router';
 import { Separator } from '~/components/ui/separator';
+import PickerSelect from '~/components/ui/picker-select';
 
 export const GlobalReportListRow: React.FC<IGlobalReport> = props => {
     const { isMobile } = useMediaQuery();
@@ -158,22 +158,17 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
         <ViewWrapper className="py-0 px-2" noPadding refreshing={isLoading || servicesLoading || isFetching}>
             <View className="flex-1">
                 <View className="w-100 md:h-1/3 flex-1 gap-3 pt-4">
-                    <SelectComponent
+                    <PickerSelect
                         valueKey="_id"
-                        selectedValue={serviceId}
-                        placeholder="Select Service"
-                        onValueChange={setService as any}
-                        displayKey={['name', 'clockInStartTime']}
+                        labelKey="name"
+                        value={serviceId}
+                        onValueChange={setService}
                         items={sortedServices || []}
-                    >
-                        {sortedServices?.map((service, index) => (
-                            <SelectItemComponent
-                                value={service._id}
-                                key={`service-${index}`}
-                                label={`${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
-                            />
-                        ))}
-                    </SelectComponent>
+                        placeholder="Select Service"
+                        customLabel={service =>
+                            `${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`
+                        }
+                    />
                     <View>
                         <View style={{ height: '65%' }}>
                             <Text className="font-bold">Campus Reports</Text>

@@ -1,5 +1,4 @@
 import { View } from 'react-native';
-import { SelectComponent, SelectItemComponent } from '@components/atoms/select';
 import { StatCardComponent } from '@components/composite/card';
 import { BarChart, IStackedHistogramData, PieChart, StackedHistogram } from '@components/composite/chart';
 import { GridItem, ResponsiveGrid } from '@components/layout/responsive-grid';
@@ -7,7 +6,6 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { THEME_CONFIG } from '@config/appConfig';
 import useScreenFocus from '@hooks/focus';
 import useMediaQuery from '@hooks/media-query';
-import { Icon, ScreenWidth } from '@rneui/base';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
@@ -176,26 +174,6 @@ const CongressReport: React.FC = () => {
                     onValueChange={handleUserCategory}
                     isLoading={campusLoading || campusIsFetching}
                 />
-
-                {/* <SelectComponent
-                    selectedValue={userCategory}
-                    onValueChange={userCategories}
-                    w={isMobile ? ScreenWidth : ScreenWidth / 3.5}
-                    dropdownIcon={
-                        <View mr={2} space={2}>
-                            <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
-                        </View>
-                    }
-                >
-                    {userCategories?.map((campus, index) => (
-                        <SelectItemComponent
-                            value={campus.key}
-                            key={`campus-${index}`}
-                            label={campus.label}
-                            isLoading={campusLoading || campusIsFetching}
-                        />
-                    ))}
-                </SelectComponent> */}
                 <PickerSelect
                     valueKey="_id"
                     value={campusId}
@@ -205,26 +183,6 @@ const CongressReport: React.FC = () => {
                     onValueChange={handleCampusChange}
                     isLoading={campusLoading || campusIsFetching}
                 />
-                {/* <SelectComponent
-                    selectedValue={campusId}
-                    onValueChange={handleCampusChange}
-                    w={isMobile ? ScreenWidth - 36 : ScreenWidth / 3.5}
-                    dropdownIcon={
-                        <View mr={2} space={2}>
-                            <Icon type="entypo" name="chevron-small-down" color={THEME_CONFIG.lightGray} />
-                        </View>
-                    }
-                >
-                    <SelectItemComponent value={undefined as unknown as string} label={'All Campuses'} />
-                    {campuses?.map((campus, index) => (
-                        <SelectItemComponent
-                            value={campus._id}
-                            key={`campus-${index}`}
-                            label={campus.campusName}
-                            isLoading={campusLoading || campusIsFetching}
-                        />
-                    ))}
-                </SelectComponent> */}
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"
@@ -234,29 +192,6 @@ const CongressReport: React.FC = () => {
                     onValueChange={handleService}
                     value={undefined as unknown as string}
                 />
-                {/* <SelectComponent
-                    selectedValue={serviceId}
-                    placeholder="Choose session"
-                    onValueChange={handleService}
-                    w={isMobile ? ScreenWidth - 36 : ScreenWidth / 3.5}
-                >
-                    <SelectItemComponent
-                        key="all-sessions"
-                        label="All Sessions"
-                        isLoading={servicesLoading}
-                        value={undefined as unknown as string}
-                    />
-                    {(pastServices || [])?.map((service, index) => (
-                        <SelectItemComponent
-                            value={service._id}
-                            key={`service-${index}`}
-                            label={`${service.name} - ${
-                                service.serviceTime ? dayjs(service.serviceTime).format('DD-MM-YYYY') : ''
-                            }`}
-                            isLoading={servicesLoading}
-                        />
-                    ))}
-                </SelectComponent> */}
             </ResponsiveGrid>
             <ResponsiveGrid>
                 <GridItem flexBasis="40%">

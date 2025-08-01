@@ -11,8 +11,8 @@ import { cn } from '~/lib/utils';
 interface PickerSelectComponentProps<T> extends Omit<PickerSelectProps, 'items'> {
     items: T[];
     value?: string;
-    labelKey: keyof T;
-    valueKey: keyof T;
+    labelKey?: keyof T;
+    valueKey?: keyof T;
     className?: string;
     customLabel?: (arg: T) => string;
     isLoading?: boolean;
@@ -32,7 +32,7 @@ function PickerSelect<T = any>({
 }: PickerSelectComponentProps<T>) {
     const [value, setValue] = useState<string | undefined>(`${inputValue}` || '');
     const selectedItem = useMemo(
-        () => items?.find(item => `${item[valueKey]}` === `${inputValue ?? value}`),
+        () => items?.find(item => (valueKey ? `${item[valueKey]}` === `${inputValue ?? value}` : item === inputValue)),
         [items, value, valueKey, inputValue]
     );
 
@@ -40,8 +40,8 @@ function PickerSelect<T = any>({
         () =>
             items?.map(item => {
                 return {
-                    label: customLabel ? customLabel(item) : (item[labelKey] as string),
-                    value: item[valueKey],
+                    label: labelKey ? (customLabel ? customLabel(item) : (item[labelKey] as string)) : (item as string),
+                    value: valueKey ? item[valueKey] : (item as string),
                 };
             }) || [],
         [items, value, valueKey, labelKey]
