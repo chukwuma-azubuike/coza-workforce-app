@@ -5,7 +5,7 @@ import React from 'react';
 import { Formik } from 'formik';
 import { ResetPasswordSchema } from '@utils/schemas';
 
-import SupportLink from '../support-link';
+import SupportLink from '~/components/SupportLink';
 import { IResetPasswordPayload, useResetPasswordMutation } from '@store/services/account';
 import useModal from '@hooks/modal/useModal';
 import { router, useLocalSearchParams } from 'expo-router';

@@ -6,7 +6,7 @@ import { EmailSchema } from '@utils/schemas';
 import { useLazySendOTPQuery, useValidateEmailOTPMutation } from '@store/services/account';
 import Utils from '@utils/index';
 import Logo from '@components/atoms/logo';
-import SupportLink from '../support-link';
+import SupportLink from '~/components/SupportLink';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';

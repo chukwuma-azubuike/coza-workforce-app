@@ -7,7 +7,7 @@ import { ILoginPayload } from '@store/types';
 import Utils from '@utils/index';
 import { useAppDispatch } from '@store/hooks';
 import Logo from '@components/atoms/logo';
-import SupportLink from '../support-link';
+import SupportLink from '~/components/SupportLink';
 import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { storeSession } from '~/store/actions/users';
 import { Input } from '~/components/ui/input';
