@@ -1,5 +1,5 @@
 import { Text } from '~/components/ui/text';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import dayjs from 'dayjs';
 import React from 'react';
 import AvatarComponent from '@components/atoms/avatar';
@@ -23,7 +23,7 @@ import {
 import { ICreateTicketPayload, ITicket } from '@store/types';
 import { Button } from '~/components/ui/button';
 import { router, useLocalSearchParams } from 'expo-router';
-import RefreshControl from '~/components/RefreshControl';
+import ViewWrapper from '~/components/layout/viewWrapper';
 
 const TicketDetails: React.FC = () => {
     const ticketParams = useLocalSearchParams() as unknown as ITicket;
@@ -252,184 +252,177 @@ const TicketDetails: React.FC = () => {
     }, [ticket?.department?._id, userId, ticket?.user?._id, ticket?.isDepartment, department?._id]);
 
     return (
-        <View>
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'position' : 'height'}>
-                <ScrollView refreshControl={<RefreshControl refreshing={isLoading} />} className="px-2 py-10">
-                    <CardComponent
-                        isLoading={isLoading || isFetching}
-                        style={{
-                            paddingVertical: 20,
-                        }}
-                        className="py-8"
-                    >
-                        <View className="gap-2">
-                            <AvatarComponent
-                                alt="ticket-pic"
-                                className="w-32 h-32 mx-auto"
-                                lastName={ticket?.user?.lastName}
-                                firstName={ticket?.user?.firstName}
-                                imageUrl={
-                                    ticket?.isIndividual
-                                        ? ticket?.user?.pictureUrl || AVATAR_FALLBACK_URL
-                                        : AVATAR_GROUP_FALLBACK_URL
-                                }
-                            />
-                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                <Text className="font-bold">Date issued</Text>
-                                <Text>{dayjs(ticket?.createdAt).format('DD/MM/YYYY - h:mm A')}</Text>
-                            </View>
-                            {ticket?.updatedAt ? (
-                                <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                    <Text className="font-bold">Last updated</Text>
-                                    <Text>{dayjs(ticket?.updatedAt).format('DD/MM/YYYY - h:mm A')}</Text>
-                                </View>
-                            ) : null}
-                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                <Text className="font-bold">Department</Text>
-                                <Text>{ticket?.department?.departmentName}</Text>
-                            </View>
-                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                <Text className="font-bold">Ticket type</Text>
-                                <Text>{ticket?.isDepartment ? 'Departmental' : 'Individual'}</Text>
-                            </View>
-
-                            <If condition={isQC || isCampusPastor || isGlobalPastor}>
-                                {issuerIsLoading ? (
-                                    <FlatListSkeleton count={1} />
-                                ) : issuer ? (
-                                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                        <Text className="font-bold">Issued by</Text>
-                                        <Text>{`${issuer?.firstName} ${issuer?.lastName}`}</Text>
-                                    </View>
-                                ) : null}
-                            </If>
-
-                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                <Text className="font-bold">Status</Text>
-                                <StatusTag>{ticket?.status}</StatusTag>
-                            </View>
-
-                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                <Text className="font-bold">Category</Text>
-                                <Text>{ticket?.category.categoryName}</Text>
-                            </View>
-
-                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
-                                <Text className="font-bold">Offender</Text>
-                                <Text>
-                                    {ticket?.isIndividual
-                                        ? `${ticket?.user?.firstName} ${ticket?.user?.lastName}`
-                                        : `${ticket?.department?.departmentName}`}
-                                </Text>
-                            </View>
-
-                            <View className="pb-4 justify-between border-b border-b-border">
-                                <Text className="mb-8 font-bold">Details</Text>
-                                <Text className="line-clamp-none">{ticket?.ticketSummary}</Text>
-                            </View>
-
-                            <View className="pb-4 justify-between  gap-2">
-                                <Text className="font-bold">Contest Comment</Text>
-                                <If condition={ticket?.isIndividual}>
-                                    {!ticket?.contestComment && (
-                                        <TextAreaComponent
-                                            onChangeText={handleChange}
-                                            value={ticket?.contestComment}
-                                            isDisabled={ticket?.status !== 'ISSUED' && ticket?.user?._id !== userId}
-                                        />
-                                    )}
-                                    {ticket?.contestComment && (
-                                        <Text className="line-clamp-none">{ticket?.contestComment}</Text>
-                                    )}
-                                </If>
-                                <If condition={ticket?.isDepartment}>
-                                    {!ticket?.contestComment && (
-                                        <TextAreaComponent
-                                            onChangeText={handleChange}
-                                            value={ticket?.contestComment}
-                                            isDisabled={
-                                                ticket?.status !== 'ISSUED' ||
-                                                ticket?.department?._id !== department?._id
-                                            }
-                                        />
-                                    )}
-                                    {ticket?.contestComment && (
-                                        <Text className="line-clamp-none">{ticket?.contestComment}</Text>
-                                    )}
-                                </If>
-                            </View>
-                            <View className="pb-4 justify-between gap-2">
-                                <Text className="font-bold">QC / M&E Reply</Text>
-                                {!ticket?.contestReplyComment && (
-                                    <TextAreaComponent
-                                        onChangeText={handleReplyChange}
-                                        isDisabled={
-                                            !isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment
-                                        }
-                                    />
-                                )}
-                                {ticket?.contestReplyComment && (
-                                    <Text className="line-clamp-none">{ticket?.contestReplyComment}</Text>
-                                )}
-                            </View>
-                            <If condition={offenderAction}>
-                                <View className="pb-4 justify-between gap-2 flex-row">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        style={{ flex: 1 }}
-                                        onPress={handleSubmit}
-                                        isLoading={contestLoading}
-                                        disabled={
-                                            (!contestComment || !!ticket?.contestComment) &&
-                                            (ticket?.status === 'ISSUED' ||
-                                                ticket?.status === 'ACKNOWLEGDED' ||
-                                                ticket?.status === 'CONTESTED')
-                                        }
-                                    >
-                                        Contest ticket
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        style={{ flex: 1 }}
-                                        onPress={handleAcknowledge}
-                                        isLoading={acknowledgeLoading}
-                                        disabled={
-                                            ticket?.status !== 'ISSUED' &&
-                                            (userId !== ticket?.user?._id || ticket?.department._id !== department._id)
-                                        }
-                                    >
-                                        Acknowledge
-                                    </Button>
-                                </View>
-                            </If>
-                            <If condition={qcAction}>
-                                <View className="pb-4 flex-row gap-2">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="flex-1"
-                                        isLoading={retractLoading}
-                                        onPress={handleRetractTicket}
-                                    >
-                                        Retract
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        className="flex-1"
-                                        isLoading={replyLoading}
-                                        onPress={handleReplySubmit}
-                                        disabled={!contestReplyComment}
-                                    >
-                                        Reply
-                                    </Button>
-                                </View>
-                            </If>
+        <ViewWrapper className="py-10" scroll refreshing={isLoading}>
+            <CardComponent
+                isLoading={isLoading || isFetching}
+                style={{
+                    paddingVertical: 20,
+                }}
+                className="py-8"
+            >
+                <View className="gap-2">
+                    <AvatarComponent
+                        alt="ticket-pic"
+                        className="w-32 h-32 mx-auto"
+                        lastName={ticket?.user?.lastName}
+                        firstName={ticket?.user?.firstName}
+                        imageUrl={
+                            ticket?.isIndividual
+                                ? ticket?.user?.pictureUrl || AVATAR_FALLBACK_URL
+                                : AVATAR_GROUP_FALLBACK_URL
+                        }
+                    />
+                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                        <Text className="font-bold">Date issued</Text>
+                        <Text>{dayjs(ticket?.createdAt).format('DD/MM/YYYY - h:mm A')}</Text>
+                    </View>
+                    {ticket?.updatedAt ? (
+                        <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                            <Text className="font-bold">Last updated</Text>
+                            <Text>{dayjs(ticket?.updatedAt).format('DD/MM/YYYY - h:mm A')}</Text>
                         </View>
-                    </CardComponent>
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </View>
+                    ) : null}
+                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                        <Text className="font-bold">Department</Text>
+                        <Text>{ticket?.department?.departmentName}</Text>
+                    </View>
+                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                        <Text className="font-bold">Ticket type</Text>
+                        <Text>{ticket?.isDepartment ? 'Departmental' : 'Individual'}</Text>
+                    </View>
+
+                    <If condition={isQC || isCampusPastor || isGlobalPastor}>
+                        {issuerIsLoading ? (
+                            <FlatListSkeleton count={1} />
+                        ) : issuer ? (
+                            <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                                <Text className="font-bold">Issued by</Text>
+                                <Text>{`${issuer?.firstName} ${issuer?.lastName}`}</Text>
+                            </View>
+                        ) : null}
+                    </If>
+
+                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                        <Text className="font-bold">Status</Text>
+                        <StatusTag>{ticket?.status}</StatusTag>
+                    </View>
+
+                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                        <Text className="font-bold">Category</Text>
+                        <Text>{ticket?.category.categoryName}</Text>
+                    </View>
+
+                    <View className="pb-4 pt-2 justify-between gap-2 flex-row border-b border-b-border">
+                        <Text className="font-bold">Offender</Text>
+                        <Text>
+                            {ticket?.isIndividual
+                                ? `${ticket?.user?.firstName} ${ticket?.user?.lastName}`
+                                : `${ticket?.department?.departmentName}`}
+                        </Text>
+                    </View>
+
+                    <View className="pb-4 justify-between border-b border-b-border">
+                        <Text className="mb-8 font-bold">Details</Text>
+                        <Text className="line-clamp-none">{ticket?.ticketSummary}</Text>
+                    </View>
+
+                    <View className="pb-4 justify-between  gap-2">
+                        <Text className="font-bold">Contest Comment</Text>
+                        <If condition={ticket?.isIndividual}>
+                            {!ticket?.contestComment && (
+                                <TextAreaComponent
+                                    onChangeText={handleChange}
+                                    value={ticket?.contestComment}
+                                    isDisabled={ticket?.status !== 'ISSUED' && ticket?.user?._id !== userId}
+                                />
+                            )}
+                            {ticket?.contestComment && (
+                                <Text className="line-clamp-none">{ticket?.contestComment}</Text>
+                            )}
+                        </If>
+                        <If condition={ticket?.isDepartment}>
+                            {!ticket?.contestComment && (
+                                <TextAreaComponent
+                                    onChangeText={handleChange}
+                                    value={ticket?.contestComment}
+                                    isDisabled={
+                                        ticket?.status !== 'ISSUED' || ticket?.department?._id !== department?._id
+                                    }
+                                />
+                            )}
+                            {ticket?.contestComment && (
+                                <Text className="line-clamp-none">{ticket?.contestComment}</Text>
+                            )}
+                        </If>
+                    </View>
+                    <View className="pb-4 justify-between gap-2">
+                        <Text className="font-bold">QC / M&E Reply</Text>
+                        {!ticket?.contestReplyComment && (
+                            <TextAreaComponent
+                                onChangeText={handleReplyChange}
+                                isDisabled={!isQC || userId === ticket?.user?._id || !!ticket?.contestReplyComment}
+                            />
+                        )}
+                        {ticket?.contestReplyComment && (
+                            <Text className="line-clamp-none">{ticket?.contestReplyComment}</Text>
+                        )}
+                    </View>
+                    <If condition={offenderAction}>
+                        <View className="pb-4 justify-between gap-2 flex-row">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                style={{ flex: 1 }}
+                                onPress={handleSubmit}
+                                isLoading={contestLoading}
+                                disabled={
+                                    (!contestComment || !!ticket?.contestComment) &&
+                                    (ticket?.status === 'ISSUED' ||
+                                        ticket?.status === 'ACKNOWLEGDED' ||
+                                        ticket?.status === 'CONTESTED')
+                                }
+                            >
+                                Contest ticket
+                            </Button>
+                            <Button
+                                size="sm"
+                                style={{ flex: 1 }}
+                                onPress={handleAcknowledge}
+                                isLoading={acknowledgeLoading}
+                                disabled={
+                                    ticket?.status !== 'ISSUED' &&
+                                    (userId !== ticket?.user?._id || ticket?.department._id !== department._id)
+                                }
+                            >
+                                Acknowledge
+                            </Button>
+                        </View>
+                    </If>
+                    <If condition={qcAction}>
+                        <View className="pb-4 flex-row gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="flex-1"
+                                isLoading={retractLoading}
+                                onPress={handleRetractTicket}
+                            >
+                                Retract
+                            </Button>
+                            <Button
+                                size="sm"
+                                className="flex-1"
+                                isLoading={replyLoading}
+                                onPress={handleReplySubmit}
+                                disabled={!contestReplyComment}
+                            >
+                                Reply
+                            </Button>
+                        </View>
+                    </If>
+                </View>
+            </CardComponent>
+        </ViewWrapper>
     );
 };
 

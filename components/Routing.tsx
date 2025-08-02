@@ -5,33 +5,33 @@ import NotificationModal from '~/components/composite/notification-modal';
 
 import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
-// import { usePushNotifications } from '~/hooks/push-notifications';
+import { NotificationsProvider } from './NotificationsProvider';
 
 export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
-    const isLoggedIn = useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const user = useAppSelector(store => userSelectors.selectCurrentUser(store));
 
     React.useEffect(() => {
-        if (isLoggedIn?.userId) {
+        if (user?.userId) {
             router.replace('/(tabs)');
         } else {
             router.replace('/');
         }
-    }, [isLoggedIn?.userId]);
-
-    // usePushNotifications(isLoggedIn as IUser);
+    }, [user?.userId]);
 
     return (
-        <View className="flex-1">
-            <NotificationModal />
-            <Stack>
-                <Stack.Screen name="index" options={{ headerShown: false }} />
-                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                <Stack.Screen name="(stack)" options={{ headerShown: false }} />
-                <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
-            </Stack>
-        </View>
+        <NotificationsProvider user={user || ({} as any)}>
+            <View className="flex-1">
+                <NotificationModal />
+                <Stack>
+                    <Stack.Screen name="index" options={{ headerShown: false }} />
+                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(stack)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+                </Stack>
+            </View>
+        </NotificationsProvider>
     );
 };
 
