@@ -20,11 +20,7 @@ const getBaseBundleIdentifier = (platform, originalConfig) => {
 // Updated to use the actual app identifiers and names from the base config
 const getDynamicUniqueIdentifier = (platform, baseConfig) => {
     const baseIdentifier = getBaseBundleIdentifier(platform, baseConfig);
-    if (IS_DEV) {
-        // TODO: Add a development identifier with a .development suffix after generating google services file for development
-        return `${baseIdentifier}`;
-    }
-    if (IS_PREVIEW) {
+    if (IS_DEV || IS_PREVIEW) {
         return `${baseIdentifier}.staging`;
     }
     return baseIdentifier; // Production uses the base identifier

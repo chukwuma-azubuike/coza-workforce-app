@@ -21,11 +21,12 @@
             "bundleIdentifier": "com.cozaworkforceapp",
             "infoPlist": {
                 "ITSAppUsesNonExemptEncryption": false,
-                "UIBackgroundModes": ["remote-notification", "remote-notification"],
+                "UIBackgroundModes": ["remote-notification"],
                 "NSLocationWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
                 "NSLocationAlwaysAndWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
             },
+            "usesAppleSignIn": true,
             "buildNumber": "49.2",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
@@ -37,7 +38,7 @@
                 "foregroundImage": "./assets/images/icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "versionCode": 73,
+            "versionCode": 74,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
