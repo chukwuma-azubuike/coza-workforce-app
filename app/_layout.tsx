@@ -16,6 +16,7 @@ import '~/global.css';
 import Routing from '~/components/Routing';
 import { PersistGate } from 'redux-persist/integration/react';
 import Loading from '~/components/atoms/loading';
+import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -58,6 +59,8 @@ export default function RootLayout() {
         setIsColorSchemeLoaded(true);
         hasMounted.current = true;
     }, []);
+
+    useNotificationObserver();
 
     if (!isColorSchemeLoaded) {
         return null;

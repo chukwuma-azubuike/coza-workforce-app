@@ -9,14 +9,14 @@ import React from 'react';
 
 interface IWorkforceAnalyticsProps extends IDefaultQueryParams {}
 
-const WorkforceAnalytics: React.FC<IWorkforceAnalyticsProps> = ({ CongressId, serviceId, campusId }) => {
+const WorkforceAnalytics: React.FC<IWorkforceAnalyticsProps> = ({ CGWCId, serviceId, campusId }) => {
     const {
         data: attendanceReport,
         isLoading: attendanceReportLoading,
         refetch: attendanceReportRefetch,
         isFetching: attendanceReportFetching,
     } = useGetGraphAttendanceReportsQuery({
-        CongressId, //TODO: Restore after test
+        CGWCId,
         serviceId,
         campusId,
     });
@@ -31,7 +31,7 @@ const WorkforceAnalytics: React.FC<IWorkforceAnalyticsProps> = ({ CongressId, se
     });
 
     return (
-        <ViewWrapper pt={6} scroll onRefresh={handleRefresh} refreshing={false}>
+        <ViewWrapper className="pt-8" scroll onRefresh={handleRefresh} refreshing={false}>
             <ResponsiveGrid rowCount={1}>
                 <LineChart
                     horizontal

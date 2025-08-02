@@ -1,6 +1,5 @@
 import { useAppSelector } from '../../store/hooks';
 import { notificationSelectors } from '../../store/actions/notifications';
-import { schedulePushNotification } from '../../components/NotificationsProvider';
 
 export const useNotifications = () => {
     const expoPushToken = useAppSelector(notificationSelectors.selectExpoPushToken);
@@ -9,10 +8,9 @@ export const useNotifications = () => {
     const permissionStatus = useAppSelector(notificationSelectors.selectPermissionStatus);
 
     return {
-        expoPushToken,
         channels,
         notification,
+        expoPushToken,
         permissionStatus,
-        schedulePushNotification,
     };
 };
