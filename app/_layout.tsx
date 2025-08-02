@@ -10,6 +10,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { PortalHost } from '@rn-primitives/portal';
 import ConnectionStatusBar from '~/components/atoms/status-bar';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
+import * as Notifications from 'expo-notifications';
 
 import '~/global.css';
 import Routing from '~/components/Routing';
@@ -24,6 +25,15 @@ const DARK_THEME: Theme = {
     ...DarkTheme,
     colors: NAV_THEME.dark,
 };
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true,
+        priority: Notifications.AndroidNotificationPriority.HIGH,
+    }),
+});
 
 export {
     // Catch any errors thrown by the Layout component.

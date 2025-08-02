@@ -16,6 +16,7 @@ import { groupHeadServiceSlice } from '@store/services/grouphead';
 import { uploadServiceSlice } from '@store/services/upload';
 import userStateSlice from '../actions/users';
 import appStateSlice from '../actions/app';
+import notificationsSlice from '../actions/notifications';
 
 const rootReducer = combineReducers({
     [appStateSlice.reducerPath]: appStateSlice.reducer,
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
     [groupHeadServiceSlice.reducerPath]: groupHeadServiceSlice.reducer,
     [uploadServiceSlice.reducerPath]: uploadServiceSlice.reducer,
     [userStateSlice.reducerPath]: userStateSlice.reducer,
+    [notificationsSlice.reducerPath]: notificationsSlice.reducer,
 });
 
 export default rootReducer;
