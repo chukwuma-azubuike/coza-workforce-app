@@ -7,11 +7,11 @@ const useNotificationObserver = () => {
         let isMounted = true;
 
         const redirect = (notification: Notifications.Notification) => {
-            const url = notification.request.content.data?.url;
-            const content = notification.request.content.data?.content;
+            const pathname = notification.request.content.data?.url;
+            const params = notification.request.content.data?.content;
 
-            if (url) {
-                router.push({ pathname: url, params: content });
+            if (pathname) {
+                router.push({ pathname, params });
             }
         };
 
