@@ -90,6 +90,13 @@
                         "deploymentTarget": "15.1"
                     }
                 }
+            ],
+            [
+                "expo-notifications",
+                {
+                    "defaultChannel": "default",
+                    "icon": "./assets/images/icon.png"
+                }
             ]
         ],
         "experiments": {

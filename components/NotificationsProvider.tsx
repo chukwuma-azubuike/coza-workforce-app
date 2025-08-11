@@ -25,6 +25,7 @@ export const registerForPushNotificationsAsync = async () => {
 
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
+
     if (existingStatus !== 'granted') {
         const { status } = await Notifications.requestPermissionsAsync();
         finalStatus = status;
@@ -39,7 +40,10 @@ export const registerForPushNotificationsAsync = async () => {
         if (!projectId) {
             throw new Error('Project ID not found');
         }
-        return (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+
+        const expoPushToken = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+
+        return expoPushToken;
     } catch (e) {
         return null;
     }
@@ -104,7 +108,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
             notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
             responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
         };
-    }, [dispatch]);7
+    }, [dispatch]);
 
     return <>{children}</>;
 };

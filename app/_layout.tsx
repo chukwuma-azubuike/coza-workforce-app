@@ -31,8 +31,8 @@ Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
         shouldPlaySound: true,
-        shouldSetBadge: true,
-        priority: Notifications.AndroidNotificationPriority.HIGH,
+        shouldSetBadge: false,
+        priority: Notifications.AndroidNotificationPriority.MAX,
     }),
 });
 
