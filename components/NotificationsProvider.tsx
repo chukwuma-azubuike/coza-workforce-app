@@ -8,6 +8,7 @@ import { notificationActions } from '../store/actions/notifications';
 import { IUser } from '~/store/types';
 import { useAddDeviceTokenMutation } from '~/store/services/account';
 import { getUniqueId } from 'react-native-device-info';
+import { ENV } from '~/config/envConfig';
 
 export const registerForPushNotificationsAsync = async () => {
     if (Platform.OS === 'android') {
@@ -41,7 +42,10 @@ export const registerForPushNotificationsAsync = async () => {
             throw new Error('Project ID not found');
         }
 
-        const expoPushToken = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
+        const deviceId = await getUniqueId();
+        const expoPushToken = (
+            await Notifications.getExpoPushTokenAsync({ projectId, deviceId, development: ENV !== 'production' })
+        ).data;
 
         return expoPushToken;
     } catch (e) {
