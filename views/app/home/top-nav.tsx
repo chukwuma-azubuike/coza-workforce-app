@@ -23,7 +23,7 @@ const TopNav: React.FC = () => {
     const { user } = useRole();
     const { isLightMode } = useAppColorMode();
 
-    const { data, isError, isLoading } = useGetLatestServiceQuery(user?.campus?._id as string, {
+    const { data, isLoading } = useGetLatestServiceQuery(user?.campus?._id as string, {
         skip: !user,
         refetchOnMountOrArgChange: true,
     });
@@ -42,8 +42,9 @@ const TopNav: React.FC = () => {
                 />
             </TouchableOpacity>
             <Text className="text-xl font-light text-center justify-center text-muted-foreground px-6 flex-1">
-                {isLoading ? 'Searching for service...' : !isError ? data?.name : 'No service today'}
+                {isLoading ? 'Searching for service...' : data?.name || 'No service today'}
             </Text>
+            {/* TODO: Notification route to be reinstated */}
             {/* <TouchableOpacity onPress={handleNotificationPress} activeOpacity={0.6}>
                 <Ionicons
                     size={16}
