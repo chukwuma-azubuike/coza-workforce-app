@@ -68,6 +68,18 @@ const getGoogleServicesJson = () => {
     return googleServicesFile;
 };
 
+// Get google service info.plis for ios
+const getGoogleServicesInfoPlist = () => {
+    // default to production
+    let googleServicesInfoPlist = './GoogleService-Info.plist';
+
+    if (IS_PREVIEW || IS_DEV) {
+        googleServicesInfoPlist = './GoogleService-Info_staging.plist';
+    }
+
+    return googleServicesInfoPlist;
+};
+
 export default ({ config }) => {
     // 'config' is the base configuration object, containing all settings
     // from your original app.json's "expo" field.
@@ -79,10 +91,12 @@ export default ({ config }) => {
     if (config.ios) {
         config.ios.bundleIdentifier = getDynamicUniqueIdentifier('ios', config);
         config.ios.buildNumber = getIOSBuildNumber(config);
+        config.ios.googleServicesFile = getGoogleServicesInfoPlist();
     } else {
         config.ios = {
             bundleIdentifier: getDynamicUniqueIdentifier('ios', config),
             buildNumber: getIOSBuildNumber(config),
+            googleServicesFile: getGoogleServicesInfoPlist()
         };
     }
 
