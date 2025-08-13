@@ -6,6 +6,7 @@ import NotificationModal from '~/components/composite/notification-modal';
 import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { NotificationsProvider } from './NotificationsProvider';
+import inAppUpdates from '~/utils/in-app-updates';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -18,6 +19,12 @@ const Routing: React.FC = () => {
         } else {
             router.replace('/');
         }
+
+        const update = async () => {
+            await inAppUpdates();
+        };
+
+        update();
     }, [user?.userId]);
 
     return (
