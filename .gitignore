@@ -54,3 +54,6 @@ google-services.json
 coza-workforce-app-prod-firebase-adminsdk.json
 coza-workforce-app-staging-firebase-adminsdk.json
 *.plist
+
+*.aab
+*.apk

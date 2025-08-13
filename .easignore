@@ -48,3 +48,6 @@ expo-env.d.ts
 firebase-service-account.json
 service-account-key.json
 upload-keystore.jks
+
+*.aab
+*.apk
