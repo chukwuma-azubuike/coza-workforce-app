@@ -13,7 +13,7 @@ const inAppUpdates = async () => {
         if (Platform.OS === 'android') {
             // android only, on iOS the user will be promped to go to your app store page
             updateOptions = {
-                updateType: IAUUpdateKind.IMMEDIATE,
+                updateType: IAUUpdateKind.FLEXIBLE,
             };
         }
         appUpdates.startUpdate(updateOptions);

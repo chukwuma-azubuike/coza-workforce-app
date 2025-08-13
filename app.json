@@ -22,6 +22,7 @@
             "infoPlist": {
                 "ITSAppUsesNonExemptEncryption": false,
                 "UIBackgroundModes": ["remote-notification"],
+                "LSApplicationQueriesSchemes": ["itms-apps"],
                 "NSLocationWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
                 "NSLocationAlwaysAndWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
