@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>CLIENT_ID</key>
-	<string>378695098622-30mj2fqgo6aogoksu2nirhco4o7p659e.apps.googleusercontent.com</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.378695098622-30mj2fqgo6aogoksu2nirhco4o7p659e</string>
-	<key>API_KEY</key>
-	<string>AIzaSyDlkIsvaOaiFaV6O8HzpeOe-Y0LK_Lz-Ts</string>
-	<key>GCM_SENDER_ID</key>
-	<string>378695098622</string>
-	<key>PLIST_VERSION</key>
-	<string>1</string>
-	<key>BUNDLE_ID</key>
-	<string>com.cozaworkforceapp</string>
-	<key>PROJECT_ID</key>
-	<string>cozaworkforceapp</string>
-	<key>STORAGE_BUCKET</key>
-	<string>cozaworkforceapp.appspot.com</string>
-	<key>IS_ADS_ENABLED</key>
-	<false></false>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
-	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
-	<key>IS_GCM_ENABLED</key>
-	<true></true>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:378695098622:ios:b1b8d9162edbe19d1605af</string>
-</dict>
+	<dict>
+		<key>API_KEY</key>
+		<string>AIzaSyCakOyhj3FDtFc0AvLVAHS3VF7-ZoP7Xkc</string>
+		<key>GCM_SENDER_ID</key>
+		<string>837652474933</string>
+		<key>PLIST_VERSION</key>
+		<string>1</string>
+		<key>BUNDLE_ID</key>
+		<string>com.cozaworkforceapp</string>
+		<key>PROJECT_ID</key>
+		<string>coza-workforce-app-prod</string>
+		<key>STORAGE_BUCKET</key>
+		<string>coza-workforce-app-prod.firebasestorage.app</string>
+		<key>IS_ADS_ENABLED</key>
+		<false></false>
+		<key>IS_ANALYTICS_ENABLED</key>
+		<false></false>
+		<key>IS_APPINVITE_ENABLED</key>
+		<true></true>
+		<key>IS_GCM_ENABLED</key>
+		<true></true>
+		<key>IS_SIGNIN_ENABLED</key>
+		<true></true>
+		<key>GOOGLE_APP_ID</key>
+		<string>1:837652474933:ios:e37a4a1214a78ffd2f557c</string>
+	</dict>
 </plist>
