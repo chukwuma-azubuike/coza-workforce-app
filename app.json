@@ -28,7 +28,7 @@
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
             },
             "usesAppleSignIn": true,
-            "buildNumber": "50.2",
+            "buildNumber": "51",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
@@ -39,7 +39,7 @@
                 "foregroundImage": "./assets/images/icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "versionCode": 76,
+            "versionCode": 81,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
