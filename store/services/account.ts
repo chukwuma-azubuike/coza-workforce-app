@@ -15,6 +15,7 @@ import {
     IAssignSecondaryRole,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
+import { Platform } from 'react-native';
 
 const SERVICE_URL = 'account';
 const USER_SERVICE_URL = 'users';
@@ -104,6 +105,15 @@ export type ILoginResponse = IDefaultResponse<{
     token: IToken;
     profile: IUser;
 }>;
+
+export interface IAddNotificationTokenPayload {
+    email: string;
+    deviceId: string;
+    fcmToken?: string;
+    appVersion: string;
+    expoPushToken: string;
+    platform: Platform['OS'];
+}
 
 export type IRegisterResponse = IDefaultResponse<IUser>;
 export type IGetUserByIdResponse = IDefaultResponse<IUser>;
@@ -325,7 +335,7 @@ export const accountServiceSlice = createApi({
             }),
         }),
 
-        addDeviceToken: endpoint.mutation<any, { email: string; deviceId: string; fcmToken: string }>({
+        addDeviceToken: endpoint.mutation<any, IAddNotificationTokenPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/addDeviceToken`,
                 method: REST_API_VERBS.POST,

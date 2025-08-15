@@ -7,7 +7,7 @@ import { useAppDispatch } from '../store/hooks';
 import { notificationActions } from '../store/actions/notifications';
 import { IUser } from '~/store/types';
 import { useAddDeviceTokenMutation } from '~/store/services/account';
-import { getUniqueId } from 'react-native-device-info';
+import * as Application from 'expo-application';
 import { ENV } from '~/config/envConfig';
 
 export const registerForPushNotificationsAsync = async () => {
@@ -37,17 +37,18 @@ export const registerForPushNotificationsAsync = async () => {
 
     try {
         const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+
         if (!projectId) {
             throw new Error('Project ID not found');
         }
 
-        const deviceId = await getUniqueId();
         const expoPushToken = (
-            await Notifications.getExpoPushTokenAsync({ projectId, deviceId, development: ENV !== 'production' })
+            await Notifications.getExpoPushTokenAsync({ projectId, development: ENV !== 'production' })
         ).data;
 
         return expoPushToken;
     } catch (e) {
+        console.log({ e });
         return null;
     }
 };
@@ -65,21 +66,29 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
     useEffect(() => {
         (async () => {
             try {
-                const deviceId = await getUniqueId();
-                // Get permission and set up channel
-                await registerForPushNotificationsAsync();
+                let deviceId;
 
-                // Get the actual FCM token directly
-                const { data: fcmToken } = await Notifications.getDevicePushTokenAsync();
+                if (Platform.OS === 'android') {
+                    deviceId = Application.getAndroidId();
+                } else {
+                    deviceId = await Application.getIosIdForVendorAsync();
+                }
 
-                if (deviceId && fcmToken) {
-                    const res = await addDeviceToken({
+                // Get permission, set up channel & return expo push token
+                const expoPushToken = await registerForPushNotificationsAsync();
+
+                if (deviceId && expoPushToken) {
+                    await addDeviceToken({
                         email,
                         deviceId,
-                        fcmToken,
+                        expoPushToken,
+                        platform: Platform.OS,
+                        appVersion: Application.nativeApplicationVersion as string,
                     }).unwrap();
                 }
-            } catch (error) {}
+            } catch (error) {
+                console.log(error);
+            }
         })();
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
