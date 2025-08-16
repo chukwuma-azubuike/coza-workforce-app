@@ -41,6 +41,35 @@ const ticketTypes = [
         value: 'CAMPUS',
     },
 ];
+
+const TICKET_TEMPLATE = {
+    MINIMAL: {
+        id: 1,
+        value: `We celebrate you,
+        
+QC/M&E is issuing you this ticket BECAUSE ...
+
+#Dominion`,
+    },
+    VERBOSE: {
+        id: 2,
+        value: `We celebrate you,
+
+We appreciate what you do in the house and we know you are committed to serving God.
+
+We are issuing you this ticket for ...
+
+While we know you may have genuine reasons for this action, it is not in line with the church standards.
+
+Let us be reminded of the COZA culture and stay true to it.
+
+We love & celebrate you!` as any,
+    },
+    BLANK: {
+        id: 1,
+        value: '',
+    },
+};
 const IssueTicket: React.FC = () => {
     const {
         user: { campus, userId },
@@ -52,6 +81,7 @@ const IssueTicket: React.FC = () => {
     const [campusId, setCampusId] = React.useState<ICampus['_id']>(user?.campusId || campus?._id);
     const [departmentId, setDepartmentId] = React.useState<IDepartment['_id'] | undefined>(user?.departmentId); //Just for 3P testing
     const [ticketType, setTicketType] = React.useState<string>('INDIVIDUAL');
+    const [template, setTemplate] = React.useState<string>(TICKET_TEMPLATE.VERBOSE.value);
 
     const isDepartment = ticketType === 'DEPARTMENTAL';
     const isIndividual = ticketType === 'INDIVIDUAL';
@@ -125,7 +155,7 @@ const IssueTicket: React.FC = () => {
                         isRetracted: false,
                         serviceId: '',
                         ticketType,
-                        ticketSummary: TICKET_TEMPLATE.verbose,
+                        ticketSummary: TICKET_TEMPLATE.VERBOSE.value,
                         issuedBy: '',
                     } as ICreateTicketPayload,
                 });
@@ -153,25 +183,6 @@ const IssueTicket: React.FC = () => {
 
     const [searchedUser, setSearchedUser] = React.useState<IUser | undefined>(user?._id ? user : undefined);
 
-    enum TICKET_TEMPLATE {
-        minimal = `We celebrate you, 
-        
-QC/M&E is issuing you this ticket BECAUSE ... 
-        
-#Dominion`,
-        verbose = `We celebrate you,
-
-We appreciate what you do in the house and we know you are committed to serving God.
-    
-We are issuing you this ticket for ...
-    
-While we know you may have genuine reasons for this action, it is not in line with the church standards.
-    
-Let us be reminded of the COZA culture and stay true to it.
-    
-We love & celebrate you!` as any,
-    }
-
     const [initialValues] = React.useState<ICreateTicketPayload>({
         departmentId,
         campusId,
@@ -183,7 +194,7 @@ We love & celebrate you!` as any,
         isRetracted: false,
         serviceId: '',
         ticketType,
-        ticketSummary: TICKET_TEMPLATE.verbose,
+        ticketSummary: TICKET_TEMPLATE.VERBOSE.value,
         issuedBy: '',
     } as ICreateTicketPayload);
 
@@ -209,18 +220,18 @@ We love & celebrate you!` as any,
     const ticketSummaryTemplates = [
         {
             id: '1',
-            label: 'VERBOSE',
-            value: TICKET_TEMPLATE.verbose as string,
+            value: 'VERBOSE',
+            content: TICKET_TEMPLATE.VERBOSE.value,
         },
         {
             id: '2',
-            label: 'MINIMAL',
-            value: TICKET_TEMPLATE.minimal as string,
+            value: 'MINIMAL',
+            content: TICKET_TEMPLATE.MINIMAL.value,
         },
         {
             id: '3',
-            label: 'BLANK',
-            value: '',
+            value: 'BLANK',
+            content: TICKET_TEMPLATE.BLANK.value,
         },
     ];
 
@@ -246,8 +257,8 @@ We love & celebrate you!` as any,
                             isDepartment
                                 ? CreateDepartmentalTicketSchema
                                 : isCampus
-                                  ? CreateCampusTicketSchema
-                                  : CreateIndividualTicketSchema
+                                ? CreateCampusTicketSchema
+                                : CreateIndividualTicketSchema
                         }
                     >
                         {({
@@ -407,11 +418,17 @@ We love & celebrate you!` as any,
                                         <Label>Description Template</Label>
                                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                             <RadioButtonGroup
+                                                value={template}
                                                 defaultSelected="1"
-                                                value={values.ticketSummary}
                                                 radioButtons={ticketSummaryTemplates}
                                                 className="gap-3 w-full items-start px-0 flex-row"
-                                                onValueChange={handleChange('ticketSummary') as any}
+                                                onValueChange={key => {
+                                                    setTemplate(key);
+                                                    handleChange('ticketSummary')(
+                                                        TICKET_TEMPLATE[key as unknown as keyof typeof TICKET_TEMPLATE]
+                                                            .value
+                                                    ) as any;
+                                                }}
                                             />
                                         </ScrollView>
                                     </View>
