@@ -30,9 +30,9 @@ const RadioButtonGroup: React.FC<Partial<IRadioButtonProps>> = ({
         <View className="flex-1 justify-center items-center py-4">
             <RadioGroup
                 className="gap-3"
-                onValueChange={handleValueChange as () => void}
                 value={props.value}
                 {...props}
+                onValueChange={handleValueChange as () => void}
             >
                 {radioButtons?.map(button => (
                     <RadioGroupItemWithLabel onLabelPress={onLabelPress as () => void} {...button} />
