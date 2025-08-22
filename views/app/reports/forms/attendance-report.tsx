@@ -103,7 +103,7 @@ const AttendanceReport: React.FC = () => {
     }, []);
 
     return (
-        <ViewWrapper scroll avoidKeyboard={isIOS} avoidKeyboardBehavior="padding">
+        <ViewWrapper scroll avoidKeyboard>
             <Formik<IAttendanceReportPayload>
                 validateOnChange
                 enableReinitialize

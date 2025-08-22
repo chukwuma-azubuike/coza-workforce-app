@@ -309,15 +309,7 @@ const CampusReport: React.FC = props => {
     };
 
     return (
-        <ViewWrapper
-            className="py-4"
-            scroll
-            noPadding
-            avoidKeyboard
-            avoidKeyboardOffset={40}
-            refreshing={isLoading}
-            onRefresh={handleRefresh}
-        >
+        <ViewWrapper className="py-4" scroll noPadding avoidKeyboard refreshing={isLoading} onRefresh={handleRefresh}>
             {isGlobalPastor && <Text className="font-bold text-4xl mb-2">{params?.campusName}</Text>}
             <View className="px-4 gap-6">
                 <Separator />

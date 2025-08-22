@@ -6,12 +6,11 @@ import { ISecurityReportPayload } from '@store/types';
 import { useCreateSecurityReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import dayjs from 'dayjs';
-import TextAreaComponent from '@components/atoms/text-area';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 // import FormErrorMessage from '~/components/ui/error-message';
@@ -102,17 +101,15 @@ const SecurityReport: React.FC = () => {
             : '0';
     }, []);
 
-    const isIOS = Platform.OS === 'ios';
-
     return (
-        <Formik<ISecurityReportPayload>
-            validateOnChange
-            enableReinitialize
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
-            {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                <ViewWrapper scroll avoidKeyboard={isIOS}>
+        <ViewWrapper scroll avoidKeyboard>
+            <Formik<ISecurityReportPayload>
+                validateOnChange
+                enableReinitialize
+                onSubmit={onSubmit}
+                initialValues={INITIAL_VALUES}
+            >
+                {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                     <View className="px-2 mt-4 gap-4">
                         <Text className="w-full text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
@@ -244,9 +241,9 @@ const SecurityReport: React.FC = () => {
                             </View>
                         </If>
                     </View>
-                </ViewWrapper>
-            )}
-        </Formik>
+                )}
+            </Formik>
+        </ViewWrapper>
     );
 };
 

@@ -246,7 +246,7 @@ const IssueTicket: React.FC = () => {
                     searchFields={['firstName', 'lastName', 'departmentName', 'email']}
                 />
             </If>
-            <ViewWrapper avoidKeyboardOffset={60} avoidKeyboard scroll noPadding style={{ paddingTop: 20, flex: 1 }}>
+            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20, flex: 1 }}>
                 <View className="mb-4 px-4 gap-8 w-full">
                     <Formik<ICreateTicketPayload>
                         validateOnChange
