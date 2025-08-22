@@ -5,15 +5,15 @@ import {
     ScrollView,
     View,
     ViewProps,
-    ScrollViewProps,
     useColorScheme,
     Platform,
     KeyboardAvoidingViewProps,
 } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Empty from '../atoms/empty';
 import { cn } from '~/lib/utils';
 
-interface IViewWrapperProps extends ViewProps, ScrollViewProps {
+interface IViewWrapperProps extends ViewProps {
     scroll?: boolean;
     noPadding?: boolean;
     refreshing?: boolean;
@@ -23,10 +23,7 @@ interface IViewWrapperProps extends ViewProps, ScrollViewProps {
     avoidKeyboardBehavior?: KeyboardAvoidingViewProps['behavior'];
 }
 
-const THEME = {
-    light: 'white',
-    dark: 'black',
-} as const;
+const THEME = { light: 'white', dark: 'black' } as const;
 
 const ViewWrapper = forwardRef<any, IViewWrapperProps>(
     (
@@ -36,8 +33,8 @@ const ViewWrapper = forwardRef<any, IViewWrapperProps>(
             refreshing = false,
             onRefresh,
             avoidKeyboard = false,
-            avoidKeyboardOffset = 96,
-            avoidKeyboardBehavior = 'position',
+            avoidKeyboardOffset = 30,
+            avoidKeyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
             style,
             className,
             children,
@@ -48,32 +45,41 @@ const ViewWrapper = forwardRef<any, IViewWrapperProps>(
         const Container: React.ComponentType<any> = scroll ? ScrollView : View;
         const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
 
-        const content = (
-            <Container
+        const content = scroll ? (
+            // default ScrollView when not avoiding keyboard
+            <KeyboardAwareScrollView
+                innerRef={ref as any}
+                enableOnAndroid={false}
+                extraScrollHeight={avoidKeyboardOffset}
+                contentContainerStyle={[{ paddingHorizontal: noPadding ? 0 : 6 }, style]}
+                refreshControl={
+                    onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
+                }
+                keyboardShouldPersistTaps="handled"
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                {...rest}
+            >
+                {children ?? <Empty />}
+            </KeyboardAwareScrollView>
+        ) : (
+            // non-scrollable view
+            <View
                 ref={ref}
                 {...rest}
                 className={cn('bg-background', className)}
                 style={[{ paddingHorizontal: noPadding ? 0 : 6 }, style]}
-                refreshControl={
-                    onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
-                }
-                showsVerticalScrollIndicator={false}
-                showsHorizontalScrollIndicator={false}
             >
                 {children ?? <Empty />}
-            </Container>
+            </View>
         );
 
         if (avoidKeyboard) {
             return (
                 <KeyboardAvoidingView
-                    style={{
-                        flex: 1,
-                        position: 'relative',
-                        backgroundColor: THEME[scheme],
-                    }}
+                    style={{ flex: 1, position: 'relative', backgroundColor: THEME[scheme] }}
                     keyboardVerticalOffset={avoidKeyboardOffset}
-                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    behavior={avoidKeyboardBehavior}
                 >
                     {content}
                 </KeyboardAvoidingView>

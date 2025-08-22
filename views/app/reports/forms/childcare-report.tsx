@@ -119,15 +119,15 @@ const ChildcareReport: React.FC = () => {
     }, []);
 
     return (
-        <Formik<IChildCareReportPayload>
-            validateOnChange
-            enableReinitialize
-            onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES}
-        >
-            {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
-                <ViewWrapper scroll avoidKeyboard={isIOS}>
-                    <View className="pt-4 w-full gap-4 flex-1">
+        <ViewWrapper scroll avoidKeyboard>
+            <Formik<IChildCareReportPayload>
+                validateOnChange
+                enableReinitialize
+                onSubmit={onSubmit}
+                initialValues={INITIAL_VALUES}
+            >
+                {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
+                    <View className="pt-4 w-full gap-4">
                         <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
@@ -343,9 +343,9 @@ const ChildcareReport: React.FC = () => {
                             </If>
                         </View>
                     </View>
-                </ViewWrapper>
-            )}
-        </Formik>
+                )}
+            </Formik>
+        </ViewWrapper>
     );
 };
 

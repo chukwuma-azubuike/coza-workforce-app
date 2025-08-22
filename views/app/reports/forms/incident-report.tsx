@@ -55,7 +55,7 @@ const IncidentReport: React.FC = () => {
             initialValues={INITIAL_VALUES}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ViewWrapper scroll avoidKeyboard avoidKeyboardBehavior="height">
+                <ViewWrapper scroll avoidKeyboard>
                     <View className="pb-4">
                         <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}

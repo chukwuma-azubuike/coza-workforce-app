@@ -12,7 +12,7 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import If from '@components/composite/if-container';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
@@ -103,17 +103,15 @@ const TransferReport: React.FC = () => {
             : '0';
     }, []);
 
-    const isIOS = Platform.OS === 'ios';
-
     return (
-        <Formik<ITransferReportPayload>
-            validateOnChange
-            onSubmit={onSubmit}
-            enableReinitialize
-            initialValues={INITIAL_VALUES}
-        >
-            {({ handleChange, handleSubmit, values, errors, setFieldValue }) => (
-                <ViewWrapper scroll avoidKeyboard={isIOS}>
+        <ViewWrapper scroll avoidKeyboard>
+            <Formik<ITransferReportPayload>
+                validateOnChange
+                onSubmit={onSubmit}
+                enableReinitialize
+                initialValues={INITIAL_VALUES}
+            >
+                {({ handleChange, handleSubmit, values, setFieldValue }) => (
                     <View className="pb-4 mt-4 gap-4">
                         <Text className="text-muted-foreground text-center mb-2">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
@@ -278,9 +276,9 @@ const TransferReport: React.FC = () => {
                             </View>
                         </If>
                     </View>
-                </ViewWrapper>
-            )}
-        </Formik>
+                )}
+            </Formik>
+        </ViewWrapper>
     );
 };
 
