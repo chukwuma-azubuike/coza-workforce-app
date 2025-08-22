@@ -10,6 +10,18 @@ import { useAddDeviceTokenMutation } from '~/store/services/account';
 import * as Application from 'expo-application';
 import { ENV } from '~/config/envConfig';
 
+export const getDeviceId = async (): Promise<string> => {
+    let deviceId: string;
+
+    if (Platform.OS === 'android') {
+        deviceId = Application.getAndroidId();
+    } else {
+        deviceId = (await Application.getIosIdForVendorAsync()) as string;
+    }
+
+    return deviceId;
+};
+
 export const registerForPushNotificationsAsync = async () => {
     if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {
@@ -36,17 +48,17 @@ export const registerForPushNotificationsAsync = async () => {
     }
 
     try {
-        const projectId =
-            ENV === 'production'
-                ? Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId
-                : '2D1D64CE-8E9E-4C7A-8FA3-7FE9257E6C58';
+        const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
 
         if (!projectId) {
             throw new Error('Project ID not found');
         }
 
         const expoPushToken = (
-            await Notifications.getExpoPushTokenAsync({ projectId, development: ENV !== 'production' })
+            await Notifications.getExpoPushTokenAsync({
+                projectId,
+                development: ENV !== 'production',
+            })
         ).data;
 
         return expoPushToken;
@@ -69,16 +81,9 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
     useEffect(() => {
         (async () => {
             try {
-                let deviceId;
-
-                if (Platform.OS === 'android') {
-                    deviceId = Application.getAndroidId();
-                } else {
-                    deviceId = await Application.getIosIdForVendorAsync();
-                }
-
                 // Get permission, set up channel & return expo push token
                 const expoPushToken = await registerForPushNotificationsAsync();
+                const deviceId = await getDeviceId();
 
                 if (deviceId && expoPushToken) {
                     await addDeviceToken({
