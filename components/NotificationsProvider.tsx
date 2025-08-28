@@ -63,7 +63,6 @@ export const registerForPushNotificationsAsync = async () => {
 
         return expoPushToken;
     } catch (e) {
-        console.log({ e });
         return null;
     }
 };
@@ -94,9 +93,7 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
                         appVersion: Application.nativeApplicationVersion as string,
                     }).unwrap();
                 }
-            } catch (error) {
-                console.log(error);
-            }
+            } catch (error) {}
         })();
 
         // eslint-disable-next-line react-hooks/exhaustive-deps

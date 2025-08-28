@@ -10,8 +10,10 @@ const useNotificationObserver = () => {
             const pathname = notification.request.content.data?.url;
             const params = notification.request.content.data?.content;
 
-            if (pathname) {
+            if (pathname && typeof params === 'object') {
                 router.push({ pathname, params });
+            } else {
+                router.push('/');
             }
         };
 
@@ -19,11 +21,16 @@ const useNotificationObserver = () => {
             if (!isMounted || !response?.notification) {
                 return;
             }
+            // TODO TBD
             redirect(response?.notification);
         });
 
         const subscription = Notifications.addNotificationResponseReceivedListener(response => {
-            redirect(response.notification);
+            try {
+                redirect(response.notification);
+            } catch (error) {
+                console.error(error);
+            }
         });
 
         return () => {
