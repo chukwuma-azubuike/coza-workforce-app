@@ -25,6 +25,15 @@ const useNotificationObserver = () => {
             redirect(response?.notification);
         });
 
+        // Handle case where app was opened from a killed state via a notification
+        (async () => {
+            const lastResponse = await Notifications.getLastNotificationResponseAsync();
+            if (lastResponse) {
+                redirect(lastResponse.notification);
+                await Notifications.clearLastNotificationResponseAsync();
+            }
+        })();
+
         const subscription = Notifications.addNotificationResponseReceivedListener(response => {
             try {
                 redirect(response.notification);
