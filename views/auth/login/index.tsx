@@ -27,8 +27,6 @@ const Login: React.FC = () => {
     const onSubmit = async (values: ILoginPayload) => {
         const response = await login({ ...values, email: Utils.formatEmail(values.email) });
 
-        console.log(response);
-
         if ('error' in response) {
             Alert.alert((response?.error as any)?.data?.message || (response as any)?.data?.message);
         }
