@@ -79,7 +79,6 @@ const CreateCongress: React.FC = () => {
                                     <DateTimePicker
                                         mode="date"
                                         label="Start date"
-                                        className="flex-1"
                                         error={errors.startDate}
                                         touched={touched.startDate}
                                         placeholder="Enter start date"
@@ -93,7 +92,6 @@ const CreateCongress: React.FC = () => {
                                     <DateTimePicker
                                         mode="date"
                                         label="End date"
-                                        className="flex-1"
                                         error={errors.endDate}
                                         touched={touched.endDate}
                                         placeholder="Enter end date"

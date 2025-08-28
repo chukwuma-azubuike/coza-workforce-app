@@ -246,7 +246,7 @@ const IssueTicket: React.FC = () => {
                     searchFields={['firstName', 'lastName', 'departmentName', 'email']}
                 />
             </If>
-            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20, flex: 1 }}>
+            <ViewWrapper avoidKeyboard scroll noPadding style={{ paddingTop: 20 }}>
                 <View className="mb-4 px-4 gap-8 w-full">
                     <Formik<ICreateTicketPayload>
                         validateOnChange
@@ -356,7 +356,7 @@ const IssueTicket: React.FC = () => {
                                             onValueChange={handleCampus}
                                             isLoading={campusesIsLoading || campusesIsFetching}
                                         />
-                                        {errors?.ticketType && <FormErrorMessage>{errors?.campusId}</FormErrorMessage>}
+                                        {errors?.campusId && <FormErrorMessage>{errors?.campusId}</FormErrorMessage>}
                                     </View>
                                     <If condition={!isCampus}>
                                         <View>

@@ -153,9 +153,9 @@ const CongressDetails: React.FC = () => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <ViewWrapper noPadding>
+            <ViewWrapper noPadding className="flex-1">
                 <If condition={isLoading || isFetching || messagesIsLoading}>
-                    <Loading cover />
+                    <Loading cover className="flex-1" />
                 </If>
                 <If condition={!isLoading && !isFetching && !!congress}>
                     <ScrollContainer scrollOffsetY={scrollOffsetY}>
