@@ -58,6 +58,7 @@ const ViewWrapper = forwardRef<any, IViewWrapperProps>(
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
+                className={cn('bg-background', className)}
                 {...rest}
             >
                 {children ?? <Empty />}
