@@ -10,10 +10,9 @@ import Utils from '@utils/index';
 import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
-import { View } from 'react-native';
+import { SafeAreaView, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import GhClocker from './workers/gh-clocker';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface IInitialHomeState {
     latestService: {
@@ -101,11 +100,7 @@ const Home: React.FC = () => {
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
             <SafeAreaView style={styles.container}>
-                <View
-                    style={styles.container}
-                    // refreshing={isLoading}
-                    // onRefresh={handleRefresh}
-                >
+                <View style={styles.container}>
                     <If condition={!!user}>
                         <If condition={!isGlobalPastor && !isGroupHead}>
                             <Clocker
@@ -113,7 +108,7 @@ const Home: React.FC = () => {
                                 refreshLocation={refresh}
                                 refreshTrigger={refreshTrigger}
                                 setRefreshTrigger={setRefreshTrigger}
-                                deviceCoordinates={deviceCoordinates}
+                                deviceCoordinates={deviceCoordinates as any}
                                 verifyRangeBeforeAction={verifyRangeBeforeAction}
                             />
                         </If>
@@ -123,7 +118,7 @@ const Home: React.FC = () => {
                                 refreshLocation={refresh}
                                 refreshTrigger={refreshTrigger}
                                 setRefreshTrigger={setRefreshTrigger}
-                                deviceCoordinates={deviceCoordinates}
+                                deviceCoordinates={deviceCoordinates as any}
                                 verifyRangeBeforeAction={verifyRangeBeforeAction}
                             />
                         </If>
