@@ -247,14 +247,14 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                     disabled={disabled}
                     accessibilityRole="button"
                     className={cn(
-                        '!w-56 !h-56 shadow-md !rounded-full',
+                        '!w-56 !h-56 shadow-md !rounded-full disabled:opacity-100',
                         canClockIn && !disabled
                             ? 'bg-primary'
                             : canClockOut
-                              ? ' bg-rose-400'
-                              : disabled
-                                ? 'bg-gray-400'
-                                : 'bg-gray-400'
+                            ? ' bg-rose-400'
+                            : disabled
+                            ? 'bg-gray-400'
+                            : 'bg-gray-400'
                     )}
                 >
                     <View className="flex-1 justify-center items-center">
@@ -263,18 +263,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         </If>
                         <If condition={!isLoading && !clockOutLoading}>
                             <View className="items-center gap-4 flex-1 justify-center">
-                                <Icon
-                                    size={110}
-                                    color="white"
-                                    name="touch-app"
-                                    type="materialicons"
-                                    className={cn(disabled && 'mb-6')}
-                                />
-                                {!disabled && (
-                                    <Text className="font-light">
-                                        {canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
-                                    </Text>
-                                )}
+                                <Icon size={110} color="white" name="touch-app" type="materialicons" />
+                                <Text className={cn('font-light !text-lg', disabled && 'opacity-0')}>
+                                    {canClockIn ? 'CLOCK IN' : canClockOut ? 'CLOCK OUT' : ''}
+                                </Text>
                             </View>
                         </If>
                     </View>
