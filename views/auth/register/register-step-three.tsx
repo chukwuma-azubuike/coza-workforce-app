@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import React from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepThree, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '.';
+import { RegisterFormContext } from '~/views/auth/register';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_3 } from '@utils/schemas';
@@ -16,6 +16,8 @@ import FilePickerUploader from '~/components/composite/file-picker-uploader';
 import { S3_BUCKET_FOLDERS } from '~/constants';
 
 const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
+    if (!RegisterFormContext) return;
+
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 
     const onSubmit: FormikConfig<IRegisterFormStepThree>['onSubmit'] = values => {
@@ -86,8 +88,8 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     <Label>Facebook</Label>
                                                     <Input
                                                         leftIcon={{
-                                                            name: 'logo-facebook',
-                                                            type: 'ionicons',
+                                                            name: 'facebook',
+                                                            type: 'entypo',
                                                         }}
                                                         value={values?.socialMedia?.facebook}
                                                         placeholder="Enter your facebook handle"
@@ -106,8 +108,8 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     <Label>Instagram</Label>
                                                     <Input
                                                         leftIcon={{
-                                                            name: 'logo-instagram',
-                                                            type: 'ionicons',
+                                                            name: 'instagram',
+                                                            type: 'entypo',
                                                         }}
                                                         value={values?.socialMedia?.instagram}
                                                         placeholder="Enter your instagram handle"
@@ -126,8 +128,8 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                                     <Label>Twitter</Label>
                                                     <Input
                                                         leftIcon={{
-                                                            name: 'logo-twitter',
-                                                            type: 'ionicons',
+                                                            name: 'twitter',
+                                                            type: 'entypo',
                                                         }}
                                                         value={values?.socialMedia?.twitter}
                                                         placeholder="Enter your twitter handle"
