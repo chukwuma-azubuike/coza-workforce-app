@@ -43,7 +43,7 @@ const FilePickerUploader: React.FC<FilePickerUploaderProps> = ({
                     <Text className="text-sm mt-2">Uploading: {Math.round(progress * 100)}%</Text>
                 </View>
             )}
-            {uploadSuccessful && <Text className="text-sm text-primary">Upload Successful</Text>}
+            {uploadSuccessful && <Text className="text-sm text-green-400">Upload Successful</Text>}
             {uploadFailed && <Text className="text-sm text-destructive">Upload Failed</Text>}
         </Pressable>
     );

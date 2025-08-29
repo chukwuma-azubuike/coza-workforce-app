@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import React from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepFour, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '.';
+import { RegisterFormContext } from '~/views/auth/register';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_4 } from '@utils/schemas';
@@ -17,6 +17,8 @@ import { storeSession } from '~/store/actions/users';
 import Utils from '~/utils';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
+    if (!RegisterFormContext) return;
+
     const dispatch = useAppDispatch();
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
 

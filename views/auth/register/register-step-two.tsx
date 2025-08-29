@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepTwo, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '.';
+import { RegisterFormContext } from '~/views/auth/register';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_2 } from '@utils/schemas';
@@ -15,6 +15,8 @@ import { ICountry } from 'react-native-international-phone-number';
 import PickerSelect from '~/components/ui/picker-select';
 
 const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
+    if (!RegisterFormContext) return;
+
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
 
@@ -86,8 +88,8 @@ const RegisterStepTwo: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
                                                     <Label>Occupation</Label>
                                                     <Input
                                                         leftIcon={{
-                                                            name: 'briefcase-outline',
-                                                            type: 'ionicons',
+                                                            name: 'briefcase',
+                                                            type: 'feather',
                                                         }}
                                                         value={values?.occupation}
                                                         onBlur={handleBlur('occupation')}

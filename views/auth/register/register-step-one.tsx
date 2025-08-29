@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepOne, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '.';
+import { RegisterFormContext } from '~/views/auth/register';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
@@ -14,6 +14,15 @@ import { PhoneInput } from '~/components/ui/phone-input';
 import { ICountry } from 'react-native-international-phone-number';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
+    if (!RegisterFormContext) {
+        console.log({ RegisterFormContext });
+
+        return (
+            <SafeAreaView className="flex-1">
+                <Text>Step One</Text>
+            </SafeAreaView>
+        );
+    }
     const { formValues, setFormValues } = React.useContext(RegisterFormContext);
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
 
