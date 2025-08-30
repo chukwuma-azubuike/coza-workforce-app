@@ -10,9 +10,10 @@ import Utils from '@utils/index';
 import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
-import { SafeAreaView, View } from 'react-native';
+import { Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import GhClocker from './workers/gh-clocker';
+import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
 
 interface IInitialHomeState {
     latestService: {
@@ -96,6 +97,8 @@ const Home: React.FC = () => {
     React.useEffect(() => {
         Utils.checkLocationPermission(refresh);
     }, []);
+
+    const SafeAreaView = Platform.OS === 'ios' ? RNSafeAreaView : SACSafeAreaView;
 
     return (
         <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
