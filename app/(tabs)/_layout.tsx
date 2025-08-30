@@ -10,6 +10,7 @@ import { NavTabBackground } from '~/components/NavBackgroundBlur';
 import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
 import { cn } from '~/lib/utils';
+import { Platform } from 'react-native';
 
 const TabLayout: React.FC = () => {
     const { isWorker, isQC, isCGWCApproved } = useRole();
@@ -18,6 +19,7 @@ const TabLayout: React.FC = () => {
 
     const pathname = usePathname();
     const progress = useSharedValue(1);
+    const isAndroid = Platform.OS === 'android';
 
     useEffect(() => {
         // animate from 0 -> 1 on path change
@@ -46,7 +48,7 @@ const TabLayout: React.FC = () => {
             }}
             className="shadow-lg shadow-black/5 flex-1"
         >
-            <Animated.View style={[{ flex: 1, marginBottom: 90 }, style]}>
+            <Animated.View style={[{ flex: 1, marginBottom: isAndroid ? 70 : 90 }, style]}>
                 <TabSlot />
             </Animated.View>
 
