@@ -140,7 +140,7 @@ const IssueTicket: React.FC = () => {
                     message: 'Ticket successfully issued',
                     defaultRender: true,
                     status: 'success',
-                    duration: 2,
+                    duration: 1,
                 });
                 reset();
                 resetForm({
@@ -169,7 +169,7 @@ const IssueTicket: React.FC = () => {
                     message: (error as any)?.data?.message || 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
-                    duration: 2,
+                    duration: 1,
                 });
                 reset();
             }

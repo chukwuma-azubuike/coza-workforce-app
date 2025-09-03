@@ -77,7 +77,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
 
             if ('data' in result) {
                 setModalState({
-                    duration: 2,
+                    duration: 1,
                     render: (
                         <ModalAlertComponent
                             description={`You clocked in at ${dayjs().format('hh:mm A')}`}
@@ -155,7 +155,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 () => handleClockOut(),
                 () =>
                     setModalState({
-                        duration: 2,
+                        duration: 1,
                         render: (
                             <ModalAlertComponent
                                 description={'You are not within range of any campus!'}
@@ -197,7 +197,7 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 }
                 if (!isInRange && (res === RESULTS.GRANTED || res === RESULTS.LIMITED)) {
                     setModalState({
-                        duration: 2,
+                        duration: 1,
                         render: (
                             <ModalAlertComponent
                                 description={
