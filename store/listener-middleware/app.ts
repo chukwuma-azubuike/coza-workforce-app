@@ -8,7 +8,7 @@ dismissModalListenerMiddleware.startListening({
     actionCreator: appActions.toast, // This action is dispatched every second
     effect: async (action, { dispatch, delay, cancelActiveListeners }) => {
         cancelActiveListeners();
-        const duration = (action.payload?.duration || 2) * 1000;
+        const duration = (action.payload?.duration || 1) * 1000;
 
         await delay(duration);
         dispatch(appActions.toast({}));

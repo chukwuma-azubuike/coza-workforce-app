@@ -27,7 +27,7 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
                 className="w-full"
             >
                 <View className="py-4 my-2 px-4 items-center gap-2 justify-between flex-row w-full rounded-xl border-border border">
-                    <View className="gap-3 flex-1">
+                    <View className="gap-3 flex-auto">
                         <View className="justify-between">
                             <Text className="font-bold ">{service?.name}</Text>
                             <Text className="text-sm">
@@ -35,6 +35,12 @@ const ServiceListRow: React.FC<IService> = React.memo(service => {
                                     service?.serviceTime
                                 ).format('h:mm A')}`}
                             </Text>
+                        </View>
+                    </View>
+                    <View className="gap-3 flex-auto">
+                        <View className="justify-between">
+                            <Text className="font-bold">Range</Text>
+                            <Text className="text-sm text-green-400">{service?.rangeToClockIn.toLocaleString()}m</Text>
                         </View>
                     </View>
                     <StatusTag

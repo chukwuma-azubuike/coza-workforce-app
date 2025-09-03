@@ -1,4 +1,4 @@
-import { PayloadAction, asyncThunkCreator, buildCreateSlice, createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, asyncThunkCreator, buildCreateSlice } from '@reduxjs/toolkit';
 import { IModalState } from '~/types/app';
 
 export interface IAppState {
