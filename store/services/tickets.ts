@@ -253,4 +253,5 @@ export const {
     useGetCampusTicketReportQuery,
     useLazyGetDepartmentTicketsQuery,
     useGetTicketsReportForDownloadQuery,
+    useLazyGetTicketsReportForDownloadQuery,
 } = ticketServiceSlice;

@@ -227,7 +227,7 @@ export const attendanceServiceSlice = createApi({
 
         getAttendanceReportForDownload: endpoint.query<any, IReportDownloadPayload>({
             query: params => ({
-                url: `${SERVICE_URL}/downloadServiceAttendance`,
+                url: `${SERVICE_URL}/download`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
@@ -252,6 +252,7 @@ export const {
     useGetDepartmentAttendanceReportQuery,
     useGetAttendanceReportForDownloadQuery,
     useGetWorkersCongressAttendanceReportQuery,
+    useLazyGetAttendanceReportForDownloadQuery,
     useGetLeadersCongressAttendanceReportQuery,
     useGetDepartmentCongressAttendanceReportQuery,
 } = attendanceServiceSlice;

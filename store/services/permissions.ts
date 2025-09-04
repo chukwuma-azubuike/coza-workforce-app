@@ -167,5 +167,5 @@ export const {
     useApprovePermissionMutation,
     useDeclinePermissionMutation,
     useGetPermissionCategoriesQuery,
-    useGetPermissionsReportForDownloadQuery,
+    useLazyGetPermissionsReportForDownloadQuery,
 } = permissionsServiceSlice;

@@ -5,9 +5,9 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { useGetServicesQuery } from '@store/services/services';
 import dayjs from 'dayjs';
 import { downloadFile } from '@utils/downloadFile';
-import { useLazyGetAttendanceQuery } from '@store/services/attendance';
-import { useLazyGetPermissionsQuery } from '@store/services/permissions';
-import { useLazyGetTicketsQuery } from '@store/services/tickets';
+import { useLazyGetAttendanceReportForDownloadQuery } from '@store/services/attendance';
+import { useLazyGetPermissionsReportForDownloadQuery } from '@store/services/permissions';
+import { useLazyGetTicketsReportForDownloadQuery } from '@store/services/tickets';
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
@@ -84,18 +84,11 @@ const Export: React.FC = () => {
     );
 
     const [getTickets, { data: tickets, isLoading: ticketsIsLoading, isFetching: ticketsIsFetching }] =
-        useLazyGetTicketsQuery();
+        useLazyGetTicketsReportForDownloadQuery();
     const [getAttendance, { data: attendance, isLoading: attendanceIsLoading, isFetching: attendanceIsFetching }] =
-        useLazyGetAttendanceQuery();
-    const [
-        getPermissions,
-        {
-            data: permissions,
-
-            isLoading: permissionsIsLoading,
-            isFetching: permissionIsFetching,
-        },
-    ] = useLazyGetPermissionsQuery();
+        useLazyGetAttendanceReportForDownloadQuery();
+    const [getPermissions, { data: permissions, isLoading: permissionsIsLoading, isFetching: permissionIsFetching }] =
+        useLazyGetPermissionsReportForDownloadQuery();
 
     const handleDataType = (value: IExportType) => {
         setDataType(value);
@@ -126,9 +119,8 @@ const Export: React.FC = () => {
             case 'attendance':
                 try {
                     const res = await getAttendance({
-                        // TODO: To be reinstated
-                        // endDate,
-                        // startDate,
+                        endDate,
+                        startDate,
                         campusId,
                         serviceId,
                         departmentId,
