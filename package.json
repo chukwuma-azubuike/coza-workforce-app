@@ -24,8 +24,8 @@
         "submit:prod": "eas submit --profile production",
         "submit:preview": "eas submit --profile preview",
         "prebuild": "npx expo prebuild",
-        "update:preview": "eas update --channel preview",
-        "update:prod": "eas update --channel production",
+        "update:preview": "eas update --channel preview --environment preview",
+        "update:prod": "eas update --channel production --environment production",
         "workflow:dev": "eas workflow:run .eas/workflows/create-development-build.yml",
         "workflow:preview": "eas workflow:run .eas/workflows/publish-preview-update.yml",
         "workflow:production": "eas workflow:run .eas/workflows/deploy-to-production.yml"
