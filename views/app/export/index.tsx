@@ -145,6 +145,11 @@ const Export: React.FC = () => {
                         }
                     }
 
+                    if (res.error) {
+                        const error = res.error as any;
+                        Alert.alert(error?.status, error?.error);
+                    }
+
                     return;
                 } catch (error) {
                     return;
@@ -179,6 +184,11 @@ const Export: React.FC = () => {
                         }
                     }
 
+                    if (res.error) {
+                        const error = res.error as any;
+                        Alert.alert(error?.status, error?.error);
+                    }
+
                     return;
                 } catch (error) {
                     return;
@@ -210,6 +220,11 @@ const Export: React.FC = () => {
                         } else {
                             Alert.alert('Empty report', 'No records found.');
                         }
+                    }
+
+                    if (res.error) {
+                        const error = res.error as any;
+                        Alert.alert(error?.status, error?.error);
                     }
 
                     return;
