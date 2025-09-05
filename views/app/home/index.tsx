@@ -12,7 +12,6 @@ import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
 import { StyleSheet } from 'react-native';
-import GhClocker from './workers/gh-clocker';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
 
 interface IInitialHomeState {
@@ -105,18 +104,8 @@ const Home: React.FC = () => {
             <SafeAreaView style={styles.container}>
                 <View style={styles.container}>
                     <If condition={!!user}>
-                        <If condition={!isGlobalPastor && !isGroupHead}>
+                        <If condition={!isGlobalPastor}>
                             <Clocker
-                                isInRange={isInRange}
-                                refreshLocation={refresh}
-                                refreshTrigger={refreshTrigger}
-                                setRefreshTrigger={setRefreshTrigger}
-                                deviceCoordinates={deviceCoordinates as any}
-                                verifyRangeBeforeAction={verifyRangeBeforeAction}
-                            />
-                        </If>
-                        <If condition={isGroupHead}>
-                            <GhClocker
                                 isInRange={isInRange}
                                 refreshLocation={refresh}
                                 refreshTrigger={refreshTrigger}
