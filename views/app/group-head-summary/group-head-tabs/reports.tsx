@@ -13,6 +13,7 @@ import { IIncidentReportPayload } from '@store/types';
 import Utils from '@utils';
 import { ReportRouteIndex } from '../../home/campus-pastors/report-summary';
 import { IReportFormProps } from '../../reports/forms/types';
+import { router } from 'expo-router';
 
 interface IReportProps
     extends Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status' | 'departmentId' | 'departmentName'> {
@@ -35,22 +36,11 @@ export const DepartmentReportListRow: React.FC<IReportProps> = props => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <View
-                p={2}
-                my={1.5}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-                className="px-4"
-            >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
+            <View className="px-4 text-muted-foreground justify-between items-center my-3 rounded-sm  ">
+                <Text className="text-muted-foreground">
                     {dayjs(props.updatedAt || props.createdAt).format('DD/MM/YYYY')}
                 </Text>
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }} className="font-bold">
-                    Departmental
-                </Text>
+                <Text className="text-muted-foreground font-bold">Departmental</Text>
                 <StatusTag>{props?.status as any}</StatusTag>
             </View>
         </TouchableOpacity>
@@ -64,10 +54,8 @@ interface IIncidentProps extends Pick<IIncidentReportPayload, 'createdAt' | 'det
 }
 
 const IncidentReportListRow: React.FC<IIncidentProps> = props => {
-    const navigation = useNavigation();
-
     const handlePress = () => {
-        navigation.navigate('Incident Report' as never, props as never);
+        router.push({ pathname: '/reports/incident-report', params: props as any });
     };
 
     return (
@@ -79,25 +67,10 @@ const IncidentReportListRow: React.FC<IIncidentProps> = props => {
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
-            <View
-                p={2}
-                my={1.5}
-                borderRadius={10}
-                alignItems="center"
-                _dark={{ bg: 'gray.900' }}
-                _light={{ bg: 'gray.50' }}
-                justifyContent="space-between"
-                className="px-4"
-            >
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {dayjs(props.createdAt).format('DD/MM/YYYY')}
-                </Text>
-                <Text _dark={{ color: 'rose.400' }} _light={{ color: 'rose.500' }} className="font-bold">
-                    Incident
-                </Text>
-                <Text _dark={{ color: 'gray.400' }} _light={{ color: 'gray.500' }}>
-                    {Utils.truncateString(props.details, 10)}
-                </Text>
+            <View className="p-4 justify-between text-muted-foreground items-center rounded-sm my-3">
+                <Text className=" text-muted-foreground">{dayjs(props.createdAt).format('DD/MM/YYYY')}</Text>
+                <Text className="font-bold text-rose-300 dark:text-rose-400">Incident</Text>
+                <Text className="text-muted-foreground">{Utils.truncateString(props.details, 10)}</Text>
             </View>
         </TouchableOpacity>
     );

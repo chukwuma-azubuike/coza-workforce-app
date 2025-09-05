@@ -1,8 +1,6 @@
 import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Heading } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -12,9 +10,10 @@ import useRole from '@hooks/role';
 import Utils from '@utils/index';
 import { useGetGHDepartmentByIdQuery } from '@store/services/department';
 import useScreenFocus from '@hooks/focus';
+import { router, useLocalSearchParams } from 'expo-router';
 
-const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const params = props.route.params as { _id?: string; title: string };
+const GroupHeadDepartments: React.FC = props => {
+    const params = useLocalSearchParams<{ _id?: string; title: string }>();
     const campusId = params?._id as string;
 
     const { navigate, setOptions } = useNavigation();
@@ -35,7 +34,10 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
 
     const handlePress = (elm: any) => {
         const screenName = `${data?.campusName} - ${elm.title}`;
-        navigate('Group Head Department Activities' as never, { ...elm, campusId, screenName } as never);
+        router.push({
+            pathname: '/group-head-campus/group-head-department-activities',
+            params: { ...elm, campusId, screenName },
+        });
     };
 
     const campusInfo = [
@@ -72,30 +74,16 @@ const GroupHeadDepartments: React.FC<NativeStackScreenProps<ParamListBase>> = pr
                     isLoading || isFetching ? (
                         <FlexListSkeleton count={1} />
                     ) : (
-                        <View
-                            key={index}
-                            flexDirection="row"
-                            alignItems="center"
-                            justifyItems="center"
-                            my={2}
-                            className="px-2"
-                        >
-                            <Text
-                                flexWrap="wrap"
-                                fontWeight="400"
-                                _dark={{ color: 'gray.400' }}
-                                _light={{ color: 'gray.600' }}
-                            >
-                                {item.name}
-                            </Text>
-                            <Heading ml={4} size="sm" _dark={{ color: 'gray.300' }} _light={{ color: 'gray.700' }}>
+                        <View key={index} className="px-2 flex-row items-center justify-center my-4">
+                            <Text className="flex-wrap font-semibold text-muted-foreground">{item.name}</Text>
+                            <Text className="flex-wrap text-base font-semibold text-muted-foreground ml-8">
                                 {item.value}
-                            </Heading>
+                            </Text>
                         </View>
                     )
                 )}
                 <View>
-                    <View mb={4} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
+                    <View className="py-3 mb-8 flex-row flex-1 flex-wrap">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (

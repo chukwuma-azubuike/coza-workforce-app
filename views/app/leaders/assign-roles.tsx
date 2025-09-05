@@ -1,6 +1,4 @@
 import { Text } from '~/components/ui/text';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Formik, FormikConfig } from 'formik';
 import React, { useState } from 'react';
 import ButtonComponent from '@components/atoms/button';
@@ -10,7 +8,7 @@ import { useAssignSecondaryRolesMutation, useGetUsersQuery } from '@store/servic
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { useGetRolesQuery } from '@store/services/role';
-import { IAssignGroupHead, IUser } from '@store/types';
+import { IAssignGroupHead } from '@store/types';
 import { AssignGroupHeadSchema } from '@utils/schemas';
 import { TouchableOpacity, View } from 'react-native';
 import Utils from '@utils/index';
@@ -19,6 +17,7 @@ import PickerSelect from '~/components/ui/picker-select';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { X } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 interface IGroupHead {
     campus: string;
@@ -26,9 +25,7 @@ interface IGroupHead {
     departmentName: string;
     campusName: string;
 }
-const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) => {
-    const { navigate } = navigation;
-
+const AssignRole: React.FC = () => {
     const INITIAL_ADDCAMPUS = {
         campus: '',
         department: '',
@@ -72,7 +69,7 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
             ?.departmentName as string;
         const campusName = campus?.find(item => item._id === addCampusDept.campus)?.campusName as string;
         const campusDeptData = { ...addCampusDept, campusName, departmentName };
-        setCampusDept([...campusDept, campusDeptData]);
+        setCampusDept(campusDept.concat(campusDeptData));
         setAddCampusDept(INITIAL_ADDCAMPUS);
     };
 
@@ -104,10 +101,10 @@ const AssignRole: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigatio
                 status: 'success',
             });
             reset();
-            navigate('More');
             resetForm({ values: INITIAL_VALUES });
             setCampusDept([]);
             setIsOpen(false);
+            router.push('/more');
         }
 
         if ('error' in result) {

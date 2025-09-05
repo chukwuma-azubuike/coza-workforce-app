@@ -1,5 +1,4 @@
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 // import { SceneMap } from 'react-native-tab-view';
 import { GroupHeadTeamAttendance, GroupHeadTeamPermissionsList, GroupHeadTeamTicketsList } from './lists';
@@ -10,14 +9,12 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import TabComponent from '@components/composite/tabs';
 import { IPermission, ITicket } from '@store/types';
 import GroupHeadReports from './reports';
+import { useLocalSearchParams } from 'expo-router';
 
-const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+const GroupHeadDepartmentActivies: React.FC = props => {
     const { isMobile } = useMediaQuery();
-    const navigation = props.navigation;
-
-    const { setOptions } = navigation;
-
-    const params = props.route.params as {
+    const navigation = useNavigation();
+    const _params = useLocalSearchParams<{
         role: ROLES;
         route: string;
         permissions: IPermission;
@@ -27,7 +24,11 @@ const GroupHeadDepartmentActivies: React.FC<NativeStackScreenProps<ParamListBase
         campusId: string;
         tab: number;
         title: string;
-    };
+    }>();
+
+    const { setOptions } = navigation;
+
+    const params = _params;
 
     const ROUTES = [
         { key: 'teamAttendance', title: 'Team Attendance' },

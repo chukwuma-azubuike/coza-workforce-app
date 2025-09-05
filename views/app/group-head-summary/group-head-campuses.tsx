@@ -1,26 +1,22 @@
-import { View } from 'react-native';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { SafeAreaView, View } from 'react-native';
 import React from 'react';
 import { SmallCardComponent } from '@components/composite/card';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { FlatListSkeleton } from '@components/layout/skeleton';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { useCustomBackNavigation } from '@hooks/navigation';
 import useRole from '@hooks/role';
 import { useGetGHCampusByIdQuery } from '@store/services/campus';
 import Utils from '@utils/index';
+import { router } from 'expo-router';
 
-const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
-    const { navigate } = useNavigation();
-
+const GroupHeadCampuses: React.FC = () => {
     const handlePress = (elm: any) => {
-        navigate('Group Head Departments' as never, { ...elm } as never);
+        router.push({ pathname: '/group-head-campus/group-head-departments', params: elm });
     };
 
-    const { user, isGroupHead } = useRole();
+    const { user } = useRole();
 
-    const { refetch, data, isLoading, isFetching, isSuccess } = useGetGHCampusByIdQuery(user.userId);
+    const { data, isLoading, isFetching } = useGetGHCampusByIdQuery(user.userId);
 
     const Departmentlist = React.useMemo(
         () =>
@@ -36,13 +32,11 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
         [data]
     );
 
-    useCustomBackNavigation({ targetRoute: 'More' });
-
     return (
         <ErrorBoundary>
             <ViewWrapper scroll>
-                <View>
-                    <View mb={4} flexDirection="row" flex={1} flexWrap="wrap" className="py-3">
+                <SafeAreaView>
+                    <View className="py-3 mb-8 flex flex-row flex-1 flex-wrap">
                         {isLoading || isFetching ? (
                             <FlatListSkeleton count={6} />
                         ) : (
@@ -58,7 +52,7 @@ const GroupHeadCampuses: React.FC<NativeStackScreenProps<ParamListBase>> = props
                             </>
                         )}
                     </View>
-                </View>
+                </SafeAreaView>
             </ViewWrapper>
         </ErrorBoundary>
     );

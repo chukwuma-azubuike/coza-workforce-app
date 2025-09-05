@@ -5,7 +5,8 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { router } from 'expo-router';
 
 const WorkforceSummary: React.FC = () => {
-    const { isHOD, isAHOD, isSuperAdmin, isCampusPastor, isGlobalPastor, isQC, isInternshipHOD } = useRole();
+    const { isHOD, isAHOD, isSuperAdmin, isCampusPastor, isGlobalPastor, isQC, isGroupHead, isInternshipHOD } =
+        useRole();
 
     const handleReroute = () => {
         // QC condition comes first as QC can also be HOD or AHOD
@@ -15,7 +16,7 @@ const WorkforceSummary: React.FC = () => {
         if (isHOD || isAHOD) {
             return router.push('/workforce-summary/workforce-management');
         }
-        if (isGlobalPastor || isSuperAdmin) {
+        if (isGlobalPastor || isSuperAdmin || isGroupHead) {
             return router.push('/workforce-summary/global-workforce');
         }
     };
