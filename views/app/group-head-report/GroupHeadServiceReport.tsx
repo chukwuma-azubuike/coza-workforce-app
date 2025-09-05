@@ -2,16 +2,14 @@ import ErrorBoundary from '@components/composite/error-boundary';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
 import useGeoLocation from '@hooks/geo-location';
-import { useCustomBackNavigation, usePreventGoBack } from '@hooks/navigation';
+import { usePreventGoBack } from '@hooks/navigation';
 import useRole from '@hooks/role';
-import { ParamListBase } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useAppDispatch, useAppSelector } from '@store/hooks';
+import { useAppDispatch } from '@store/hooks';
 import { useGetUserByIdQuery } from '@store/services/account';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import { IGHSubmittedReport } from '@store/services/reports';
 import { useGetLatestServiceQuery } from '@store/services/services';
-import { selectCurrentUser, userActionTypes } from '@store/services/users';
+// import { userActionTypes } from '@store/services/users';
 import { IAttendance, IService } from '@store/types';
 import Utils from '@utils/index';
 import React from 'react';
@@ -20,7 +18,7 @@ import Geolocation from '@react-native-community/geolocation';
 import { GeoCoordinates } from '@hooks/geo-location';
 import { HomeContext } from '../home';
 import { GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
-import GhClocker from '../home/workers/gh-clocker';
+import { useLocalSearchParams } from 'expo-router';
 
 interface IInitialHomeState {
     latestService: {
@@ -38,12 +36,13 @@ interface IInitialHomeState {
     currentCoordinate: GeoCoordinates;
 }
 
-const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
+const GroupHeadServiceReport: React.FC = () => {
     const dispatch = useAppDispatch();
-    const currentUserId = useAppSelector(store => selectCurrentUser(store)).userId;
+    const { user } = useRole();
+    const currentUserId = user?._id || user?.userId;
 
     usePreventGoBack();
-    const prop = props.route.params as IGHSubmittedReport;
+    const prop = useLocalSearchParams<IGHSubmittedReport>();
 
     const {
         error,
@@ -52,8 +51,6 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
         isLoading: userLoading,
         isFetching: userFetching,
     } = useGetUserByIdQuery(currentUserId);
-
-    const { user } = useRole();
 
     const {
         isError,
@@ -105,10 +102,10 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
 
     React.useEffect(() => {
         if (currentUserData) {
-            dispatch({
-                type: userActionTypes.SET_USER_DATA,
-                payload: currentUserData,
-            });
+            // dispatch({
+            //     type: userActionTypes.SET_USER_DATA,
+            //     payload: currentUserData,
+            // });
         }
     }, [currentUserData]);
 
@@ -119,8 +116,6 @@ const GroupHeadServiceReport: React.FC<NativeStackScreenProps<ParamListBase>> = 
     });
 
     const now = Math.floor(Date.now() / 1000); // Current time in seconds (UNIX timestamp)
-
-    useCustomBackNavigation({ targetRoute: prop?.serviceId ? 'GH Reports History' : 'Home' });
 
     const isIOS = Platform.OS === 'ios';
 

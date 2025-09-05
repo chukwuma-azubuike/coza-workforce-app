@@ -1,28 +1,23 @@
 import { Text } from '~/components/ui/text';
-import { ParamListBase, useNavigation } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { memo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { IGHSubmittedReport } from '@store/services/reports';
-import HStackComponent from '@components/layout/h-stack';
-import VStackComponent from '@components/layout/v-stack';
-import TextComponent from '@components/text';
 import StatusTag from '@components/atoms/status-tag';
 import { TouchableOpacity, View } from 'react-native';
 import dayjs from 'dayjs';
 import { useGetGhReportsQuery } from '@store/services/grouphead';
+import { router } from 'expo-router';
 
 const ITEM_HEIGHT = 60;
 
 export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
-    const navigation = useNavigation();
     const { status, serviceName, createdAt } = props;
 
     const handlePress = () => {
-        navigation.navigate('Group Head Service Report' as never, props as never);
+        router.push('/group-head-service-report');
     };
 
     return (
@@ -35,7 +30,7 @@ export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
             style={{ flex: 1 }}
         >
             <View className="py-12 items-center justify-between px-12">
-                <View space={6} className="items-center">
+                <View className="items-center gap-12">
                     <View className="justify-between">
                         <>
                             <Text>{serviceName}</Text>
@@ -49,7 +44,7 @@ export const ReportListRow: React.FC<IGHSubmittedReport> = memo(props => {
     );
 });
 
-const GroupHeadReportHistory: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation, route }) => {
+const GroupHeadReportHistory: React.FC = () => {
     return (
         <ViewWrapper scroll>
             <GroupReportList />

@@ -1,7 +1,8 @@
 import React from 'react';
+import AssignRoles from '~/views/app/leaders/assign-roles';
 
 const AssignGroupHeadScreen: React.FC = () => {
-    return <></>;
+    return <AssignRoles />;
 };
 
 export default AssignGroupHeadScreen;
