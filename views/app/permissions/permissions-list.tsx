@@ -290,7 +290,11 @@ const LeadersPermissionsList: React.FC = memo(() => {
     const isLoading = hodLoading || ahodLoading;
     const isFetching = hodIsFetching || ahodIsFetching;
     const hasNextPage = hodHasNextPage || ahodHasNextPage;
-    const refetch = hodRefetch || ahodRefetch;
+
+    const refetch = () => {
+        hodRefetch();
+        ahodRefetch();
+    };
 
     const fetchNextPage = useCallback(() => {
         hodFetchNextPage();
