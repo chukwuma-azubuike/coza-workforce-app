@@ -16,6 +16,7 @@ import {
     REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
+import Utils from '~/utils';
 
 const SERVICE_URL = 'report';
 
@@ -408,12 +409,20 @@ export const reportsServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            providesTags: (result, error, departmentId) => [
+            providesTags: (_result, _error, departmentId) => [
                 { type: 'DepartmentReport', id: departmentId },
                 SERVICE_URL,
             ],
 
-            transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => res.data,
+            transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => {
+                return {
+                    ...res.data,
+                    departmentalReport: Utils.sortByDate(
+                        res.data?.departmentalReport?.slice(res.data.departmentalReport.length - 50),
+                        'createdAt'
+                    ),
+                };
+            },
         }),
 
         submitGSPReport: endpoint.mutation<any, IGSPReportPayload>({
