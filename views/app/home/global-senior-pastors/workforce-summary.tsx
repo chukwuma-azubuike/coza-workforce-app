@@ -9,13 +9,15 @@ import { useGetGSPReportQuery } from '@store/services/reports';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import dayjs from 'dayjs';
-import { IAttendanceStatus, ICampus, IService, IUserReportType } from '@store/types';
+import { ICampus, IService, IUserReportType } from '@store/types';
 import Utils from '@utils/index';
 import useRole from '@hooks/role';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { IUserReportProps } from '../../Workforce-management/user-reports';
 import { router } from 'expo-router';
 import PickerSelect from '~/components/ui/picker-select';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
+import { useColorScheme } from '~/lib/useColorScheme';
 
 interface WorkforceSummaryProps {
     servicesIsSuccess: boolean;
@@ -23,13 +25,8 @@ interface WorkforceSummaryProps {
 }
 
 const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesIsSuccess }) => {
-    const [expandedWorkers, setExpandedWorkers] = React.useState<boolean>(true);
-    const [expandedAttendance, setExpandedAttendance] = React.useState<boolean>(false);
-    const [expandedGuests, setExpandedGuests] = React.useState<boolean>(false);
-    const [expandedBusCount, setExpandedBusCount] = React.useState<boolean>(false);
-
     const { user } = useRole();
-    const { isDarkMode } = useAppColorMode();
+    const { isDarkColorScheme: isDarkMode } = useColorScheme();
 
     const { data: campuses, isSuccess: campusIsSuccess, isLoading: campusesLoading } = useGetCampusesQuery();
     const { refetch: latestServiceRefetch } = useGetLatestServiceQuery(user?.campus?._id as string);
@@ -86,7 +83,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
     );
 
     const campusName = React.useMemo<ICampus['campusName'] | undefined>(
-        () => sortedCampuses?.find(a => a._id === campusId)?.campusName,
+        () => sortedCampuses?.find(a => a._id === campusId)?.campusName ?? '',
         [sortedCampuses, campusId]
     );
 
@@ -109,8 +106,8 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
         };
 
     return (
-        <>
-            <View className="px-4 justify-around static gap-6 w-full mb-6">
+        <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading} className="flex-1 gap-4">
+            <View className="px-1 justify-around static gap-4 w-full mb-4">
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
@@ -138,362 +135,179 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                     </View>
                 </View>
             </View>
-            <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading} className="flex-1 mt-8">
-                <ListItem.Accordion
-                    content={
-                        <>
-                            <Icon
-                                size={20}
-                                name="globe"
-                                type="font-awesome"
-                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                                style={{ marginRight: 12 }}
-                            />
-                            <ListItem.Content>
-                                <Text>{`${campusName ? campusName : ''} Workforce`}</Text>
-                            </ListItem.Content>
-                        </>
-                    }
-                    containerStyle={{
-                        borderWidth: 0.2,
-                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
-                    }}
-                    isExpanded={expandedWorkers}
-                    onPress={() => {
-                        setExpandedWorkers(!expandedWorkers);
-                    }}
-                    expandIcon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                    icon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            style={{ marginRight: 12 }}
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                        />
-                    }
-                >
-                    <View className="py-3 flex-row flex-wrap">
-                        <StatCardComponent
-                            // percent
-                            label="Total"
-                            // suffix="+12"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={gspReportIsLoading}
-                            value={workers?.totalWorkers}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Active"
-                            // suffix="+15"
-                            iconType="feather"
-                            iconName="check-square"
-                            isLoading={gspReportIsLoading}
-                            value={workers?.activeWorkers}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Present"
-                            // suffix="+25"
-                            iconType="material"
-                            iconName="event-available"
-                            isLoading={gspReportIsLoading}
-                            value={workers?.presentWorkers}
-                            onPress={handlePressCard({ status: IAttendanceStatus.PRESENT, service: 'attendance' })}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Late"
-                            // suffix="-8"
-                            iconType="entypo"
-                            iconName="back-in-time"
-                            value={workers?.lateWorkers}
-                            iconColor={THEME_CONFIG.rose}
-                            isLoading={gspReportIsLoading}
-                            onPress={handlePressCard({ status: IAttendanceStatus.LATE, service: 'attendance' })}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Absent"
-                            // suffix="-21"
-                            iconName="groups"
-                            iconType="material"
-                            isLoading={gspReportIsLoading}
-                            value={workers?.absentWorkers}
-                            iconColor={THEME_CONFIG.rose}
-                            onPress={handlePressCard({ status: IAttendanceStatus.ABSENT, service: 'attendance' })}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Tickets"
-                            // suffix="-21"
-                            value={workers?.tickets}
-                            iconColor={THEME_CONFIG.rose}
-                            iconType="material-community"
-                            isLoading={gspReportIsLoading}
-                            iconName="ticket-confirmation-outline"
-                            onPress={handlePressCard({ service: 'ticket' })}
-                        />
-                    </View>
-                </ListItem.Accordion>
-                <ListItem.Accordion
-                    content={
-                        <>
+            <Accordion type="single" collapsible className="w-full max-w-lg px-2" defaultValue="item-1">
+                <AccordionItem value="item-1">
+                    <AccordionTrigger>
+                        <View className="flex-row items-center flex-1">
                             <Icon
                                 size={20}
                                 type="font-awesome"
                                 name="calendar-check-o"
-                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                                 style={{ marginRight: 12 }}
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             />
                             <ListItem.Content>
                                 <Text>{campusName || campusId} Service Attendance</Text>
                             </ListItem.Content>
-                        </>
-                    }
-                    containerStyle={{
-                        borderWidth: 0.2,
-                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
-                    }}
-                    isExpanded={expandedAttendance}
-                    onPress={() => {
-                        setExpandedAttendance(!expandedAttendance);
-                    }}
-                    expandIcon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                    icon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                >
-                    <View className="py-3 flex-row flex-wrap">
-                        <StatCardComponent
-                            // percent
-                            label="Total"
-                            // suffix="+27"
-                            iconName="account-group"
-                            iconType="material-community"
-                            isLoading={gspReportIsLoading}
-                            value={serviceAttendance?.totalAttenance}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Men"
-                            // suffix="+12"
-                            iconType="ionicon"
-                            iconName="man-outline"
-                            isLoading={gspReportIsLoading}
-                            value={serviceAttendance?.menAttendance}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Women"
-                            // suffix="+12"
-                            iconName="woman-outline"
-                            iconType="ionicon"
-                            isLoading={gspReportIsLoading}
-                            value={serviceAttendance?.womenAttendance}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Teenagers"
-                            // suffix="+17"
-                            iconName="child"
-                            iconType="font-awesome"
-                            isLoading={gspReportIsLoading}
-                            value={serviceAttendance?.teenagerAttendance}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Children"
-                            // suffix="+12"
-                            iconName="child"
-                            iconType="font-awesome"
-                            isLoading={gspReportIsLoading}
-                            value={serviceAttendance?.childrenAttendance}
-                        />
-                    </View>
-                </ListItem.Accordion>
-                <ListItem.Accordion
-                    content={
-                        <>
+                        </View>
+                    </AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-4 text-balance">
+                        <View className="py-3 flex-row flex-wrap gap-4">
+                            <StatCardComponent
+                                // percent
+                                label="Total"
+                                // suffix="+27"
+                                iconName="account-group"
+                                iconType="material-community"
+                                isLoading={gspReportIsLoading}
+                                value={serviceAttendance?.totalAttenance}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Men"
+                                // suffix="+12"
+                                iconType="ionicon"
+                                iconName="man-outline"
+                                isLoading={gspReportIsLoading}
+                                value={serviceAttendance?.menAttendance}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Women"
+                                // suffix="+12"
+                                iconName="woman-outline"
+                                iconType="ionicon"
+                                isLoading={gspReportIsLoading}
+                                value={serviceAttendance?.womenAttendance}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Teenagers"
+                                // suffix="+17"
+                                iconName="child"
+                                iconType="font-awesome"
+                                isLoading={gspReportIsLoading}
+                                value={serviceAttendance?.teenagerAttendance}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Children"
+                                // suffix="+12"
+                                iconName="child"
+                                iconType="font-awesome"
+                                isLoading={gspReportIsLoading}
+                                value={serviceAttendance?.childrenAttendance}
+                            />
+                        </View>
+                    </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-3">
+                    <AccordionTrigger>
+                        <View className="flex-row items-center flex-1">
                             <Icon
                                 size={20}
                                 type="ionicon"
                                 name="person-add"
-                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                                 style={{ marginRight: 12 }}
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             />
                             <ListItem.Content>
                                 <Text>{campusName || campusId} Guests Attendance</Text>
                             </ListItem.Content>
-                        </>
-                    }
-                    containerStyle={{
-                        borderWidth: 0.2,
-                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
-                    }}
-                    isExpanded={expandedGuests}
-                    onPress={() => {
-                        setExpandedGuests(!expandedGuests);
-                    }}
-                    expandIcon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                    icon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                >
-                    <View className="py-3 flex-row flex-wrap">
-                        <StatCardComponent
-                            // percent
-                            label="First timers"
-                            // suffix="+22"
-                            iconName="badge"
-                            iconType="simple-line-icon"
-                            isLoading={gspReportIsLoading}
-                            value={guestAttendance?.firstTimer}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="New Converts"
-                            // suffix="+32"
-                            iconName="person-add-outline"
-                            iconType="ionicon"
-                            isLoading={gspReportIsLoading}
-                            value={guestAttendance?.newConvert}
-                        />
-                    </View>
-                </ListItem.Accordion>
-                <ListItem.Accordion
-                    content={
-                        <>
+                        </View>
+                    </AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-4 text-balance">
+                        <View className="py-3 flex-row flex-wrap gap-4">
+                            <StatCardComponent
+                                // percent
+                                label="First timers"
+                                // suffix="+22"
+                                iconName="badge"
+                                iconType="simple-line-icon"
+                                isLoading={gspReportIsLoading}
+                                value={guestAttendance?.firstTimer}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="New Converts"
+                                // suffix="+32"
+                                iconName="person-add-outline"
+                                iconType="ionicon"
+                                isLoading={gspReportIsLoading}
+                                value={guestAttendance?.newConvert}
+                            />
+                        </View>
+                    </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="item-4">
+                    <AccordionTrigger>
+                        <View className="flex-row items-center flex-1">
                             <Icon
                                 size={20}
                                 type="ionicon"
                                 name="bus-outline"
-                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                                 style={{ marginRight: 12 }}
+                                color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
                             />
                             <ListItem.Content>
                                 <Text>{campusName || campusId} Bus Count (Pick up)</Text>
                             </ListItem.Content>
-                        </>
-                    }
-                    containerStyle={{
-                        borderWidth: 0.2,
-                        borderColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryLightGray,
-                        backgroundColor: isDarkMode ? THEME_CONFIG.darkGray : THEME_CONFIG.veryVeryLightGray,
-                    }}
-                    isExpanded={expandedBusCount}
-                    onPress={() => {
-                        setExpandedBusCount(!expandedBusCount);
-                    }}
-                    expandIcon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                    icon={
-                        <Icon
-                            size={20}
-                            type="ionicon"
-                            name="chevron-down"
-                            color={isDarkMode ? THEME_CONFIG.lightGray : THEME_CONFIG.darkGray}
-                            style={{ marginRight: 12 }}
-                        />
-                    }
-                >
-                    <View className="py-3 flex-row flex-wrap">
-                        <StatCardComponent
-                            // percent
-                            label="Locations"
-                            // suffix="+9"
-                            iconName="location-outline"
-                            iconType="ionicon"
-                            isLoading={gspReportIsLoading}
-                            value={busCount?.location}
-                        />
-                        <StatCardComponent
-                            // percent
-                            // suffix="+12"
-                            label="Adults"
-                            iconName="child"
-                            iconType="font-awesome"
-                            isLoading={gspReportIsLoading}
-                            value={busCount?.totalAdult}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Total Guests"
-                            // suffix="+12"
-                            iconName="account-group"
-                            iconType="material-community"
-                            isLoading={gspReportIsLoading}
-                            value={busCount?.totalGuest}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Chldren"
-                            // suffix="+12"
-                            iconName="account-group"
-                            iconType="material-community"
-                            isLoading={gspReportIsLoading}
-                            value={busCount?.totalChildren}
-                        />
-                        <StatCardComponent
-                            // percent
-                            label="Cars"
-                            // suffix="+37"
-                            iconType="ionicon"
-                            iconName="car-sport-outline"
-                            isLoading={gspReportIsLoading}
-                            value={busCount?.totalCars}
-                        />
-                    </View>
-                </ListItem.Accordion>
-            </ViewWrapper>
-        </>
+                        </View>
+                    </AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-4 text-balance">
+                        <View className="py-3 flex-row flex-wrap gap-4">
+                            <StatCardComponent
+                                // percent
+                                label="Locations"
+                                // suffix="+9"
+                                iconName="location-outline"
+                                iconType="ionicon"
+                                isLoading={gspReportIsLoading}
+                                value={busCount?.location}
+                            />
+                            <StatCardComponent
+                                // percent
+                                // suffix="+12"
+                                label="Adults"
+                                iconName="child"
+                                iconType="font-awesome"
+                                isLoading={gspReportIsLoading}
+                                value={busCount?.totalAdult}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Total Guests"
+                                // suffix="+12"
+                                iconName="account-group"
+                                iconType="material-community"
+                                isLoading={gspReportIsLoading}
+                                value={busCount?.totalGuest}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Chldren"
+                                // suffix="+12"
+                                iconName="account-group"
+                                iconType="material-community"
+                                isLoading={gspReportIsLoading}
+                                value={busCount?.totalChildren}
+                            />
+                            <StatCardComponent
+                                // percent
+                                label="Cars"
+                                // suffix="+37"
+                                iconType="ionicon"
+                                iconName="car-sport-outline"
+                                isLoading={gspReportIsLoading}
+                                value={busCount?.totalCars}
+                            />
+                        </View>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
+        </ViewWrapper>
     );
 };
 

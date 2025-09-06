@@ -13,6 +13,7 @@ import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
+import TopNav from './top-nav';
 
 interface IInitialHomeState {
     latestService: {
@@ -115,6 +116,7 @@ const Home: React.FC = () => {
                             />
                         </If>
                         <If condition={isGlobalPastor}>
+                            <TopNav />
                             <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
                         </If>
                     </If>
