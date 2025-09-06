@@ -55,7 +55,10 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
         <>
             {props[1]?.map((elm, index) => {
                 const handlePress = () => {
-                    router.push({ pathname: ReportRouteIndex[elm?.departmentName] as any, params: elm.report });
+                    router.push({
+                        pathname: `/reports/${ReportRouteIndex[elm?.departmentName]}` as any,
+                        params: elm.report,
+                    });
                 };
 
                 return (
@@ -103,7 +106,7 @@ const GHReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
                         {reports?.map((reportItem, index) => {
                             const handlePress = () => {
                                 router.push({
-                                    pathname: ReportRouteIndex[reportItem?.departmentName] as any,
+                                    pathname: `/reports/${ReportRouteIndex[reportItem?.departmentName]}` as any,
                                     params: reportItem.report,
                                 });
                             };
@@ -152,7 +155,13 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
             refetchService();
         };
 
-        const navigateToReports = () => router.push('/reports');
+        const { user } = useRole();
+
+        const navigateToReports = () =>
+            router.push({
+                pathname: '/reports/campus-report',
+                params: { serviceId, campusId, campusName: user?.campusName },
+            });
 
         const reportColumns: IFlatListColumn[] = [
             {

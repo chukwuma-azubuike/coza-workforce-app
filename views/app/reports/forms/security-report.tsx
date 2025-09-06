@@ -110,7 +110,7 @@ const SecurityReport: React.FC = () => {
                 initialValues={INITIAL_VALUES}
             >
                 {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
-                    <View className="px-2 mt-4 gap-4">
+                    <View className="px-2 mt-4 gap-4 mb-12">
                         <Text className="w-full text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>

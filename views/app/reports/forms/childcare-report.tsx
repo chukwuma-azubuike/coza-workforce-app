@@ -121,7 +121,7 @@ const ChildcareReport: React.FC = () => {
     }, []);
 
     return (
-        <ViewWrapper scroll avoidKeyboard>
+        <ViewWrapper scroll avoidKeyboard className='px-2' >
             <Formik<IChildCareReportPayload>
                 validateOnChange
                 enableReinitialize
@@ -129,7 +129,7 @@ const ChildcareReport: React.FC = () => {
                 initialValues={INITIAL_VALUES}
             >
                 {({ handleChange, errors, values, handleSubmit, setFieldValue }) => (
-                    <View className="pt-4 w-full gap-4">
+                    <View className="pt-4 w-full gap-4 mb-12">
                         <Text className="mb-2 text-muted-foreground text-center">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>

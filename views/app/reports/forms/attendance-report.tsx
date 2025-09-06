@@ -200,7 +200,7 @@ const AttendanceReport: React.FC = () => {
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </View>
-                                <View className="gap-4 justify-between flex-row">
+                                <View className="justify-between gap-4 flex-row">
                                     <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
@@ -210,14 +210,14 @@ const AttendanceReport: React.FC = () => {
                                     >
                                         Request Review
                                     </Button>
-                                    <ButtonComponent
+                                    <Button
                                         onPress={() => onApprove(values)}
                                         isLoading={isLoading}
                                         className="flex-1"
                                         size="sm"
                                     >
                                         Approve
-                                    </ButtonComponent>
+                                    </Button>
                                 </View>
                             </If>
                         </View>

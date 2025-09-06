@@ -77,7 +77,7 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
     };
 
     return (
-        <ViewWrapper className="mb-4" noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+        <ViewWrapper className="mb-4 flex-1" noPadding refreshing={isLoading} onRefresh={handleRefresh}>
             <FlatListComponent
                 onRefresh={refetch}
                 data={moreData as any}
