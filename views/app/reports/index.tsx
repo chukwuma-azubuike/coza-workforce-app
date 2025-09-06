@@ -34,7 +34,7 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
         } = useRole();
 
         const handlePress = () => {
-            router.push({ pathname: ReportRouteIndex[department?.departmentName] as any, params: props });
+            router.push({ pathname: `/reports/${ReportRouteIndex[department?.departmentName]}` as any, params: props });
         };
 
         return (

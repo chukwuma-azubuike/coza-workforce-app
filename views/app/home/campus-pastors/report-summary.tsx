@@ -24,12 +24,12 @@ interface ReportSummaryListRowProps {
 }
 
 enum ReportSummaryMap {
-    PCU = 'Guest Report',
-    CTS = 'Transfer Report',
-    Ushery = 'Attendance Report',
-    Security = 'Security Report',
-    Programme = 'Service Report',
-    Childcare = 'Childcare Report',
+    PCU = 'guest-report',
+    CTS = 'transfer-report',
+    Ushery = 'attendance-report',
+    Security = 'security-report',
+    Programme = 'service-report',
+    Childcare = 'childcare-report',
 }
 
 interface ReportSummaryMapIndex {
