@@ -104,7 +104,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
         data: services,
         isLoading: servicesLoading,
         isSuccess: servicesIsSuccess,
-    } = useGetServicesQuery({ limit: 40, page: 1 });
+    } = useGetServicesQuery({ limit: 100, page: 1 });
 
     const filteredServices = React.useMemo<IService[] | undefined>(
         () => services && services.filter(service => dayjs().unix() > dayjs(service.clockInStartTime).unix()),
@@ -155,51 +155,46 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
     const { campusId, campusName } = React.useContext(GlobalReportContext);
 
     return (
-        <ViewWrapper className="py-0 px-2" noPadding refreshing={isLoading || servicesLoading || isFetching}>
-            <View className="flex-1">
-                <View className="w-100 md:h-1/3 flex-1 gap-3 pt-4">
-                    <PickerSelect
-                        valueKey="_id"
-                        labelKey="name"
-                        value={serviceId}
-                        onValueChange={setService}
-                        items={sortedServices || []}
-                        placeholder="Select Service"
-                        customLabel={service =>
-                            `${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`
-                        }
-                    />
-                    <View>
-                        <View style={{ height: '65%' }}>
-                            <Text className="font-bold">Campus Reports</Text>
-                            <FlatListComponent
-                                refreshing={isFetching}
-                                columns={reportColumns}
-                                onRefresh={handleRefresh}
-                                isLoading={isLoading || isFetching}
-                                data={campusReports as IGlobalReportList}
-                            />
-                        </View>
-                        <Separator orientation="horizontal" />
-                        <>
-                            <Text className="font-bold mt-10">Group Head Reports</Text>
-                            <FlatListComponent
-                                refreshing={isFetching}
-                                onRefresh={handleRefresh}
-                                columns={ghReportColumns}
-                                isLoading={ghIsLoading || ghIsFetching}
-                                data={ghReports as Array<IGHSubmittedReportForGSP>}
-                            />
-                        </>
-                    </View>
-                </View>
-                <If condition={isTablet}>
-                    <Separator orientation="vertical" className="h-full m-4" />
-                    <View className="w-4/6">
-                        <CampusReportDetails serviceId={serviceId} campusId={campusId} campusName={campusName} />
-                    </View>
-                </If>
+        <ViewWrapper
+            scroll
+            noPadding
+            className="py-4 px-2 flex-1"
+            refreshing={isLoading || servicesLoading || isFetching}
+        >
+            <PickerSelect
+                valueKey="_id"
+                labelKey="name"
+                value={serviceId}
+                onValueChange={setService}
+                items={sortedServices || []}
+                placeholder="Select Service"
+                customLabel={service => `${service.name} - ${dayjs(service.clockInStartTime).format('DD MMM YYYY')}`}
+            />
+            <View className="gap-4 pt-4 px-1 flex-1">
+                <Text className="font-bold mt-2">Campus Reports</Text>
+                <FlatListComponent
+                    refreshing={isFetching}
+                    columns={reportColumns}
+                    onRefresh={handleRefresh}
+                    isLoading={isLoading || isFetching}
+                    data={campusReports as IGlobalReportList}
+                />
+                <Separator orientation="horizontal" className="my-4" />
+                <Text className="font-bold">Group Head Reports</Text>
+                <FlatListComponent
+                    refreshing={isFetching}
+                    onRefresh={handleRefresh}
+                    columns={ghReportColumns}
+                    isLoading={ghIsLoading || ghIsFetching}
+                    data={ghReports as Array<IGHSubmittedReportForGSP>}
+                />
             </View>
+            <If condition={isTablet}>
+                <Separator orientation="vertical" className="h-full m-4" />
+                <View className="w-4/6">
+                    <CampusReportDetails serviceId={serviceId} campusId={campusId} campusName={campusName} />
+                </View>
+            </If>
         </ViewWrapper>
     );
 };
