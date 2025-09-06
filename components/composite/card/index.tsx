@@ -86,29 +86,27 @@ export const StatCardComponent: React.FC<IStatCardComponentProps> = React.memo(p
     } = props;
 
     return (
-        <CardComponent className={cn('h-32', marginActive && 'm-2')} {...cardProps}>
+        <CardComponent className={cn('h-32 flex-1')} {...cardProps}>
             {isLoading ? (
                 <FlatListSkeleton count={2} />
             ) : (
                 <TouchableOpacity onPress={props.onPress} style={{ margin: marginActive ? 4 : 0 }} activeOpacity={0.6}>
-                    <View className="justify-between border-none w-full">
-                        <View className="w-full justify-between h-28">
-                            <View className="justify-between w-full items-center">
-                                <Text className="font-bold text-5xl text-primary ">
-                                    <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
-                                </Text>
-                                <Text className={cn('font-light text-green-500')} style={{ color: iconColor }}>
-                                    {percent && `${props.suffix}${percent ? '%' : ''}`}
-                                </Text>
-                            </View>
-                            <View className="items-center justify-between w-full">
-                                <Text className={cn('font-light text-muted-foreground font-2xl', bold && 'font-bold')}>
-                                    {props.label}
-                                </Text>
-                                {props.iconName && (
-                                    <Icon name={props.iconName} type={props.iconType} color={iconColor} size={25} />
-                                )}
-                            </View>
+                    <View className="h-full justify-between py-3">
+                        <View className="justify-between w-full items-center flex-row">
+                            <Text className="font-bold !text-6xl text-primary">
+                                <CountUp isCounting duration={2} end={props?.value ? +props?.value : 0} />
+                            </Text>
+                            <Text className={cn('font-light text-green-500')} style={{ color: iconColor }}>
+                                {percent && `${props.suffix}${percent ? '%' : ''}`}
+                            </Text>
+                        </View>
+                        <View className="items-baseline justify-between w-full flex-row">
+                            <Text className={cn('font-light text-muted-foreground font-2xl', bold && 'font-bold')}>
+                                {props.label}
+                            </Text>
+                            {props.iconName && (
+                                <Icon name={props.iconName} type={props.iconType} color={iconColor} size={25} />
+                            )}
                         </View>
                     </View>
                 </TouchableOpacity>
