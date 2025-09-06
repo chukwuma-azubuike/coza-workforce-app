@@ -265,12 +265,18 @@ const TransferReport: React.FC = () => {
                                 <Button
                                     size="sm"
                                     variant="outline"
+                                    className="flex-1"
                                     isLoading={isLoading}
                                     onPress={() => onRequestReview(values)}
                                 >
                                     Request Review
                                 </Button>
-                                <Button size="sm" isLoading={isLoading} onPress={() => onApprove(values)}>
+                                <Button
+                                    size="sm"
+                                    className="flex-1"
+                                    isLoading={isLoading}
+                                    onPress={() => onApprove(values)}
+                                >
                                     Approve
                                 </Button>
                             </View>

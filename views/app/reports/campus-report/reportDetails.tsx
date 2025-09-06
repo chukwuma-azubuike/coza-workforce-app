@@ -36,7 +36,7 @@ import { Button } from '~/components/ui/button';
 
 const DEPARTMENTAL_REPORT_COUNT = 6;
 
-const CampusReport: React.FC = props => {
+const CampusReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ICampusReport & { campusName: string };
     const { serviceId, campusId } = params;
     const { user, isCampusPastor, isGlobalPastor } = useRole();
@@ -281,6 +281,8 @@ const CampusReport: React.FC = props => {
                 message: 'Kindly ensure all departmental reports have been approved',
                 status: 'info',
             });
+
+            return;
         }
 
         if (!!reportsNotApproved) {
@@ -311,8 +313,7 @@ const CampusReport: React.FC = props => {
     return (
         <ViewWrapper className="py-4" scroll noPadding avoidKeyboard refreshing={isLoading} onRefresh={handleRefresh}>
             {isGlobalPastor && <Text className="font-bold text-4xl mb-2">{params?.campusName}</Text>}
-            <View className="px-4 gap-6">
-                <Separator />
+            <View className="px-4 gap-6 mb-12">
                 <VerticalTable
                     isLoading={isLoading || isFetching}
                     title="Service Attendance"
@@ -371,7 +372,7 @@ const CampusReport: React.FC = props => {
                     >
                         {({ errors, handleChange, handleSubmit }) => {
                             return (
-                                <View className="gap-1">
+                                <View className="gap-4">
                                     <View>
                                         <Label>For the GSP's attention</Label>
                                         <Textarea

@@ -1,6 +1,6 @@
 import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import Empty from '../../atoms/empty';
 import If from '../if-container';
 import { FlatListSkeleton } from '../../layout/skeleton';
@@ -16,56 +16,43 @@ type Props = {
     };
 };
 
-const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter = true }) => {
+const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter }) => {
     return (
         <View>
-            <Text textAlign="left" fontSize="md" _light={{ color: 'gray.600' }} _dark={{ color: 'gray.200' }} mb={2}>
-                {title}
-            </Text>
+            <Text className="text-left text-base text-muted-foreground mb-2">{title}</Text>
             {children}
-            <View w="100%">
+            <View className="w-full">
                 <If condition={isLoading}>
                     <FlatListSkeleton />
                 </If>
                 <If condition={!isLoading}>
                     {tableData.rows.length ? (
-                        <View space={'2px'}>
-                            <View space={'2px'}>
+                        <View className="space-y-1 items-center flex-1">
+                            <View className="space-y-1 flex-row flex-1">
                                 {tableData?.headers?.map((item, index) => (
                                     <View
-                                        alignItems={alignItemsCenter ? 'center' : 'flex-start'}
-                                        w={`${100 / tableData?.headers?.length}%`}
+                                        className={` items-center flex-1 bg-primary-600 text-left p-3`}
                                         key={`${item}-${index}`}
-                                        bg="primary.600"
-                                        textAlign="left"
-                                        p={3}
                                     >
-                                        <Text textAlign="left" color="white">
-                                            {item}
-                                        </Text>
+                                        <Text className="text-left text-white">{item}</Text>
                                     </View>
                                 ))}
                             </View>
-                            {tableData?.rows?.map((row, index) => (
-                                <View key={`row-data-${index}`} space={'2px'} w={'100%'}>
-                                    {Object.values(row)?.map(item => (
-                                        <View
-                                            alignItems={alignItemsCenter ? 'center' : 'flex-start'}
-                                            padding={'10px'}
-                                            w={`${100 / tableData?.headers?.length}%`}
-                                            _text={{
-                                                fontSize: '15px',
-                                                fontWeight: '500',
-                                            }}
-                                            textAlign="left"
-                                            _light={{ color: 'gray.700', bgColor: 'gray.200' }}
-                                            _dark={{ color: 'gray.300', bgColor: 'gray.900' }}
-                                        >
-                                            {item}
-                                        </View>
-                                    ))}
-                                </View>
-                            ))}
+                            <View className="flex-1 w-full gap-1">
+                                {tableData?.rows?.map((row, index) => (
+                                    <View key={`row-data-${index}`} className="space-y-1 flex-1 flex-row gap-2 w-full">
+                                        {Object.values(row)?.map(item => (
+                                            <View
+                                                className={`items-center p-2 text-left text-muted-foreground bg-muted flex-1`}
+                                            >
+                                                <Text className="text-left text-white">
+                                                    {(item as ReactNode) ?? ''}
+                                                </Text>
+                                            </View>
+                                        ))}
+                                    </View>
+                                ))}
+                            </View>
                         </View>
                     ) : (
                         <Empty width={120} />

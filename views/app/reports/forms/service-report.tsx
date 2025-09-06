@@ -167,14 +167,20 @@ const ServiceReport: React.FC = () => {
                                 />
                                 <View className="justify-between gap-4 flex-row">
                                     <Button
-                                        onPress={() => onRequestReview(values)}
-                                        isLoading={isLoading}
-                                        variant="outline"
                                         size="sm"
+                                        variant="outline"
+                                        className="flex-1"
+                                        isLoading={isLoading}
+                                        onPress={() => onRequestReview(values)}
                                     >
                                         Request Review
                                     </Button>
-                                    <Button onPress={() => onApprove(values)} isLoading={isLoading} size="sm">
+                                    <Button
+                                        size="sm"
+                                        className="flex-1"
+                                        isLoading={isLoading}
+                                        onPress={() => onApprove(values)}
+                                    >
                                         Approve
                                     </Button>
                                 </View>

@@ -106,7 +106,7 @@ const GuestReport: React.FC = () => {
                         <Text className="text-muted-foreground text-center mb-2">
                             {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
                         </Text>
-                        <View className="px-4 gap-4">
+                        <View className="px-2 gap-4">
                             <View>
                                 <Label>Number of First Timers</Label>
                                 <Input
@@ -158,16 +158,22 @@ const GuestReport: React.FC = () => {
                                         value={values?.pastorComment ? values?.pastorComment : ''}
                                     />
                                 </View>
-                                <View className="gap-4 justify-between flex-row">
+                                <View className="justify-between gap-4 flex-row">
                                     <Button
                                         onPress={() => onRequestReview(values)}
                                         isLoading={isLoading}
+                                        className="flex-1"
                                         variant="outline"
                                         size="sm"
                                     >
                                         Request Review
                                     </Button>
-                                    <Button onPress={() => onApprove(values)} isLoading={isLoading} size="sm">
+                                    <Button
+                                        onPress={() => onApprove(values)}
+                                        isLoading={isLoading}
+                                        className="flex-1"
+                                        size="sm"
+                                    >
                                         Approve
                                     </Button>
                                 </View>
