@@ -147,7 +147,7 @@ const AssignRole: React.FC = () => {
                             };
 
                             return (
-                                <View className="w-full gap-8">
+                                <View className="w-full gap-4">
                                     <View>
                                         <Label>Campus</Label>
                                         <PickerSelect
@@ -158,7 +158,7 @@ const AssignRole: React.FC = () => {
                                             items={sortedCampuses || []}
                                             onValueChange={value => handleCampusDept('campus', value as string) as any}
                                         />
-                                        <FormErrorMessage>{errors?.campus}</FormErrorMessage>
+                                        {errors?.campus && <FormErrorMessage>{errors?.campus}</FormErrorMessage>}
                                     </View>
                                     <View>
                                         <Label>Department</Label>
@@ -171,7 +171,9 @@ const AssignRole: React.FC = () => {
                                             disabled={!findCampusDept.campus}
                                             onValueChange={value => handleCampusDept('department', value as string)}
                                         />
-                                        <FormErrorMessage>{errors?.department}</FormErrorMessage>
+                                        {errors?.department && (
+                                            <FormErrorMessage>{errors?.department}</FormErrorMessage>
+                                        )}
                                     </View>
                                     <View>
                                         <Label>Worker</Label>
@@ -185,7 +187,7 @@ const AssignRole: React.FC = () => {
                                             onValueChange={handleChange('worker') as any}
                                             customLabel={({ firstName, lastName }: any) => `${firstName} ${lastName}`}
                                         />
-                                        <FormErrorMessage>{errors?.worker}</FormErrorMessage>
+                                        {errors?.worker && <FormErrorMessage>{errors?.worker}</FormErrorMessage>}
                                     </View>
                                     <View>
                                         <Label>Role</Label>
@@ -198,7 +200,7 @@ const AssignRole: React.FC = () => {
                                             disabled={!findCampusDept.campus && !findCampusDept.department}
                                             onValueChange={value => handleCampusDept('role', value as string)}
                                         />
-                                        <FormErrorMessage>{errors?.role}</FormErrorMessage>
+                                        {errors?.role && <FormErrorMessage>{errors?.role}</FormErrorMessage>}
                                     </View>
                                     <View>
                                         {campusDept?.map((item, key) => (
@@ -207,8 +209,8 @@ const AssignRole: React.FC = () => {
                                                 className="py-2 px-3 bg-muted-background border-border items-center justify-between flex-row border mb-4 rounded-md"
                                             >
                                                 <View>
-                                                    <Text>Campus: {item.campusName}</Text>
-                                                    <Text>Department: {item.departmentName}</Text>
+                                                    <Text className="font-semibold">{item.campusName}</Text>
+                                                    <Text className="font-semibold">{item.departmentName}</Text>
                                                 </View>
                                                 <TouchableOpacity onPress={() => handleRemoveCampusDept(item)}>
                                                     <X />
@@ -218,7 +220,7 @@ const AssignRole: React.FC = () => {
                                     </View>
                                     {isGroupHead && (
                                         <View>
-                                            <Button variant="outline" onPress={AddNewDept}>
+                                            <Button variant="outline" onPress={AddNewDept} size="sm">
                                                 {isOpen ? 'Done' : '+ Add a Campus Department'}
                                             </Button>
                                         </View>
@@ -229,7 +231,7 @@ const AssignRole: React.FC = () => {
                                                 <Label>Campus</Label>
                                                 <PickerSelect
                                                     valueKey="_id"
-                                                    labelKey="name"
+                                                    labelKey="campusName"
                                                     placeholder="Campus"
                                                     value={addCampusDept.campus}
                                                     items={sortedCampuses || []}
@@ -250,11 +252,20 @@ const AssignRole: React.FC = () => {
                                                 />
                                             </View>
 
-                                            <View>
-                                                <Button variant="outline" onPress={AddNewDept} className="w-full">
+                                            <View className="flex-row gap-4">
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onPress={AddNewDept}
+                                                    className="w-full flex-1"
+                                                >
                                                     Cancel
                                                 </Button>
-                                                <Button className="w-full flex-1" onPress={handleAddCampusDept}>
+                                                <Button
+                                                    size="sm"
+                                                    className="w-full flex-1"
+                                                    onPress={handleAddCampusDept}
+                                                >
                                                     Add
                                                 </Button>
                                             </View>
