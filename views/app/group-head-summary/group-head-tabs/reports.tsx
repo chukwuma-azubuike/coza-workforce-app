@@ -1,5 +1,4 @@
 import { Text } from '~/components/ui/text';
-import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
@@ -21,10 +20,8 @@ interface IReportProps
 }
 
 export const DepartmentReportListRow: React.FC<IReportProps> = props => {
-    const navigation = useNavigation();
-
     const handlePress = () => {
-        navigation.navigate(ReportRouteIndex[props?.departmentName] as never, props as never);
+        router.push({ pathname: `/reports/${ReportRouteIndex[props?.departmentName]}`, params: props as any });
     };
 
     return (

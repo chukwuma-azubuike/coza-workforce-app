@@ -30,6 +30,8 @@ const ChildcareReport: React.FC = () => {
 
     const [updateReport, { error, isLoading }] = useCreateChildCareReportMutation();
     const onSubmit = async (values: IChildCareReportPayload) => {
+        delete (values as any).__EXPO_ROUTER_key;
+
         try {
             const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
 
