@@ -44,14 +44,15 @@ export const ProfileSkeleton: React.FC<{
 
 export const ProfileSkeletonMini: React.FC<{
     count?: number;
-}> = React.memo(({ count = 4 }) => {
+}> = React.memo(() => {
     return (
         <View className="flex-row gap-4 items-center">
-            <Skeleton className="h-32 w-32 rounded-full" />
-            <View className="flex-1">
-                {Array.from(Array(count).keys()).map((elm, idx) => (
-                    <Skeleton className="h-4 mb-2 overflow-hidden" key={`elm-${idx}`} />
-                ))}
+            <Skeleton className="h-56 w-56 rounded-full" />
+            <View className="flex-1 gap-2">
+                <Skeleton className="h-6 w-3/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-6 w-2/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-6 w-1/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-6 w-2/4 mb-2 overflow-hidden" />
             </View>
         </View>
     );

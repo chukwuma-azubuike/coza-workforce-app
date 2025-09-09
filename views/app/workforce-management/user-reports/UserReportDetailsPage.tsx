@@ -1,25 +1,21 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import ViewWrapper from '@components/layout/viewWrapper';
-import { SceneMap } from 'react-native-tab-view';
 import TabComponent from '@components/composite/tabs';
-import { IAttendance, IPermission, ITicket, IUser } from '@store/types';
+import { IAttendance, ITicket, IUser } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
 import Utils from '@utils/index';
-// import { useGetPermissionsQuery } from '@store/services/permissions';
-// import { PermissionListRow } from '../../permissions/permissions-list';
 import { TicketListRow } from '../../tickets/ticket-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import { myAttendanceColumns } from '../../attendance/flatListConfig';
-import { UserReportContext } from './context';
 import UserProfileBrief from './UserProfile';
 import Loading from '@components/atoms/loading';
-import useScreenFocus from '@hooks/focus';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
+
 const isAndroid = Platform.OS === 'android';
 
 // const UserPermissionsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
@@ -156,19 +152,13 @@ const UserReportDetailsPage: React.FC<NativeStackScreenProps<ParamListBase>> = (
     const params = route.params as { userId: string };
     const userId = params?.userId;
 
-    //TODO: Considering for performance optimisation
-    // const renderScene = SceneMap({
-    //     userTickets: () => <UserTicketsList userId={userId} />,
-    //     userAttendance: () => <UserAttendanceList userId={userId} />,
-    //     // userPermissions: () => <UserPermissionsList userId={userId} />,
-    // });
-
     const renderScene = ({ route }: any) => {
         switch (route.key) {
             case 'userTickets':
                 return <UserTicketsList userId={userId} />;
             case 'userAttendance':
                 return <UserAttendanceList userId={userId} />;
+            // TODO: TBD
             // case 'userPermissions':
             //     return <UserPermissionsList userId={userId} />;
             default:
