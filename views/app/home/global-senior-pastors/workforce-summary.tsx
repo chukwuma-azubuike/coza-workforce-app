@@ -6,7 +6,6 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { Icon, ListItem } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { useGetGSPReportQuery } from '@store/services/reports';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import dayjs from 'dayjs';
 import { IAttendanceStatus, ICampus, IService, IUserReportType } from '@store/types';
@@ -135,7 +134,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
                     </View>
                 </View>
             </View>
-            <Accordion type="single" collapsible className="w-full max-w-lg px-2" defaultValue="item-1">
+            <Accordion type="multiple" collapsible className="w-full px-2" defaultValue={['item-1']}>
                 <AccordionItem value="item-1">
                     <AccordionTrigger>
                         <View className="flex-row items-center flex-1">
