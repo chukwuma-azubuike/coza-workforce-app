@@ -12,8 +12,8 @@ import { myAttendanceColumns } from '../../attendance/flatListConfig';
 import { UserReportContext } from './context';
 import UserProfileBrief from './UserProfile';
 import Loading from '@components/atoms/loading';
-import useScreenFocus from '@hooks/focus';
 import { Platform, View } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 const isAndroid = Platform.OS === 'android';
 
 const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
@@ -73,8 +73,9 @@ const ROUTES = [
 ];
 
 const UserReportDetails: React.FC<{ userId?: string; defaultUserId?: string } | undefined> = props => {
-    const { userId: contextUserId } = React.useContext(UserReportContext);
-    const userId = contextUserId || (props?.userId as string);
+    const { userId: contextUserId, setUserId } = React.useContext(UserReportContext);
+    const params = useLocalSearchParams<{ userId: string }>();
+    const userId = params?.userId ?? contextUserId ?? (props?.userId as string);
 
     const renderScene = ({ route }: any) => {
         switch (route.key) {
@@ -89,14 +90,6 @@ const UserReportDetails: React.FC<{ userId?: string; defaultUserId?: string } | 
 
     const [index, setIndex] = React.useState(0);
 
-    const { setUserId } = React.useContext(UserReportContext);
-
-    useScreenFocus({
-        onFocus: () => {
-            !props?.userId && setUserId(undefined);
-        },
-    });
-
     useEffect(() => {
         if (!userId && !!setUserId) {
             setUserId(props?.defaultUserId);
@@ -104,7 +97,7 @@ const UserReportDetails: React.FC<{ userId?: string; defaultUserId?: string } | 
     }, [userId, props?.defaultUserId]);
 
     return (
-        <ViewWrapper className="flex-auto">
+        <ViewWrapper className="flex-1">
             {!userId ? (
                 <Loading className="flex-1" cover />
             ) : (
