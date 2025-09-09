@@ -47,12 +47,12 @@ export const ProfileSkeletonMini: React.FC<{
 }> = React.memo(() => {
     return (
         <View className="flex-row gap-4 items-center">
-            <Skeleton className="h-56 w-56 rounded-full" />
+            <Skeleton className="h-32 w-32 md:h-56 md:w-56 rounded-full" />
             <View className="flex-1 gap-2">
-                <Skeleton className="h-6 w-3/4 mb-2 overflow-hidden" />
-                <Skeleton className="h-6 w-2/4 mb-2 overflow-hidden" />
-                <Skeleton className="h-6 w-1/4 mb-2 overflow-hidden" />
-                <Skeleton className="h-6 w-2/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-4 md:h-6 w-3/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-4 md:h-6 w-2/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-4 md:h-6 w-1/4 mb-2 overflow-hidden" />
+                <Skeleton className="h-4 md:h-6 w-2/4 mb-2 overflow-hidden" />
             </View>
         </View>
     );
