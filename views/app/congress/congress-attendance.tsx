@@ -1,7 +1,7 @@
 import { Text } from '~/components/ui/text';
 import React, { ReactNode } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
-import { scoreMappingColumn } from '../attendance/flatListConfig';
+import { ScoreMappingRow } from '../attendance/row-components';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -198,7 +198,9 @@ export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(
                 padding={isAndroid ? 3 : 4}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
-                columns={scoreMappingColumn}
+                renderItemComponent={({ item }: { item: any; index: number }) => (
+                    <ScoreMappingRow item={item} index={0} />
+                )}
                 data={mergedAttendanceWithMemberList || []}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
@@ -332,7 +334,9 @@ export const LeadersCongressAttendance: React.FC<ICongressAttendance> = React.me
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
                 data={mergedAttendanceWithLeaderList}
-                columns={scoreMappingColumn}
+                renderItemComponent={({ item }: { item: any; index: number }) => (
+                    <ScoreMappingRow item={item} index={0} />
+                )}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
@@ -453,7 +457,9 @@ export const CampusCongressAttendance: React.FC<ICongressAttendance> = React.mem
                 // fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching || sessionsIsLoading}
                 refreshing={isLoading || isFetching}
-                columns={scoreMappingColumn}
+                renderItemComponent={({ item }: { item: any; index: number }) => (
+                    <ScoreMappingRow item={item} index={0} />
+                )}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>

@@ -3,7 +3,7 @@ import { Text } from '~/components/ui/text';
 import { TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
@@ -94,12 +94,10 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
 });
 
 const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
-    const teamColumns: IFlatListColumn[] = [
-        {
-            dataIndex: '_id',
-            render: (_: IUser, key) => <UserListRow {..._} key={key} />,
-        },
-    ];
+    const renderTeamUserItem = React.useCallback(
+        ({ item }: { item: IUser; index: number }) => <UserListRow {...item} />,
+        []
+    );
 
     const {
         user: { department },
@@ -110,7 +108,7 @@ const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
     return (
         <FlatListComponent
             data={data || []}
-            columns={teamColumns}
+            renderItemComponent={renderTeamUserItem}
             refreshing={isFetching}
             isLoading={isLoading || isFetching}
         />
@@ -118,12 +116,10 @@ const MyTeam: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
 });
 
 const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) => {
-    const departmentColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: IUser, key) => <CampusListRow {..._} key={key} />,
-        },
-    ];
+    const renderDepartmentUserItem = React.useCallback(
+        ({ item }: { item: any; index: number }) => <CampusListRow {...item} />,
+        []
+    );
 
     const { data, isLoading, isFetching, isUninitialized, refetch } = useGetUsersQuery({ departmentId });
     const isRefreshing = isLoading || isFetching;
@@ -142,7 +138,7 @@ const Department: React.FC<{ departmentId: string }> = memo(({ departmentId }) =
             <FlatListComponent
                 showHeader={false}
                 refreshing={isFetching}
-                columns={departmentColumns}
+                renderItemComponent={renderDepartmentUserItem}
                 data={sortedGroupedData || []}
                 isLoading={isLoading || isFetching}
             />

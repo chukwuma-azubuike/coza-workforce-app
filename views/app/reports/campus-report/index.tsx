@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import { ICampusReport, useGetCampusReportListQuery } from '@store/services/reports';
@@ -37,12 +37,10 @@ interface ICampusReportPayload {
     campusId: string;
 }
 
-const reportColumns: IFlatListColumn[] = [
-    {
-        dataIndex: 'createdAt',
-        render: (_: ICampusReport, key) => <DepartmentReportListRow {..._} />,
-    },
-];
+const renderCampusReportItem = React.useCallback(
+    ({ item }: { item: ICampusReport; index: number }) => <DepartmentReportListRow {...item} />,
+    []
+);
 
 const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
     const { serviceId, campusId } = props;
@@ -82,7 +80,7 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
                 onRefresh={refetch}
                 data={moreData as any}
                 refreshing={isFetching}
-                columns={reportColumns}
+                renderItemComponent={renderCampusReportItem}
                 fetchMoreData={fetchMoreData}
                 isLoading={isLoading || isFetching}
             />

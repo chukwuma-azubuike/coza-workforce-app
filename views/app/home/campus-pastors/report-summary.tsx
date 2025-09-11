@@ -1,6 +1,6 @@
 import { Text } from '~/components/ui/text';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Ionicons } from '@expo/vector-icons';
 import useScreenFocus from '@hooks/focus';
@@ -163,14 +163,12 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
                 params: { serviceId, campusId, campusName: user?.campusName },
             });
 
-        const reportColumns: IFlatListColumn[] = [
-            {
-                dataIndex: 'createdAt',
-                render: (_: ICampusReportSummary['departmentalReport'][0], key) => (
-                    <ReportSummaryListRow {..._} key={key} />
-                ),
-            },
-        ];
+        const renderReportSummaryItem = React.useCallback(
+            ({ item }: { item: ICampusReportSummary['departmentalReport'][0]; index: number }) => (
+                <ReportSummaryListRow {...item} />
+            ),
+            []
+        );
 
         const sortedData = React.useMemo(
             () => Utils.sortByDate(data ? data.departmentalReport : [], 'createdAt'),
@@ -211,7 +209,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
                     emptySize={160}
                     data={groupedData}
                     showHeader={false}
-                    columns={reportColumns}
+                    renderItemComponent={renderReportSummaryItem}
                     onRefresh={handleRefresh}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
@@ -249,14 +247,12 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
 
         const navigateToReports = () => navigate('Reports' as never);
 
-        const reportColumns: IFlatListColumn[] = [
-            {
-                dataIndex: 'createdAt',
-                render: (_: ICampusReportSummary['departmentalReport'][0], key) => (
-                    <GHReportSummaryListRow {..._} key={key} />
-                ),
-            },
-        ];
+        const renderGHReportSummaryItem = React.useCallback(
+            ({ item }: { item: ICampusReportSummary['departmentalReport'][0]; index: number }) => (
+                <GHReportSummaryListRow {...item} />
+            ),
+            []
+        );
 
         const sortedData = React.useMemo(
             () => Utils.sortByDate(data ? data?.departmentalReport : [], 'createdAt'),
@@ -310,7 +306,7 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
                     emptySize={160}
                     data={groupedData}
                     showHeader={false}
-                    columns={reportColumns}
+                    renderItemComponent={renderGHReportSummaryItem}
                     onRefresh={handleRefresh}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}

@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo } from 'react';
 import FlatListComponent from '@components/composite/flat-list';
 import {
-    campusColumns,
-    groupAttendanceDataColumns,
-    leadersAttendanceDataColumns,
-    myAttendanceColumns,
-    teamAttendanceDataColumns,
-} from './flatListConfig';
+    CampusAttendanceRow,
+    GroupAttendanceRow,
+    LeadersAttendanceRow,
+    MyAttendanceRow,
+    TeamAttendanceRow,
+} from './row-components';
 import { useGetAttendanceQuery } from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -45,17 +45,22 @@ export const MyAttendance: React.FC = React.memo(() => {
         }
     }, [isFetching, isLoading, data]);
 
+    const renderItemComponent = useCallback(
+        ({ item }: { item: any; index: number }) => <MyAttendanceRow item={item as IAttendance} index={0} />,
+        [MyAttendanceRow]
+    );
+
     return (
         <ErrorBoundary>
             <View className="mt-4 flex-1">
                 <FlatListComponent
                     itemHeight={85.3}
-                    padding={isAndroid ? 3 : true}
                     fetchMoreData={fetchMoreData}
-                    columns={myAttendanceColumns}
+                    padding={isAndroid ? 3 : true}
                     data={moreData as IAttendance[]}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
+                    renderItemComponent={renderItemComponent}
                     onRefresh={isUninitialized ? refetch : undefined}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
                 />
@@ -169,7 +174,7 @@ export const TeamAttendance: React.FC = React.memo(() => {
                     onRefresh={handleRefetch}
                     padding={isAndroid ? 3 : 1}
                     isLoading={isLoading || isFetching}
-                    columns={teamAttendanceDataColumns}
+                    renderItemComponent={({ item }) => <TeamAttendanceRow item={item as any} index={0} />}
                     refreshing={isLoading || isFetching}
                     data={mergedAttendanceWithMemberList}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
@@ -315,7 +320,7 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
                     data={mergedAttendanceWithLeaderList}
-                    columns={leadersAttendanceDataColumns}
+                    renderItemComponent={({ item }) => <LeadersAttendanceRow item={item as any} index={0} />}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
                 />
             </View>
@@ -399,7 +404,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
             <View className="px-2 flex-1">
                 <FlatListComponent
                     itemHeight={85.3}
-                    columns={campusColumns}
+                    renderItemComponent={({ item }) => <CampusAttendanceRow item={item as IAttendance} index={0} />}
                     onRefresh={handleRefetch}
                     data={data as IAttendance[]}
                     padding={isAndroid ? 3 : true}
@@ -515,7 +520,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
                     onRefresh={handleRefetch}
                     padding={isAndroid ? 3 : 1}
                     isLoading={isLoading || isFetching}
-                    columns={groupAttendanceDataColumns}
+                    renderItemComponent={({ item }) => <GroupAttendanceRow item={item as IAttendance} index={0} />}
                     refreshing={isLoading || isFetching}
                     data={mergedAttendanceWithMemberList}
                     ListFooterComponentStyle={{ marginVertical: 20 }}

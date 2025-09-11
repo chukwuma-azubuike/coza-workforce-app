@@ -2,7 +2,7 @@ import React, { memo, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import useScreenFocus from '@hooks/focus';
 import { Text } from '~/components/ui/text';
 import { ICongress, IUserStatus } from '@store/types';
@@ -44,12 +44,10 @@ const CongressListRow: React.FC<ICongress> = memo(congress => {
 });
 
 const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(({ updatedListItem }) => {
-    const congressColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ICongress, key) => <CongressListRow {..._} key={key} />,
-        },
-    ];
+    const renderCongressItem = React.useCallback(
+        ({ item }: { item: ICongress; index: number }) => <CongressListRow {...item} />,
+        []
+    );
 
     const { data, isLoading, refetch, isFetching } = useGetCongresssQuery({});
 
@@ -58,7 +56,7 @@ const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(({ updatedLi
     return (
         <FlatListComponent
             data={data || []}
-            columns={congressColumns}
+            renderItemComponent={renderCongressItem}
             refreshing={isFetching}
             emptyMessage="No congress created"
             isLoading={isLoading || isFetching}

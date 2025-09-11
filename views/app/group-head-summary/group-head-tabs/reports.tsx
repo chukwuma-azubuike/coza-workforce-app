@@ -4,7 +4,7 @@ import React from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import ErrorBoundary from '@components/composite/error-boundary';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
 import { IDepartmentReportListById, useGetDepartmentReportsListQuery } from '@store/services/reports';
@@ -76,25 +76,19 @@ const IncidentReportListRow: React.FC<IIncidentProps> = props => {
 const GroupHeadReports: React.FC<{ params: { departmentId: string; departmentName: string; screenName: string } }> = ({
     params,
 }) => {
-    const reportColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: IDepartmentReportListById, key) => {
-                const items = { ..._, ...params };
-                return <DepartmentReportListRow {...items} />;
-            },
-        },
-    ];
+    const renderDepartmentReportItem = React.useCallback(
+        ({ item }: { item: IDepartmentReportListById; index: number }) => (
+            <DepartmentReportListRow {...(Object.assign({}, item, params) as any)} />
+        ),
+        [params]
+    );
 
-    const incidentReportColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: IIncidentReportPayload, key) => {
-                const items = { ..._, ...params };
-                return <IncidentReportListRow {...items} />;
-            },
-        },
-    ];
+    const renderIncidentReportItem = React.useCallback(
+        ({ item }: { item: IIncidentReportPayload; index: number }) => (
+            <IncidentReportListRow {...(Object.assign({}, item, params) as any)} />
+        ),
+        [params]
+    );
 
     const {
         refetch: reportsRefetch,
@@ -113,7 +107,7 @@ const GroupHeadReports: React.FC<{ params: { departmentId: string; departmentNam
         <ErrorBoundary>
             <ViewWrapper className="flex-1">
                 <FlatListComponent
-                    columns={reportColumns}
+                    renderItemComponent={renderDepartmentReportItem}
                     onRefresh={reportsRefetch}
                     isLoading={reportsIsLoading || reportsIsFetching}
                     refreshing={reportsIsLoading || reportsIsFetching}
@@ -121,7 +115,7 @@ const GroupHeadReports: React.FC<{ params: { departmentId: string; departmentNam
                 />
                 <FlatListComponent
                     showEmpty={false}
-                    columns={incidentReportColumns}
+                    renderItemComponent={renderIncidentReportItem}
                     data={departmentAndIncidentReport?.incidentReport || []}
                 />
             </ViewWrapper>

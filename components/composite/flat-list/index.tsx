@@ -18,7 +18,8 @@ export interface IFlatListColumn {
 
 export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     data: any[];
-    columns: any[];
+    // Deprecated: prefer renderItemComponent
+    columns?: any[];
     refreshing?: boolean;
     onRefresh?: () => void;
     isLoading?: boolean;
@@ -31,6 +32,8 @@ export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     emptySize?: number;
     showEmpty?: boolean;
     getItemKey?: (item: any, index: number) => string;
+    // New preferred API: a single row component
+    renderItemComponent?: React.ComponentType<{ item: any; index: number }>;
 }
 
 const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
@@ -48,8 +51,18 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         fetchMoreData,
         itemHeight = 60,
         showHeader = true,
+        renderItemComponent,
     } = props;
-    const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
+    const titles = React.useMemo(() => (columns ? columns.map(column => column.title) : []), [columns]);
+
+    React.useEffect(() => {
+        if (__DEV__ && columns && !renderItemComponent) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                '[FlatListComponent] `columns` is deprecated. Migrate to `renderItemComponent` for better performance.'
+            );
+        }
+    }, [columns, renderItemComponent]);
 
     // Guard repeated triggers on fast scroll momentum
     const endReachedCalledDuringMomentum = React.useRef<boolean>(false);
@@ -80,13 +93,30 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     }, []);
 
     const renderItem1 = useCallback(
-        ({ item }: any) => <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />,
-        [showHeader, columns]
+        ({ item, index }: any) => (
+            <ListComponent_1
+                item={item}
+                showHeader={showHeader}
+                columns={columns}
+                ItemComponent={renderItemComponent}
+                index={index}
+            />
+        ),
+        [showHeader, columns, renderItemComponent]
     );
 
     const renderItem2 = useCallback(
-        ({ item }: any) => <ListComponent_2 item={item} padding={padding} columns={columns} navLink={navLink} />,
-        [padding, navLink, columns]
+        ({ item, index }: any) => (
+            <ListComponent_2
+                item={item}
+                index={index}
+                padding={padding}
+                columns={columns}
+                navLink={navLink}
+                ItemComponent={renderItemComponent}
+            />
+        ),
+        [padding, navLink, columns, renderItemComponent]
     );
 
     const listHeaderComponent = useCallback(
@@ -203,63 +233,79 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
 
 export default React.memo(FlatListComponent);
 
-const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }> = React.memo(
-    ({ item, showHeader, columns }) => {
-        const { textColor } = useAppColorMode();
+const ListComponent_1: React.FC<
+    Partial<IFlatListComponentProps> & {
+        item: any;
+        index?: number;
+        ItemComponent?: React.ComponentType<{ item: any; index: number }>;
+    }
+> = React.memo(({ item, showHeader, columns, ItemComponent, index = 0 }) => {
+    const { textColor } = useAppColorMode();
 
-        return (
+    return (
+        <View
+            style={{
+                borderColor: textColor,
+                padding: 4,
+                flex: 1,
+            }}
+        >
+            {showHeader ? (
+                <Text className="pb-3 text-lg font-semibold text-muted-foreground">
+                    {dayjs(item[0]).format() !== 'Invalid Date'
+                        ? dayjs(item[0]).format('DD MMMM, YYYY')
+                        : Utils.capitalizeFirstChar(item[0])}
+                </Text>
+            ) : null}
+            <View className="px-1">
+                {ItemComponent ? (
+                    <ItemComponent item={item} index={index} />
+                ) : (
+                    columns?.map((column, idx) => (
+                        <React.Fragment key={column?.dataIndex || idx}>{column.render(item, idx)}</React.Fragment>
+                    ))
+                )}
+            </View>
+        </View>
+    );
+});
+
+const ListComponent_2: React.FC<
+    Partial<IFlatListComponentProps> & {
+        item: any;
+        index?: number;
+        ItemComponent?: React.ComponentType<{ item: any; index: number }>;
+    }
+> = React.memo(({ item, index = 0, padding, columns, navLink, ItemComponent }) => {
+    const { navigate } = useNavigation();
+    const { textColor } = useAppColorMode();
+
+    const navigateTo = useCallback(() => {
+        if (navLink) navigate(navLink as never);
+        return;
+    }, [navLink]);
+
+    return (
+        <TouchableOpacity
+            disabled={false}
+            delayPressIn={0}
+            activeOpacity={0.6}
+            accessibilityRole="button"
+            onPress={item?.onPress || navigateTo}
+        >
             <View
                 style={{
                     borderColor: textColor,
-                    padding: 4,
                     flex: 1,
+                    paddingVertical: 4,
+                    paddingHorizontal: padding ? 6 : 0,
                 }}
             >
-                {showHeader ? (
-                    <Text className="pb-3 text-lg font-semibold text-muted-foreground">
-                        {dayjs(item[0]).format() !== 'Invalid Date'
-                            ? dayjs(item[0]).format('DD MMMM, YYYY')
-                            : Utils.capitalizeFirstChar(item[0])}
-                    </Text>
-                ) : null}
-                <View className="px-1">
-                    {columns?.map((column, idx) => (
-                        <React.Fragment key={column?.dataIndex || idx}>{column.render(item, idx)}</React.Fragment>
-                    ))}
-                </View>
-            </View>
-        );
-    }
-);
-
-const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }> = React.memo(
-    ({ item, padding, columns, navLink }) => {
-        const { navigate } = useNavigation();
-        const { textColor } = useAppColorMode();
-
-        const navigateTo = useCallback(() => {
-            if (navLink) navigate(navLink as never);
-            return;
-        }, [navLink]);
-
-        return (
-            <TouchableOpacity
-                disabled={false}
-                delayPressIn={0}
-                activeOpacity={0.6}
-                accessibilityRole="button"
-                onPress={item?.onPress || navigateTo}
-            >
-                <View
-                    style={{
-                        borderColor: textColor,
-                        flex: 1,
-                        paddingVertical: 4,
-                        paddingHorizontal: padding ? 6 : 0,
-                    }}
-                >
-                    <View className="items-center justify-between gap-2">
-                        {columns?.map((column, idx) => {
+                <View className="items-center justify-between gap-2">
+                    {ItemComponent ? (
+                        <ItemComponent item={item} index={index} />
+                    ) : (
+                        columns?.map((column, idx) => {
                             if (column.render)
                                 return (
                                     <React.Fragment key={column?.dataIndex || idx}>
@@ -271,10 +317,10 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                                     {item[column.dataIndex as never]}
                                 </Text>
                             );
-                        })}
-                    </View>
+                        })
+                    )}
                 </View>
-            </TouchableOpacity>
-        );
-    }
-);
+            </View>
+        </TouchableOpacity>
+    );
+});

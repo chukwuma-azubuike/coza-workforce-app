@@ -3,7 +3,7 @@ import React from 'react';
 import { GlobalReportContext } from './context';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import ViewWrapper from '@components/layout/viewWrapper';
 import { IGlobalReport, IGlobalReportList, useGetGlobalReportListQuery } from '@store/services/reports';
 import { useGetServicesQuery } from '@store/services/services';
@@ -85,19 +85,15 @@ interface IGlobalReportPayload {
     serviceId?: string;
 }
 
-const reportColumns: IFlatListColumn[] = [
-    {
-        dataIndex: 'createdAt',
-        render: (_: IGlobalReport, key) => <GlobalReportListRow key={key} {..._} />,
-    },
-];
+const renderGlobalReportItem = React.useCallback(
+    ({ item }: { item: IGlobalReport; index: number }) => <GlobalReportListRow {...item} />,
+    []
+);
 
-const ghReportColumns: IFlatListColumn[] = [
-    {
-        dataIndex: 'createdAt',
-        render: (_: IGHSubmittedReportForGSP, key) => <GHSubmittedReportListRowForGSP key={key} {..._} />,
-    },
-];
+const renderGHReportItem = React.useCallback(
+    ({ item }: { item: IGHSubmittedReportForGSP; index: number }) => <GHSubmittedReportListRowForGSP {...item} />,
+    []
+);
 
 const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
     const {
@@ -174,7 +170,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                 <Text className="font-bold mt-2">Campus Reports</Text>
                 <FlatListComponent
                     refreshing={isFetching}
-                    columns={reportColumns}
+                    renderItemComponent={renderGlobalReportItem}
                     onRefresh={handleRefresh}
                     isLoading={isLoading || isFetching}
                     data={campusReports as IGlobalReportList}
@@ -184,7 +180,7 @@ const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {
                 <FlatListComponent
                     refreshing={isFetching}
                     onRefresh={handleRefresh}
-                    columns={ghReportColumns}
+                    renderItemComponent={renderGHReportItem}
                     isLoading={ghIsLoading || ghIsFetching}
                     data={ghReports as Array<IGHSubmittedReportForGSP>}
                 />
