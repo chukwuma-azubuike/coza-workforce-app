@@ -166,7 +166,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                     <FlatList
                         data={sortedSearchResults}
                         renderItem={renderItem}
-                        keyExtractor={(item: any) => item._id.toString()}
+                        keyExtractor={(item: any) => item?._id?.toString()}
                         ListEmptyComponent={
                             <View style={{ padding: 16 }}>
                                 <Text className="w-100% text-center text-muted-foreground">No data found</Text>
