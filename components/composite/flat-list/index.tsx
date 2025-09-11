@@ -30,6 +30,7 @@ export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     fetchMoreData?: () => void;
     emptySize?: number;
     showEmpty?: boolean;
+    getItemKey?: (item: any, index: number) => string;
 }
 
 const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
@@ -50,11 +51,19 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
     } = props;
     const titles = React.useMemo(() => columns.map(column => column.title), [columns]);
 
+    // Guard repeated triggers on fast scroll momentum
+    const endReachedCalledDuringMomentum = React.useRef<boolean>(false);
+
     const handleMore = useCallback(() => {
-        if (fetchMoreData && !refreshing) {
+        if (fetchMoreData && !refreshing && !endReachedCalledDuringMomentum.current) {
+            endReachedCalledDuringMomentum.current = true;
             fetchMoreData();
         }
     }, [refreshing]);
+
+    const handleMomentumBegin = useCallback(() => {
+        endReachedCalledDuringMomentum.current = false;
+    }, []);
 
     const handleItemLayout = useCallback(
         (_: ArrayLike<any> | null | undefined, index: number) => ({
@@ -64,6 +73,11 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         }),
         [itemHeight]
     );
+
+    const defaultKeyExtractor = useCallback((item: any, index: number) => {
+        const candidate = item?._id || item?.userId || item?.id || item?.key;
+        return (candidate ?? String(index)) as string;
+    }, []);
 
     const renderItem1 = useCallback(
         ({ item }: any) => <ListComponent_1 item={item} showHeader={showHeader} columns={columns} />,
@@ -102,10 +116,9 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                             }
                             style={{ flex: 1 }}
-                            nestedScrollEnabled
+                            onMomentumScrollBegin={handleMomentumBegin}
                             onEndReached={handleMore}
                             onEndReachedThreshold={0.1}
-                            onScrollEndDrag={handleMore}
                             ListEmptyComponent={
                                 <Empty
                                     width={emptySize}
@@ -114,9 +127,15 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                     refresh={onRefresh}
                                 />
                             }
-                            keyExtractor={item => item?._id}
+                            keyExtractor={props.getItemKey || defaultKeyExtractor}
                             renderItem={renderItem1}
                             getItemLayout={handleItemLayout}
+                            removeClippedSubviews
+                            initialNumToRender={10}
+                            maxToRenderPerBatch={8}
+                            windowSize={10}
+                            updateCellsBatchingPeriod={50}
+                            scrollEventThrottle={16}
                             showsVerticalScrollIndicator={false}
                             showsHorizontalScrollIndicator={false}
                             ListFooterComponentStyle={{ paddingBottom: 20 }}
@@ -137,7 +156,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                                 onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                             }
                             style={{ flex: 1 }}
-                            nestedScrollEnabled
+                            onMomentumScrollBegin={handleMomentumBegin}
                             ListEmptyComponent={
                                 <Empty
                                     width={emptySize}
@@ -148,11 +167,16 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                             }
                             onEndReached={handleMore}
                             onEndReachedThreshold={0.1}
-                            onScrollEndDrag={handleMore}
-                            keyExtractor={item => item?._id}
+                            keyExtractor={props.getItemKey || defaultKeyExtractor}
                             ListHeaderComponent={listHeaderComponent}
                             renderItem={renderItem2}
                             getItemLayout={handleItemLayout}
+                            removeClippedSubviews
+                            initialNumToRender={10}
+                            maxToRenderPerBatch={8}
+                            windowSize={10}
+                            updateCellsBatchingPeriod={50}
+                            scrollEventThrottle={16}
                             ListFooterComponentStyle={{ paddingBottom: 20 }}
                             ListFooterComponent={
                                 <ActivityIndicator
@@ -198,7 +222,11 @@ const ListComponent_1: React.FC<Partial<IFlatListComponentProps> & { item: any }
                             : Utils.capitalizeFirstChar(item[0])}
                     </Text>
                 ) : null}
-                <View className="px-1">{columns?.map((column, idx) => column.render(item, idx))}</View>
+                <View className="px-1">
+                    {columns?.map((column, idx) => (
+                        <React.Fragment key={column?.dataIndex || idx}>{column.render(item, idx)}</React.Fragment>
+                    ))}
+                </View>
             </View>
         );
     }
@@ -232,9 +260,14 @@ const ListComponent_2: React.FC<Partial<IFlatListComponentProps> & { item: any }
                 >
                     <View className="items-center justify-between gap-2">
                         {columns?.map((column, idx) => {
-                            if (column.render) return column.render(item, idx);
+                            if (column.render)
+                                return (
+                                    <React.Fragment key={column?.dataIndex || idx}>
+                                        {column.render(item, idx)}
+                                    </React.Fragment>
+                                );
                             return (
-                                <Text key={idx} className="text-left flex-1 w-100%">
+                                <Text key={column?.dataIndex || idx} className="text-left flex-1 w-100%">
                                     {item[column.dataIndex as never]}
                                 </Text>
                             );
