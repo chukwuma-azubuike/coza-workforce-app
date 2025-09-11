@@ -30,43 +30,60 @@ function PickerSelect<T = any>({
     placeholder = 'Select',
     ...props
 }: PickerSelectComponentProps<T>) {
-    const [value, setValue] = useState<string | undefined>(`${inputValue}` || '');
+    const [value, setValue] = useState<string | undefined>(inputValue !== undefined ? `${inputValue}` : undefined);
+
+    // Keep internal value in sync with prop changes
+    React.useEffect(() => {
+        setValue(inputValue !== undefined ? `${inputValue}` : undefined);
+    }, [inputValue]);
+
     const selectedItem = useMemo(
         () => items?.find(item => (valueKey ? `${item[valueKey]}` === `${inputValue ?? value}` : item === inputValue)),
         [items, value, valueKey, inputValue]
     );
 
-    const options = useMemo(
-        () =>
+    const options = useMemo(() => {
+        const seen = new Set<string>();
+        const mapped =
             items?.map(item => {
-                return {
-                    label: labelKey ? (customLabel ? customLabel(item) : (item[labelKey] as string)) : (item as string),
-                    value: valueKey ? item[valueKey] : (item as string),
-                };
-            }) || [],
-        [items, value, valueKey, labelKey]
-    );
+                const rawLabel = labelKey ? (customLabel ? customLabel(item) : (item[labelKey] as any)) : (item as any);
+                const rawValue = valueKey ? (item[valueKey] as any) : (item as any);
+
+                const label = rawLabel != null ? String(rawLabel) : '';
+                const val = rawValue != null ? String(rawValue) : '';
+
+                return { label, value: val };
+            }) || [];
+
+        return mapped.filter(opt => {
+            if (!opt.value) return false;
+            if (seen.has(opt.value)) return false;
+            seen.add(opt.value);
+            return true;
+        });
+    }, [items, valueKey, labelKey, customLabel]);
 
     const { isDarkColorScheme } = useColorScheme();
 
     const handleValueChange = useCallback(
-        (value: any, index: number) => {
-            setValue && setValue(value ? `${value}` : undefined);
-            if (typeof value === 'number' || typeof value === 'string' || typeof value === 'undefined') {
-                onValueChange(value ? `${value}` : undefined, index);
-            }
-            if (typeof value === 'object' || value === 'null') {
-                onValueChange('null', index);
-            }
+        (nextValue: any, index: number) => {
+            const strVal = nextValue == null ? undefined : String(nextValue);
+            setValue(strVal);
+            onValueChange?.(strVal as any, index);
         },
-        [setValue, onValueChange]
+        [onValueChange]
     );
 
     return (
         <RNPickerSelect
             pickerProps={{
-                accessibilityLabel: (!!selectedItem ? (selectedItem || {})[labelKey as string] : placeholder) as string,
+                accessibilityLabel: (selectedItem
+                    ? customLabel
+                        ? customLabel(selectedItem as T)
+                        : String((selectedItem || {})[labelKey as string])
+                    : String(placeholder)) as string,
             }}
+            value={value}
             items={options}
             onValueChange={handleValueChange}
             darkTheme={isDarkColorScheme}
