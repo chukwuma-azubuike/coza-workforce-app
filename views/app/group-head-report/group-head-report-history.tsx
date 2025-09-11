@@ -1,7 +1,7 @@
 import { Text } from '~/components/ui/text';
 import React, { memo } from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
 import { IGHSubmittedReport } from '@store/services/reports';
@@ -55,13 +55,10 @@ const GroupHeadReportHistory: React.FC = () => {
 export default GroupHeadReportHistory;
 
 const GroupReportList = memo(() => {
-    const groupHeadReportColumns: IFlatListColumn[] = [
-        {
-            title: '',
-            dataIndex: 'createdAt',
-            render: (_: IGHSubmittedReport, key) => <ReportListRow {..._} key={key} />,
-        },
-    ];
+    const renderGroupHeadReportItem = React.useCallback(
+        ({ item }: { item: IGHSubmittedReport; index: number }) => <ReportListRow {...item} />,
+        []
+    );
 
     const [page, setPage] = React.useState<number>(1);
     const { data, isLoading, isSuccess, isFetching } = useGetGhReportsQuery(
@@ -100,7 +97,7 @@ const GroupReportList = memo(() => {
     return (
         <FlatListComponent
             data={sortedData}
-            columns={groupHeadReportColumns}
+            renderItemComponent={renderGroupHeadReportItem}
             fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}

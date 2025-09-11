@@ -14,7 +14,7 @@ import {
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { FlatListSkeleton } from '@components/layout/skeleton';
 import useScreenFocus from '@hooks/focus';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
@@ -84,19 +84,15 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
     );
 });
 
-const reportColumns: IFlatListColumn[] = [
-    {
-        dataIndex: 'createdAt',
-        render: (_: IDepartmentReportListById, key) => <DepartmentReportListRow {..._} />,
-    },
-];
+const renderDepartmentReportItem = React.useCallback(
+    ({ item }: { item: IDepartmentReportListById; index: number }) => <DepartmentReportListRow {...item} />,
+    []
+);
 
-const incidentReportColumns: IFlatListColumn[] = [
-    {
-        dataIndex: 'createdAt',
-        render: (_: IIncidentReportPayload, key) => <IncidentReportListRow {..._} />,
-    },
-];
+const renderIncidentReportItem = React.useCallback(
+    ({ item }: { item: IIncidentReportPayload; index: number }) => <IncidentReportListRow {...item} />,
+    []
+);
 
 const Reports: React.FC = () => {
     const {
@@ -212,7 +208,7 @@ const Reports: React.FC = () => {
                             <Text className="text-muted-foreground font-semibold">Departmental Reports</Text>
                             <Separator className="my-2" />
                             <FlatListComponent
-                                columns={reportColumns}
+                                renderItemComponent={renderDepartmentReportItem}
                                 onRefresh={reportsRefetch}
                                 isLoading={reportsIsLoading || reportsIsFetching}
                                 refreshing={reportsIsLoading || reportsIsFetching}
@@ -225,7 +221,7 @@ const Reports: React.FC = () => {
                             <FlatListComponent
                                 showEmpty={false}
                                 onRefresh={reportsRefetch}
-                                columns={incidentReportColumns}
+                                renderItemComponent={renderIncidentReportItem}
                                 refreshing={reportsIsLoading || reportsIsFetching}
                                 data={departmentAndIncidentReport?.incidentReport || []}
                             />

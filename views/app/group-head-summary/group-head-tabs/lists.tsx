@@ -15,7 +15,7 @@ import { IService } from '@store/types';
 import Utils from '@utils/index';
 import { PermissionListRow } from '../../permissions/permissions-list';
 import { TicketListRow } from '../../tickets/ticket-list';
-import { teamAttendanceDataColumns } from './flatListConfig';
+import { TeamAttendanceRow } from '../../attendance/row-components';
 import SectionListComponent from '~/components/composite/section-list';
 import PickerSelect from '~/components/ui/picker-select';
 
@@ -119,7 +119,9 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
                 padding={isAndroid ? 3 : 1}
                 onRefresh={handleRefetch}
                 isLoading={isLoading || isFetching}
-                columns={teamAttendanceDataColumns}
+                renderItemComponent={({ item }: { item: any; index: number }) => (
+                    <TeamAttendanceRow item={item as any} index={0} />
+                )}
                 refreshing={isLoading || isFetching}
                 data={mergedAttendanceWithMemberList}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
@@ -131,12 +133,10 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
 export const GroupHeadTeamTicketsList: React.FC<{
     departmentId: string;
 }> = memo(({ departmentId }) => {
-    const teamTicketsColumns: IFlatListColumn[] = [
-        {
-            dataIndex: 'createdAt',
-            render: (_: ITicket, key) => <TicketListRow type="team" {..._} key={key} />,
-        },
-    ];
+    const renderTeamTicketItem = React.useCallback(
+        ({ item }: { item: ITicket; index: number }) => <TicketListRow type="team" {...item} />,
+        []
+    );
 
     const [page, setPage] = React.useState<number>(1);
     const { data, isLoading, isSuccess, isFetching } = useGetTicketsQuery(
@@ -176,7 +176,7 @@ export const GroupHeadTeamTicketsList: React.FC<{
     return (
         <FlatListComponent
             data={sortedData}
-            columns={teamTicketsColumns}
+            renderItemComponent={renderTeamTicketItem}
             fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}
             refreshing={isLoading || isFetching}

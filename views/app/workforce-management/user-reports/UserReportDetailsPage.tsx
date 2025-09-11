@@ -4,13 +4,13 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import TabComponent from '@components/composite/tabs';
 import { IAttendance, ITicket, IUser } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
-import FlatListComponent, { IFlatListColumn } from '@components/composite/flat-list';
+import FlatListComponent from '@components/composite/flat-list';
 import Utils from '@utils/index';
 import { TicketListRow } from '../../tickets/ticket-list';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { useGetAttendanceQuery } from '@store/services/attendance';
-import { myAttendanceColumns } from '../../attendance/flatListConfig';
+import { MyAttendanceRow } from '../../attendance/row-components';
 import UserProfileBrief from './UserProfile';
 import Loading from '@components/atoms/loading';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -59,12 +59,10 @@ const isAndroid = Platform.OS === 'android';
 // });
 
 const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId }) => {
-    const ticketColumns: IFlatListColumn[] = [
-        {
-            dataIndex: '_id',
-            render: (_: ITicket, key) => <TicketListRow type="own" {..._} key={key} />,
-        },
-    ];
+    const renderOwnTicketItem = React.useCallback(
+        ({ item }: { item: ITicket; index: number }) => <TicketListRow type="own" {...item} />,
+        []
+    );
 
     const [page, setPage] = React.useState<number>(1);
 
@@ -96,7 +94,7 @@ const UserTicketsList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ userId
                 data={memoizedData}
                 refreshing={isFetching}
                 fetchMoreData={fetchMoreData}
-                columns={ticketColumns}
+                renderItemComponent={renderOwnTicketItem}
                 isLoading={isLoading || isFetching}
             />
         </ErrorBoundary>
@@ -132,7 +130,9 @@ const UserAttendanceList: React.FC<{ userId: IUser['_id'] }> = React.memo(({ use
             <FlatListComponent
                 padding={isAndroid ? 3 : true}
                 fetchMoreData={fetchMoreData}
-                columns={myAttendanceColumns}
+                renderItemComponent={({ item }: { item: IAttendance; index: number }) => (
+                    <MyAttendanceRow item={item} index={0} />
+                )}
                 data={moreData as IAttendance[]}
                 isLoading={isLoading || isFetching}
                 refreshing={isLoading || isFetching}
