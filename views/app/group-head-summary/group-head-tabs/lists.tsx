@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import React, { memo, useMemo } from 'react';
 import { Platform, View } from 'react-native';
-import { IFlatListColumn } from '@components/composite/flat-list';
 import { useGetPermissionsQuery } from '@store/services/permissions';
 import { useGetTicketsQuery } from '@store/services/tickets';
 import { ITicket } from '@store/types';
@@ -94,6 +93,19 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
         [membersClockedIn, mergedUsers]
     );
 
+    const minimalTeamData = useMemo(() => 
+        mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+            _id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            pictureUrl: user?.pictureUrl,
+            clockIn,
+            clockOut,
+            departmentName
+        })) || [],
+        [mergedAttendanceWithMemberList]
+    );
+
     const handleRefetch = () => {
         usersRefetch();
         refetchServices();
@@ -123,7 +135,7 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
                     <TeamAttendanceRow item={item as any} index={0} />
                 )}
                 refreshing={isLoading || isFetching}
-                data={mergedAttendanceWithMemberList}
+                data={minimalTeamData}
                 ListFooterComponentStyle={{ marginVertical: 20 }}
             />
         </ErrorBoundary>
@@ -173,9 +185,28 @@ export const GroupHeadTeamTicketsList: React.FC<{
         [preparedForSortData]
     );
 
+    const minimalTicketData = useMemo(() => 
+        sortedData?.map(({ _id, user, departmentName, category, status, isIndividual, isDepartment }) => ({
+            _id,
+            user: user ? {
+                firstName: user.firstName,
+                lastName: user.lastName,
+                pictureUrl: user.pictureUrl
+            } : undefined,
+            departmentName,
+            category: category ? {
+                categoryName: category.categoryName
+            } : undefined,
+            status,
+            isIndividual,
+            isDepartment
+        })) || [],
+        [sortedData]
+    );
+
     return (
         <FlatListComponent
-            data={sortedData}
+            data={minimalTicketData}
             renderItemComponent={renderTeamTicketItem}
             fetchMoreData={fetchMoreData}
             isLoading={isLoading || isFetching}

@@ -51,11 +51,18 @@ const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(() => {
 
     const { data, isLoading, refetch, isFetching } = useGetCongresssQuery({});
 
+    const minimalCongressData = React.useMemo(() => 
+        data?.map(({ _id, name, startDate, endDate }) => ({
+            _id, name, startDate, endDate
+        })) || [],
+        [data]
+    );
+
     useScreenFocus({ onFocus: refetch });
 
     return (
         <FlatListComponent
-            data={data || []}
+            data={minimalCongressData}
             renderItemComponent={renderCongressItem}
             refreshing={isFetching}
             emptyMessage="No congress created"

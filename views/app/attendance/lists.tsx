@@ -35,6 +35,13 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
 
+    const minimalAttendanceData = useMemo(() => 
+        (moreData as IAttendance[])?.map(({ _id, createdAt, clockIn, clockOut }) => ({
+            _id, createdAt, clockIn, clockOut
+        })),
+        [moreData]
+    );
+
     const fetchMoreData = useCallback(() => {
         if (!isFetching && !isLoading) {
             if (data?.length) {
@@ -46,7 +53,7 @@ export const MyAttendance: React.FC = React.memo(() => {
     }, [isFetching, isLoading, data]);
 
     const renderItemComponent = useCallback(
-        ({ item }: { item: any; index: number }) => <MyAttendanceRow item={item as IAttendance} index={0} />,
+        ({ item }: { item: any; index: number }) => <MyAttendanceRow item={item} index={0} />,
         [MyAttendanceRow]
     );
 
@@ -57,7 +64,7 @@ export const MyAttendance: React.FC = React.memo(() => {
                     itemHeight={85.3}
                     fetchMoreData={fetchMoreData}
                     padding={isAndroid ? 3 : true}
-                    data={moreData as IAttendance[]}
+                    data={minimalAttendanceData}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
                     renderItemComponent={renderItemComponent}
@@ -143,6 +150,19 @@ export const TeamAttendance: React.FC = React.memo(() => {
         [membersClockedIn, mergedUsers]
     );
 
+    const minimalTeamData = useMemo(() => 
+        mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+            _id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            pictureUrl: user?.pictureUrl,
+            clockIn,
+            clockOut,
+            departmentName
+        })),
+        [mergedAttendanceWithMemberList]
+    );
+
     const handleRefetch = useCallback(() => {
         usersRefetch();
         refetchServices();
@@ -174,9 +194,9 @@ export const TeamAttendance: React.FC = React.memo(() => {
                     onRefresh={handleRefetch}
                     padding={isAndroid ? 3 : 1}
                     isLoading={isLoading || isFetching}
-                    renderItemComponent={({ item }) => <TeamAttendanceRow item={item as any} index={0} />}
+                    renderItemComponent={({ item }) => <TeamAttendanceRow item={item} index={0} />}
                     refreshing={isLoading || isFetching}
-                    data={mergedAttendanceWithMemberList}
+                    data={minimalTeamData}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
                 />
             </View>
@@ -287,6 +307,19 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         [mergedLeaders]
     );
 
+    const minimalLeaderData = useMemo(() => 
+        mergedAttendanceWithLeaderList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+            _id,
+            firstName: user?.firstName,
+            lastName: user?.lastName,
+            pictureUrl: user?.pictureUrl,
+            clockIn,
+            clockOut,
+            departmentName
+        })),
+        [mergedAttendanceWithLeaderList]
+    );
+
     const handleRefetch = useCallback(() => {
         refetchHods();
         refetchAHods();
@@ -319,8 +352,8 @@ export const LeadersAttendance: React.FC = React.memo(() => {
                     onRefresh={handleRefetch}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
-                    data={mergedAttendanceWithLeaderList}
-                    renderItemComponent={({ item }) => <LeadersAttendanceRow item={item as any} index={0} />}
+                    data={minimalLeaderData}
+                    renderItemComponent={({ item }) => <LeadersAttendanceRow item={item} index={0} />}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
                 />
             </View>
@@ -377,6 +410,21 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
+    const minimalCampusData = useMemo(() => 
+        data?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+            _id,
+            user: {
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                pictureUrl: user?.pictureUrl
+            },
+            clockIn,
+            clockOut,
+            departmentName
+        })) || [],
+        [data]
+    );
+
     const handleRefetch = useCallback(() => {
         !attedanceIsUninitialized && refetchAttendance();
         !servicesIsUninitialized && refetchServices();
@@ -406,7 +454,7 @@ export const CampusAttendance: React.FC = React.memo(() => {
                     itemHeight={85.3}
                     renderItemComponent={({ item }) => <CampusAttendanceRow item={item as IAttendance} index={0} />}
                     onRefresh={handleRefetch}
-                    data={data as IAttendance[]}
+                    data={minimalCampusData}
                     padding={isAndroid ? 3 : true}
                     isLoading={isLoading || isFetching}
                     refreshing={isLoading || isFetching}
@@ -489,6 +537,22 @@ export const GroupAttendance: React.FC = React.memo(() => {
         [mergedUsers]
     );
 
+    const minimalGroupData = useMemo(() => 
+        mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName, campusName }) => ({
+            _id,
+            user: {
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                pictureUrl: user?.pictureUrl
+            },
+            clockIn,
+            clockOut,
+            departmentName,
+            campusName
+        })),
+        [mergedAttendanceWithMemberList]
+    );
+
     const handleRefetch = useCallback(() => {
         usersRefetch();
         refetchServices();
@@ -522,7 +586,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
                     isLoading={isLoading || isFetching}
                     renderItemComponent={({ item }) => <GroupAttendanceRow item={item as IAttendance} index={0} />}
                     refreshing={isLoading || isFetching}
-                    data={mergedAttendanceWithMemberList}
+                    data={minimalGroupData}
                     ListFooterComponentStyle={{ marginVertical: 20 }}
                 />
             </View>
