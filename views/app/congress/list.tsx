@@ -43,7 +43,7 @@ const CongressListRow: React.FC<ICongress> = memo(congress => {
     );
 });
 
-const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(({ updatedListItem }) => {
+const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(() => {
     const renderCongressItem = React.useCallback(
         ({ item }: { item: ICongress; index: number }) => <CongressListRow {...item} />,
         []

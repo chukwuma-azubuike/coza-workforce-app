@@ -165,7 +165,7 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
 
         const renderReportSummaryItem = React.useCallback(
             ({ item }: { item: ICampusReportSummary['departmentalReport'][0]; index: number }) => (
-                <ReportSummaryListRow {...item} />
+                <ReportSummaryListRow {...(item as any)} />
             ),
             []
         );
@@ -249,7 +249,7 @@ const GroupHeadReportSummary: React.FC<Partial<ICampusReportSummaryProps>> = Rea
 
         const renderGHReportSummaryItem = React.useCallback(
             ({ item }: { item: ICampusReportSummary['departmentalReport'][0]; index: number }) => (
-                <GHReportSummaryListRow {...item} />
+                <GHReportSummaryListRow {...(item as any)} />
             ),
             []
         );
