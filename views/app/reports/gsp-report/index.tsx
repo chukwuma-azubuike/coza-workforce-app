@@ -85,14 +85,10 @@ interface IGlobalReportPayload {
     serviceId?: string;
 }
 
-const renderGlobalReportItem = React.useCallback(
-    ({ item }: { item: IGlobalReport; index: number }) => <GlobalReportListRow {...item} />,
-    []
-);
+const renderGlobalReportItem = ({ item }: { item: IGlobalReport; index: number }) => <GlobalReportListRow {...item} />;
 
-const renderGHReportItem = React.useCallback(
-    ({ item }: { item: IGHSubmittedReportForGSP; index: number }) => <GHSubmittedReportListRowForGSP {...item} />,
-    []
+const renderGHReportItem = ({ item }: { item: IGHSubmittedReportForGSP; index: number }) => (
+    <GHSubmittedReportListRowForGSP {...item} />
 );
 
 const GlobalReportDetails: React.FC<IGlobalReportPayload> = props => {

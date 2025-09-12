@@ -84,14 +84,12 @@ const IncidentReportListRow: React.FC<Pick<IIncidentReportPayload, 'createdAt' |
     );
 });
 
-const renderDepartmentReportItem = React.useCallback(
-    ({ item }: { item: IDepartmentReportListById; index: number }) => <DepartmentReportListRow {...item} />,
-    []
+const renderDepartmentReportItem = ({ item }: { item: IDepartmentReportListById; index: number }) => (
+    <DepartmentReportListRow {...item} />
 );
 
-const renderIncidentReportItem = React.useCallback(
-    ({ item }: { item: IIncidentReportPayload; index: number }) => <IncidentReportListRow {...item} />,
-    []
+const renderIncidentReportItem = ({ item }: { item: IIncidentReportPayload; index: number }) => (
+    <IncidentReportListRow {...item} />
 );
 
 const Reports: React.FC = () => {

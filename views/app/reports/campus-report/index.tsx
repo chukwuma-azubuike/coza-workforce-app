@@ -37,9 +37,8 @@ interface ICampusReportPayload {
     campusId: string;
 }
 
-const renderCampusReportItem = React.useCallback(
-    ({ item }: { item: ICampusReport; index: number }) => <DepartmentReportListRow {...item} />,
-    []
+const renderCampusReportItem = ({ item }: { item: ICampusReport; index: number }) => (
+    <DepartmentReportListRow {...item} />
 );
 
 const CampusReportDetails: React.FC<ICampusReportPayload> = props => {

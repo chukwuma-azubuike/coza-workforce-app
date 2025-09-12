@@ -10,12 +10,13 @@ import ScreenHeader from '~/components/ScreenHeader';
 import { NavButton } from '~/components/NavButton';
 
 const usePreventGoBack = () => {
-    const navigation = useNavigation().addListener;
+    const navigation = useNavigation();
 
     React.useEffect(() => {
-        navigation('beforeRemove', e => {
+        const unsubscribe = navigation.addListener('beforeRemove', e => {
             e.preventDefault();
         });
+        return unsubscribe;
     }, [navigation]);
 };
 
