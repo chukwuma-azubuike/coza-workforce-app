@@ -23,11 +23,15 @@ const CreateCongress: React.FC = () => {
         const name = values.name;
         const endDate = dayjs(values.endDate).unix();
         const startDate = dayjs(values.startDate).unix();
+        const registrationStartDate = dayjs(values.registrationStartDate).unix();
+        const registrationEndDate = dayjs(values.registrationEndDate).unix();
 
         const result = await createCongress({
             name,
             endDate,
             startDate,
+            registrationEndDate,
+            registrationStartDate,
         });
 
         if ('data' in result) {
@@ -100,6 +104,40 @@ const CreateCongress: React.FC = () => {
                                     />
                                     {!!errors.endDate && touched.endDate && (
                                         <FormErrorMessage>{errors?.endDate}</FormErrorMessage>
+                                    )}
+                                </View>
+                            </View>
+
+                            <View className="justify-between flex-row gap-4 w-full">
+                                <View className="flex-1">
+                                    <DateTimePicker
+                                        mode="date"
+                                        label="Registration start date"
+                                        error={errors.registrationStartDate}
+                                        touched={touched.registrationStartDate}
+                                        placeholder="Enter registration start date"
+                                        onConfirm={
+                                            handleChange('registrationStartDate') as unknown as (value: Date) => void
+                                        }
+                                    />
+                                    {!!errors.registrationStartDate && touched.registrationStartDate && (
+                                        <FormErrorMessage>{errors?.registrationStartDate}</FormErrorMessage>
+                                    )}
+                                </View>
+                                <View className="flex-1">
+                                    <DateTimePicker
+                                        mode="date"
+                                        label="Registration end date"
+                                        error={errors.registrationEndDate}
+                                        touched={touched.registrationEndDate}
+                                        placeholder="Enter registration end date"
+                                        minimumDate={dayjs(values?.registrationEndDate || undefined).toDate()}
+                                        onConfirm={
+                                            handleChange('registrationEndDate') as unknown as (value: Date) => void
+                                        }
+                                    />
+                                    {!!errors.registrationEndDate && touched.registrationEndDate && (
+                                        <FormErrorMessage>{errors?.registrationEndDate}</FormErrorMessage>
                                     )}
                                 </View>
                             </View>

@@ -509,6 +509,8 @@ export interface ICongressPayload {
     name: string;
     endDate: number;
     startDate: number;
+    registrationStartDate: number;
+    registrationEndDate: number;
 }
 
 export interface ICongressInstantMessage {

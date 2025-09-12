@@ -33,7 +33,7 @@ export const congressServiceSlice = createApi({
             }),
         }),
 
-        updateCongress: endpoint.mutation<void, ICreateService>({
+        updateCongress: endpoint.mutation<void, ICreateService & { _id: string }>({
             query: args => ({
                 url: `/${SERVICE_URL}/updateCGWC${args._id}`,
                 method: REST_API_VERBS.PUT,
