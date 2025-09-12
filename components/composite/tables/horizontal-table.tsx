@@ -28,7 +28,7 @@ const HorizontalTable: React.FC<Props> = ({ title, tableData, isLoading }) => {
                             <View className="space-y-1 gap-2">
                                 {tableData?.headers?.map((item, index) => (
                                     <View key={`${item}-${index}`} className="items-start bg-primary-600 p-3">
-                                        <Text className="text-white">{item}</Text>
+                                        <Text>{item}</Text>
                                     </View>
                                 ))}
                             </View>

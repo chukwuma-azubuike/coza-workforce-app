@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useCallback } from 'react';
 import useRole from '@hooks/role';
 import { CampusTickets, MyTicketsList, MyTeamTicketsList, LeadersTicketsList, GroupTicketsList } from './ticket-list';
 import { SceneMap } from 'react-native-tab-view';
@@ -59,30 +59,30 @@ const Tickets: React.FC = () => {
         isFetching: isFetchingTickets,
     } = useGetTicketsQuery({ campusId: campus?._id, limit: 100 }, { skip: !canSearch });
 
-    const allRoutes = React.useMemo(() => {
+    const allRoutes = useMemo(() => {
         if (isQC) return [ROUTES[0], ROUTES[1], ROUTES[2], ROUTES[3]];
         if (isHOD || isAHOD) return [ROUTES[0], ROUTES[1]];
         if (isGroupHead) return [ROUTES[0], ROUTES[4]];
         if (isCampusPastor || isGlobalPastor) return [ROUTES[3], ROUTES[2]];
 
         return [ROUTES[0]];
-    }, []);
+    }, [isQC, isHOD, isAHOD, isGroupHead, isCampusPastor, isGlobalPastor]);
 
     const [index, setIndex] = React.useState(0);
 
-    const routeFocus = () => {
+    const routeFocus = useCallback(() => {
         if (params?.tabKey) {
             setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
         }
-    };
+    }, [params?.tabKey, allRoutes]);
 
     useScreenFocus({
         onFocus: routeFocus,
     });
 
-    const handleUserPress = (user: ITicket) => {
+    const handleUserPress = useCallback((user: ITicket) => {
         router.push({ pathname: '/tickets/ticket-details', params: user as any });
-    };
+    }, []);
 
     return (
         <SafeAreaView className="flex-1">

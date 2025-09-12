@@ -34,7 +34,7 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                         className={` items-center flex-1 bg-primary-600 text-left p-3`}
                                         key={`${item}-${index}`}
                                     >
-                                        <Text className="text-left text-white">{item}</Text>
+                                        <Text className="text-left">{item}</Text>
                                     </View>
                                 ))}
                             </View>
@@ -45,9 +45,7 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                             <View
                                                 className={`items-center p-2 text-left text-muted-foreground bg-muted flex-1`}
                                             >
-                                                <Text className="text-left text-white">
-                                                    {(item as ReactNode) ?? ''}
-                                                </Text>
+                                                <Text className="text-left">{(item as ReactNode) ?? ''}</Text>
                                             </View>
                                         ))}
                                     </View>
