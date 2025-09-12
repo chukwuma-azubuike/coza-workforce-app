@@ -106,7 +106,7 @@ const WorkForceSummary: React.FC<WorkforceSummaryProps> = ({ services, servicesI
 
     return (
         <ViewWrapper scroll onRefresh={refresh} refreshing={gspReportIsLoading} className="flex-1 gap-4">
-            <View className="px-1 justify-around static gap-4 w-full mb-4">
+            <View className="px-1 justify-around static gap-4 w-full mb-4 flex-row">
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
