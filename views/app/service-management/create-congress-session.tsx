@@ -88,8 +88,8 @@ const CreateCGWGSession: React.FC = () => {
     } as unknown as ICreateServicePayload;
 
     return (
-        <ViewWrapper scroll noPadding>
-            <View className="px-4 gap-6 items-start w-full">
+        <ViewWrapper scroll className="pt-4">
+            <View className="gap-6 items-start w-full">
                 <View className="items-center w-full">
                     <Formik<ICreateServicePayload>
                         validateOnChange
