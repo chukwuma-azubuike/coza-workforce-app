@@ -63,6 +63,15 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: 'serviceId' });
 
+    const minimalReportData = React.useMemo(() => 
+        moreData?.map(({ serviceTime, serviceName, status }) => ({
+            serviceTime,
+            serviceName,
+            status
+        })) || [],
+        [moreData]
+    );
+
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
             if (data?.length) {
@@ -77,7 +86,7 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
         <ViewWrapper className="mb-4 flex-1" noPadding refreshing={isLoading} onRefresh={handleRefresh}>
             <FlatListComponent
                 onRefresh={refetch}
-                data={moreData as any}
+                data={minimalReportData}
                 refreshing={isFetching}
                 renderItemComponent={renderCampusReportItem}
                 fetchMoreData={fetchMoreData}
