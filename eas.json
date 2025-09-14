@@ -1,0 +1,72 @@
+{
+    "cli": {
+        "version": ">= 15.0.6",
+        "appVersionSource": "local"
+    },
+    "build": {
+        "development": {
+            "developmentClient": true,
+            "distribution": "internal",
+            "environment": "development",
+            "env": {
+                "APP_VARIANT": "development",
+                "SENTRY_DNS": "SENTRY_DNS",
+                "EXPO_APPLE_TEAM_ID": "499THBRLGD",
+                "NODE_VERSION": "20"
+            },
+            "channel": "development"
+        },
+        "preview": {
+            "distribution": "store",
+            "environment": "preview",
+            "autoIncrement": true,
+            "env": {
+                "APP_VARIANT": "preview",
+                "SENTRY_DNS": "SENTRY_DNS",
+                "NODE_VERSION": "20",
+                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON_STAGING"
+            },
+            "channel": "preview",
+            "ios": {
+                "resourceClass": "m-medium"
+            },
+            "android": {
+                "buildType": "app-bundle"
+            }
+        },
+        "production": {
+            "distribution": "store",
+            "environment": "production",
+            "autoIncrement": true,
+            "env": {
+                "APP_VARIANT": "production",
+                "SENTRY_DNS": "SENTRY_DNS",
+                "NODE_VERSION": "20",
+                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON_PROD"
+            },
+            "channel": "production",
+            "ios": {
+                "resourceClass": "m-medium"
+            }
+        }
+    },
+    "submit": {
+        "production": {
+            "ios": {
+                "appleId": "timilehin.oloruntoba@icloud.com",
+                "ascAppId": "1667229564",
+                "appleTeamId": "499THBRLGD"
+            }
+        },
+        "preview": {
+            "ios": {
+                "appleId": "timilehin.oloruntoba@icloud.com",
+                "ascAppId": "6476398822",
+                "appleTeamId": "499THBRLGD"
+            },
+            "android": {
+                "releaseStatus": "draft"
+            }
+        }
+    }
+}

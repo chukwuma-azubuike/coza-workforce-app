@@ -10,4 +10,8 @@ declare module '@env' {
     export const SENTRY_DNS: string;
     export const UPLOAD_URL: string;
     export const UPLOAD_API_KEY: string;
+    export const AWS_REGION: string;
+    export const AWS_S3_BUCKET_NAME: string;
+    export const AWS_ACCESS_KEY: string;
+    export const AWS_SECRET_KEY: string;
 }
