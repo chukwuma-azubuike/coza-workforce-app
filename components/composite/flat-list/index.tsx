@@ -1,0 +1,326 @@
+import { Text } from '~/components/ui/text';
+import React, { useCallback } from 'react';
+import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableOpacity, View } from 'react-native';
+import If from '../if-container';
+import Utils from '@utils/index';
+import Empty from '../../atoms/empty';
+import { FlatListSkeleton } from '../../layout/skeleton';
+import dayjs from 'dayjs';
+import { THEME_CONFIG } from '@config/appConfig';
+import { useNavigation } from '@react-navigation/native';
+import useAppColorMode from '@hooks/theme/colorMode';
+
+export interface IFlatListColumn {
+    title?: string;
+    dataIndex: string;
+    render?: (elm: any, key: string | number) => JSX.Element;
+}
+
+export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
+    data: any[];
+    // Deprecated: prefer renderItemComponent
+    columns?: any[];
+    refreshing?: boolean;
+    onRefresh?: () => void;
+    isLoading?: boolean;
+    emptyMessage?: string;
+    navLink?: string;
+    showHeader?: boolean;
+    itemHeight?: number;
+    padding?: boolean | number;
+    fetchMoreData?: () => void;
+    emptySize?: number;
+    showEmpty?: boolean;
+    getItemKey?: (item: any, index: number) => string;
+    // New preferred API: a single row component
+    renderItemComponent?: React.ComponentType<{ item: any; index: number }>;
+}
+
+const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
+    const {
+        data,
+        padding,
+        columns,
+        onRefresh,
+        refreshing,
+        emptySize,
+        navLink,
+        isLoading,
+        showEmpty = true,
+        emptyMessage,
+        fetchMoreData,
+        itemHeight = 60,
+        showHeader = true,
+        renderItemComponent,
+    } = props;
+    const titles = React.useMemo(() => (columns ? columns.map(column => column.title) : []), [columns]);
+
+    React.useEffect(() => {
+        if (__DEV__ && columns && !renderItemComponent) {
+            // eslint-disable-next-line no-console
+            console.warn(
+                '[FlatListComponent] `columns` is deprecated. Migrate to `renderItemComponent` for better performance.'
+            );
+        }
+    }, [columns, renderItemComponent]);
+
+    // Guard repeated triggers on fast scroll momentum
+    const endReachedCalledDuringMomentum = React.useRef<boolean>(false);
+
+    const handleMore = useCallback(() => {
+        if (fetchMoreData && !refreshing && !endReachedCalledDuringMomentum.current) {
+            endReachedCalledDuringMomentum.current = true;
+            fetchMoreData();
+        }
+    }, [refreshing]);
+
+    const handleMomentumBegin = useCallback(() => {
+        endReachedCalledDuringMomentum.current = false;
+    }, []);
+
+    const handleItemLayout = useCallback(
+        (_: ArrayLike<any> | null | undefined, index: number) => ({
+            length: itemHeight,
+            offset: itemHeight * index,
+            index,
+        }),
+        [itemHeight]
+    );
+
+    const defaultKeyExtractor = useCallback((item: any, index: number) => {
+        const candidate = item?._id || item?.userId || item?.id || item?.key;
+        return (candidate ?? String(index)) as string;
+    }, []);
+
+    const renderItem1 = useCallback(
+        ({ item, index }: any) => (
+            <ListComponent_1
+                item={item}
+                showHeader={showHeader}
+                columns={columns}
+                ItemComponent={renderItemComponent}
+                index={index}
+            />
+        ),
+        [showHeader, columns, renderItemComponent]
+    );
+
+    const renderItem2 = useCallback(
+        ({ item, index }: any) => (
+            <ListComponent_2
+                item={item}
+                index={index}
+                padding={padding}
+                columns={columns}
+                navLink={navLink}
+                ItemComponent={renderItemComponent}
+            />
+        ),
+        [padding, navLink, columns, renderItemComponent]
+    );
+
+    const listHeaderComponent = useCallback(
+        () =>
+            titles[0] ? (
+                <View style={{ paddingVertical: 6, flex: 1, width: '100%' }}>
+                    <View className="justify-between">
+                        {titles.map((title, idx) => (
+                            <Text key={`title-${idx}`} className="font-bold">
+                                {title}
+                            </Text>
+                        ))}
+                    </View>
+                </View>
+            ) : null,
+        [titles]
+    );
+
+    return (
+        <>
+            {data && data[0] ? (
+                <>
+                    {/* Is an array of arrays */}
+                    <If condition={data[0][0]}>
+                        <FlatList
+                            refreshControl={
+                                onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
+                            }
+                            style={{ flex: 1 }}
+                            onMomentumScrollBegin={handleMomentumBegin}
+                            onEndReached={handleMore}
+                            onEndReachedThreshold={0.1}
+                            ListEmptyComponent={
+                                <Empty
+                                    width={emptySize}
+                                    isLoading={isLoading}
+                                    message={emptyMessage}
+                                    refresh={onRefresh}
+                                />
+                            }
+                            keyExtractor={props.getItemKey || defaultKeyExtractor}
+                            renderItem={renderItem1}
+                            getItemLayout={handleItemLayout}
+                            removeClippedSubviews
+                            initialNumToRender={10}
+                            maxToRenderPerBatch={8}
+                            windowSize={10}
+                            updateCellsBatchingPeriod={50}
+                            scrollEventThrottle={16}
+                            showsVerticalScrollIndicator={false}
+                            showsHorizontalScrollIndicator={false}
+                            ListFooterComponentStyle={{ paddingBottom: 20 }}
+                            ListFooterComponent={
+                                <ActivityIndicator
+                                    size="small"
+                                    hidesWhenStopped
+                                    animating={refreshing}
+                                    color={THEME_CONFIG.lightGray}
+                                />
+                            }
+                            {...props}
+                        />
+                    </If>
+                    <If condition={!data[0][0]}>
+                        <FlatList
+                            refreshControl={
+                                onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
+                            }
+                            style={{ flex: 1 }}
+                            onMomentumScrollBegin={handleMomentumBegin}
+                            ListEmptyComponent={
+                                <Empty
+                                    width={emptySize}
+                                    isLoading={isLoading}
+                                    message={emptyMessage}
+                                    refresh={onRefresh}
+                                />
+                            }
+                            onEndReached={handleMore}
+                            onEndReachedThreshold={0.1}
+                            keyExtractor={props.getItemKey || defaultKeyExtractor}
+                            ListHeaderComponent={listHeaderComponent}
+                            renderItem={renderItem2}
+                            getItemLayout={handleItemLayout}
+                            removeClippedSubviews
+                            initialNumToRender={10}
+                            maxToRenderPerBatch={8}
+                            windowSize={10}
+                            updateCellsBatchingPeriod={50}
+                            scrollEventThrottle={16}
+                            ListFooterComponentStyle={{ paddingBottom: 20 }}
+                            ListFooterComponent={
+                                <ActivityIndicator
+                                    size="small"
+                                    hidesWhenStopped
+                                    animating={refreshing}
+                                    color={THEME_CONFIG.lightGray}
+                                />
+                            }
+                            {...props}
+                        />
+                    </If>
+                </>
+            ) : isLoading ? (
+                <FlatListSkeleton />
+            ) : (
+                showEmpty && (
+                    <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
+                )
+            )}
+        </>
+    );
+};
+
+export default React.memo(FlatListComponent);
+
+const ListComponent_1: React.FC<
+    Partial<IFlatListComponentProps> & {
+        item: any;
+        index?: number;
+        ItemComponent?: React.ComponentType<{ item: any; index: number }>;
+    }
+> = React.memo(({ item, showHeader, columns, ItemComponent, index = 0 }) => {
+    const { textColor } = useAppColorMode();
+
+    return (
+        <View
+            style={{
+                borderColor: textColor,
+                padding: 4,
+                flex: 1,
+            }}
+        >
+            {showHeader ? (
+                <Text className="pb-3 text-lg font-semibold text-muted-foreground">
+                    {dayjs(item[0]).format() !== 'Invalid Date'
+                        ? dayjs(item[0]).format('DD MMMM, YYYY')
+                        : Utils.capitalizeFirstChar(item[0])}
+                </Text>
+            ) : null}
+            <View className="px-1">
+                {ItemComponent ? (
+                    <ItemComponent item={item} index={index} />
+                ) : (
+                    columns?.map((column, idx) => (
+                        <React.Fragment key={column?.dataIndex || idx}>{column.render(item, idx)}</React.Fragment>
+                    ))
+                )}
+            </View>
+        </View>
+    );
+});
+
+const ListComponent_2: React.FC<
+    Partial<IFlatListComponentProps> & {
+        item: any;
+        index?: number;
+        ItemComponent?: React.ComponentType<{ item: any; index: number }>;
+    }
+> = React.memo(({ item, index = 0, padding, columns, navLink, ItemComponent }) => {
+    const { navigate } = useNavigation();
+    const { textColor } = useAppColorMode();
+
+    const navigateTo = useCallback(() => {
+        if (navLink) navigate(navLink as never);
+        return;
+    }, [navLink]);
+
+    return (
+        <TouchableOpacity
+            disabled={false}
+            delayPressIn={0}
+            activeOpacity={0.6}
+            accessibilityRole="button"
+            onPress={item?.onPress || navigateTo}
+        >
+            <View
+                style={{
+                    borderColor: textColor,
+                    flex: 1,
+                    paddingVertical: 4,
+                    paddingHorizontal: padding ? 6 : 0,
+                }}
+            >
+                <View className="items-center justify-between gap-2">
+                    {ItemComponent ? (
+                        <ItemComponent item={item} index={index} />
+                    ) : (
+                        columns?.map((column, idx) => {
+                            if (column.render)
+                                return (
+                                    <React.Fragment key={column?.dataIndex || idx}>
+                                        {column.render(item, idx)}
+                                    </React.Fragment>
+                                );
+                            return (
+                                <Text key={column?.dataIndex || idx} className="text-left flex-1 w-100%">
+                                    {item[column.dataIndex as never]}
+                                </Text>
+                            );
+                        })
+                    )}
+                </View>
+            </View>
+        </TouchableOpacity>
+    );
+});

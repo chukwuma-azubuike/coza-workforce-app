@@ -1,0 +1,290 @@
+import { View } from 'react-native';
+import { StatCardComponent } from '@components/composite/card';
+import { BarChart, IStackedHistogramData, PieChart, StackedHistogram } from '@components/composite/chart';
+import { GridItem, ResponsiveGrid } from '@components/layout/responsive-grid';
+import ViewWrapper from '@components/layout/viewWrapper';
+import { THEME_CONFIG } from '@config/appConfig';
+import useScreenFocus from '@hooks/focus';
+import useMediaQuery from '@hooks/media-query';
+import { useGetCampusesQuery } from '@store/services/campus';
+import { useGetGraphAttendanceReportsQuery } from '@store/services/reports';
+import { useGetServicesQuery } from '@store/services/services';
+import flattenedObject from '@utils/flattenObject';
+import dayjs from 'dayjs';
+import React from 'react';
+import { useLocalSearchParams } from 'expo-router';
+import PickerSelect from '~/components/ui/picker-select';
+
+const CongressReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as { CongressId: string };
+    const CGWCId = params?.CongressId;
+
+    const [campusId, setCampusId] = React.useState<string>();
+    const [serviceId, setServiceId] = React.useState<string>();
+    const [userCategory, setUserCategory] = React.useState<string>('WORKERS');
+    const { data: campuses = [], isLoading: campusLoading, isFetching: campusIsFetching } = useGetCampusesQuery();
+    const {
+        data: services,
+        isLoading: servicesLoading,
+        refetch: refetchServices,
+        isUninitialized: servicesIsUninitialized,
+    } = useGetServicesQuery({ CGWCId }, { skip: !CGWCId });
+
+    const {
+        data: attendanceReport,
+        isLoading: attendanceReportLoading,
+        refetch: attendanceReportRefetch,
+        isFetching: attendanceReportFetching,
+    } = useGetGraphAttendanceReportsQuery({
+        CGWCId, //TODO: Restore after test
+        serviceId,
+        campusId,
+    });
+    const isLoadingOrFetching = attendanceReportLoading || attendanceReportFetching;
+    const transformedAttendanceReport = React.useMemo(() => {
+        if (!!attendanceReport) {
+            const transformedReport = {
+                present: attendanceReport.present,
+                late: attendanceReport.late,
+                absent: attendanceReport.absent,
+            };
+            return Object.values(transformedReport);
+        }
+        return [];
+    }, [attendanceReport]);
+
+    const totalEarly = React.useMemo(
+        () =>
+            attendanceReport?.present
+                ?.map(present => {
+                    return present.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.present]
+    );
+
+    const totalLate = React.useMemo(
+        () =>
+            attendanceReport?.late
+                ?.map(late => {
+                    return late.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.late]
+    );
+
+    const totalAbsent = React.useMemo(
+        () =>
+            attendanceReport?.absent
+                ?.map(absent => {
+                    return absent.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.absent]
+    );
+
+    const totalPresent = (totalLate || 0) + (totalEarly || 0);
+
+    const totalTickets = React.useMemo(
+        () =>
+            attendanceReport?.ticket
+                ?.map(ticket => {
+                    return ticket.value;
+                })
+                .reduce((a, b) => a + b),
+        [attendanceReport?.ticket]
+    );
+
+    const pastServices = React.useMemo(
+        () => services?.filter(service => dayjs(service.clockInStartTime).unix() < dayjs().unix()),
+        [services]
+    );
+
+    const validCategories = React.useMemo(
+        () => attendanceReport?.ticketCategory.find(campusTicketCategories => !!campusTicketCategories.value?.length),
+        [attendanceReport?.ticketCategory]
+    );
+
+    const categoryTemplate = React.useMemo(() => {
+        if (!!validCategories) {
+            return validCategories.value.map(category => {
+                return {
+                    [category.name]: 0,
+                };
+            });
+        }
+        return [];
+    }, [validCategories]);
+
+    const ticketCategories = React.useMemo(() => flattenedObject(categoryTemplate), [categoryTemplate]);
+
+    const allTicketsCategorized = React.useMemo(() => {
+        const ticketDump = ticketCategories;
+
+        attendanceReport?.ticketCategory.forEach(campusTickets => {
+            campusTickets.value.forEach(ticketValue => {
+                ticketDump[ticketValue.name] = ticketDump[ticketValue.name] + ticketValue.campusTicketCount;
+            });
+        });
+
+        return Object.entries(ticketDump).map((category, index) => {
+            return {
+                x: index + 1,
+                y: category[1],
+                label: category[0],
+            };
+        });
+    }, [ticketCategories, attendanceReport]);
+
+    const handleCampusChange = (value: string) => {
+        setCampusId(value);
+    };
+    const handleService = (value: string) => {
+        setServiceId(value);
+    };
+    const handleUserCategory = (value: string) => {
+        setUserCategory(value);
+    };
+
+    const userCategories = [
+        { key: 'WORKERS', label: 'Workers' },
+        { key: 'LEADERS', label: 'Leaders' },
+    ];
+
+    const { isMobile } = useMediaQuery();
+
+    const handleRefresh = () => {
+        attendanceReportRefetch();
+        !servicesIsUninitialized && refetchServices();
+    };
+
+    useScreenFocus({
+        onFocus: handleRefresh,
+    });
+
+    return (
+        <ViewWrapper scroll onRefresh={handleRefresh} refreshing={false}>
+            <ResponsiveGrid rowCount={3}>
+                <PickerSelect
+                    valueKey="key"
+                    labelKey="label"
+                    value={userCategory}
+                    items={userCategories}
+                    placeholder="Select User Category"
+                    onValueChange={handleUserCategory}
+                    isLoading={campusLoading || campusIsFetching}
+                />
+                <PickerSelect
+                    valueKey="_id"
+                    value={campusId}
+                    items={campuses}
+                    labelKey="campusName"
+                    placeholder="Select Campus"
+                    onValueChange={handleCampusChange}
+                    isLoading={campusLoading || campusIsFetching}
+                />
+                <PickerSelect
+                    valueKey="_id"
+                    labelKey="name"
+                    items={pastServices || []}
+                    isLoading={servicesLoading}
+                    placeholder="Select Session"
+                    onValueChange={handleService}
+                    value={undefined as unknown as string}
+                />
+            </ResponsiveGrid>
+            <ResponsiveGrid>
+                <GridItem flexBasis="40%">
+                    <View className="flex-row flex-wrap justify-between">
+                        <StatCardComponent
+                            label="Present"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalPresent}
+                            bold
+                            width="48%"
+                            iconColor={THEME_CONFIG.primary}
+                            marginActive={false}
+                        />
+                        <StatCardComponent
+                            label="Late"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalLate}
+                            bold
+                            width="48%"
+                            iconColor="orange"
+                            marginActive={false}
+                        />
+                    </View>
+                    <View className="flex-row flex-wrap justify-between">
+                        <StatCardComponent
+                            label="Early"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalEarly}
+                            width="48%"
+                            bold
+                            marginActive={false}
+                        />
+                        <StatCardComponent
+                            label="Absent"
+                            iconName="groups"
+                            iconType="material"
+                            isLoading={isLoadingOrFetching}
+                            value={totalAbsent}
+                            bold
+                            width="48%"
+                            iconColor={THEME_CONFIG.rose}
+                            marginActive={false}
+                        />
+                    </View>
+                    <View className="flex-row flex-wrap justify-between">
+                        <StatCardComponent
+                            label="Number of Tickets"
+                            iconType="material-community"
+                            iconName="ticket-confirmation-outline"
+                            iconColor={THEME_CONFIG.rose}
+                            isLoading={isLoadingOrFetching}
+                            value={totalTickets}
+                            bold
+                            width={['96%', '50%']}
+                            marginActive={false}
+                        />
+                    </View>
+                </GridItem>
+                <GridItem flexBasis="60%">
+                    <StackedHistogram
+                        stackColors={[THEME_CONFIG.primary, 'orange', THEME_CONFIG.rose]}
+                        entityKey="campusName"
+                        title="Attendance"
+                        valueKey="value"
+                        isLoading={isLoadingOrFetching}
+                        data={transformedAttendanceReport as unknown as IStackedHistogramData}
+                    />
+                </GridItem>
+            </ResponsiveGrid>
+            <ResponsiveGrid rowCount={2}>
+                <BarChart
+                    horizontal
+                    barColor={THEME_CONFIG.rose}
+                    entityKey="campusName"
+                    title="Campus Non-Compliance"
+                    valueKey="value"
+                    isLoading={isLoadingOrFetching}
+                    data={attendanceReport?.ticket || []}
+                />
+                <PieChart
+                    data={allTicketsCategorized}
+                    title="Non-Compliance Categories"
+                    isLoading={isLoadingOrFetching}
+                />
+            </ResponsiveGrid>
+        </ViewWrapper>
+    );
+};
+
+export default React.memo(CongressReport);
