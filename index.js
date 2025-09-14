@@ -1,42 +1,12 @@
-/**
- * @format
- */
-import React from 'react';
-import { AppRegistry } from 'react-native';
-import App from './App';
-import { name as appName } from './app.json';
-import messaging from '@react-native-firebase/messaging';
-import notifee, { EventType } from '@notifee/react-native';
-import { extractIncomingNotifications } from './src/utils/extractIncomingNotifications';
+import { registerRootComponent } from 'expo';
+import { ExpoRoot } from 'expo-router';
 
-function HeadlessCheck({ isHeadless }) {
-    // If App has been launched in the background by iOS, then ignore.
-    if (isHeadless) {
-        return null;
-    }
+// https://docs.expo.dev/router/reference/troubleshooting/#expo_router_app_root-not-defined
 
-    return <App />;
+// Must be exported or Fast Refresh won't update the context
+export function App() {
+    const ctx = require.context('./app');
+    return <ExpoRoot context={ctx} />;
 }
 
-messaging().setBackgroundMessageHandler(async remoteMessage => {
-    const { title, body, data } = extractIncomingNotifications(remoteMessage);
-
-    notifee.displayNotification({
-        title,
-        body,
-        data: JSON.stringify(data),
-    });
-
-    //handle background event for when the notification is displayed in the background
-    notifee.onBackgroundEvent(async ({ type, detail }) => {
-        const { notification, pressAction } = detail;
-
-        // Remove the notification
-        if (type === EventType.ACTION_PRESS) {
-            await notifee.cancelNotification(notification.id);
-            // Or perform another action (Deeplink action)
-        }
-    });
-});
-
-AppRegistry.registerComponent(appName, () => HeadlessCheck);
+registerRootComponent(App);
