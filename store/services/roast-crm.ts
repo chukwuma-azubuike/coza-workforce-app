@@ -22,11 +22,11 @@ import {
     NotificationRule,
     REST_API_VERBS,
 } from '../types';
-import { v4 as uuid } from 'uuid';
 import APP_VARIANT from '~/config/envConfig';
 
 // Helper to get current ISO timestamp
 const now = () => new Date();
+const uuid = () => Math.random().toString(36).substring(2, 10);
 
 // Mock Data Generator
 const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
