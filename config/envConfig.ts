@@ -6,6 +6,7 @@ export const ENV = Constants.expoConfig?.extra?.APP_VARIANT as string;
 const APP_VARIANT = {
     ENV,
     isProd: ENV === 'production',
+    CRM_API_BASE_URL: process.env.EXPO_PUBLIC_CRM_API_BASE_URL,
     API_KEY: process.env.EXPO_PUBLIC_API_KEY || '',
     API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || '',
     APP_NAME: process.env.EXPO_PUBLIC_APP_NAME || '',
