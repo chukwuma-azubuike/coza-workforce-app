@@ -13,7 +13,7 @@ import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
-import TopNav from './top-nav';
+import TopNav from '~/components/TopNav';
 
 interface IInitialHomeState {
     latestService: {
