@@ -1,8 +1,7 @@
 import React from 'react';
-import Attendance from '~/views/app/attendance';
 
 const MyGuestsScreen: React.FC = () => {
-    return <Attendance />;
+    return <></>;
 };
 
 export default MyGuestsScreen;
