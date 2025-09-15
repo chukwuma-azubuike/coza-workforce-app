@@ -1,14 +1,17 @@
 import { PayloadAction, asyncThunkCreator, buildCreateSlice } from '@reduxjs/toolkit';
+import { stat } from 'react-native-fs';
 import { IModalState } from '~/types/app';
 
 export interface IAppState {
     toast: IModalState;
+    mode: 'crm' | 'ops';
 }
 
 const initialState: IAppState = {
     toast: {
         open: false,
     },
+    mode: 'ops',
 };
 
 export const createAppSlice = buildCreateSlice({
@@ -24,10 +27,14 @@ const appStateSlice = createAppSlice({
         toast: (state, { payload }: PayloadAction<IAppState['toast']>) => {
             state.toast = payload;
         },
+        toggleMode: (state, { payload }: PayloadAction<IAppState['mode']>) => {
+            state.mode = payload;
+        },
     },
 
     selectors: {
         selectToast: store => store.toast,
+        selectMode: store => store.mode,
     },
 });
 
