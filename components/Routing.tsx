@@ -7,15 +7,25 @@ import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { NotificationsProvider } from './NotificationsProvider';
 import inAppUpdates from '~/utils/in-app-updates';
+import { appSelectors } from '~/store/actions/app';
 
 export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
     const user = useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const mode = useAppSelector(store => appSelectors.selectMode(store));
+
+    const routeToMode = () => {
+        if (mode === 'crm') {
+            router.replace('/(roast-crm)');
+        } else {
+            router.replace('/(tabs)');
+        }
+    };
 
     React.useEffect(() => {
         if (user?.userId) {
-            router.replace('/(tabs)');
+            routeToMode();
         } else {
             router.replace('/');
         }
@@ -25,7 +35,7 @@ const Routing: React.FC = () => {
         };
 
         update();
-    }, [user?.userId]);
+    }, [user?.userId, mode]);
 
     return (
         <NotificationsProvider user={user || ({} as any)}>
@@ -36,6 +46,7 @@ const Routing: React.FC = () => {
                     <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                     <Stack.Screen name="(stack)" options={{ headerShown: false }} />
                     <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+                    <Stack.Screen name="(roast-crm)" options={{ headerShown: false, gestureEnabled: false }} />
                 </Stack>
             </View>
         </NotificationsProvider>
