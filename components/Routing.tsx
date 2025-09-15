@@ -8,15 +8,25 @@ import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { NotificationsProvider } from './NotificationsProvider';
 import inAppUpdates from '~/utils/in-app-updates';
+import { appSelectors } from '~/store/actions/app';
 
 export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
     const user = useAppSelector(userSelectors.selectCurrentUser);
+    const mode = useAppSelector(appSelectors.selectMode);
+
+    const routeToMode = () => {
+        if (mode === 'crm') {
+            router.replace('/(roast-crm)');
+        } else {
+            router.replace('/(tabs)');
+        }
+    };
 
     React.useEffect(() => {
         if (user?.userId) {
-            router.replace('/(tabs)');
+            routeToMode();
         } else {
             router.replace('/');
         }
@@ -26,7 +36,7 @@ const Routing: React.FC = () => {
         };
 
         update();
-    }, [user?.userId]);
+    }, [user?.userId, mode]);
 
     const SafeAreaView = Platform.OS === 'android' ? RNSafeAreaView : RNCSafeAreaView;
 
