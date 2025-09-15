@@ -21,7 +21,7 @@ const Routing: React.FC = () => {
 
     const routeToMode = () => {
         if (mode === 'crm') {
-            router.replace('/(roast-crm)');
+            router.replace('/(roast-crm)/my-guests');
         } else {
             router.replace('/(tabs)');
         }
