@@ -19,10 +19,10 @@ import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { View } from 'react-native';
-import TopNav from '../top-nav';
 import { cn } from '~/lib/utils';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import { ScreenHeight } from '@rneui/base';
+import TopNav from '~/components/TopNav';
 
 interface IClockerProps {
     isInRange: boolean;
