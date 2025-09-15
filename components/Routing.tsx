@@ -8,17 +8,27 @@ import { userSelectors } from '~/store/actions/users';
 import { NotificationsProvider } from './NotificationsProvider';
 import inAppUpdates from '~/utils/in-app-updates';
 import { useAuth } from '~/hooks/auth';
+import { appSelectors } from '~/store/actions/app';
 
 export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
-    const user = useAppSelector(userSelectors.selectCurrentUser);
     const { logOut } = useAuth();
+    const user = useAppSelector(userSelectors.selectCurrentUser);
+    const mode = useAppSelector(appSelectors.selectMode);
+
+    const routeToMode = () => {
+        if (mode === 'crm') {
+            router.replace('/(roast-crm)');
+        } else {
+            router.replace('/(tabs)');
+        }
+    };
 
     React.useEffect(() => {
         const run = async () => {
             if (user?.userId) {
-                router.replace('/(tabs)');
+                routeToMode();
             } else {
                 await logOut();
             }
@@ -30,7 +40,7 @@ const Routing: React.FC = () => {
 
         run();
         update();
-    }, [user?.userId]);
+    }, [user?.userId, mode]);
 
     return (
         <NotificationsProvider user={user || ({} as any)}>
