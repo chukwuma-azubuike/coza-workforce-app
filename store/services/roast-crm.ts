@@ -97,6 +97,28 @@ const mockGuests: Guest[] = [
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.JOINED,
     }),
+    generateMockGuest({
+        name: 'Remi Lawal',
+        assignedToId: 'user-worker-1',
+        assimilationStage: AssimilationStage.ATTENDED,
+        lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+    }),
+    generateMockGuest({
+        name: 'Chidi Uba',
+        assignedToId: 'user-worker-2',
+        assimilationStage: AssimilationStage.ATTENDED,
+        lastContact: now(),
+    }),
+    generateMockGuest({
+        name: 'Ngozi Udo',
+        assignedToId: 'user-worker-3',
+        assimilationStage: AssimilationStage.DISCIPLED,
+    }),
+    generateMockGuest({
+        name: 'Usman Jankin',
+        assignedToId: 'user-worker-3',
+        assimilationStage: AssimilationStage.JOINED,
+    }),
 ];
 
 const mockZones: Zone[] = [
@@ -560,7 +582,7 @@ export const roastCrmApi = createApi({
     reducerPath: SERVICE_URL,
 
     baseQuery: fetchBaseQuery({
-        baseUrl: APP_VARIANT.CRM_API_BASE_URL,
+        baseUrl: APP_VARIANT.API_BASE_URL ?? 'https://localhost:4000/api',
         prepareHeaders: headers => {
             return headers;
         },
@@ -587,11 +609,12 @@ export const roastCrmApi = createApi({
         // Guest Queries
         getGuests: builder.query<Guest[], { campusId?: string; workerId?: string; zoneId?: string }>({
             query: params => ({
-                url: `${SERVICE_URL}/guests`,
+                url: `/role/getRoles`,
+                // url: `/${SERVICE_URL}/guests`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            transformResponse() {
+            transformResponse: () => {
                 return mockGuests;
             },
             providesTags: result =>
