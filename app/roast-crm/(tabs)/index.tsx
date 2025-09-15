@@ -1,8 +1,9 @@
 import React from 'react';
-import Home from '~/views/app/home';
+
+import { MyGuestsDashboard } from '~/views/roast-crm/my-guests';
 
 const RoastCRMScreen: React.FC = () => {
-    return <Home />;
+    return <MyGuestsDashboard />;
 };
 
 export default RoastCRMScreen;

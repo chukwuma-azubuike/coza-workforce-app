@@ -85,8 +85,8 @@ export function KanbanColumn({
                 <View className="gap-4">
                     {isLoading ? (
                         <View className="gap-6">
-                            {[...Array(3)].map(() => (
-                                <View className="gap-2 p-6 border border-border rounded-2xl">
+                            {[...Array(3)].map((_, index) => (
+                                <View key={index} className="gap-2 p-6 border border-border rounded-2xl">
                                     <View className="flex-row gap-4">
                                         <Skeleton className="h-12 w-12 rounded-full" />
                                         <View className="flex-1 gap-2">

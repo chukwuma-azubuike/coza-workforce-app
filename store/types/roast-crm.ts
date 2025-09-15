@@ -80,6 +80,7 @@ export interface Guest {
     _id: ID;
     phone: string;
     zoneId: ID;
+    gender: 'male' | 'female';
     assignedToId?: ID | null;
     campusId?: ID;
     createdById?: ID;
@@ -87,7 +88,7 @@ export interface Guest {
     lastContact?: string | Date; // ISO string format
     preferredChannel?: ContactChannel;
     completedAt?: string | Date | null;
-    prayerRequest?: string | null;
+    comment?: string | null;
     address?: string | null;
     assimilationStage: AssimilationStage;
     nextAction?: string;
@@ -107,7 +108,7 @@ export interface Engagement {
 }
 
 // Form and request/response types
-export interface GuestFormData extends Omit<Guest, '_id' | 'createdAt' | 'milestones' | 'name' | 'stage'> {
+export interface GuestFormData extends Omit<Guest, '_id' | 'createdAt' | 'milestones'> {
     milestones?: Partial<Omit<Milestone, '_id'>>[];
 }
 

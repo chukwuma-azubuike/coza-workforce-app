@@ -24,101 +24,72 @@ interface KanbanCardProps {
 }
 
 export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGuest }: KanbanCardProps) {
-    const pan = useRef(new Animated.ValueXY()).current;
     const [isDragging, setIsDragging] = useState(false);
-    const scale = useRef(new Animated.Value(1)).current;
-    const opacity = useRef(new Animated.Value(1)).current;
-
-    const panResponder = useRef(
+    const translateX = useRef(new Animated.Value(0)).current;
+    const translateY = useRef(new Animated.Value(0)).current;    const panResponder = useRef(
         PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
             onMoveShouldSetPanResponder: (_, gestureState) => {
-                // Only activate pan responder if user has moved more than 5 pixels
-                // This prevents conflict with touch events on buttons
-                return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
-            },
-            onMoveShouldSetPanResponderCapture: (_, gestureState) => {
-                // Capture movement only after threshold
                 return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
             },
             onPanResponderGrant: () => {
                 setIsDragging(true);
-
-                // Notify parent that drag has started
                 onDragStart?.();
-
-                // Animate scale and opacity for visual feedback
-                Animated.parallel([
-                    Animated.spring(scale, {
-                        toValue: 1.05,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(opacity, {
-                        toValue: 0.9,
-                        duration: 200,
-                        useNativeDriver: true,
-                    }),
-                ]).start();
-
-                // Set pan offset
-                pan.setOffset({
-                    x: (pan.x as any)._value || 0,
-                    y: (pan.y as any)._value || 0,
-                });
-                pan.setValue({ x: 0, y: 0 });
+                
+                // Reset values to current position
+                translateX.setValue(0);
+                translateY.setValue(0);
             },
-            onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-                useNativeDriver: false,
-                // listener: (event, gestureState) => {
-                //     // Optional: Add visual feedback while dragging
-                //     // You could highlight potential drop zones here
-                // },
-            }),
+            onPanResponderMove: (_, gesture) => {
+                Animated.event(
+                    [
+                        null,
+                        {
+                            dx: translateX,
+                            dy: translateY
+                        }
+                    ],
+                    { useNativeDriver: true }
+                )(_, gesture);
+            },
             onPanResponderRelease: (_, gesture) => {
-                setIsDragging(false);
-
-                // Call drop handler with final position
                 onDrop(guest._id, gesture.moveX, gesture.moveY);
-
-                // Animate back to original position
+                
                 Animated.parallel([
-                    Animated.spring(pan, {
-                        toValue: { x: 0, y: 0 },
-                        useNativeDriver: false,
+                    Animated.spring(translateX, {
+                        toValue: 0,
+                        tension: 40,
                         friction: 5,
+                        useNativeDriver: true
                     }),
-                    Animated.spring(scale, {
-                        toValue: 1,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(opacity, {
-                        toValue: 1,
-                        duration: 200,
-                        useNativeDriver: true,
-                    }),
+                    Animated.spring(translateY, {
+                        toValue: 0,
+                        tension: 40,
+                        friction: 5,
+                        useNativeDriver: true
+                    })
                 ]).start(() => {
-                    // Clean up
-                    pan.flattenOffset();
+                    setIsDragging(false);
                 });
             },
             onPanResponderTerminate: () => {
-                // Handle gesture cancellation
-                setIsDragging(false);
                 Animated.parallel([
-                    Animated.spring(pan, {
-                        toValue: { x: 0, y: 0 },
-                        useNativeDriver: false,
+                    Animated.spring(translateX, {
+                        toValue: 0,
+                        tension: 40,
+                        friction: 5,
+                        useNativeDriver: true
                     }),
-                    Animated.spring(scale, {
-                        toValue: 1,
-                        useNativeDriver: true,
-                    }),
-                    Animated.timing(opacity, {
-                        toValue: 1,
-                        duration: 200,
-                        useNativeDriver: true,
-                    }),
-                ]).start();
-            },
+                    Animated.spring(translateY, {
+                        toValue: 0,
+                        tension: 40,
+                        friction: 5,
+                        useNativeDriver: true
+                    })
+                ]).start(() => {
+                    setIsDragging(false);
+                });
+            }
         })
     ).current;
 
@@ -157,10 +128,19 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
             {...panResponder.panHandlers}
             style={[
                 {
-                    transform: [{ translateX: pan.x }, { translateY: pan.y }, { scale: scale }],
-                    opacity: opacity,
+                    transform: [
+                        { translateX: translateX },
+                        { translateY: translateY }
+                    ],
                     elevation: isDragging ? 5 : 2,
                     zIndex: isDragging ? 1000 : 1,
+                    shadowColor: '#000',
+                    shadowOffset: {
+                        width: 0,
+                        height: isDragging ? 3 : 1,
+                    },
+                    shadowOpacity: isDragging ? 0.3 : 0.2,
+                    shadowRadius: isDragging ? 4.65 : 2.22,
                 },
             ]}
             className="bg-background rounded-3xl"

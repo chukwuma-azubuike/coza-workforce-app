@@ -7,7 +7,7 @@ import { cn } from '~/lib/utils';
 import { Text } from '~/components/ui/text';
 
 const alertVariants = cva(
-    'relative bg-background w-full rounded-lg border border-border p-4 shadow shadow-foreground/10',
+    'relative bg-background w-full rounded-xl border border-border p-4 shadow shadow-foreground/10',
     {
         variants: {
             variant: {
