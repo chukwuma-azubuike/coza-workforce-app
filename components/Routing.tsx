@@ -17,7 +17,7 @@ const Routing: React.FC = () => {
 
     const routeToMode = () => {
         if (mode === 'crm') {
-            router.replace('/(roast-crm)/my-guests');
+            router.replace('/roast-crm/my-guests');
         } else {
             router.replace('/(tabs)');
         }
@@ -46,7 +46,8 @@ const Routing: React.FC = () => {
                     <Stack.Screen name="(auth)" options={{ headerShown: false }} />
                     <Stack.Screen name="(stack)" options={{ headerShown: false }} />
                     <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
-                    <Stack.Screen name="(roast-crm)" options={{ headerShown: false, gestureEnabled: false }} />
+                    <Stack.Screen name="roast-crm/(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+                    <Stack.Screen name="roast-crm/(stack)" options={{ headerShown: false }} />
                 </Stack>
             </View>
         </NotificationsProvider>
