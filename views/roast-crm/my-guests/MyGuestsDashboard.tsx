@@ -28,6 +28,7 @@ import { FloatButton } from '~/components/atoms/button';
 import KanbanBoard from './KanbanBoard';
 import PickerSelect from '~/components/ui/picker-select';
 import { router } from 'expo-router';
+import AddGuestModal from './AddGuest';
 
 export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (guestId: string) => void }> = ({
     guest,
@@ -179,6 +180,7 @@ function MyGuestsDashboard() {
 
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
     const [stageFilter, setStageFilter] = useState<Guest['assimilationStage'] | 'all'>('all');
+    const [modalVisible, setModalVisible] = useState(false);
 
     const { data: guests, isLoading, refetch } = useGetGuestsQuery({ workerId: currentUser._id, zoneId: '' });
 
@@ -198,7 +200,7 @@ function MyGuestsDashboard() {
     };
 
     const handleViewGuest = (guestId: string) => {
-        router.push({ pathname: '/(roast-crm)/guests/profile', params: { guestId } });
+        router.push({ pathname: '/roast-crm/guests/profile', params: { guestId } });
     };
 
     const ListView = ({ displayGuests }: { displayGuests: Guest[] }) => {
@@ -301,61 +303,72 @@ function MyGuestsDashboard() {
         return filtered;
     }, [userGuests, searchTerm, stageFilter]);
 
+    const handleAddGuest = () => {
+        setModalVisible(prev => !prev);
+    };
+
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
-    const kanbanContainerHeight = Dimensions.get('window').height - 406;
+    const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     return (
         <View className="flex-1 bg-background">
-            <ViewWrapper avoidKeyboard scroll onRefresh={refetch} noPadding className="flex-1  mb-0">
-                {/* Header with Stats */}
-                <View className="gap-4 px-2 pt-4">
-                    <Text className="text-2xl font-bold">My Guests</Text>
-                    <View className="flex-row flex-wrap gap-3">
-                        <Card className="items-center flex-1 min-w-[20%]">
-                            <CardContent className="p-4">
-                                <Text className="text-3xl font-bold text-blue-600 text-center">
-                                    {categorizedGuests?.invited?.length ?? 0}
-                                </Text>
-                                <Text className="text-foreground">Invited</Text>
-                            </CardContent>
-                        </Card>
+            <View className="flex-auto">
+                <ViewWrapper avoidKeyboard scroll onRefresh={refetch} noPadding className="flex-1 mb-0">
+                    {/* Header with Stats */}
+                    <View className="gap-4 px-2 pt-4">
+                        <Text className="text-2xl font-bold">My Guests</Text>
+                        <View className="flex-row flex-wrap gap-3">
+                            <Card className="items-center flex-1 min-w-[20%]">
+                                <CardContent className="p-4">
+                                    <Text className="text-3xl font-bold text-blue-600 text-center">
+                                        {categorizedGuests?.invited?.length ?? 0}
+                                    </Text>
+                                    <Text className="text-foreground">Invited</Text>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="items-center flex-1 min-w-[20%]">
-                            <CardContent className="p-4">
-                                <Text className="text-3xl font-bold text-green-600 text-center">
-                                    {categorizedGuests?.attended?.length ?? 0}
-                                </Text>
-                                <Text className="text-foreground">Attended</Text>
-                            </CardContent>
-                        </Card>
+                            <Card className="items-center flex-1 min-w-[20%]">
+                                <CardContent className="p-4">
+                                    <Text className="text-3xl font-bold text-green-600 text-center">
+                                        {categorizedGuests?.attended?.length ?? 0}
+                                    </Text>
+                                    <Text className="text-foreground">Attended</Text>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="items-center flex-1 min-w-[20%]">
-                            <CardContent className="p-4">
-                                <Text className="text-3xl font-bold text-purple-600 text-center">
-                                    {categorizedGuests?.discipled?.length ?? 0}
-                                </Text>
-                                <Text className="text-foreground">Discipled</Text>
-                            </CardContent>
-                        </Card>
+                            <Card className="items-center flex-1 min-w-[20%]">
+                                <CardContent className="p-4">
+                                    <Text className="text-3xl font-bold text-purple-600 text-center">
+                                        {categorizedGuests?.discipled?.length ?? 0}
+                                    </Text>
+                                    <Text className="text-foreground">Discipled</Text>
+                                </CardContent>
+                            </Card>
 
-                        <Card className="items-center flex-1 min-w-[20%]">
-                            <CardContent className="p-4">
-                                <Text className="text-3xl font-bold text-foreground text-center">
-                                    {categorizedGuests?.joined?.length ?? 0}
-                                </Text>
-                                <Text className="text-foreground">Joined</Text>
-                            </CardContent>
-                        </Card>
+                            <Card className="items-center flex-1 min-w-[20%]">
+                                <CardContent className="p-4">
+                                    <Text className="text-3xl font-bold text-foreground text-center">
+                                        {categorizedGuests?.joined?.length ?? 0}
+                                    </Text>
+                                    <Text className="text-foreground">Joined</Text>
+                                </CardContent>
+                            </Card>
+                        </View>
                     </View>
-                </View>
 
-                <View className="mt-6 mx-2">
-                    <SearchAndFilter />
-                </View>
-            </ViewWrapper>
+                    <View className="mt-6 mx-2">
+                        <SearchAndFilter />
+                    </View>
+                </ViewWrapper>
+            </View>
 
             {/* Content */}
-            <View style={{ height: kanbanContainerHeight }}>
+            <View
+                style={{
+                    height: kanbanContainerHeight,
+                }}
+                className="flex-auto"
+            >
                 {viewMode === 'kanban' ? (
                     <KanbanBoard
                         isLoading={isLoading}
@@ -372,9 +385,17 @@ function MyGuestsDashboard() {
                 )}
             </View>
 
-            <FloatButton iconName="plus" iconType="font-awesome-5" className="!p-2" iconClassname="!w-4 !h-4">
+            <FloatButton
+                iconName="plus"
+                className="!p-2"
+                onPress={handleAddGuest}
+                iconType="font-awesome-5"
+                iconClassname="!w-4 !h-4"
+            >
                 Add Guest
             </FloatButton>
+
+            <AddGuestModal modalVisible={modalVisible} setModalVisible={handleAddGuest} />
         </View>
     );
 }
