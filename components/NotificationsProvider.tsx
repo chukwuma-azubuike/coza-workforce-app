@@ -32,7 +32,7 @@ export const registerForPushNotificationsAsync = async () => {
     }
 
     if (!Device.isDevice) {
-        alert('Must use physical device for Push Notifications');
+        // alert('Must use physical device for Push Notifications');
         return null;
     }
 
