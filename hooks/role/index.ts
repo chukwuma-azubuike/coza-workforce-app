@@ -11,6 +11,7 @@ export enum ROLES {
     AHOD = 'AHOD',
     admin = 'Admin',
     worker = 'Worker',
+    zonalCoordinator = 'Zonal Coordinator',
     groupHead = 'Group Head',
     superAdmin = 'Super Admin',
     globalAdmin = 'Global Admin',
@@ -165,11 +166,14 @@ const useRole = () => {
         //Role IDs
         leaderRoleIds,
 
+        role: roleName,
+
         // Roles
         isHOD: roleName === ROLES.AHOD,
         isAHOD: roleName === ROLES.HOD,
         isAdmin: roleName === ROLES.admin,
         isWorker: roleName === ROLES.worker,
+        zonalCoordinator: roleName === ROLES.zonalCoordinator,
         isGroupHead: roleName === ROLES.groupHead,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,

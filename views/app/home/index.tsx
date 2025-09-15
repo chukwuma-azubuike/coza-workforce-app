@@ -13,8 +13,8 @@ import useGeoLocation from '@hooks/geo-location';
 import { View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
-import TopNav from './top-nav';
 import { HomeContext } from './context';
+import TopNav from '~/components/TopNav';
 
 interface IInitialHomeState {
     latestService: {
