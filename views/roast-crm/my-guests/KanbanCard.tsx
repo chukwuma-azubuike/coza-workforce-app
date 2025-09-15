@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Animated, PanResponder, View, Linking, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Animated, PanResponder, View, Linking, TouchableOpacity, Platform } from 'react-native';
 import { Guest } from '~/store/types';
 
 import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
@@ -25,55 +25,126 @@ interface KanbanCardProps {
 
 export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGuest }: KanbanCardProps) {
     const pan = useRef(new Animated.ValueXY()).current;
+    const [isDragging, setIsDragging] = useState(false);
+    const scale = useRef(new Animated.Value(1)).current;
+    const opacity = useRef(new Animated.Value(1)).current;
 
     const panResponder = useRef(
         PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponder: (_, gestureState) => {
+                // Only activate pan responder if user has moved more than 5 pixels
+                // This prevents conflict with touch events on buttons
+                return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+            },
+            onMoveShouldSetPanResponderCapture: (_, gestureState) => {
+                // Capture movement only after threshold
+                return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
+            },
             onPanResponderGrant: () => {
-                // notify board to re-measure columns
+                setIsDragging(true);
+
+                // Notify parent that drag has started
                 onDragStart?.();
-                // reset offset so animation starts fresh
-                // use internal value access (safe for RN Animated.Value)
-                const ox = (pan.x as any)._value ?? 0;
-                const oy = (pan.y as any)._value ?? 0;
-                pan.setOffset({ x: ox, y: oy });
+
+                // Animate scale and opacity for visual feedback
+                Animated.parallel([
+                    Animated.spring(scale, {
+                        toValue: 1.05,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(opacity, {
+                        toValue: 0.9,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }),
+                ]).start();
+
+                // Set pan offset
+                pan.setOffset({
+                    x: (pan.x as any)._value || 0,
+                    y: (pan.y as any)._value || 0,
+                });
                 pan.setValue({ x: 0, y: 0 });
             },
             onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
                 useNativeDriver: false,
+                // listener: (event, gestureState) => {
+                //     // Optional: Add visual feedback while dragging
+                //     // You could highlight potential drop zones here
+                // },
             }),
             onPanResponderRelease: (_, gesture) => {
-                // gesture.moveX / moveY are screen coords — board measured with measureInWindow (screen coords) so they match
+                setIsDragging(false);
+
+                // Call drop handler with final position
                 onDrop(guest._id, gesture.moveX, gesture.moveY);
-                // reset animated position
-                Animated.spring(pan, {
-                    toValue: { x: 0, y: 0 },
-                    useNativeDriver: false,
-                }).start(() => {
-                    pan.setOffset({ x: 0, y: 0 });
-                    pan.setValue({ x: 0, y: 0 });
+
+                // Animate back to original position
+                Animated.parallel([
+                    Animated.spring(pan, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: false,
+                        friction: 5,
+                    }),
+                    Animated.spring(scale, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(opacity, {
+                        toValue: 1,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }),
+                ]).start(() => {
+                    // Clean up
+                    pan.flattenOffset();
                 });
+            },
+            onPanResponderTerminate: () => {
+                // Handle gesture cancellation
+                setIsDragging(false);
+                Animated.parallel([
+                    Animated.spring(pan, {
+                        toValue: { x: 0, y: 0 },
+                        useNativeDriver: false,
+                    }),
+                    Animated.spring(scale, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(opacity, {
+                        toValue: 1,
+                        duration: 200,
+                        useNativeDriver: true,
+                    }),
+                ]).start();
             },
         })
     ).current;
 
-    const handleCall = (guest: Guest) => () => {
-        Linking.openURL(`tel:${guest.phone}`);
+    const handleCall = () => {
+        if (!isDragging) {
+            Linking.openURL(`tel:${guest.phone}`);
+        }
     };
 
-    const handleWhatsApp = (guest: Guest) => () => {
-        Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
+    const handleWhatsApp = () => {
+        if (!isDragging) {
+            Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
+        }
     };
 
     const getProgressPercentage = (milestones: Guest['milestones']) => {
+        if (!milestones || milestones.length === 0) return 0;
         const completed = milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
         return Math.round((completed / milestones.length) * 100);
     };
 
-    const getDaysSinceContact = (lastContact: Date) => {
+    const getDaysSinceContact = (lastContact: Date | undefined | null) => {
+        if (!lastContact) return null;
         const today = new Date();
-
-        const diffTime = today.getTime() - lastContact?.getTime();
+        const contactDate = new Date(lastContact);
+        const diffTime = today.getTime() - contactDate.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         return diffDays;
     };
@@ -86,13 +157,15 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
             {...panResponder.panHandlers}
             style={[
                 {
-                    elevation: 2,
+                    transform: [{ translateX: pan.x }, { translateY: pan.y }, { scale: scale }],
+                    opacity: opacity,
+                    elevation: isDragging ? 5 : 2,
+                    zIndex: isDragging ? 1000 : 1,
                 },
-                pan.getLayout(),
             ]}
-            className="cursor-move hover:shadow-md transition-shadow bg-background rounded-3xl"
+            className="bg-background rounded-3xl"
         >
-            <Card>
+            <Card className={isDragging ? 'shadow-lg' : 'shadow-sm'}>
                 <CardContent className="p-4">
                     <View className="flex-row items-start justify-between mb-2">
                         <View className="flex-row items-center gap-2">
@@ -102,7 +175,8 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
                                         {guest.name
                                             .split(' ')
                                             .map(n => n[0])
-                                            .join('')}
+                                            .join('')
+                                            .toUpperCase()}
                                     </Text>
                                 </AvatarFallback>
                             </Avatar>
@@ -112,24 +186,23 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
                             </View>
                         </View>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <TouchableOpacity className="items-center justify-center rounded-full">
-                                    <MoreVertical className="w-2 h-2" color="gray" />
-                                </TouchableOpacity>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl py-0">
-                                <DropdownMenuItem asChild className="active:bg-background">
+                        {!isDragging && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
                                     <TouchableOpacity
-                                        activeOpacity={6}
-                                        onPress={() => onViewGuest(guest._id)}
-                                        className="items-center justify-center rounded-full"
+                                        className="items-center justify-center p-2 rounded-full"
+                                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                                     >
-                                        <Text>View Profile</Text>
+                                        <MoreVertical className="w-4 h-4" color="gray" />
                                     </TouchableOpacity>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
+                                    <DropdownMenuItem onPress={() => onViewGuest(guest._id)}>
+                                        <Text>View Profile</Text>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
                     </View>
 
                     <View className="gap-3">
@@ -145,35 +218,48 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
                             />
                         </View>
 
-                        <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2 flex-row">
-                            <Text className="font-bold">Next: </Text>
-                            <Text>{guest.nextAction}</Text>
-                        </View>
+                        {guest.nextAction && (
+                            <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2 flex-row">
+                                <Text className="font-bold">Next: </Text>
+                                <Text>{guest.nextAction}</Text>
+                            </View>
+                        )}
 
                         <View className="flex-row items-center justify-between text-xs">
                             <View className="flex-row items-center gap-2 text-foreground">
                                 <Clock className="w-3 h-3" />
                                 <Text>
-                                    {daysSinceContact === 0
+                                    {daysSinceContact === null
+                                        ? 'No contact'
+                                        : daysSinceContact === 0
                                         ? 'Today'
                                         : daysSinceContact === 1
                                         ? 'Yesterday'
                                         : `${daysSinceContact} days ago`}
                                 </Text>
                             </View>
-                            <View className="flex-row gap-2">
-                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
-                                    <Phone className="w-3 h-3" />
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="h-6 px-2"
-                                    onPress={handleWhatsApp(guest)}
-                                >
-                                    <MessageCircle className="w-3 h-3" />
-                                </Button>
-                            </View>
+                            {!isDragging && (
+                                <View className="flex-row gap-2">
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-6 px-2"
+                                        onPress={handleCall}
+                                        disabled={isDragging}
+                                    >
+                                        <Phone className="w-3 h-3" />
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-6 px-2"
+                                        onPress={handleWhatsApp}
+                                        disabled={isDragging}
+                                    >
+                                        <MessageCircle className="w-3 h-3" />
+                                    </Button>
+                                </View>
+                            )}
                         </View>
                     </View>
                 </CardContent>

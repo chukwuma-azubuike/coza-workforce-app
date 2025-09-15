@@ -1,87 +1,139 @@
-import React, { useRef, useEffect } from 'react';
-import { ScrollView, View, findNodeHandle, UIManager } from 'react-native';
+import React, { useRef, useState, useCallback } from 'react';
+import { View, ScrollView } from 'react-native';
 import { KanbanColumn } from './KanbanColumn';
-import { AssimilationStage, Guest } from '~/store/types';
-import { router } from 'expo-router';
+import { Guest } from '~/store/types';
 
-export interface KanbanBoardProps {
+interface KanbanBoardProps {
     guests: Guest[];
-    stages: AssimilationStage[];
+    stages: Guest['assimilationStage'][];
+    onGuestMove?: (guestId: string, newStage: Guest['assimilationStage']) => void;
+    onViewGuest?: (guestId: string) => void;
+    isLoading?: boolean;
 }
 
-type LayoutRect = { x: number; y: number; width: number; height: number };
+interface ColumnMeasurement {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    stage: Guest['assimilationStage'];
+}
 
-const KanbanBoard: React.FC<KanbanBoardProps> = ({ guests: initialGuests, stages }) => {
-    const [guests, setGuests] = React.useState<Guest[]>(initialGuests);
+export default function KanbanBoard({ guests, stages, onGuestMove, onViewGuest, isLoading }: KanbanBoardProps) {
+    const columnRefs = useRef<{ [key: string]: View | null }>({});
+    const columnMeasurements = useRef<{ [key: string]: ColumnMeasurement }>({});
+    const [isDragging, setIsDragging] = useState(false);
 
-    // refs for column nodes and measured layouts
-    const columnRefs = useRef<Record<string, View | null>>({});
-    const columnLayouts = useRef<Record<string, LayoutRect>>({});
-
-    // when a guest moves (update local state)
-    const handleMoveGuest = (guestId: string, newStage: Guest['assimilationStage']) => {
-        setGuests(prev => prev.map(g => (g._id === guestId ? { ...g, assimilationStage: newStage } : g)));
-    };
-
-    const handleViewGuest = (guestId: string) => {
-        router.push({ pathname: '/(roast-crm)/guests/profile', params: { guestId } });
-    };
-
-    useEffect(() => {
-        if (initialGuests?.length > 0) setGuests(initialGuests);
-    }, [initialGuests]);
-
-    // register column refs from columns
-    const registerColumnRef = (stage: string, ref: View | null) => {
-        columnRefs.current[stage] = ref;
-        // measure immediately when registered
-        measureColumn(stage);
-    };
-
-    const measureColumn = (stage: string) => {
-        const node = findNodeHandle(columnRefs.current[stage] as any);
-        if (!node) return;
-        // measureInWindow gives absolute coords (x,y)
-        UIManager.measureInWindow(node, (x: number, y: number, width: number, height: number) => {
-            columnLayouts.current[stage] = { x, y, width, height };
-        });
-    };
-
-    const measureAll = () => {
-        stages.forEach(stage => measureColumn(stage));
-    };
-
-    // called by cards when drag starts
-    const handleDragStart = () => {
-        // re-measure all columns to account for scrolling/layout shifts
-        measureAll();
-    };
-
-    // central drop handler
-    const handleDrop = (guestId: string, x: number, y: number) => {
-        for (const stage of stages) {
-            const l = columnLayouts.current[stage];
-            if (l && x >= l.x && x <= l.x + l.width && y >= l.y && y <= l.y + l.height) {
-                handleMoveGuest(guestId, stage);
-                return;
+    // Register column refs
+    const registerColumnRef = useCallback((stage: Guest['assimilationStage']) => {
+        return (ref: View | null) => {
+            columnRefs.current[stage] = ref;
+            // Measure column position when ref is set
+            if (ref) {
+                setTimeout(() => {
+                    ref.measureInWindow((x, y, width, height) => {
+                        columnMeasurements.current[stage] = {
+                            x,
+                            y,
+                            width,
+                            height,
+                            stage,
+                        };
+                    });
+                }, 100);
             }
+        };
+    }, []);
+
+    // Re-measure all columns when drag starts
+    const handleDragStart = useCallback(() => {
+        setIsDragging(true);
+        // Re-measure all column positions when drag starts
+        Object.entries(columnRefs.current).forEach(([stage, ref]) => {
+            if (ref) {
+                ref.measureInWindow((x, y, width, height) => {
+                    columnMeasurements.current[stage] = {
+                        x,
+                        y,
+                        width,
+                        height,
+                        stage: stage as Guest['assimilationStage'],
+                    };
+                });
+            }
+        });
+    }, []);
+
+    // Handle drop and determine target column
+    const handleDrop = useCallback(
+        (guestId: string, dropX: number, dropY: number) => {
+            setIsDragging(false);
+
+            // Find which column the drop occurred in
+            let targetStage: Guest['assimilationStage'] | null = null;
+
+            Object.values(columnMeasurements.current).forEach(measurement => {
+                if (
+                    dropX >= measurement.x &&
+                    dropX <= measurement.x + measurement.width &&
+                    dropY >= measurement.y &&
+                    dropY <= measurement.y + measurement.height
+                ) {
+                    targetStage = measurement.stage;
+                }
+            });
+
+            // If we found a target column and it's different from current stage
+            if (targetStage) {
+                const guest = guests.find(g => g._id === guestId);
+                if (guest && guest.assimilationStage !== targetStage) {
+                    onGuestMove?.(guestId, targetStage);
+                }
+            }
+        },
+        [guests, onGuestMove]
+    );
+
+    // Group guests by stage
+    const guestsByStage = stages.reduce((acc, stage) => {
+        acc[stage] = guests.filter(g => g.assimilationStage === stage);
+        return acc;
+    }, {} as Record<Guest['assimilationStage'], Guest[]>);
+
+    // Get stage display names
+    const getStageTitle = (stage: Guest['assimilationStage']) => {
+        switch (stage) {
+            case 'invited':
+                return 'Invited';
+            case 'attended':
+                return 'Attended';
+            case 'discipled':
+                return 'Discipled';
+            case 'joined':
+                return 'Joined Workforce';
+            default:
+                return stage;
         }
-        // no column matched — you may want to handle "snap back" or similar
     };
 
     return (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} onMomentumScrollEnd={measureAll}>
-            <View style={{ flexDirection: 'row', gap: 16 }}>
+        <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="flex-1"
+            contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 16 }}
+        >
+            <View className="flex-row gap-3">
                 {stages.map(stage => (
                     <KanbanColumn
                         key={stage}
-                        title={stage}
+                        title={getStageTitle(stage)}
                         stage={stage}
-                        onViewGuest={handleViewGuest}
-                        guests={guests.filter(g => g.assimilationStage.toLowerCase() === stage.toLowerCase())}
-                        // register this column's view ref so board can measure it
-                        registerColumnRef={ref => registerColumnRef(stage, ref)}
-                        // global drag/drop handlers
+                        guests={guestsByStage[stage]}
+                        isLoading={isLoading}
+                        onViewGuest={onViewGuest || (() => {})}
+                        onGuestMove={onGuestMove}
+                        registerColumnRef={registerColumnRef(stage)}
                         onDropGlobal={handleDrop}
                         onDragStartGlobal={handleDragStart}
                     />
@@ -89,6 +141,4 @@ const KanbanBoard: React.FC<KanbanBoardProps> = ({ guests: initialGuests, stages
             </View>
         </ScrollView>
     );
-};
-
-export default KanbanBoard;
+}
