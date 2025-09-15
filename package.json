@@ -144,6 +144,7 @@
         "tailwindcss": "3.3.5",
         "tailwindcss-animate": "^1.0.7",
         "use-count-up": "3.0.1",
+        "uuid": "13.0.0",
         "victory-native": "41.16.2",
         "xlsx": "0.18.5",
         "yup": "1.6.1",
