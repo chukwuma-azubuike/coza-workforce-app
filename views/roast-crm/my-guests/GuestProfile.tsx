@@ -48,7 +48,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     if (!guestId || isLoadingGuest) {
         return (
             <View className="p-4 text-center">
-                <p>{!guestId ? 'Guest not found' : 'Loading...'}</p>
+                <Text>{!guestId ? 'Guest not found' : 'Loading...'}</Text>
                 <Button onPress={onBack} className="mt-4">
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Back
@@ -157,7 +157,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                             </AvatarFallback>
                         </Avatar>
                         <View className="flex-1">
-                            <h1 className="text-2xl font-bold mb-2">{`${guest.name || ''}`}</h1>
+                            <Text className="text-2xl font-bold mb-2">{`${guest.name || ''}`}</h1>
                             <View className="flex items-center space-x-2 mb-2">
                                 <Badge variant="secondary" className={getStageColor(guest.assimilationStage)}>
                                     {guest.assimilationStage.charAt(0).toUpperCase() + guest.assimilationStage.slice(1)}
@@ -205,8 +205,8 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                     {/* Prayer Request */}
                     {guest.prayerRequest && (
                         <View className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                            <h4 className="font-medium text-blue-900 mb-1">Prayer Request</h4>
-                            <p className="text-sm text-blue-800">{guest.prayerRequest}</p>
+                            <Text className="font-medium text-blue-900 mb-1">Prayer Request</h4>
+                            <Text className="text-sm text-blue-800">{guest.prayerRequest}</Text>
                         </View>
                     )}
                 </CardContent>
@@ -313,7 +313,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                                             {formatTimeAgo(new Date(item.timestamp))}
                                         </Text>
                                     </View>
-                                    <p className="text-sm text-gray-700">{item.notes}</p>
+                                    <Text className="text-sm text-gray-700">{item.notes}</Text>
                                 </View>
                             </View>
                         ))}
@@ -322,8 +322,8 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                     {engagements.length === 0 && (
                         <View className="text-center py-8 text-gray-500">
                             <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                            <p>No interactions recorded yet</p>
-                            <p className="text-sm">Add your first note to start tracking engagement</p>
+                            <Text>No interactions recorded yet</Text>
+                            <Text className="text-sm">Add your first note to start tracking engagement</Text>
                         </View>
                     )}
                 </CardContent>
