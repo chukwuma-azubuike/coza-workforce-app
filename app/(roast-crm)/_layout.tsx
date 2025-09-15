@@ -41,6 +41,15 @@ const tabRoutes = [
         href: '/global-dashboard',
     },
     {
+        name: 'Leaderboards',
+        options: { title: 'Leaderboards' },
+        users: ['all'],
+        inMenuBar: true,
+        inMore: false,
+        icon: { name: 'chart-line', type: 'font-awesome-5' },
+        href: '/leaderboards',
+    },
+    {
         name: 'Notifications',
         options: { title: 'Notifications' },
         users: ['all'],
@@ -98,7 +107,7 @@ const TabLayout: React.FC = () => {
             className="shadow-lg shadow-black/5 flex-1"
         >
             <SafeAreaView className="flex-1">
-                <Animated.View style={[{ flex: 1, marginBottom: isAndroid ? 70 : 90 }, style]}>
+                <Animated.View style={[{ flex: 1, marginBottom: isAndroid ? 35 : 55 }, style]}>
                     <TopNav />
                     <TabSlot />
                 </Animated.View>
@@ -114,7 +123,7 @@ const TabLayout: React.FC = () => {
                             key={`route-${index}`}
                             href={route.href as any}
                         >
-                            <TabButton iconName={route.icon.name} iconType={route.icon.type} className="w-28">
+                            <TabButton iconName={route.icon.name} iconType={route.icon.type}>
                                 {route.name}
                             </TabButton>
                         </TabTrigger>

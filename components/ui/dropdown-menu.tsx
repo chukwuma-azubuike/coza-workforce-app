@@ -88,8 +88,8 @@ const DropdownMenuContent = React.forwardRef<
                               overlayStyle,
                           ])
                         : Platform.OS !== 'web'
-                          ? StyleSheet.absoluteFill
-                          : undefined
+                        ? StyleSheet.absoluteFill
+                        : undefined
                 }
                 className={overlayClassName}
             >
@@ -120,7 +120,7 @@ const DropdownMenuItem = React.forwardRef<
         <DropdownMenuPrimitive.Item
             ref={ref}
             className={cn(
-                'relative flex flex-row web:cursor-default gap-2 items-center rounded-sm px-2 py-1.5 native:py-2 web:outline-none web:focus:bg-accent active:bg-accent web:hover:bg-accent group',
+                'relative flex flex-row web:cursor-default gap-2 items-center rounded-sm px-2 py-1.5 native:py-2 web:outline-none web:focus:bg-accent web:hover:bg-accent group',
                 inset && 'pl-8',
                 props.disabled && 'opacity-50 web:pointer-events-none',
                 className

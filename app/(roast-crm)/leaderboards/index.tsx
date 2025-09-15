@@ -1,8 +1,8 @@
 import React from 'react';
 import Attendance from '~/views/app/attendance';
 
-const MyGuestsScreen: React.FC = () => {
+const LeaderboardsScreen: React.FC = () => {
     return <Attendance />;
 };
 
-export default MyGuestsScreen;
+export default LeaderboardsScreen;
