@@ -14,8 +14,8 @@ import { Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
-import TopNav from './top-nav';
 import { HomeContext } from './context';
+import TopNav from '~/components/TopNav';
 
 interface IInitialHomeState {
     latestService: {
