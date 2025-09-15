@@ -1,22 +1,33 @@
+import { TextClassContext } from './text';
+import { Icon } from './icon';
+import { cn } from '~/lib/utils';
 import * as TogglePrimitive from '@rn-primitives/toggle';
 import { cva, type VariantProps } from 'class-variance-authority';
-import type { LucideIcon } from 'lucide-react-native';
 import * as React from 'react';
-import { cn } from '~/lib/utils';
-import { TextClassContext } from '~/components/ui/text';
+import { Platform } from 'react-native';
 
 const toggleVariants = cva(
-    'web:group web:inline-flex items-center justify-center rounded-md web:ring-offset-background web:transition-colors web:hover:bg-muted active:bg-muted web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+    cn(
+        'active:bg-muted group flex flex-row items-center justify-center gap-2 rounded-md',
+        Platform.select({
+            web: 'hover:bg-muted hover:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex cursor-default whitespace-nowrap outline-none transition-[color,box-shadow] focus-visible:ring-[3px] disabled:pointer-events-none [&_svg]:pointer-events-none',
+        })
+    ),
     {
         variants: {
             variant: {
                 default: 'bg-transparent',
-                outline: 'border border-input bg-transparent web:hover:bg-accent active:bg-accent active:bg-accent',
+                outline: cn(
+                    'border-input active:bg-accent border bg-transparent shadow-sm shadow-black/5',
+                    Platform.select({
+                        web: 'hover:bg-accent hover:text-accent-foreground',
+                    })
+                ),
             },
             size: {
-                default: 'h-10 px-3 native:h-12 native:px-[12]',
-                sm: 'h-9 px-2.5 native:h-10 native:px-[9]',
-                lg: 'h-11 px-5 native:h-14 native:px-6',
+                default: 'h-10 min-w-10 px-2.5 sm:h-9 sm:min-w-9 sm:px-2',
+                sm: 'h-9 min-w-9 px-2 sm:h-8 sm:min-w-8 sm:px-1.5',
+                lg: 'h-11 min-w-11 px-3 sm:h-10 sm:min-w-10 sm:px-2.5',
             },
         },
         defaultVariants: {
@@ -26,59 +37,38 @@ const toggleVariants = cva(
     }
 );
 
-const toggleTextVariants = cva('text-sm native:text-base text-foreground font-medium', {
-    variants: {
-        variant: {
-            default: '',
-            outline: 'web:group-hover:text-accent-foreground web:group-active:text-accent-foreground',
-        },
-        size: {
-            default: '',
-            sm: '',
-            lg: '',
-        },
-    },
-    defaultVariants: {
-        variant: 'default',
-        size: 'default',
-    },
-});
-
-const Toggle = React.forwardRef<
-    TogglePrimitive.RootRef,
-    TogglePrimitive.RootProps & VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => (
-    <TextClassContext.Provider
-        value={cn(
-            toggleTextVariants({ variant, size }),
-            props.pressed ? 'text-accent-foreground' : 'web:group-hover:text-muted-foreground',
-            className
-        )}
-    >
-        <TogglePrimitive.Root
-            ref={ref}
-            className={cn(
-                toggleVariants({ variant, size }),
-                props.disabled && 'web:pointer-events-none opacity-50',
-                props.pressed && 'bg-accent',
+function Toggle({
+    className,
+    variant,
+    size,
+    ...props
+}: TogglePrimitive.RootProps & VariantProps<typeof toggleVariants> & React.RefAttributes<TogglePrimitive.RootRef>) {
+    return (
+        <TextClassContext.Provider
+            value={cn(
+                'text-sm text-foreground font-medium',
+                props.pressed
+                    ? 'text-accent-foreground'
+                    : Platform.select({ web: 'group-hover:text-muted-foreground' }),
                 className
             )}
-            {...props}
-        />
-    </TextClassContext.Provider>
-));
-
-Toggle.displayName = TogglePrimitive.Root.displayName;
-
-function ToggleIcon({
-    className,
-    icon: Icon,
-    ...props
-}: React.ComponentPropsWithoutRef<LucideIcon> & {
-    icon: LucideIcon;
-}) {
-    const textClass = React.useContext(TextClassContext);
-    return <Icon className={cn(textClass, className)} {...props} />;
+        >
+            <TogglePrimitive.Root
+                className={cn(
+                    toggleVariants({ variant, size }),
+                    props.disabled && 'opacity-50',
+                    props.pressed && 'bg-accent',
+                    className
+                )}
+                {...props}
+            />
+        </TextClassContext.Provider>
+    );
 }
 
-export { Toggle, ToggleIcon, toggleTextVariants, toggleVariants };
+function ToggleIcon({ className, ...props }: React.ComponentProps<typeof Icon>) {
+    const textClass = React.useContext(TextClassContext);
+    return <Icon className={cn('size-4 shrink-0', textClass, className)} {...props} />;
+}
+
+export { Toggle, ToggleIcon, toggleVariants };
