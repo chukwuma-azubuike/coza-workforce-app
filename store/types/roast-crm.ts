@@ -77,6 +77,7 @@ export interface Timeline {
 }
 
 export interface Guest {
+    id: ID;
     _id: ID;
     phone: string;
     zoneId: ID;
