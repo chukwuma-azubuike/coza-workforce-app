@@ -16,8 +16,8 @@ import { FloatButton } from '~/components/atoms/button';
 import PickerSelect from '~/components/ui/picker-select';
 import { router } from 'expo-router';
 import Loading from '~/components/atoms/loading';
-const GuestListView = React.lazy(() => import('./GuestListView'));
 
+const GuestListView = React.lazy(() => import('./GuestListView'));
 const KanbanBoard = React.lazy(() => import('./KanbanBoard'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
@@ -124,7 +124,7 @@ function MyGuestsDashboard() {
     };
 
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
-    const kanbanContainerHeight = Dimensions.get('window').height - 620;
+    const kanbanContainerHeight = Dimensions.get('window').height - 630;
 
     return (
         <View className="flex-1 bg-background">
