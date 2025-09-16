@@ -1,8 +1,12 @@
-import React from 'react';
-import IssueTicket from '~/views/app/tickets/issue-ticket';
-
+import React, { Suspense } from 'react';
+import Loading from '~/components/atoms/loading';
+const IssueTicket = React.lazy(() => import('~/views/app/tickets/issue-ticket'));
 const IssueTicketsScreen: React.FC = () => {
-    return <IssueTicket />;
+    return (
+        <Suspense fallback={<Loading cover />}>
+            <IssueTicket />
+        </Suspense>
+    );
 };
 
 export default IssueTicketsScreen;

@@ -12,6 +12,8 @@ import TopNav from '~/components/TopNav';
 import { Text } from '~/components/ui/text';
 import { useColorScheme } from '~/lib/useColorScheme';
 import { THEME_CONFIG } from '~/config/appConfig';
+import useDeferHeavy from '~/hooks/performance/defer-heavy';
+import Loading from '~/components/atoms/loading';
 
 const tabRoutes = [
     {
@@ -92,10 +94,12 @@ const TabLayout: React.FC = () => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     };
 
+    const ready = useDeferHeavy();
+
     return (
         <SafeAreaView className="relative flex-1">
             <TopNav />
-            <Slot />
+            <View className="flex-1">{ready ? <Slot /> : <Loading cover />}</View>
             <View className="flex-row justify-around pt-4 pb-1 bg-background border-t-border border-t-[0.5px] ">
                 {filteredRoutes.map((route, index) => {
                     const isFocused = pathname == route.pathname;

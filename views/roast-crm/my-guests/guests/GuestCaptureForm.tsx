@@ -33,7 +33,7 @@ const QUICK_TIPS = [
     'Follow up within 24-48 hours',
 ];
 
-export function GuestCaptureForm() {
+const GuestCaptureForm = () => {
     const { user: currentUser } = useRole();
     const { data: zones = [] } = useGetZonesQuery();
     const isOnline = true;
@@ -220,4 +220,6 @@ export function GuestCaptureForm() {
             </ViewWrapper>
         </ErrorBoundary>
     );
-}
+};
+
+export default GuestCaptureForm;
