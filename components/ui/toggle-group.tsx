@@ -74,7 +74,7 @@ function ToggleGroupItem({
                         size: context.size || size,
                     }),
                     props.disabled && 'opacity-50',
-                    ToggleGroupPrimitive.utils.getIsSelected(value, props.value) && 'bg-accent',
+                    ToggleGroupPrimitive.utils.getIsSelected(value, props.value) && 'bg-background',
                     'min-w-0 shrink-0 rounded-none shadow-none',
                     isFirst && 'rounded-l-xl',
                     isLast && 'rounded-r-xl',
