@@ -15,6 +15,8 @@ import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { HomeContext } from './context';
 import TopNav from '~/components/TopNav';
+import useDeferHeavy from '~/hooks/performance/defer-heavy';
+import Loading from '~/components/atoms/loading';
 
 interface IInitialHomeState {
     latestService: {
@@ -97,7 +99,9 @@ const Home: React.FC = () => {
         Utils.checkLocationPermission(refresh);
     }, []);
 
-    return (
+    const ready = useDeferHeavy();
+
+    return ready ? (
         <ErrorBoundary>
             <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
                 <View style={styles.container}>
@@ -127,6 +131,8 @@ const Home: React.FC = () => {
                 </View>
             </HomeContext.Provider>
         </ErrorBoundary>
+    ) : (
+        <Loading cover />
     );
 };
 
