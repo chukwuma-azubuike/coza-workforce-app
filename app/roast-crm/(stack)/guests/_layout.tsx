@@ -9,7 +9,6 @@ const GuestsScreensLayout: React.FC = () => {
             <Stack screenOptions={{ headerLeft: () => <NavButton /> }}>
                 <Stack.Screen name="index" options={{ title: 'Guests' }} />
                 <Stack.Screen name="profile" options={{ title: 'Guest profile' }} />
-                <Stack.Screen name="add-guest" options={{ presentation: 'modal', title: 'Add Guest' }} />
             </Stack>
         </SafeAreaView>
     );
