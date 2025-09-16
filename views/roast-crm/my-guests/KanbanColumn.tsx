@@ -1,6 +1,5 @@
-import React, { useRef } from 'react';
-import { View, ScrollView } from 'react-native';
-import { KanbanCard } from './KanbanCard';
+import React, { ReactNode } from 'react';
+import { View } from 'react-native';
 import { Guest } from '~/store/types';
 import { Text } from '~/components/ui/text';
 import { Badge } from '~/components/ui/badge';
@@ -9,36 +8,14 @@ import Utils from '~/utils';
 
 interface KanbanColumnProps {
     title: string;
-    stage: Guest['assimilationStage'];
-    guests?: Guest[];
+    guestCount?: number;
+    children: ReactNode;
     isLoading?: boolean;
-    onViewGuest: (guestId: string) => void;
-    onGuestMove?: (guestId: string, newStage: Guest['assimilationStage']) => void;
-    // new props
-    registerColumnRef?: (ref: View | null) => void;
-    onDropGlobal: (guestId: string, x: number, y: number) => void;
-    onDragStartGlobal?: () => void;
+    containerHeight?: number;
+    stage: Guest['assimilationStage'];
 }
 
-export function KanbanColumn({
-    title,
-    stage,
-    guests,
-    onViewGuest,
-    isLoading,
-    onGuestMove,
-    registerColumnRef,
-    onDropGlobal,
-    onDragStartGlobal,
-}: KanbanColumnProps) {
-    const columnRef = useRef<View | null>(null);
-
-    // register column ref with parent when mounted/updated
-    const setRef = (ref: View | null) => {
-        columnRef.current = ref;
-        if (registerColumnRef) registerColumnRef(ref);
-    };
-
+export function KanbanColumn({ title, stage, guestCount, children, containerHeight, isLoading }: KanbanColumnProps) {
     const getStageColor = () => {
         switch (stage) {
             case 'invited':
@@ -66,55 +43,40 @@ export function KanbanColumn({
 
     return (
         <View
-            ref={setRef}
-            onLayout={() => {
-                // parent (board) will measure when it gets the ref, and we also re-measure on drag start in board
-            }}
-            className={`flex-1 min-w-[320px] ${getStageColor()} border-2 border-dashed rounded-2xl transition-colors pb-3`}
+            className={` ${
+                getStageColor() ?? 'border-gray-200 dark:border-gray-200/10 bg-gray-50 dark:bg-gray-500/10'
+            } border-2 border-dashed rounded-2xl transition-colors pb-3`}
         >
-            <View className="flex justify-between p-3">
-                <View className="flex-row items-center gap-2">
-                    <Text className="font-semibold">{Utils.capitalizeFirstChar(title)}</Text>
-                    <Badge variant="secondary" className={getBadgeColor()}>
-                        <Text>{guests?.length}</Text>
-                    </Badge>
-                </View>
+            <View className="flex-row items-center gap-2 p-3">
+                <Text className="font-semibold">{Utils.capitalizeFirstChar(title)}</Text>
+                <Badge variant="secondary" className={getBadgeColor()}>
+                    <Text>{guestCount}</Text>
+                </Badge>
             </View>
 
-            <ScrollView className="flex-1 p-3">
-                <View className="gap-4">
-                    {isLoading ? (
-                        <View className="gap-6">
-                            {[...Array(3)].map((_, index) => (
-                                <View key={index} className="gap-2 p-6 border border-border rounded-2xl">
-                                    <View className="flex-row gap-4">
-                                        <Skeleton className="h-12 w-12 rounded-full" />
-                                        <View className="flex-1 gap-2">
-                                            <Skeleton className="h-4 w-2/3" />
-                                            <Skeleton className="h-4 w-1/2" />
-                                        </View>
-                                    </View>
-                                    <View className="gap-2">
-                                        <Skeleton className="h-10 w-full" />
-                                        <Skeleton className="h-2 w-1/2" />
+            <View className="gap-4 p-1.5" style={{ height: (containerHeight ?? 0) + 430 }}>
+                {isLoading ? (
+                    <View className="gap-2">
+                        {[...Array(3)].map((_, index) => (
+                            <View key={index} className="gap-2 p-5 border border-border rounded-2xl">
+                                <View className="flex-row gap-4">
+                                    <Skeleton className="h-12 w-12 rounded-full" />
+                                    <View className="flex-1 gap-2">
+                                        <Skeleton className="h-4 w-2/3" />
+                                        <Skeleton className="h-4 w-1/2" />
                                     </View>
                                 </View>
-                            ))}
-                        </View>
-                    ) : (
-                        guests?.map(guest => (
-                            <KanbanCard
-                                key={guest._id}
-                                guest={guest}
-                                onViewGuest={onViewGuest}
-                                onGuestMove={onGuestMove}
-                                onDrop={onDropGlobal ?? (() => {})}
-                                onDragStart={onDragStartGlobal}
-                            />
-                        ))
-                    )}
-                </View>
-            </ScrollView>
+                                <View className="gap-2">
+                                    <Skeleton className="h-10 w-full" />
+                                    <Skeleton className="h-2 w-1/2" />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                ) : (
+                    children
+                )}
+            </View>
         </View>
     );
 }

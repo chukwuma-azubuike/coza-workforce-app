@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo, useState } from 'react';
+import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Dimensions } from 'react-native';
 import { Search, List } from 'lucide-react-native';
 import { Card, CardContent } from '~/components/ui/card';
@@ -16,10 +16,21 @@ import { FloatButton } from '~/components/atoms/button';
 import PickerSelect from '~/components/ui/picker-select';
 import { router } from 'expo-router';
 import Loading from '~/components/atoms/loading';
+import { columnDataType, HeaderParams } from '../../../components/Kanban/types';
+import { KanbanUICard } from './KanbanCard';
+import { ScreenWidth } from '@rneui/base';
+import { KanbanColumn } from './KanbanColumn';
+import ReactNativeKanbanBoard from '~/components/Kanban';
 
 const GuestListView = React.lazy(() => import('./GuestListView'));
-const KanbanBoard = React.lazy(() => import('./KanbanBoard'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
+
+import groupBy from 'lodash/groupBy';
+
+type Column<T> = {
+    header: { title: string; subtitle?: string };
+    items: T[];
+};
 
 function MyGuestsDashboard() {
     const { user: currentUser } = useRole();
@@ -29,7 +40,7 @@ function MyGuestsDashboard() {
     const [stageFilter, setStageFilter] = useState<Guest['assimilationStage'] | 'all'>('all');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { data: guests, isLoading, refetch } = useGetGuestsQuery({ workerId: currentUser._id, zoneId: '' });
+    const { data: guests = [], isLoading, refetch } = useGetGuestsQuery({ workerId: currentUser._id, zoneId: '' });
 
     // Filter guests by current user and search term
     const userGuests = useMemo(
@@ -119,17 +130,62 @@ function MyGuestsDashboard() {
         return filtered;
     }, [userGuests, searchTerm, stageFilter]);
 
+    const mappedGuests: columnDataType<Guest, HeaderParams>[] = useMemo(
+        () =>
+            Object.entries(groupBy<Guest>(guests, 'assimilationStage'))?.map(([key, value]) => {
+                return {
+                    header: { title: key, subtitle: '', count: value?.length },
+                    items: value.map(val => {
+                        return { ...val, id: val._id };
+                    }),
+                };
+            }),
+        [guests]
+    );
+
+    const [statefulMappedGuests, setMappedGuests] = useState<Column<Guest>[]>(mappedGuests);
+
+    const onDragEnd = useCallback((params: { fromColumnIndex: number; toColumnIndex: number; itemId: string }) => {
+        const { fromColumnIndex, toColumnIndex, itemId } = params;
+
+        // no-op if dropped in same column
+        if (fromColumnIndex === toColumnIndex) return;
+
+        setMappedGuests(prev => {
+            // create shallow copy of columns
+            const next = prev.map(c => ({ ...c, items: [...c.items] }));
+
+            // find and remove the item from source column
+            const sourceItems = next[fromColumnIndex].items;
+            const itemIndex = sourceItems.findIndex(it => it._id === itemId);
+            if (itemIndex === -1) return prev; // item not found - keep previous
+
+            const [removed] = sourceItems.splice(itemIndex, 1);
+
+            // append to destination column (change to unshift or splice to insert at other position)
+            next[toColumnIndex].items.unshift(removed);
+
+            return next;
+        });
+    }, []);
+
     const handleAddGuest = () => {
         setModalVisible(prev => !prev);
     };
 
+    useEffect(() => {
+        if (statefulMappedGuests && statefulMappedGuests?.length < 1 && mappedGuests && mappedGuests.length > 0) {
+            setMappedGuests(mappedGuests);
+        }
+    }, [statefulMappedGuests, mappedGuests]);
+
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
-    const kanbanContainerHeight = Dimensions.get('window').height - 630;
+    const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     return (
         <View className="flex-1 bg-background">
-            <View className="flex-auto">
-                <ViewWrapper avoidKeyboard scroll onRefresh={refetch} noPadding className="flex-1 mb-0">
+            <View className="h-[15.3rem]">
+                <ViewWrapper scroll onRefresh={refetch} noPadding className="mb-0">
                     {/* Header with Stats */}
                     <View className="gap-4 px-2 pt-4">
                         <Text className="text-2xl font-bold">My Guests</Text>
@@ -177,25 +233,27 @@ function MyGuestsDashboard() {
                     </View>
                 </ViewWrapper>
             </View>
-
             {/* Content */}
-            <View
-                style={{
-                    height: kanbanContainerHeight,
-                }}
-                className="flex-auto"
-            >
+            <View className="flex-1">
                 {viewMode === 'kanban' ? (
                     <Suspense fallback={<Loading cover />}>
-                        <KanbanBoard
-                            isLoading={isLoading}
-                            guests={guests || []}
-                            stages={[
-                                AssimilationStage.INVITED,
-                                AssimilationStage.ATTENDED,
-                                AssimilationStage.DISCIPLED,
-                                AssimilationStage.JOINED,
-                            ]}
+                        <ReactNativeKanbanBoard<Guest, HeaderParams>
+                            columnData={statefulMappedGuests}
+                            renderItem={guest => <KanbanUICard guest={guest} />}
+                            renderColumnContainer={(child, props) => (
+                                <KanbanColumn
+                                    title={props.title}
+                                    isLoading={isLoading}
+                                    guestCount={props.count}
+                                    stage={props.title as AssimilationStage}
+                                >
+                                    {child}
+                                </KanbanColumn>
+                            )}
+                            columnContainerStyle={{ flex: 1 }}
+                            gapBetweenColumns={4}
+                            columnWidth={ScreenWidth - 80}
+                            onDragEnd={onDragEnd}
                         />
                     </Suspense>
                 ) : (

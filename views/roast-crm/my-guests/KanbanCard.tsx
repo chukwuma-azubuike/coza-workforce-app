@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Animated, PanResponder, View, Linking, TouchableOpacity, Platform } from 'react-native';
+import React from 'react';
+import { View, Linking, TouchableOpacity } from 'react-native';
 import { Guest } from '~/store/types';
 
 import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
@@ -17,92 +17,15 @@ import { Text } from '~/components/ui/text';
 
 interface KanbanCardProps {
     guest: Guest;
-    onDragStart?: () => void;
-    onViewGuest: (guestId: string) => void;
-    onDrop: (guestId: string, x: number, y: number) => void;
-    onGuestMove?: (guestId: string, newStage: Guest['assimilationStage']) => void;
 }
 
-export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGuest }: KanbanCardProps) {
-    const [isDragging, setIsDragging] = useState(false);
-    const translateX = useRef(new Animated.Value(0)).current;
-    const translateY = useRef(new Animated.Value(0)).current;    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: (_, gestureState) => {
-                return Math.abs(gestureState.dx) > 5 || Math.abs(gestureState.dy) > 5;
-            },
-            onPanResponderGrant: () => {
-                setIsDragging(true);
-                onDragStart?.();
-                
-                // Reset values to current position
-                translateX.setValue(0);
-                translateY.setValue(0);
-            },
-            onPanResponderMove: (_, gesture) => {
-                Animated.event(
-                    [
-                        null,
-                        {
-                            dx: translateX,
-                            dy: translateY
-                        }
-                    ],
-                    { useNativeDriver: true }
-                )(_, gesture);
-            },
-            onPanResponderRelease: (_, gesture) => {
-                onDrop(guest._id, gesture.moveX, gesture.moveY);
-                
-                Animated.parallel([
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        tension: 40,
-                        friction: 5,
-                        useNativeDriver: true
-                    }),
-                    Animated.spring(translateY, {
-                        toValue: 0,
-                        tension: 40,
-                        friction: 5,
-                        useNativeDriver: true
-                    })
-                ]).start(() => {
-                    setIsDragging(false);
-                });
-            },
-            onPanResponderTerminate: () => {
-                Animated.parallel([
-                    Animated.spring(translateX, {
-                        toValue: 0,
-                        tension: 40,
-                        friction: 5,
-                        useNativeDriver: true
-                    }),
-                    Animated.spring(translateY, {
-                        toValue: 0,
-                        tension: 40,
-                        friction: 5,
-                        useNativeDriver: true
-                    })
-                ]).start(() => {
-                    setIsDragging(false);
-                });
-            }
-        })
-    ).current;
-
+export function KanbanUICard({ guest }: KanbanCardProps) {
     const handleCall = () => {
-        if (!isDragging) {
-            Linking.openURL(`tel:${guest.phone}`);
-        }
+        Linking.openURL(`tel:${guest.phone}`);
     };
 
     const handleWhatsApp = () => {
-        if (!isDragging) {
-            Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
-        }
+        Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
     };
 
     const getProgressPercentage = (milestones: Guest['milestones']) => {
@@ -124,28 +47,8 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
     const daysSinceContact = getDaysSinceContact(guest?.lastContact as any);
 
     return (
-        <Animated.View
-            {...panResponder.panHandlers}
-            style={[
-                {
-                    transform: [
-                        { translateX: translateX },
-                        { translateY: translateY }
-                    ],
-                    elevation: isDragging ? 5 : 2,
-                    zIndex: isDragging ? 1000 : 1,
-                    shadowColor: '#000',
-                    shadowOffset: {
-                        width: 0,
-                        height: isDragging ? 3 : 1,
-                    },
-                    shadowOpacity: isDragging ? 0.3 : 0.2,
-                    shadowRadius: isDragging ? 4.65 : 2.22,
-                },
-            ]}
-            className="bg-background rounded-3xl"
-        >
-            <Card className={isDragging ? 'shadow-lg' : 'shadow-sm'}>
+        <View className="bg-background rounded-3xl">
+            <Card>
                 <CardContent className="p-4">
                     <View className="flex-row items-start justify-between mb-2">
                         <View className="flex-row items-center gap-2">
@@ -161,28 +64,26 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
                                 </AvatarFallback>
                             </Avatar>
                             <View>
-                                <Text className="font-medium">{guest.name}</Text>
+                                <Text className="font-bold text-xl">{guest.name}</Text>
                                 <Text className="text-xs text-foreground">{guest.phone}</Text>
                             </View>
                         </View>
 
-                        {!isDragging && (
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <TouchableOpacity
-                                        className="items-center justify-center p-2 rounded-full"
-                                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                                    >
-                                        <MoreVertical className="w-4 h-4" color="gray" />
-                                    </TouchableOpacity>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
-                                    <DropdownMenuItem onPress={() => onViewGuest(guest._id)}>
-                                        <Text>View Profile</Text>
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        )}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <TouchableOpacity
+                                    className="items-center justify-center p-2 rounded-full"
+                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                >
+                                    <MoreVertical className="w-4 h-4" color="gray" />
+                                </TouchableOpacity>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
+                                <DropdownMenuItem onPress={() => {}}>
+                                    <Text>View Profile</Text>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </View>
 
                     <View className="gap-3">
@@ -218,32 +119,19 @@ export function KanbanCard({ guest, onDrop, onGuestMove, onDragStart, onViewGues
                                         : `${daysSinceContact} days ago`}
                                 </Text>
                             </View>
-                            {!isDragging && (
-                                <View className="flex-row gap-2">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-6 px-2"
-                                        onPress={handleCall}
-                                        disabled={isDragging}
-                                    >
-                                        <Phone className="w-3 h-3" />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        className="h-6 px-2"
-                                        onPress={handleWhatsApp}
-                                        disabled={isDragging}
-                                    >
-                                        <MessageCircle className="w-3 h-3" />
-                                    </Button>
-                                </View>
-                            )}
+
+                            <View className="flex-row gap-2">
+                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall}>
+                                    <Phone className="w-3 h-3" />
+                                </Button>
+                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp}>
+                                    <MessageCircle className="w-3 h-3" />
+                                </Button>
+                            </View>
                         </View>
                     </View>
                 </CardContent>
             </Card>
-        </Animated.View>
+        </View>
     );
 }

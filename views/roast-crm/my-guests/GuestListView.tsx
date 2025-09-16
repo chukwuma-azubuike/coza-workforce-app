@@ -72,7 +72,7 @@ export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (gue
                         </AvatarFallback>
                     </Avatar>
                     <View>
-                        <Text className="font-medium">{guest.name}</Text>
+                        <Text className="font-bold text-xl">{guest.name}</Text>
                         <Text className="text-xs text-foreground">{guest.phone}</Text>
                     </View>
                 </View>
