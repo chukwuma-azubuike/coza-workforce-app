@@ -54,7 +54,7 @@ export default function RootLayout() {
 
         if (Platform.OS === 'web') {
             // Adds the background color to the html element to prevent white background on overscroll.
-            document.documentElement.classList.add('bg-background');
+            // document.documentElement.classList.add('bg-background');
         }
         setAndroidNavigationBar(colorScheme);
         setIsColorSchemeLoaded(true);
@@ -84,4 +84,5 @@ export default function RootLayout() {
 }
 
 const useIsomorphicLayoutEffect =
-    Platform.OS === 'web' && typeof window === 'undefined' ? React.useEffect : React.useLayoutEffect;
+    // Platform.OS === 'web' && typeof window === 'undefined' ? React.useEffect :
+    React.useLayoutEffect;
