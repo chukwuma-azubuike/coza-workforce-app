@@ -15,6 +15,8 @@ import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
 import TopNav from '~/components/TopNav';
+import useDeferHeavy from '~/hooks/performance/defer-heavy';
+import Loading from '~/components/atoms/loading';
 
 interface IInitialHomeState {
     latestService: {
@@ -99,9 +101,11 @@ const Home: React.FC = () => {
         Utils.checkLocationPermission(refresh);
     }, []);
 
+    const ready = useDeferHeavy();
+
     const SafeAreaView = Platform.OS === 'ios' ? RNSafeAreaView : SACSafeAreaView;
 
-    return (
+    return ready ? (
         <ErrorBoundary>
             <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
                 <SafeAreaView style={styles.container}>
@@ -133,6 +137,8 @@ const Home: React.FC = () => {
                 </SafeAreaView>
             </HomeContext.Provider>
         </ErrorBoundary>
+    ) : (
+        <Loading cover />
     );
 };
 
