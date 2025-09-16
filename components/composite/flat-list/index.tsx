@@ -1,5 +1,5 @@
 import { Text } from '~/components/ui/text';
-import React, { useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 import { ActivityIndicator, FlatList, FlatListProps, RefreshControl, TouchableOpacity, View } from 'react-native';
 import If from '../if-container';
 import Utils from '@utils/index';
@@ -31,6 +31,7 @@ export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     fetchMoreData?: () => void;
     emptySize?: number;
     showEmpty?: boolean;
+    emptyCompoenent?: ReactNode;
     getItemKey?: (item: any, index: number) => string;
     // New preferred API: a single row component
     renderItemComponent?: React.ComponentType<{ item: any; index: number }>;
@@ -51,6 +52,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         fetchMoreData,
         itemHeight = 60,
         showHeader = true,
+        emptyCompoenent,
         renderItemComponent,
     } = props;
     const titles = React.useMemo(() => (columns ? columns.map(column => column.title) : []), [columns]);
@@ -223,9 +225,10 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
             ) : isLoading ? (
                 <FlatListSkeleton />
             ) : (
-                showEmpty && (
+                emptyCompoenent ||
+                (showEmpty && (
                     <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
-                )
+                ))
             )}
         </>
     );
