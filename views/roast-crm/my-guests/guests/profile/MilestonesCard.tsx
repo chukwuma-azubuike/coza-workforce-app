@@ -11,7 +11,7 @@ interface MilestonesCardProps {
     onToggle: (milestoneId: string) => void;
 }
 
-export function MilestonesCard({ milestones, onToggle }: MilestonesCardProps) {
+const MilestonesCard: React.FC<MilestonesCardProps> = ({ milestones, onToggle }) => {
     return (
         <Card className="mb-6">
             <CardHeader>
@@ -50,4 +50,6 @@ export function MilestonesCard({ milestones, onToggle }: MilestonesCardProps) {
             </CardContent>
         </Card>
     );
-}
+};
+
+export default MilestonesCard;

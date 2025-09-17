@@ -57,7 +57,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
                 {isPassword && (
                     <TouchableOpacity
                         onPress={event => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            Haptics.selectionAsync();
                             togglePasswordVisibility();
                         }}
                         className="absolute top-5 right-3"
