@@ -42,24 +42,26 @@ function MyGuestsDashboard() {
         [guests, searchTerm]
     );
 
+    const [statefulUserGuests, setStatefulUserGuests] = useState<Guest[]>(userGuests);
+
     // Categorize guests by stage
     const categorizedGuests = {
-        all: userGuests,
+        all: statefulUserGuests,
         invited: useMemo(
-            () => userGuests?.filter(guest => guest.assimilationStage === AssimilationStage.INVITED),
-            [userGuests]
+            () => statefulUserGuests?.filter(guest => guest.assimilationStage === AssimilationStage.INVITED),
+            [statefulUserGuests]
         ),
         attended: useMemo(
-            () => userGuests?.filter(guest => guest.assimilationStage.includes('attended')),
-            [userGuests]
+            () => statefulUserGuests?.filter(guest => guest.assimilationStage.includes('attended')),
+            [statefulUserGuests]
         ),
         MGI: useMemo(
-            () => userGuests?.filter(guest => guest.assimilationStage === AssimilationStage.MGI),
-            [userGuests]
+            () => statefulUserGuests?.filter(guest => guest.assimilationStage === AssimilationStage.MGI),
+            [statefulUserGuests]
         ),
         joined: useMemo(
-            () => userGuests?.filter(guest => guest.assimilationStage === AssimilationStage.JOINED),
-            [userGuests]
+            () => statefulUserGuests?.filter(guest => guest.assimilationStage === AssimilationStage.JOINED),
+            [statefulUserGuests]
         ),
     };
 
