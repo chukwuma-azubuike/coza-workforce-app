@@ -120,13 +120,25 @@ function MyGuestsDashboard() {
 
             // find and remove the item from source column
             const sourceItems = next[fromColumnIndex].items;
-            const itemIndex = sourceItems.findIndex(it => it._id === itemId);
+            const itemIndex = sourceItems.findIndex(it => it._id === itemId || it.id === itemId);
             if (itemIndex === -1) return prev; // item not found - keep previous
 
             const [removed] = sourceItems.splice(itemIndex, 1);
 
+            // compute new stage name from destination column's header
+            const destStage = next[toColumnIndex]?.header?.title as Guest['assimilationStage'];
+
+            // create updated item with new assimilationStage
+            const updatedRemoved: Guest = {
+                ...removed,
+                assimilationStage: destStage,
+            };
+
             // append to destination column (change to unshift or splice to insert at other position)
-            next[toColumnIndex].items.push(removed);
+            next[toColumnIndex].items.push(updatedRemoved);
+
+            // update flattened stateful users so UI and derived lists reflect the change
+            setStatefulUserGuests(next.flatMap(stage => stage.items));
 
             return next;
         });
@@ -147,6 +159,12 @@ function MyGuestsDashboard() {
             );
         }
     }, [statefulMappedGuests, mappedGuests, assimilationStages]);
+
+    useEffect(() => {
+        if (statefulUserGuests && statefulMappedGuests?.length < 1 && guests && guests?.length > 1) {
+            setStatefulUserGuests(guests);
+        }
+    }, [guests]);
 
     const renderContentContainer = useCallback(
         (child: ReactNode, props: HeaderParams) => (
