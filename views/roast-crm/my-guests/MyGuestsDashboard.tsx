@@ -106,7 +106,7 @@ function MyGuestsDashboard() {
         [guests]
     );
 
-    const [statefulMappedGuests, setMappedGuests] = useState<columnDataType<Guest, HeaderParams>[]>(mappedGuests);
+    const [statefulMappedGuests, setMappedGuests] = useState<columnDataType<Guest, HeaderParams>[]>(assimilationStages);
 
     const onDragEnd = useCallback((params: { fromColumnIndex: number; toColumnIndex: number; itemId: string }) => {
         const { fromColumnIndex, toColumnIndex, itemId } = params;
@@ -149,7 +149,12 @@ function MyGuestsDashboard() {
     };
 
     useEffect(() => {
-        if (statefulMappedGuests && statefulMappedGuests?.length < 1 && mappedGuests && mappedGuests.length > 0) {
+        if (
+            statefulMappedGuests &&
+            statefulMappedGuests[0]?.items.length < 1 &&
+            mappedGuests &&
+            mappedGuests.length > 0
+        ) {
             // Concatenate only the stages that are not present in the mapped guest headers
             setMappedGuests(
                 assimilationStages
@@ -161,7 +166,7 @@ function MyGuestsDashboard() {
     }, [statefulMappedGuests, mappedGuests, assimilationStages]);
 
     useEffect(() => {
-        if (statefulUserGuests && statefulMappedGuests?.length < 1 && guests && guests?.length > 1) {
+        if (statefulUserGuests && statefulMappedGuests[0]?.items.length < 1 && guests && guests?.length > 1) {
             setStatefulUserGuests(guests);
         }
     }, [guests]);
