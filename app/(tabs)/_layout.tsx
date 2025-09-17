@@ -41,7 +41,7 @@ const TabLayout: React.FC = () => {
                 backBehavior: 'order',
                 screenListeners: {
                     tabPress: () => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        Haptics.selectionAsync();
                     },
                 },
             }}

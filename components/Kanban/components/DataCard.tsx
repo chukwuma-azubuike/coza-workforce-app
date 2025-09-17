@@ -1,7 +1,7 @@
 import React, { createRef, useRef } from 'react';
 import { type LayoutChangeEvent, Pressable, View } from 'react-native';
 import { type DraggedCardProps, type ItemType, type KanbanBoardProps } from '../types';
-
+import * as Haptics from 'expo-haptics';
 interface CardItemProps<T extends ItemType, K> {
     item: T;
     isDraggable: boolean;
@@ -26,6 +26,7 @@ export const DataCard = React.memo(
 
         const onLongPress = () => {
             if (positionRef.current && isDraggable) {
+                Haptics.selectionAsync();
                 disableScroll();
 
                 viewRef.current?.measureInWindow((x, y, width) => {
