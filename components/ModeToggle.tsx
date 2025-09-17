@@ -14,8 +14,8 @@ const ModeToggle: React.FC = () => {
     const mode = useAppSelector(store => appSelectors.selectMode(store));
 
     function onValueChange(value: 'crm' | 'ops') {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         if (value) {
+            Haptics.selectionAsync();
             dispatch(appActions.toggleMode(value));
         }
     }
