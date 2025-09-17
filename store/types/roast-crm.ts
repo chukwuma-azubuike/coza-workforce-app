@@ -11,9 +11,26 @@ export enum Role {
 
 export enum AssimilationStage {
     INVITED = 'invited',
-    ATTENDED = 'attended',
-    DISCIPLED = 'discipled',
-    JOINED = 'joined',
+    ATTENDED1 = 'attended 1st',
+    ATTENDED2 = 'attended 2nd',
+    ATTENDED3 = 'attended 3rd',
+    ATTENDED4 = 'attended 4th',
+    ATTENDED5 = 'attended 5th',
+    ATTENDED6 = 'attended 6th',
+    MGI = 'MGI',
+    JOINED = 'joined workforce',
+}
+
+export enum AssimilationStagePosition {
+    invited,
+    'attended 1st',
+    'attended 2nd',
+    'attended 3rd',
+    'attended 4th',
+    'attended 5th',
+    'attended 6th',
+    MGI,
+    'joined workforce',
 }
 
 export enum ContactChannel {
