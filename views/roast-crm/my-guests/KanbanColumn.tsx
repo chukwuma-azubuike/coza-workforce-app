@@ -33,7 +33,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, stage, guestCount, c
             <View className="gap-4 p-1.5" style={{ height: (ScreenHeight ?? 0) - 480 }}>
                 {isLoading ? (
                     <View className="gap-2">
-                        {[...Array(3)].map((_, index) => (
+                        {[...Array(2)].map((_, index) => (
                             <View key={index} className="gap-2 p-5 border border-border rounded-2xl">
                                 <View className="flex-row gap-4">
                                     <Skeleton className="h-12 w-12 rounded-full" />

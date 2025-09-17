@@ -1,6 +1,6 @@
 import { Clock, MessageCircle, MoreVertical, Phone } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
-import { Linking, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -14,19 +14,12 @@ import FlatListComponent from '~/components/composite/flat-list';
 import PickerSelect from '~/components/ui/picker-select';
 import { Text } from '~/components/ui/text';
 import { Guest, MilestoneStatus } from '~/store/types';
+import { handleCall, handleWhatsApp } from '../utils/communication';
 
 export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (guestId: string) => void }> = ({
     guest,
     onViewGuest,
 }) => {
-    const handleCall = () => {
-        Linking.openURL(`tel:${guest.phone}`);
-    };
-
-    const handleWhatsApp = () => {
-        Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
-    };
-
     const getProgressPercentage = useCallback((milestones: Guest['milestones']) => {
         if (!milestones || milestones.length === 0) return 0;
         const completed = milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
@@ -146,10 +139,10 @@ export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (gue
                     </View>
 
                     <View className="flex-row gap-2">
-                        <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall}>
+                        <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
                             <Phone className="w-3 h-3" />
                         </Button>
-                        <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp}>
+                        <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
                             <MessageCircle className="w-3 h-3" />
                         </Button>
                     </View>
@@ -188,7 +181,7 @@ const GuestListView: React.FC<{
                 refreshing={isLoading}
                 style={{ height: containerHeight }}
                 renderItemComponent={renderItemComponent}
-                ListFooterComponentStyle={{ marginVertical: 20 }}
+                ListFooterComponentStyle={{ marginBottom: 0 }}
             />
         </View>
     );

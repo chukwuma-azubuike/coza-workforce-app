@@ -182,21 +182,30 @@ export const NavigationBackButton: React.FC = React.memo(props => {
 });
 
 export const FloatButton: React.FC<
-    ButtonProps & { iconName?: string; iconType?: string; className?: string; iconClassname?: string }
-> = React.memo(({ iconName, iconClassname, iconType, className, children, ...props }) => {
+    ButtonProps & {
+        iconName?: string;
+        iconType?: string;
+        className?: string;
+        iconClassname?: string;
+        iconSize?: number;
+    }
+> = React.memo(({ iconSize = 14, iconName, iconClassname, iconType, className, children, ...props }) => {
     return (
         <Button
-            style={{
-                right: 10,
-                bottom: 15,
-                zIndex: 10,
-                position: 'absolute',
-            }}
+            style={[
+                {
+                    right: 10,
+                    bottom: 15,
+                    zIndex: 10,
+                    position: 'absolute',
+                },
+                props.style as any,
+            ]}
             className={cn('!h-[3rem] gap-0.5 flex-row items-center !rounded-full', className)}
             {...props}
         >
             {iconName && iconType && (
-                <Icon name={iconName} type={iconType} size={14} color="white" className={iconClassname} />
+                <Icon name={iconName} type={iconType} size={iconSize} color="white" className={iconClassname} />
             )}
 
             {typeof children === 'string' && <Text className="text-white font-bold">{children}</Text>}

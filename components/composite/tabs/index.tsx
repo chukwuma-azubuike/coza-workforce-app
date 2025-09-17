@@ -61,7 +61,7 @@ const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> 
 const TabComponent: React.FC<ITabComponentProps> = props => {
     const layout = useWindowDimensions();
 
-    const renderLazyPlaceholder = useCallback(() => <Loading cover spinnerProps={{ size: 'large' }} />, []);
+    const renderLazyPlaceholder = useCallback(() => <Loading cover spinnerProps={{ size: 'small' }} />, []);
 
     return (
         <TabView
