@@ -187,11 +187,12 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 </View>
             </ModalComponent>
             <FloatButton
+                iconSize={24}
+                disabled={disable}
                 iconName="search1"
                 iconType="ant-design"
                 onPress={handleSearchBar}
-                className={cn('bottom-16 shadow-md !rounded-full', className)}
-                disabled={disable}
+                className={cn('!bottom-36 !right-[1.6rem] shadow-md !rounded-full w-[4.5rem] !h-[4.5rem]', className)}
             />
         </>
     );
