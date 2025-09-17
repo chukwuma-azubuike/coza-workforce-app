@@ -10,11 +10,13 @@ import {
 } from '~/store/services/roast-crm';
 // import { toast } from 'sonner';
 import { GuestHeader } from './GuestHeader';
-import { MilestonesCard } from './MilestonesCard';
+import MilestonesCard from './MilestonesCard';
 import { TimelineCard } from './TimelineCard';
 import { Card, CardContent } from '~/components/ui/card';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
+import { getStageColor } from '~/views/roast-crm/utils/colors';
+import { handleCall, handleWhatsApp } from '~/views/roast-crm/utils/communication';
 
 interface GuestProfileProps {
     guestId: string | null;
@@ -26,21 +28,6 @@ function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     const { data: engagements = [] } = useGetEngagementsForGuestQuery(guestId || '', { skip: !guestId });
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
-
-    const getStageColor = (stage: Guest['assimilationStage']) => {
-        switch (stage) {
-            case 'invited':
-                return 'bg-blue-100 text-blue-800';
-            case 'attended':
-                return 'bg-green-100 text-green-800';
-            case 'discipled':
-                return 'bg-purple-100 text-purple-800';
-            case 'joined':
-                return 'bg-gray-100 text-gray-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
 
     const getProgressPercentage = () => {
         if (!guest?.milestones?.length) return 0;
@@ -139,8 +126,8 @@ function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                 guest={guest}
                 stageColor={getStageColor(guest.assimilationStage)}
                 progressPercentage={getProgressPercentage()}
-                onCall={() => window.open(`tel:${guest.phone}`, '_self')}
-                onWhatsApp={() => window.open(`https://wa.me/${guest.phone.replace(/\D/g, '')}`, '_blank')}
+                onCall={handleCall(guest)}
+                onWhatsApp={handleWhatsApp(guest)}
             />
 
             {/* Milestones Section */}
