@@ -22,6 +22,7 @@ export interface KanbanBoardProps<T extends ItemType, K> {
     columnContainerStyle?: ViewStyle;
     columnContainerStyleOnDrag?: ViewStyle;
     columnWidth?: number;
+    itemHeight?: number;
     gapBetweenColumns?: number;
 }
 
@@ -37,6 +38,7 @@ export type State = {
 };
 
 export type HeaderParams = {
+    position: number;
     title: string;
     count?: number;
     subtitle?: string;
