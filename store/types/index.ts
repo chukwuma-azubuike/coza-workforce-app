@@ -177,6 +177,7 @@ export interface IUser {
         instagram: string;
         twitter: string;
     };
+    zoneIds?: Array<string>;
 }
 
 export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;

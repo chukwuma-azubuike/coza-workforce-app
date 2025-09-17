@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
@@ -9,6 +9,7 @@ import { ContactChannel } from '~/store/types';
 import { Engagement } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
+import { formatTimelineDate } from '../../../utils/time';
 
 interface TimelineCardProps {
     engagements: Engagement[];
@@ -46,18 +47,7 @@ export function TimelineCard({ engagements, onAddNote }: TimelineCardProps) {
         }
     };
 
-    const formatTimelineDate = (date: string | Date) => {
-        const now = new Date();
-        const eventDate = new Date(date);
-        const diffMs = now.getTime() - eventDate.getTime();
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffDays = Math.floor(diffHours / 24);
-
-        if (diffHours < 1) return 'Just now';
-        if (diffHours < 24) return `${diffHours}h ago`;
-        if (diffDays < 7) return `${diffDays}d ago`;
-        return eventDate.toLocaleDateString();
-    };
+    const formattedTimelineDate = useCallback((timestamp: Date | string) => formatTimelineDate(timestamp), []);
 
     return (
         <Card>
@@ -118,7 +108,9 @@ export function TimelineCard({ engagements, onAddNote }: TimelineCardProps) {
                                     <Badge variant="outline" className="capitalize">
                                         {item.type}
                                     </Badge>
-                                    <Text className="text-xs text-gray-500">{formatTimelineDate(item.timestamp)}</Text>
+                                    <Text className="text-xs text-gray-500">
+                                        {formattedTimelineDate(item.timestamp)}
+                                    </Text>
                                 </View>
                                 <Text className="text-sm text-gray-700">{item.notes}</Text>
                             </View>
