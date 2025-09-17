@@ -1,8 +1,8 @@
 import React from 'react';
-import Attendance from '~/views/app/attendance';
+import Loading from '~/components/atoms/loading';
 
 const LeaderboardsScreen: React.FC = () => {
-    return <Attendance />;
+    return <Loading cover />;
 };
 
 export default LeaderboardsScreen;
