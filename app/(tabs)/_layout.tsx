@@ -24,7 +24,7 @@ const TabLayout: React.FC = () => {
         // animate from 0 -> 1 on path change
         progress.value = 0;
         progress.value = withTiming(1, {
-            duration: 600,
+            duration: 700,
             easing: Easing.out(Easing.cubic),
         });
     }, [pathname]);
