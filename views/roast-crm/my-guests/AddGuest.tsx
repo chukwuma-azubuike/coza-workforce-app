@@ -19,12 +19,15 @@ const AddGuestModal: React.FC<AddGuestModalProps> = ({ modalVisible, setModalVis
             presentationStyle="formSheet"
             onRequestClose={setModalVisible}
         >
-            <View style={{ justifyContent: 'flex-end' }} className=" bg-background rounded-t-lg pb-12 flex-1">
+            <View
+                style={{ justifyContent: 'flex-end' }}
+                className="bg-secondary dark:bg-secondary/40 rounded-t-lg pb-12 flex-1"
+            >
                 <View className="bg-secondary/40 rounded-t-2xl p-6">
                     <Text className="font-bold text-lg text-center">Add Guest</Text>
                 </View>
                 <View className="flex-1 px-2">
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<Loading cover />}>
                         <GuestCaptureForm />
                     </Suspense>
                 </View>
