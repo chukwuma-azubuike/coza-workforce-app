@@ -91,7 +91,7 @@ const TabLayout: React.FC = () => {
     );
 
     const handlePress = () => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        Haptics.selectionAsync();
     };
 
     const ready = useDeferHeavy();
