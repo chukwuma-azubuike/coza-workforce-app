@@ -1,6 +1,7 @@
 import { throttle } from 'lodash';
 import type Animated from 'react-native-reanimated';
 import { useSharedValue, type AnimatedRef } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 interface UseColumnPaginationProps {
     columnsHorizontalScrollRef: AnimatedRef<Animated.FlatList<any>>;
@@ -21,6 +22,8 @@ export const useColumnPagination = ({ columnsHorizontalScrollRef, constants }: U
 
     const paginate = throttle(
         (to: 'left' | 'right' | 'center') => {
+            Haptics.selectionAsync();
+
             switch (to) {
                 case 'right':
                     columnsHorizontalScrollRef.current?.scrollToOffset({
@@ -42,7 +45,7 @@ export const useColumnPagination = ({ columnsHorizontalScrollRef, constants }: U
                     break;
             }
         },
-        1000,
+        700,
         { leading: true, trailing: false }
     );
 

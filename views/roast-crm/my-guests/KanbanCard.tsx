@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Linking, TouchableOpacity } from 'react-native';
+import React, { memo, useMemo } from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { Guest } from '~/store/types';
 
 import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
@@ -12,39 +12,17 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
-import { MilestoneStatus } from '~/store/types';
 import { Text } from '~/components/ui/text';
+import { handleCall, handleWhatsApp } from '../utils/communication';
+import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 
 interface KanbanCardProps {
     guest: Guest;
 }
 
-export function KanbanUICard({ guest }: KanbanCardProps) {
-    const handleCall = () => {
-        Linking.openURL(`tel:${guest.phone}`);
-    };
-
-    const handleWhatsApp = () => {
-        Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
-    };
-
-    const getProgressPercentage = (milestones: Guest['milestones']) => {
-        if (!milestones || milestones.length === 0) return 0;
-        const completed = milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
-        return Math.round((completed / milestones.length) * 100);
-    };
-
-    const getDaysSinceContact = (lastContact: Date | undefined | null) => {
-        if (!lastContact) return null;
-        const today = new Date();
-        const contactDate = new Date(lastContact);
-        const diffTime = today.getTime() - contactDate.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
-    };
-
-    const progress = getProgressPercentage(guest.milestones);
-    const daysSinceContact = getDaysSinceContact(guest?.lastContact as any);
+const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
+    const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones]);
+    const daysSinceContact = useMemo(() => getDaysSinceContact(guest?.lastContact as any), [guest?.lastContact]);
 
     return (
         <View className="bg-background rounded-3xl">
@@ -121,10 +99,15 @@ export function KanbanUICard({ guest }: KanbanCardProps) {
                             </View>
 
                             <View className="flex-row gap-2">
-                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall}>
+                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
                                     <Phone className="w-3 h-3" />
                                 </Button>
-                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp}>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2"
+                                    onPress={handleWhatsApp(guest)}
+                                >
                                     <MessageCircle className="w-3 h-3" />
                                 </Button>
                             </View>
@@ -134,4 +117,8 @@ export function KanbanUICard({ guest }: KanbanCardProps) {
             </Card>
         </View>
     );
-}
+};
+
+export default memo(KanbanUICard);
+
+KanbanUICard.displayName = 'KanbanUICard';

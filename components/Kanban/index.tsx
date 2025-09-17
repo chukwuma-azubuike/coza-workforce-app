@@ -68,21 +68,33 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                 { translateY: dragY.value },
                 { translateX: dragX.value },
                 {
-                    rotate:
-                        interpolate(dragX.value, [-scrollTriggerWidth, 0, scrollTriggerWidth], [12, 0, 12], 'extend') +
-                        'deg',
+                    rotate: '8deg',
+                    // TODO: Another rotating animation, but I prefer the basic
+                    // rotate:
+                    //     interpolate(dragX.value, [-scrollTriggerWidth, 0, scrollTriggerWidth], [12, 0, 12], 'extend') +
+                    //     'deg',
                 },
-                {
-                    scale: interpolate(
-                        dragX.value,
-                        [-scrollTriggerWidth, 0, scrollTriggerWidth],
-                        [1.12, 1, 1.12],
-                        'extend'
-                    ),
-                },
+                // TODO; I don't really like the look of the scaling
+                // {
+                //     scale: interpolate(
+                //         dragX.value,
+                //         [-scrollTriggerWidth, 0, scrollTriggerWidth],
+                //         [1.12, 1, 1.12],
+                //         'extend'
+                //     ),
+                // },
             ],
         };
     }, [dragItem]);
+
+    const handleItemLayout = useCallback(
+        (_: ArrayLike<any> | null | undefined, index: number) => ({
+            length: props?.itemHeight ?? 20,
+            offset: (props?.itemHeight ?? 20) * index,
+            index,
+        }),
+        [props?.itemHeight]
+    );
 
     const renderColumn = ({ item: columnData, index: i }: { item: columnDataType<T, K>; index: number }) => {
         const isPotentiallyBeingMoveTo =
@@ -127,26 +139,29 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                 {props.renderColumnContainer ? (
                     props.renderColumnContainer(
                         <FlatList
-                            scrollEnabled={itemsVerticalScrollEnabledRef.current}
+                            style={{ flex: 1 }}
                             data={columnData.items}
                             renderItem={renderCard}
-                            keyExtractor={(_, index) => `${i}-${index}`}
                             extraData={isItemInFocusedColumn}
                             initialNumToRender={i === 0 ? 8 : 3}
                             showsVerticalScrollIndicator={false}
-                            style={{ flex: 1 }}
+                            keyExtractor={(_, index) => `${i}-${index}`}
+                            scrollEnabled={itemsVerticalScrollEnabledRef.current}
+                            getItemLayout={props.itemHeight ? handleItemLayout : undefined}
                         />,
                         columnData.header
                     )
                 ) : (
                     <FlatList
-                        scrollEnabled={itemsVerticalScrollEnabledRef.current}
+                        style={{ flex: 1 }}
                         data={columnData.items}
                         renderItem={renderCard}
-                        keyExtractor={(_, index) => `${i}-${index}`}
                         extraData={isItemInFocusedColumn}
                         initialNumToRender={i === 0 ? 8 : 3}
                         showsVerticalScrollIndicator={false}
+                        keyExtractor={(_, index) => `${i}-${index}`}
+                        scrollEnabled={itemsVerticalScrollEnabledRef.current}
+                        getItemLayout={props.itemHeight ? handleItemLayout : undefined}
                     />
                 )}
             </View>

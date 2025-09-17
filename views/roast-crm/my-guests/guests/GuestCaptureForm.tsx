@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { Home, Save } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
@@ -24,43 +24,49 @@ import { ICountry } from 'react-native-international-phone-number';
 import formatToE164 from '~/utils/formatToE164';
 import PickerSelect from '~/components/ui/picker-select';
 import ViewWrapper from '~/components/layout/viewWrapper';
-import { GuestFormValidationSchema } from './form/validation';
+import { GuestFormValidationSchema } from '../../utils/validation';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const QUICK_TIPS = [
-    'Keep conversations natural and friendly',
-    'Ask permission before capturing contact details',
+    'Keep conversations natural, friendly and spiritual',
+    'Avoid arguments',
     'Focus on building genuine connections',
     'Follow up within 24-48 hours',
 ];
 
-const GuestCaptureForm = () => {
+const GuestCaptureForm: React.FC = () => {
     const { user: currentUser } = useRole();
-    const { data: zones = [] } = useGetZonesQuery();
-    const isOnline = true;
-
-    const defaultZone = zones?.find(z => z._id === (currentUser?.zoneIds as string[])?.[0] || zones[0]?._id);
+    const { goBack } = useNavigation();
+    const { setModalState } = useModal();
+    const netInfo = useNetInfo();
+    const isOnline = netInfo.isConnected;
 
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+
+    const { data: zones = [] } = useGetZonesQuery();
+    const { refetch: refetchUser } = useGetUserByIdQuery(currentUser?._id);
+    const [addGuest, { reset, isLoading, isError, isSuccess, error }] = useCreateGuestMutation();
+
+    const defaultZone = useMemo(
+        () => zones?.find(z => z._id === (currentUser?.zoneIds as string[])?.[0] || zones[0]?._id),
+        [zones, currentUser?.zoneIds]
+    );
 
     const handleSelectedCountry = (country: ICountry) => {
         setSelectedCountry(country);
     };
 
-    const { user } = useRole();
-    const { goBack } = useNavigation();
-
-    const { setModalState } = useModal();
-
-    const [addGuest, { reset, isLoading, isError, isSuccess, error }] = useCreateGuestMutation();
-
-    const onSubmit = async (value: GuestFormData) => {
-        try {
-            const res = await addGuest({
-                ...value,
-                phone: value.phone ? formatToE164(value.phone, selectedCountry?.callingCode as string) : '',
-            });
-        } catch (error) {}
-    };
+    const onSubmit = useCallback(
+        async (value: GuestFormData) => {
+            try {
+                const res = await addGuest({
+                    ...value,
+                    phone: value.phone ? formatToE164(value.phone, selectedCountry?.callingCode as string) : '',
+                });
+            } catch (error) {}
+        },
+        [selectedCountry?.callingCode]
+    );
 
     React.useEffect(() => {
         if (isSuccess) {
@@ -80,11 +86,9 @@ const GuestCaptureForm = () => {
 
     const INITIAL_VALUES = { zoneId: defaultZone?._id as string } as GuestFormData;
 
-    const { refetch: refetchUser } = useGetUserByIdQuery(user?._id);
-
     return (
         <ErrorBoundary>
-            <ViewWrapper scroll className="pt-4">
+            <ViewWrapper scroll avoidKeyboard className="pt-4">
                 <Formik<GuestFormData>
                     onSubmit={onSubmit}
                     initialValues={INITIAL_VALUES}
@@ -222,4 +226,6 @@ const GuestCaptureForm = () => {
     );
 };
 
-export default GuestCaptureForm;
+export default memo(GuestCaptureForm);
+
+GuestCaptureForm.displayName = 'GuestCaptureForm';

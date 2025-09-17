@@ -25,10 +25,12 @@ import {
     useGetGuestByIdQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
-import { ContactChannel, Guest, MilestoneStatus } from '~/store/types';
+import { AssimilationStage, ContactChannel, Guest, MilestoneStatus } from '~/store/types';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
+import { getStageColor } from '../utils/colors';
+import { handleCall, handleWhatsApp } from '../utils/communication';
 
 interface GuestProfileProps {
     guestId: string | null;
@@ -56,19 +58,6 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
             </View>
         );
     }
-
-    const getStageColor = (stage: Guest['assimilationStage']) => {
-        switch (stage) {
-            case 'invited':
-                return 'bg-blue-100 text-blue-800';
-            case 'attended':
-                return 'bg-green-100 text-green-800';
-            case 'discipled':
-                return 'bg-purple-100 text-purple-800';
-            case 'joined':
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
 
     const getProgressPercentage = () => {
         if (!guest) return 0;
@@ -157,7 +146,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                             </AvatarFallback>
                         </Avatar>
                         <View className="flex-1">
-                            <Text className="text-2xl font-bold mb-2">{`${guest.name || ''}`}</h1>
+                            <Text className="text-2xl font-bold mb-2">{`${guest.name || ''}`}</Text>
                             <View className="flex items-center space-x-2 mb-2">
                                 <Badge variant="secondary" className={getStageColor(guest.assimilationStage)}>
                                     {guest.assimilationStage.charAt(0).toUpperCase() + guest.assimilationStage.slice(1)}
@@ -170,15 +159,11 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
 
                     {/* Contact Actions */}
                     <View className="flex space-x-2 mb-4">
-                        <Button className="flex-1" onPress={() => window.open(`tel:${guest.phone}`, '_self')}>
+                        <Button className="flex-1" onPress={handleCall(guest)}>
                             <Phone className="w-4 h-4 mr-2" />
                             Call
                         </Button>
-                        <Button
-                            variant="outline"
-                            className="flex-1"
-                            onPress={() => window.open(`https://wa.me/${guest.phone.replace(/\D/g, '')}`, '_blank')}
-                        >
+                        <Button variant="outline" className="flex-1" onPress={handleWhatsApp(guest)}>
                             <MessageCircle className="w-4 h-4 mr-2" />
                             WhatsApp
                         </Button>
@@ -203,10 +188,10 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                     </View>
 
                     {/* Prayer Request */}
-                    {guest.prayerRequest && (
+                    {guest.comment && (
                         <View className="mt-4 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-400">
-                            <Text className="font-medium text-blue-900 mb-1">Prayer Request</h4>
-                            <Text className="text-sm text-blue-800">{guest.prayerRequest}</Text>
+                            <Text className="font-medium text-2xl text-blue-900 mb-1">Comment</Text>
+                            <Text className="text-sm text-blue-800">{guest.comment}</Text>
                         </View>
                     )}
                 </CardContent>

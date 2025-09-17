@@ -30,7 +30,9 @@ const uuid = () => Math.random().toString(36).substring(2, 10);
 
 // Mock Data Generator
 const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
+    id: uuid(),
     _id: uuid(),
+    gender: 'male',
     name: 'John Doe',
     phone: '+2348012345678',
     zoneId: 'zone-1',
@@ -39,7 +41,7 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
     createdAt: now(),
     lastContact: now(),
     preferredChannel: ContactChannel.WHATSAPP,
-    prayerRequest: 'Pray for new job',
+    comment: 'Pray for new job',
     address: 'Lagos',
     nextAction: 'Follow up via call',
     assimilationStage: AssimilationStage.INVITED,
@@ -84,38 +86,55 @@ const mockGuests: Guest[] = [
     generateMockGuest({
         name: 'Chidi Uba',
         assignedToId: 'user-worker-2',
-        assimilationStage: AssimilationStage.ATTENDED,
+        assimilationStage: AssimilationStage.ATTENDED1,
         lastContact: now(),
     }),
     generateMockGuest({
         name: 'Ngozi Udo',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.DISCIPLED,
+        assimilationStage: AssimilationStage.ATTENDED1,
     }),
     generateMockGuest({
         name: 'Usman Jankin',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.JOINED,
+        assimilationStage: AssimilationStage.ATTENDED2,
     }),
     generateMockGuest({
         name: 'Remi Lawal',
         assignedToId: 'user-worker-1',
-        assimilationStage: AssimilationStage.ATTENDED,
+        assimilationStage: AssimilationStage.ATTENDED2,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
         name: 'Chidi Uba',
         assignedToId: 'user-worker-2',
-        assimilationStage: AssimilationStage.ATTENDED,
+        assimilationStage: AssimilationStage.ATTENDED3,
         lastContact: now(),
     }),
     generateMockGuest({
         name: 'Ngozi Udo',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.DISCIPLED,
+        assimilationStage: AssimilationStage.ATTENDED5,
     }),
     generateMockGuest({
         name: 'Usman Jankin',
+        assignedToId: 'user-worker-3',
+        assimilationStage: AssimilationStage.ATTENDED6,
+    }),
+    generateMockGuest({
+        name: 'Remi Lawal',
+        assignedToId: 'user-worker-1',
+        assimilationStage: AssimilationStage.MGI,
+        lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+    }),
+    generateMockGuest({
+        name: 'Chidi Uba',
+        assignedToId: 'user-worker-2',
+        assimilationStage: AssimilationStage.MGI,
+        lastContact: now(),
+    }),
+    generateMockGuest({
+        name: 'Ngozi Udo',
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.JOINED,
     }),
