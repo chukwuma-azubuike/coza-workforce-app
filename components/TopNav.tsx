@@ -33,7 +33,7 @@ const TopNav: React.FC = () => {
     });
 
     return (
-        <View className="px-2 w-full z-20 items-center justify-between flex-row">
+        <View className="px-2 w-full z-20 items-center justify-between flex-row bg-background">
             <ModeToggle />
             {/* <TouchableOpacity onPress={handleSupportPress} activeOpacity={0.6} className="w-12">
                 <Ionicons
