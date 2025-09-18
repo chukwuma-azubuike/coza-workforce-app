@@ -16,6 +16,7 @@ import PickerSelect from '~/components/ui/picker-select';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { router } from 'expo-router';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 const CreateUser: React.FC = () => {
     const {
@@ -124,47 +125,53 @@ const CreateUser: React.FC = () => {
                             <View className="w-full gap-1">
                                 <View>
                                     <Label>Campus</Label>
-                                    <PickerSelect
-                                        valueKey="_id"
-                                        labelKey="campusName"
-                                        value={values?.campusId}
-                                        items={sortedCampuses || []}
-                                        isLoading={allCampusesLoading || isFetchingAllCampuses}
-                                        placeholder="Select Campus"
-                                        onValueChange={value => {
-                                            handleCampus(value as string);
-                                            handleChange('campusId')(value as string);
-                                        }}
-                                        disabled={!canSwitchCampus}
-                                    />
+                                    <ErrorBoundary>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="campusName"
+                                            value={values?.campusId}
+                                            items={sortedCampuses || []}
+                                            isLoading={allCampusesLoading || isFetchingAllCampuses}
+                                            placeholder="Select Campus"
+                                            onValueChange={value => {
+                                                handleCampus(value as string);
+                                                handleChange('campusId')(value as string);
+                                            }}
+                                            disabled={!canSwitchCampus}
+                                        />
+                                    </ErrorBoundary>
                                     {!!errors?.campusId && <FormErrorMessage>{errors?.campusId}</FormErrorMessage>}
                                 </View>
 
                                 <View>
                                     <Label>Department</Label>
-                                    <PickerSelect
-                                        valueKey="_id"
-                                        labelKey="departmentName"
-                                        value={values?.departmentId}
-                                        placeholder="Choose department"
-                                        isLoading={campusDepartmentsLoading}
-                                        items={sortedCampusDepartments || []}
-                                        onValueChange={handleChange('departmentId') as any}
-                                    />
+                                    <ErrorBoundary>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="departmentName"
+                                            value={values?.departmentId}
+                                            placeholder="Choose department"
+                                            isLoading={campusDepartmentsLoading}
+                                            items={sortedCampusDepartments || []}
+                                            onValueChange={handleChange('departmentId') as any}
+                                        />
+                                    </ErrorBoundary>
                                     {!!errors?.departmentId && (
                                         <FormErrorMessage>{errors?.departmentId}</FormErrorMessage>
                                     )}
                                 </View>
                                 <View>
                                     <Label>Role</Label>
-                                    <PickerSelect
-                                        valueKey="_id"
-                                        labelKey="name"
-                                        value={values?.roleId}
-                                        placeholder="Choose role"
-                                        items={memoizedRoles || []}
-                                        onValueChange={handleChange('roleId') as any}
-                                    />
+                                    <ErrorBoundary>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="name"
+                                            value={values?.roleId}
+                                            placeholder="Choose role"
+                                            items={memoizedRoles || []}
+                                            onValueChange={handleChange('roleId') as any}
+                                        />
+                                    </ErrorBoundary>
                                     {!!errors.roleId && <FormErrorMessage>{errors?.roleId}</FormErrorMessage>}
                                 </View>
                                 <View>
