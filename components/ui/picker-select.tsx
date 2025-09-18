@@ -68,8 +68,11 @@ function PickerSelect<T = any>({
     const handleValueChange = useCallback(
         (nextValue: any, index: number) => {
             const strVal = nextValue == null ? undefined : String(nextValue);
-            setValue(strVal);
-            onValueChange?.(strVal as any, index);
+
+            if (typeof strVal === 'string') {
+                setValue(strVal);
+                onValueChange(strVal as any, index);
+            }
         },
         [onValueChange]
     );
