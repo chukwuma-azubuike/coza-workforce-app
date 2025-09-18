@@ -79,10 +79,9 @@ const tabRoutes = [
 ];
 
 const TabLayout: React.FC = () => {
+    const ready = useDeferHeavy();
     const { role } = useRole();
-
     const pathname = usePathname();
-
     const { isLightColorScheme } = useColorScheme();
 
     const filteredRoutes = useMemo(
@@ -93,8 +92,6 @@ const TabLayout: React.FC = () => {
     const handlePress = () => {
         Haptics.selectionAsync();
     };
-
-    const ready = useDeferHeavy();
 
     return (
         <SafeAreaView className="relative flex-1">
