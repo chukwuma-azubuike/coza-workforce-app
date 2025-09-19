@@ -1,8 +1,5 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-// import * as Sentry from '@sentry/react-native';
-// import { SENTRY_DNS } from '@env';
-
 import { NativeBaseProvider } from 'native-base';
 import Views from './src/views';
 import { SafeAreaProvider, SafeAreaView, initialWindowMetrics } from 'react-native-safe-area-context';
@@ -17,14 +14,6 @@ import Loading from './src/components/atoms/loading';
 
 import { PersistGate } from 'redux-persist/integration/react';
 import { requestUserPermission } from '@utils/notificationPermission';
-
-// Sentry.init({
-//     dsn: SENTRY_DNS,
-//     enableNative: false,
-//     tracesSampleRate: 0.1,
-//     attachScreenshot: true,
-//     enableNativeCrashHandling: true,
-// });
 
 export interface IAppStateContext {
     isLoggedIn: boolean;
@@ -48,7 +37,6 @@ const App: React.FC<JSX.Element> = () => {
     requestUserPermission();
 
     return (
-        // <Sentry.TouchEventBoundary>
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <SafeAreaView style={{ flex: 1 }} edges={['right', 'bottom', 'left']}>
                 <Provider store={store}>
@@ -76,7 +64,6 @@ const App: React.FC<JSX.Element> = () => {
                 </Provider>
             </SafeAreaView>
         </SafeAreaProvider>
-        // </Sentry.TouchEventBoundary>
     );
 };
 

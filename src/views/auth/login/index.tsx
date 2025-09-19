@@ -53,7 +53,7 @@ const Login: React.FC<NativeStackScreenProps<ParamListBase>> = ({ navigation }) 
             dispatch({
                 type: versionActiontypes.SET_HAS_LOGGED_OUT_TRUE,
             });
-            Utils.storeCurrentUserData(response?.data?.profile as IUser);
+            await Utils.storeCurrentUserData(response?.data?.profile as IUser);
 
             setIsLoggedIn && setIsLoggedIn(true);
         }

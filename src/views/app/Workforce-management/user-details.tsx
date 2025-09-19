@@ -34,12 +34,20 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
     const { _id } = props.route.params as IUser;
     const { setModalState } = useModal();
     const { goBack } = useNavigation();
-    const { isHOD, isAHOD, isSuperAdmin, isGlobalPastor, isCampusPastor, isInternshipHOD, rolesPermittedToCreate } =
-        useRole();
+    const {
+        isHOD,
+        isAHOD,
+        isSuperAdmin,
+        isGlobalPastor,
+        isCampusPastor,
+        isInternshipHOD,
+        isWorker,
+        rolesPermittedToCreate,
+    } = useRole();
 
     const canEdit = isSuperAdmin || isGlobalPastor || isCampusPastor || isInternshipHOD;
     const canDelete = isSuperAdmin || isGlobalPastor || isCampusPastor;
-    const canApproveForCGWC = isHOD || isAHOD || isCampusPastor || isGlobalPastor || isSuperAdmin;
+    const canApproveForCGWC = isWorker || isHOD || isAHOD || isCampusPastor || isGlobalPastor || isSuperAdmin;
 
     const [isEditMode, setIsEditMode] = React.useState<boolean>(false);
     const handleEditMode = () => {
@@ -163,7 +171,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
 
             if ('data' in result) {
                 setModalState({
-                    message: `User ${event ? 'Approved' : 'Unapproved'} for CGWC`,
+                    message: `RSVP ${event ? 'confirmed' : 'withdrawn'}`,
                     defaultRender: true,
                     status: 'success',
                     duration: 3,
@@ -268,7 +276,7 @@ const UserDetails: React.FC<NativeStackScreenProps<ParamListBase>> = props => {
                                     <HStackComponent style={{ marginHorizontal: 2 }}>
                                         <FormControl flexDirection="row" justifyContent="space-between">
                                             <FormControl.Label>
-                                                {data?.isCGWCApproved ? 'Approved' : 'Approve'} for CGWC
+                                                {data?.isCGWCApproved ? 'RSVP Confirmed' : 'Confirm RSVP'}
                                             </FormControl.Label>
 
                                             {updateResults?.isLoading ? (
