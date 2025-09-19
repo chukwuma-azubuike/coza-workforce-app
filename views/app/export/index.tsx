@@ -11,7 +11,6 @@ import { useLazyGetTicketsReportForDownloadQuery } from '@store/services/tickets
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
-import DateTimePicker from '~/components/composite/date-time-picker';
 import useRole from '@hooks/role';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { generateReportName } from '@utils/generateReportName';
@@ -21,6 +20,7 @@ import { Label } from '~/components/ui/label';
 import { useLocalSearchParams } from 'expo-router';
 import PickerSelect from '~/components/ui/picker-select';
 import { Button } from '~/components/ui/button';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -257,7 +257,7 @@ const Export: React.FC = () => {
     return (
         <ErrorBoundary>
             <ViewWrapper scroll className="px-4 py-4">
-                <View style={{ alignItems: 'center' }}>
+                <View style={{ alignItems: 'center' }} className="gap-6">
                     <View style={{ gap: 16, width: '100%' }}>
                         <View>
                             <Label>Data Type</Label>
@@ -302,45 +302,32 @@ const Export: React.FC = () => {
                                 />
                             </View>
                         </If>
-                        <View className="w-full flex-row gap-4">
-                            <View className="flex-1">
-                                <DateTimePicker
-                                    mode="date"
-                                    label="Start date"
-                                    placeholder="Enter start date"
-                                    onConfirm={handleStartDate as unknown as (value: Date) => void}
-                                />
-                            </View>
-                            <View className="flex-1">
-                                <DateTimePicker
-                                    mode="date"
-                                    label="End date"
-                                    placeholder="Enter end date"
-                                    onConfirm={handleEndDate as unknown as (value: Date) => void}
-                                />
-                            </View>
-                        </View>
-                        <View>
-                            <Label>Department</Label>
-                            <PickerSelect
-                                valueKey="_id"
-                                labelKey="departmentName"
-                                value={departmentId}
-                                items={sortedCampusDepartments || []}
-                                isLoading={campusDepartmentsLoading}
-                                placeholder="Choose department"
-                                onValueChange={handleDepartment}
-                            />
-                        </View>
-                        <Button
-                            isLoading={isLoading}
-                            onPress={handlePress}
-                            disabled={!dataType}
-                            startIcon={<Icon size={28} color="white" type="ionicon" name="download-outline" />}
-                        >
-                            Fetch report
-                        </Button>
                     </View>
+                    <View className="w-full flex-row justify-between gap-4">
+                        <DateTimePickerLegend
+                            mode="date"
+                            label="Start date"
+                            placeholder="Enter start date"
+                            minimumDate={dayjs(endDate).toDate()}
+                            onConfirm={handleStartDate as unknown as (value: Date) => void}
+                        />
+                        <DateTimePickerLegend
+                            mode="date"
+                            label="End date"
+                            placeholder="Enter end date"
+                            minimumDate={dayjs(startDate).toDate()}
+                            onConfirm={handleEndDate as unknown as (value: Date) => void}
+                        />
+                    </View>
+                    <Button
+                        isLoading={isLoading}
+                        onPress={handlePress}
+                        disabled={!dataType}
+                        className="w-full"
+                        startIcon={<Icon size={28} color="white" type="ionicon" name="download-outline" />}
+                    >
+                        Fetch report
+                    </Button>
                 </View>
             </ViewWrapper>
         </ErrorBoundary>
