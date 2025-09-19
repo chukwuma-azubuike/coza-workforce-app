@@ -10,10 +10,10 @@ import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from '
 import { Label } from '~/components/ui/label';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
-import DateTimePicker from '~/components/ui/date-time-picker';
 import dayjs from 'dayjs';
 import FilePickerUploader from '~/components/composite/file-picker-uploader';
 import { S3_BUCKET_FOLDERS } from '~/constants';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     if (!RegisterFormContext) return;
@@ -65,7 +65,7 @@ const RegisterStepThree: React.FC<IRegistrationPageStep> = ({ onStepPress }) => 
                                         <ScrollView className="w-full gap-3 flex-1">
                                             <View className="w-full gap-3">
                                                 <View className="gap-1">
-                                                    <DateTimePicker
+                                                    <DateTimePickerLegend
                                                         mode="date"
                                                         className="flex-1"
                                                         error={errors.birthDay}
