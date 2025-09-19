@@ -16,6 +16,7 @@ import { Label } from '~/components/ui/label';
 import { Textarea } from '~/components/ui/textarea';
 import { Button } from '~/components/ui/button';
 import PickerSelect from '~/components/ui/picker-select';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const RequestPermission: React.FC = () => {
     const { user } = useRole();
@@ -100,9 +101,9 @@ const RequestPermission: React.FC = () => {
                     >
                         {({ errors, touched, values, handleChange, handleSubmit }) => {
                             return (
-                                <View className="gap-2 w-full">
+                                <View className="gap-4 w-full">
                                     <View className="justify-between flex-row gap-4">
-                                        <DateTimePicker
+                                        <DateTimePickerLegend
                                             mode="date"
                                             label="Start date"
                                             minimumDate={new Date()}
@@ -111,7 +112,7 @@ const RequestPermission: React.FC = () => {
                                             placeholder="Enter start date"
                                             onConfirm={handleChange('startDate') as unknown as (value: Date) => void}
                                         />
-                                        <DateTimePicker
+                                        <DateTimePickerLegend
                                             mode="date"
                                             label="End date"
                                             error={errors.endDate}
