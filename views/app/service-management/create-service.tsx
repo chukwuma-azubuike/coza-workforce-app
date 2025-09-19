@@ -20,6 +20,7 @@ import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import PickerSelect from '~/components/ui/picker-select';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const CreateServiceManagement: React.FC = () => {
     const { setModalState } = useModal();
@@ -329,16 +330,20 @@ const CreateServiceManagement: React.FC = () => {
                                         )}
                                     </View>
                                     <View className="justify-between flex-row gap-4">
-                                        <DateTimePicker
-                                            mode="date"
-                                            label="Service date"
-                                            minimumDate={new Date()}
-                                            error={errors.serviceDate}
-                                            touched={touched.serviceDate}
-                                            placeholder="Select service date"
-                                            initialValue={values.serviceDate as string}
-                                            onConfirm={handleChange('serviceDate') as unknown as (value: Date) => void}
-                                        />
+                                        <View className="flex-1">
+                                            <DateTimePickerLegend
+                                                mode="date"
+                                                label="Service date"
+                                                minimumDate={new Date()}
+                                                error={errors.serviceDate}
+                                                touched={touched.serviceDate}
+                                                placeholder="Select service date"
+                                                initialValue={values.serviceDate as string}
+                                                onConfirm={
+                                                    handleChange('serviceDate') as unknown as (value: Date) => void
+                                                }
+                                            />
+                                        </View>
                                         <DateTimePicker
                                             mode="time"
                                             label="Service Start Time"
