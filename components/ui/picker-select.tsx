@@ -119,6 +119,8 @@ function PickerSelect<T extends ValidPickerItem>({
 
     const handleValueChange = useCallback(
         (nextValue: any, index: number) => {
+            if (!onValueChange) return;
+
             const strVal = nextValue == null ? undefined : String(nextValue);
 
             if (typeof strVal === 'string') {
@@ -126,7 +128,7 @@ function PickerSelect<T extends ValidPickerItem>({
                 onValueChange?.(strVal as any, index);
             }
         },
-        [onValueChange]
+        [onValueChange, setValue]
     );
 
     return (
