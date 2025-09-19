@@ -17,6 +17,7 @@ import PickerSelect from '~/components/ui/picker-select';
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { Icon } from '@rneui/themed';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const UpdateServiceManagement: React.FC<IService> = props => {
     const { setModalState } = useModal();
@@ -293,24 +294,32 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                                         )}
                                     </View>
                                     <View className="justify-between flex-row gap-4">
-                                        <DateTimePicker
-                                            mode="date"
-                                            label="Service date"
-                                            error={errors.serviceDate}
-                                            touched={touched.serviceDate}
-                                            placeholder="Select service date"
-                                            initialValue={values.serviceTime as string}
-                                            onConfirm={handleChange('serviceDate') as unknown as (value: Date) => void}
-                                        />
-                                        <DateTimePicker
-                                            mode="time"
-                                            label="Service Start Time"
-                                            error={errors.serviceTime}
-                                            touched={touched.serviceTime}
-                                            placeholder="Select service time"
-                                            initialValue={values.serviceTime as string}
-                                            onConfirm={handleChange('serviceTime') as unknown as (value: Date) => void}
-                                        />
+                                        <View className="flex-1">
+                                            <DateTimePickerLegend
+                                                mode="date"
+                                                label="Service date"
+                                                error={errors.serviceDate}
+                                                touched={touched.serviceDate}
+                                                placeholder="Select service date"
+                                                initialValue={values.serviceTime as string}
+                                                onConfirm={
+                                                    handleChange('serviceDate') as unknown as (value: Date) => void
+                                                }
+                                            />
+                                        </View>
+                                        <View className="flex-1">
+                                            <DateTimePicker
+                                                mode="time"
+                                                label="Service Start Time"
+                                                error={errors.serviceTime}
+                                                touched={touched.serviceTime}
+                                                placeholder="Select service time"
+                                                initialValue={values.serviceTime as string}
+                                                onConfirm={
+                                                    handleChange('serviceTime') as unknown as (value: Date) => void
+                                                }
+                                            />
+                                        </View>
                                     </View>
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker

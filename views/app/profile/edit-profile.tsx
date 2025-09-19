@@ -1,6 +1,5 @@
 import { View } from 'react-native';
 import React, { useState } from 'react';
-import DateTimePicker from '~/components/ui/date-time-picker';
 import useModal from '@hooks/modal/useModal';
 import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
@@ -19,6 +18,7 @@ import { ICountry } from 'react-native-international-phone-number';
 import { Button } from '~/components/ui/button';
 import formatToE164 from '~/utils/formatToE164';
 import PickerSelect from '~/components/ui/picker-select';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const EditProfile: React.FC = () => {
     const userData = useLocalSearchParams() as unknown as IEditProfilePayload;
@@ -198,7 +198,7 @@ const EditProfile: React.FC = () => {
                                 </If>
                                 <If condition={!!userData?.birthDay}>
                                     <View className="gap-1">
-                                        <DateTimePicker
+                                        <DateTimePickerLegend
                                             mode="date"
                                             error={errors.birthDay}
                                             touched={touched.birthDay}
