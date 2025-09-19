@@ -124,7 +124,7 @@ function PickerSelect<T extends ValidPickerItem>({
             setValue(strVal);
             onValueChange?.(strVal as any, index);
         },
-        [onValueChange]
+        [onValueChange, setValue]
     );
 
     return (
