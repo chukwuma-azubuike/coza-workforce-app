@@ -12,6 +12,7 @@ const Textarea = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputP
                     (props.editable === false || isDisabled) && 'opacity-50 web:cursor-not-allowed',
                     className
                 )}
+                autoCorrect={false}
                 editable={!isDisabled}
                 placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
                 multiline={multiline}

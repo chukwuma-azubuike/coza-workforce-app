@@ -1,1 +1,1 @@
-export * from './AddGuest';
+export * from './profile';

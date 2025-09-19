@@ -84,17 +84,28 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                     {...(props as TouchableOpacityProps)}
                 >
                     {isLoading ? (
-                        <View className="flex flex-row items-center justify-center gap-2">
-                            <Loading spinnerProps={{ className: 'text-white' }} />
-                            <Text className={cn('!text-xl', buttonTextVariants({ variant, size }))}>{loadingText}</Text>
+                        <View className="flex flex-1 flex-row items-center justify-center gap-2">
+                            {children && (
+                                <Loading spinnerProps={{ className: variant === 'default' ? 'text-white' : '' }} />
+                            )}
+                            {loadingText && (
+                                <Text
+                                    className={cn(
+                                        '!text-xl',
+                                        size === 'sm' && '!text-base',
+                                        buttonTextVariants({ variant, size })
+                                    )}
+                                >
+                                    {loadingText}
+                                </Text>
+                            )}
                         </View>
                     ) : typeof children === 'string' ? (
-                        <View className="flex-1 w-full items-center flex-row gap-2 justify-center">
-                            <View className="flex-1 justify-end flex-row">{startIcon || icon}</View>
-                            <Text className={cn('!text-xl mx-auto', buttonTextVariants({ variant, size }))}>
+                        <View className="flex-1 items-center flex-row gap-2 justify-center">
+                            {startIcon || (icon && <View className="justify-end flex-row">{startIcon || icon}</View>)}
+                            <Text className={cn(size === 'sm' && '!text-base', buttonTextVariants({ variant, size }))}>
                                 {children}
                             </Text>
-                            <View className="flex-1" />
                         </View>
                     ) : (
                         (children as any)

@@ -647,7 +647,8 @@ export const roastCrmApi = createApi({
 
         getGuestById: builder.query<Guest, string>({
             query: _id => ({
-                url: `${SERVICE_URL}/guests/${_id}`,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/guests/${_id}`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse(_res: any, _meta, arg) {
@@ -658,7 +659,8 @@ export const roastCrmApi = createApi({
 
         createGuest: builder.mutation<Guest, GuestFormData>({
             query: guest => ({
-                url: `${SERVICE_URL}/guests`,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/guests`,
                 method: REST_API_VERBS.POST,
                 body: guest,
             }),
@@ -685,9 +687,11 @@ export const roastCrmApi = createApi({
 
         updateGuest: builder.mutation<Guest, Partial<Guest> & { _id: string }>({
             query: ({ _id, ...patch }) => ({
-                url: `${SERVICE_URL}/guests/${_id}`,
-                method: REST_API_VERBS.PATCH,
-                body: patch,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/guests/${_id}`,
+                method: REST_API_VERBS.GET,
+                // method: REST_API_VERBS.PATCH,
+                // body: patch,
             }),
             transformResponse(_res: any, _meta, arg) {
                 const idx = mockGuests.findIndex(g => g._id === arg._id);
@@ -707,7 +711,8 @@ export const roastCrmApi = createApi({
         // Zone Queries
         getZones: builder.query<Zone[], void>({
             query: () => ({
-                url: `${SERVICE_URL}/zones`,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/zones`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse() {
@@ -722,7 +727,8 @@ export const roastCrmApi = createApi({
         // User Queries
         getUsers: builder.query<User[], { role?: string; zoneId?: string }>({
             query: params => ({
-                url: `${SERVICE_URL}/users`,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/users`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
@@ -738,7 +744,8 @@ export const roastCrmApi = createApi({
         // Engagement Queries
         getEngagementsForGuest: builder.query<Engagement[], string>({
             query: guestId => ({
-                url: `${SERVICE_URL}/guests/${guestId}/engagements`,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/guests/${guestId}/engagements`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse(_res: any, _meta, guestId) {
@@ -748,8 +755,24 @@ export const roastCrmApi = createApi({
                             _id: uuid(),
                             guestId,
                             workerId: 'user-worker-1',
-                            type: ContactChannel.WHATSAPP,
+                            type: ContactChannel.CALL,
                             notes: 'Initial contact made',
+                            timestamp: now(),
+                        },
+                        {
+                            _id: uuid(),
+                            guestId,
+                            workerId: 'user-worker-1',
+                            type: ContactChannel.WHATSAPP,
+                            notes: `She mentioned that she’ll be coming to church whenever she’s around, though sometimes she stays on the island. Sister Joy also spoke to Esther.`,
+                            timestamp: now(),
+                        },
+                        {
+                            _id: uuid(),
+                            guestId,
+                            workerId: 'user-worker-1',
+                            type: ContactChannel.VISIT,
+                            notes: `She mentioned that she’ll be coming to church whenever she’s around, though sometimes she stays on the island. Sister Joy also spoke to Esther. She has been a member of the church for a long time and recently invited her brother, who just joined (I met him today).`,
                             timestamp: now(),
                         },
                     ];
@@ -761,9 +784,11 @@ export const roastCrmApi = createApi({
 
         addEngagement: builder.mutation<Engagement, Omit<Engagement, '_id' | 'timestamp'>>({
             query: engagement => ({
-                url: `${SERVICE_URL}/guests/${engagement.guestId}/engagements`,
-                method: REST_API_VERBS.POST,
-                body: engagement,
+                url: `/role/getRoles`,
+                method: REST_API_VERBS.GET,
+                // url: `${SERVICE_URL}/guests/${engagement.guestId}/engagements`,
+                // method: REST_API_VERBS.POST,
+                // body: engagement,
             }),
             transformResponse(_res: any, _meta, arg) {
                 const newEngagement: Engagement = {

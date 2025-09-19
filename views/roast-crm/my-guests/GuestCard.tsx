@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Linking, View, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
 
 import { Card, CardContent } from '~/components/ui/card';
@@ -13,6 +13,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu';
+import { handleCall, handleWhatsApp } from '../utils/communication';
 
 interface GuestCardProps {
     guest: Guest;
@@ -26,14 +27,6 @@ export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragSta
         const completed = guest.milestones.filter(m => m.status === 'COMPLETED').length;
         return Math.round((completed / guest.milestones.length) * 100);
     }, [guest.milestones]);
-
-    const handleCall = () => {
-        Linking.openURL(`tel:${guest.phone}`);
-    };
-
-    const handleWhatsApp = () => {
-        Linking.openURL(`https://wa.me/${guest.phone.replace(/\D/g, '')}`);
-    };
 
     const handleViewProfile = () => {
         onViewGuest(guest._id);
@@ -58,10 +51,7 @@ export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragSta
 
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button
-                                className="items-center justify-center rounded-md h-6 w-6 p-0"
-                                variant="ghost"
-                            >
+                            <Button className="items-center justify-center rounded-md h-6 w-6 p-0" variant="ghost">
                                 <MoreVertical className="w-3 h-3" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -78,10 +68,7 @@ export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragSta
                     </View>
 
                     <View className="w-full bg-gray-200 rounded-full h-2">
-                        <View
-                            className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${progress}%` }}
-                        />
+                        <View className="bg-blue-600 h-2 rounded-full" style={{ width: `${progress}%` }} />
                     </View>
 
                     {guest.nextAction && (
@@ -100,10 +87,10 @@ export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragSta
                             </Text>
                         </View>
                         <View className="flex-row space-x-1">
-                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall}>
+                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
                                 <Phone className="w-3 h-3" />
                             </Button>
-                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp}>
+                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
                                 <MessageCircle className="w-3 h-3" />
                             </Button>
                         </View>

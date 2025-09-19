@@ -1,8 +1,9 @@
 import React from 'react';
-import IssueTicket from '~/views/app/tickets/issue-ticket';
+
+import { GuestProfile } from '~/views/roast-crm';
 
 const GuestsProfileScreen: React.FC = () => {
-    return <IssueTicket />;
+    return <GuestProfile />;
 };
 
 export default GuestsProfileScreen;

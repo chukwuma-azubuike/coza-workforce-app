@@ -37,9 +37,7 @@ export enum ContactChannel {
     CALL = 'CALL',
     WHATSAPP = 'WHATSAPP',
     SMS = 'SMS',
-    EMAIL = 'EMAIL',
     VISIT = 'VISIT',
-    MEETING = 'MEETING',
 }
 
 export enum MilestoneStatus {
