@@ -15,8 +15,6 @@ import { ICountry } from 'react-native-international-phone-number';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     if (!RegisterFormContext) {
-        console.log({ RegisterFormContext });
-
         return (
             <SafeAreaView className="flex-1">
                 <Text>Step One</Text>
