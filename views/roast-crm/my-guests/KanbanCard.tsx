@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Guest } from '~/store/types';
 
@@ -15,6 +15,7 @@ import {
 import { Text } from '~/components/ui/text';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
+import { router } from 'expo-router';
 
 interface KanbanCardProps {
     guest: Guest;
@@ -23,6 +24,10 @@ interface KanbanCardProps {
 const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
     const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones]);
     const daysSinceContact = useMemo(() => getDaysSinceContact(guest?.lastContact as any), [guest?.lastContact]);
+
+    const handleProfileView = useCallback(() => {
+        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
+    }, [guest]);
 
     return (
         <View className="bg-background rounded-3xl">
@@ -56,8 +61,8 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                     <MoreVertical className="w-4 h-4" color="gray" />
                                 </TouchableOpacity>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
-                                <DropdownMenuItem onPress={() => {}}>
+                            <DropdownMenuContent side="top" align="end" alignOffset={-10} className="rounded-2xl">
+                                <DropdownMenuItem onPress={handleProfileView}>
                                     <Text>View Profile</Text>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
