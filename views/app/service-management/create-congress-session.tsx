@@ -14,6 +14,7 @@ import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
 import PickerSelect from '~/components/ui/picker-select';
 import { Button } from '~/components/ui/button';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const CreateCGWGSession: React.FC = () => {
     const params = useLocalSearchParams() as any as { CongressId: string };
@@ -145,7 +146,7 @@ const CreateCGWGSession: React.FC = () => {
                                         )}
                                     </View>
                                     <View className="justify-between flex-row gap-4">
-                                        <DateTimePicker
+                                        <DateTimePickerLegend
                                             mode="date"
                                             label="Session date"
                                             minimumDate={new Date()}
