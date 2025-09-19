@@ -26,6 +26,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
             <View className={cn('relative', (props.editable === false || isDisabled) && 'opacity-40')}>
                 <TextInput
                     ref={ref}
+                    autoCorrect={false}
                     editable={!isDisabled}
                     secureTextEntry={secureTextEntry}
                     className={cn(
