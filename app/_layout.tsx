@@ -11,6 +11,7 @@ import { PortalHost } from '@rn-primitives/portal';
 import ConnectionStatusBar from '~/components/atoms/status-bar';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
 import * as Notifications from 'expo-notifications';
+import { useFonts } from 'expo-font';
 
 import '~/global.css';
 import Routing from '~/components/Routing';
@@ -47,8 +48,12 @@ export default function RootLayout() {
     const { colorScheme, isDarkColorScheme } = useColorScheme();
     const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
+    const [loaded, error] = useFonts({
+        Angelos: require('../assets/fonts/Angelos.ttf'),
+    });
+
     useIsomorphicLayoutEffect(() => {
-        if (hasMounted.current) {
+        if (hasMounted.current && !loaded) {
             return;
         }
 
@@ -63,7 +68,7 @@ export default function RootLayout() {
 
     useNotificationObserver();
 
-    if (!isColorSchemeLoaded) {
+    if (!isColorSchemeLoaded || (!loaded && !error)) {
         return null;
     }
 

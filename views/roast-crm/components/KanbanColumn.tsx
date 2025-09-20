@@ -1,5 +1,5 @@
 import React, { memo, ReactNode } from 'react';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Guest } from '~/store/types';
 import { Text } from '~/components/ui/text';
 import { Badge } from '~/components/ui/badge';
@@ -21,9 +21,9 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, stage, guestCount, c
         <View
             className={` ${
                 getStageColumnColor(stage) ?? 'border-gray-200 dark:border-gray-200/10 bg-gray-50 dark:bg-gray-500/10'
-            } border-2 border-dashed rounded-2xl transition-colors pb-3`}
+            } border-2 border-dashed rounded-2xl transition-colors pb-0`}
         >
-            <View className="flex-row items-center gap-2 p-3">
+            <View className="flex-row items-center gap-2 px-3 pt-2">
                 <Text className="font-semibold">{Utils.capitalizeFirstChar(title)}</Text>
                 <Badge variant="secondary" className={getBadgeColor(stage)}>
                     <Text>{guestCount}</Text>
