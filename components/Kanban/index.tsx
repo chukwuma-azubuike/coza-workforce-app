@@ -23,8 +23,8 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
         edgeColumnOff,
         marginAlign,
     };
-    const columnPadding = props.gapBetweenColumns ?? 12;
 
+    const columnPadding = props.gapBetweenColumns ?? 12;
     const columnsHorizontalScrollRef = useAnimatedRef<Animated.FlatList<K>>();
     const itemsVerticalScrollEnabledRef = useRef(false);
 
@@ -123,8 +123,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                 style={[
                     props.columnContainerStyle,
                     {
-                        margin: columnPadding,
-                        padding: columnPadding,
+                        marginHorizontal: columnPadding,
                         width: columnContainerWidth - columnPadding * 2,
                     },
                     isPotentiallyBeingMoveTo ? props.columnContainerStyleOnDrag : {},
