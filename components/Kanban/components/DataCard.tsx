@@ -9,6 +9,7 @@ interface CardItemProps<T extends ItemType, K> {
     renderItem: KanbanBoardProps<T, K>['renderItem'];
     disableScroll: () => void;
     isBeingDragged: boolean;
+    onPress?: (cardItem: T) => void;
     setDragCard: (props: DraggedCardProps<T>) => void;
 }
 
@@ -21,12 +22,13 @@ export const DataCard = React.memo(
         isDraggable,
         disableScroll,
         isBeingDragged,
+        onPress,
     }: CardItemProps<any, K>) => {
         const positionRef = useRef<{ x: number; y: number; width: number }>(undefined);
 
         const onLongPress = () => {
             if (positionRef.current && isDraggable) {
-                Haptics.selectionAsync();
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 disableScroll();
 
                 viewRef.current?.measureInWindow((x, y, width) => {
@@ -51,6 +53,7 @@ export const DataCard = React.memo(
                 style={{ opacity: isBeingDragged ? 0.6 : 1, marginVertical: 3 }}
                 onLongPress={onLongPress}
                 onLayout={onLayout}
+                onPress={onPress}
             >
                 <View ref={viewRef}>{renderItem(item)}</View>
             </Pressable>
