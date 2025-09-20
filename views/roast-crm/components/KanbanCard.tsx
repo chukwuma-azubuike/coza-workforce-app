@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Pressable } from 'react-native';
 import { Guest } from '~/store/types';
 
 import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
