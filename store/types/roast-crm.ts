@@ -71,6 +71,7 @@ export interface Milestone {
 export interface Zone {
     _id: ID;
     name: string;
+    campusId: string;
     coordinator?: ID;
     workers?: ID[];
     guestCounts?: {
@@ -88,7 +89,7 @@ export interface Timeline {
     createdBy: string;
     description?: string;
     createdAt: string | Date;
-    type: 'note' | 'call' | 'visit';
+    type: ContactChannel;
 }
 
 export interface Guest {
@@ -111,6 +112,9 @@ export interface Guest {
     milestones: Milestone[];
     meta?: Record<string, any>;
     name: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
     timeline?: Timeline[];
 }
 

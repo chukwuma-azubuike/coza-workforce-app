@@ -34,6 +34,8 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
     _id: uuid(),
     gender: 'male',
     name: 'John Doe',
+    lastName: 'John',
+    firstName: 'Doe',
     phone: '+2348012345678',
     zoneId: 'zone-1',
     assignedToId: 'user-worker-1',
@@ -141,11 +143,11 @@ const mockGuests: Guest[] = [
 ];
 
 const mockZones: Zone[] = [
-    { _id: 'zone-1', name: 'Central Zone' },
-    { _id: 'zone-2', name: 'North Zone' },
-    { _id: 'zone-3', name: 'South Zone' },
-    { _id: 'zone-4', name: 'East Zone' },
-    { _id: 'zone-5', name: 'West Zone' },
+    { _id: 'zone-1', campusId:'coza-lagos', name: 'Central Zone' },
+    { _id: 'zone-2', campusId:'coza-lagos', name: 'North Zone' },
+    { _id: 'zone-3', campusId:'coza-lagos', name: 'South Zone' },
+    { _id: 'zone-4', campusId:'coza-lagos', name: 'East Zone' },
+    { _id: 'zone-5', campusId:'coza-lagos', name: 'West Zone' },
 ];
 
 const mockUsers: User[] = [

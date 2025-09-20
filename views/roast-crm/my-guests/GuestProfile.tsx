@@ -25,7 +25,7 @@ import {
     useGetGuestByIdQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
-import { AssimilationStage, ContactChannel, Guest, MilestoneStatus } from '~/store/types';
+import { ContactChannel, MilestoneStatus } from '~/store/types';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { Text } from '~/components/ui/text';
 import { View } from 'react-native';

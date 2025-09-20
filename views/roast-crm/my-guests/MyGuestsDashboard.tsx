@@ -1,11 +1,10 @@
 import React, { ReactNode, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, Dimensions, ScrollView } from 'react-native';
 
 import { AssimilationStage, AssimilationStagePosition, Guest } from '~/store/types';
 import { useGetGuestsQuery } from '~/store/services/roast-crm';
 import useRole from '~/hooks/role';
 
-import ViewWrapper from '~/components/layout/viewWrapper';
 import { Text } from '~/components/ui/text';
 import { FloatButton } from '~/components/atoms/button';
 
@@ -16,15 +15,16 @@ import { columnDataType, HeaderParams } from '../../../components/Kanban/types';
 import { ScreenWidth } from '@rneui/base';
 import ReactNativeKanbanBoard from '~/components/Kanban';
 import groupBy from 'lodash/groupBy';
-import SearchAndFilter from './SearchAndFilter';
-import StatsCard from './StatsCard';
+import SearchAndFilter from '../components/SearchAndFilter';
+import StatsCard from '../components/StatsCard';
 
-const KanbanColumn = React.lazy(() => import('./KanbanColumn'));
-const KanbanUICard = React.lazy(() => import('./KanbanCard'));
-const GuestListView = React.lazy(() => import('./GuestListView'));
+const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
+const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
+const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
 import { assimilationStages } from '../data/assimilationStages';
+import { RefreshControl } from 'react-native';
 
 function MyGuestsDashboard() {
     const { user: currentUser } = useRole();
@@ -189,9 +189,12 @@ function MyGuestsDashboard() {
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     return (
-        <View className="flex-1 bg-background">
+        <View className="flex-1 bg-background gap-2">
             <View className="h-[15.3rem]">
-                <ViewWrapper scroll onRefresh={refetch} noPadding className="mb-0">
+                <ScrollView
+                    className="mb-0"
+                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
+                >
                     {/* Header with Stats */}
                     <View className="gap-4 px-2 pt-4">
                         <Text className="text-2xl font-bold">My Guests</Text>
@@ -213,14 +216,14 @@ function MyGuestsDashboard() {
                             setViewMode={setViewMode as any}
                         />
                     </View>
-                </ViewWrapper>
+                </ScrollView>
             </View>
             {/* Content */}
             <View className="flex-1">
                 {viewMode === 'kanban' ? (
                     <Suspense fallback={<Loading cover />}>
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
-                            gapBetweenColumns={4}
+                            gapBetweenColumns={8}
                             onDragEnd={onDragEnd}
                             columnWidth={ScreenWidth - 80}
                             columnData={statefulMappedGuests}
@@ -252,7 +255,7 @@ function MyGuestsDashboard() {
                 Add Guest
             </FloatButton>
 
-            <Suspense fallback={<Text>...</Text>}>
+            <Suspense fallback={null}>
                 <AddGuestModal modalVisible={modalVisible} setModalVisible={handleAddGuest} />
             </Suspense>
         </View>
