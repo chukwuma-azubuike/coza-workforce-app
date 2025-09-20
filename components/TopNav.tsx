@@ -25,18 +25,24 @@ const TopNav: React.FC = () => {
     });
 
     return (
-        <View className="px-2 w-full z-20 items-center justify-between flex-row bg-background">
-            <ModeToggle />
-            {mode === 'ops' ? (
-                <Text className="text-xl font-light text-center justify-center text-muted-foreground px-6 w-maxmx mx-auto">
-                    {isLoading ? 'Searching for service...' : data?.name || 'No service today'}
-                </Text>
-            ) : (
-                <Text style={{ fontFamily: 'Angelos', fontSize: 24, lineHeight: 38 }} className="text-2xl">
-                    Roast
-                </Text>
-            )}
-            <View className="w-[76px] justify-end flex-row">
+        <View className="px-2 w-full h-14 z-20 items-center justify-between flex-row bg-background">
+            <View className="min-w-[36px] flex-1">
+                <ModeToggle />
+            </View>
+            <View className="min-w-[40%] flex-1 items-center">
+                {mode === 'ops' ? (
+                    <Text className="text-xl font-light text-center justify-center text-muted-foreground w-full mx-auto">
+                        {isLoading ? 'Searching for service...' : data?.name || 'No service today'}
+                    </Text>
+                ) : (
+                    <View className="pt-3">
+                        <Text style={{ fontFamily: 'Angelos', fontSize: 24, lineHeight: 38 }} className="text-2xl">
+                            Roast
+                        </Text>
+                    </View>
+                )}
+            </View>
+            <View className="min-w-[36px] flex-1 justify-end flex-row">
                 <TouchableOpacity onPress={handlePress} activeOpacity={0.6}>
                     <AvatarComponent
                         badge
