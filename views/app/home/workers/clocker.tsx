@@ -121,7 +121,7 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className={cn('gap', 'flex-1 mt-2')}>
+        <View className={cn('gap', 'flex-1')}>
             <TopNav />
             <ViewWrapper scroll onRefresh={refreshData} refreshing={false} className="pt-8">
                 <Timer />

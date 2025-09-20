@@ -12,7 +12,7 @@ import { ZoneStats } from './components/ZoneStats';
 import { useGuestFiltering } from './hooks/useGuestFiltering';
 import useRole from '~/hooks/role';
 import Loading from '~/components/atoms/loading';
-import ReactNativeKanbanBoard from '~/components/Kanban';
+
 import { columnDataType, HeaderParams } from '../../../components/Kanban/types';
 import { assimilationStages } from '../data/assimilationStages';
 import { ScreenWidth } from '@rneui/base';
@@ -25,6 +25,7 @@ import groupBy from 'lodash/groupBy';
 const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
 const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
+import ReactNativeKanbanBoard from '~/components/Kanban';
 
 export function ZoneDashboard() {
     const { user: currentUser, role } = useRole();
@@ -64,6 +65,10 @@ export function ZoneDashboard() {
         } catch (error) {
             // toast.error('Failed to update guest stage');
         }
+    };
+
+    const handleProfileView = (guest: Guest) => {
+        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     };
 
     const handleReassignWorker = async (guestId: string, workerId: string, zoneId?: string) => {
@@ -236,7 +241,7 @@ export function ZoneDashboard() {
     const selectedZoneOption = zones.find((zone: Zone) => zone._id === selectedZone);
 
     return (
-        <View className="flex-1 bg-background pt-4 gap-6">
+        <View className="flex-1 bg-background pt-2 gap-6">
             {/* Header */}
             <View className="gap-4 px-2">
                 <View className="flex-row items-center justify-between">
@@ -272,7 +277,7 @@ export function ZoneDashboard() {
             {/* TODO: Pipeline instructions might be unecessary */}
             {/* {viewMode === 'kanban' && <PipelineInstructions />} */}
 
-            <View className="px-2 flex-row items-center gap-2 w-full justify-between">
+            <View className="px-2 flex-row items-center gap-2 w-full justify-between mb-1">
                 {/* TODO: Not sure how practical this is */}
                 {/* <BulkActions
                     bulkReassignMode={bulkReassignMode}
@@ -305,6 +310,7 @@ export function ZoneDashboard() {
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
                             gapBetweenColumns={8}
                             onDragEnd={onDragEnd}
+                            onPressCard={handleProfileView}
                             columnWidth={ScreenWidth - 80}
                             columnData={statefulMappedGuests}
                             columnContainerStyle={{ flex: 1 }}
