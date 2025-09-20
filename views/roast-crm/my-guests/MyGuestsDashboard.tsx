@@ -185,18 +185,22 @@ function MyGuestsDashboard() {
         [isLoading]
     );
 
+    const handleProfileView = (guest: Guest) => {
+        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
+    };
+
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     return (
-        <View className="flex-1 bg-background gap-2">
+        <View className="flex-1 bg-background">
             <View className="h-[15.3rem]">
                 <ScrollView
                     className="mb-0"
                     refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
                 >
                     {/* Header with Stats */}
-                    <View className="gap-4 px-2 pt-4">
+                    <View className="gap-4 px-2 pt-2">
                         <Text className="text-2xl font-bold">My Guests</Text>
                         <View className="flex-row flex-wrap gap-3">
                             <StatsCard stage={AssimilationStage.INVITED} count={categorizedGuests?.invited?.length} />
@@ -219,12 +223,13 @@ function MyGuestsDashboard() {
                 </ScrollView>
             </View>
             {/* Content */}
-            <View className="flex-1">
+            <View className="flex-1 bg-red-30">
                 {viewMode === 'kanban' ? (
                     <Suspense fallback={<Loading cover />}>
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
                             gapBetweenColumns={8}
                             onDragEnd={onDragEnd}
+                            onPressCard={handleProfileView}
                             columnWidth={ScreenWidth - 80}
                             columnData={statefulMappedGuests}
                             columnContainerStyle={{ flex: 1 }}
