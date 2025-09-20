@@ -1,5 +1,5 @@
 import React, { memo, ReactNode } from 'react';
-import { Pressable, View } from 'react-native';
+import { View } from 'react-native';
 import { Guest } from '~/store/types';
 import { Text } from '~/components/ui/text';
 import { Badge } from '~/components/ui/badge';

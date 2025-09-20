@@ -106,6 +106,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
 
             return (
                 <DataCard
+                    onPress={props.onPressCard}
                     disableScroll={disableScroll}
                     setDragCard={setDragCard}
                     renderItem={props.renderItem}
