@@ -61,7 +61,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                     <MoreVertical className="w-4 h-4" color="gray" />
                                 </TouchableOpacity>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent side="top" align="end" alignOffset={-10} className="rounded-2xl">
+                            <DropdownMenuContent align="end" alignOffset={-20} className="rounded-2xl">
                                 <DropdownMenuItem onPress={handleProfileView}>
                                     <Text>View Profile</Text>
                                 </DropdownMenuItem>

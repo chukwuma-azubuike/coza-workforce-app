@@ -11,6 +11,7 @@ export interface DraggedCardProps<T> {
 }
 
 export interface KanbanBoardProps<T extends ItemType, K> {
+    onPressCard?: (arg: T) => void;
     columnData: columnDataType<T, K>[];
     renderItem: (props: T, isDragged?: boolean) => JSX.Element;
     renderColumnContainer?: (child: ReactNode, props: K) => ReactNode;
