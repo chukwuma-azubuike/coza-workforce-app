@@ -18,6 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import userStateSlice from './actions/users';
 import appStateSlice from './actions/app';
+import roastCRMState from './actions/roast-crm';
 import notificationsSlice from './actions/notifications';
 
 const middlewares: Middleware[] = [];
@@ -26,7 +27,12 @@ const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {
     key: 'root',
     storage: AsyncStorage,
     stateReconciler: autoMergeLevel2,
-    whitelist: [userStateSlice.reducerPath, appStateSlice.reducerPath, notificationsSlice.reducerPath],
+    whitelist: [
+        userStateSlice.reducerPath,
+        appStateSlice.reducerPath,
+        roastCRMState.reducerPath,
+        notificationsSlice.reducerPath,
+    ],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

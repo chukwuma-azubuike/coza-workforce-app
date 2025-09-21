@@ -18,6 +18,7 @@ import userStateSlice from '../actions/users';
 import appStateSlice from '../actions/app';
 import notificationsSlice from '../actions/notifications';
 import { roastCrmApi } from '../services/roast-crm';
+import roastCRMState from '../actions/roast-crm';
 
 const rootReducer = combineReducers({
     [appStateSlice.reducerPath]: appStateSlice.reducer,
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
     [userStateSlice.reducerPath]: userStateSlice.reducer,
     [notificationsSlice.reducerPath]: notificationsSlice.reducer,
     [roastCrmApi.reducerPath]: roastCrmApi.reducer,
+    [roastCRMState.reducerPath]: roastCRMState.reducer,
 });
 
 export default rootReducer;

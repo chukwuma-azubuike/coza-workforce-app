@@ -319,3 +319,10 @@ export interface NotificationRule {
     recipients: ('worker' | 'coordinator' | 'admin')[];
     isActive: boolean;
 }
+
+// Utils
+export interface FetchCache<P = any, R = any> {
+    payload: P;
+    cacheKey: string;
+    fn: (payload: P) => Promise<R>;
+}
