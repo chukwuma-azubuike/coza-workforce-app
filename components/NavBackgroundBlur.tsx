@@ -15,7 +15,7 @@ const NavTabBackground = forwardRef(({ children, className, ...props }: NavTabBa
             {...props}
             style={{ backgroundColor: 'transparent' }}
             className={cn(
-                `w-full !bg-transparent flex-row pb-10 !justify-around pt-4 border-t border-border/60`,
+                `w-full !bg-transparent flex-row !justify-around pt-4 border-t border-border/60`,
                 isAndroid && 'pb-4',
                 className
             )}

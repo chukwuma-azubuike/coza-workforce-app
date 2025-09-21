@@ -48,7 +48,7 @@ const TabLayout: React.FC = () => {
             }}
             className="shadow-lg shadow-black/5 flex-1"
         >
-            <Animated.View style={[{ flex: 1, marginBottom: isAndroid ? 70 : 90 }, style]}>
+            <Animated.View style={[{ flex: 1, marginBottom: isAndroid ? 36 : 56 }, style]}>
                 <TabSlot />
             </Animated.View>
 
