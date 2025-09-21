@@ -7,7 +7,7 @@ import { MessageSquare, MapPin, User, Phone } from 'lucide-react-native';
 
 import { useCreateGuestMutation, useGetZonesQuery } from '~/store/services/roast-crm';
 import { QuickTips } from './form/QuickTips';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
 import useRole from '~/hooks/role';
 
 import { useState } from 'react';
@@ -26,6 +26,8 @@ import PickerSelect from '~/components/ui/picker-select';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import { GuestFormValidationSchema } from '../../utils/validation';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { roastCRMActions } from '~/store/actions/roast-crm';
+import { useDispatch } from 'react-redux';
 
 const QUICK_TIPS = [
     'Keep conversations natural, friendly and spiritual',
@@ -38,6 +40,7 @@ const GuestCaptureForm: React.FC = () => {
     const { user: currentUser } = useRole();
     const { goBack } = useNavigation();
     const { setModalState } = useModal();
+    const dispatch = useDispatch();
     const netInfo = useNetInfo();
     const isOnline = netInfo.isConnected;
 
@@ -59,13 +62,33 @@ const GuestCaptureForm: React.FC = () => {
     const onSubmit = useCallback(
         async (value: GuestFormData) => {
             try {
-                const res = await addGuest({
+                const payload = {
                     ...value,
                     phone: value.phone ? formatToE164(value.phone, selectedCountry?.callingCode as string) : '',
-                });
-            } catch (error) {}
+                };
+                const res = await addGuest(payload);
+
+                if (!isOnline && res.error) {
+                    const cacheKey = `${addGuest.name}(${JSON.stringify(payload)})`;
+
+                    dispatch(
+                        roastCRMActions.addFetchCache({
+                            fn: addGuest,
+                            cacheKey,
+                            payload,
+                        })
+                    );
+
+                    Alert.alert(
+                        'Offline Storage',
+                        "You're currently offline, buy not to worry, we've stored your guest locally and will sync with our servers once you're back online"
+                    );
+                }
+            } catch (error) {
+                console.log({ isOnline });
+            }
         },
-        [selectedCountry?.callingCode]
+        [selectedCountry?.callingCode, isOnline]
     );
 
     React.useEffect(() => {
