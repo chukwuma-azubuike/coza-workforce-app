@@ -9,6 +9,7 @@ import { NotificationsProvider } from './NotificationsProvider';
 import inAppUpdates from '~/utils/in-app-updates';
 import { useAuth } from '~/hooks/auth';
 import { appSelectors } from '~/store/actions/app';
+// import useCacheSync from '~/views/roast-crm/hooks/use-cache-sync';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -16,6 +17,8 @@ const Routing: React.FC = () => {
     const { logOut } = useAuth();
     const user = useAppSelector(userSelectors.selectCurrentUser);
     const mode = useAppSelector(appSelectors.selectMode);
+
+    // useCacheSync();
 
     const routeToMode = () => {
         if (mode === 'crm') {
