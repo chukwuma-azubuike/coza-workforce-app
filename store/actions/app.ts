@@ -1,5 +1,4 @@
 import { PayloadAction, asyncThunkCreator, buildCreateSlice } from '@reduxjs/toolkit';
-import { stat } from 'react-native-fs';
 import { IModalState } from '~/types/app';
 
 export interface IAppState {
