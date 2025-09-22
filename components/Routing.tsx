@@ -12,7 +12,7 @@ import inAppUpdates from '~/utils/in-app-updates';
 export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
-    const user = useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const user = useAppSelector(userSelectors.selectCurrentUser);
 
     React.useEffect(() => {
         if (user?.userId) {
