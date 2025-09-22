@@ -11,7 +11,6 @@ import { useLazyGetTicketsReportForDownloadQuery } from '@store/services/tickets
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
-import DateTimePicker from '~/components/composite/date-time-picker';
 import useRole from '@hooks/role';
 import { generateReportName } from '@utils/generateReportName';
 import { IReportDownloadPayload } from '@store/types';
@@ -20,6 +19,7 @@ import { Label } from '~/components/ui/label';
 import { useLocalSearchParams } from 'expo-router';
 import PickerSelect from '~/components/ui/picker-select';
 import { Button } from '~/components/ui/button';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -302,18 +302,20 @@ const Export: React.FC = () => {
                     </If>
                     <View className="w-full flex-row gap-4">
                         <View className="flex-1">
-                            <DateTimePicker
+                            <DateTimePickerLegend
                                 mode="date"
                                 label="Start date"
                                 placeholder="Enter start date"
+                                minimumDate={dayjs(endDate).toDate()}
                                 onConfirm={handleStartDate as unknown as (value: Date) => void}
                             />
                         </View>
                         <View className="flex-1">
-                            <DateTimePicker
+                            <DateTimePickerLegend
                                 mode="date"
                                 label="End date"
                                 placeholder="Enter end date"
+                                minimumDate={dayjs(startDate).toDate()}
                                 onConfirm={handleEndDate as unknown as (value: Date) => void}
                             />
                         </View>
