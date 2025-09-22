@@ -6,7 +6,6 @@ import { useCreateCampusMutation } from '@store/services/campus';
 import { ICreateCampusPayload } from '@store/types';
 import { Formik, FormikConfig } from 'formik';
 import { CreateCampusSchema } from '@utils/schemas';
-import DateTimePicker from '~/components/composite/date-time-picker';
 import { useAddress } from '@hooks/address';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Input } from '~/components/ui/input';
@@ -15,6 +14,7 @@ import { Button } from '~/components/ui/button';
 import { router } from 'expo-router';
 import { Textarea } from '~/components/ui/textarea';
 import PickerSelect from '~/components/ui/picker-select';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const CreateCampus: React.FC = () => {
     const { setModalState } = useModal();
@@ -76,7 +76,7 @@ const CreateCampus: React.FC = () => {
 
     return (
         <ViewWrapper scroll noPadding avoidKeyboard>
-            <View className="px-4 gap-6 items-start w-full pt-4">
+            <View className="px-4 gap-6 items-start w-full py-4">
                 <View className="items-center w-full">
                     <Formik<ICreateCampusPayload>
                         validateOnChange
@@ -153,7 +153,7 @@ const CreateCampus: React.FC = () => {
                                         {!!errors?.address && <FormErrorMessage>{errors?.address}</FormErrorMessage>}
                                     </View>
                                     <View>
-                                        <DateTimePicker
+                                        <DateTimePickerLegend
                                             mode="date"
                                             className="flex-1"
                                             label="Date of Birth"
