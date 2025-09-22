@@ -32,8 +32,8 @@ const Routing: React.FC = () => {
 
     return (
         <NotificationsProvider user={user || ({} as any)}>
-            <SafeAreaProvider>
-                <SafeAreaView className="flex-1">
+            <SafeAreaProvider className="!bg-background">
+                <SafeAreaView className="flex-1 !bg-background">
                     <View className="flex-1">
                         <NotificationModal />
                         <Stack>

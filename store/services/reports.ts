@@ -417,10 +417,7 @@ export const reportsServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IDepartmentAndIncidentReport>) => {
                 return {
                     ...res.data,
-                    departmentalReport: Utils.sortByDate(
-                        res.data?.departmentalReport?.slice(res.data.departmentalReport.length - 50),
-                        'createdAt'
-                    ),
+                    departmentalReport: Utils.sortByDate(res.data?.departmentalReport?.slice(0, 49), 'createdAt'),
                 };
             },
         }),
