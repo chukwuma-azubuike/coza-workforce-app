@@ -3,33 +3,43 @@ import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { ISecurityReportPayload } from '@store/types';
-import { useCreateSecurityReportMutation } from '@store/services/reports';
+import {
+    ICampusReportSummary,
+    useCreateSecurityReportMutation,
+    useGetCampusReportSummaryQuery,
+} from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import dayjs from 'dayjs';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import If from '@components/composite/if-container';
-import useRole from '@hooks/role';
+import useRole, { DEPARTMENTS } from '@hooks/role';
 import { View } from 'react-native';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
-// import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Textarea } from '~/components/ui/textarea';
 import { router, useLocalSearchParams } from 'expo-router';
+import Loading from '~/components/atoms/loading';
 
 const SecurityReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as ISecurityReportPayload;
-
-    const { status, updatedAt } = params;
-
     const {
         isCampusPastor,
         user: { userId },
     } = useRole();
+    const params = useLocalSearchParams() as unknown as ISecurityReportPayload;
 
-    const [updateReport, { error, isError, isSuccess, isLoading, reset }] = useCreateSecurityReportMutation();
+    const { data, isLoading: loadingReport } = useGetCampusReportSummaryQuery({
+        serviceId: params?.serviceId as string,
+        campusId: params?.campusId as string,
+    });
+
+    const typedData = data as ICampusReportSummary<ISecurityReportPayload> | undefined;
+
+    const { status, updatedAt } = params;
+
+    const [updateReport, { error, isLoading }] = useCreateSecurityReportMutation();
 
     const onSubmit = async (values: ISecurityReportPayload) => {
         try {
@@ -95,11 +105,20 @@ const SecurityReport: React.FC = () => {
         locations: params?.locations?.length ? params?.locations : [{ name: '', carCount: '' }],
     } as ISecurityReportPayload;
 
+    const securityReport = React.useMemo(
+        () => typedData?.departmentalReport?.find(report => report.departmentName === DEPARTMENTS.security)?.report,
+        [typedData?.departmentalReport]
+    ) as any;
+
     const addValues = React.useCallback((values: ISecurityReportPayload) => {
-        return values.locations.length
-            ? (values.locations.map(a => a.carCount).reduce((a, b) => +a + +b) as unknown as string)
+        return values.locations?.length > 0
+            ? (values?.locations?.map(a => a.carCount)?.reduce((a, b) => +a + +b) as unknown as string)
             : '0';
     }, []);
+
+    if (loadingReport) {
+        return <Loading cover />;
+    }
 
     return (
         <ViewWrapper scroll avoidKeyboard>
@@ -107,7 +126,7 @@ const SecurityReport: React.FC = () => {
                 validateOnChange
                 enableReinitialize
                 onSubmit={onSubmit}
-                initialValues={INITIAL_VALUES}
+                initialValues={securityReport || INITIAL_VALUES}
             >
                 {({ handleChange, errors, handleSubmit, values, setFieldValue }) => (
                     <View className="px-2 mt-4 gap-4 mb-12">
@@ -118,7 +137,7 @@ const SecurityReport: React.FC = () => {
                             name="locations"
                             render={arrayHelpers => (
                                 <View className="gap-4">
-                                    {values.locations.map((location, idx) => (
+                                    {values?.locations?.map((location, idx) => (
                                         <View key={idx} className="gap-4 flex-row items-center">
                                             <View className="flex-1 gap-1">
                                                 <Label>Location</Label>
@@ -193,6 +212,7 @@ const SecurityReport: React.FC = () => {
 
                         <View className="my-2">
                             <Textarea
+                                isDisabled={isCampusPastor}
                                 value={`${values.otherInfo}`}
                                 placeholder="Any other information"
                                 onChangeText={handleChange('otherInfo')}
