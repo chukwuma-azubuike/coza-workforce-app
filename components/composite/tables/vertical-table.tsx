@@ -1,22 +1,22 @@
 import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
 import React, { ReactNode } from 'react';
-import Empty from '../../atoms/empty';
 import If from '../if-container';
 import { FlatListSkeleton } from '../../layout/skeleton';
+import { cn } from '~/lib/utils';
 
 type Props = {
     title: string;
     children?: any;
     isLoading?: boolean;
-    alignItemsCenter?: boolean;
+    textWrap?: boolean;
     tableData: {
         headers: string[];
         rows: any[];
     };
 };
 
-const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, alignItemsCenter }) => {
+const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData, textWrap }) => {
     return (
         <View>
             <Text className="text-left text-base text-muted-foreground mb-2">{title}</Text>
@@ -45,7 +45,9 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                                             <View
                                                 className={`items-center p-2 text-left text-muted-foreground bg-muted flex-1`}
                                             >
-                                                <Text className="text-left">{(item as ReactNode) ?? ''}</Text>
+                                                <Text className={cn('text-left', textWrap && 'line-clamp-none')}>
+                                                    {(item as ReactNode) ?? ''}
+                                                </Text>
                                             </View>
                                         ))}
                                     </View>
