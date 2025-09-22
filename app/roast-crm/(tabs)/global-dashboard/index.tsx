@@ -1,8 +1,8 @@
 import React from 'react';
-import Loading from '~/components/atoms/loading';
+import GlobalDashboard from '~/views/roast-crm/global-dashboard';
 
-const MyGuestsScreen: React.FC = () => {
-    return <Loading cover />;
+const GlobalDashboardScreen: React.FC = () => {
+    return <GlobalDashboard />;
 };
 
-export default MyGuestsScreen;
+export default GlobalDashboardScreen;

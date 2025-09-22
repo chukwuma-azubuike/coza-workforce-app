@@ -143,11 +143,11 @@ const mockGuests: Guest[] = [
 ];
 
 const mockZones: Zone[] = [
-    { _id: 'zone-1', campusId:'coza-lagos', name: 'Central Zone' },
-    { _id: 'zone-2', campusId:'coza-lagos', name: 'North Zone' },
-    { _id: 'zone-3', campusId:'coza-lagos', name: 'South Zone' },
-    { _id: 'zone-4', campusId:'coza-lagos', name: 'East Zone' },
-    { _id: 'zone-5', campusId:'coza-lagos', name: 'West Zone' },
+    { _id: 'zone-1', campusId: 'coza-lagos', name: 'Central Zone' },
+    { _id: 'zone-2', campusId: 'coza-lagos', name: 'North Zone' },
+    { _id: 'zone-3', campusId: 'coza-lagos', name: 'South Zone' },
+    { _id: 'zone-4', campusId: 'coza-lagos', name: 'East Zone' },
+    { _id: 'zone-5', campusId: 'coza-lagos', name: 'West Zone' },
 ];
 
 const mockUsers: User[] = [
@@ -960,9 +960,10 @@ export const roastCrmApi = createApi({
         }),
 
         // Analytics Queries
-        getGlobalAnalytics: builder.query<GlobalAnalytics, { timeRange: string; zoneId?: string }>({
+        getGlobalAnalytics: builder.query<GlobalAnalytics, { startDate: string; endDate: string; zoneId?: string }>({
             query: params => ({
-                url: `${SERVICE_URL}/analytics/global`,
+                url: `/role/getRoles`,
+                // url: `${SERVICE_URL}/analytics/global`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
