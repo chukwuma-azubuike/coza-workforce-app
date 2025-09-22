@@ -313,7 +313,7 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                 <VerticalTable isLoading={isLoading || isFetching} title="Bus Count (Pick Up)" tableData={busCount} />
                 <Separator />
                 <VerticalTable
-                    alignItemsCenter={false}
+                    textWrap
                     tableData={serviceObservation}
                     isLoading={isLoading || isFetching}
                     title="Service Programme Observation"
