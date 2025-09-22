@@ -14,6 +14,7 @@ interface DateTimePickerProps extends Partial<DatePickerProps> {
     placeholder?: string;
     error?: string;
     initialValue?: string;
+    disabled?: boolean;
     touched?: boolean;
 }
 
@@ -24,6 +25,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     mode = 'date',
     label = 'Select Date',
     initialValue,
+    disabled,
     placeholder,
     ...props
 }) => {
@@ -44,6 +46,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <View className="gap-2 flex-1">
             <Label>{label}</Label>
             <Button
+                disabled={disabled}
                 variant="outline"
                 onPress={showPicker}
                 className={cn(
@@ -59,8 +62,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                               mode === 'date'
                                   ? 'DD MMMM, YYYY'
                                   : mode === 'datetime'
-                                    ? 'dddd, DD MMMM, hh:mm A'
-                                    : 'hh:mm A'
+                                  ? 'dddd, DD MMMM, hh:mm A'
+                                  : 'hh:mm A'
                           )}
                 </Text>
             </Button>
