@@ -35,10 +35,14 @@ export const MyAttendance: React.FC = React.memo(() => {
 
     const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess, uniqKey: '_id' });
 
-    const minimalAttendanceData = useMemo(() => 
-        (moreData as IAttendance[])?.map(({ _id, createdAt, clockIn, clockOut }) => ({
-            _id, createdAt, clockIn, clockOut
-        })),
+    const minimalAttendanceData = useMemo(
+        () =>
+            (moreData as IAttendance[])?.map(({ _id, createdAt, clockIn, clockOut }) => ({
+                _id,
+                createdAt,
+                clockIn,
+                clockOut,
+            })),
         [moreData]
     );
 
@@ -150,16 +154,17 @@ export const TeamAttendance: React.FC = React.memo(() => {
         [membersClockedIn, mergedUsers]
     );
 
-    const minimalTeamData = useMemo(() => 
-        mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
-            _id,
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-            pictureUrl: user?.pictureUrl,
-            clockIn,
-            clockOut,
-            departmentName
-        })),
+    const minimalTeamData = useMemo(
+        () =>
+            mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+                _id,
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                pictureUrl: user?.pictureUrl,
+                clockIn,
+                clockOut,
+                departmentName,
+            })),
         [mergedAttendanceWithMemberList]
     );
 
@@ -307,16 +312,17 @@ export const LeadersAttendance: React.FC = React.memo(() => {
         [mergedLeaders]
     );
 
-    const minimalLeaderData = useMemo(() => 
-        mergedAttendanceWithLeaderList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
-            _id,
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-            pictureUrl: user?.pictureUrl,
-            clockIn,
-            clockOut,
-            departmentName
-        })),
+    const minimalLeaderData = useMemo(
+        () =>
+            mergedAttendanceWithLeaderList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+                _id,
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                pictureUrl: user?.pictureUrl,
+                clockIn,
+                clockOut,
+                departmentName,
+            })),
         [mergedAttendanceWithLeaderList]
     );
 
@@ -410,18 +416,19 @@ export const CampusAttendance: React.FC = React.memo(() => {
         }
     );
 
-    const minimalCampusData = useMemo(() => 
-        data?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
-            _id,
-            user: {
-                firstName: user?.firstName,
-                lastName: user?.lastName,
-                pictureUrl: user?.pictureUrl
-            },
-            clockIn,
-            clockOut,
-            departmentName
-        })) || [],
+    const minimalCampusData = useMemo(
+        () =>
+            data?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+                _id,
+                user: {
+                    firstName: user?.firstName,
+                    lastName: user?.lastName,
+                    pictureUrl: user?.pictureUrl,
+                },
+                clockIn,
+                clockOut,
+                departmentName,
+            })) || [],
         [data]
     );
 
@@ -537,19 +544,20 @@ export const GroupAttendance: React.FC = React.memo(() => {
         [mergedUsers]
     );
 
-    const minimalGroupData = useMemo(() => 
-        mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName, campusName }) => ({
-            _id,
-            user: {
-                firstName: user?.firstName,
-                lastName: user?.lastName,
-                pictureUrl: user?.pictureUrl
-            },
-            clockIn,
-            clockOut,
-            departmentName,
-            campusName
-        })),
+    const minimalGroupData = useMemo(
+        () =>
+            mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName, campusName }) => ({
+                _id,
+                user: {
+                    firstName: user?.firstName,
+                    lastName: user?.lastName,
+                    pictureUrl: user?.pictureUrl,
+                },
+                clockIn,
+                clockOut,
+                departmentName,
+                campusName,
+            })),
         [mergedAttendanceWithMemberList]
     );
 
