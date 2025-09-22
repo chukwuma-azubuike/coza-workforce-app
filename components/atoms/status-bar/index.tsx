@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ConnectionStatusBar: React.FC = () => {
     const netInfo = useNetInfo();
-
     const opacity = useRef(new Animated.Value(0)).current;
 
     React.useEffect(() => {
@@ -35,7 +34,6 @@ const ConnectionStatusBar: React.FC = () => {
     }, [netInfo.isInternetReachable]);
 
     const isAndroid = Platform.OS === 'android';
-
     const SafeAreaComp = isAndroid ? SafeAreaView : RNSafeAreaView;
 
     return (
@@ -48,7 +46,7 @@ const ConnectionStatusBar: React.FC = () => {
             }}
         >
             <SafeAreaComp className={cn(netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive')}>
-                <View className="fkex-1 pb-2">
+                <View className="flex-1 pb-2">
                     <Text className="text-center absolute bottom-0 w-full !text-base text-white">{`${
                         netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
                     }`}</Text>
