@@ -156,15 +156,17 @@ export const TeamAttendance: React.FC = React.memo(() => {
 
     const minimalTeamData = useMemo(
         () =>
-            mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
-                _id,
-                firstName: user?.firstName,
-                lastName: user?.lastName,
-                pictureUrl: user?.pictureUrl,
-                clockIn,
-                clockOut,
-                departmentName,
-            })),
+            mergedAttendanceWithMemberList?.map(
+                ({ _id, user, clockIn, clockOut, firstName, lastName, departmentName }) => ({
+                    _id,
+                    firstName: firstName ?? user?.firstName,
+                    lastName: lastName ?? user?.lastName,
+                    pictureUrl: user?.pictureUrl,
+                    clockIn,
+                    clockOut,
+                    departmentName,
+                })
+            ),
         [mergedAttendanceWithMemberList]
     );
 
@@ -314,15 +316,17 @@ export const LeadersAttendance: React.FC = React.memo(() => {
 
     const minimalLeaderData = useMemo(
         () =>
-            mergedAttendanceWithLeaderList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
-                _id,
-                firstName: user?.firstName,
-                lastName: user?.lastName,
-                pictureUrl: user?.pictureUrl,
-                clockIn,
-                clockOut,
-                departmentName,
-            })),
+            mergedAttendanceWithLeaderList?.map(
+                ({ _id, user, clockIn, clockOut, firstName, lastName, departmentName }) => ({
+                    _id,
+                    firstName: firstName ?? user?.firstName,
+                    lastName: lastName ?? user?.lastName,
+                    pictureUrl: user?.pictureUrl,
+                    clockIn,
+                    clockOut,
+                    departmentName,
+                })
+            ),
         [mergedAttendanceWithLeaderList]
     );
 
