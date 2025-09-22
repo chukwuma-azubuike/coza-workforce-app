@@ -76,7 +76,7 @@ export enum DEPARTMENTS {
 
 const useRole = () => {
     const dispatch = useAppDispatch();
-    const storedUser = useAppSelector(store => userSelectors.selectCurrentUser(store));
+    const storedUser = useAppSelector(userSelectors.selectCurrentUser);
     const {
         data: latestUser,
         refetch,

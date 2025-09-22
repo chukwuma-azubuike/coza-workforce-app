@@ -3,14 +3,18 @@ import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
 import { ITransferReportPayload } from '@store/types';
-import { useCreateTransferReportMutation } from '@store/services/reports';
+import {
+    ICampusReportSummary,
+    useCreateTransferReportMutation,
+    useGetCampusReportSummaryQuery,
+} from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ButtonComponent from '@components/atoms/button';
 import dayjs from 'dayjs';
 import TextAreaComponent from '@components/atoms/text-area';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
-import useRole from '@hooks/role';
+import useRole, { DEPARTMENTS } from '@hooks/role';
 import If from '@components/composite/if-container';
 import { View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -20,11 +24,18 @@ import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Textarea } from '~/components/ui/textarea';
+import Loading from '~/components/atoms/loading';
 
 const TransferReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ITransferReportPayload;
-
     const { status, updatedAt } = params;
+
+    const { data, isLoading: loadingReport } = useGetCampusReportSummaryQuery({
+        serviceId: params?.serviceId as string,
+        campusId: params?.campusId as string,
+    });
+
+    const typedData = data as ICampusReportSummary<ITransferReportPayload> | undefined;
 
     const {
         isCampusPastor,
@@ -98,10 +109,19 @@ const TransferReport: React.FC = () => {
     } as ITransferReportPayload;
 
     const addValues = React.useCallback((values: ITransferReportPayload, field: 'adultCount' | 'minorCount') => {
-        return values?.locations?.length
-            ? (values?.locations?.map(a => a[field]).reduce((a, b) => +a + +b) as unknown as string)
+        return values?.locations?.length > 0
+            ? ((values?.locations?.map(a => a[field]) ?? [])?.reduce((a, b) => +a + +b) as unknown as string)
             : '0';
     }, []);
+
+    const securityReport = React.useMemo(
+        () => typedData?.departmentalReport?.find(report => report.departmentName === DEPARTMENTS.CTS)?.report,
+        [typedData?.departmentalReport]
+    ) as any;
+
+    if (loadingReport) {
+        return <Loading cover />;
+    }
 
     return (
         <ViewWrapper scroll avoidKeyboard>
@@ -109,7 +129,7 @@ const TransferReport: React.FC = () => {
                 validateOnChange
                 onSubmit={onSubmit}
                 enableReinitialize
-                initialValues={INITIAL_VALUES}
+                initialValues={securityReport || INITIAL_VALUES}
             >
                 {({ handleChange, handleSubmit, values, setFieldValue }) => (
                     <View className="pb-4 mt-4 gap-4">

@@ -4,7 +4,7 @@ import { IModalState } from '~/types/app';
 
 const useModal = () => {
     const dispatch = useAppDispatch();
-    const modalState = useAppSelector(store => appSelectors.selectToast(store));
+    const modalState = useAppSelector(appSelectors.selectToast);
 
     const setModalState = (state: IModalState) => {
         dispatch(appActions.toast(state));
