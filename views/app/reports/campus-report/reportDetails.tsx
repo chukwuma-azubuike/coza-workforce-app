@@ -213,7 +213,7 @@ const CampusReport: React.FC = () => {
                 headers: ['Observations'],
                 rows: [
                     {
-                        observations: rawData?.observations ? rawData?.observations : 'null',
+                        observations: rawData?.observations ? rawData?.observations : 'None',
                     },
                 ],
             };

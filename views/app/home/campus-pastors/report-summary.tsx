@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react';
 import { Text } from '~/components/ui/text';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent from '@components/composite/flat-list';
@@ -13,15 +14,12 @@ import { useGetGhReportByIdQuery } from '@store/services/grouphead';
 import { ICampusReportSummary, useGetCampusReportSummaryQuery } from '@store/services/reports';
 import Utils from '@utils/index';
 import { router } from 'expo-router';
-import React from 'react';
 import { Platform, TouchableOpacity, View } from 'react-native';
 import { Separator } from '~/components/ui/separator';
+
 const isAndroid = Platform.OS === 'android';
 
-interface ReportSummaryListRowProps {
-    '0'?: string;
-    '1'?: ICampusReportSummary['departmentalReport'];
-}
+type ReportSummaryListRowProps = ICampusReportSummary['departmentalReport'][0];
 
 enum ReportSummaryMap {
     PCU = 'guest-report',
@@ -46,90 +44,63 @@ export const ReportRouteIndex: ReportSummaryMapIndex = {
     'Programme Coordination': ReportSummaryMap.Programme,
 };
 
-const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
+const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = elm => {
     const { isLightMode } = useAppColorMode();
-
     const { isGroupHead } = useRole();
 
-    return (
-        <>
-            {props[1]?.map((elm, index) => {
-                const handlePress = () => {
-                    router.push({
-                        pathname: `/reports/${ReportRouteIndex[elm?.departmentName]}` as any,
-                        params: elm.report,
-                    });
-                };
+    const handlePress = useCallback(
+        (elm: any) => () => {
+            router.push({
+                pathname: `/reports/${ReportRouteIndex[elm?.departmentName]}` as any,
+                params: elm.report as any,
+            });
+        },
+        [ReportRouteIndex]
+    );
 
-                return (
-                    <TouchableOpacity
-                        key={index}
-                        disabled={false}
-                        delayPressIn={0}
-                        activeOpacity={0.6}
-                        onPress={handlePress}
-                        accessibilityRole="button"
-                    >
-                        <View className="p-2 px-4 my-2 py-3 w-full flex-row rounded-2xl items-center bg-muted-background justify-between">
-                            <Text className="text-lg text-muted-foreground">{`${elm?.departmentName} Report`}</Text>
-                            <StatusTag>{elm?.report.status as any}</StatusTag>
-                        </View>
-                    </TouchableOpacity>
-                );
-            })}
-        </>
+    return (
+        <TouchableOpacity
+            disabled={false}
+            delayPressIn={0}
+            activeOpacity={0.6}
+            onPress={handlePress(elm)}
+            accessibilityRole="button"
+        >
+            <View className="p-2 px-4 my-2 py-3 w-full flex-row rounded-2xl items-center bg-muted-background justify-between">
+                <Text className="text-lg text-muted-foreground">{`${elm?.departmentName} Report`}</Text>
+                <StatusTag>{elm?.report.status as any}</StatusTag>
+            </View>
+        </TouchableOpacity>
     );
 };
 
-const GHReportSummaryListRow: React.FC<ReportSummaryListRowProps> = props => {
-    const navigation = useNavigation();
-    const { isLightMode } = useAppColorMode();
-
-    const { isGroupHead } = useRole();
-
-    const groupedData = props[1]?.reduce((acc: Record<string, (typeof props)[1]>, item) => {
-        const campusName = item.campus;
-        if (!acc[campusName]) {
-            acc[campusName] = [];
-        }
-        acc[campusName].push(item);
-        return acc;
-    }, {});
+const GHReportSummaryListRow: React.FC<ReportSummaryListRowProps> = reportItem => {
+    const handlePress = useCallback(
+        (reportItem: any) => () => {
+            router.push({
+                pathname: `/reports/${ReportRouteIndex[reportItem?.departmentName]}` as any,
+                params: reportItem.report as any,
+            });
+        },
+        [ReportRouteIndex]
+    );
 
     return (
         <>
-            {groupedData &&
-                Object.entries(groupedData).map(([campusName, reports]) => (
-                    <>
-                        <Text className="text-muted-foreground">{campusName}</Text>
-
-                        {reports?.map((reportItem, index) => {
-                            const handlePress = () => {
-                                router.push({
-                                    pathname: `/reports/${ReportRouteIndex[reportItem?.departmentName]}` as any,
-                                    params: reportItem.report,
-                                });
-                            };
-                            return (
-                                <TouchableOpacity
-                                    key={index}
-                                    disabled={false}
-                                    delayPressIn={0}
-                                    activeOpacity={0.6}
-                                    onPress={handlePress}
-                                    accessibilityRole="button"
-                                >
-                                    <View className="p-2 px-4 my-1 w-full rounded-md items-center bg-muted-background justify-between">
-                                        <Text className="text-muted-foreground">
-                                            {`${reportItem?.departmentName} Report`}
-                                        </Text>
-                                        <StatusTag>{reportItem?.report.status as any}</StatusTag>
-                                    </View>
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </>
-                ))}
+            <Text className="text-muted-foreground">{reportItem?.campus ?? ''}</Text>(
+            <TouchableOpacity
+                disabled={false}
+                delayPressIn={0}
+                activeOpacity={0.6}
+                accessibilityRole="button"
+                onPress={handlePress(reportItem)}
+            >
+                <View className="p-2 px-4 my-1 w-full rounded-md items-center bg-muted-background justify-between">
+                    <Text className="text-muted-foreground">{`${reportItem?.departmentName} Report`}</Text>
+                    <StatusTag>{reportItem?.report.status as any}</StatusTag>
+                </View>
+            </TouchableOpacity>
+            );
         </>
     );
 };
@@ -170,13 +141,6 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
             []
         );
 
-        const sortedData = React.useMemo(
-            () => Utils.sortByDate(data ? data.departmentalReport : [], 'createdAt'),
-            [data]
-        );
-
-        const groupedData = React.useMemo(() => Utils.groupListByKey(sortedData, 'createdAt'), [sortedData]);
-
         const submittedReportCount = React.useMemo(
             () => data?.departmentalReport.filter(dept => dept?.report?.status !== 'PENDING').length,
             [data]
@@ -199,7 +163,9 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
                             <Text className="font-semibold text-primary text-5xl ml-1">
                                 {submittedReportCount || 0}
                             </Text>
-                            <Text className="font-semibold text-muted-foreground">{`/${sortedData?.length || 0}`}</Text>
+                            <Text className="font-semibold text-muted-foreground">{`/${
+                                data?.departmentalReport?.length || 0
+                            }`}</Text>
                         </View>
                     </View>
                     <Separator />
@@ -207,8 +173,8 @@ const CampusReportSummary: React.FC<ICampusReportSummaryProps> = React.memo(
                 <FlatListComponent
                     padding={isAndroid ? 3 : true}
                     emptySize={160}
-                    data={groupedData}
                     showHeader={false}
+                    data={data?.departmentalReport ?? []}
                     renderItemComponent={renderReportSummaryItem}
                     onRefresh={handleRefresh}
                     isLoading={isLoading || isFetching}
