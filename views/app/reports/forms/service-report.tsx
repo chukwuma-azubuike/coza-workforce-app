@@ -1,5 +1,5 @@
 import { Text } from '~/components/ui/text';
-import { View } from 'react-native';
+import { Linking, Pressable, View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
 import useModal from '@hooks/modal/useModal';
@@ -26,6 +26,7 @@ const ServiceReport: React.FC = () => {
 
     const {
         isCampusPastor,
+        isGlobalPastor,
         user: { userId },
     } = useRole();
 
@@ -119,6 +120,7 @@ const ServiceReport: React.FC = () => {
                                     error={errors.serviceStartTime}
                                     touched={touched.serviceStartTime}
                                     placeholder="Select start time"
+                                    disabled={isCampusPastor || isGlobalPastor}
                                     onConfirm={handleChange('serviceStartTime') as unknown as (value: Date) => void}
                                 />
                                 <DateTimePicker
@@ -127,21 +129,33 @@ const ServiceReport: React.FC = () => {
                                     error={errors.serviceEndTime}
                                     touched={touched.serviceEndTime}
                                     placeholder="Select end time"
+                                    disabled={isCampusPastor || isGlobalPastor}
                                     onConfirm={handleChange('serviceEndTime') as unknown as (value: Date) => void}
                                 />
                             </View>
-                            <View>
-                                <Label>Link to Service Report</Label>
-                                <Input
-                                    keyboardType="url"
-                                    value={values.serviceReportLink}
-                                    placeholder="https://www.link-to-report.com"
-                                    onChangeText={handleChange('serviceReportLink')}
-                                />
-                                {errors.serviceReportLink && touched.serviceReportLink && (
-                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                )}
-                            </View>
+                            {!isCampusPastor && !isGlobalPastor && (
+                                <View>
+                                    <Label>Link to Service Report</Label>
+                                    <Input
+                                        keyboardType="url"
+                                        value={values.serviceReportLink}
+                                        placeholder="https://www.link-to-report.com"
+                                        onChangeText={handleChange('serviceReportLink')}
+                                    />
+                                    {errors.serviceReportLink && touched.serviceReportLink && (
+                                        <FormErrorMessage>This field cannot be empty</FormErrorMessage>
+                                    )}
+                                </View>
+                            )}
+                            {values?.serviceReportLink && (isCampusPastor || isGlobalPastor) && (
+                                <Pressable
+                                    onPress={() => {
+                                        Linking.openURL(values?.serviceReportLink);
+                                    }}
+                                >
+                                    <Text className="text-xl text-green-500 text-center">Press to view report</Text>
+                                </Pressable>
+                            )}
                             <Separator className="my-2" />
 
                             <Textarea

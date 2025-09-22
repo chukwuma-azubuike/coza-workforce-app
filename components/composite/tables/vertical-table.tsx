@@ -53,7 +53,7 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                             </View>
                         </View>
                     ) : (
-                        <Empty width={120} />
+                        <Text>None</Text>
                     )}
                 </If>
             </View>

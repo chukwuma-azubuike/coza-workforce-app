@@ -48,11 +48,11 @@ const TabLayout: React.FC = () => {
             }}
             className="shadow-lg shadow-black/5 flex-1"
         >
-            <Animated.View style={[{ flex: 1, marginBottom: isAndroid ? 70 : 90 }, style]}>
+            <Animated.View style={[{ flex: 1 }, style]}>
                 <TabSlot />
             </Animated.View>
 
-            <TabList asChild className={cn('absolute !bg-background bottom-0 left-0 right-0 z-10 overflow-x-auto')}>
+            <TabList asChild className={cn('!bg-background bottom-0 left-0 right-0 z-10 overflow-x-auto')}>
                 <NavTabBackground>
                     {tabRoutes.map((route, index) => {
                         // Roles and permissions filter
