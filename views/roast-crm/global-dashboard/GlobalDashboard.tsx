@@ -16,6 +16,7 @@ import { StatsCard } from './StatsCard';
 import PickerSelect from '~/components/ui/picker-select';
 import dayjs from 'dayjs';
 import { Skeleton } from '~/components/ui/skeleton';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 type TimeRange = '1 month' | '3 months' | '6 months' | '1 year';
 type ZoneId = 'all' | 'central' | 'north' | 'south' | 'east' | 'west';
@@ -229,26 +230,38 @@ const GlobalDashboard: React.FC = () => {
 
                     <TabsContent value="overview">
                         <View className="gap-6">
-                            <DistributionChart data={analytics.stageDistribution} />
-                            <TopPerformers performers={analytics.topPerformers} />
+                            <ErrorBoundary>
+                                <DistributionChart data={analytics.stageDistribution} />
+                            </ErrorBoundary>
+                            <ErrorBoundary>
+                                <TopPerformers performers={analytics.topPerformers} />
+                            </ErrorBoundary>
                         </View>
                     </TabsContent>
 
                     <TabsContent value="zones">
-                        <ZonePerformanceChart data={analytics.zonePerformance} />
+                        <ErrorBoundary>
+                            <ZonePerformanceChart data={analytics.zonePerformance} />
+                        </ErrorBoundary>
                     </TabsContent>
 
                     <TabsContent value="trends">
-                        <TrendChart data={analytics.monthlyTrends} />
+                        <ErrorBoundary>
+                            <TrendChart data={analytics.monthlyTrends} />
+                        </ErrorBoundary>
                     </TabsContent>
 
                     <TabsContent value="analytics">
                         <View className="flex-row flex-wrap" style={{ gap: 16 }}>
                             <View style={{ flex: 1, minWidth: 300 }}>
-                                <DropoffAnalysis data={analytics.dropOffAnalysis} />
+                                <ErrorBoundary>
+                                    <DropoffAnalysis data={analytics.dropOffAnalysis} />
+                                </ErrorBoundary>
                             </View>
                             <View style={{ flex: 1, minWidth: 300 }}>
-                                <RecommendationsCard recommendations={recommendations} />
+                                <ErrorBoundary>
+                                    <RecommendationsCard recommendations={recommendations} />
+                                </ErrorBoundary>
                             </View>
                         </View>
                     </TabsContent>
