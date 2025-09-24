@@ -120,6 +120,7 @@ const ServiceReport: React.FC = () => {
                                     error={errors.serviceStartTime}
                                     touched={touched.serviceStartTime}
                                     placeholder="Select start time"
+                                    initialValue={values.serviceStartTime}
                                     disabled={isCampusPastor || isGlobalPastor}
                                     onConfirm={handleChange('serviceStartTime') as unknown as (value: Date) => void}
                                 />
@@ -129,6 +130,7 @@ const ServiceReport: React.FC = () => {
                                     error={errors.serviceEndTime}
                                     touched={touched.serviceEndTime}
                                     placeholder="Select end time"
+                                    initialValue={values.serviceEndTime}
                                     disabled={isCampusPastor || isGlobalPastor}
                                     onConfirm={handleChange('serviceEndTime') as unknown as (value: Date) => void}
                                 />

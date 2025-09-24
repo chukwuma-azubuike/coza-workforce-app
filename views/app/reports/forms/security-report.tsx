@@ -188,12 +188,12 @@ const SecurityReport: React.FC = () => {
                                                     carCount: '',
                                                 })
                                             }
+                                            icon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
                                             style={{ flex: 1 }}
                                             disabled={isCampusPastor || isLoading}
                                             variant="outline"
                                             size="sm"
                                         >
-                                            <Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />
                                             Add Location
                                         </Button>
                                     </View>
