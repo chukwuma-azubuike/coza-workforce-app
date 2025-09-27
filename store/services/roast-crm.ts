@@ -6,7 +6,6 @@ import {
     MilestoneStatus,
     ContactChannel,
     Zone,
-    AssimilationStage,
     GuestFormData,
     Role,
     NotificationProps,
@@ -39,7 +38,7 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
     gender: 'male',
     lastName: 'John',
     firstName: 'Doe',
-    phone: '+2348012345678',
+    phoneNumber: '+2348012345678',
     zoneId: 'zone-1',
     assignedToId: 'user-worker-1',
     createdById: 'user-worker-1',
@@ -51,7 +50,6 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
     nextAction: 'Follow up via call',
     assimilationStageId: '68d494f6b5d99ef9705c3c52',
     assimilationSubStageId: '68d494f6b5d99ef9705c3c52',
-    assimilationStage: AssimilationStage.INVITED,
     milestones: [
         {
             _id: uuid(),
@@ -88,73 +86,62 @@ const mockGuests: Guest[] = [
         firstName: 'Remi',
         lastName: 'Lawal',
         assignedToId: 'user-worker-1',
-        assimilationStage: AssimilationStage.INVITED,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
         firstName: 'Chidi',
         lastName: 'Uba',
         assignedToId: 'user-worker-2',
-        assimilationStage: AssimilationStage.ATTENDED1,
         lastContact: now(),
     }),
     generateMockGuest({
         firstName: 'Ngozi',
         lastName: 'Udo',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.ATTENDED1,
     }),
     generateMockGuest({
         firstName: 'Usman',
         lastName: 'Jankin',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.ATTENDED2,
     }),
     generateMockGuest({
         firstName: 'Remi',
         lastName: 'Lawal',
         assignedToId: 'user-worker-1',
-        assimilationStage: AssimilationStage.ATTENDED2,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
         firstName: 'Chidi',
         lastName: 'Uba',
         assignedToId: 'user-worker-2',
-        assimilationStage: AssimilationStage.ATTENDED3,
         lastContact: now(),
     }),
     generateMockGuest({
         firstName: 'Ngozi',
         lastName: 'Udo',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.ATTENDED5,
     }),
     generateMockGuest({
         firstName: 'Usman',
         lastName: 'Jankin',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.ATTENDED6,
     }),
     generateMockGuest({
         firstName: 'Remi',
         lastName: 'Lawal',
         assignedToId: 'user-worker-1',
-        assimilationStage: AssimilationStage.MGI,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
         firstName: 'Chidi',
         lastName: 'Uba',
         assignedToId: 'user-worker-2',
-        assimilationStage: AssimilationStage.MGI,
         lastContact: now(),
     }),
     generateMockGuest({
         firstName: 'Ngozi',
         lastName: 'Udo',
         assignedToId: 'user-worker-3',
-        assimilationStage: AssimilationStage.JOINED,
     }),
 ];
 
@@ -456,133 +443,6 @@ const mockZoneLeaderboard: ZoneLeaderboardEntry[] = [
     },
 ];
 
-const mockPipelineStages: PipelineStage[] = [
-    {
-        _id: 'invited',
-        name: 'Invited',
-        description: 'Guest has been invited to church but has not yet attended',
-        order: 1,
-        color: '#3B82F6',
-        isDefault: true,
-        milestones: [
-            {
-                id: 'm1',
-                title: 'Initial Contact',
-                description: 'First interaction with guest',
-                required: true,
-                order: 1,
-            },
-            {
-                id: 'm2',
-                title: 'Phone Call',
-                description: 'Follow-up phone call made',
-                required: true,
-                order: 2,
-            },
-            {
-                id: 'm3',
-                title: 'Service Invitation',
-                description: 'Guest invited to attend service',
-                required: true,
-                order: 3,
-            },
-        ],
-    },
-    {
-        _id: 'attended',
-        name: 'Attended',
-        description: 'Guest has attended at least one church service',
-        order: 2,
-        color: '#10B981',
-        isDefault: true,
-        milestones: [
-            {
-                id: 'm4',
-                title: 'First Visit',
-                description: 'Guest attended their first service',
-                required: true,
-                order: 1,
-            },
-            {
-                id: 'm5',
-                title: 'Welcome Meeting',
-                description: 'Met with welcome team',
-                required: false,
-                order: 2,
-            },
-            {
-                id: 'm6',
-                title: 'Small Group Invitation',
-                description: 'Invited to join small group',
-                required: true,
-                order: 3,
-            },
-        ],
-    },
-    {
-        _id: 'discipled',
-        name: 'Discipled',
-        description: 'Guest is actively participating in discipleship activities',
-        order: 3,
-        color: '#8B5CF6',
-        isDefault: true,
-        milestones: [
-            {
-                id: 'm7',
-                title: 'Small Group Attendance',
-                description: 'Regularly attending small group',
-                required: true,
-                order: 1,
-            },
-            {
-                id: 'm8',
-                title: 'Bible Study Started',
-                description: 'Enrolled in Bible study program',
-                required: true,
-                order: 2,
-            },
-            {
-                id: 'm9',
-                title: 'Baptism Preparation',
-                description: 'Preparing for baptism',
-                required: false,
-                order: 3,
-            },
-        ],
-    },
-    {
-        _id: 'joined',
-        name: 'Joined Workforce',
-        description: 'Guest has become an active member and joined ministry',
-        order: 4,
-        color: '#6B7280',
-        isDefault: true,
-        milestones: [
-            {
-                id: 'm10',
-                title: 'Baptism Completed',
-                description: 'Guest has been baptized',
-                required: false,
-                order: 1,
-            },
-            {
-                id: 'm11',
-                title: 'Ministry Assignment',
-                description: 'Assigned to a ministry team',
-                required: true,
-                order: 2,
-            },
-            {
-                id: 'm12',
-                title: 'Leadership Training',
-                description: 'Completed leadership training',
-                required: false,
-                order: 3,
-            },
-        ],
-    },
-];
-
 const mockNotificationRules: NotificationRule[] = [
     {
         id: 'n1',
@@ -660,13 +520,13 @@ export const roastCrmApi = createApi({
 
             transformResponse: (res: IDefaultResponse<Guest[]>) => res.data,
 
-            // providesTags: result =>
-            //     result
-            //         ? [
-            //               ...result.map(({ _id }) => ({ type: 'Guest' as const, _id })),
-            //               { type: 'GuestList', _id: 'LIST' },
-            //           ]
-            //         : [{ type: 'GuestList', _id: 'LIST' }],
+            providesTags: result =>
+                result
+                    ? [
+                          ...result.map(({ _id }) => ({ type: 'Guest' as const, _id })),
+                          { type: 'GuestList', _id: 'LIST' },
+                      ]
+                    : [{ type: 'GuestList', _id: 'LIST' }],
         }),
 
         getGuests: builder.query<Guest[], GetGuestPayload>({
@@ -701,8 +561,7 @@ export const roastCrmApi = createApi({
 
         createGuest: builder.mutation<Guest, GuestFormData>({
             query: guest => ({
-                url: `/role/getRoles`,
-                // url: `/guests`,
+                url: `/guests`,
                 method: REST_API_VERBS.POST,
                 body: guest,
             }),
@@ -947,9 +806,7 @@ export const roastCrmApi = createApi({
                 url: `/assimilation-stages`,
                 method: REST_API_VERBS.GET,
             }),
-            transformResponse() {
-                return mockPipelineStages;
-            },
+            transformResponse: (res: IDefaultResponse<PipelineStage[]>) => res.data,
             providesTags: ['Pipeline'],
         }),
 

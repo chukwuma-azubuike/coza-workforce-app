@@ -1,13 +1,8 @@
-import React, { ReactNode, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, Suspense, useCallback, useMemo, useState } from 'react';
 import { View, Dimensions, ScrollView } from 'react-native';
 
 import { AssimilationStage, Guest } from '~/store/types';
-import {
-    useGetAssimilationStagesQuery,
-    useGetAssimilationSubStagesQuery,
-    useGetMyGuestsQuery,
-} from '~/store/services/roast-crm';
-import useRole from '~/hooks/role';
+import { useGetAssimilationSubStagesQuery, useGetMyGuestsQuery } from '~/store/services/roast-crm';
 
 import { Text } from '~/components/ui/text';
 import { FloatButton } from '~/components/atoms/button';
@@ -30,19 +25,17 @@ const AddGuestModal = React.lazy(() => import('./AddGuest'));
 import { RefreshControl } from 'react-native';
 
 function MyGuestsDashboard() {
-    const { user: currentUser } = useRole();
     const [searchTerm, setSearchTerm] = useState('');
 
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
-    const [stageFilter, setStageFilter] = useState<Guest['assimilationStage'] | 'all'>('all');
+    const [stageFilter, setStageFilter] = useState<string | 'all'>('all');
     const [modalVisible, setModalVisible] = useState(false);
 
     //TODO: Return for testing purposes
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
-    const { data: assimilationStages = [] } = useGetAssimilationStagesQuery();
     const { data: guests = [], isLoading, refetch } = useGetMyGuestsQuery();
 
-    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationStageId'), [guests]);
+    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
 
     const transformedAssimilationSubStages = useMemo(
         (): columnDataType<Guest, HeaderParams>[] =>
@@ -80,13 +73,13 @@ function MyGuestsDashboard() {
             filtered = filtered?.filter(
                 guest =>
                     `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    guest.phone.includes(searchTerm) ||
+                    guest.phoneNumber.includes(searchTerm) ||
                     (guest.address && guest.address.toLowerCase().includes(searchTerm.toLowerCase()))
             );
         }
 
         if (stageFilter !== 'all') {
-            filtered = filtered?.filter(guest => guest.assimilationStage === stageFilter);
+            filtered = filtered?.filter(guest => guest.assimilationSubStageId === stageFilter);
         }
 
         return filtered;
@@ -136,9 +129,9 @@ function MyGuestsDashboard() {
                         <Text className="text-2xl font-bold">My Guests</Text>
                         <View className="flex-row flex-wrap gap-3">
                             <StatsCard stage={AssimilationStage.INVITED} count={0} />
-                            <StatsCard stage={'attended' as any} count={0} />
-                            <StatsCard stage={AssimilationStage.MGI} count={0} />
-                            <StatsCard stage={AssimilationStage.JOINED} count={0} />
+                            <StatsCard stage={AssimilationStage.ATTENDED} count={0} />
+                            <StatsCard stage={AssimilationStage.BEING_DISCIPLED} count={0} />
+                            <StatsCard stage={AssimilationStage.ASSIMILATED} count={0} />
                         </View>
                     </View>
 
