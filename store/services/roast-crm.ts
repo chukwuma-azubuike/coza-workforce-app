@@ -21,8 +21,12 @@ import {
     PipelineStage,
     NotificationRule,
     REST_API_VERBS,
+    IDefaultResponse,
+    GetGuestPayload,
+    PipelineSubStage,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
+import Utils from '~/utils';
 
 // Helper to get current ISO timestamp
 const now = () => new Date();
@@ -33,7 +37,6 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
     id: uuid(),
     _id: uuid(),
     gender: 'male',
-    name: 'John Doe',
     lastName: 'John',
     firstName: 'Doe',
     phone: '+2348012345678',
@@ -46,6 +49,8 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
     comment: 'Pray for new job',
     address: 'Lagos',
     nextAction: 'Follow up via call',
+    assimilationStageId: '68d494f6b5d99ef9705c3c52',
+    assimilationSubStageId: '68d494f6b5d99ef9705c3c52',
     assimilationStage: AssimilationStage.INVITED,
     milestones: [
         {
@@ -80,63 +85,74 @@ const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
 // Initial Mock Data
 const mockGuests: Guest[] = [
     generateMockGuest({
-        name: 'Remi Lawal',
+        firstName: 'Remi',
+        lastName: 'Lawal',
         assignedToId: 'user-worker-1',
         assimilationStage: AssimilationStage.INVITED,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
-        name: 'Chidi Uba',
+        firstName: 'Chidi',
+        lastName: 'Uba',
         assignedToId: 'user-worker-2',
         assimilationStage: AssimilationStage.ATTENDED1,
         lastContact: now(),
     }),
     generateMockGuest({
-        name: 'Ngozi Udo',
+        firstName: 'Ngozi',
+        lastName: 'Udo',
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.ATTENDED1,
     }),
     generateMockGuest({
-        name: 'Usman Jankin',
+        firstName: 'Usman',
+        lastName: 'Jankin',
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.ATTENDED2,
     }),
     generateMockGuest({
-        name: 'Remi Lawal',
+        firstName: 'Remi',
+        lastName: 'Lawal',
         assignedToId: 'user-worker-1',
         assimilationStage: AssimilationStage.ATTENDED2,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
-        name: 'Chidi Uba',
+        firstName: 'Chidi',
+        lastName: 'Uba',
         assignedToId: 'user-worker-2',
         assimilationStage: AssimilationStage.ATTENDED3,
         lastContact: now(),
     }),
     generateMockGuest({
-        name: 'Ngozi Udo',
+        firstName: 'Ngozi',
+        lastName: 'Udo',
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.ATTENDED5,
     }),
     generateMockGuest({
-        name: 'Usman Jankin',
+        firstName: 'Usman',
+        lastName: 'Jankin',
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.ATTENDED6,
     }),
     generateMockGuest({
-        name: 'Remi Lawal',
+        firstName: 'Remi',
+        lastName: 'Lawal',
         assignedToId: 'user-worker-1',
         assimilationStage: AssimilationStage.MGI,
         lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
     }),
     generateMockGuest({
-        name: 'Chidi Uba',
+        firstName: 'Chidi',
+        lastName: 'Uba',
         assignedToId: 'user-worker-2',
         assimilationStage: AssimilationStage.MGI,
         lastContact: now(),
     }),
     generateMockGuest({
-        name: 'Ngozi Udo',
+        firstName: 'Ngozi',
+        lastName: 'Udo',
         assignedToId: 'user-worker-3',
         assimilationStage: AssimilationStage.JOINED,
     }),
@@ -442,7 +458,7 @@ const mockZoneLeaderboard: ZoneLeaderboardEntry[] = [
 
 const mockPipelineStages: PipelineStage[] = [
     {
-        id: 'invited',
+        _id: 'invited',
         name: 'Invited',
         description: 'Guest has been invited to church but has not yet attended',
         order: 1,
@@ -473,7 +489,7 @@ const mockPipelineStages: PipelineStage[] = [
         ],
     },
     {
-        id: 'attended',
+        _id: 'attended',
         name: 'Attended',
         description: 'Guest has attended at least one church service',
         order: 2,
@@ -504,7 +520,7 @@ const mockPipelineStages: PipelineStage[] = [
         ],
     },
     {
-        id: 'discipled',
+        _id: 'discipled',
         name: 'Discipled',
         description: 'Guest is actively participating in discipleship activities',
         order: 3,
@@ -535,7 +551,7 @@ const mockPipelineStages: PipelineStage[] = [
         ],
     },
     {
-        id: 'joined',
+        _id: 'joined',
         name: 'Joined Workforce',
         description: 'Guest has become an active member and joined ministry',
         order: 4,
@@ -603,8 +619,15 @@ export const roastCrmApi = createApi({
     reducerPath: SERVICE_URL,
 
     baseQuery: fetchBaseQuery({
-        baseUrl: APP_VARIANT.API_BASE_URL ?? 'https://localhost:4000/api',
-        prepareHeaders: headers => {
+        baseUrl: APP_VARIANT.CRM_API_BASE_URL,
+        prepareHeaders: async headers => {
+            const userSession = (await Utils.retrieveUserSession()) || '';
+            const token = !!userSession && JSON.parse(userSession)?.token.token;
+
+            if (token) {
+                headers.set('authorization', `Bearer ${token}`);
+            }
+
             return headers;
         },
     }),
@@ -620,6 +643,7 @@ export const roastCrmApi = createApi({
         'Analytics',
         'Leaderboard',
         'Pipeline',
+        'PipelineStages',
     ],
 
     refetchOnFocus: true,
@@ -628,16 +652,32 @@ export const roastCrmApi = createApi({
 
     endpoints: builder => ({
         // Guest Queries
-        getGuests: builder.query<Guest[], { campusId?: string; workerId?: string; zoneId?: string }>({
+        getMyGuests: builder.query<Guest[], void>({
+            query: () => ({
+                url: `/guests`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (res: IDefaultResponse<Guest[]>) => res.data,
+
+            // providesTags: result =>
+            //     result
+            //         ? [
+            //               ...result.map(({ _id }) => ({ type: 'Guest' as const, _id })),
+            //               { type: 'GuestList', _id: 'LIST' },
+            //           ]
+            //         : [{ type: 'GuestList', _id: 'LIST' }],
+        }),
+
+        getGuests: builder.query<Guest[], GetGuestPayload>({
             query: params => ({
-                url: `/role/getRoles`,
-                // url: `/${SERVICE_URL}/guests`,
+                url: `/guests`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            transformResponse: () => {
-                return mockGuests;
-            },
+
+            transformResponse: (res: IDefaultResponse<Guest[]>) => res.data,
+
             providesTags: result =>
                 result
                     ? [
@@ -650,7 +690,7 @@ export const roastCrmApi = createApi({
         getGuestById: builder.query<Guest, string>({
             query: _id => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/guests/${_id}`,
+                // url: `/guests/${_id}`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse(_res: any, _meta, arg) {
@@ -662,7 +702,7 @@ export const roastCrmApi = createApi({
         createGuest: builder.mutation<Guest, GuestFormData>({
             query: guest => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/guests`,
+                // url: `/guests`,
                 method: REST_API_VERBS.POST,
                 body: guest,
             }),
@@ -690,7 +730,7 @@ export const roastCrmApi = createApi({
         updateGuest: builder.mutation<Guest, Partial<Guest> & { _id: string }>({
             query: ({ _id, ...patch }) => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/guests/${_id}`,
+                // url: `/guests/${_id}`,
                 method: REST_API_VERBS.GET,
                 // method: REST_API_VERBS.PATCH,
                 // body: patch,
@@ -714,7 +754,7 @@ export const roastCrmApi = createApi({
         getZones: builder.query<Zone[], void>({
             query: () => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/zones`,
+                // url: `/zones`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse() {
@@ -730,7 +770,7 @@ export const roastCrmApi = createApi({
         getUsers: builder.query<User[], { role?: string; zoneId?: string }>({
             query: params => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/users`,
+                // url: `/users`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
@@ -747,7 +787,7 @@ export const roastCrmApi = createApi({
         getEngagementsForGuest: builder.query<Engagement[], string>({
             query: guestId => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/guests/${guestId}/engagements`,
+                // url: `/guests/${guestId}/engagements`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse(_res: any, _meta, guestId) {
@@ -788,7 +828,7 @@ export const roastCrmApi = createApi({
             query: engagement => ({
                 url: `/role/getRoles`,
                 method: REST_API_VERBS.GET,
-                // url: `${SERVICE_URL}/guests/${engagement.guestId}/engagements`,
+                // url: `/guests/${engagement.guestId}/engagements`,
                 // method: REST_API_VERBS.POST,
                 // body: engagement,
             }),
@@ -824,7 +864,7 @@ export const roastCrmApi = createApi({
         // Notification Queries
         getNotifications: builder.query<NotificationProps[], void>({
             query: () => ({
-                url: `${SERVICE_URL}/notifications`,
+                url: `/notifications`,
                 method: REST_API_VERBS.GET,
             }),
 
@@ -839,7 +879,7 @@ export const roastCrmApi = createApi({
 
         markNotificationAsRead: builder.mutation<NotificationProps, string>({
             query: _id => ({
-                url: `${SERVICE_URL}/notifications/${_id}/read`,
+                url: `/notifications/${_id}/read`,
                 method: REST_API_VERBS.PATCH,
             }),
             transformResponse(_res: any, _meta, _id) {
@@ -856,7 +896,7 @@ export const roastCrmApi = createApi({
         // Current User Query
         getCurrentUser: builder.query<User, void>({
             query: () => ({
-                url: `${SERVICE_URL}/me`,
+                url: `/me`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse() {
@@ -868,7 +908,7 @@ export const roastCrmApi = createApi({
         // Leaderboard Queries
         getWorkerLeaderboard: builder.query<WorkerLeaderboardEntry[], string>({
             query: period => ({
-                url: `${SERVICE_URL}/leaderboard/workers`,
+                url: `/leaderboard/workers`,
                 params: { period },
                 method: REST_API_VERBS.GET,
             }),
@@ -880,7 +920,7 @@ export const roastCrmApi = createApi({
 
         getZoneLeaderboard: builder.query<ZoneLeaderboardEntry[], string>({
             query: period => ({
-                url: `${SERVICE_URL}/leaderboard/zones`,
+                url: `/leaderboard/zones`,
                 params: { period },
                 method: REST_API_VERBS.GET,
             }),
@@ -892,7 +932,7 @@ export const roastCrmApi = createApi({
 
         getAchievements: builder.query<Achievement[], void>({
             query: () => ({
-                url: `${SERVICE_URL}/achievements`,
+                url: `/achievements`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse() {
@@ -902,9 +942,9 @@ export const roastCrmApi = createApi({
         }),
 
         // Pipeline Settings Queries
-        getPipelineStages: builder.query<PipelineStage[], void>({
+        getAssimilationStages: builder.query<PipelineStage[], void>({
             query: () => ({
-                url: `${SERVICE_URL}/pipeline/stages`,
+                url: `/assimilation-stages`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse() {
@@ -913,9 +953,19 @@ export const roastCrmApi = createApi({
             providesTags: ['Pipeline'],
         }),
 
+        getAssimilationSubStages: builder.query<PipelineSubStage[], void>({
+            query: () => ({
+                url: `/assimilation-sub-stages`,
+                method: REST_API_VERBS.GET,
+            }),
+            transformResponse: (res: IDefaultResponse<PipelineSubStage[]>) => res.data,
+
+            providesTags: ['PipelineStages'],
+        }),
+
         getNotificationRules: builder.query<NotificationRule[], void>({
             query: () => ({
-                url: `${SERVICE_URL}/pipeline/notification-rules`,
+                url: `/pipeline/notification-rules`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse() {
@@ -926,7 +976,7 @@ export const roastCrmApi = createApi({
 
         updatePipelineStage: builder.mutation<PipelineStage, Partial<PipelineStage> & { id: string }>({
             query: ({ id, ...patch }) => ({
-                url: `${SERVICE_URL}/pipeline/stages/${id}`,
+                url: `/pipeline/stages/${id}`,
                 method: REST_API_VERBS.PATCH,
                 body: patch,
             }),
@@ -935,7 +985,7 @@ export const roastCrmApi = createApi({
 
         createPipelineStage: builder.mutation<PipelineStage, Omit<PipelineStage, 'id'>>({
             query: stage => ({
-                url: `${SERVICE_URL}/pipeline/stages`,
+                url: `/pipeline/stages`,
                 method: REST_API_VERBS.POST,
                 body: stage,
             }),
@@ -944,7 +994,7 @@ export const roastCrmApi = createApi({
 
         deletePipelineStage: builder.mutation<void, string>({
             query: id => ({
-                url: `${SERVICE_URL}/pipeline/stages/${id}`,
+                url: `/pipeline/stages/${id}`,
                 method: REST_API_VERBS.DELETE,
             }),
             invalidatesTags: ['Pipeline'],
@@ -952,7 +1002,7 @@ export const roastCrmApi = createApi({
 
         updateNotificationRule: builder.mutation<NotificationRule, Partial<NotificationRule> & { id: string }>({
             query: ({ id, ...patch }) => ({
-                url: `${SERVICE_URL}/pipeline/notification-rules/${id}`,
+                url: `/pipeline/notification-rules/${id}`,
                 method: REST_API_VERBS.PATCH,
                 body: patch,
             }),
@@ -963,7 +1013,7 @@ export const roastCrmApi = createApi({
         getGlobalAnalytics: builder.query<GlobalAnalytics, { startDate: string; endDate: string; zoneId?: string }>({
             query: params => ({
                 url: `/role/getRoles`,
-                // url: `${SERVICE_URL}/analytics/global`,
+                // url: `/analytics/global`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
@@ -1019,6 +1069,7 @@ export const roastCrmApi = createApi({
 
 export const {
     useGetGuestsQuery,
+    useGetMyGuestsQuery,
     useGetGuestByIdQuery,
     useCreateGuestMutation,
     useUpdateGuestMutation,
@@ -1033,7 +1084,8 @@ export const {
     useGetWorkerLeaderboardQuery,
     useGetZoneLeaderboardQuery,
     useGetAchievementsQuery,
-    useGetPipelineStagesQuery,
+    useGetAssimilationStagesQuery,
+    useGetAssimilationSubStagesQuery,
     useGetNotificationRulesQuery,
     useUpdatePipelineStageMutation,
     useCreatePipelineStageMutation,
