@@ -13,7 +13,7 @@ export const getStageColor = (stage: AssimilationStage) => {
     }
 };
 
-export const getStageColumnColor = (stage: string) => {
+export const getStageColumnColor = (stage: AssimilationStage) => {
     switch (stage) {
         case AssimilationStage.INVITED:
             return 'border-blue-200 dark:border-blue-200/10 bg-blue-50 dark:bg-blue-500/10';

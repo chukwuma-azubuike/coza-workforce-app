@@ -30,8 +30,8 @@ function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
 
-    const assimilationSubStagesIndex = useAssimilationStageIndex();
-    const assimilationSubStage = assimilationSubStagesIndex[guest?.assimilationSubStageId || ''];
+    const assimilationStagesIndex = useAssimilationStageIndex();
+    const assimilationSubStage = assimilationStagesIndex[guest?.assimilationSubStageId || ''];
 
     const getProgressPercentage = () => {
         if (!guest?.milestones?.length) return 0;

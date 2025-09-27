@@ -1,18 +1,16 @@
 import { useMemo } from 'react';
-import { useGetAssimilationSubStagesQuery } from '~/store/services/roast-crm';
+import { useGetAssimilationStagesQuery } from '~/store/services/roast-crm';
 
 const useAssimilationStageIndex = () => {
-    const { data: assimilationSubStages } = useGetAssimilationSubStagesQuery();
+    const { data: assimilationStages } = useGetAssimilationStagesQuery();
 
-    const assimilationSubStagesIndex = useMemo(
+    const assimilationStagesIndex = useMemo(
         () =>
-            assimilationSubStages
-                ? Object.fromEntries(assimilationSubStages?.map(stage => [stage._id, stage.label]))
-                : {},
-        [assimilationSubStages]
+            assimilationStages ? Object.fromEntries(assimilationStages?.map(stage => [stage._id, stage.label])) : {},
+        [assimilationStages]
     );
 
-    return assimilationSubStagesIndex;
+    return assimilationStagesIndex;
 };
 
 export default useAssimilationStageIndex;

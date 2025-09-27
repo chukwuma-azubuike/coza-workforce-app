@@ -23,6 +23,7 @@ const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
 import { RefreshControl } from 'react-native';
+import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 
 function MyGuestsDashboard() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -35,6 +36,7 @@ function MyGuestsDashboard() {
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
     const { data: guests = [], isLoading, refetch } = useGetMyGuestsQuery();
 
+    const assimilationStageIndex = useAssimilationStageIndex();
     const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
 
     const transformedAssimilationSubStages = useMemo(
@@ -42,10 +44,13 @@ function MyGuestsDashboard() {
             assimilationSubStages.map((stage, index) => {
                 return {
                     _id: stage._id,
+                    stageId: stage.assimilationStageId,
                     items: groupedGuestsByAssimilationId[stage?._id] ?? [],
                     header: {
+                        _id: stage._id,
                         title: stage.name,
                         position: stage.order ?? index,
+                        stageId: stage.assimilationStageId,
                         count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
                     },
                 };
@@ -96,17 +101,23 @@ function MyGuestsDashboard() {
         setModalVisible(prev => !prev);
     };
 
+    console.log({});
+
     const renderContentContainer = useCallback(
-        (child: ReactNode, props: HeaderParams) => (
-            <KanbanColumn
-                title={props.title}
-                isLoading={isLoading}
-                guestCount={props.count}
-                stage={props.title as AssimilationStage}
-            >
-                {child}
-            </KanbanColumn>
-        ),
+        (child: ReactNode, props: HeaderParams) => {
+            console.log({ props });
+
+            return (
+                <KanbanColumn
+                    title={props.title}
+                    isLoading={isLoading}
+                    guestCount={props.count}
+                    stage={assimilationStageIndex[props.stageId as string] as AssimilationStage}
+                >
+                    {child}
+                </KanbanColumn>
+            );
+        },
         [isLoading]
     );
 

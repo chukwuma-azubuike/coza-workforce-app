@@ -48,8 +48,8 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
 
-    const assimilationSubStagesIndex = useAssimilationStageIndex();
-    const guestAssimilationSubStage = guest ? assimilationSubStagesIndex[guest?.assimilationSubStageId] : '';
+    const assimilationStagesIndex = useAssimilationStageIndex();
+    const guestAssimilationSubStage = guest ? assimilationStagesIndex[guest?.assimilationSubStageId] : '';
 
     if (!guestId || isLoadingGuest) {
         return (

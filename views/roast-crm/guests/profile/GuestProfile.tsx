@@ -30,7 +30,7 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
 
-    const assimilationSubStagesIndex = useAssimilationStageIndex();
+    const assimilationStagesIndex = useAssimilationStageIndex();
 
     const onBack = () => {
         if (router.canGoBack()) {
@@ -123,8 +123,8 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                     onCall={handleCall(guest)}
                     onWhatsApp={handleWhatsApp(guest)}
                     progressPercentage={getProgressPercentage(guest.milestones)}
-                    assimilationStage={assimilationSubStagesIndex[guest?.assimilationSubStageId]}
-                    stageColor={getStageColor(assimilationSubStagesIndex[guest?.assimilationSubStageId])}
+                    assimilationStage={assimilationStagesIndex[guest?.assimilationSubStageId]}
+                    stageColor={getStageColor(assimilationStagesIndex[guest?.assimilationSubStageId])}
                 />
 
                 {/* Milestones Section */}
