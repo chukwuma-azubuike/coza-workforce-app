@@ -41,6 +41,7 @@ export type State = {
 
 export type HeaderParams = {
     _id?: string;
+    stageId?: string;
     position: number;
     title: string;
     count?: number;
