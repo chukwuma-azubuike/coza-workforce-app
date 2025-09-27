@@ -48,7 +48,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                             </Avatar>
                             <View>
                                 <Text className="font-bold text-xl">{`${guest.firstName} ${guest.lastName}`}</Text>
-                                <Text className="text-xs text-foreground">{guest.phone}</Text>
+                                <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
                             </View>
                         </View>
 
