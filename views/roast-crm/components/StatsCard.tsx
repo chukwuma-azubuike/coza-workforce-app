@@ -10,16 +10,14 @@ interface StatsCardProps {
 
 const StatsCard: React.FC<StatsCardProps> = ({ stage, count }: StatsCardProps) => {
     const getStageText = useCallback(() => {
-        if (stage.includes('attended')) {
-            return { title: 'Attended', color: 'text-green-600' };
-        }
-
         switch (stage) {
             case AssimilationStage.INVITED:
                 return { title: 'Invited', color: 'text-blue-600' };
-            case AssimilationStage.MGI:
+            case AssimilationStage.ATTENDED:
+                return { title: 'Attended', color: 'text-green-600' };
+            case AssimilationStage.BEING_DISCIPLED:
                 return { title: 'Discipled', color: 'text-purple-600' };
-            case AssimilationStage.JOINED:
+            case AssimilationStage.ASSIMILATED:
                 return { title: 'Joined', color: 'text-foreground' };
         }
     }, [stage]);
