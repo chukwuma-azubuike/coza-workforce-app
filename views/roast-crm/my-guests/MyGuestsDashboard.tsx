@@ -2,7 +2,11 @@ import React, { ReactNode, Suspense, useCallback, useMemo, useState } from 'reac
 import { View, Dimensions, ScrollView } from 'react-native';
 
 import { AssimilationStage, Guest } from '~/store/types';
-import { useGetAssimilationSubStagesQuery, useGetMyGuestsQuery } from '~/store/services/roast-crm';
+import {
+    useGetAssimilationSubStagesQuery,
+    useGetMyGuestsCountQuery,
+    useGetMyGuestsQuery,
+} from '~/store/services/roast-crm';
 
 import { Text } from '~/components/ui/text';
 import { FloatButton } from '~/components/atoms/button';
@@ -24,6 +28,7 @@ const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
 import { RefreshControl } from 'react-native';
 import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
+import { Skeleton } from '~/components/ui/skeleton';
 
 function MyGuestsDashboard() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -35,6 +40,7 @@ function MyGuestsDashboard() {
     //TODO: Return for testing purposes
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
     const { data: guests = [], isLoading, refetch } = useGetMyGuestsQuery();
+    const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
 
     const assimilationStageIndex = useAssimilationStageIndex();
     const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
@@ -101,12 +107,8 @@ function MyGuestsDashboard() {
         setModalVisible(prev => !prev);
     };
 
-    console.log({});
-
     const renderContentContainer = useCallback(
         (child: ReactNode, props: HeaderParams) => {
-            console.log({ props });
-
             return (
                 <KanbanColumn
                     title={props.title}
@@ -139,10 +141,21 @@ function MyGuestsDashboard() {
                     <View className="gap-4 px-2 pt-2">
                         <Text className="text-2xl font-bold">My Guests</Text>
                         <View className="flex-row flex-wrap gap-3">
-                            <StatsCard stage={AssimilationStage.INVITED} count={0} />
-                            <StatsCard stage={AssimilationStage.ATTENDED} count={0} />
-                            <StatsCard stage={AssimilationStage.BEING_DISCIPLED} count={0} />
-                            <StatsCard stage={AssimilationStage.ASSIMILATED} count={0} />
+                            {loadingGuestCounts ? (
+                                <>
+                                    {[...Array(4)].map(i => (
+                                        <Skeleton className="h-24 flex-1 rounded-2xl min-w-[20%]" />
+                                    ))}
+                                </>
+                            ) : (
+                                guestCounts?.count.map(stage => (
+                                    <StatsCard
+                                        count={stage.count}
+                                        key={stage.assimilationStageId}
+                                        stage={assimilationStageIndex[stage.assimilationStageId]}
+                                    />
+                                ))
+                            )}
                         </View>
                     </View>
 
