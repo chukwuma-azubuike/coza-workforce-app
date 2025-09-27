@@ -6,7 +6,6 @@ import {
     useGetEngagementsForGuestQuery,
     useAddEngagementMutation,
 } from '~/store/services/roast-crm';
-// import { toast } from 'sonner';
 import { GuestHeader } from './GuestHeader';
 import MilestonesCard from './MilestonesCard';
 import { TimelineCard } from './TimelineCard';
@@ -19,6 +18,7 @@ import { View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import useRole from '~/hooks/role';
+import useAssimilationStageIndex from '../../hooks/use-assimilation-stage-index';
 
 interface GuestProfileProps {}
 
@@ -29,6 +29,8 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
     const { data: engagements = [] } = useGetEngagementsForGuestQuery(guestId || '', { skip: !guestId });
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
+
+    const assimilationSubStagesIndex = useAssimilationStageIndex();
 
     const onBack = () => {
         if (router.canGoBack()) {
@@ -41,7 +43,7 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
             if (!guest) return;
 
             try {
-                const updatedMilestones = guest.milestones.map(m =>
+                const updatedMilestones = guest?.milestones?.map(m =>
                     m._id === milestoneId
                         ? {
                               ...m,
@@ -120,12 +122,13 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                     guest={guest}
                     onCall={handleCall(guest)}
                     onWhatsApp={handleWhatsApp(guest)}
-                    stageColor={getStageColor(guest.assimilationStage)}
                     progressPercentage={getProgressPercentage(guest.milestones)}
+                    assimilationStage={assimilationSubStagesIndex[guest?.assimilationSubStageId]}
+                    stageColor={getStageColor(assimilationSubStagesIndex[guest?.assimilationSubStageId])}
                 />
 
                 {/* Milestones Section */}
-                <MilestonesCard milestones={guest.milestones} onToggle={handleMilestoneToggle} />
+                <MilestonesCard milestones={guest?.milestones ?? []} onToggle={handleMilestoneToggle} />
 
                 {/* Timeline Section */}
                 <TimelineCard
