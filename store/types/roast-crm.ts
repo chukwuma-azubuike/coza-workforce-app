@@ -1,3 +1,5 @@
+import { IPaginationParams } from '.';
+
 // Core types
 export type ID = string;
 
@@ -108,10 +110,11 @@ export interface Guest {
     comment?: string | null;
     address?: string | null;
     assimilationStage: AssimilationStage;
+    assimilationStageId: string;
+    assimilationSubStageId: string;
     nextAction?: string;
     milestones: Milestone[];
     meta?: Record<string, any>;
-    name: string;
     firstName: string;
     lastName: string;
     email?: string;
@@ -297,7 +300,17 @@ export interface PipelineMilestone {
 }
 
 export interface PipelineStage {
-    id: string;
+    _id: string;
+    name: string;
+    description: string;
+    order: number;
+    color: string;
+    isDefault: boolean;
+    milestones: PipelineMilestone[];
+}
+
+export interface PipelineSubStage {
+    _id: string;
     name: string;
     description: string;
     order: number;
@@ -326,3 +339,5 @@ export interface FetchCache<P = any, R = any> {
     cacheKey: string;
     fn: (payload: P) => Promise<R>;
 }
+
+export type GetGuestPayload = Partial<Pick<Guest, 'campusId' | 'assignedToId' | 'zoneId'>> & IPaginationParams;
