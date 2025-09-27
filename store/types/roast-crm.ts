@@ -338,3 +338,12 @@ export interface FetchCache<P = any, R = any> {
 }
 
 export type GetGuestPayload = Partial<Pick<Guest, 'campusId' | 'assignedToId' | 'zoneId'>> & IPaginationParams;
+
+export interface GuestCount {
+    assimilationStageId: string;
+    stageName: string;
+    count: number;
+}
+export interface GuestCountResponse {
+    count: Array<GuestCount>;
+}
