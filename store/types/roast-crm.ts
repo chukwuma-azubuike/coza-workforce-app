@@ -12,15 +12,10 @@ export enum Role {
 }
 
 export enum AssimilationStage {
-    INVITED = 'invited',
-    ATTENDED1 = 'attended 1st',
-    ATTENDED2 = 'attended 2nd',
-    ATTENDED3 = 'attended 3rd',
-    ATTENDED4 = 'attended 4th',
-    ATTENDED5 = 'attended 5th',
-    ATTENDED6 = 'attended 6th',
-    MGI = 'MGI',
-    JOINED = 'joined workforce',
+    INVITED = 'INVITED',
+    ATTENDED = 'ATTENDED',
+    BEING_DISCIPLED = 'BEING_DISCIPLED',
+    ASSIMILATED = 'ASSIMILATED',
 }
 
 export enum AssimilationStagePosition {
@@ -97,7 +92,7 @@ export interface Timeline {
 export interface Guest {
     id: ID;
     _id: ID;
-    phone: string;
+    phoneNumber: string;
     zoneId: ID;
     gender: 'male' | 'female';
     assignedToId?: ID | null;
@@ -109,11 +104,10 @@ export interface Guest {
     completedAt?: string | Date | null;
     comment?: string | null;
     address?: string | null;
-    assimilationStage: AssimilationStage;
     assimilationStageId: string;
     assimilationSubStageId: string;
     nextAction?: string;
-    milestones: Milestone[];
+    milestones?: Milestone[];
     meta?: Record<string, any>;
     firstName: string;
     lastName: string;
@@ -302,6 +296,7 @@ export interface PipelineMilestone {
 export interface PipelineStage {
     _id: string;
     name: string;
+    label: AssimilationStage;
     description: string;
     order: number;
     color: string;
@@ -312,6 +307,8 @@ export interface PipelineStage {
 export interface PipelineSubStage {
     _id: string;
     name: string;
+    assimilationStageId: string;
+    label: AssimilationStage;
     description: string;
     order: number;
     color: string;

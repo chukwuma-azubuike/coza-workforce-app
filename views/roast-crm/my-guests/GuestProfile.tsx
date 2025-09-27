@@ -31,6 +31,7 @@ import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
 import { getStageColor } from '../utils/colors';
 import { handleCall, handleWhatsApp } from '../utils/communication';
+import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 
 interface GuestProfileProps {
     guestId: string | null;
@@ -47,6 +48,9 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
 
+    const assimilationSubStagesIndex = useAssimilationStageIndex();
+    const guestAssimilationSubStage = guest ? assimilationSubStagesIndex[guest?.assimilationSubStageId] : '';
+
     if (!guestId || isLoadingGuest) {
         return (
             <View className="p-4 text-center">
@@ -61,14 +65,14 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
 
     const getProgressPercentage = () => {
         if (!guest) return 0;
-        const completed = guest.milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
-        return Math.round((completed / guest.milestones.length) * 100);
+        const completed = guest?.milestones?.filter(m => m.status === MilestoneStatus.COMPLETED).length ?? 0;
+        return Math.round((completed / (guest?.milestones?.length ?? 0)) * 100);
     };
 
     const handleMilestoneToggle = async (milestoneId: string) => {
         if (!guest) return;
 
-        const updatedMilestones = guest.milestones.map(m =>
+        const updatedMilestones = guest?.milestones?.map(m =>
             m._id === milestoneId
                 ? {
                       ...m,
@@ -141,15 +145,18 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                     <View className="flex items-start space-x-4 mb-4">
                         <Avatar alt="profile-avatar" className="w-16 h-16">
                             <AvatarFallback className="text-lg">
-                                {guest.name.split(' ')[0]}
-                                {guest.name.split(' ')[1]}
+                                {guest.firstName.split(' ')[0]}
+                                {guest.lastName.split(' ')[1]}
                             </AvatarFallback>
                         </Avatar>
                         <View className="flex-1">
-                            <Text className="text-2xl font-bold mb-2">{`${guest.name || ''}`}</Text>
+                            <Text className="text-2xl font-bold mb-2">{`${guest.firstName ?? ''} ${
+                                guest.lastName ?? ''
+                            }`}</Text>
                             <View className="flex items-center space-x-2 mb-2">
-                                <Badge variant="secondary" className={getStageColor(guest.assimilationStage)}>
-                                    {guest.assimilationStage.charAt(0).toUpperCase() + guest.assimilationStage.slice(1)}
+                                <Badge variant="secondary" className={getStageColor(guestAssimilationSubStage as any)}>
+                                    {guestAssimilationSubStage.charAt(0).toUpperCase() +
+                                        guestAssimilationSubStage.slice(1)}
                                 </Badge>
                                 <Text className="text-sm text-gray-500">{getProgressPercentage()}% complete</Text>
                             </View>
@@ -173,7 +180,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                     <View className="space-y-3">
                         <View className="flex items-center space-x-2">
                             <Phone className="w-4 h-4 text-gray-500" />
-                            <Text>{guest.phone}</Text>
+                            <Text>{guest.phoneNumber}</Text>
                         </View>
                         {guest.address && (
                             <View className="flex items-start space-x-2">
@@ -207,7 +214,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                 </CardHeader>
                 <CardContent>
                     <View className="space-y-3">
-                        {guest.milestones.map((milestone, index) => (
+                        {guest?.milestones?.map((milestone, index) => (
                             <View key={milestone._id} className="flex items-center space-x-3">
                                 <Checkbox
                                     checked={milestone.status === MilestoneStatus.COMPLETED}

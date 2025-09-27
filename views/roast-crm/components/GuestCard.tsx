@@ -24,8 +24,8 @@ interface GuestCardProps {
 
 export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragStart, className }: GuestCardProps) {
     const progress = React.useMemo(() => {
-        const completed = guest.milestones.filter(m => m.status === 'COMPLETED').length;
-        return Math.round((completed / guest.milestones.length) * 100);
+        const completed = guest?.milestones?.filter(m => m.status === 'COMPLETED').length ?? 0;
+        return Math.round((completed / (guest?.milestones?.length ?? 0)) * 100);
     }, [guest.milestones]);
 
     const handleViewProfile = () => {
@@ -39,13 +39,13 @@ export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragSta
                     <View className="flex-row items-center space-x-2">
                         <Avatar alt="guest-avatar" className="w-8 h-8">
                             <AvatarFallback className="text-xs">
-                                {guest.name.split(' ')[0]}
-                                {guest.name.split(' ')[1]}
+                                {guest.firstName.split(' ')[0]}
+                                {guest.lastName.split(' ')[1]}
                             </AvatarFallback>
                         </Avatar>
                         <View>
-                            <Text className="font-medium text-sm">{`${guest.name || ''}`}</Text>
-                            <Text className="text-xs text-gray-500">{guest.phone}</Text>
+                            <Text className="font-medium text-sm">{`${guest.firstName || ''}`}</Text>
+                            <Text className="text-xs text-gray-500">{guest.lastName}</Text>
                         </View>
                     </View>
 

@@ -35,7 +35,7 @@ export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (gue
         return diffDays;
     }, []);
 
-    const handleGuestMove = (guestId: string, newStage: Guest['assimilationStage']) => {
+    const handleGuestMove = (guestId: string, newStage: string) => {
         // TODO: Update guest stage in backend
         // setGuests(prev =>
         //     prev.map(guest => (guest._id === guestId ? { ...guest, stage: newStage, lastContact: new Date() } : guest))
@@ -68,7 +68,7 @@ export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (gue
                         <Text className="font-bold text-xl">
                             {guest.firstName} {guest.lastName}
                         </Text>
-                        <Text className="text-xs text-foreground">{guest.phone}</Text>
+                        <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
                     </View>
                 </View>
 
@@ -76,7 +76,7 @@ export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (gue
                     <PickerSelect
                         valueKey="value"
                         labelKey="label"
-                        value={guest?.assimilationStage}
+                        value={guest?.assimilationSubStageId}
                         className="!w-28 !h-10"
                         items={[
                             { label: 'All', value: 'all' },

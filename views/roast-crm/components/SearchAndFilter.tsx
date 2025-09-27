@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { Search, List } from 'lucide-react-native';
 import { Input } from '~/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group';
-import { AssimilationStage } from '~/store/types';
 import { View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '~/config/appConfig';
@@ -14,8 +13,8 @@ interface SearchAndFilterProps {
     viewMode: 'kanban' | 'list';
     setViewMode: (arg: string) => void;
     setSearchTerm: (arg: string) => void;
-    stageFilter: AssimilationStage | 'all';
-    setStageFilter: (value: AssimilationStage | 'all') => void;
+    stageFilter: string | 'all';
+    setStageFilter: (value: string | 'all') => void;
 }
 
 const SearchAndFilter: React.FC<SearchAndFilterProps> = ({

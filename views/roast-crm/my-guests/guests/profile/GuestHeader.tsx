@@ -5,36 +5,46 @@ import { Progress } from '~/components/ui/progress';
 import { Card, CardContent } from '~/components/ui/card';
 import { Phone, MessageCircle, MapPin, Calendar } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
-import { Guest } from '~/store/types';
+import { AssimilationStage, Guest } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 
 interface GuestHeaderProps {
     guest: Guest;
     stageColor: string;
+    guestAssimilationSubStage: AssimilationStage;
     progressPercentage: number;
     onCall: () => void;
     onWhatsApp: () => void;
 }
 
-export function GuestHeader({ guest, stageColor, progressPercentage, onCall, onWhatsApp }: GuestHeaderProps) {
+export function GuestHeader({
+    guest,
+    stageColor,
+    progressPercentage,
+    onCall,
+    onWhatsApp,
+    guestAssimilationSubStage,
+}: GuestHeaderProps) {
     return (
         <Card className="mb-6">
             <CardContent className="p-6">
                 <View className="flex items-start space-x-4 mb-4">
                     <Avatar alt="profile-avatar" className="w-16 h-16">
                         <AvatarFallback className="text-lg">
-                            {guest.name
+                            {`${guest.firstName} ${guest.lastName}`
                                 .split(' ')
                                 .map(n => n[0])
                                 .join('')}
                         </AvatarFallback>
                     </Avatar>
                     <View className="flex-1">
-                        <Text className="text-2xl font-bold mb-2">{guest.name}</Text>
+                        <Text className="text-2xl font-bold mb-2">
+                            {guest.firstName} {guest.lastName}
+                        </Text>
                         <View className="flex items-center space-x-2 mb-2">
                             <Badge variant="secondary" className={stageColor}>
-                                {guest.assimilationStage.charAt(0).toUpperCase() + guest.assimilationStage.slice(1)}
+                                {guestAssimilationSubStage.charAt(0).toUpperCase() + guestAssimilationSubStage.slice(1)}
                             </Badge>
                             <Text className="text-sm text-gray-500">{progressPercentage}% complete</Text>
                         </View>
@@ -58,7 +68,7 @@ export function GuestHeader({ guest, stageColor, progressPercentage, onCall, onW
                 <View className="space-y-3">
                     <View className="flex items-center space-x-2">
                         <Phone className="w-4 h-4 text-gray-500" />
-                        <Text>{guest.phone}</Text>
+                        <Text>{guest.phoneNumber}</Text>
                     </View>
                     {guest.address && (
                         <View className="flex items-start space-x-2">

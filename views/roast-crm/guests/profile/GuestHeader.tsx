@@ -17,9 +17,17 @@ interface GuestHeaderProps {
     progressPercentage: number;
     onCall: () => void;
     onWhatsApp: () => void;
+    assimilationStage: string;
 }
 
-export function GuestHeader({ guest, stageColor, progressPercentage, onCall, onWhatsApp }: GuestHeaderProps) {
+export function GuestHeader({
+    guest,
+    stageColor,
+    progressPercentage,
+    onCall,
+    onWhatsApp,
+    assimilationStage,
+}: GuestHeaderProps) {
     return (
         <Card>
             <CardContent className="p-6 gap-6">
@@ -27,7 +35,7 @@ export function GuestHeader({ guest, stageColor, progressPercentage, onCall, onW
                     <Avatar alt="profile-image" className="w-16 h-16">
                         <AvatarFallback className="text-lg">
                             <Text>
-                                {guest.name
+                                {`${guest.firstName} ${guest.lastName}`
                                     .split(' ')
                                     .map(n => n[0])
                                     .join('')}
@@ -35,11 +43,13 @@ export function GuestHeader({ guest, stageColor, progressPercentage, onCall, onW
                         </AvatarFallback>
                     </Avatar>
                     <View className="flex-1 gap-1">
-                        <Text className="text-2xl font-bold mb-2">{guest.name}</Text>
+                        <Text className="text-2xl font-bold mb-2">
+                            {guest.firstName} {guest.lastName}{' '}
+                        </Text>
                         <View className="flex-row items-center gap-2 mb-2">
                             <Badge variant="secondary" className={stageColor}>
                                 <Text className={stageColor}>
-                                    {guest.assimilationStage.charAt(0).toUpperCase() + guest.assimilationStage.slice(1)}
+                                    {assimilationStage.charAt(0).toUpperCase() + assimilationStage.slice(1)}
                                 </Text>
                             </Badge>
                             <Text className="text-muted-foreground">{progressPercentage}% complete</Text>
@@ -74,7 +84,7 @@ export function GuestHeader({ guest, stageColor, progressPercentage, onCall, onW
                 <View className="gap-3">
                     <View className="flex-row items-center gap-2">
                         <Phone className="w-4 h-4 text-muted-foreground" />
-                        <Text>{guest.phone}</Text>
+                        <Text>{guest.phoneNumber}</Text>
                     </View>
                     {guest.address && (
                         <View className="flex-row items-start gap-2">
