@@ -23,6 +23,7 @@ import {
     IDefaultResponse,
     GetGuestPayload,
     PipelineSubStage,
+    GuestCountResponse,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
@@ -529,6 +530,15 @@ export const roastCrmApi = createApi({
                     : [{ type: 'GuestList', _id: 'LIST' }],
         }),
 
+        getMyGuestsCount: builder.query<GuestCountResponse, void>({
+            query: () => ({
+                url: `/guests/counts`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            transformResponse: (res: IDefaultResponse<GuestCountResponse>) => res.data,
+        }),
+
         getGuests: builder.query<Guest[], GetGuestPayload>({
             query: params => ({
                 url: `/guests`,
@@ -927,6 +937,7 @@ export const roastCrmApi = createApi({
 export const {
     useGetGuestsQuery,
     useGetMyGuestsQuery,
+    useGetMyGuestsCountQuery,
     useGetGuestByIdQuery,
     useCreateGuestMutation,
     useUpdateGuestMutation,
