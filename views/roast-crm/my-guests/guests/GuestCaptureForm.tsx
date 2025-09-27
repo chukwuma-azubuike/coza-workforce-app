@@ -64,7 +64,9 @@ const GuestCaptureForm: React.FC = () => {
             try {
                 const payload = {
                     ...value,
-                    phone: value.phone ? formatToE164(value.phone, selectedCountry?.callingCode as string) : '',
+                    phone: value.phoneNumber
+                        ? formatToE164(value.phoneNumber, selectedCountry?.callingCode as string)
+                        : '',
                 };
                 const res = await addGuest(payload);
 
@@ -123,16 +125,32 @@ const GuestCaptureForm: React.FC = () => {
                                 <View className="gap-2">
                                     <View className="items-center gap-2 flex-row">
                                         <User color="gray" size={16} />
-                                        <Label>Name</Label>
+                                        <Label>First Name</Label>
                                     </View>
                                     <Input
-                                        placeholder="Enter guest's full name"
+                                        placeholder="Enter guest's first name"
                                         className="!h-12"
-                                        value={values?.name}
-                                        onChangeText={handleChange('name')}
+                                        value={values?.firstName}
+                                        onChangeText={handleChange('firstName')}
                                     />
-                                    {errors?.name && touched?.name && (
-                                        <FormErrorMessage>{errors?.name}</FormErrorMessage>
+                                    {errors?.firstName && touched?.firstName && (
+                                        <FormErrorMessage>{errors?.firstName}</FormErrorMessage>
+                                    )}
+                                </View>
+
+                                <View className="gap-2">
+                                    <View className="items-center gap-2 flex-row">
+                                        <User color="gray" size={16} />
+                                        <Label>Last Name</Label>
+                                    </View>
+                                    <Input
+                                        placeholder="Enter guest's last name"
+                                        className="!h-12"
+                                        value={values?.lastName}
+                                        onChangeText={handleChange('lastName')}
+                                    />
+                                    {errors?.lastName && touched?.lastName && (
+                                        <FormErrorMessage>{errors?.lastName}</FormErrorMessage>
                                     )}
                                 </View>
 
@@ -143,18 +161,18 @@ const GuestCaptureForm: React.FC = () => {
                                     </View>
                                     <PhoneInput
                                         defaultCountry="NG"
-                                        error={errors.phone}
+                                        error={errors.phoneNumber}
                                         className="!h-12"
                                         placeholder="Enter phone number"
-                                        touched={touched.phone}
+                                        touched={touched.phoneNumber}
                                         selectedCountry={selectedCountry}
-                                        onBlur={handleBlur('phone')}
-                                        value={values.phone as string}
+                                        onBlur={handleBlur('phoneNumber')}
+                                        value={values.phoneNumber as string}
                                         onChangeSelectedCountry={handleSelectedCountry}
-                                        onChangePhoneNumber={handleChange('phone')}
+                                        onChangePhoneNumber={handleChange('phoneNumber')}
                                     />
-                                    {errors?.phone && touched?.phone && (
-                                        <FormErrorMessage>{errors?.phone}</FormErrorMessage>
+                                    {errors?.phoneNumber && touched?.phoneNumber && (
+                                        <FormErrorMessage>{errors?.phoneNumber}</FormErrorMessage>
                                     )}
                                 </View>
 

@@ -1,10 +1,9 @@
 import React, { memo, ReactNode } from 'react';
 import { View } from 'react-native';
-import { Guest } from '~/store/types';
+import { AssimilationStage } from '~/store/types';
 import { Text } from '~/components/ui/text';
 import { Badge } from '~/components/ui/badge';
 import { Skeleton } from '~/components/ui/skeleton';
-import Utils from '~/utils';
 import { ScreenHeight } from '@rneui/base';
 import { getBadgeColor, getStageColumnColor } from '../utils/colors';
 
@@ -13,7 +12,7 @@ interface KanbanColumnProps {
     guestCount?: number;
     children: ReactNode;
     isLoading?: boolean;
-    stage: Guest['assimilationStage'];
+    stage: AssimilationStage;
 }
 
 const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, stage, guestCount, children, isLoading }) => {
@@ -24,7 +23,7 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, stage, guestCount, c
             } border-2 border-dashed rounded-2xl transition-colors pb-0`}
         >
             <View className="flex-row items-center gap-2 px-3 pt-2">
-                <Text className="font-semibold">{Utils.capitalizeFirstChar(title)}</Text>
+                <Text className="font-semibold">{title}</Text>
                 <Badge variant="secondary" className={getBadgeColor(stage)}>
                     <Text>{guestCount}</Text>
                 </Badge>

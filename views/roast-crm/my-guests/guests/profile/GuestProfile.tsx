@@ -17,6 +17,7 @@ import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { getStageColor } from '~/views/roast-crm/utils/colors';
 import { handleCall, handleWhatsApp } from '~/views/roast-crm/utils/communication';
+import useAssimilationStageIndex from '~/views/roast-crm/hooks/use-assimilation-stage-index';
 
 interface GuestProfileProps {
     guestId: string | null;
@@ -29,6 +30,9 @@ function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     const [updateGuest] = useUpdateGuestMutation();
     const [addEngagement] = useAddEngagementMutation();
 
+    const assimilationSubStagesIndex = useAssimilationStageIndex();
+    const assimilationSubStage = assimilationSubStagesIndex[guest?.assimilationSubStageId || ''];
+
     const getProgressPercentage = () => {
         if (!guest?.milestones?.length) return 0;
         const completed = guest.milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
@@ -39,7 +43,7 @@ function GuestProfile({ guestId, onBack }: GuestProfileProps) {
         if (!guest) return;
 
         try {
-            const updatedMilestones = guest.milestones.map(m =>
+            const updatedMilestones = guest?.milestones?.map(m =>
                 m._id === milestoneId
                     ? {
                           ...m,
@@ -124,14 +128,15 @@ function GuestProfile({ guestId, onBack }: GuestProfileProps) {
             {/* Guest Info Section */}
             <GuestHeader
                 guest={guest}
-                stageColor={getStageColor(guest.assimilationStage)}
+                guestAssimilationSubStage={assimilationSubStage}
+                stageColor={getStageColor(assimilationSubStage)}
                 progressPercentage={getProgressPercentage()}
                 onCall={handleCall(guest)}
                 onWhatsApp={handleWhatsApp(guest)}
             />
 
             {/* Milestones Section */}
-            <MilestonesCard milestones={guest.milestones} onToggle={handleMilestoneToggle} />
+            <MilestonesCard milestones={guest.milestones ?? []} onToggle={handleMilestoneToggle} />
 
             {/* Timeline Section */}
             <TimelineCard engagements={engagements} onAddNote={handleAddNote} />
