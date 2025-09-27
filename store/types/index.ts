@@ -10,6 +10,11 @@ export interface ILog {
     updatedAt?: string;
 }
 
+export interface IPaginationParams {
+    page?: number;
+    limit?: number;
+}
+
 export enum ERROR {
     NETWORK_CONNECTION_ERROR = 'TypeError: Network request failed',
 }

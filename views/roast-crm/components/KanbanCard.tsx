@@ -38,7 +38,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                             <Avatar alt="profile-avatar" className="w-12 h-12">
                                 <AvatarFallback className="text-xs">
                                     <Text>
-                                        {guest.name
+                                        {`${guest.firstName} ${guest.lastName}`
                                             .split(' ')
                                             .map(n => n[0])
                                             .join('')
@@ -47,7 +47,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                 </AvatarFallback>
                             </Avatar>
                             <View>
-                                <Text className="font-bold text-xl">{guest.name}</Text>
+                                <Text className="font-bold text-xl">{`${guest.firstName} ${guest.lastName}`}</Text>
                                 <Text className="text-xs text-foreground">{guest.phone}</Text>
                             </View>
                         </View>

@@ -1,8 +1,12 @@
 import React, { ReactNode, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Dimensions, ScrollView } from 'react-native';
 
-import { AssimilationStage, AssimilationStagePosition, Guest } from '~/store/types';
-import { useGetGuestsQuery } from '~/store/services/roast-crm';
+import { AssimilationStage, Guest } from '~/store/types';
+import {
+    useGetAssimilationStagesQuery,
+    useGetAssimilationSubStagesQuery,
+    useGetMyGuestsQuery,
+} from '~/store/services/roast-crm';
 import useRole from '~/hooks/role';
 
 import { Text } from '~/components/ui/text';
@@ -23,7 +27,6 @@ const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
-import { assimilationStages } from '../data/assimilationStages';
 import { RefreshControl } from 'react-native';
 
 function MyGuestsDashboard() {
@@ -34,36 +37,37 @@ function MyGuestsDashboard() {
     const [stageFilter, setStageFilter] = useState<Guest['assimilationStage'] | 'all'>('all');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { data: guests = [], isLoading, refetch } = useGetGuestsQuery({ workerId: currentUser._id, zoneId: '' });
+    //TODO: Return for testing purposes
+    const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
+    const { data: assimilationStages = [] } = useGetAssimilationStagesQuery();
+    const { data: guests = [], isLoading, refetch } = useGetMyGuestsQuery();
+
+    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationStageId'), [guests]);
+
+    const transformedAssimilationSubStages = useMemo(
+        (): columnDataType<Guest, HeaderParams>[] =>
+            assimilationSubStages.map((stage, index) => {
+                return {
+                    _id: stage._id,
+                    items: groupedGuestsByAssimilationId[stage?._id] ?? [],
+                    header: {
+                        title: stage.name,
+                        position: stage.order ?? index,
+                        count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
+                    },
+                };
+            }),
+        [assimilationSubStages, groupedGuestsByAssimilationId]
+    );
 
     // Filter guests by current user and search term
     const userGuests = useMemo(
-        () => guests?.filter(guest => guest.name.toLowerCase().includes(searchTerm.toLowerCase())),
+        () =>
+            guests?.filter(guest =>
+                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+            ),
         [guests, searchTerm]
     );
-
-    const [statefulUserGuests, setStatefulUserGuests] = useState<Guest[]>(userGuests);
-
-    // Categorize guests by stage
-    const categorizedGuests = {
-        all: statefulUserGuests,
-        invited: useMemo(
-            () => statefulUserGuests?.filter(guest => guest.assimilationStage === AssimilationStage.INVITED),
-            [statefulUserGuests]
-        ),
-        attended: useMemo(
-            () => statefulUserGuests?.filter(guest => guest.assimilationStage.includes('attended')),
-            [statefulUserGuests]
-        ),
-        MGI: useMemo(
-            () => statefulUserGuests?.filter(guest => guest.assimilationStage === AssimilationStage.MGI),
-            [statefulUserGuests]
-        ),
-        joined: useMemo(
-            () => statefulUserGuests?.filter(guest => guest.assimilationStage === AssimilationStage.JOINED),
-            [statefulUserGuests]
-        ),
-    };
 
     const handleViewGuest = useCallback((guestId: string) => {
         router.push({ pathname: '/roast-crm/guests/profile', params: { guestId } });
@@ -75,7 +79,7 @@ function MyGuestsDashboard() {
         if (searchTerm) {
             filtered = filtered?.filter(
                 guest =>
-                    guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
                     guest.phone.includes(searchTerm) ||
                     (guest.address && guest.address.toLowerCase().includes(searchTerm.toLowerCase()))
             );
@@ -88,88 +92,16 @@ function MyGuestsDashboard() {
         return filtered;
     }, [userGuests, searchTerm, stageFilter]);
 
-    const mappedGuests: columnDataType<Guest, HeaderParams>[] = useMemo(
-        () =>
-            Object.entries(groupBy<Guest>(guests, 'assimilationStage'))?.map(([key, value]) => {
-                return {
-                    header: {
-                        title: key,
-                        subtitle: '',
-                        count: value?.length,
-                        position: AssimilationStagePosition[key as any] as unknown as number,
-                    },
-                    items: value.map(val => {
-                        return { ...val, id: val._id };
-                    }),
-                };
-            }),
-        [guests]
-    );
-
-    const [statefulMappedGuests, setMappedGuests] = useState<columnDataType<Guest, HeaderParams>[]>(assimilationStages);
-
     const onDragEnd = useCallback((params: { fromColumnIndex: number; toColumnIndex: number; itemId: string }) => {
         const { fromColumnIndex, toColumnIndex, itemId } = params;
 
         // no-op if dropped in same column
         if (fromColumnIndex === toColumnIndex) return;
-
-        setMappedGuests(prev => {
-            // create shallow copy of columns
-            const next = prev.map(c => ({ ...c, items: [...c.items] }));
-
-            // find and remove the item from source column
-            const sourceItems = next[fromColumnIndex].items;
-            const itemIndex = sourceItems.findIndex(it => it._id === itemId || it.id === itemId);
-            if (itemIndex === -1) return prev; // item not found - keep previous
-
-            const [removed] = sourceItems.splice(itemIndex, 1);
-
-            // compute new stage name from destination column's header
-            const destStage = next[toColumnIndex]?.header?.title as Guest['assimilationStage'];
-
-            // create updated item with new assimilationStage
-            const updatedRemoved: Guest = {
-                ...removed,
-                assimilationStage: destStage,
-            };
-
-            // append to destination column (change to unshift or splice to insert at other position)
-            next[toColumnIndex].items.push(updatedRemoved);
-
-            // update flattened stateful users so UI and derived lists reflect the change
-            setStatefulUserGuests(next.flatMap(stage => stage.items));
-
-            return next;
-        });
     }, []);
 
     const handleAddGuest = () => {
         setModalVisible(prev => !prev);
     };
-
-    useEffect(() => {
-        if (
-            statefulMappedGuests &&
-            statefulMappedGuests[0]?.items.length < 1 &&
-            mappedGuests &&
-            mappedGuests.length > 0
-        ) {
-            // Concatenate only the stages that are not present in the mapped guest headers
-            setMappedGuests(
-                assimilationStages
-                    .filter(stage => !mappedGuests.map(guests => guests.header.title).includes(stage.header.title))
-                    .concat(mappedGuests)
-                    .sort((a, b) => a.header.position - b.header.position)
-            );
-        }
-    }, [statefulMappedGuests, mappedGuests, assimilationStages]);
-
-    useEffect(() => {
-        if (statefulUserGuests && statefulMappedGuests[0]?.items.length < 1 && guests && guests?.length > 1) {
-            setStatefulUserGuests(guests);
-        }
-    }, [guests]);
 
     const renderContentContainer = useCallback(
         (child: ReactNode, props: HeaderParams) => (
@@ -203,10 +135,10 @@ function MyGuestsDashboard() {
                     <View className="gap-4 px-2 pt-2">
                         <Text className="text-2xl font-bold">My Guests</Text>
                         <View className="flex-row flex-wrap gap-3">
-                            <StatsCard stage={AssimilationStage.INVITED} count={categorizedGuests?.invited?.length} />
-                            <StatsCard stage={'attended' as any} count={categorizedGuests?.attended?.length} />
-                            <StatsCard stage={AssimilationStage.MGI} count={categorizedGuests?.MGI?.length} />
-                            <StatsCard stage={AssimilationStage.JOINED} count={categorizedGuests?.joined?.length} />
+                            <StatsCard stage={AssimilationStage.INVITED} count={0} />
+                            <StatsCard stage={'attended' as any} count={0} />
+                            <StatsCard stage={AssimilationStage.MGI} count={0} />
+                            <StatsCard stage={AssimilationStage.JOINED} count={0} />
                         </View>
                     </View>
 
@@ -231,7 +163,7 @@ function MyGuestsDashboard() {
                             onDragEnd={onDragEnd}
                             onPressCard={handleProfileView}
                             columnWidth={ScreenWidth - 80}
-                            columnData={statefulMappedGuests}
+                            columnData={transformedAssimilationSubStages}
                             columnContainerStyle={{ flex: 1 }}
                             renderColumnContainer={renderContentContainer}
                             renderItem={guest => <KanbanUICard guest={guest} />}
