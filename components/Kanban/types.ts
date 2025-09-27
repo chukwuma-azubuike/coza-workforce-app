@@ -28,6 +28,7 @@ export interface KanbanBoardProps<T extends ItemType, K> {
 }
 
 export type columnDataType<T, K> = {
+    _id: string;
     header: K;
     items: T[];
 };
@@ -39,6 +40,7 @@ export type State = {
 };
 
 export type HeaderParams = {
+    _id?: string;
     position: number;
     title: string;
     count?: number;
