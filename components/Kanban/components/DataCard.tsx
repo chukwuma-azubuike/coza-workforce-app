@@ -37,6 +37,12 @@ export const DataCard = React.memo(
             }
         };
 
+        const onPressHandler = () => {
+            if (onPress) {
+                onPress(item);
+            }
+        };
+
         const onLayout = (event: LayoutChangeEvent) => {
             event.currentTarget.measure(
                 (_x: number, _y: number, width: number, _height: number, pageX: number, pageY: number) => {
@@ -53,7 +59,7 @@ export const DataCard = React.memo(
                 style={{ opacity: isBeingDragged ? 0.6 : 1, marginVertical: 3 }}
                 onLongPress={onLongPress}
                 onLayout={onLayout}
-                onPress={onPress}
+                onPress={onPressHandler}
             >
                 <View ref={viewRef}>{renderItem(item)}</View>
             </Pressable>

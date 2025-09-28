@@ -10,6 +10,8 @@ export const getStageColor = (stage: AssimilationStage) => {
             return 'bg-purple-100 text-purple-800';
         case AssimilationStage.ASSIMILATED:
             return 'bg-gray-100 text-gray-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
     }
 };
 
