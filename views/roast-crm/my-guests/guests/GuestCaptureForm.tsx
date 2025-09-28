@@ -31,6 +31,7 @@ import { GuestFormValidationSchema } from '../../utils/validation';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { roastCRMActions } from '~/store/actions/roast-crm';
 import { useDispatch } from 'react-redux';
+import * as Haptics from 'expo-haptics';
 
 const QUICK_TIPS = [
     'Keep conversations natural, friendly and spiritual',
@@ -76,6 +77,7 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
                 if (res.data) {
                     Alert.alert('Guest created successfully');
                     setModalVisible();
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                 }
 
                 if (!isOnline && res.error) {
@@ -96,6 +98,8 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
                 }
 
                 if (res.error) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+
                     setModalState({
                         message: (res?.error as any)?.data?.message || 'Oops something went wrong',
                         status: 'error',
