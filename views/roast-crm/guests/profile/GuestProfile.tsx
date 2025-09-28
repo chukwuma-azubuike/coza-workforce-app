@@ -1,21 +1,16 @@
 import React, { useCallback } from 'react';
-import { ContactChannel, Guest, MilestoneStatus } from '~/store/types';
-import {
-    useGetGuestByIdQuery,
-    useUpdateGuestMutation,
-    useGetEngagementsForGuestQuery,
-    useAddEngagementMutation,
-} from '~/store/services/roast-crm';
+import { AssimilationStage, Guest, MilestoneStatus } from '~/store/types';
+import { useGetGuestByIdQuery, useUpdateGuestMutation, useGetTimelineQuery } from '~/store/services/roast-crm';
 import { GuestHeader } from './GuestHeader';
 import MilestonesCard from './MilestonesCard';
-import { TimelineCard } from './TimelineCard';
+import TimelineCard from './TimelineCard';
 import { Card, CardContent } from '~/components/ui/card';
 import { getStageColor } from '../../utils/colors';
 import { getProgressPercentage } from '../../utils/milestones';
 import { handleCall, handleWhatsApp } from '../../utils/communication';
 import { Skeleton } from '~/components/ui/skeleton';
 import { View } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import useRole from '~/hooks/role';
 import useAssimilationStageIndex from '../../hooks/use-assimilation-stage-index';
@@ -24,19 +19,15 @@ interface GuestProfileProps {}
 
 const GuestProfile: React.FC<GuestProfileProps> = () => {
     const { user } = useRole();
-    const { _id: guestId } = useLocalSearchParams() as unknown as Guest;
-    const { data: guest, isLoading } = useGetGuestByIdQuery(guestId || '');
-    const { data: engagements = [] } = useGetEngagementsForGuestQuery(guestId || '', { skip: !guestId });
-    const [updateGuest] = useUpdateGuestMutation();
-    const [addEngagement] = useAddEngagementMutation();
+    const guestParams = useLocalSearchParams() as unknown as Guest;
+    const guestId = guestParams?._id;
 
+    const { data: guestRemote, isLoading } = useGetGuestByIdQuery(guestParams?._id, { skip: !!guestParams });
+    const { data: timeline = [], isLoading: loadingTimeline } = useGetTimelineQuery({ guestId }, { skip: !guestId });
+    const [updateGuest] = useUpdateGuestMutation();
     const assimilationStagesIndex = useAssimilationStageIndex();
 
-    const onBack = () => {
-        if (router.canGoBack()) {
-            router.back();
-        }
-    };
+    const guest = guestRemote ?? guestParams;
 
     const handleMilestoneToggle = useCallback(
         async (milestoneId: string) => {
@@ -70,16 +61,10 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
         [guest]
     );
 
-    const handleAddNote = async (note: string) => {
+    const handleAddNote = async () => {
         if (!guest) return;
 
         try {
-            await addEngagement({
-                guestId: guest._id,
-                workerId: 'user1', // Should come from auth context in real app
-                type: ContactChannel.WHATSAPP, // Using WhatsApp as the default channel
-                notes: note,
-            });
             // toast.success('Note added');
         } catch (error) {
             // toast.error('Failed to add note');
@@ -123,8 +108,10 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                     onCall={handleCall(guest)}
                     onWhatsApp={handleWhatsApp(guest)}
                     progressPercentage={getProgressPercentage(guest.milestones)}
-                    assimilationStage={assimilationStagesIndex[guest?.assimilationSubStageId]}
-                    stageColor={getStageColor(assimilationStagesIndex[guest?.assimilationSubStageId])}
+                    assimilationStage={assimilationStagesIndex[guest?.assimilationSubStageId] ?? ''}
+                    stageColor={getStageColor(
+                        assimilationStagesIndex[guest?.assimilationSubStageId] as AssimilationStage
+                    )}
                 />
 
                 {/* Milestones Section */}
@@ -133,8 +120,9 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                 {/* Timeline Section */}
                 <TimelineCard
                     guestId={guest?._id}
-                    workerId={user?._id}
-                    engagements={engagements}
+                    assignedToId={user?._id}
+                    timeline={timeline}
+                    loading={loadingTimeline}
                     onAddNote={handleAddNote}
                 />
             </View>
