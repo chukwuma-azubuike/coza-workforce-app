@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
     Guest,
     User,
-    Engagement,
     Zone,
     GuestFormData,
     Role,
@@ -558,10 +557,22 @@ export const roastCrmApi = createApi({
             providesTags: (_result, _error, guestId) => [{ type: 'Timeline', _id: guestId }],
         }),
 
-        addTimeline: builder.mutation<Engagement, Omit<Timeline, '_id' | 'createdAt' | 'createdBy'>>({
+        addTimeline: builder.mutation<Timeline, Omit<Timeline, '_id' | 'createdAt' | 'createdBy'>>({
             query: timeline => ({
                 url: '/timelines',
                 method: REST_API_VERBS.POST,
+                body: timeline,
+            }),
+            invalidatesTags: (_result, _error, { guestId }) => [
+                { type: 'Timeline', _id: guestId },
+                { type: 'Guest', _id: guestId },
+            ],
+        }),
+
+        updateTimeline: builder.mutation<Timeline, Partial<Timeline> & { _id: string }>({
+            query: ({ _id, ...timeline }) => ({
+                url: `/timelines/${_id}`,
+                method: REST_API_VERBS.PUT,
                 body: timeline,
             }),
             invalidatesTags: (_result, _error, { guestId }) => [
@@ -777,6 +788,7 @@ export const {
     useGetUsersQuery,
     useGetTimelineQuery,
     useAddTimelineMutation,
+    useUpdateTimelineMutation,
     useGetNotificationsQuery,
     useMarkNotificationAsReadMutation,
     useGetCurrentUserQuery,
