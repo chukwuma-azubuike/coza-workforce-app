@@ -99,10 +99,10 @@ export function GuestHeader({
                 </View>
 
                 {/* Prayer Request */}
-                {guest.comment && (
+                {guest.nextAction && (
                     <Alert className="rounded-lg border-l-4 border-l-yellow-400 bg-yellow-50 dark:bg-yellow-300/30">
-                        <Text className="font-semibold">Comment</Text>
-                        <Text>{guest.comment}</Text>
+                        <Text className="font-semibold">Next Action</Text>
+                        <Text className="line-clamp-none">{guest.nextAction}</Text>
                     </Alert>
                 )}
             </CardContent>
