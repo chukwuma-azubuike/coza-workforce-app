@@ -4,35 +4,38 @@ import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
 import { Badge } from '~/components/ui/badge';
 import { Clock, Plus, Save, X } from 'lucide-react-native';
-import { ContactChannel, Engagement } from '~/store/types';
+import { ContactChannel, Timeline } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { formatTimelineDate, getTimelineIcon } from '../../utils/time';
 import PickerSelect from '~/components/ui/picker-select';
-import { useAddEngagementMutation } from '~/store/services/roast-crm';
+import { useAddTimelineMutation } from '~/store/services/roast-crm';
+import { Skeleton } from '~/components/ui/skeleton';
 
 interface TimelineCardProps {
     guestId: string;
-    workerId: string;
-    engagements: Engagement[];
+    assignedToId: string;
+    timeline: Timeline[];
+    loading: boolean;
     onAddNote: (note: string) => Promise<void>;
 }
 
-export function TimelineCard({ engagements, guestId, workerId }: TimelineCardProps) {
+const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading, assignedToId }) => {
     const [newNote, setNewNote] = useState('');
+    const [channel, setChannel] = useState(ContactChannel.CALL);
     const [isAddingNote, setIsAddingNote] = useState(false);
-    const [timelineType, setTimeLineType] = useState<string>();
-    const [addEngagement, { isLoading }] = useAddEngagementMutation();
+    const [addTimeline, { isLoading }] = useAddTimelineMutation();
 
     const handleAddEngagement = async () => {
         if (!newNote.trim()) return;
 
         try {
-            await addEngagement({
+            await addTimeline({
+                notes: newNote,
+                title: 'Timeline',
+                assignedToId,
+                channel,
                 guestId,
-                workerId,
-                type: ContactChannel.CALL,
-                notes: 'Initial contact made',
             });
 
             setNewNote('');
@@ -44,8 +47,6 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
 
     const getTimeline = useCallback((timestamp: string | Date) => formatTimelineDate(timestamp), [formatTimelineDate]);
     const getIcon = useCallback((type: string) => getTimelineIcon(type), [getTimelineIcon]);
-
-    const handleSubmitTimeline = async () => {};
 
     return (
         <Card>
@@ -59,7 +60,7 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
                         size="sm"
                         variant="outline"
                         disabled={isAddingNote}
-                        className='!h-10 !w-[8.4rem]'
+                        className="!h-10 !w-[8.4rem]"
                         onPress={() => setIsAddingNote(true)}
                         icon={<Plus className="w-4 h-4" />}
                     >
@@ -83,8 +84,8 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
                                 <PickerSelect
                                     valueKey="value"
                                     labelKey="label"
-                                    value={timelineType}
-                                    className="!w-full !h-12"
+                                    value={channel}
+                                    className="!h-12"
                                     items={[
                                         { label: ContactChannel.CALL, value: ContactChannel.CALL },
                                         { label: ContactChannel.WHATSAPP, value: ContactChannel.WHATSAPP },
@@ -92,7 +93,7 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
                                         { label: ContactChannel.SMS, value: ContactChannel.SMS },
                                     ]}
                                     placeholder="Select Engagement Type"
-                                    onValueChange={setTimeLineType}
+                                    onValueChange={setChannel}
                                 />
                             </View>
                             <View className="flex-row gap-2">
@@ -108,11 +109,11 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
                                 </Button>
                                 <Button
                                     size="sm"
-                                    loadingText=''
+                                    loadingText=""
                                     variant="outline"
                                     isLoading={isLoading}
                                     onPress={handleAddEngagement}
-                                    disabled={!timelineType || !newNote}
+                                    disabled={!channel || !newNote}
                                 >
                                     <Save className="w-4 h-4 mr-1" />
                                 </Button>
@@ -121,24 +122,47 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
                     </View>
                 )}
 
+                {/* Timeline Loading */}
+                {loading && (
+                    <View className="gap-4">
+                        {[...Array(4)].map((_, index) => (
+                            <View key={index} className="flex-row gap-3">
+                                <View className="items-center box-border pb-4">
+                                    <Skeleton className="w-10 h-10 bg-blue-100 dark:bg-blue-600/40 rounded-full flex-row items-center justify-center text-blue-600" />
+                                    <View className="w-px bg-border min-h-[1rem] flex-1 mt-2" />
+                                </View>
+                                <View className="flex-1 gap-2">
+                                    <View className="flex-row items-center justify-between mb-1">
+                                        <Skeleton className="w-8 h-4" />
+                                    </View>
+                                    <Skeleton className="w-full h-4 text-sm text-muted-foreground" />
+                                    <Skeleton className="w-full h-4 text-sm text-muted-foreground" />
+                                    <Skeleton className="w-[60%] h-4 text-sm text-muted-foreground" />
+                                    <Skeleton className="w-[40%] h-4 text-sm text-muted-foreground" />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                )}
+
                 {/* Timeline Items */}
                 <View className="gap-4">
-                    {engagements.map((item, index) => (
+                    {timeline.map((item, index) => (
                         <View key={item._id} className="flex-row gap-3">
                             <View className="items-center box-border pb-4">
                                 <View className="w-10 h-10 bg-blue-100 dark:bg-blue-600/40 rounded-full flex-row items-center justify-center text-blue-600">
-                                    {getIcon(item.type)}
+                                    {getIcon(item.channel)}
                                 </View>
-                                {index < engagements.length - 1 && (
+                                {index < timeline.length - 1 && (
                                     <View className="w-px bg-border min-h-[1rem] flex-1 mt-2" />
                                 )}
                             </View>
                             <View className="flex-1">
                                 <View className="flex-row items-center justify-between mb-1">
                                     <Badge variant="outline" className="capitalize">
-                                        <Text>{item.type}</Text>
+                                        <Text>{item.channel}</Text>
                                     </Badge>
-                                    <Text className="text-sm text-muted-foreground">{getTimeline(item.timestamp)}</Text>
+                                    <Text className="text-sm text-muted-foreground">{getTimeline(item.createdAt)}</Text>
                                 </View>
                                 <Text className="line-clamp-none">{item.notes}</Text>
                             </View>
@@ -146,7 +170,7 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
                     ))}
                 </View>
 
-                {engagements.length === 0 && (
+                {timeline.length === 0 && !loading && (
                     <View className="text-center flex-row gap-4">
                         <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
                         <View>
@@ -160,4 +184,6 @@ export function TimelineCard({ engagements, guestId, workerId }: TimelineCardPro
             </CardContent>
         </Card>
     );
-}
+};
+
+export default TimelineCard;
