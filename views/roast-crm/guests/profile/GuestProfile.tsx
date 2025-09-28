@@ -1,8 +1,7 @@
-import React, { useCallback } from 'react';
-import { AssimilationStage, Guest, MilestoneStatus } from '~/store/types';
-import { useGetGuestByIdQuery, useUpdateGuestMutation, useGetTimelineQuery } from '~/store/services/roast-crm';
+import React from 'react';
+import { AssimilationStage, Guest } from '~/store/types';
+import { useGetGuestByIdQuery, useGetTimelineQuery } from '~/store/services/roast-crm';
 import { GuestHeader } from './GuestHeader';
-import MilestonesCard from './MilestonesCard';
 import TimelineCard from './TimelineCard';
 import { Card, CardContent } from '~/components/ui/card';
 import { getStageColor } from '../../utils/colors';
@@ -15,51 +14,16 @@ import ViewWrapper from '~/components/layout/viewWrapper';
 import useRole from '~/hooks/role';
 import useAssimilationStageIndex from '../../hooks/use-assimilation-stage-index';
 
-interface GuestProfileProps {}
-
-const GuestProfile: React.FC<GuestProfileProps> = () => {
+const GuestProfile: React.FC = () => {
     const { user } = useRole();
     const guestParams = useLocalSearchParams() as unknown as Guest;
     const guestId = guestParams?._id;
 
     const { data: guestRemote, isLoading } = useGetGuestByIdQuery(guestParams?._id, { skip: !!guestParams });
     const { data: timeline = [], isLoading: loadingTimeline } = useGetTimelineQuery({ guestId }, { skip: !guestId });
-    const [updateGuest] = useUpdateGuestMutation();
     const assimilationStagesIndex = useAssimilationStageIndex();
 
     const guest = guestRemote ?? guestParams;
-
-    const handleMilestoneToggle = useCallback(
-        async (milestoneId: string) => {
-            if (!guest) return;
-
-            try {
-                const updatedMilestones = guest?.milestones?.map(m =>
-                    m._id === milestoneId
-                        ? {
-                              ...m,
-                              status:
-                                  m.status === MilestoneStatus.COMPLETED
-                                      ? MilestoneStatus.PENDING
-                                      : MilestoneStatus.COMPLETED,
-                              completedAt:
-                                  m.status === MilestoneStatus.COMPLETED ? undefined : new Date().toISOString(),
-                          }
-                        : m
-                );
-
-                await updateGuest({
-                    _id: guest._id,
-                    milestones: updatedMilestones,
-                    lastContact: new Date().toISOString(),
-                });
-                // toast.success('Milestone updated');
-            } catch (error) {
-                // toast.error('Failed to update milestone');
-            }
-        },
-        [guest]
-    );
 
     if (!guestId || !guest || isLoading) {
         return (
@@ -102,7 +66,8 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                 />
 
                 {/* Milestones Section */}
-                <MilestonesCard milestones={guest?.milestones ?? []} onToggle={handleMilestoneToggle} />
+                {/* TODO: TBD */}
+                {/* <MilestonesCard milestones={guest?.milestones ?? []} onToggle={handleMilestoneToggle} /> */}
 
                 {/* Timeline Section */}
                 <TimelineCard

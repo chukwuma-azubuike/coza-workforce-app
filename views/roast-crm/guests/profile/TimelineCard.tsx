@@ -1,16 +1,17 @@
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { Card, CardHeader, CardContent } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
 import { Badge } from '~/components/ui/badge';
 import { Clock, Pencil, Plus, Save, X } from 'lucide-react-native';
 import { ContactChannel, Timeline } from '~/store/types';
-import { Pressable, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { formatTimelineDate, getTimelineIcon } from '../../utils/time';
 import PickerSelect from '~/components/ui/picker-select';
-import { useAddTimelineMutation } from '~/store/services/roast-crm';
+import { useAddTimelineMutation, useUpdateTimelineMutation } from '~/store/services/roast-crm';
 import { Skeleton } from '~/components/ui/skeleton';
+import * as Haptics from 'expo-haptics';
 
 interface TimelineCardProps {
     guestId: string;
@@ -23,13 +24,41 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
     const [newNote, setNewNote] = useState('');
     const [channel, setChannel] = useState(ContactChannel.CALL);
     const [isAddingNote, setIsAddingNote] = useState(false);
-    const [addTimeline, { isLoading }] = useAddTimelineMutation();
+    const [isEditingNote, setIsEditingNote] = useState<number | null>(null);
+    const [addTimeline, { isLoading, error: addingError }] = useAddTimelineMutation();
+    const [updateTimeline, { isLoading: isUpdating, error: updatingError }] = useUpdateTimelineMutation();
 
-    const handleAddEngagement = async () => {
+    const error = addingError
+        ? (addingError as any).data?.message
+        : updatingError
+        ? (updatingError as any).data?.message
+        : null;
+
+    const handleAddingNoteVisible = () => {
+        Haptics.selectionAsync();
+        setIsEditingNote(null);
+        setIsAddingNote(prev => !prev);
+        setNewNote('');
+    };
+
+    const handleUpdateNoteVisible = (index: number | null, item?: Timeline) => () => {
+        Haptics.selectionAsync();
+        setIsAddingNote(false);
+        setIsEditingNote(index);
+
+        if (item && typeof index === 'number') {
+            setNewNote(item.notes as string);
+            setChannel(item.channel as ContactChannel);
+        } else {
+            setNewNote('');
+        }
+    };
+
+    const onSubmit = useCallback(async () => {
         if (!newNote.trim()) return;
 
         try {
-            await addTimeline({
+            const res = await addTimeline({
                 notes: newNote,
                 title: 'Timeline',
                 assignedToId,
@@ -39,10 +68,51 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
 
             setNewNote('');
             setIsAddingNote(false);
+
+            if (res.data) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
+
+            if (res.error) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
         } catch (error) {
             // Error handling is done in the parent component
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         }
-    };
+    }, [newNote, assignedToId, channel, guestId, addTimeline]);
+
+    const onSubmitUpdate = useCallback(
+        (_id: string) => async () => {
+            if (!newNote.trim()) return;
+
+            try {
+                const res = await updateTimeline({
+                    _id,
+                    notes: newNote,
+                    title: 'Timeline',
+                    assignedToId,
+                    channel,
+                    guestId,
+                });
+
+                setNewNote('');
+                setIsEditingNote(null);
+
+                if (res.data) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+
+                if (res.error) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                }
+            } catch (error) {
+                // Error handling is done in the parent component
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
+        },
+        [newNote, assignedToId, channel, guestId, updateTimeline]
+    );
 
     const getTimeline = useCallback((timestamp: string | Date) => formatTimelineDate(timestamp), [formatTimelineDate]);
     const getIcon = useCallback((type: string) => getTimelineIcon(type), [getTimelineIcon]);
@@ -60,7 +130,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                         variant="outline"
                         disabled={isAddingNote}
                         className="!h-10 !w-[8.4rem]"
-                        onPress={() => setIsAddingNote(true)}
+                        onPress={handleAddingNoteVisible}
                         icon={<Plus className="w-4 h-4" />}
                     >
                         Add Note
@@ -71,54 +141,15 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
             <CardContent className="gap-6">
                 {/* Add Note Form */}
                 {isAddingNote && (
-                    <View className="gap-4">
-                        <Textarea
-                            placeholder="Add a note about your interaction..."
-                            value={newNote}
-                            onChangeText={e => setNewNote(e)}
-                            className="line-clamp-6"
-                        />
-                        <View className="flex-row justify-between gap-4">
-                            <View className="flex-1">
-                                <PickerSelect
-                                    valueKey="value"
-                                    labelKey="label"
-                                    value={channel}
-                                    className="!h-12"
-                                    items={[
-                                        { label: ContactChannel.CALL, value: ContactChannel.CALL },
-                                        { label: ContactChannel.WHATSAPP, value: ContactChannel.WHATSAPP },
-                                        { label: ContactChannel.VISIT, value: ContactChannel.VISIT },
-                                        { label: ContactChannel.SMS, value: ContactChannel.SMS },
-                                    ]}
-                                    placeholder="Select Engagement Type"
-                                    onValueChange={setChannel}
-                                />
-                            </View>
-                            <View className="flex-row gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onPress={() => {
-                                        setIsAddingNote(false);
-                                        setNewNote('');
-                                    }}
-                                >
-                                    <X className="w-4 h-4 mr-1 text-destructive" />
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    loadingText=""
-                                    variant="outline"
-                                    isLoading={isLoading}
-                                    onPress={handleAddEngagement}
-                                    disabled={!channel || !newNote}
-                                >
-                                    <Save className="w-4 h-4 mr-1" />
-                                </Button>
-                            </View>
-                        </View>
-                    </View>
+                    <NoteEditor
+                        newNote={newNote}
+                        channel={channel}
+                        onSubmit={onSubmit}
+                        isLoading={isLoading}
+                        setChannel={setChannel}
+                        setNewNote={setNewNote}
+                        handleAddingNoteVisible={handleAddingNoteVisible}
+                    />
                 )}
 
                 {/* Timeline Loading */}
@@ -162,11 +193,32 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                                         <Text>{item.channel}</Text>
                                     </Badge>
                                     <Text className="text-sm text-muted-foreground">{getTimeline(item.createdAt)}</Text>
-                                    <Pressable onPress={() => {}}>
-                                        <Pencil className="w-4 h-4 text-muted-foreground" />
-                                    </Pressable>
                                 </View>
-                                <Text className="line-clamp-none">{item.notes}</Text>
+                                {isEditingNote === index ? (
+                                    <NoteEditor
+                                        index={index}
+                                        error={error}
+                                        newNote={newNote}
+                                        channel={channel}
+                                        isLoading={isUpdating}
+                                        setChannel={setChannel}
+                                        setNewNote={setNewNote}
+                                        onSubmit={onSubmitUpdate(item._id)}
+                                        handleAddingNoteVisible={handleUpdateNoteVisible(null)}
+                                    />
+                                ) : (
+                                    <Text className="line-clamp-none">{item.notes}</Text>
+                                )}
+                                {isEditingNote !== index && (
+                                    <View className="flex-1 items-end">
+                                        <TouchableOpacity
+                                            onPress={handleUpdateNoteVisible(index, item)}
+                                            activeOpacity={0.6}
+                                        >
+                                            <Pencil size={20} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
                             </View>
                         </View>
                     ))}
@@ -189,3 +241,66 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
 };
 
 export default TimelineCard;
+
+interface NoteEditorProps {
+    index?: number;
+    newNote: string;
+    channel: string;
+    isLoading: boolean;
+    error?: string | null;
+    onSubmit: () => Promise<void>;
+    setNewNote: (arg: string) => void;
+    handleAddingNoteVisible: () => void;
+    setChannel: React.Dispatch<React.SetStateAction<ContactChannel>>;
+}
+
+const NoteEditor: React.FC<NoteEditorProps> = memo(
+    ({ newNote, setNewNote, channel, setChannel, handleAddingNoteVisible, error, isLoading, onSubmit }) => {
+        console.log(newNote);
+        return (
+            <View className="gap-4">
+                <Textarea
+                    value={newNote}
+                    className="line-clamp-6"
+                    onChangeText={setNewNote}
+                    placeholder="Add a note about your interaction..."
+                />
+                <View className="flex-row justify-between gap-4">
+                    <View className="flex-1">
+                        <PickerSelect
+                            valueKey="value"
+                            labelKey="label"
+                            value={channel}
+                            className="!h-12"
+                            items={[
+                                { label: ContactChannel.CALL, value: ContactChannel.CALL },
+                                { label: ContactChannel.WHATSAPP, value: ContactChannel.WHATSAPP },
+                                { label: ContactChannel.VISIT, value: ContactChannel.VISIT },
+                                { label: ContactChannel.SMS, value: ContactChannel.SMS },
+                            ]}
+                            placeholder="Select Engagement Type"
+                            onValueChange={setChannel}
+                        />
+                    </View>
+                    <View className="flex-1" />
+                    <View className="flex-row gap-2">
+                        <Button size="sm" variant="outline" onPress={handleAddingNoteVisible}>
+                            <X className="w-4 h-4 text-destructive" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            loadingText=""
+                            variant="outline"
+                            onPress={onSubmit}
+                            isLoading={isLoading}
+                            disabled={!channel || !newNote}
+                        >
+                            <Save className="w-4 h-4 mr-1" />
+                        </Button>
+                    </View>
+                </View>
+                {error && <Text className="text-sm text-destructive">{error ?? 'An error occured'}</Text>}
+            </View>
+        );
+    }
+);
