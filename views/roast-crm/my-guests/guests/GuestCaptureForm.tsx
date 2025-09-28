@@ -1,22 +1,25 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { Home, Save } from 'lucide-react-native';
+import { ActivitySquareIcon, Home, Save } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
 import { Label } from '~/components/ui/label';
 import { MessageSquare, MapPin, User, Phone } from 'lucide-react-native';
 
-import { useCreateGuestMutation, useGetZonesQuery } from '~/store/services/roast-crm';
+import {
+    useCreateGuestMutation,
+    useGetAssimilationStagesQuery,
+    useGetAssimilationSubStagesQuery,
+    useGetZonesQuery,
+} from '~/store/services/roast-crm';
 import { QuickTips } from './form/QuickTips';
 import { Alert, View } from 'react-native';
 import useRole from '~/hooks/role';
 
 import { useState } from 'react';
 import useModal from '@hooks/modal/useModal';
-import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { GuestFormData } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { useGetUserByIdQuery } from '@store/services/account';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Input } from '~/components/ui/input';
 import { PhoneInput } from '~/components/ui/phone-input';
@@ -36,9 +39,8 @@ const QUICK_TIPS = [
     'Follow up within 24-48 hours',
 ];
 
-const GuestCaptureForm: React.FC = () => {
+const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }) => {
     const { user: currentUser } = useRole();
-    const { goBack } = useNavigation();
     const { setModalState } = useModal();
     const dispatch = useDispatch();
     const netInfo = useNetInfo();
@@ -46,9 +48,10 @@ const GuestCaptureForm: React.FC = () => {
 
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
 
-    const { data: zones = [] } = useGetZonesQuery();
-    const { refetch: refetchUser } = useGetUserByIdQuery(currentUser?._id);
-    const [addGuest, { reset, isLoading, isError, isSuccess, error }] = useCreateGuestMutation();
+    const { data: zones = [] } = useGetZonesQuery({ campusId: currentUser?.campusId });
+    const [addGuest, { isLoading }] = useCreateGuestMutation();
+    const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
+    const { data: assimilationStages = [] } = useGetAssimilationStagesQuery();
 
     const defaultZone = useMemo(
         () => zones?.find(z => z._id === (currentUser?.zoneIds as string[])?.[0] || zones[0]?._id),
@@ -70,6 +73,11 @@ const GuestCaptureForm: React.FC = () => {
                 };
                 const res = await addGuest(payload);
 
+                if (res.data) {
+                    Alert.alert('Guest created successfully');
+                    setModalVisible();
+                }
+
                 if (!isOnline && res.error) {
                     const cacheKey = `${addGuest.name}(${JSON.stringify(payload)})`;
 
@@ -86,30 +94,23 @@ const GuestCaptureForm: React.FC = () => {
                         "You're currently offline, buy not to worry, we've stored your guest locally and will sync with our servers once you're back online"
                     );
                 }
-            } catch (error) {
-                console.log({ isOnline });
-            }
+
+                if (res.error) {
+                    setModalState({
+                        message: (res?.error as any)?.data?.message || 'Oops something went wrong',
+                        status: 'error',
+                    });
+                }
+            } catch (error) {}
         },
         [selectedCountry?.callingCode, isOnline]
     );
 
-    React.useEffect(() => {
-        if (isSuccess) {
-            reset();
-            refetchUser();
-            goBack();
-        }
-
-        if (isError) {
-            setModalState({
-                message: 'Oops something went wrong',
-                status: 'error',
-            });
-            reset();
-        }
-    }, [isSuccess, isError]);
-
-    const INITIAL_VALUES = { zoneId: defaultZone?._id as string } as GuestFormData;
+    const INITIAL_VALUES = {
+        zoneId: defaultZone?._id as string,
+        assimilationStageId: assimilationStages[0]?._id,
+        assimilationSubStageId: assimilationSubStages[0]?._id,
+    } as GuestFormData;
 
     return (
         <ErrorBoundary>
@@ -121,7 +122,7 @@ const GuestCaptureForm: React.FC = () => {
                 >
                     {({ errors, touched, values, isValid, handleChange, handleSubmit, handleBlur }) => {
                         return (
-                            <View className="gap-4">
+                            <View className="gap-4 pb-6">
                                 <View className="gap-2">
                                     <View className="items-center gap-2 flex-row">
                                         <User color="gray" size={16} />
@@ -231,6 +232,18 @@ const GuestCaptureForm: React.FC = () => {
                                     {errors?.gender && touched?.gender && (
                                         <FormErrorMessage>{errors?.gender}</FormErrorMessage>
                                     )}
+                                </View>
+
+                                <View className="gap-2 mb-2">
+                                    <View className="items-center gap-2 flex-row">
+                                        <ActivitySquareIcon color="gray" size={16} />
+                                        <Label>Next Action (Optional)</Label>
+                                    </View>
+                                    <Textarea
+                                        placeholder="Any specific action you need to take regading your guest?"
+                                        value={values?.nextAction as string}
+                                        onChangeText={handleChange('nextAction')}
+                                    />
                                 </View>
 
                                 <View className="gap-2 mb-2">
