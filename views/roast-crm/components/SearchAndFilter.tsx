@@ -7,9 +7,11 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '~/config/appConfig';
 import PickerSelect from '~/components/ui/picker-select';
 import * as Haptics from 'expo-haptics';
+import Loading from '~/components/atoms/loading';
 
 interface SearchAndFilterProps {
     searchTerm: string;
+    loading: boolean;
     viewMode: 'kanban' | 'list';
     setViewMode: (arg: string) => void;
     setSearchTerm: (arg: string) => void;
@@ -18,7 +20,7 @@ interface SearchAndFilterProps {
 }
 
 const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
-    searchTerm,
+    loading,
     setSearchTerm,
     setViewMode,
     viewMode,
@@ -36,11 +38,15 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
         <View className="flex-row items-center gap-4">
             <View className="flex-1 relative">
                 <View className="absolute left-2 top-2.5 z-10">
-                    <Search className="w-3 h-3 text-foreground" size={20} color="gray" />
+                    {loading ? (
+                        <Loading className="h-5" />
+                    ) : (
+                        <Search className="w-3 h-3 text-foreground" size={20} color="gray" />
+                    )}
                 </View>
                 <Input
                     placeholder="Search by name, phone, or address..."
-                    value={searchTerm}
+                    // value={searchTerm}
                     onChangeText={setSearchTerm}
                     className="pl-10 !h-10"
                 />
