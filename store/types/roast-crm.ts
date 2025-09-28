@@ -102,6 +102,7 @@ export interface Guest {
     createdAt: string | Date; // ISO string format
     lastContact?: string | Date; // ISO string format
     preferredChannel?: ContactChannel;
+    preferredChannelId?: string;
     completedAt?: string | Date | null;
     comment?: string | null;
     address?: string | null;
@@ -338,7 +339,10 @@ export interface FetchCache<P = any, R = any> {
     fn: (payload: P) => Promise<R>;
 }
 
-export type GetGuestPayload = Partial<Pick<Guest, 'campusId' | 'assignedToId' | 'zoneId'>> & IPaginationParams;
+export type GetGuestPayload = Partial<
+    Pick<Guest, 'campusId' | 'assignedToId' | 'zoneId' | 'preferredChannelId' | 'assimilationStageId'>
+> &
+    IPaginationParams & { search?: string };
 
 export interface GuestCount {
     assimilationStageId: string;
