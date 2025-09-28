@@ -420,7 +420,7 @@ export const roastCrmApi = createApi({
 
         getGuests: builder.query<Guest[], GetGuestPayload>({
             query: params => ({
-                url: `/guests`,
+                url: `/guests/filter`,
                 method: REST_API_VERBS.GET,
                 params,
             }),

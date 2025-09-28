@@ -25,12 +25,12 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, subTitle, stage, gue
         >
             <View className="px-3 pt-2">
                 <View className="flex-row items-center gap-2 ">
-                    <Text className="font-semibold line-clamp-none">{title}</Text>
+                    <Text className="font-semibold">{title}</Text>
                     <Badge variant="secondary" className={getBadgeColor(stage)}>
                         <Text>{guestCount}</Text>
                     </Badge>
                 </View>
-                <Text className="text-sm text-muted-foreground">{subTitle}</Text>
+                <Text className="text-sm text-muted-foreground line-clamp-none">{subTitle}</Text>
             </View>
 
             <View className="gap-4 p-1.5" style={{ height: (ScreenHeight ?? 0) - 480 }}>
