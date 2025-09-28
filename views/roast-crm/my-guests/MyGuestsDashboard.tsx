@@ -61,6 +61,7 @@ function MyGuestsDashboard() {
                     header: {
                         _id: stage._id,
                         title: stage.name,
+                        subtitle: stage.descriptions,
                         position: stage.order ?? index,
                         stageId: stage.assimilationStageId,
                         count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
@@ -127,6 +128,7 @@ function MyGuestsDashboard() {
                 <KanbanColumn
                     title={props.title}
                     isLoading={isLoading}
+                    subTitle={props.subtitle}
                     guestCount={props.count}
                     stage={assimilationStageIndex[props.stageId as string] as AssimilationStage}
                 >

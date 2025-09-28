@@ -9,24 +9,28 @@ import { getBadgeColor, getStageColumnColor } from '../utils/colors';
 
 interface KanbanColumnProps {
     title: string;
+    subTitle?: string;
     guestCount?: number;
     children: ReactNode;
     isLoading?: boolean;
     stage: AssimilationStage;
 }
 
-const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, stage, guestCount, children, isLoading }) => {
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, subTitle, stage, guestCount, children, isLoading }) => {
     return (
         <View
             className={` ${
                 getStageColumnColor(stage) ?? 'border-gray-200 dark:border-gray-200/10 bg-gray-50 dark:bg-gray-500/10'
             } border-2 border-dashed rounded-2xl transition-colors pb-0`}
         >
-            <View className="flex-row items-center gap-2 px-3 pt-2">
-                <Text className="font-semibold">{title}</Text>
-                <Badge variant="secondary" className={getBadgeColor(stage)}>
-                    <Text>{guestCount}</Text>
-                </Badge>
+            <View className="px-3 pt-2">
+                <View className="flex-row items-center gap-2 ">
+                    <Text className="font-semibold line-clamp-none">{title}</Text>
+                    <Badge variant="secondary" className={getBadgeColor(stage)}>
+                        <Text>{guestCount}</Text>
+                    </Badge>
+                </View>
+                <Text className="text-sm text-muted-foreground">{subTitle}</Text>
             </View>
 
             <View className="gap-4 p-1.5" style={{ height: (ScreenHeight ?? 0) - 480 }}>

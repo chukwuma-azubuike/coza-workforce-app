@@ -3,9 +3,9 @@ import { Card, CardHeader, CardContent } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
 import { Badge } from '~/components/ui/badge';
-import { Clock, Plus, Save, X } from 'lucide-react-native';
+import { Clock, Pencil, Plus, Save, X } from 'lucide-react-native';
 import { ContactChannel, Timeline } from '~/store/types';
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { formatTimelineDate, getTimelineIcon } from '../../utils/time';
 import PickerSelect from '~/components/ui/picker-select';
@@ -162,6 +162,9 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                                         <Text>{item.channel}</Text>
                                     </Badge>
                                     <Text className="text-sm text-muted-foreground">{getTimeline(item.createdAt)}</Text>
+                                    <Pressable onPress={() => {}}>
+                                        <Pencil className="w-4 h-4 text-muted-foreground" />
+                                    </Pressable>
                                 </View>
                                 <Text className="line-clamp-none">{item.notes}</Text>
                             </View>
