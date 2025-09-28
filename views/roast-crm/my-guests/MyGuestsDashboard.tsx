@@ -80,8 +80,8 @@ function MyGuestsDashboard() {
         [guests, searchTerm]
     );
 
-    const handleViewGuest = useCallback((guestId: string) => {
-        router.push({ pathname: '/roast-crm/guests/profile', params: { guestId } });
+    const handleViewGuest = useCallback((guest: Guest) => {
+        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     }, []);
 
     const getFilteredGuests = useCallback(() => {
@@ -103,17 +103,21 @@ function MyGuestsDashboard() {
         return filtered;
     }, [userGuests, searchTerm, stageFilter]);
 
+    const onGuestUpdate = async (guestId: string, assimilationSubStageId: string) => {
+        try {
+            await updateGuest({ _id: guestId, assimilationSubStageId });
+        } catch (error) {}
+    };
+
     const onDragEnd = useCallback(
         async (params: DragEndParams) => {
             const { fromColumnIndex, toColumnIndex, itemId: guestId } = params;
             const assimilationSubStageId = assimilationSubStagesIndex[toColumnIndex];
 
+            await onGuestUpdate(guestId, assimilationSubStageId as string);
+
             // no-op if dropped in same column
             if (fromColumnIndex === toColumnIndex) return;
-
-            try {
-                await updateGuest({ _id: guestId, assimilationSubStageId });
-            } catch (error) {}
         },
         [assimilationSubStagesIndex]
     );
@@ -207,9 +211,11 @@ function MyGuestsDashboard() {
                         <GuestListView
                             refetch={refetch}
                             isLoading={isLoading}
+                            onGuestUpdate={onGuestUpdate}
                             handleViewGuest={handleViewGuest}
                             containerHeight={kanbanContainerHeight}
                             displayGuests={displayGuests as Guest[]}
+                            assimilationSubStages={assimilationSubStages}
                         />
                     </Suspense>
                 )}

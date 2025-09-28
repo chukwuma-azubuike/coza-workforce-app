@@ -1,6 +1,6 @@
 import { Clock, MessageCircle, MoreVertical, Phone } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
@@ -13,156 +13,159 @@ import {
 import FlatListComponent from '~/components/composite/flat-list';
 import PickerSelect from '~/components/ui/picker-select';
 import { Text } from '~/components/ui/text';
-import { Guest, MilestoneStatus } from '~/store/types';
+import { Guest, MilestoneStatus, PipelineSubStage } from '~/store/types';
 import { handleCall, handleWhatsApp } from '../utils/communication';
+import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 
-export const GuestRow: React.FC<{ guest: Guest; index: number; onViewGuest: (guestId: string) => void }> = ({
-    guest,
-    onViewGuest,
-}) => {
-    const getProgressPercentage = useCallback((milestones: Guest['milestones']) => {
-        if (!milestones || milestones.length === 0) return 0;
-        const completed = milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
-        return Math.round((completed / milestones.length) * 100);
-    }, []);
+export const GuestRow: React.FC<{
+    guest: Guest;
+    index: number;
+    onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
+    onViewGuest: (guest: Guest) => void;
+    assimilationSubStages: Array<PipelineSubStage>;
+}> = ({ guest, onViewGuest, assimilationSubStages, onGuestUpdate }) => {
+    const handleGuestMove = async (newStageId: string) => {
+        onGuestUpdate(guest._id, newStageId);
+    };
 
-    const getDaysSinceContact = useCallback((lastContact: Date | undefined | null) => {
-        if (!lastContact) return null;
-        const today = new Date();
-        const contactDate = new Date(lastContact);
-        const diffTime = today.getTime() - contactDate.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays;
-    }, []);
-
-    const handleGuestMove = (guestId: string, newStage: string) => {
-        // TODO: Update guest stage in backend
-        // setGuests(prev =>
-        //     prev.map(guest => (guest._id === guestId ? { ...guest, stage: newStage, lastContact: new Date() } : guest))
-        // );
-        // toast.success(`Guest moved to ${newStage} stage`);
+    const handleViewGuest = () => {
+        onViewGuest(guest);
     };
 
     const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones, getProgressPercentage]);
     const daysSinceContact = useMemo(
-        () => getDaysSinceContact(guest?.lastContact as any),
-        [guest?.lastContact, getDaysSinceContact]
+        () => getDaysSinceContact((guest?.lastContact as any) ?? guest.createdAt),
+        [guest?.lastContact, guest?.createdAt, getDaysSinceContact]
     );
 
     return (
         <View className="py-4 w-full border-t border-t-border">
-            <View className="flex-row items-start justify-between mb-2">
-                <View className="flex-row items-center gap-2">
-                    <Avatar alt="profile-avatar" className="w-12 h-12">
-                        <AvatarFallback className="text-xs">
-                            <Text>
-                                {`${guest.firstName} ${guest.lastName}`
-                                    .split(' ')
-                                    .map(n => n[0])
-                                    .join('')
-                                    .toUpperCase()}
+            <Pressable onPress={handleViewGuest}>
+                <View className="flex-row items-start justify-between mb-2">
+                    <View className="flex-row items-center gap-2">
+                        <Avatar alt="profile-avatar" className="w-12 h-12">
+                            <AvatarFallback className="text-xs">
+                                <Text>
+                                    {`${guest.firstName} ${guest.lastName}`
+                                        .split(' ')
+                                        .map(n => n[0])
+                                        .join('')
+                                        .toUpperCase()}
+                                </Text>
+                            </AvatarFallback>
+                        </Avatar>
+                        <View>
+                            <Text className="font-bold text-xl">
+                                {guest.firstName} {guest.lastName}
                             </Text>
-                        </AvatarFallback>
-                    </Avatar>
-                    <View>
-                        <Text className="font-bold text-xl">
-                            {guest.firstName} {guest.lastName}
-                        </Text>
-                        <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
+                            <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
+                        </View>
+                    </View>
+
+                    <View className="flex-row gap-4 items-center">
+                        <PickerSelect
+                            valueKey="_id"
+                            labelKey="name"
+                            className="!w-36 !h-10"
+                            placeholder="Select stage"
+                            items={assimilationSubStages}
+                            value={guest?.assimilationSubStageId}
+                            onValueChange={handleGuestMove}
+                        />
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <TouchableOpacity
+                                    className="items-center justify-center p-2 rounded-full"
+                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                >
+                                    <MoreVertical className="w-4 h-4" color="gray" />
+                                </TouchableOpacity>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
+                                <DropdownMenuItem onPress={handleViewGuest}>
+                                    <Text>View Profile</Text>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </View>
                 </View>
 
-                <View className="flex-row gap-4 items-center">
-                    <PickerSelect
-                        valueKey="value"
-                        labelKey="label"
-                        value={guest?.assimilationSubStageId}
-                        className="!w-28 !h-10"
-                        items={[
-                            { label: 'All', value: 'all' },
-                            { label: 'Invited', value: 'invited' },
-                            { label: 'Attended', value: 'attended' },
-                            { label: 'Discipled', value: 'discipled' },
-                            { label: 'Joined', value: 'joined' },
-                        ]}
-                        placeholder="Select stage"
-                        onValueChange={value => handleGuestMove(guest._id, value)}
-                    />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <TouchableOpacity
-                                className="items-center justify-center p-2 rounded-full"
-                                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                            >
-                                <MoreVertical className="w-4 h-4" color="gray" />
-                            </TouchableOpacity>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
-                            <DropdownMenuItem onPress={() => onViewGuest(guest._id)}>
-                                <Text>View Profile</Text>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </View>
-            </View>
-
-            <View className="gap-3">
-                <View className="flex-row items-center justify-between text-xs">
-                    <Text className="text-foreground">Progress</Text>
-                    <Text className="text-foreground">{progress}% complete</Text>
-                </View>
-
-                <View className="w-full bg-secondary rounded-full h-2">
-                    <View
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${progress}%` }}
-                    />
-                </View>
-
-                {guest.nextAction && (
-                    <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2 flex-row">
-                        <Text className="font-bold">Next: </Text>
-                        <Text>{guest.nextAction}</Text>
-                    </View>
-                )}
-
-                <View className="flex-row items-center justify-between text-xs">
-                    <View className="flex-row items-center gap-2 text-foreground">
-                        <Clock className="w-3 h-3" />
-                        <Text>
-                            {daysSinceContact === null
-                                ? 'No contact'
-                                : daysSinceContact === 0
-                                ? 'Today'
-                                : daysSinceContact === 1
-                                ? 'Yesterday'
-                                : `${daysSinceContact} days ago`}
-                        </Text>
+                <View className="gap-3">
+                    <View className="flex-row items-center justify-between text-xs">
+                        <Text className="text-foreground">Progress</Text>
+                        <Text className="text-foreground">{progress}% complete</Text>
                     </View>
 
-                    <View className="flex-row gap-2">
-                        <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
-                            <Phone className="w-3 h-3" />
-                        </Button>
-                        <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
-                            <MessageCircle className="w-3 h-3" />
-                        </Button>
+                    <View className="w-full bg-secondary rounded-full h-2">
+                        <View
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${progress}%` }}
+                        />
+                    </View>
+
+                    {guest.nextAction && (
+                        <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2">
+                            <Text className="font-bold">Next Action: </Text>
+                            <Text className="line-clamp-none">{guest.nextAction}</Text>
+                        </View>
+                    )}
+
+                    <View className="flex-row items-center justify-between text-xs">
+                        <View className="flex-row items-center gap-2 text-foreground">
+                            <Clock className="w-3 h-3" />
+                            <Text>
+                                {daysSinceContact === null
+                                    ? 'No contact'
+                                    : daysSinceContact === 0
+                                    ? 'Today'
+                                    : daysSinceContact === 1
+                                    ? 'Yesterday'
+                                    : `${daysSinceContact} days ago`}
+                            </Text>
+                        </View>
+
+                        <View className="flex-row gap-2">
+                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
+                                <Phone className="w-3 h-3" />
+                            </Button>
+                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
+                                <MessageCircle className="w-3 h-3" />
+                            </Button>
+                        </View>
                     </View>
                 </View>
-            </View>
+            </Pressable>
         </View>
     );
 };
 
 const GuestListView: React.FC<{
-    displayGuests: Guest[];
-    handleViewGuest: (id: string) => void;
     isLoading?: boolean;
     refetch: () => void;
+    displayGuests: Guest[];
     containerHeight: number;
-}> = ({ handleViewGuest, refetch, isLoading, containerHeight, displayGuests }) => {
+    handleViewGuest: (Guest: Guest) => void;
+    assimilationSubStages: Array<PipelineSubStage>;
+    onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
+}> = ({
+    handleViewGuest,
+    refetch,
+    isLoading,
+    containerHeight,
+    displayGuests,
+    onGuestUpdate,
+    assimilationSubStages,
+}) => {
     const renderItemComponent = useCallback(
-        ({ item }: { item: any; index: number }) => <GuestRow onViewGuest={handleViewGuest} guest={item} index={0} />,
+        ({ item }: { item: any; index: number }) => (
+            <GuestRow
+                onGuestUpdate={onGuestUpdate}
+                assimilationSubStages={assimilationSubStages}
+                onViewGuest={handleViewGuest}
+                guest={item}
+                index={0}
+            />
+        ),
         [GuestRow, handleViewGuest]
     );
 
