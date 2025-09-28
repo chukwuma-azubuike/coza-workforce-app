@@ -33,9 +33,12 @@ export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt
             user: { department },
         } = useRole();
 
-        const handlePress = () => {
-            router.push({ pathname: `/reports/${ReportRouteIndex[department?.departmentName]}` as any, params: props });
-        };
+        const handlePress = useCallback(() => {
+            router.push({
+                pathname: `/reports/${ReportRouteIndex[department?.departmentName]}` as any,
+                params: department?.departmentName === 'Children Ministry' ? { data: JSON.stringify(props) } : props,
+            });
+        }, [props, department?.departmentName, ReportRouteIndex]);
 
         return (
             <TouchableOpacity
