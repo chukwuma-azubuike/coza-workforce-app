@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useMemo } from 'react';
-import { View, TouchableOpacity, Pressable } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Guest } from '~/store/types';
 
 import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
@@ -23,7 +23,10 @@ interface KanbanCardProps {
 
 const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
     const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones]);
-    const daysSinceContact = useMemo(() => getDaysSinceContact(guest?.lastContact as any), [guest?.lastContact]);
+    const daysSinceContact = useMemo(
+        () => getDaysSinceContact(guest?.lastContact ?? (guest?.createdAt as any)),
+        [guest?.lastContact, guest?.createdAt]
+    );
 
     const handleProfileView = useCallback(() => {
         router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
