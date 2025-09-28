@@ -17,7 +17,6 @@ interface TimelineCardProps {
     assignedToId: string;
     timeline: Timeline[];
     loading: boolean;
-    onAddNote: (note: string) => Promise<void>;
 }
 
 const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading, assignedToId }) => {

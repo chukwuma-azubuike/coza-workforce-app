@@ -61,17 +61,6 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
         [guest]
     );
 
-    const handleAddNote = async () => {
-        if (!guest) return;
-
-        try {
-            // toast.success('Note added');
-        } catch (error) {
-            // toast.error('Failed to add note');
-            throw error; // Re-throw to handle in the component
-        }
-    };
-
     if (!guestId || !guest || isLoading) {
         return (
             <View className="px-4 py-6 gap-6">
@@ -108,10 +97,8 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                     onCall={handleCall(guest)}
                     onWhatsApp={handleWhatsApp(guest)}
                     progressPercentage={getProgressPercentage(guest.milestones)}
-                    assimilationStage={assimilationStagesIndex[guest?.assimilationSubStageId] ?? ''}
-                    stageColor={getStageColor(
-                        assimilationStagesIndex[guest?.assimilationSubStageId] as AssimilationStage
-                    )}
+                    assimilationStage={assimilationStagesIndex[guest?.assimilationStageId] ?? ''}
+                    stageColor={getStageColor(assimilationStagesIndex[guest?.assimilationStageId] as AssimilationStage)}
                 />
 
                 {/* Milestones Section */}
@@ -123,7 +110,6 @@ const GuestProfile: React.FC<GuestProfileProps> = () => {
                     assignedToId={user?._id}
                     timeline={timeline}
                     loading={loadingTimeline}
-                    onAddNote={handleAddNote}
                 />
             </View>
         </ViewWrapper>
