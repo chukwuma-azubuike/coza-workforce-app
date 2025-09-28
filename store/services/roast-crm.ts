@@ -519,7 +519,10 @@ export const roastCrmApi = createApi({
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<Guest[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<Guest[]>) =>
+                res.data.map(guest => {
+                    return { ...guest, id: guest._id };
+                }),
 
             providesTags: result =>
                 result
@@ -537,6 +540,8 @@ export const roastCrmApi = createApi({
             }),
 
             transformResponse: (res: IDefaultResponse<GuestCountResponse>) => res.data,
+
+            providesTags: ['GuestList'],
         }),
 
         getGuests: builder.query<Guest[], GetGuestPayload>({
@@ -546,7 +551,10 @@ export const roastCrmApi = createApi({
                 params,
             }),
 
-            transformResponse: (res: IDefaultResponse<Guest[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<Guest[]>) =>
+                res.data.map(guest => {
+                    return { ...guest, id: guest._id };
+                }),
 
             providesTags: result =>
                 result
@@ -559,8 +567,7 @@ export const roastCrmApi = createApi({
 
         getGuestById: builder.query<Guest, string>({
             query: _id => ({
-                url: `/role/getRoles`,
-                // url: `/guests/${_id}`,
+                url: `/guests/${_id}`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse(_res: any, _meta, arg) {
@@ -575,44 +582,15 @@ export const roastCrmApi = createApi({
                 method: REST_API_VERBS.POST,
                 body: guest,
             }),
-            transformResponse(_res: any, _meta, arg) {
-                const newGuest = generateMockGuest({
-                    ...arg,
-                    createdAt: now(),
-                    lastContact: now(),
-                    milestones:
-                        arg.milestones?.map(m => ({
-                            _id: uuid(),
-                            title: m.title || '',
-                            description: m.description,
-                            weekNumber: m.weekNumber,
-                            status: m.status || MilestoneStatus.PENDING,
-                            completedAt: m.completedAt,
-                        })) || [],
-                });
-                mockGuests.unshift(newGuest);
-                return newGuest;
-            },
             invalidatesTags: [{ type: 'GuestList', id: 'LIST' }],
         }),
 
         updateGuest: builder.mutation<Guest, Partial<Guest> & { _id: string }>({
             query: ({ _id, ...patch }) => ({
-                url: `/role/getRoles`,
-                // url: `/guests/${_id}`,
-                method: REST_API_VERBS.GET,
-                // method: REST_API_VERBS.PATCH,
-                // body: patch,
+                url: `/guests/${_id}`,
+                method: REST_API_VERBS.PUT,
+                body: patch,
             }),
-            transformResponse(_res: any, _meta, arg) {
-                const idx = mockGuests.findIndex(g => g._id === arg._id);
-                if (idx >= 0) {
-                    const updated = { ...mockGuests[idx], ...arg };
-                    mockGuests[idx] = updated;
-                    return updated;
-                }
-                throw new Error('Guest not found');
-            },
             invalidatesTags: (_result, _error, { _id }) => [
                 { type: 'Guest', _id },
                 { type: 'GuestList', _id: 'LIST' },
