@@ -83,8 +83,8 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                         </View>
 
                         {guest.nextAction && (
-                            <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2 flex-row">
-                                <Text className="font-bold">Next: </Text>
+                            <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2">
+                                <Text className="font-bold">Next Action: </Text>
                                 <Text>{guest.nextAction}</Text>
                             </View>
                         )}
