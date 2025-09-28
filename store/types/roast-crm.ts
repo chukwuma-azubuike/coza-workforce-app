@@ -298,7 +298,7 @@ export interface PipelineStage {
     _id: string;
     name: string;
     label: AssimilationStage;
-    description: string;
+    descriptions: string;
     order: number;
     color: string;
     isDefault: boolean;
@@ -310,7 +310,7 @@ export interface PipelineSubStage {
     name: string;
     assimilationStageId: string;
     label: AssimilationStage;
-    description: string;
+    descriptions: string;
     order: number;
     color: string;
     isDefault: boolean;
