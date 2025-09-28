@@ -3,7 +3,6 @@ import {
     Guest,
     User,
     Engagement,
-    ContactChannel,
     Zone,
     GuestFormData,
     Role,
@@ -24,12 +23,12 @@ import {
     PipelineSubStage,
     GuestCountResponse,
     IDefaultQueryParams,
+    Timeline,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
 
 // Helper to get current ISO timestamp
-const now = () => new Date();
 const uuid = () => Math.random().toString(36).substring(2, 10);
 
 const mockUsers: User[] = [
@@ -37,8 +36,6 @@ const mockUsers: User[] = [
     { _id: 'user-worker-2', name: 'Worker 2', role: Role.WORKER },
     { _id: 'user-coord-1', name: 'Coordinator', role: Role.ZONAL_COORDINATOR, zoneIds: ['zone-1'] },
 ];
-
-const mockEngagements: Record<string, Engagement[]> = {};
 
 // Mock current user for development
 const mockCurrentUser: User = {
@@ -376,7 +373,7 @@ export const roastCrmApi = createApi({
         'GuestList',
         'Zone',
         'User',
-        'Engagement',
+        'Timeline',
         'Notification',
         'CurrentUser',
         'Analytics',
@@ -550,53 +547,25 @@ export const roastCrmApi = createApi({
         }),
 
         // Engagement Queries
-        getEngagementsForGuest: builder.query<Engagement[], string>({
-            query: guestId => ({
-                url: `/guests/${guestId}/engagements`,
+        getTimeline: builder.query<Timeline[], { guestId: string }>({
+            query: params => ({
+                url: '/timelines',
                 method: REST_API_VERBS.GET,
+                params,
             }),
-            transformResponse(_res: any, _meta, guestId) {
-                if (!mockEngagements[guestId]) {
-                    mockEngagements[guestId] = [
-                        {
-                            _id: uuid(),
-                            guestId,
-                            workerId: 'user-worker-1',
-                            type: ContactChannel.CALL,
-                            notes: 'Initial contact made',
-                            timestamp: now(),
-                        },
-                        {
-                            _id: uuid(),
-                            guestId,
-                            workerId: 'user-worker-1',
-                            type: ContactChannel.WHATSAPP,
-                            notes: `She mentioned that she’ll be coming to church whenever she’s around, though sometimes she stays on the island. Sister Joy also spoke to Esther.`,
-                            timestamp: now(),
-                        },
-                        {
-                            _id: uuid(),
-                            guestId,
-                            workerId: 'user-worker-1',
-                            type: ContactChannel.VISIT,
-                            notes: `She mentioned that she’ll be coming to church whenever she’s around, though sometimes she stays on the island. Sister Joy also spoke to Esther. She has been a member of the church for a long time and recently invited her brother, who just joined (I met him today).`,
-                            timestamp: now(),
-                        },
-                    ];
-                }
-                return mockEngagements[guestId];
-            },
-            providesTags: (_result, _error, guestId) => [{ type: 'Engagement', _id: guestId }],
+
+            transformResponse: (res: IDefaultResponse<Timeline[]>) => res.data,
+            providesTags: (_result, _error, guestId) => [{ type: 'Timeline', _id: guestId }],
         }),
 
-        addEngagement: builder.mutation<Engagement, Omit<Engagement, '_id' | 'timestamp'>>({
-            query: engagement => ({
-                url: `/guests/${engagement.guestId}/engagements`,
+        addTimeline: builder.mutation<Engagement, Omit<Timeline, '_id' | 'createdAt' | 'createdBy'>>({
+            query: timeline => ({
+                url: '/timelines',
                 method: REST_API_VERBS.POST,
-                body: engagement,
+                body: timeline,
             }),
             invalidatesTags: (_result, _error, { guestId }) => [
-                { type: 'Engagement', _id: guestId },
+                { type: 'Timeline', _id: guestId },
                 { type: 'Guest', _id: guestId },
             ],
         }),
@@ -806,8 +775,8 @@ export const {
     useUpdateGuestMutation,
     useGetZonesQuery,
     useGetUsersQuery,
-    useGetEngagementsForGuestQuery,
-    useAddEngagementMutation,
+    useGetTimelineQuery,
+    useAddTimelineMutation,
     useGetNotificationsQuery,
     useMarkNotificationAsReadMutation,
     useGetCurrentUserQuery,
