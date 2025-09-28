@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { Search, List } from 'lucide-react-native';
 import { Input } from '~/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group';
@@ -8,6 +8,7 @@ import { THEME_CONFIG } from '~/config/appConfig';
 import PickerSelect from '~/components/ui/picker-select';
 import * as Haptics from 'expo-haptics';
 import Loading from '~/components/atoms/loading';
+import { PipelineSubStage } from '~/store/types';
 
 interface SearchAndFilterProps {
     searchTerm: string;
@@ -16,6 +17,7 @@ interface SearchAndFilterProps {
     setViewMode: (arg: string) => void;
     setSearchTerm: (arg: string) => void;
     stageFilter: string | 'all';
+    assimilationSubStages?: Array<PipelineSubStage>;
     setStageFilter: (value: string | 'all') => void;
 }
 
@@ -26,6 +28,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     viewMode,
     stageFilter,
     setStageFilter,
+    assimilationSubStages = [],
 }) => {
     const handleChange = (val: string) => {
         if (val) {
@@ -33,6 +36,11 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
             setViewMode(val);
         }
     };
+
+    const stageOptions = useMemo(
+        () => [{ _id: 'all', name: 'All Stages' }].concat(assimilationSubStages),
+        [assimilationSubStages]
+    );
 
     return (
         <View className="flex-row items-center gap-4">
@@ -46,24 +54,17 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 </View>
                 <Input
                     placeholder="Search by name, phone, or address..."
-                    // value={searchTerm}
                     onChangeText={setSearchTerm}
                     className="pl-10 !h-10"
                 />
             </View>
             {viewMode == 'list' && (
                 <PickerSelect
-                    valueKey="value"
-                    labelKey="label"
+                    valueKey="_id"
+                    labelKey="name"
                     value={stageFilter}
+                    items={stageOptions}
                     className="!w-28 !h-10"
-                    items={[
-                        { label: 'All', value: 'all' },
-                        { label: 'Invited', value: 'invited' },
-                        { label: 'Attended', value: 'attended' },
-                        { label: 'Discipled', value: 'discipled' },
-                        { label: 'Joined', value: 'joined' },
-                    ]}
                     placeholder="Select stage"
                     onValueChange={setStageFilter}
                 />

@@ -196,6 +196,7 @@ function MyGuestsDashboard() {
                             setStageFilter={setStageFilter}
                             setViewMode={setViewMode as any}
                             loading={isFetching || isLoading}
+                            assimilationSubStages={assimilationSubStages}
                         />
                     </View>
                 </ScrollView>
