@@ -4,8 +4,8 @@ import { View, Dimensions, ScrollView } from 'react-native';
 import { AssimilationStage, Guest } from '~/store/types';
 import {
     useGetAssimilationSubStagesQuery,
+    useGetGuestsQuery,
     useGetMyGuestsCountQuery,
-    useGetMyGuestsQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
 
@@ -30,17 +30,25 @@ const AddGuestModal = React.lazy(() => import('./AddGuest'));
 import { RefreshControl } from 'react-native';
 import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 import { Skeleton } from '~/components/ui/skeleton';
+import useRole from '~/hooks/role';
+import useDebounce from '~/hooks/debounce/use-debounce';
 
 function MyGuestsDashboard() {
-    const [searchTerm, setSearchTerm] = useState('');
+    const { user } = useRole();
+    const [search, setSearch] = useState('');
+    const denouncedSearch = useDebounce(setSearch);
 
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
     const [stageFilter, setStageFilter] = useState<string | 'all'>('all');
     const [modalVisible, setModalVisible] = useState(false);
 
-    //TODO: Return for testing purposes
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
-    const { data: guests = [], isLoading, refetch } = useGetMyGuestsQuery();
+    const {
+        data: guests = [],
+        isLoading,
+        isFetching,
+        refetch,
+    } = useGetGuestsQuery({ assignedToId: user?._id, search });
     const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
     const [updateGuest] = useUpdateGuestMutation();
 
@@ -75,9 +83,9 @@ function MyGuestsDashboard() {
     const userGuests = useMemo(
         () =>
             guests?.filter(guest =>
-                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase())
             ),
-        [guests, searchTerm]
+        [guests, search]
     );
 
     const handleViewGuest = useCallback((guest: Guest) => {
@@ -87,12 +95,12 @@ function MyGuestsDashboard() {
     const getFilteredGuests = useCallback(() => {
         let filtered = userGuests;
 
-        if (searchTerm) {
+        if (search) {
             filtered = filtered?.filter(
                 guest =>
-                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    guest.phoneNumber.includes(searchTerm) ||
-                    (guest.address && guest.address.toLowerCase().includes(searchTerm.toLowerCase()))
+                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
+                    guest.phoneNumber.includes(search) ||
+                    (guest.address && guest.address.toLowerCase().includes(search.toLowerCase()))
             );
         }
 
@@ -101,7 +109,7 @@ function MyGuestsDashboard() {
         }
 
         return filtered;
-    }, [userGuests, searchTerm, stageFilter]);
+    }, [userGuests, search, stageFilter]);
 
     const onGuestUpdate = async (guestId: string, assimilationSubStageId: string) => {
         try {
@@ -182,11 +190,12 @@ function MyGuestsDashboard() {
                     <View className="mt-6 mx-2">
                         <SearchAndFilter
                             viewMode={viewMode}
-                            searchTerm={searchTerm}
+                            searchTerm={search}
                             stageFilter={stageFilter}
-                            setSearchTerm={setSearchTerm}
+                            setSearchTerm={denouncedSearch}
                             setStageFilter={setStageFilter}
                             setViewMode={setViewMode as any}
+                            loading={isFetching || isLoading}
                         />
                     </View>
                 </ScrollView>
