@@ -7,7 +7,7 @@ const useDebounce = (fn: (arg?: any) => void, delay: number = 300) => {
             debounce((value: string) => {
                 fn(value);
             }, delay),
-        [fn]
+        [fn, delay]
     );
 
     // Cleanup debounced function on unmount
