@@ -87,7 +87,7 @@ export interface Timeline {
     notes?: string;
     createdBy: string;
     createdAt: string | Date;
-    type: ContactChannel;
+    channel: ContactChannel;
 }
 
 export interface Guest {
