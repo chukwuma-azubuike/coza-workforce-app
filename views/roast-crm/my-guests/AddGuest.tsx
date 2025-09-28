@@ -33,7 +33,7 @@ const AddGuestModal: React.FC<AddGuestModalProps> = ({ modalVisible, setModalVis
                 </View>
                 <View className="flex-1 px-2">
                     <Suspense fallback={<Loading cover />}>
-                        <GuestCaptureForm />
+                        <GuestCaptureForm setModalVisible={setModalVisible} />
                     </Suspense>
                 </View>
             </View>

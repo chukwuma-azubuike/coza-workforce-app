@@ -3,7 +3,6 @@ import {
     Guest,
     User,
     Engagement,
-    MilestoneStatus,
     ContactChannel,
     Zone,
     GuestFormData,
@@ -24,6 +23,7 @@ import {
     GetGuestPayload,
     PipelineSubStage,
     GuestCountResponse,
+    IDefaultQueryParams,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
@@ -31,128 +31,6 @@ import Utils from '~/utils';
 // Helper to get current ISO timestamp
 const now = () => new Date();
 const uuid = () => Math.random().toString(36).substring(2, 10);
-
-// Mock Data Generator
-const generateMockGuest = (overrides: Partial<Guest> = {}): Guest => ({
-    id: uuid(),
-    _id: uuid(),
-    gender: 'male',
-    lastName: 'John',
-    firstName: 'Doe',
-    phoneNumber: '+2348012345678',
-    zoneId: 'zone-1',
-    assignedToId: 'user-worker-1',
-    createdById: 'user-worker-1',
-    createdAt: now(),
-    lastContact: now(),
-    preferredChannel: ContactChannel.WHATSAPP,
-    comment: 'Pray for new job',
-    address: 'Lagos',
-    nextAction: 'Follow up via call',
-    assimilationStageId: '68d494f6b5d99ef9705c3c52',
-    assimilationSubStageId: '68d494f6b5d99ef9705c3c52',
-    milestones: [
-        {
-            _id: uuid(),
-            title: 'Initial Contact',
-            description: 'First contact with guest',
-            weekNumber: 1,
-            status: MilestoneStatus.PENDING,
-            completedAt: null,
-        },
-        {
-            _id: uuid(),
-            title: 'First Service',
-            description: 'Attended first service',
-            weekNumber: 2,
-            status: MilestoneStatus.COMPLETED,
-            completedAt: now(),
-        },
-        {
-            _id: uuid(),
-            title: 'Second Service',
-            description: 'Attended second service',
-            weekNumber: 3,
-            status: MilestoneStatus.COMPLETED,
-            completedAt: now(),
-        },
-    ],
-    meta: {},
-    ...overrides,
-});
-
-// Initial Mock Data
-const mockGuests: Guest[] = [
-    generateMockGuest({
-        firstName: 'Remi',
-        lastName: 'Lawal',
-        assignedToId: 'user-worker-1',
-        lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    }),
-    generateMockGuest({
-        firstName: 'Chidi',
-        lastName: 'Uba',
-        assignedToId: 'user-worker-2',
-        lastContact: now(),
-    }),
-    generateMockGuest({
-        firstName: 'Ngozi',
-        lastName: 'Udo',
-        assignedToId: 'user-worker-3',
-    }),
-    generateMockGuest({
-        firstName: 'Usman',
-        lastName: 'Jankin',
-        assignedToId: 'user-worker-3',
-    }),
-    generateMockGuest({
-        firstName: 'Remi',
-        lastName: 'Lawal',
-        assignedToId: 'user-worker-1',
-        lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    }),
-    generateMockGuest({
-        firstName: 'Chidi',
-        lastName: 'Uba',
-        assignedToId: 'user-worker-2',
-        lastContact: now(),
-    }),
-    generateMockGuest({
-        firstName: 'Ngozi',
-        lastName: 'Udo',
-        assignedToId: 'user-worker-3',
-    }),
-    generateMockGuest({
-        firstName: 'Usman',
-        lastName: 'Jankin',
-        assignedToId: 'user-worker-3',
-    }),
-    generateMockGuest({
-        firstName: 'Remi',
-        lastName: 'Lawal',
-        assignedToId: 'user-worker-1',
-        lastContact: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-    }),
-    generateMockGuest({
-        firstName: 'Chidi',
-        lastName: 'Uba',
-        assignedToId: 'user-worker-2',
-        lastContact: now(),
-    }),
-    generateMockGuest({
-        firstName: 'Ngozi',
-        lastName: 'Udo',
-        assignedToId: 'user-worker-3',
-    }),
-];
-
-const mockZones: Zone[] = [
-    { _id: 'zone-1', campusId: 'coza-lagos', name: 'Central Zone' },
-    { _id: 'zone-2', campusId: 'coza-lagos', name: 'North Zone' },
-    { _id: 'zone-3', campusId: 'coza-lagos', name: 'South Zone' },
-    { _id: 'zone-4', campusId: 'coza-lagos', name: 'East Zone' },
-    { _id: 'zone-5', campusId: 'coza-lagos', name: 'West Zone' },
-];
 
 const mockUsers: User[] = [
     { _id: 'user-worker-1', name: 'Worker 1', role: Role.WORKER },
@@ -570,9 +448,8 @@ export const roastCrmApi = createApi({
                 url: `/guests/${_id}`,
                 method: REST_API_VERBS.GET,
             }),
-            transformResponse(_res: any, _meta, arg) {
-                return mockGuests.find(g => g._id === arg) ?? mockGuests[0];
-            },
+            transformResponse: (res: IDefaultResponse<Guest>) => res.data,
+
             providesTags: (_result, _err, _id) => [{ type: 'Guest', _id }],
         }),
 
@@ -582,7 +459,7 @@ export const roastCrmApi = createApi({
                 method: REST_API_VERBS.POST,
                 body: guest,
             }),
-            invalidatesTags: [{ type: 'GuestList', id: 'LIST' }],
+            invalidatesTags: ['GuestList'],
         }),
 
         updateGuest: builder.mutation<Guest, Partial<Guest> & { _id: string }>({
@@ -643,15 +520,12 @@ export const roastCrmApi = createApi({
         }),
 
         // Zone Queries
-        getZones: builder.query<Zone[], void>({
+        getZones: builder.query<Zone[], IDefaultQueryParams | void>({
             query: () => ({
-                url: `/role/getRoles`,
-                // url: `/zones`,
+                url: `/zones`,
                 method: REST_API_VERBS.GET,
             }),
-            transformResponse() {
-                return mockZones;
-            },
+            transformResponse: (res: IDefaultResponse<{ data: Zone[] }>) => res.data.data,
             providesTags: result =>
                 result
                     ? [...result.map(({ _id }) => ({ type: 'Zone' as const, _id }))]
@@ -678,8 +552,7 @@ export const roastCrmApi = createApi({
         // Engagement Queries
         getEngagementsForGuest: builder.query<Engagement[], string>({
             query: guestId => ({
-                url: `/role/getRoles`,
-                // url: `/guests/${guestId}/engagements`,
+                url: `/guests/${guestId}/engagements`,
                 method: REST_API_VERBS.GET,
             }),
             transformResponse(_res: any, _meta, guestId) {
@@ -718,35 +591,10 @@ export const roastCrmApi = createApi({
 
         addEngagement: builder.mutation<Engagement, Omit<Engagement, '_id' | 'timestamp'>>({
             query: engagement => ({
-                url: `/role/getRoles`,
-                method: REST_API_VERBS.GET,
-                // url: `/guests/${engagement.guestId}/engagements`,
-                // method: REST_API_VERBS.POST,
-                // body: engagement,
+                url: `/guests/${engagement.guestId}/engagements`,
+                method: REST_API_VERBS.POST,
+                body: engagement,
             }),
-            transformResponse(_res: any, _meta, arg) {
-                const newEngagement: Engagement = {
-                    ...arg,
-                    _id: uuid(),
-                    timestamp: now(),
-                };
-
-                if (!mockEngagements[arg.guestId]) {
-                    mockEngagements[arg.guestId] = [];
-                }
-                mockEngagements[arg.guestId].unshift(newEngagement);
-
-                // Update guest's last contact
-                const guestIndex = mockGuests.findIndex(g => g._id === arg.guestId);
-                if (guestIndex >= 0) {
-                    mockGuests[guestIndex] = {
-                        ...mockGuests[guestIndex],
-                        lastContact: now(),
-                    };
-                }
-
-                return newEngagement;
-            },
             invalidatesTags: (_result, _error, { guestId }) => [
                 { type: 'Engagement', _id: guestId },
                 { type: 'Guest', _id: guestId },
@@ -774,14 +622,6 @@ export const roastCrmApi = createApi({
                 url: `/notifications/${_id}/read`,
                 method: REST_API_VERBS.PATCH,
             }),
-            transformResponse(_res: any, _meta, _id) {
-                const idx = mockNotifications.findIndex(n => n._id === _id);
-                if (idx >= 0) {
-                    mockNotifications[idx] = { ...mockNotifications[idx], isRead: true };
-                    return mockNotifications[idx];
-                }
-                throw new Error('Notification not found');
-            },
             invalidatesTags: (_result, _error, _id) => [{ type: 'Notification', _id }],
         }),
 
