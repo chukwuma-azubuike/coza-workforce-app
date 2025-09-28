@@ -6,6 +6,7 @@ import {
     useGetAssimilationSubStagesQuery,
     useGetMyGuestsCountQuery,
     useGetMyGuestsQuery,
+    useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
 
 import { Text } from '~/components/ui/text';
@@ -13,7 +14,7 @@ import { FloatButton } from '~/components/atoms/button';
 
 import { router } from 'expo-router';
 import Loading from '~/components/atoms/loading';
-import { columnDataType, HeaderParams } from '../../../components/Kanban/types';
+import { columnDataType, DragEndParams, HeaderParams } from '../../../components/Kanban/types';
 
 import { ScreenWidth } from '@rneui/base';
 import ReactNativeKanbanBoard from '~/components/Kanban';
@@ -41,14 +42,19 @@ function MyGuestsDashboard() {
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
     const { data: guests = [], isLoading, refetch } = useGetMyGuestsQuery();
     const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
+    const [updateGuest] = useUpdateGuestMutation();
 
     const assimilationStageIndex = useAssimilationStageIndex();
     const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
-
+    const assimilationSubStagesIndex = useMemo(
+        () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
+        [assimilationSubStages]
+    );
     const transformedAssimilationSubStages = useMemo(
         (): columnDataType<Guest, HeaderParams>[] =>
             assimilationSubStages.map((stage, index) => {
                 return {
+                    index,
                     _id: stage._id,
                     stageId: stage.assimilationStageId,
                     items: groupedGuestsByAssimilationId[stage?._id] ?? [],
@@ -96,12 +102,20 @@ function MyGuestsDashboard() {
         return filtered;
     }, [userGuests, searchTerm, stageFilter]);
 
-    const onDragEnd = useCallback((params: { fromColumnIndex: number; toColumnIndex: number; itemId: string }) => {
-        const { fromColumnIndex, toColumnIndex, itemId } = params;
+    const onDragEnd = useCallback(
+        async (params: DragEndParams) => {
+            const { fromColumnIndex, toColumnIndex, itemId: guestId } = params;
+            const assimilationSubStageId = assimilationSubStagesIndex[toColumnIndex];
 
-        // no-op if dropped in same column
-        if (fromColumnIndex === toColumnIndex) return;
-    }, []);
+            // no-op if dropped in same column
+            if (fromColumnIndex === toColumnIndex) return;
+
+            try {
+                const res = await updateGuest({ _id: guestId, assimilationSubStageId });
+            } catch (error) {}
+        },
+        [assimilationSubStagesIndex]
+    );
 
     const handleAddGuest = () => {
         setModalVisible(prev => !prev);
