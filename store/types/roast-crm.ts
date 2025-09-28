@@ -81,10 +81,11 @@ export interface Zone {
 
 export interface Timeline {
     _id: ID;
+    guestId: string;
+    assignedToId: string;
     title?: string;
     notes?: string;
     createdBy: string;
-    description?: string;
     createdAt: string | Date;
     type: ContactChannel;
 }
