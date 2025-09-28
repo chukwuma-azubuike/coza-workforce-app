@@ -256,7 +256,6 @@ interface NoteEditorProps {
 
 const NoteEditor: React.FC<NoteEditorProps> = memo(
     ({ newNote, setNewNote, channel, setChannel, handleAddingNoteVisible, error, isLoading, onSubmit }) => {
-        console.log(newNote);
         return (
             <View className="gap-4">
                 <Textarea
