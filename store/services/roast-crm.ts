@@ -591,6 +591,51 @@ export const roastCrmApi = createApi({
                 method: REST_API_VERBS.PUT,
                 body: patch,
             }),
+            async onQueryStarted({ _id, ...patch }, { dispatch, queryFulfilled, getState }) {
+                // Optimistically update myGuests list cache
+                const patchMyGuestsResult = dispatch(
+                    roastCrmApi.util.updateQueryData('getMyGuests', undefined, draft => {
+                        const guest = draft.find(g => g._id === _id);
+                        if (guest) {
+                            Object.assign(guest, patch);
+                        }
+                    })
+                );
+
+                // Get all existing getGuests queries from the cache
+                const state = getState() as any;
+                const guestsQueries = state[SERVICE_URL].queries;
+
+                const patchGuestsResults = Object.entries(guestsQueries)
+                    .filter(([key]) => key.startsWith('getGuests'))
+                    .map(([_, query]: [string, any]) => {
+                        const arg = query.originalArgs;
+                        return dispatch(
+                            roastCrmApi.util.updateQueryData('getGuests', arg, draft => {
+                                const guest = draft.find(g => g._id === _id);
+                                if (guest) {
+                                    Object.assign(guest, patch);
+                                }
+                            })
+                        );
+                    });
+
+                // Optimistically update the individual guest cache
+                const patchResult = dispatch(
+                    roastCrmApi.util.updateQueryData('getGuestById', _id, draft => {
+                        Object.assign(draft, patch);
+                    })
+                );
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    // If the mutation fails, undo all optimistic updates
+                    patchResult.undo();
+                    patchMyGuestsResult.undo();
+                    patchGuestsResults.forEach(patchResult => patchResult.undo());
+                }
+            },
             invalidatesTags: (_result, _error, { _id }) => [
                 { type: 'Guest', _id },
                 { type: 'GuestList', _id: 'LIST' },
