@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
     ArrowLeft,
     Phone,
@@ -49,7 +49,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
     const [addEngagement] = useAddEngagementMutation();
 
     const assimilationStagesIndex = useAssimilationStageIndex();
-    const guestAssimilationSubStage = guest ? assimilationStagesIndex[guest?.assimilationSubStageId] : '';
+    const guestAssimilationSubStage = guest ? assimilationStagesIndex[guest?.assimilationSubStageId] ?? '' : '';
 
     if (!guestId || isLoadingGuest) {
         return (
@@ -214,7 +214,7 @@ export function GuestProfile({ guestId, onBack }: GuestProfileProps) {
                 </CardHeader>
                 <CardContent>
                     <View className="space-y-3">
-                        {guest?.milestones?.map((milestone, index) => (
+                        {guest?.milestones?.map(milestone => (
                             <View key={milestone._id} className="flex items-center space-x-3">
                                 <Checkbox
                                     checked={milestone.status === MilestoneStatus.COMPLETED}

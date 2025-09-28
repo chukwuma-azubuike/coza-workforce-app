@@ -3,7 +3,8 @@ import 'yup-phone-lite';
 import { countryCodeIso } from '~/utils/countryCodeIso';
 
 export const GuestFormValidationSchema = Yup.object().shape({
-    name: Yup.string().required("Guest's name is required."),
+    firstName: Yup.string().required("Guest's first name is required."),
+    lastName: Yup.string().optional(),
     address: Yup.string().required('Your home address is required.'),
     phoneNumber: Yup.string()
         .phone(countryCodeIso as any, 'Please enter a valid phone number')
