@@ -10,13 +10,19 @@ export interface DraggedCardProps<T> {
     columnIndex: number;
 }
 
+export interface DragEndParams {
+    fromColumnIndex: number;
+    toColumnIndex: number;
+    itemId: string;
+}
+
 export interface KanbanBoardProps<T extends ItemType, K> {
     onPressCard?: (arg: T) => void;
     columnData: columnDataType<T, K>[];
     renderItem: (props: T, isDragged?: boolean) => JSX.Element;
     renderColumnContainer?: (child: ReactNode, props: K) => ReactNode;
     renderHeader?: (props: K) => JSX.Element;
-    onDragEnd: (params: { fromColumnIndex: number; toColumnIndex: number; itemId: string }) => void;
+    onDragEnd: (params: DragEndParams) => void;
     containerStyle?: ViewStyle;
     contentContainerStyle?: ViewStyle;
     columnHeaderStyle?: ViewStyle;
