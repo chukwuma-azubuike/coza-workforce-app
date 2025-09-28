@@ -111,7 +111,7 @@ function MyGuestsDashboard() {
             if (fromColumnIndex === toColumnIndex) return;
 
             try {
-                const res = await updateGuest({ _id: guestId, assimilationSubStageId });
+                await updateGuest({ _id: guestId, assimilationSubStageId });
             } catch (error) {}
         },
         [assimilationSubStagesIndex]
@@ -134,7 +134,7 @@ function MyGuestsDashboard() {
                 </KanbanColumn>
             );
         },
-        [isLoading]
+        [isLoading, assimilationStageIndex]
     );
 
     const handleProfileView = (guest: Guest) => {
@@ -157,8 +157,8 @@ function MyGuestsDashboard() {
                         <View className="flex-row flex-wrap gap-3">
                             {loadingGuestCounts ? (
                                 <>
-                                    {[...Array(4)].map(i => (
-                                        <Skeleton className="h-24 flex-1 rounded-2xl min-w-[20%]" />
+                                    {[...Array(4)].map((_, index) => (
+                                        <Skeleton key={index} className="h-24 flex-1 rounded-2xl min-w-[20%]" />
                                     ))}
                                 </>
                             ) : (
@@ -166,7 +166,7 @@ function MyGuestsDashboard() {
                                     <StatsCard
                                         count={stage.count}
                                         key={stage.assimilationStageId}
-                                        stage={assimilationStageIndex[stage.assimilationStageId]}
+                                        stage={assimilationStageIndex[stage.assimilationStageId] as any}
                                     />
                                 ))
                             )}
