@@ -265,7 +265,7 @@ const NoteEditor: React.FC<NoteEditorProps> = memo(
                     placeholder="Add a note about your interaction..."
                 />
                 <View className="flex-row justify-between gap-4">
-                    <View className="flex-1">
+                    <View className="flex-1 max-w-[50%]">
                         <PickerSelect
                             valueKey="value"
                             labelKey="label"
@@ -281,7 +281,6 @@ const NoteEditor: React.FC<NoteEditorProps> = memo(
                             onValueChange={setChannel}
                         />
                     </View>
-                    <View className="flex-1" />
                     <View className="flex-row gap-2">
                         <Button size="sm" variant="outline" onPress={handleAddingNoteVisible}>
                             <X className="w-4 h-4 text-destructive" />
