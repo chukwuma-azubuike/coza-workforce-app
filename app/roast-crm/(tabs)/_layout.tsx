@@ -56,26 +56,26 @@ const tabRoutes = [
         href: '/roast-crm/(tabs)/leaderboards',
         pathname: '/roast-crm/leaderboards',
     },
-    {
-        name: 'Notifications',
-        options: { title: 'Notifications' },
-        users: ['all'],
-        inMenuBar: true,
-        inMore: false,
-        icon: { name: 'notifications', type: 'ionicon' },
-        href: '/roast-crm/(tabs)/notifications',
-        pathname: '/roast-crm/notifications',
-    },
-    {
-        name: 'Settings',
-        options: { title: 'Settings' },
-        users: [ROLES.superAdmin, ROLES.globalAdmin],
-        inMenuBar: true,
-        inMore: false,
-        icon: { name: 'settings-sharp', type: 'ionicon' },
-        href: '/roast-crm/(tabs)/settings',
-        pathname: '/roast-crm/settings',
-    },
+    // {
+    //     name: 'Notifications',
+    //     options: { title: 'Notifications' },
+    //     users: ['all'],
+    //     inMenuBar: true,
+    //     inMore: false,
+    //     icon: { name: 'notifications', type: 'ionicon' },
+    //     href: '/roast-crm/(tabs)/notifications',
+    //     pathname: '/roast-crm/notifications',
+    // },
+    // {
+    //     name: 'Settings',
+    //     options: { title: 'Settings' },
+    //     users: [ROLES.superAdmin, ROLES.globalAdmin],
+    //     inMenuBar: true,
+    //     inMore: false,
+    //     icon: { name: 'settings-sharp', type: 'ionicon' },
+    //     href: '/roast-crm/(tabs)/settings',
+    //     pathname: '/roast-crm/settings',
+    // },
 ];
 
 const TabLayout: React.FC = () => {
@@ -117,7 +117,7 @@ const TabLayout: React.FC = () => {
                                 asChild
                             >
                                 <TouchableOpacity activeOpacity={0.6}>
-                                    <View className="w-24 gap-1 items-center">
+                                    <View className="w-28 gap-1 items-center">
                                         <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
                                         <Text style={{ color }} className="text-xs font-light">
                                             {route.name}
