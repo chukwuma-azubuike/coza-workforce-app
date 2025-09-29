@@ -1,8 +1,8 @@
 import React from 'react';
-import Loading from '~/components/atoms/loading';
+import Settings from '~/views/roast-crm/settings';
 
 const MyGuestsScreen: React.FC = () => {
-    return <Loading cover />;
+    return <Settings />;
 };
 
 export default MyGuestsScreen;

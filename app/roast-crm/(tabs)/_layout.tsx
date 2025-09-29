@@ -66,16 +66,16 @@ const tabRoutes = [
     //     href: '/roast-crm/(tabs)/notifications',
     //     pathname: '/roast-crm/notifications',
     // },
-    // {
-    //     name: 'Settings',
-    //     options: { title: 'Settings' },
-    //     users: [ROLES.superAdmin, ROLES.globalAdmin],
-    //     inMenuBar: true,
-    //     inMore: false,
-    //     icon: { name: 'settings-sharp', type: 'ionicon' },
-    //     href: '/roast-crm/(tabs)/settings',
-    //     pathname: '/roast-crm/settings',
-    // },
+    {
+        name: 'Settings',
+        options: { title: 'Settings' },
+        users: [ROLES.superAdmin, ROLES.globalAdmin],
+        inMenuBar: true,
+        inMore: false,
+        icon: { name: 'settings-sharp', type: 'ionicon' },
+        href: '/roast-crm/(tabs)/settings',
+        pathname: '/roast-crm/settings',
+    },
 ];
 
 const TabLayout: React.FC = () => {
