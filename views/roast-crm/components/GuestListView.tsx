@@ -13,7 +13,7 @@ import {
 import FlatListComponent from '~/components/composite/flat-list';
 import PickerSelect from '~/components/ui/picker-select';
 import { Text } from '~/components/ui/text';
-import { Guest, MilestoneStatus, PipelineSubStage } from '~/store/types';
+import { Guest, PipelineSubStage } from '~/store/types';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 
