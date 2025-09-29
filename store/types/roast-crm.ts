@@ -68,28 +68,22 @@ export interface Milestone {
 export interface Zone {
     _id: ID;
     name: string;
-    campusId: string;
-    coordinator?: ID;
-    workers?: ID[];
-}
-
-export interface CreateZonePayload {
-    name: string;
     coordinates: {
         long: number;
         lat: number;
     };
     address: string;
-    departments: [
-        {
-            id: string;
-            name: string;
-            description: string;
-        }
-    ];
+    departments: {
+        id: string;
+        name: string;
+        description: string;
+    }[];
     descriptions: string;
     campusId: string;
+    createdAt: string;
 }
+
+export type CreateZonePayload = Omit<Zone, '_id' | 'createdAt'>;
 
 export interface Timeline {
     _id: ID;
