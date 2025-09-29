@@ -62,10 +62,10 @@ const Profile: React.FC = () => {
                             alt="current-user-avatar"
                             lastName={user?.lastName}
                             firstName={user?.firstName}
+                            imageUrl={user?.pictureUrl}
                             error={JSON.stringify(error)}
                             className="w-32 h-32 shadow-sm"
                             isLoading={isProfilePictureLoading}
-                            imageUrl={user?.pictureUrl ? user.pictureUrl : AVATAR_FALLBACK_URL}
                         />
                         <Text className="absolute bottom-4 left-[19px] bg-black/50 text-white rounded-md text-sm px-2">
                             {user?.pictureUrl ? 'Edit' : 'Add'} photo

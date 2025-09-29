@@ -8,6 +8,7 @@ import Loading from '../loading';
 import { Text } from '~/components/ui/text';
 import AvatarPrimitive from '@rn-primitives/avatar';
 import { cn } from '~/lib/utils';
+import { AVATAR_FALLBACK_URL } from '~/constants';
 
 interface IAvatarComponentProps extends AvatarPrimitive.RootProps {
     size?: number;
@@ -22,8 +23,17 @@ interface IAvatarComponentProps extends AvatarPrimitive.RootProps {
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, className, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE } = props;
+    const { imageUrl: inittialImageUrl, className, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE } = props;
     const [loading, setLoading] = React.useState<boolean>();
+    const [imageUrl, setImageUrl] = React.useState<string>(inittialImageUrl);
+
+    const handleLoading = (value: boolean) => () => {
+        setLoading(value);
+    };
+
+    const handleError = () => {
+        setImageUrl(AVATAR_FALLBACK_URL);
+    };
 
     return (
         <View className={cn('w-12 h-12 justify-center relative', className)}>
@@ -38,8 +48,9 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                         uri: imageUrl,
                         priority: FastImage.priority.normal,
                     }}
-                    onLoadEnd={() => setLoading(false)}
-                    onLoadStart={() => setLoading(true)}
+                    onError={handleError}
+                    onLoadEnd={handleLoading(false)}
+                    onLoadStart={handleLoading(true)}
                     className={cn('!w-12 !h-12 justify-center relative', className)}
                 />
             )}
