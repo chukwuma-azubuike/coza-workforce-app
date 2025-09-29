@@ -84,7 +84,7 @@ const GlobalDashboard: React.FC = () => {
 
     if (isLoading) {
         return (
-            <View className="p-4 gap-6 flex-1">
+            <View className="p-2 gap-6 flex-1">
                 <Skeleton className="w-2/5 h-7" />
                 <View className="gap-6 flex-row flex-wrap">
                     {[...Array(4)].map((_, i) => (
@@ -129,7 +129,7 @@ const GlobalDashboard: React.FC = () => {
     ];
 
     return (
-        <ScrollView className="p-4 flex-1">
+        <ScrollView className="p-2 flex-1">
             <View className="gap-6 pb-6">
                 {/* Header */}
                 <View className="flex-row items-center justify-between">
