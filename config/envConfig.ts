@@ -1,3 +1,4 @@
+import { SUPPORT_EMAIL } from '@env';
 import Constants from 'expo-constants';
 
 // Get APP_VARIANT from expo constants extra
@@ -6,6 +7,7 @@ export const ENV = Constants.expoConfig?.extra?.APP_VARIANT as string;
 const APP_VARIANT = {
     ENV,
     isProd: ENV === 'production',
+    SUPPORT_EMAIL: process.env.EXPO_PUBLIC_SUPPORT_EMAIL || '',
     API_KEY: process.env.EXPO_PUBLIC_API_KEY || '',
     API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || '',
     APP_NAME: process.env.EXPO_PUBLIC_APP_NAME || '',

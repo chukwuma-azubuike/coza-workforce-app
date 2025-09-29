@@ -9,10 +9,11 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { ScreenWidth } from '@rneui/base';
 import { router } from 'expo-router';
 import { Text } from '~/components/ui/text';
+import APP_VARIANT from '~/config/envConfig';
 
 const CongressTopNav: React.FC<{ title: string | ReactNode }> = ({ title }) => {
     const handleSupportPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        Linking.openURL(`mailto:${APP_VARIANT.SUPPORT_EMAIL}`);
     };
 
     const handlePress = () => router.push('/profile');

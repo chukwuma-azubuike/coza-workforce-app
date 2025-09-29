@@ -4,10 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { Linking, TouchableOpacity } from 'react-native';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { THEME_CONFIG } from '@config/appConfig';
+import APP_VARIANT from '~/config/envConfig';
 
 const SupportLink: React.FC = () => {
     const handleNotificationPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        Linking.openURL(`mailto:${APP_VARIANT.SUPPORT_EMAIL}`);
     };
     const { isLightMode } = useAppColorMode();
     return (
