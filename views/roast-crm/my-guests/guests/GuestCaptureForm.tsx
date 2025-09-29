@@ -16,7 +16,6 @@ import { Alert, View } from 'react-native';
 import useRole from '~/hooks/role';
 
 import { useState } from 'react';
-import useModal from '@hooks/modal/useModal';
 import { Formik } from 'formik';
 import { GuestFormData } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -42,7 +41,6 @@ const QUICK_TIPS = [
 
 const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }) => {
     const { user: currentUser } = useRole();
-    const { setModalState } = useModal();
     const dispatch = useDispatch();
     const netInfo = useNetInfo();
     const isOnline = netInfo.isConnected;
@@ -99,11 +97,7 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
 
                 if (res.error) {
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
-                    setModalState({
-                        message: (res?.error as any)?.data?.message || 'Oops something went wrong',
-                        status: 'error',
-                    });
+                    Alert.alert((res?.error as any)?.data?.message || 'Oops something went wrong');
                 }
             } catch (error) {}
         },
