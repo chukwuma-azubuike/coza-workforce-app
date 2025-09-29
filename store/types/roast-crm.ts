@@ -71,12 +71,24 @@ export interface Zone {
     campusId: string;
     coordinator?: ID;
     workers?: ID[];
-    guestCounts?: {
-        invited: number;
-        attended: number;
-        discipled: number;
-        joined: number;
+}
+
+export interface CreateZonePayload {
+    name: string;
+    coordinates: {
+        long: number;
+        lat: number;
     };
+    address: string;
+    departments: [
+        {
+            _id: string;
+            name: string;
+            description: string;
+        }
+    ];
+    descriptions: string;
+    campusId: string;
 }
 
 export interface Timeline {
