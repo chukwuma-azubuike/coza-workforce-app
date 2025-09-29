@@ -16,3 +16,21 @@ export const GuestFormValidationSchema = Yup.object().shape({
     nextAction: Yup.string().optional(),
     assimilationSubStageId: Yup.string(),
 });
+
+export const ZoneFormValidationSchema = Yup.object().shape({
+    name: Yup.string().required('Zone name is required.'),
+    campusId: Yup.string().required('Please select a church'),
+    address: Yup.string().required('Address is required'),
+    departments: Yup.array(
+        Yup.object({
+            _id: Yup.string().required('Please select at least one department'),
+            name: Yup.string().required('Please select at least one department'),
+            description: Yup.string().optional(),
+        })
+    ),
+    coordinates: Yup.object({
+        long: Yup.number(),
+        lat: Yup.number(),
+    }).optional(),
+    descriptions: Yup.string().optional(),
+});
