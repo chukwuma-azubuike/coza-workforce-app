@@ -23,7 +23,7 @@ export const ZoneFormValidationSchema = Yup.object().shape({
     address: Yup.string().required('Address is required'),
     departments: Yup.array(
         Yup.object({
-            _id: Yup.string().required('Please select at least one department'),
+            id: Yup.string().required('Please select at least one department'),
             name: Yup.string().required('Please select at least one department'),
             description: Yup.string().optional(),
         })
