@@ -5,7 +5,7 @@ import Loading from '~/components/atoms/loading';
 import { Button } from '~/components/ui/button';
 import { Text } from '~/components/ui/text';
 
-const GuestCaptureForm = React.lazy(() => import('./ZoneForm'));
+const AddZoneForm = React.lazy(() => import('./ZoneForm'));
 
 interface AddGuestModalProps {
     modalVisible: boolean;
@@ -33,7 +33,7 @@ const AddZoneModal: React.FC<AddGuestModalProps> = ({ modalVisible, setModalVisi
                 </View>
                 <View className="flex-1 px-2">
                     <Suspense fallback={<Loading cover />}>
-                        <GuestCaptureForm setModalVisible={setModalVisible} />
+                        <AddZoneForm setModalVisible={setModalVisible} />
                     </Suspense>
                 </View>
             </View>

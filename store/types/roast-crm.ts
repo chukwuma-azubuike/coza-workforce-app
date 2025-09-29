@@ -82,7 +82,7 @@ export interface CreateZonePayload {
     address: string;
     departments: [
         {
-            _id: string;
+            id: string;
             name: string;
             description: string;
         }

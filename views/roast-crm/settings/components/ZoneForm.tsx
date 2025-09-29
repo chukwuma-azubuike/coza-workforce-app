@@ -32,7 +32,7 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
     const departmentIndex = useMemo(
         () =>
             Object.fromEntries(
-                departments?.map(({ _id, departmentName: name, description }) => [_id, { _id, name, description }])
+                departments?.map(({ _id: id, departmentName: name, description }) => [id, { id, name, description }])
             ),
         [departments]
     );
@@ -42,7 +42,12 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
 
     const onSubmit = useCallback(async (value: CreateZonePayload) => {
         try {
-            const res = await addZone(value);
+            const coordinates = {
+                lat: Number(value?.coordinates?.lat),
+                long: Number(value?.coordinates?.long),
+            };
+
+            const res = await addZone({ ...value, coordinates });
 
             if (res.data) {
                 setModalVisible();
@@ -162,6 +167,40 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                     )}
                                 </View>
 
+                                <View className="gap-4">
+                                    <View className="gap-2">
+                                        <View className="items-center gap-2 flex-row">
+                                            <Users2Icon color="gray" size={16} />
+                                            <Label>Department</Label>
+                                        </View>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            className="!h-12"
+                                            value={newDepartment}
+                                            labelKey="departmentName"
+                                            items={departments || []}
+                                            placeholder="Select department"
+                                            onValueChange={newDepartment => {
+                                                const alreadyAdded = values.departments.map(
+                                                    department => department.id
+                                                );
+                                                if (
+                                                    newDepartment &&
+                                                    Array.isArray(values.departments) &&
+                                                    !alreadyAdded.includes(newDepartment)
+                                                ) {
+                                                    setFieldValue('departments', [
+                                                        ...values.departments?.concat([
+                                                            departmentIndex[newDepartment] as any,
+                                                        ]),
+                                                    ]);
+                                                    setNewDepartment(undefined);
+                                                }
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+
                                 {values.departments.length > 0 && (
                                     <FieldArray
                                         name="departments"
@@ -182,40 +221,6 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                         )}
                                     />
                                 )}
-
-                                <View className="gap-4">
-                                    <View className="gap-2">
-                                        <View className="items-center gap-2 flex-row">
-                                            <Users2Icon color="gray" size={16} />
-                                            <Label>Department</Label>
-                                        </View>
-                                        <PickerSelect
-                                            valueKey="_id"
-                                            className="!h-12"
-                                            value={newDepartment}
-                                            labelKey="departmentName"
-                                            items={departments || []}
-                                            placeholder="Select department"
-                                            onValueChange={newDepartment => {
-                                                const alreadyAdded = values.departments.map(
-                                                    department => department._id
-                                                );
-                                                if (
-                                                    newDepartment &&
-                                                    Array.isArray(values.departments) &&
-                                                    !alreadyAdded.includes(newDepartment)
-                                                ) {
-                                                    setFieldValue('departments', [
-                                                        ...values.departments?.concat([
-                                                            departmentIndex[newDepartment] as any,
-                                                        ]),
-                                                    ]);
-                                                    setNewDepartment(undefined);
-                                                }
-                                            }}
-                                        />
-                                    </View>
-                                </View>
 
                                 <View className="gap-2 mb-2">
                                     <View className="items-center gap-2 flex-row">
