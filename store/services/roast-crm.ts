@@ -23,6 +23,7 @@ import {
     GuestCountResponse,
     IDefaultQueryParams,
     Timeline,
+    CreateZonePayload,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
@@ -528,6 +529,28 @@ export const roastCrmApi = createApi({
                     : [{ type: 'Zone', _id: 'LIST' }],
         }),
 
+        getCampusZones: builder.query<Zone[], string>({
+            query: campusId => ({
+                url: `/zones/${campusId}`,
+                method: REST_API_VERBS.GET,
+                params: { campusId },
+            }),
+            transformResponse: (res: IDefaultResponse<{ zones: Zone[] }>) => res.data.zones,
+            providesTags: result =>
+                result
+                    ? [...result.map(({ _id }) => ({ type: 'Zone' as const, _id }))]
+                    : [{ type: 'Zone', _id: 'LIST' }],
+        }),
+
+        addZone: builder.mutation<Zone, CreateZonePayload>({
+            query: timeline => ({
+                url: '/zones',
+                method: REST_API_VERBS.POST,
+                body: timeline,
+            }),
+            invalidatesTags: ['Zone'],
+        }),
+
         // User Queries
         getUsers: builder.query<User[], { role?: string; zoneId?: string }>({
             query: params => ({
@@ -722,7 +745,7 @@ export const roastCrmApi = createApi({
         // Analytics Queries
         getGlobalAnalytics: builder.query<GlobalAnalytics, { startDate: string; endDate: string; zoneId?: string }>({
             query: params => ({
-                url: `/role/getRoles`,
+                url: `/zones`,
                 // url: `/analytics/global`,
                 method: REST_API_VERBS.GET,
                 params,
@@ -785,6 +808,8 @@ export const {
     useCreateGuestMutation,
     useUpdateGuestMutation,
     useGetZonesQuery,
+    useAddZoneMutation,
+    useGetCampusZonesQuery,
     useGetUsersQuery,
     useGetTimelineQuery,
     useAddTimelineMutation,

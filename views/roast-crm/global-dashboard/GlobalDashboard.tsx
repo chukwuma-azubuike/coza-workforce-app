@@ -53,18 +53,6 @@ const TIME_RANGE = [
     },
 ];
 
-interface StatsCardProps {
-    title: string;
-    value: string | number;
-    icon?: React.ComponentType;
-    trend?: {
-        value: number;
-        label: string;
-        direction: 'up' | 'down' | 'flat';
-    };
-    iconColor?: string;
-}
-
 const GlobalDashboard: React.FC = () => {
     const [selectedZone, setSelectedZone] = useState<ZoneId>('all');
     const [selectedTimeRange, setSelectedTimeRange] = useState<(typeof TIME_RANGE)[0]>(TIME_RANGE[0]);
