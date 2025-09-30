@@ -1,15 +1,8 @@
+import { ROLES } from '~/hooks/role';
 import { IPaginationParams } from '.';
 
 // Core types
 export type ID = string;
-
-// Enums
-export enum Role {
-    ADMIN = 'ADMIN',
-    ZONAL_COORDINATOR = 'ZONAL_COORDINATOR',
-    WORKER = 'WORKER',
-    PASTOR = 'PASTOR',
-}
 
 export enum AssimilationStage {
     INVITED = 'INVITED',
@@ -49,7 +42,7 @@ export interface User {
     name: string;
     phone?: string;
     email?: string;
-    role: Role;
+    role: ROLES;
     zoneName?: string;
     guestCount?: number;
     zoneIds?: ID[]; // zones they coordinate
@@ -290,6 +283,35 @@ export interface GlobalAnalytics {
     stageDistribution: StageDistributionItem[];
     dropOffAnalysis: DropOffAnalysis[];
     topPerformers: TopPerformer[];
+}
+
+export interface RoastDashboardPayload {
+    startDate?: string;
+    endDate?: string;
+    zoneId?: string;
+    campusId?: string;
+}
+
+export interface ZoneDashboardResponse {
+    zoneId: string;
+    zoneName: string;
+    totalGuests: number;
+    totalConversations: number;
+    totalActiveUsers: number;
+    totalWorker: number;
+    conversionRates: {
+        invitedToAttended: number;
+        attendedToDisciple: number;
+        discipleToJoined: number;
+        attendedToJoined: number;
+        breakdown: {
+            invitedCount: number;
+            attendedCount: number;
+            discipleCount: number;
+            joinedCount: number;
+            totalGuests: number;
+        };
+    };
 }
 
 // Pipeline and Notification Types
