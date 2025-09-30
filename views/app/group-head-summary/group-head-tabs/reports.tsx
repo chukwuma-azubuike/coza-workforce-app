@@ -21,7 +21,7 @@ interface IReportProps
 
 export const DepartmentReportListRow: React.FC<IReportProps> = props => {
     const handlePress = () => {
-        router.push({ pathname: `/reports/${ReportRouteIndex[props?.departmentName]}`, params: props as any });
+        router.push({ pathname: `/reports/${ReportRouteIndex[props?.departmentName]}` as any, params: props as any });
     };
 
     return (

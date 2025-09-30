@@ -53,3 +53,18 @@ export const getBadgeColor = (stage: AssimilationStage) => {
             return 'bg-gray-100 dark:bg-gray-900/40 text-gray-800 dark:text-gray-800';
     }
 };
+
+export const getLeaderdoardBadgeColor = (rarity: string) => {
+    switch (rarity) {
+        case 'common':
+            return 'bg-gray-100 text-gray-800';
+        case 'rare':
+            return 'bg-blue-100 text-blue-800';
+        case 'epic':
+            return 'bg-purple-100 text-purple-800';
+        case 'legendary':
+            return 'bg-yellow-100 text-yellow-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+};
