@@ -25,6 +25,9 @@ import {
     CreateZonePayload,
     RoastDashboardPayload,
     ZoneDashboardResponse,
+    LeaderboardPayload,
+    ZoneUsersPayload,
+    ZoneUsersResponse,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
@@ -131,94 +134,6 @@ const mockNotifications: NotificationProps[] = [
         isRead: true,
         priority: NotificationPriority.LOW,
         actionRequired: false,
-    },
-];
-
-const mockLeaderBoard: WorkerLeaderboardEntry[] = [
-    {
-        id: 'worker1',
-        name: 'John Worker',
-        zone: 'Central',
-        avatar: 'JW',
-        stats: {
-            guestsCaptured: 28,
-            conversions: 8,
-            callsMade: 156,
-            visitsMade: 24,
-            milestoneCompletions: 45,
-            consistency: 95,
-        },
-        badges: ['Top Evangelist', 'Consistent Caller', 'Conversion King'],
-        trend: TrendDirection.UP,
-        points: 2850,
-    },
-    {
-        id: 'worker2',
-        name: 'Mary Helper',
-        zone: 'South',
-        avatar: 'MH',
-        stats: {
-            guestsCaptured: 25,
-            conversions: 7,
-            callsMade: 142,
-            visitsMade: 31,
-            milestoneCompletions: 42,
-            consistency: 88,
-        },
-        badges: ['Visit Champion', 'Faithful Follower'],
-        trend: TrendDirection.UP,
-        points: 2720,
-    },
-    {
-        id: 'worker3',
-        name: 'Paul Evangelist',
-        zone: 'North',
-        avatar: 'PE',
-        stats: {
-            guestsCaptured: 32,
-            conversions: 6,
-            callsMade: 134,
-            visitsMade: 19,
-            milestoneCompletions: 38,
-            consistency: 92,
-        },
-        badges: ['Guest Magnet', 'Street Warrior'],
-        trend: TrendDirection.STABLE,
-        points: 2680,
-    },
-    {
-        id: 'worker4',
-        name: 'Sarah Minister',
-        zone: 'East',
-        avatar: 'SM',
-        stats: {
-            guestsCaptured: 22,
-            conversions: 5,
-            callsMade: 118,
-            visitsMade: 16,
-            milestoneCompletions: 35,
-            consistency: 85,
-        },
-        badges: ['Rising Star'],
-        trend: TrendDirection.UP,
-        points: 2420,
-    },
-    {
-        id: 'worker5',
-        name: 'David Pastor',
-        zone: 'West',
-        avatar: 'DP',
-        stats: {
-            guestsCaptured: 19,
-            conversions: 5,
-            callsMade: 95,
-            visitsMade: 22,
-            milestoneCompletions: 32,
-            consistency: 78,
-        },
-        badges: ['Steady Eddie'],
-        trend: TrendDirection.DOWN,
-        points: 2180,
     },
 ];
 
@@ -633,28 +548,30 @@ export const roastCrmApi = createApi({
             invalidatesTags: (_result, _error, _id) => [{ type: 'Notification', _id }],
         }),
 
-        // Current User Query
-        getCurrentUser: builder.query<User, void>({
-            query: () => ({
-                url: `/me`,
+        // Users Query
+        getZoneUsers: builder.query<Array<ZoneUsersResponse['users'][0]['profile']>, ZoneUsersPayload>({
+            query: params => ({
+                url: `/zone-users`,
                 method: REST_API_VERBS.GET,
+                params,
             }),
-            transformResponse() {
-                return mockCurrentUser;
-            },
-            providesTags: ['CurrentUser'],
+
+            providesTags: ['Zone'],
+
+            transformResponse: (res: IDefaultResponse<ZoneUsersResponse>) =>
+                res.data.users?.map(worker => ({ ...worker.profile })),
         }),
 
         // Leaderboard Queries
-        getWorkerLeaderboard: builder.query<WorkerLeaderboardEntry[], string>({
+        getWorkerLeaderboard: builder.query<WorkerLeaderboardEntry[], LeaderboardPayload>({
             query: period => ({
-                url: `/leaderboard/workers`,
+                url: `/zone-users/guests-counts`,
                 params: { period },
                 method: REST_API_VERBS.GET,
             }),
-            transformResponse() {
-                return mockLeaderBoard;
-            },
+
+            transformResponse: (res: IDefaultResponse<WorkerLeaderboardEntry[]>) => res.data,
+
             providesTags: ['Leaderboard'],
         }),
 
@@ -832,7 +749,7 @@ export const {
     useUpdateTimelineMutation,
     useGetNotificationsQuery,
     useMarkNotificationAsReadMutation,
-    useGetCurrentUserQuery,
+    useGetZoneUsersQuery,
     useGetGlobalAnalyticsQuery,
     useGetWorkerLeaderboardQuery,
     useGetZoneLeaderboardQuery,
