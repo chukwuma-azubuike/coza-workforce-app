@@ -6,6 +6,7 @@ import {
     useGetGuestsQuery,
     useGetZoneDashboardQuery,
     useGetZonesQuery,
+    useGetZoneUsersQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
 
@@ -15,7 +16,7 @@ import { ZoneStats } from './components/ZoneStats';
 import useRole, { ROLES } from '~/hooks/role';
 import Loading from '~/components/atoms/loading';
 
-import { columnDataType, DragEndParams, HeaderParams } from '../../../components/Kanban/types';
+import { columnDataType, DragEndParams, HeaderParams } from '~/components/Kanban/types';
 
 import { ScreenWidth } from '@rneui/base';
 import { router } from 'expo-router';
@@ -24,24 +25,23 @@ import SearchAndFilter from '../components/SearchAndFilter';
 import PickerSelect from '~/components/ui/picker-select';
 import groupBy from 'lodash/groupBy';
 
-const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
-const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
-const GuestListView = React.lazy(() => import('../components/GuestListView'));
 import ReactNativeKanbanBoard from '~/components/Kanban';
 import useDebounce from '~/hooks/debounce/use-debounce';
 import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 import { FloatButton } from '~/components/atoms/button';
-import AddGuestModal from '../my-guests/AddGuest';
-import { useGetUsersQuery } from '~/store/services/account';
 
-export function ZoneDashboard() {
-    const { user: currentUser, role } = useRole();
-    const [selectedZone, setSelectedZone] = useState<string>(currentUser.zoneIds?.[0] || '');
+const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
+const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
+const GuestListView = React.lazy(() => import('../components/GuestListView'));
+const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
+
+const ZoneDashboard: React.FC = () => {
+    const { role, user, isZonalCoordinator } = useRole();
+    const [selectedZone, setSelectedZone] = useState<string>();
     const [selectedWorker, setSelectedWorker] = useState<string>();
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
     const [stageFilter, setStageFilter] = useState<Guest['assimilationSubStageId'] | 'all'>('all');
 
-    const { user, isZonalCoordinator } = useRole();
     const [search, setSearch] = useState('');
     const denouncedSearch = useDebounce(setSearch);
 
@@ -54,11 +54,18 @@ export function ZoneDashboard() {
         isFetching,
         data: guests = [],
     } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone });
-    const { data: zones = [] } = useGetZonesQuery({
-        departmentId: isZonalCoordinator ? user.department._id : undefined, // Restrict zonal coordinators to only zones assigned to their department
+    const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
+        departmentId: isZonalCoordinator ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
+        campusId: user.campus._id,
     });
     const [updateGuest] = useUpdateGuestMutation();
-    const { data: workers = [] } = useGetUsersQuery({ zoneId: selectedZone, campusId: user?.campus?._id });
+    const { data: workers = [] } = useGetZoneUsersQuery({
+        zoneId: selectedZone,
+        campusId: user?.campus?._id,
+        page: 1,
+        limit: 100,
+    });
+
     const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
 
     const assimilationStageIndex = useAssimilationStageIndex();
@@ -175,7 +182,7 @@ export function ZoneDashboard() {
             {/* Header */}
             <View className="gap-4 px-2">
                 <View className="flex-row items-center gap-4">
-                    <Text className="text-2xl font-bold max-w-[45%]">{selectedZoneOption?.name ?? 'All Zones'}</Text>
+                    <Text className="text-2xl font-bold !w-[35%]">{selectedZoneOption?.name ?? 'All Zones'}</Text>
 
                     {/* Zone Selector */}
                     {(role === ROLES.superAdmin || role === ROLES.campusPastor) && (
@@ -187,6 +194,7 @@ export function ZoneDashboard() {
                                 className="!h-10"
                                 value={selectedZone}
                                 placeholder="All Zones"
+                                isLoading={loadingZones}
                                 onValueChange={setSelectedZone}
                             />
                         </View>
@@ -198,8 +206,9 @@ export function ZoneDashboard() {
                             valueKey="_id"
                             items={workers}
                             className="!h-10"
-                            value={selectedZone}
                             labelKey="firstName"
+                            isLoading={isFetching}
+                            value={selectedWorker}
                             placeholder="All Workers"
                             onValueChange={setSelectedWorker}
                             customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
@@ -274,4 +283,6 @@ export function ZoneDashboard() {
             </Suspense>
         </View>
     );
-}
+};
+
+export default ZoneDashboard;
