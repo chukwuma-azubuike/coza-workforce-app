@@ -1,8 +1,14 @@
-import React from 'react';
-import GlobalDashboard from '~/views/roast-crm/global-dashboard';
+import React, { Suspense } from 'react';
+import Loading from '~/components/atoms/loading';
+
+const GlobalDashboard = React.lazy(() => import('~/views/roast-crm/global-dashboard/GlobalDashboard'));
 
 const GlobalDashboardScreen: React.FC = () => {
-    return <GlobalDashboard />;
+    return (
+        <Suspense fallback={<Loading cover />}>
+            <GlobalDashboard />
+        </Suspense>
+    );
 };
 
 export default GlobalDashboardScreen;
