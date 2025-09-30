@@ -198,7 +198,7 @@ export interface ZoneUsersResponse {
         profile: Pick<IUser, '_id' | 'firstName' | 'lastName' | 'phoneNumber' | 'email' | 'pictureUrl'>;
     }[];
 }
-export interface LeaderboardPayload {
+export interface LeaderboardPayload extends IPaginationParams {
     startDate?: string;
     endDate?: string;
     zoneId?: string;
@@ -228,6 +228,7 @@ export interface WorkerLeaderboardEntry {
         email: string;
         pictureUrl: string;
     };
+    position: number;
     points: number;
     guestCount: number;
     callsCounts: number;
