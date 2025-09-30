@@ -1,6 +1,5 @@
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import React from 'react';
-import DateTimePicker from '~/components/composite/date-time-picker';
 import useModal from '@hooks/modal/useModal';
 import { useGetPermissionCategoriesQuery, useRequestPermissionMutation } from '@store/services/permissions';
 import { Formik, FormikConfig } from 'formik';
@@ -9,7 +8,6 @@ import useRole from '@hooks/role';
 import { RequestPermissionSchema } from '@utils/schemas';
 import useScreenFocus from '@hooks/focus';
 import dayjs from 'dayjs';
-import ErrorBoundary from '@components/composite/error-boundary';
 import { router } from 'expo-router';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Label } from '~/components/ui/label';
@@ -50,28 +48,28 @@ const RequestPermission: React.FC = () => {
         }
     };
 
-    const iconMap = {
-        medical: {
-            type: 'antdesign',
-            name: 'medicinebox',
-        },
-        education: {
-            type: 'ionicon',
-            name: 'school-outline',
-        },
-        work: {
-            type: 'ionicon',
-            name: 'briefcase-outline',
-        },
-        maternity: {
-            type: 'material-community',
-            name: 'mother-nurse',
-        },
-        vacation: {
-            type: 'material-community',
-            name: 'beach',
-        },
-    };
+    // const iconMap = {
+    //     medical: {
+    //         type: 'antdesign',
+    //         name: 'medicinebox',
+    //     },
+    //     education: {
+    //         type: 'ionicon',
+    //         name: 'school-outline',
+    //     },
+    //     work: {
+    //         type: 'ionicon',
+    //         name: 'briefcase-outline',
+    //     },
+    //     maternity: {
+    //         type: 'material-community',
+    //         name: 'mother-nurse',
+    //     },
+    //     vacation: {
+    //         type: 'material-community',
+    //         name: 'beach',
+    //     },
+    // };
 
     const INITIAL_VALUES = {
         endDate: '',

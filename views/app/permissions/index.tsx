@@ -89,7 +89,7 @@ const Permissions: React.FC = () => {
 
     const routeFocus = useCallback(() => {
         if (params?.tabKey) {
-            setIndex(allRoutes.findIndex(route => route.key === params?.tabKey));
+            setIndex(allRoutes.findIndex(route => route?.key === params?.tabKey));
         }
     }, []);
 
