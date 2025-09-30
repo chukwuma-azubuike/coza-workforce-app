@@ -42,19 +42,6 @@ const mockUsers: User[] = [
     { _id: 'user-coord-1', name: 'Coordinator', role: ROLES.zonalCoordinator, zoneIds: ['zone-1'] },
 ];
 
-// Mock current user for development
-const mockCurrentUser: User = {
-    _id: 'current-user',
-    name: 'John Doe',
-    email: 'john@church.org',
-    phone: '+2348012345678',
-    role: ROLES.worker,
-    zoneName: 'Central Zone',
-    guestCount: 12,
-    isActive: true,
-    zoneIds: ['zone-1'],
-};
-
 // Mock analytics data
 const mockStageDistribution = [
     { name: 'Invited', value: 212, color: '#3B82F6' },
@@ -165,74 +152,6 @@ const mockCurrentUserAchievements: Achievement[] = [
         description: 'Complete 50 home visits',
         rarity: AchievementRarity.EPIC,
         points: 750,
-    },
-];
-
-const mockZoneLeaderboard: ZoneLeaderboardEntry[] = [
-    {
-        zone: 'South Zone',
-        coordinator: 'Pastor Mike',
-        stats: {
-            totalGuests: 89,
-            conversions: 24,
-            conversionRate: 27,
-            activeWorkers: 6,
-            avgResponseTime: '2.3 hours',
-        },
-        points: 8950,
-        trend: TrendDirection.UP,
-    },
-    {
-        zone: 'Central Zone',
-        coordinator: 'Elder Sarah',
-        stats: {
-            totalGuests: 76,
-            conversions: 19,
-            conversionRate: 25,
-            activeWorkers: 5,
-            avgResponseTime: '1.8 hours',
-        },
-        points: 8200,
-        trend: TrendDirection.UP,
-    },
-    {
-        zone: 'North Zone',
-        coordinator: 'Deacon John',
-        stats: {
-            totalGuests: 68,
-            conversions: 16,
-            conversionRate: 24,
-            activeWorkers: 4,
-            avgResponseTime: '3.1 hours',
-        },
-        points: 7680,
-        trend: TrendDirection.STABLE,
-    },
-    {
-        zone: 'East Zone',
-        coordinator: 'Minister Lisa',
-        stats: {
-            totalGuests: 62,
-            conversions: 14,
-            conversionRate: 23,
-            activeWorkers: 4,
-            avgResponseTime: '2.7 hours',
-        },
-        points: 7020,
-        trend: TrendDirection.DOWN,
-    },
-    {
-        zone: 'West Zone',
-        coordinator: 'Pastor David',
-        stats: {
-            totalGuests: 55,
-            conversions: 12,
-            conversionRate: 22,
-            activeWorkers: 3,
-            avgResponseTime: '4.2 hours',
-        },
-        points: 6240,
-        trend: TrendDirection.DOWN,
     },
 ];
 
@@ -571,8 +490,8 @@ export const roastCrmApi = createApi({
             }),
 
             // TODO: To be enabled when backend is fixed
-            //   query: ({ zoneId, ...params }) => ({
-            //     url: `/zone-users/${zoneId}/guests-counts`,
+            //   query: ({ params }) => ({
+            //     url: `/leaderboards/guests-counts`,
             //     params: { zoneId, ...params },
             //     method: REST_API_VERBS.GET,
             // }),
@@ -681,8 +600,18 @@ export const roastCrmApi = createApi({
             providesTags: ['ZoneDashboard'],
         }),
 
+        getGlobalDashboard: builder.query<ZoneDashboardResponse[], RoastDashboardPayload>({
+            query: params => ({
+                url: `/zones-users/reports`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse: (res: IDefaultResponse<ZoneDashboardResponse[]>) => res.data,
+            providesTags: ['GlobalDashboard'],
+        }),
+
         // Analytics Queries
-        getGlobalAnalytics: builder.query<GlobalAnalytics, { startDate: string; endDate: string; zoneId?: string }>({
+        getGlobalAnalytics: builder.query<GlobalAnalytics, RoastDashboardPayload>({
             query: params => ({
                 url: `/zones`,
                 // url: `/analytics/global`,
@@ -756,6 +685,7 @@ export const {
     useGetNotificationsQuery,
     useMarkNotificationAsReadMutation,
     useGetZoneUsersQuery,
+    useGetGlobalDashboardQuery,
     useGetGlobalAnalyticsQuery,
     useGetWorkerLeaderboardQuery,
     useGetZoneLeaderboardQuery,
