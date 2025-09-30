@@ -342,6 +342,7 @@ export interface ZoneDashboardResponse {
     totalConversations: number;
     totalActiveUsers: number;
     totalWorker: number;
+    trend: TrendDirection;
     conversionRates: {
         invitedToAttended: number;
         attendedToDisciple: number;
