@@ -31,7 +31,7 @@ export interface IFlatListComponentProps extends Partial<FlatListProps<any>> {
     fetchMoreData?: () => void;
     emptySize?: number;
     showEmpty?: boolean;
-    emptyCompoenent?: ReactNode;
+    emptyComponent?: ReactNode;
     getItemKey?: (item: any, index: number) => string;
     // New preferred API: a single row component
     renderItemComponent?: React.ComponentType<{ item: any; index: number }>;
@@ -52,7 +52,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
         fetchMoreData,
         itemHeight = 60,
         showHeader = true,
-        emptyCompoenent,
+        emptyComponent,
         renderItemComponent,
     } = props;
     const titles = React.useMemo(() => (columns ? columns.map(column => column.title) : []), [columns]);
@@ -147,7 +147,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                             refreshControl={
                                 onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                             }
-                            style={{ flex: 1 }}
+                            style={{ flex: 1, ...(props.style as any) }}
                             onMomentumScrollBegin={handleMomentumBegin}
                             onEndReached={handleMore}
                             onEndReachedThreshold={0.1}
@@ -187,7 +187,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
                             refreshControl={
                                 onRefresh && <RefreshControl onRefresh={onRefresh} refreshing={refreshing as boolean} />
                             }
-                            style={{ flex: 1 }}
+                            style={{ flex: 1, ...(props.style as any) }}
                             onMomentumScrollBegin={handleMomentumBegin}
                             ListEmptyComponent={
                                 <Empty
@@ -225,7 +225,7 @@ const FlatListComponent: React.FC<IFlatListComponentProps> = props => {
             ) : isLoading ? (
                 <FlatListSkeleton />
             ) : (
-                emptyCompoenent ||
+                emptyComponent ||
                 (showEmpty && (
                     <Empty width={emptySize} isLoading={isLoading} message={emptyMessage} refresh={onRefresh} />
                 ))
