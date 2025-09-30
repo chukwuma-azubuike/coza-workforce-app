@@ -17,52 +17,38 @@ import PickerSelect from '~/components/ui/picker-select';
 import dayjs from 'dayjs';
 import { Skeleton } from '~/components/ui/skeleton';
 import ErrorBoundary from '~/components/composite/error-boundary';
+import { LeaderboardPayload } from '~/store/types';
 
-type TimeRange = '1 month' | '3 months' | '6 months' | '1 year';
+type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
 type ZoneId = 'all' | 'central' | 'north' | 'south' | 'east' | 'west';
 type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
 
-const TIME_RANGE = [
-    {
-        label: '1 month',
-        value: {
-            startDate: dayjs().subtract(1, 'month').toISOString(),
-            endDate: dayjs().toISOString(),
-        },
-    },
-    {
-        label: '3 month',
-        value: {
-            startDate: dayjs().subtract(3, 'month').toISOString(),
-            endDate: dayjs().toISOString(),
-        },
-    },
-    {
-        label: '6 month',
-        value: {
-            startDate: dayjs().subtract(6, 'month').toISOString(),
-            endDate: dayjs().toISOString(),
-        },
-    },
-    {
-        label: '1 year',
-        value: {
-            startDate: dayjs().subtract(1, 'year').toISOString(),
-            endDate: dayjs().toISOString(),
-        },
-    },
-];
-
 const GlobalDashboard: React.FC = () => {
     const [selectedZone, setSelectedZone] = useState<ZoneId>('all');
-    const [selectedTimeRange, setSelectedTimeRange] = useState<(typeof TIME_RANGE)[0]>(TIME_RANGE[0]);
+    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
-    const { data: zones = [] } = useGetZonesQuery();
+    const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'>>({
+        startDate: dayjs().subtract(7, 'day').toISOString(),
+        endDate: dayjs().toISOString(),
+    });
 
-    const handleTimeRangeChange = useCallback((option: (typeof TIME_RANGE)[0]) => {
-        setSelectedTimeRange(option.value as any);
+    const handleDateRangeChange = useCallback((period: TimeRange) => {
+        setSelectedPeriodCode(period);
+
+        if (!period.includes('-')) return;
+
+        const [number, category] = period.split('-');
+
+        setDate({
+            startDate: dayjs()
+                .subtract(Number(number), category as 'month' | 'year')
+                .toISOString(),
+            endDate: dayjs().toISOString(),
+        });
     }, []);
+
+    const { data: zones = [] } = useGetZonesQuery();
 
     const handleZoneChange = useCallback((option: Option) => {
         setSelectedZone(option?.value as ZoneId);
@@ -77,8 +63,7 @@ const GlobalDashboard: React.FC = () => {
         isLoading,
         error,
     } = useGetGlobalAnalyticsQuery({
-        startDate: selectedTimeRange.value.startDate,
-        endDate: selectedTimeRange.value.endDate,
+        ...date,
         zoneId: 'all',
     });
 
@@ -136,13 +121,19 @@ const GlobalDashboard: React.FC = () => {
                     <Text className="text-2xl font-bold">Global Dashboard</Text>
                     <View className="flex-row" style={{ gap: 8 }}>
                         <PickerSelect
-                            valueKey="value"
-                            items={TIME_RANGE}
-                            labelKey="label"
-                            value={selectedZone}
+                            valueKey="_id"
+                            items={[
+                                { _id: '', name: 'All Time' },
+                                { _id: '1-month', name: 'Past 1 Month' },
+                                { _id: '3-month', name: 'Past 3 Months' },
+                                { _id: '6-month', name: 'Past 6 Months' },
+                                { _id: '1-year', name: 'Past 1 Year' },
+                            ]}
+                            labelKey="name"
                             className="!w-28 !h-10"
-                            placeholder="Select time range"
-                            onValueChange={handleTimeRangeChange}
+                            value={selectedPeriodCode}
+                            placeholder="Select date range"
+                            onValueChange={handleDateRangeChange}
                         />
                         <PickerSelect
                             valueKey="_id"
