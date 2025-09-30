@@ -47,25 +47,21 @@ const Settings: React.FC = () => {
         );
     }
 
-    // if (error) {
-    //     return <Loading cover />;
-    // }
-
     return (
         <>
             <View className="gap-6 px-2 pt-4 flex-1">
                 {/* Header */}
                 <View className="flex-row items-center justify-between gap-4">
-                    <Text className="text-2xl font-bold">Admin Settings</Text>
-                    <View className="flex-row flex-1" style={{ gap: 8 }}>
+                    <Text className="text-2xl font-bold">Settings</Text>
+                    <View className="flex-row flex-1 gap-4">
                         <View className="flex-1">
                             <PickerSelect
                                 valueKey="_id"
                                 items={campuses}
-                                labelKey="campusName"
-                                value={selectedCampus}
                                 className="!h-10"
                                 placeholder="Campus"
+                                labelKey="campusName"
+                                value={selectedCampus}
                                 onValueChange={setSelectedCampus}
                             />
                         </View>
@@ -84,7 +80,7 @@ const Settings: React.FC = () => {
                 </View>
 
                 <Tabs value={selectedTab} onValueChange={setSelectedTab as any} className="gap-6 flex-1">
-                    <TabsList className="flex-row gap-1">
+                    <TabsList>
                         <TabsTrigger value="zones">
                             <Text>Zones</Text>
                         </TabsTrigger>
