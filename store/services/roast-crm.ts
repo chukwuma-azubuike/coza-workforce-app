@@ -4,7 +4,6 @@ import {
     User,
     Zone,
     GuestFormData,
-    Role,
     NotificationProps,
     NotificationType,
     NotificationPriority,
@@ -24,17 +23,20 @@ import {
     IDefaultQueryParams,
     Timeline,
     CreateZonePayload,
+    RoastDashboardPayload,
+    ZoneDashboardResponse,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
+import { ROLES } from '~/hooks/role';
 
 // Helper to get current ISO timestamp
 const uuid = () => Math.random().toString(36).substring(2, 10);
 
 const mockUsers: User[] = [
-    { _id: 'user-worker-1', name: 'Worker 1', role: Role.WORKER },
-    { _id: 'user-worker-2', name: 'Worker 2', role: Role.WORKER },
-    { _id: 'user-coord-1', name: 'Coordinator', role: Role.ZONAL_COORDINATOR, zoneIds: ['zone-1'] },
+    { _id: 'user-worker-1', name: 'Worker 1', role: ROLES.worker },
+    { _id: 'user-worker-2', name: 'Worker 2', role: ROLES.worker },
+    { _id: 'user-coord-1', name: 'Coordinator', role: ROLES.zonalCoordinator, zoneIds: ['zone-1'] },
 ];
 
 // Mock current user for development
@@ -43,7 +45,7 @@ const mockCurrentUser: User = {
     name: 'John Doe',
     email: 'john@church.org',
     phone: '+2348012345678',
-    role: Role.WORKER,
+    role: ROLES.worker,
     zoneName: 'Central Zone',
     guestCount: 12,
     isActive: true,
@@ -380,6 +382,9 @@ export const roastCrmApi = createApi({
         'Leaderboard',
         'Pipeline',
         'PipelineStages',
+        'ZoneDashboard',
+        'CampusDashboard',
+        'GlobalDashboard',
     ],
 
     refetchOnFocus: true,
@@ -742,6 +747,17 @@ export const roastCrmApi = createApi({
             invalidatesTags: ['Pipeline'],
         }),
 
+        // Dashboard
+        getZoneDashboard: builder.query<ZoneDashboardResponse, RoastDashboardPayload>({
+            query: params => ({
+                url: `/zone-users/dashboard`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse: (res: IDefaultResponse<ZoneDashboardResponse>) => res.data,
+            providesTags: ['ZoneDashboard'],
+        }),
+
         // Analytics Queries
         getGlobalAnalytics: builder.query<GlobalAnalytics, { startDate: string; endDate: string; zoneId?: string }>({
             query: params => ({
@@ -828,4 +844,5 @@ export const {
     useCreatePipelineStageMutation,
     useDeletePipelineStageMutation,
     useUpdateNotificationRuleMutation,
+    useGetZoneDashboardQuery,
 } = roastCrmApi;

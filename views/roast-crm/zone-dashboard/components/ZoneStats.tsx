@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { View } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 
@@ -14,7 +14,7 @@ export function StatCard({ value, label, color, valueUnit = '' }: StatCardProps)
         <Card className="items-center !min-w-[20%] flex-1">
             <CardContent className="py-4 px-2">
                 <Text className={`text-3xl font-bold text-center ${color}`}>
-                    {value ?? 0}
+                    {value.toFixed(0) ?? 0}
                     {valueUnit}
                 </Text>
                 <Text className="text-foreground line-clamp- text-center">{label}</Text>
