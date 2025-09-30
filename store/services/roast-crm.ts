@@ -564,26 +564,32 @@ export const roastCrmApi = createApi({
 
         // Leaderboard Queries
         getWorkerLeaderboard: builder.query<WorkerLeaderboardEntry[], LeaderboardPayload>({
-            query: period => ({
-                url: `/zone-users/guests-counts`,
-                params: { period },
+            query: ({ zoneId, ...params }) => ({
+                url: `/zone-users/68dbe7a7e86e2119da5f252d/guests-counts`,
+                params: { zoneId: '68dbe7a7e86e2119da5f252d', ...params },
                 method: REST_API_VERBS.GET,
             }),
+
+            // TODO: To be enabled when backend is fixed
+            //   query: ({ zoneId, ...params }) => ({
+            //     url: `/zone-users/${zoneId}/guests-counts`,
+            //     params: { zoneId, ...params },
+            //     method: REST_API_VERBS.GET,
+            // }),
 
             transformResponse: (res: IDefaultResponse<WorkerLeaderboardEntry[]>) => res.data,
 
             providesTags: ['Leaderboard'],
         }),
 
-        getZoneLeaderboard: builder.query<ZoneLeaderboardEntry[], string>({
-            query: period => ({
-                url: `/leaderboard/zones`,
-                params: { period },
+        getZoneLeaderboard: builder.query<ZoneLeaderboardEntry[], LeaderboardPayload>({
+            query: params => ({
+                url: `/zone-users/reports`,
                 method: REST_API_VERBS.GET,
+                params,
             }),
-            transformResponse() {
-                return mockZoneLeaderboard;
-            },
+            transformResponse: (res: IDefaultResponse<ZoneLeaderboardEntry[]>) => res.data,
+
             providesTags: ['Leaderboard'],
         }),
 
