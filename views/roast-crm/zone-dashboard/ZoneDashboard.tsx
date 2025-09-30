@@ -1,23 +1,25 @@
-import React, { ReactNode, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, Suspense, useCallback, useMemo, useState } from 'react';
 import { Dimensions, View } from 'react-native';
-import { AssimilationStage, AssimilationStagePosition, Guest, Role, Zone } from '~/store/types';
-import { useGetGuestsQuery, useGetZonesQuery, useUpdateGuestMutation } from '~/store/services/roast-crm';
+import { AssimilationStage, Guest, Zone } from '~/store/types';
+import {
+    useGetAssimilationSubStagesQuery,
+    useGetGuestsQuery,
+    useGetZoneDashboardQuery,
+    useGetZonesQuery,
+    useUpdateGuestMutation,
+} from '~/store/services/roast-crm';
 
 import { Text } from '~/components/ui/text';
 
 import { ZoneStats } from './components/ZoneStats';
-// import { PipelineInstructions } from './components/PipelineInstructions';
-// import { BulkActions } from './components/BulkActions';
-
-import { useGuestFiltering } from './hooks/useGuestFiltering';
-import useRole from '~/hooks/role';
+import useRole, { ROLES } from '~/hooks/role';
 import Loading from '~/components/atoms/loading';
 
-import { columnDataType, HeaderParams } from '../../../components/Kanban/types';
-import { assimilationStages } from '../data/assimilationStages';
+import { columnDataType, DragEndParams, HeaderParams } from '../../../components/Kanban/types';
+
 import { ScreenWidth } from '@rneui/base';
 import { router } from 'expo-router';
-import { useGetUsersQuery } from '~/store/services/account';
+
 import SearchAndFilter from '../components/SearchAndFilter';
 import PickerSelect from '~/components/ui/picker-select';
 import groupBy from 'lodash/groupBy';
@@ -26,217 +28,145 @@ const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
 const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 import ReactNativeKanbanBoard from '~/components/Kanban';
+import useDebounce from '~/hooks/debounce/use-debounce';
+import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
+import { FloatButton } from '~/components/atoms/button';
+import AddGuestModal from '../my-guests/AddGuest';
+import { useGetUsersQuery } from '~/store/services/account';
 
 export function ZoneDashboard() {
     const { user: currentUser, role } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>(currentUser.zoneIds?.[0] || '');
-    const [bulkReassignMode, setBulkReassignMode] = useState(false);
-    const [selectedGuests, setSelectedGuests] = useState<string[]>([]);
+    const [selectedWorker, setSelectedWorker] = useState<string>();
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [stageFilter, setStageFilter] = useState<Guest['assimilationStage'] | 'all'>('all');
-    const [statefulMappedGuests, setMappedGuests] = useState<columnDataType<Guest, HeaderParams>[]>(assimilationStages);
+    const [stageFilter, setStageFilter] = useState<Guest['assimilationSubStageId'] | 'all'>('all');
 
-    // RTK Queries
-    const { data: guests = [], isLoading: loadingGuests, refetch } = useGetGuestsQuery({ zoneId: selectedZone });
-    const { data: users = [] } = useGetUsersQuery({});
-    const { data: zones = [] } = useGetZonesQuery();
+    const { user, isZonalCoordinator } = useRole();
+    const [search, setSearch] = useState('');
+    const denouncedSearch = useDebounce(setSearch);
+
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
+    const {
+        refetch,
+        isLoading,
+        isFetching,
+        data: guests = [],
+    } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone });
+    const { data: zones = [] } = useGetZonesQuery({
+        departmentId: isZonalCoordinator ? user.department._id : undefined, // Restrict zonal coordinators to only zones assigned to their department
+    });
     const [updateGuest] = useUpdateGuestMutation();
+    const { data: workers = [] } = useGetUsersQuery({ zoneId: selectedZone, campusId: user?.campus?._id });
+    const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
+
+    const assimilationStageIndex = useAssimilationStageIndex();
+    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
+    const assimilationSubStagesIndex = useMemo(
+        () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
+        [assimilationSubStages]
+    );
+
+    const transformedAssimilationSubStages = useMemo(
+        (): columnDataType<Guest, HeaderParams>[] =>
+            assimilationSubStages.map((stage, index) => {
+                return {
+                    index,
+                    _id: stage._id,
+                    stageId: stage.assimilationStageId,
+                    items: groupedGuestsByAssimilationId[stage?._id] ?? [],
+                    header: {
+                        _id: stage._id,
+                        title: stage.name,
+                        subtitle: stage.descriptions,
+                        position: stage.order ?? index,
+                        stageId: stage.assimilationStageId,
+                        count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
+                    },
+                };
+            }),
+        [assimilationSubStages, groupedGuestsByAssimilationId]
+    );
 
     // Filter guests by current user and search term
     const userGuests = useMemo(
-        () => guests?.filter(guest => guest.name.toLowerCase().includes(searchTerm.toLowerCase())),
-        [guests, searchTerm]
+        () =>
+            guests?.filter(guest =>
+                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase())
+            ),
+        [guests, search]
     );
 
-    const [statefulUserGuests, setStatefulUserGuests] = useState<Guest[]>(userGuests);
+    const handleViewGuest = useCallback((guest: Guest) => {
+        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
+    }, []);
 
-    const { filteredGuests, groupedGuests, stats } = useGuestFiltering({
-        guests,
-        searchTerm,
-        stageFilter,
-        zoneId: selectedZone,
-    });
+    const getFilteredGuests = useCallback(() => {
+        let filtered = userGuests;
 
-    const handleGuestMove = async (guestId: string, newStage: Guest['assimilationStage']) => {
-        try {
-            await updateGuest({ _id: guestId, assimilationStage: newStage, lastContact: new Date().toISOString() });
-            // toast.success(`Guest moved to ${newStage} stage`);
-        } catch (error) {
-            // toast.error('Failed to update guest stage');
+        if (search) {
+            filtered = filtered?.filter(
+                guest =>
+                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
+                    guest.phoneNumber.includes(search) ||
+                    (guest.address && guest.address.toLowerCase().includes(search.toLowerCase()))
+            );
         }
+
+        if (stageFilter !== 'all') {
+            filtered = filtered?.filter(guest => guest.assimilationSubStageId === stageFilter);
+        }
+
+        return filtered;
+    }, [userGuests, search, stageFilter]);
+
+    const onGuestUpdate = async (guestId: string, assimilationSubStageId: string) => {
+        try {
+            await updateGuest({ _id: guestId, assimilationSubStageId });
+        } catch (error) {}
     };
+
+    const onDragEnd = useCallback(
+        async (params: DragEndParams) => {
+            const { fromColumnIndex, toColumnIndex, itemId: guestId } = params;
+            const assimilationSubStageId = assimilationSubStagesIndex[toColumnIndex];
+
+            await onGuestUpdate(guestId, assimilationSubStageId as string);
+
+            // no-op if dropped in same column
+            if (fromColumnIndex === toColumnIndex) return;
+        },
+        [assimilationSubStagesIndex]
+    );
+
+    const handleAddGuest = () => {
+        setModalVisible(prev => !prev);
+    };
+
+    const renderContentContainer = useCallback(
+        (child: ReactNode, props: HeaderParams) => {
+            return (
+                <KanbanColumn
+                    title={props.title}
+                    isLoading={isLoading}
+                    subTitle={props.subtitle}
+                    guestCount={props.count}
+                    stage={assimilationStageIndex[props.stageId as string] as AssimilationStage}
+                >
+                    {child}
+                </KanbanColumn>
+            );
+        },
+        [isLoading, assimilationStageIndex]
+    );
 
     const handleProfileView = (guest: Guest) => {
         router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     };
 
-    const handleReassignWorker = async (guestId: string, workerId: string, zoneId?: string) => {
-        try {
-            await updateGuest({
-                _id: guestId,
-                assignedToId: workerId,
-                zoneId: zoneId || selectedZone,
-                lastContact: new Date().toISOString(),
-            });
-
-            // If guest was moved to a different zoneId, update selected zoneId to follow the guest
-            if (zoneId && zoneId !== selectedZone && (role === Role.ADMIN || role === Role.PASTOR)) {
-                setSelectedZone(zoneId);
-            }
-
-            // toast.success('Worker reassigned successfully');
-        } catch (error) {
-            // toast.error('Failed to reassign worker');
-        }
-    };
-
-    const handleBulkReassign = async (workerId: string) => {
-        if (selectedGuests.length === 0) {
-            // toast.error('Please select guests to reassign');
-            return;
-        }
-
-        try {
-            await Promise.all(
-                selectedGuests.map(guestId =>
-                    updateGuest({
-                        _id: guestId,
-                        assignedToId: workerId,
-                        lastContact: new Date().toISOString(),
-                    })
-                )
-            );
-
-            const worker = users.find(w => w._id === workerId);
-            // toast.success(`${selectedGuests.length} guests reassigned to ${worker?.name}`);
-            setSelectedGuests([]);
-            setBulkReassignMode(false);
-        } catch (error) {
-            // toast.error('Failed to reassign some guests');
-        }
-    };
-
-    const toggleGuestSelection = (guestId: string) => {
-        setSelectedGuests(prev => (prev.includes(guestId) ? prev.filter(_id => _id !== guestId) : [...prev, guestId]));
-    };
-
-    const getFilteredGuests = useCallback(() => {
-        let filtered = userGuests;
-
-        if (searchTerm) {
-            filtered = filtered?.filter(
-                guest =>
-                    guest.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    guest.phone.includes(searchTerm) ||
-                    (guest.address && guest.address.toLowerCase().includes(searchTerm.toLowerCase()))
-            );
-        }
-
-        if (stageFilter !== 'all') {
-            filtered = filtered?.filter(guest => guest.assimilationStage === stageFilter);
-        }
-
-        return filtered;
-    }, [userGuests, searchTerm, stageFilter]);
-
-    const handleViewGuest = useCallback((guestId: string) => {
-        router.push({ pathname: '/roast-crm/guests/profile', params: { guestId } });
-    }, []);
-
-    const kanbanContainerHeight = Dimensions.get('window').height - 620;
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
-
-    const renderContentContainer = useCallback(
-        (child: ReactNode, props: HeaderParams) => (
-            <KanbanColumn
-                title={props.title}
-                isLoading={loadingGuests}
-                guestCount={props.count}
-                stage={props.title as AssimilationStage}
-            >
-                {child}
-            </KanbanColumn>
-        ),
-        [loadingGuests]
-    );
-
-    const onDragEnd = useCallback((params: { fromColumnIndex: number; toColumnIndex: number; itemId: string }) => {
-        const { fromColumnIndex, toColumnIndex, itemId } = params;
-
-        // no-op if dropped in same column
-        if (fromColumnIndex === toColumnIndex) return;
-
-        setMappedGuests(prev => {
-            // create shallow copy of columns
-            const next = prev.map(c => ({ ...c, items: [...c.items] }));
-
-            // find and remove the item from source column
-            const sourceItems = next[fromColumnIndex].items;
-            const itemIndex = sourceItems.findIndex(it => it._id === itemId || it.id === itemId);
-            if (itemIndex === -1) return prev; // item not found - keep previous
-
-            const [removed] = sourceItems.splice(itemIndex, 1);
-
-            // compute new stage name from destination column's header
-            const destStage = next[toColumnIndex]?.header?.title as Guest['assimilationStage'];
-
-            // create updated item with new assimilationStage
-            const updatedRemoved: Guest = {
-                ...removed,
-                assimilationStage: destStage,
-            };
-
-            // append to destination column (change to unshift or splice to insert at other position)
-            next[toColumnIndex].items.push(updatedRemoved);
-
-            // update flattened stateful users so UI and derived lists reflect the change
-            setStatefulUserGuests(next.flatMap(stage => stage.items));
-
-            return next;
-        });
-    }, []);
-
-    const mappedGuests: columnDataType<Guest, HeaderParams>[] = useMemo(
-        () =>
-            Object.entries(groupBy<Guest>(guests, 'assimilationStage'))?.map(([key, value]) => {
-                return {
-                    header: {
-                        title: key,
-                        subtitle: '',
-                        count: value?.length,
-                        position: AssimilationStagePosition[key as any] as unknown as number,
-                    },
-                    items: value.map(val => {
-                        return { ...val, id: val._id };
-                    }),
-                };
-            }),
-        [guests]
-    );
-
-    useEffect(() => {
-        if (
-            statefulMappedGuests &&
-            statefulMappedGuests[0]?.items.length < 1 &&
-            mappedGuests &&
-            mappedGuests.length > 0
-        ) {
-            // Concatenate only the stages that are not present in the mapped guest headers
-            setMappedGuests(
-                assimilationStages
-                    .filter(stage => !mappedGuests.map(guests => guests.header.title).includes(stage.header.title))
-                    .concat(mappedGuests)
-                    .sort((a, b) => a.header.position - b.header.position)
-            );
-        }
-    }, [statefulMappedGuests, mappedGuests, assimilationStages]);
-
-    useEffect(() => {
-        if (statefulUserGuests && statefulMappedGuests[0]?.items.length < 1 && guests && guests?.length > 1) {
-            setStatefulUserGuests(guests);
-        }
-    }, [guests]);
+    const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     const selectedZoneOption = zones.find((zone: Zone) => zone._id === selectedZone);
 
@@ -244,66 +174,63 @@ export function ZoneDashboard() {
         <View className="flex-1 bg-background pt-2 gap-6">
             {/* Header */}
             <View className="gap-4 px-2">
-                <View className="flex-row items-center justify-between">
-                    <Text className="text-2xl font-bold">{selectedZoneOption?.name ?? 'Zone'} Dashboard</Text>
+                <View className="flex-row items-center gap-4">
+                    <Text className="text-2xl font-bold max-w-[45%]">{selectedZoneOption?.name ?? 'All Zones'}</Text>
 
                     {/* Zone Selector */}
-                    {(role === Role.ADMIN || role === Role.PASTOR) && (
+                    {(role === ROLES.superAdmin || role === ROLES.campusPastor) && (
+                        <View className="flex-1">
+                            <PickerSelect
+                                valueKey="_id"
+                                items={zones}
+                                labelKey="name"
+                                className="!h-10"
+                                value={selectedZone}
+                                placeholder="All Zones"
+                                onValueChange={setSelectedZone}
+                            />
+                        </View>
+                    )}
+
+                    {/* Worker Selector */}
+                    <View className="flex-1">
                         <PickerSelect
                             valueKey="_id"
-                            items={zones}
-                            labelKey="name"
+                            items={workers}
+                            className="!h-10"
                             value={selectedZone}
-                            className="!w-44 !h-10"
-                            placeholder="Select zone"
-                            onValueChange={option => {
-                                if (option?.value) {
-                                    setSelectedZone(option.value);
-                                }
-                            }}
+                            labelKey="firstName"
+                            placeholder="All Workers"
+                            onValueChange={setSelectedWorker}
+                            customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
                         />
-                    )}
+                    </View>
                 </View>
 
                 <ZoneStats
-                    totalGuests={stats.totalGuests}
-                    conversionRate={stats.conversionRate}
-                    activeThisWeek={stats.activeThisWeek}
-                    totalWorkers={users.filter((u: any) => u.role === Role.WORKER).length}
+                    totalGuests={zoneDashboard?.totalGuests ?? 0}
+                    conversionRate={zoneDashboard?.conversionRates.discipleToJoined ?? 0}
+                    activeThisWeek={zoneDashboard?.totalActiveUsers ?? 0}
+                    totalWorkers={zoneDashboard?.totalWorker ?? 0}
                 />
             </View>
 
-            {/* Instructions - Only show for Kanban view */}
-            {/* TODO: Pipeline instructions might be unecessary */}
-            {/* {viewMode === 'kanban' && <PipelineInstructions />} */}
-
             <View className="px-2 flex-row items-center gap-2 w-full justify-between mb-1">
-                {/* TODO: Not sure how practical this is */}
-                {/* <BulkActions
-                    bulkReassignMode={bulkReassignMode}
-                    selectedGuests={selectedGuests}
-                    workers={users}
-                    onBulkReassignStart={() => setBulkReassignMode(true)}
-                    onBulkReassignCancel={() => {
-                        setBulkReassignMode(false);
-                        setSelectedGuests([]);
-                    }}
-                    onWorkerSelect={handleBulkReassign}
-                /> */}
-
                 <View className="flex-1">
                     <SearchAndFilter
-                        searchTerm={searchTerm}
-                        setSearchTerm={setSearchTerm}
-                        stageFilter={stageFilter}
-                        setStageFilter={setStageFilter}
                         viewMode={viewMode}
-                        setViewMode={value => setViewMode(value as any)}
+                        searchTerm={search}
+                        stageFilter={stageFilter}
+                        setSearchTerm={denouncedSearch}
+                        setStageFilter={setStageFilter}
+                        setViewMode={setViewMode as any}
+                        loading={isFetching || isLoading}
+                        assimilationSubStages={assimilationSubStages}
                     />
                 </View>
             </View>
 
-            {/* View Content */}
+            {/* View Guests */}
             <View className="flex-1">
                 {viewMode === 'kanban' ? (
                     <Suspense fallback={<Loading cover />}>
@@ -312,8 +239,8 @@ export function ZoneDashboard() {
                             onDragEnd={onDragEnd}
                             onPressCard={handleProfileView}
                             columnWidth={ScreenWidth - 80}
-                            columnData={statefulMappedGuests}
                             columnContainerStyle={{ flex: 1 }}
+                            columnData={transformedAssimilationSubStages}
                             renderColumnContainer={renderContentContainer}
                             renderItem={guest => <KanbanUICard guest={guest} />}
                         />
@@ -322,14 +249,29 @@ export function ZoneDashboard() {
                     <Suspense fallback={<Loading cover />}>
                         <GuestListView
                             refetch={refetch}
-                            isLoading={loadingGuests}
+                            isLoading={isLoading}
+                            onGuestUpdate={onGuestUpdate}
                             handleViewGuest={handleViewGuest}
                             containerHeight={kanbanContainerHeight}
                             displayGuests={displayGuests as Guest[]}
+                            assimilationSubStages={assimilationSubStages}
                         />
                     </Suspense>
                 )}
             </View>
+            <FloatButton
+                iconName="plus"
+                className="!p-2"
+                onPress={handleAddGuest}
+                iconType="font-awesome-5"
+                iconClassname="!w-4 !h-4"
+            >
+                Add Guest
+            </FloatButton>
+
+            <Suspense fallback={null}>
+                <AddGuestModal modalVisible={modalVisible} setModalVisible={handleAddGuest} />
+            </Suspense>
         </View>
     );
 }
