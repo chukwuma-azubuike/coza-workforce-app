@@ -1,8 +1,14 @@
-import React from 'react';
-import Settings from '~/views/roast-crm/settings';
+import React, { Suspense } from 'react';
+import Loading from '~/components/atoms/loading';
+
+const Settings = React.lazy(() => import('~/views/roast-crm/settings'));
 
 const MyGuestsScreen: React.FC = () => {
-    return <Settings />;
+    return (
+        <Suspense fallback={<Loading cover />}>
+            <Settings />
+        </Suspense>
+    );
 };
 
 export default MyGuestsScreen;
