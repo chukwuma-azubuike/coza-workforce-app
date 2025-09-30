@@ -1,5 +1,5 @@
 import { ROLES } from '~/hooks/role';
-import { IPaginationParams } from '.';
+import { IPaginationParams, IUser } from '.';
 
 // Core types
 export type ID = string;
@@ -188,15 +188,57 @@ export interface WorkerStats {
     consistency: number;
 }
 
+export interface ZoneUsersPayload extends IPaginationParams {
+    zoneId?: string;
+    campusId?: string;
+}
+
+export interface ZoneUsersResponse {
+    users: {
+        profile: Pick<IUser, '_id' | 'firstName' | 'lastName' | 'phoneNumber' | 'email' | 'pictureUrl'>;
+    }[];
+}
+export interface LeaderboardPayload {
+    startDate?: string;
+    endDate?: string;
+    zoneId?: string;
+    campusId?: string;
+}
+
 export interface WorkerLeaderboardEntry {
-    id: ID;
-    name: string;
-    zone: string;
-    avatar: string;
-    stats: WorkerStats;
-    badges: string[];
-    trend: TrendDirection;
+    worker: {
+        _id: string;
+        lastName: string;
+        firstName: string;
+        phoneNumber: string;
+        pictureUrl: string;
+    };
+    zone: {
+        _id: string;
+        name: string;
+    };
+    role: {
+        _id: string;
+        name: string;
+    };
+    createdBy: {
+        _id: string;
+        firstName: string;
+        lastName: string;
+        email: string;
+        pictureUrl: string;
+    };
     points: number;
+    guestCount: number;
+    callsCounts: number;
+    consistency: number;
+    conversion: number;
+    visitsCounts: number;
+    trend: TrendDirection;
+    achievement: {
+        title: string;
+        date: string;
+    }[];
 }
 
 export interface ZoneStats {
