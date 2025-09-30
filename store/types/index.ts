@@ -73,6 +73,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
+    zoneId?: string;
     CGWCId?: string;
     cgwcId?: string;
     limit?: number;

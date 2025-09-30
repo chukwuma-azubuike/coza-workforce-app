@@ -202,7 +202,7 @@ function MyGuestsDashboard() {
                 </ScrollView>
             </View>
             {/* Content */}
-            <View className="flex-1 bg-red-30">
+            <View className="flex-1">
                 {viewMode === 'kanban' ? (
                     <Suspense fallback={<Loading cover />}>
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
