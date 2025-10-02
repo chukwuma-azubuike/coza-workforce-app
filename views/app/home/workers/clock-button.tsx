@@ -63,6 +63,8 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 lat: `${deviceCoordinates.latitude}`,
                 long: `${deviceCoordinates.longitude}`,
             },
+            CGWCId: latestServiceData?.CGWCId,
+            isCGWC: !!latestServiceData?.CGWCId,
             campusId: user?.campus._id,
             departmentId: user?.department._id,
             roleId: user?.role._id,
