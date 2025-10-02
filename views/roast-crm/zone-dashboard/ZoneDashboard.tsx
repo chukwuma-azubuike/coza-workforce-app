@@ -18,7 +18,6 @@ import Loading from '~/components/atoms/loading';
 
 import { columnDataType, DragEndParams, HeaderParams } from '~/components/Kanban/types';
 
-import { ScreenWidth } from '@rneui/base';
 import { router } from 'expo-router';
 
 import SearchAndFilter from '../components/SearchAndFilter';
@@ -247,7 +246,6 @@ const ZoneDashboard: React.FC = () => {
                             gapBetweenColumns={8}
                             onDragEnd={onDragEnd}
                             onPressCard={handleProfileView}
-                            columnWidth={ScreenWidth - 80}
                             columnContainerStyle={{ flex: 1 }}
                             columnData={transformedAssimilationSubStages}
                             renderColumnContainer={renderContentContainer}
