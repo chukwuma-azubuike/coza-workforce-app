@@ -117,7 +117,7 @@ const TabLayout: React.FC = () => {
                                 asChild
                             >
                                 <TouchableOpacity activeOpacity={0.6}>
-                                    <View className="!w-20 gap-1 items-center">
+                                    <View className="!w-20 sm:!w-28 gap-1 items-center">
                                         <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
                                         <Text style={{ color }} className="text-xs font-light">
                                             {route.name}
