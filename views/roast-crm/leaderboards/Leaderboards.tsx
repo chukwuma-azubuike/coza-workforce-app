@@ -15,7 +15,7 @@ import dayjs from 'dayjs';
 
 const Leaderboards: React.FC = () => {
     const { user: currentUser, isSuperAdmin, isGlobalPastor } = useRole();
-    const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'>>({
+    const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'> | undefined>({
         startDate: dayjs().subtract(7, 'day').toISOString(),
         endDate: dayjs().toISOString(),
     });
@@ -25,11 +25,13 @@ const Leaderboards: React.FC = () => {
     const handleDateRangeChange = useCallback((period: '7d' | '30d' | '90d') => {
         setSelectedPeriodCode(period);
 
+        if (typeof period !== 'object') return setDate(undefined);
+
         setDate({
             startDate: dayjs()
-                .subtract(Number(period.replace('d', '')), 'day')
-                .toISOString(),
-            endDate: dayjs().toISOString(),
+                ?.subtract(Number((period as any)?.replace('d', '')), 'day')
+                ?.toISOString(),
+            endDate: dayjs()?.toISOString(),
         });
     }, []);
 
@@ -70,7 +72,8 @@ const Leaderboards: React.FC = () => {
         <View className="py-4 px-2 gap-6">
             {/* Header */}
             <View className="flex-row items-center justify-between">
-                <Text className="text-2xl font-bold">Leaderboards</Text>
+                <Text className="text-2xl flex-1 font-bold">Leaderboards</Text>
+                {/* <View className="flex-1"> */}
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"
@@ -85,6 +88,7 @@ const Leaderboards: React.FC = () => {
                     placeholder="Select Period"
                     onValueChange={handleDateRangeChange}
                 />
+                {/* </View> */}
             </View>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-1">
