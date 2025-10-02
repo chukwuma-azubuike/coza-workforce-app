@@ -49,7 +49,7 @@ export const servicesServiceSlice = createApi({
                 body: args,
             }),
 
-            invalidatesTags: (result, error, { _id }) => [
+            invalidatesTags: (_result, _error, { _id }) => [
                 { type: 'Service', id: _id },
                 'ServiceList',
                 'LatestService',
@@ -64,7 +64,7 @@ export const servicesServiceSlice = createApi({
                 method: REST_API_VERBS.DELETE,
             }),
 
-            invalidatesTags: (result, error, _id) => [
+            invalidatesTags: (_result, _error, _id) => [
                 { type: 'Service', id: _id },
                 'ServiceList',
                 'LatestService',
@@ -78,7 +78,7 @@ export const servicesServiceSlice = createApi({
 
             transformResponse: (response: IGetLatestServiceResponse) => response.data,
 
-            providesTags: (result, error, campusId) => [
+            providesTags: (result, _error, campusId) => [
                 { type: 'Service', id: result?._id },
                 { type: 'CampusServices', id: campusId },
                 'LatestService',
@@ -93,7 +93,7 @@ export const servicesServiceSlice = createApi({
                 params,
             }),
 
-            providesTags: (result = [], error, arg) => [
+            providesTags: (result = [], _error, arg) => [
                 ...result.map(({ _id }) => ({ type: 'Service' as const, id: _id })),
                 { type: 'PaginatedServices', id: 'LIST' },
                 arg.campusId ? { type: 'CampusServices', id: arg.campusId } : 'ServiceList',
@@ -107,7 +107,7 @@ export const servicesServiceSlice = createApi({
         getServiceById: endpoint.query<IService, string>({
             query: id => `/${SERVICE_URL}/${id}`,
 
-            providesTags: (result, error, id) => [{ type: 'Service', id }, SERVICE_URL],
+            providesTags: (_result, _error, id) => [{ type: 'Service', id }, SERVICE_URL],
 
             transformResponse: (response: IDefaultResponse<IService>) => response.data,
         }),
