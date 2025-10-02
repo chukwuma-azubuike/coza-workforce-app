@@ -117,9 +117,9 @@ const GlobalDashboard: React.FC = () => {
         <ScrollView className="p-2 flex-1">
             <View className="gap-6 pb-6">
                 {/* Header */}
-                <View className="flex-row items-center justify-between">
-                    <Text className="text-2xl font-bold">Global Dashboard</Text>
-                    <View className="flex-row" style={{ gap: 8 }}>
+                <View className="flex-row items-center gap-4">
+                    <Text className="text-2xl !w-[45%] font-bold">Global Dashboard</Text>
+                    <View className="flex-1">
                         <PickerSelect
                             valueKey="_id"
                             items={[
@@ -132,21 +132,19 @@ const GlobalDashboard: React.FC = () => {
                             labelKey="name"
                             className="!w-28 !h-10"
                             value={selectedPeriodCode}
-                            placeholder="Select date range"
+                            placeholder="Date range"
                             onValueChange={handleDateRangeChange}
                         />
+                    </View>
+                    <View className="flex-1">
                         <PickerSelect
                             valueKey="_id"
                             items={zones}
                             labelKey="name"
                             value={selectedZone}
                             className="!w-28 !h-10"
-                            placeholder="Select zone"
-                            onValueChange={option => {
-                                if (option?.value) {
-                                    handleZoneChange(option.value);
-                                }
-                            }}
+                            placeholder="Zone"
+                            onValueChange={handleZoneChange}
                         />
                     </View>
                 </View>
@@ -208,7 +206,7 @@ const GlobalDashboard: React.FC = () => {
                     </TabsList>
 
                     <TabsContent value="overview">
-                        <View className="gap-6">
+                        <View className="gap-6 md:flex-row">
                             <ErrorBoundary>
                                 <DistributionChart data={analytics.stageDistribution} />
                             </ErrorBoundary>
@@ -220,7 +218,7 @@ const GlobalDashboard: React.FC = () => {
 
                     <TabsContent value="zones">
                         <ErrorBoundary>
-                            <ZonePerformanceChart data={analytics.zonePerformance} />
+                            <ZonePerformanceChart data={analytics.zonePerformance as any} />
                         </ErrorBoundary>
                     </TabsContent>
 

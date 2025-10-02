@@ -12,10 +12,12 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T, K>) => {
     const [toColumnIndex, setToColumnIndex] = useState(0);
     const SCREEN_WIDTH = Dimensions.get('screen').width;
-    const columnContainerWidth = props.columnWidth ?? SCREEN_WIDTH * 0.8;
-    const scrollTriggerWidth = SCREEN_WIDTH * 0.3;
-    const edgeColumnOff = columnContainerWidth * 1.5 - SCREEN_WIDTH * 0.5;
-    const marginAlign = (SCREEN_WIDTH - columnContainerWidth) / 2;
+    const MAX_WIDTH = 448; // Define your max width for large screens
+    const responsiveWidth = SCREEN_WIDTH > MAX_WIDTH ? MAX_WIDTH : SCREEN_WIDTH;
+    const columnContainerWidth = props.columnWidth ?? responsiveWidth * 0.8;
+    const scrollTriggerWidth = responsiveWidth * 0.3;
+    const edgeColumnOff = columnContainerWidth * 1.5 - responsiveWidth * 0.5;
+    const marginAlign = (responsiveWidth - columnContainerWidth) / 2;
 
     const constants = {
         columnContainerWidth,
