@@ -16,7 +16,6 @@ import { router } from 'expo-router';
 import Loading from '~/components/atoms/loading';
 import { columnDataType, DragEndParams, HeaderParams } from '../../../components/Kanban/types';
 
-import { ScreenWidth } from '@rneui/base';
 import ReactNativeKanbanBoard from '~/components/Kanban';
 import groupBy from 'lodash/groupBy';
 import SearchAndFilter from '../components/SearchAndFilter';
@@ -209,7 +208,6 @@ function MyGuestsDashboard() {
                             gapBetweenColumns={8}
                             onDragEnd={onDragEnd}
                             onPressCard={handleProfileView}
-                            columnWidth={ScreenWidth - 80}
                             columnData={transformedAssimilationSubStages}
                             columnContainerStyle={{ flex: 1 }}
                             renderColumnContainer={renderContentContainer}
