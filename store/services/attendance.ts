@@ -26,6 +26,8 @@ export interface IClockInPayload {
         lat: string;
         long: string;
     };
+    isCGWC?: boolean;
+    CGWCId?: string;
     roleId: IUser['role']['_id'];
     campusId: ICampus['_id'];
     departmentId: string;

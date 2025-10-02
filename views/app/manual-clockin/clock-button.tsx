@@ -70,6 +70,8 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                     lat: `${deviceCoordinates.latitude}`,
                     long: `${deviceCoordinates.longitude}`,
                 },
+                CGWCId: latestServiceData?.CGWCId,
+                isCGWC: !!latestServiceData?.CGWCId,
                 campusId: user?.campusId as string,
                 departmentId: user?.departmentId as string,
                 roleId: user?.roleId,
@@ -262,10 +264,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         canClockIn && !disabled
                             ? 'bg-primary'
                             : canClockOut
-                              ? ' bg-rose-400'
-                              : disabled
-                                ? 'bg-gray-400'
-                                : 'bg-gray-400'
+                            ? ' bg-rose-400'
+                            : disabled
+                            ? 'bg-gray-400'
+                            : 'bg-gray-400'
                     )}
                 >
                     <View className="flex-1 justify-center items-center">
