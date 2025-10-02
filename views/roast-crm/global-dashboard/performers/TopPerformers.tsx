@@ -15,7 +15,7 @@ interface TopPerformersProps {
 
 export function TopPerformers({ performers }: TopPerformersProps) {
     return (
-        <Card>
+        <Card className="flex-1">
             <CardHeader>
                 <CardTitle>Top Performing Workers</CardTitle>
             </CardHeader>

@@ -17,7 +17,7 @@ export function DistributionChart({ data }: DistributionChartProps) {
     const font = useFont(NexaExtraLight, 14);
 
     return (
-        <Card>
+        <Card className="flex-1">
             <CardHeader>
                 <CardTitle>Guest Distribution by Stage</CardTitle>
             </CardHeader>
