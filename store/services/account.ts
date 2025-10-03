@@ -224,6 +224,24 @@ export const accountServiceSlice = createApi({
                 body,
             }),
 
+            // Add optimistic updates
+            async onQueryStarted(patch, { dispatch, queryFulfilled, getState }) {
+                // Get the current cache key for user details
+                const patchResult = dispatch(
+                    accountServiceSlice.util.updateQueryData('getUserById', patch?._id as string, draft => {
+                        // Update the draft with new values
+                        Object.assign(draft, patch);
+                    })
+                );
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    // If the mutation fails, revert the optimistic update
+                    patchResult.undo();
+                }
+            },
+
             invalidatesTags: [
                 'listOfDepartmentUsers',
                 'CampusSummaryByCampusId',

@@ -3,8 +3,8 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import dayjs from 'dayjs';
-import React from 'react';
-import { Alert, Switch, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import CardComponent from '@components/composite/card';
@@ -26,6 +26,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
 import PickerSelect from '~/components/ui/picker-select';
+import { Switch } from '~/components/ui/switch';
 
 const UserDetails: React.FC = () => {
     const { _id } = useLocalSearchParams() as unknown as IUser;
@@ -91,7 +92,7 @@ const UserDetails: React.FC = () => {
 
             if ('error' in result) {
                 setModalState({
-                    message: `${(deleteUserResults?.error as any)?.data.message}` || 'Oops, something went wrong!',
+                    message: (result?.error as any)?.data?.message ?? 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 1,
@@ -130,13 +131,12 @@ const UserDetails: React.FC = () => {
                     status: 'success',
                     duration: 1,
                 });
-                resetForm();
                 goBack();
             }
 
             if ('error' in result) {
                 setModalState({
-                    message: `${(updateResults?.error as any)?.data?.message}` || 'Oops, something went wrong!',
+                    message: (updateResults?.error as any)?.data?.message ?? 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 1,
@@ -168,7 +168,7 @@ const UserDetails: React.FC = () => {
 
             if ('error' in result) {
                 setModalState({
-                    message: `${(updateResults?.error as any)?.data?.message}` || 'Oops, something went wrong!',
+                    message: (result?.error as any)?.data?.message ?? 'Oops, something went wrong!',
                     defaultRender: true,
                     status: 'error',
                     duration: 1,
@@ -266,8 +266,8 @@ const UserDetails: React.FC = () => {
                                             <Loading />
                                         ) : (
                                             <Switch
-                                                value={data?.isCGWCApproved}
-                                                onValueChange={handleApproveCongress}
+                                                checked={!!data?.isCGWCApproved}
+                                                onCheckedChange={handleApproveCongress}
                                                 disabled={updateResults?.isLoading}
                                             />
                                         )}
