@@ -77,7 +77,7 @@ export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(({
             return total;
         }, 0);
 
-        return numberOfClockIns === numberOfSessions - 1;
+        return numberOfClockIns >= numberOfSessions - 1;
     }, [sessions, minifiedAttendance]);
 
     const percantageAttendance = Math.round(((cumulativeAttendance as number) / TOTAL_ATTAINABLE_SCORE) * 100) || 0;
