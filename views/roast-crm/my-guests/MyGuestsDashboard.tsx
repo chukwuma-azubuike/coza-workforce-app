@@ -47,7 +47,7 @@ function MyGuestsDashboard() {
         isLoading,
         isFetching,
         refetch,
-    } = useGetGuestsQuery({ assignedToId: user?._id, search });
+    } = useGetGuestsQuery({ assignedToId: user?._id, search }, { pollingInterval: 10000 });
     const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
     const [updateGuest] = useUpdateGuestMutation();
 
