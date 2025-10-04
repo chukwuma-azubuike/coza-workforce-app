@@ -52,7 +52,7 @@ const ZoneDashboard: React.FC = () => {
         isLoading,
         isFetching,
         data: guests = [],
-    } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone });
+    } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone }, { pollingInterval: 10000 });
     const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
         departmentId: isZonalCoordinator ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
         campusId: user.campus._id,
