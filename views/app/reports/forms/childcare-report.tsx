@@ -18,8 +18,11 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Textarea } from '~/components/ui/textarea';
 
 const ChildcareReport: React.FC = () => {
-    const { data } = useLocalSearchParams() as unknown as { data: string };
-    const params = JSON.parse(data) as IChildCareReportPayload;
+    const stringifiedParams = useLocalSearchParams() as unknown as { data: string };
+    const params = !!stringifiedParams?.data
+        ? (JSON.parse(stringifiedParams?.data) as IChildCareReportPayload)
+        : (stringifiedParams as unknown as IChildCareReportPayload);
+
     const { status, updatedAt } = params;
 
     const {
