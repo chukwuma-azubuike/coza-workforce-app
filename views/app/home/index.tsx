@@ -107,8 +107,8 @@ const Home: React.FC = () => {
                     <If condition={!!user}>
                         <If condition={!isGlobalPastor}>
                             <Clocker
-                                isInRange={isInRange}
                                 refreshLocation={refresh}
+                                isInRange={isInRange as boolean}
                                 refreshTrigger={refreshTrigger}
                                 setRefreshTrigger={setRefreshTrigger}
                                 deviceCoordinates={deviceCoordinates as any}

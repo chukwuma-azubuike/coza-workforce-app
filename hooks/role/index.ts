@@ -85,7 +85,7 @@ const useRole = () => {
         skip: !storedUser?.userId,
         refetchOnMountOrArgChange: false,
     });
-    const currentUser = latestUser || storedUser;
+    const currentUser = latestUser ?? storedUser;
 
     const { data: roleObjects } = useGetRolesQuery(undefined, { refetchOnMountOrArgChange: false });
     const leaderRoleIds = React.useMemo(
@@ -134,7 +134,7 @@ const useRole = () => {
     const { logOut } = useAuth();
 
     React.useEffect(() => {
-        if (!!currentUser?._id && !!currentUser?.userId) {
+        if (!currentUser?.userId) {
             logOut();
         }
     }, []);
