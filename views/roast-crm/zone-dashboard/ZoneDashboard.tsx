@@ -1,6 +1,6 @@
-import React, { ReactNode, Suspense, useCallback, useMemo, useState } from 'react';
+import React, { ReactNode, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { Dimensions, View } from 'react-native';
-import { AssimilationStage, Guest, Zone } from '~/store/types';
+import { AssimilationStage, Guest } from '~/store/types';
 import {
     useGetAssimilationSubStagesQuery,
     useGetGuestsQuery,
@@ -13,7 +13,7 @@ import {
 import { Text } from '~/components/ui/text';
 
 import { ZoneStats } from './components/ZoneStats';
-import useRole, { ROLES } from '~/hooks/role';
+import useRole from '~/hooks/role';
 import Loading from '~/components/atoms/loading';
 
 import { columnDataType, DragEndParams, HeaderParams } from '~/components/Kanban/types';
@@ -28,6 +28,7 @@ import ReactNativeKanbanBoard from '~/components/Kanban';
 import useDebounce from '~/hooks/debounce/use-debounce';
 import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 import { FloatButton } from '~/components/atoms/button';
+import useZoneIndex from '../hooks/use-zone-index';
 
 const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
 const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
@@ -35,15 +36,25 @@ const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
 
 const ZoneDashboard: React.FC = () => {
-    const { role, user, isZonalCoordinator } = useRole();
-    const [selectedZone, setSelectedZone] = useState<string>();
+    const { user, isZonalCoordinator, isHOD, isAHOD } = useRole();
+    const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
+    const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id });
+    const [selectedZone, setSelectedZone] = useState<string | undefined>(
+        departmentZones ? departmentZones[0]?._id : undefined
+    );
+
+    useEffect(() => {
+        if (!selectedZone && departmentZones) {
+            setSelectedZone(departmentZones ? departmentZones[0]?._id : undefined);
+        }
+    }, [selectedZone, departmentZones]);
+
     const [selectedWorker, setSelectedWorker] = useState<string>();
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
     const [stageFilter, setStageFilter] = useState<Guest['assimilationSubStageId'] | 'all'>('all');
 
     const [search, setSearch] = useState('');
     const denouncedSearch = useDebounce(setSearch);
-
     const [modalVisible, setModalVisible] = useState(false);
 
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
@@ -54,7 +65,7 @@ const ZoneDashboard: React.FC = () => {
         data: guests = [],
     } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone }, { pollingInterval: 10000 });
     const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
-        departmentId: isZonalCoordinator ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
+        departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
         campusId: user.campus._id,
     });
     const [updateGuest] = useUpdateGuestMutation();
@@ -173,31 +184,29 @@ const ZoneDashboard: React.FC = () => {
 
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
-
-    const selectedZoneOption = zones.find((zone: Zone) => zone._id === selectedZone);
+    const zoneIndex = useZoneIndex();
+    const selectedZoneName = zoneIndex[selectedZone as string];
 
     return (
         <View className="flex-1 bg-background pt-2 gap-6">
             {/* Header */}
             <View className="gap-4 px-2">
                 <View className="flex-row items-center gap-4">
-                    <Text className="text-2xl font-bold !w-[35%]">{selectedZoneOption?.name ?? 'All Zones'}</Text>
+                    <Text className="text-2xl font-bold !w-[35%]">{selectedZoneName ?? 'All Zones'}</Text>
 
                     {/* Zone Selector */}
-                    {(role === ROLES.superAdmin || role === ROLES.campusPastor) && (
-                        <View className="flex-1">
-                            <PickerSelect
-                                valueKey="_id"
-                                items={zones}
-                                labelKey="name"
-                                className="!h-10"
-                                value={selectedZone}
-                                placeholder="All Zones"
-                                isLoading={loadingZones}
-                                onValueChange={setSelectedZone}
-                            />
-                        </View>
-                    )}
+                    <View className="flex-1">
+                        <PickerSelect
+                            valueKey="_id"
+                            labelKey="name"
+                            className="!h-10"
+                            value={selectedZone}
+                            placeholder="All Zones"
+                            isLoading={loadingZones}
+                            onValueChange={setSelectedZone}
+                            items={hasZoneRights ? departmentZones ?? [] : zones}
+                        />
+                    </View>
 
                     {/* Worker Selector */}
                     <View className="flex-1">
