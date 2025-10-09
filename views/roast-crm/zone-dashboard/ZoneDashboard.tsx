@@ -29,6 +29,7 @@ import useDebounce from '~/hooks/debounce/use-debounce';
 import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 import { FloatButton } from '~/components/atoms/button';
 import useZoneIndex from '../hooks/use-zone-index';
+import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
 
 const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
 const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
@@ -57,7 +58,7 @@ const ZoneDashboard: React.FC = () => {
     const denouncedSearch = useDebounce(setSearch);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
+    const { data: assimilationSubStages = [], isLoading: subStagesLoading } = useGetAssimilationSubStagesQuery();
     const {
         refetch,
         isLoading,
@@ -250,17 +251,24 @@ const ZoneDashboard: React.FC = () => {
             {/* View Guests */}
             <View className="flex-1">
                 {viewMode === 'kanban' ? (
-                    <Suspense fallback={<Loading cover />}>
-                        <ReactNativeKanbanBoard<Guest, HeaderParams>
-                            gapBetweenColumns={8}
-                            onDragEnd={onDragEnd}
-                            onPressCard={handleProfileView}
-                            columnContainerStyle={{ flex: 1 }}
-                            columnData={transformedAssimilationSubStages}
-                            renderColumnContainer={renderContentContainer}
-                            renderItem={guest => <KanbanUICard guest={guest} />}
-                        />
-                    </Suspense>
+                    subStagesLoading ? (
+                        <View className="flex-row gap-5 pl-2">
+                            <KanbanColumnSkeleton />
+                            <KanbanColumnSkeleton />
+                        </View>
+                    ) : (
+                        <Suspense fallback={<Loading cover />}>
+                            <ReactNativeKanbanBoard<Guest, HeaderParams>
+                                gapBetweenColumns={8}
+                                onDragEnd={onDragEnd}
+                                onPressCard={handleProfileView}
+                                columnContainerStyle={{ flex: 1 }}
+                                columnData={transformedAssimilationSubStages}
+                                renderColumnContainer={renderContentContainer}
+                                renderItem={guest => <KanbanUICard guest={guest} />}
+                            />
+                        </Suspense>
+                    )
                 ) : (
                     <Suspense fallback={<Loading cover />}>
                         <GuestListView

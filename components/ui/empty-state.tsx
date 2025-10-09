@@ -2,7 +2,6 @@ import React from 'react';
 import { View } from 'react-native';
 import { Text } from './text';
 import { Button } from './button';
-import { cn } from '~/lib/utils';
 
 interface EmptyStateProps {
     title?: string;
