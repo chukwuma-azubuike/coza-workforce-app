@@ -1,4 +1,4 @@
-import { Clock, MessageCircle, MoreVertical, Phone } from 'lucide-react-native';
+import { Clock, MapPin, MessageCircle, MoreVertical, Phone, PhoneIcon } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
@@ -16,6 +16,7 @@ import { Text } from '~/components/ui/text';
 import { Guest, PipelineSubStage } from '~/store/types';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
+import useZoneIndex from '../hooks/use-zone-index';
 
 export const GuestRow: React.FC<{
     guest: Guest;
@@ -24,6 +25,7 @@ export const GuestRow: React.FC<{
     onViewGuest: (guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
 }> = ({ guest, onViewGuest, assimilationSubStages, onGuestUpdate }) => {
+    const zoneIndex = useZoneIndex();
     const handleGuestMove = async (newStageId: string) => {
         onGuestUpdate(guest._id, newStageId);
     };
@@ -58,11 +60,14 @@ export const GuestRow: React.FC<{
                             <Text className="font-bold text-xl">
                                 {guest.firstName} {guest.lastName}
                             </Text>
-                            <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
+                            <View className="flex-row gap-1 items-center">
+                                <MapPin size={12} />
+                                <Text className="text-xs text-foreground">{zoneIndex[guest.zoneId]}</Text>
+                            </View>
                         </View>
                     </View>
 
-                    <View className="flex-row gap-4 items-center">
+                    <View className="flex-row gap-1 items-center">
                         <PickerSelect
                             valueKey="_id"
                             labelKey="name"
