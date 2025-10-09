@@ -4,7 +4,7 @@
  * @param localNumber e.g. "070 3234 1364" or "07032341364"
  * @param countryDialCode e.g. "234" for Nigeria, "1" for USA, etc.
  */
-const formatToE164 = (localNumber: string, countryDialCode: string): string => {
+const formatToE164 = (localNumber: string, countryDialCode: string = '+234'): string => {
     // 1) strip out everything but digits
     const digits = localNumber.replace(/\D+/g, '');
     // 2) drop leading zero if present
