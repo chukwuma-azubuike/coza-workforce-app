@@ -2,7 +2,7 @@ import React, { memo, useCallback, useMemo } from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import { Guest } from '~/store/types';
 
-import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
+import { Phone, MessageCircle, Clock, MoreVertical, MapPin, PhoneIcon } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
@@ -16,12 +16,14 @@ import { Text } from '~/components/ui/text';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 import { router } from 'expo-router';
+import useZoneIndex from '../hooks/use-zone-index';
 
 interface KanbanCardProps {
     guest: Guest;
 }
 
 const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
+    const zoneIndex = useZoneIndex();
     const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones]);
     const daysSinceContact = useMemo(
         () => getDaysSinceContact(guest?.lastContact ?? (guest?.createdAt as any)),
@@ -51,7 +53,12 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                             </Avatar>
                             <View>
                                 <Text className="font-bold text-xl">{`${guest.firstName} ${guest.lastName}`}</Text>
-                                <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
+                                <View className="flex-row gap-1 items-center">
+                                    <PhoneIcon size={12} />
+                                    <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
+                                    <MapPin size={12} />
+                                    <Text className="text-xs text-foreground">{zoneIndex[guest.zoneId]}</Text>
+                                </View>
                             </View>
                         </View>
 
