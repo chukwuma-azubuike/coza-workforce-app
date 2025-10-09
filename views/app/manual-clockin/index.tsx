@@ -3,7 +3,7 @@ import { Formik, useFormik } from 'formik';
 import React from 'react';
 import ErrorBoundary from '@components/composite/error-boundary';
 import ViewWrapper from '@components/layout/viewWrapper';
-import useGeoLocation from '@hooks/geo-location';
+import useGeoLocation, { GeoCoordinates } from '@hooks/geo-location';
 import useRole from '@hooks/role';
 import { useGetUsersQuery } from '@store/services/account';
 import { IClockInPayload } from '@store/services/attendance';
@@ -213,10 +213,10 @@ const ManualClockin: React.FC = () => {
                                 <View className="flex-1 w-full">
                                     <ThirdPartyClockButton
                                         campusId={campusId}
-                                        isInRange={isInRange}
+                                        isInRange={isInRange as boolean}
                                         refreshLocation={refresh}
                                         user={thirdPartyUser as IUser}
-                                        deviceCoordinates={deviceCoordinates}
+                                        deviceCoordinates={deviceCoordinates as GeoCoordinates}
                                         verifyRangeBeforeAction={verifyRangeBeforeAction}
                                     />
                                 </View>

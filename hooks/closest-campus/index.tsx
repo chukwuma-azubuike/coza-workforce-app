@@ -4,7 +4,7 @@ import { useGetCampusesQuery } from '@store/services/campus';
 import CampusTree from '@utils/campusTree';
 
 const useClosestCampus = (deviceCoordinates: ICampusCoordinates) => {
-    const { data } = useGetCampusesQuery();
+    const { data } = useGetCampusesQuery(undefined, { pollingInterval: 10000 });
 
     const campusCoordinates = React.useMemo(
         () => data?.map(campus => [campus.coordinates.long, campus.coordinates.lat]),
@@ -14,7 +14,7 @@ const useClosestCampus = (deviceCoordinates: ICampusCoordinates) => {
     const campusTree = campusCoordinates && new CampusTree(campusCoordinates);
 
     const query = [deviceCoordinates.longitude, deviceCoordinates.latitude];
-    const closestCoordinatesArray = campusTree && campusTree.findClosest(query);
+    const closestCoordinatesArray = campusTree?.findClosest(query);
 
     const closestCampusCoordinates: ICampusCoordinates = {
         longitude: closestCoordinatesArray ? closestCoordinatesArray[0] : Infinity,
