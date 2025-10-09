@@ -8,6 +8,8 @@ import { columnDataType, ItemType, KanbanBoardProps } from './types';
 import { DataCard } from './components/DataCard';
 import { DragContextValue } from './utils/DraggedCardContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { EmptyState } from '../ui/empty-state';
+import Empty from '../atoms/empty';
 
 const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T, K>) => {
     const [toColumnIndex, setToColumnIndex] = useState(0);
@@ -150,6 +152,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                             keyExtractor={(_, index) => `${i}-${index}`}
                             scrollEnabled={itemsVerticalScrollEnabledRef.current}
                             getItemLayout={props.itemHeight ? handleItemLayout : undefined}
+                            ListEmptyComponent={<Empty width={160} message="No guests in this stage" />}
                         />,
                         columnData.header
                     )
@@ -164,6 +167,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                         keyExtractor={(_, index) => `${i}-${index}`}
                         scrollEnabled={itemsVerticalScrollEnabledRef.current}
                         getItemLayout={props.itemHeight ? handleItemLayout : undefined}
+                        ListEmptyComponent={<Empty width={160} message="No guests in this stage" />}
                     />
                 )}
             </View>
