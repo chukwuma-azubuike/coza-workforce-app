@@ -58,6 +58,7 @@ const GuestProfile: React.FC = () => {
                 {/* Guest Info Section */}
                 <GuestHeader
                     guest={guest}
+                    currentUser={user}
                     onCall={handleCall(guest)}
                     onWhatsApp={handleWhatsApp(guest)}
                     progressPercentage={getProgressPercentage(guest.milestones)}
