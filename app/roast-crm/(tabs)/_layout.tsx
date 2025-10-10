@@ -7,7 +7,7 @@ import { usePathname } from 'expo-router';
 
 import useRole, { ROLES } from '@hooks/role';
 
-import { SafeAreaView, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import TopNav from '~/components/TopNav';
 import { Text } from '~/components/ui/text';
 import { useColorScheme } from '~/lib/useColorScheme';
@@ -94,42 +94,40 @@ const TabLayout: React.FC = () => {
     };
 
     return (
-        <SafeAreaView className="relative flex-1">
-            <View className="flex-1">
-                <TopNav />
-                <View className="flex-1">{ready ? <Slot /> : <Loading cover />}</View>
-                <View className="flex-row justify-around pt-4 pb-1 bg-background border-t-border border-t-[0.5px] ">
-                    {filteredRoutes.map((route, index) => {
-                        const isFocused = pathname == route.pathname;
+        <View className="relative flex-1">
+            <TopNav />
+            <View className="flex-1">{ready ? <Slot /> : <Loading cover />}</View>
+            <View className="flex-row justify-around pt-4 bg-background border-t-border border-t-[0.5px]">
+                {filteredRoutes.map((route, index) => {
+                    const isFocused = pathname == route.pathname;
 
-                        const color = isFocused
-                            ? isLightColorScheme
-                                ? THEME_CONFIG.primary
-                                : THEME_CONFIG.primaryLight
-                            : THEME_CONFIG.lightGray;
+                    const color = isFocused
+                        ? isLightColorScheme
+                            ? THEME_CONFIG.primary
+                            : THEME_CONFIG.primaryLight
+                        : THEME_CONFIG.lightGray;
 
-                        return (
-                            <Link
-                                href={route.href as any}
-                                key={`route-${index}`}
-                                className="text-foreground"
-                                onPress={handlePress}
-                                asChild
-                            >
-                                <TouchableOpacity activeOpacity={0.6}>
-                                    <View className="!w-20 sm:!w-28 gap-1 items-center">
-                                        <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
-                                        <Text style={{ color }} className="text-xs font-light">
-                                            {route.name}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </Link>
-                        );
-                    })}
-                </View>
+                    return (
+                        <Link
+                            href={route.href as any}
+                            key={`route-${index}`}
+                            className="text-foreground"
+                            onPress={handlePress}
+                            asChild
+                        >
+                            <TouchableOpacity activeOpacity={0.6}>
+                                <View className="!w-20 sm:!w-28 gap-1 items-center">
+                                    <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
+                                    <Text style={{ color }} className="text-xs font-light">
+                                        {route.name}
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
+                        </Link>
+                    );
+                })}
             </View>
-        </SafeAreaView>
+        </View>
     );
 };
 
