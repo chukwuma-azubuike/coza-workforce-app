@@ -7,6 +7,7 @@ import { IService } from '@store/types';
 // import WorkforceAnalytics from './workforce-analytics';
 import WorkForceSummary from './workforce-summary';
 import { SafeAreaView, View } from 'react-native';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 interface GSPViewProps {
     servicesIsSuccess: boolean;
@@ -28,17 +29,19 @@ const GSPView: React.FC<GSPViewProps> = ({ services, servicesIsSuccess }) => {
     // const [index, setIndex] = React.useState(0);
 
     return (
-        <SafeAreaView className="flex-1">
-            <View className="flex-1">
-                {/* <TabComponent
+        <ErrorBoundary>
+            <SafeAreaView className="flex-1">
+                <View className="flex-1">
+                    {/* <TabComponent
                 tabBarScroll={false}
                 onIndexChange={setIndex}
                 renderScene={renderScene}
                 navigationState={{ index, routes: ROUTES }}
             /> */}
-                <WorkForceSummary servicesIsSuccess={servicesIsSuccess} services={services} />
-            </View>
-        </SafeAreaView>
+                    <WorkForceSummary servicesIsSuccess={servicesIsSuccess} services={services} />
+                </View>
+            </SafeAreaView>
+        </ErrorBoundary>
     );
 };
 

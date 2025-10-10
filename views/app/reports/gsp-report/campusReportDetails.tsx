@@ -9,6 +9,7 @@ import If from '@components/composite/if-container';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import useRole from '@hooks/role';
 import { IGSPReportPayload, useGetCampusReportSummaryQuery, useSubmitGSPReportMutation } from '@store/services/reports';
 import {
@@ -286,7 +287,8 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
     };
 
     return (
-        <ViewWrapper className="py-6" scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
+        <ErrorBoundary>
+            <ViewWrapper className="py-6" scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
             <Text className="font-bold text-2xl mb-2 ml-2">{campusName}</Text>
             <View className="px-4 gap-5">
                 <Separator />
@@ -374,7 +376,8 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
                     </Formik>
                 </If>
             </View>
-        </ViewWrapper>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 

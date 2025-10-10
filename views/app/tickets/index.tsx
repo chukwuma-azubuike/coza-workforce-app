@@ -12,6 +12,7 @@ import { useGetTicketsQuery } from '@store/services/tickets';
 import { AddButtonComponent } from '@components/atoms/button';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import { cn } from '~/lib/utils';
 
 const ROUTES = [
@@ -85,8 +86,9 @@ const Tickets: React.FC = () => {
     }, []);
 
     return (
-        <SafeAreaView className="flex-1">
-            <View className="flex-1 pt-4">
+        <ErrorBoundary>
+            <SafeAreaView className="flex-1">
+                <View className="flex-1 pt-4">
                 <TabComponent
                     onIndexChange={setIndex}
                     renderScene={renderScene}
@@ -106,8 +108,9 @@ const Tickets: React.FC = () => {
                         className={cn('!bottom-32 !right-[1.4rem]', (isCampusPastor || isGlobalPastor) && '!bottom-16')}
                     />
                 </If>
-            </View>
-        </SafeAreaView>
+                </View>
+            </SafeAreaView>
+        </ErrorBoundary>
     );
 };
 

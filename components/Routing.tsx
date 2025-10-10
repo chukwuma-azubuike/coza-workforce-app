@@ -8,17 +8,19 @@ import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { NotificationsProvider } from './NotificationsProvider';
 import inAppUpdates from '~/utils/in-app-updates';
+import { useAuth } from '~/hooks/auth';
 
 export { ErrorBoundary } from 'expo-router';
 
 const Routing: React.FC = () => {
     const user = useAppSelector(userSelectors.selectCurrentUser);
+    const { logOut } = useAuth();
 
     React.useEffect(() => {
         if (user?.userId) {
             router.replace('/(tabs)');
         } else {
-            router.replace('/');
+            logOut();
         }
 
         const update = async () => {

@@ -1,9 +1,10 @@
 import React, { ReactNode } from 'react';
 import * as Sentry from '@sentry/react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { AlertTriangle } from 'lucide-react-native';
+import { Code } from '~/components/ui/typography';
 
 const ErrorBoundary: React.FC<{ children?: ReactNode }> = ({ children }) => {
     return (
@@ -16,6 +17,9 @@ const ErrorBoundary: React.FC<{ children?: ReactNode }> = ({ children }) => {
                         <Text className="text-center text-muted-foreground line-clamp-none">
                             An unexpected error occurred. Please try again.
                         </Text>
+                        <ScrollView className="max-h-56">
+                            <Code>{JSON.stringify(error)}</Code>
+                        </ScrollView>
                         <View>
                             <Button size="sm" onPress={resetError} variant="secondary" className="w-full">
                                 Retry

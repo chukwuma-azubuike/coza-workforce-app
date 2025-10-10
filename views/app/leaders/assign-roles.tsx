@@ -18,6 +18,7 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { X } from 'lucide-react-native';
 import { router } from 'expo-router';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 interface IGroupHead {
     campus: string;
@@ -131,162 +132,170 @@ const AssignRole: React.FC = () => {
         setIsOpen(!isOpen);
     };
     return (
-        <ViewWrapper scroll noPadding style={{ paddingTop: 10 }}>
-            <View className="px-4 gap-12 items-start w-full mb-12">
-                <View className="w-full items-center">
-                    <Formik<IAssignGroupHead>
-                        validateOnChange
-                        onSubmit={onSubmit}
-                        initialValues={INITIAL_VALUES}
-                        validationSchema={AssignGroupHeadSchema}
-                    >
-                        {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => {
-                            const handleCampusDept = (name: string, value: string) => {
-                                setFieldValue(name, value);
-                                setFindCampusDept({ ...findCampusDept, [name]: value });
-                            };
+        <ErrorBoundary>
+            <ViewWrapper scroll noPadding style={{ paddingTop: 10 }}>
+                <View className="px-4 gap-12 items-start w-full mb-12">
+                    <View className="w-full items-center">
+                        <Formik<IAssignGroupHead>
+                            validateOnChange
+                            onSubmit={onSubmit}
+                            initialValues={INITIAL_VALUES}
+                            validationSchema={AssignGroupHeadSchema}
+                        >
+                            {({ errors, values, handleChange, handleSubmit, touched, setFieldValue }) => {
+                                const handleCampusDept = (name: string, value: string) => {
+                                    setFieldValue(name, value);
+                                    setFindCampusDept({ ...findCampusDept, [name]: value });
+                                };
 
-                            return (
-                                <View className="w-full gap-4">
-                                    <View>
-                                        <Label>Campus</Label>
-                                        <PickerSelect
-                                            valueKey="_id"
-                                            value={values.campus}
-                                            labelKey="campusName"
-                                            placeholder="Select Campus"
-                                            items={sortedCampuses || []}
-                                            onValueChange={value => handleCampusDept('campus', value as string) as any}
-                                        />
-                                        {errors?.campus && <FormErrorMessage>{errors?.campus}</FormErrorMessage>}
-                                    </View>
-                                    <View>
-                                        <Label>Department</Label>
-                                        <PickerSelect
-                                            valueKey="_id"
-                                            labelKey="departmentName"
-                                            value={values.department}
-                                            placeholder="Select Department"
-                                            items={sortedDepartments || []}
-                                            disabled={!findCampusDept.campus}
-                                            onValueChange={value => handleCampusDept('department', value as string)}
-                                        />
-                                        {errors?.department && (
-                                            <FormErrorMessage>{errors?.department}</FormErrorMessage>
-                                        )}
-                                    </View>
-                                    <View>
-                                        <Label>Worker</Label>
-                                        <PickerSelect
-                                            valueKey="_id"
-                                            labelKey="firstName"
-                                            value={values.worker}
-                                            items={sortedUsers || []}
-                                            placeholder="Select a worker"
-                                            disabled={!findCampusDept.department}
-                                            onValueChange={handleChange('worker') as any}
-                                            customLabel={({ firstName, lastName }: any) => `${firstName} ${lastName}`}
-                                        />
-                                        {errors?.worker && <FormErrorMessage>{errors?.worker}</FormErrorMessage>}
-                                    </View>
-                                    <View>
-                                        <Label>Role</Label>
-                                        <PickerSelect
-                                            valueKey="_id"
-                                            labelKey="name"
-                                            value={values.role}
-                                            items={roles || []}
-                                            placeholder="Select role"
-                                            disabled={!findCampusDept.campus && !findCampusDept.department}
-                                            onValueChange={value => handleCampusDept('role', value as string)}
-                                        />
-                                        {errors?.role && <FormErrorMessage>{errors?.role}</FormErrorMessage>}
-                                    </View>
-                                    <View>
-                                        {campusDept?.map((item, key) => (
-                                            <View
-                                                key={key}
-                                                className="py-2 px-3 bg-muted-background border-border items-center justify-between flex-row border mb-4 rounded-md"
-                                            >
-                                                <View>
-                                                    <Text className="font-semibold">{item.campusName}</Text>
-                                                    <Text className="font-semibold">{item.departmentName}</Text>
-                                                </View>
-                                                <TouchableOpacity onPress={() => handleRemoveCampusDept(item)}>
-                                                    <X />
-                                                </TouchableOpacity>
-                                            </View>
-                                        ))}
-                                    </View>
-                                    {isGroupHead && (
+                                return (
+                                    <View className="w-full gap-4">
                                         <View>
-                                            <Button variant="outline" onPress={AddNewDept} size="sm">
-                                                {isOpen ? 'Done' : '+ Add a Campus Department'}
-                                            </Button>
+                                            <Label>Campus</Label>
+                                            <PickerSelect
+                                                valueKey="_id"
+                                                value={values.campus}
+                                                labelKey="campusName"
+                                                placeholder="Select Campus"
+                                                items={sortedCampuses || []}
+                                                onValueChange={value =>
+                                                    handleCampusDept('campus', value as string) as any
+                                                }
+                                            />
+                                            {errors?.campus && <FormErrorMessage>{errors?.campus}</FormErrorMessage>}
                                         </View>
-                                    )}
-                                    {isOpen && (
-                                        <View className="gap-4">
+                                        <View>
+                                            <Label>Department</Label>
+                                            <PickerSelect
+                                                valueKey="_id"
+                                                labelKey="departmentName"
+                                                value={values.department}
+                                                placeholder="Select Department"
+                                                items={sortedDepartments || []}
+                                                disabled={!findCampusDept.campus}
+                                                onValueChange={value => handleCampusDept('department', value as string)}
+                                            />
+                                            {errors?.department && (
+                                                <FormErrorMessage>{errors?.department}</FormErrorMessage>
+                                            )}
+                                        </View>
+                                        <View>
+                                            <Label>Worker</Label>
+                                            <PickerSelect
+                                                valueKey="_id"
+                                                labelKey="firstName"
+                                                value={values.worker}
+                                                items={sortedUsers || []}
+                                                placeholder="Select a worker"
+                                                disabled={!findCampusDept.department}
+                                                onValueChange={handleChange('worker') as any}
+                                                customLabel={({ firstName, lastName }: any) =>
+                                                    `${firstName} ${lastName}`
+                                                }
+                                            />
+                                            {errors?.worker && <FormErrorMessage>{errors?.worker}</FormErrorMessage>}
+                                        </View>
+                                        <View>
+                                            <Label>Role</Label>
+                                            <PickerSelect
+                                                valueKey="_id"
+                                                labelKey="name"
+                                                value={values.role}
+                                                items={roles || []}
+                                                placeholder="Select role"
+                                                disabled={!findCampusDept.campus && !findCampusDept.department}
+                                                onValueChange={value => handleCampusDept('role', value as string)}
+                                            />
+                                            {errors?.role && <FormErrorMessage>{errors?.role}</FormErrorMessage>}
+                                        </View>
+                                        <View>
+                                            {campusDept?.map((item, key) => (
+                                                <View
+                                                    key={key}
+                                                    className="py-2 px-3 bg-muted-background border-border items-center justify-between flex-row border mb-4 rounded-md"
+                                                >
+                                                    <View>
+                                                        <Text className="font-semibold">{item.campusName}</Text>
+                                                        <Text className="font-semibold">{item.departmentName}</Text>
+                                                    </View>
+                                                    <TouchableOpacity onPress={() => handleRemoveCampusDept(item)}>
+                                                        <X />
+                                                    </TouchableOpacity>
+                                                </View>
+                                            ))}
+                                        </View>
+                                        {isGroupHead && (
                                             <View>
-                                                <Label>Campus</Label>
-                                                <PickerSelect
-                                                    valueKey="_id"
-                                                    labelKey="campusName"
-                                                    placeholder="Campus"
-                                                    value={addCampusDept.campus}
-                                                    items={sortedCampuses || []}
-                                                    onValueChange={(value: any) => handleInputChange('campus', value)}
-                                                />
+                                                <Button variant="outline" onPress={AddNewDept} size="sm">
+                                                    {isOpen ? 'Done' : '+ Add a Campus Department'}
+                                                </Button>
                                             </View>
-                                            <View>
-                                                <Label>Department</Label>
-                                                <PickerSelect
-                                                    valueKey="_id"
-                                                    labelKey="departmentName"
-                                                    placeholder="Select department"
-                                                    value={addCampusDept.department}
-                                                    items={sortedDepartments || []}
-                                                    onValueChange={(value: any) =>
-                                                        handleInputChange('department', value)
-                                                    }
-                                                />
-                                            </View>
+                                        )}
+                                        {isOpen && (
+                                            <View className="gap-4">
+                                                <View>
+                                                    <Label>Campus</Label>
+                                                    <PickerSelect
+                                                        valueKey="_id"
+                                                        labelKey="campusName"
+                                                        placeholder="Campus"
+                                                        value={addCampusDept.campus}
+                                                        items={sortedCampuses || []}
+                                                        onValueChange={(value: any) =>
+                                                            handleInputChange('campus', value)
+                                                        }
+                                                    />
+                                                </View>
+                                                <View>
+                                                    <Label>Department</Label>
+                                                    <PickerSelect
+                                                        valueKey="_id"
+                                                        labelKey="departmentName"
+                                                        placeholder="Select department"
+                                                        value={addCampusDept.department}
+                                                        items={sortedDepartments || []}
+                                                        onValueChange={(value: any) =>
+                                                            handleInputChange('department', value)
+                                                        }
+                                                    />
+                                                </View>
 
-                                            <View className="flex-row gap-4">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onPress={AddNewDept}
-                                                    className="w-full flex-1"
-                                                >
-                                                    Cancel
-                                                </Button>
-                                                <Button
-                                                    size="sm"
-                                                    className="w-full flex-1"
-                                                    onPress={handleAddCampusDept}
-                                                >
-                                                    Add
-                                                </Button>
+                                                <View className="flex-row gap-4">
+                                                    <Button
+                                                        size="sm"
+                                                        variant="outline"
+                                                        onPress={AddNewDept}
+                                                        className="w-full flex-1"
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <Button
+                                                        size="sm"
+                                                        className="w-full flex-1"
+                                                        onPress={handleAddCampusDept}
+                                                    >
+                                                        Add
+                                                    </Button>
+                                                </View>
                                             </View>
+                                        )}
+                                        <View>
+                                            <ButtonComponent
+                                                className="mt-8"
+                                                isLoading={isLoading}
+                                                onPress={handleSubmit as (event: any) => void}
+                                            >
+                                                Submit
+                                            </ButtonComponent>
                                         </View>
-                                    )}
-                                    <View>
-                                        <ButtonComponent
-                                            className="mt-8"
-                                            isLoading={isLoading}
-                                            onPress={handleSubmit as (event: any) => void}
-                                        >
-                                            Submit
-                                        </ButtonComponent>
                                     </View>
-                                </View>
-                            );
-                        }}
-                    </Formik>
+                                );
+                            }}
+                        </Formik>
+                    </View>
                 </View>
-            </View>
-        </ViewWrapper>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 

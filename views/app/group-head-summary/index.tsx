@@ -1,5 +1,6 @@
 import React from 'react';
 import ViewWrapper from '@components/layout/viewWrapper';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import useScreenFocus from '@hooks/focus';
 import { router } from 'expo-router';
 
@@ -16,7 +17,11 @@ const CampusGroupHeads: React.FC = () => {
         handleReroute();
     }, []);
 
-    return <ViewWrapper className="flex-1">{null}</ViewWrapper>;
+    return (
+        <ErrorBoundary>
+            <ViewWrapper className="flex-1">{null}</ViewWrapper>
+        </ErrorBoundary>
+    );
 };
 
 export default CampusGroupHeads;
