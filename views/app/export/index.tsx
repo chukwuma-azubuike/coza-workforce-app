@@ -10,7 +10,6 @@ import { useLazyGetPermissionsReportForDownloadQuery } from '@store/services/per
 import { useLazyGetTicketsReportForDownloadQuery } from '@store/services/tickets';
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
-import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { generateReportName } from '@utils/generateReportName';
@@ -251,8 +250,6 @@ const Export: React.FC = () => {
         attendanceIsFetching ||
         permissionsIsLoading ||
         permissionIsFetching;
-
-    const isPermission = dataType === 'permissions';
 
     return (
         <ErrorBoundary>
