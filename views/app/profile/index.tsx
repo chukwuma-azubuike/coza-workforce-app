@@ -3,6 +3,7 @@ import { Icon } from '@rneui/themed';
 import dayjs from 'dayjs';
 import React, { useCallback } from 'react';
 import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -51,11 +52,12 @@ const Profile: React.FC = () => {
     const isProfilePictureLoading = updateIsLoading || isUploading;
 
     return (
-        <View className="flex-1">
-            <ScrollView
-                className="px-4 pt-6 pb-12"
-                refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
-            >
+        <ErrorBoundary>
+            <View className="flex-1">
+                <ScrollView
+                    className="px-4 pt-6 pb-12"
+                    refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
+                >
                 <View className="pb-8 items-center">
                     <TouchableOpacity activeOpacity={0.7} onPress={pickImage} disabled={updateIsLoading || isUploading}>
                         <AvatarComponent
@@ -145,8 +147,9 @@ const Profile: React.FC = () => {
                     Version {DeviceInfo.getVersion()} ({capitalize(APP_VARIANT.ENV)})
                 </Text>
                 {/* <EASUpdates /> */}
-            </ScrollView>
-        </View>
+                </ScrollView>
+            </View>
+        </ErrorBoundary>
     );
 };
 

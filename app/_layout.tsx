@@ -17,6 +17,7 @@ import Routing from '~/components/Routing';
 import { PersistGate } from 'redux-persist/integration/react';
 import Loading from '~/components/atoms/loading';
 import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -72,7 +73,9 @@ export default function RootLayout() {
                 <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
                     <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
                     <ConnectionStatusBar />
-                    <Routing />
+                    <ErrorBoundary>
+                        <Routing />
+                    </ErrorBoundary>
                     <PortalHost />
                 </ThemeProvider>
             </PersistGate>

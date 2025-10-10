@@ -10,6 +10,7 @@ import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import { router, useLocalSearchParams } from 'expo-router';
 import { SafeAreaView, View } from 'react-native';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 const ROUTES = [
     { key: 'myAttendance', title: 'My Attendance' },
@@ -75,8 +76,9 @@ const Attendance: React.FC = () => {
     }, []);
 
     return (
-        <SafeAreaView className="flex-1">
-            <View className="flex-1 pt-4">
+        <ErrorBoundary>
+            <SafeAreaView className="flex-1">
+                <View className="flex-1 pt-4">
                 <TabComponent
                     onIndexChange={setIndex}
                     renderScene={renderScene}
@@ -95,8 +97,9 @@ const Attendance: React.FC = () => {
                         ]}
                     />
                 </If>
-            </View>
-        </SafeAreaView>
+                </View>
+            </SafeAreaView>
+        </ErrorBoundary>
     );
 };
 

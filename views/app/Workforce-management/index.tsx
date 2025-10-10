@@ -2,6 +2,7 @@ import React from 'react';
 import useRole from '@hooks/role';
 import useScreenFocus from '@hooks/focus';
 import ViewWrapper from '@components/layout/viewWrapper';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import { router } from 'expo-router';
 
 const WorkforceSummary: React.FC = () => {
@@ -29,7 +30,11 @@ const WorkforceSummary: React.FC = () => {
         handleReroute();
     }, []);
 
-    return <ViewWrapper className="flex-1">{null}</ViewWrapper>;
+    return (
+        <ErrorBoundary>
+            <ViewWrapper className="flex-1">{null}</ViewWrapper>
+        </ErrorBoundary>
+    );
 };
 
 export default React.memo(WorkforceSummary);

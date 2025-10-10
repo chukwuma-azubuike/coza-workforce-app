@@ -11,6 +11,7 @@ import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
 import TopNav from './top-nav';
@@ -101,9 +102,10 @@ const Home: React.FC = () => {
     const SafeAreaView = Platform.OS === 'ios' ? RNSafeAreaView : SACSafeAreaView;
 
     return (
-        <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-            <SafeAreaView style={styles.container}>
-                <View style={styles.container}>
+        <ErrorBoundary>
+            <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
+                <SafeAreaView style={styles.container}>
+                    <View style={styles.container}>
                     <If condition={!!user}>
                         <If condition={!isGlobalPastor}>
                             <Clocker
@@ -127,9 +129,10 @@ const Home: React.FC = () => {
                             serviceId={latestService?._id as string}
                         />
                     </If>
-                </View>
-            </SafeAreaView>
-        </HomeContext.Provider>
+                    </View>
+                </SafeAreaView>
+            </HomeContext.Provider>
+        </ErrorBoundary>
     );
 };
 

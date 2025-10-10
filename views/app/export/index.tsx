@@ -13,6 +13,7 @@ import { Icon } from '@rneui/themed';
 import If from '@components/composite/if-container';
 import DateTimePicker from '~/components/composite/date-time-picker';
 import useRole from '@hooks/role';
+import ErrorBoundary from '~/components/composite/error-boundary';
 import { generateReportName } from '@utils/generateReportName';
 import { IReportDownloadPayload } from '@store/types';
 import Utils from '@utils/index';
@@ -254,7 +255,8 @@ const Export: React.FC = () => {
     const isPermission = dataType === 'permissions';
 
     return (
-        <ViewWrapper scroll className="px-4 py-4">
+        <ErrorBoundary>
+            <ViewWrapper scroll className="px-4 py-4">
             <View style={{ alignItems: 'center' }}>
                 <View style={{ gap: 16, width: '100%' }}>
                     <View>
@@ -340,7 +342,8 @@ const Export: React.FC = () => {
                     </Button>
                 </View>
             </View>
-        </ViewWrapper>
+            </ViewWrapper>
+        </ErrorBoundary>
     );
 };
 
