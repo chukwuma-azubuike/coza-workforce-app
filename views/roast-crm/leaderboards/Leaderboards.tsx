@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 
 import { useGetWorkerLeaderboardQuery, useGetZoneLeaderboardQuery } from '~/store/services/roast-crm';
-import { LeaderboardPayload, WorkerLeaderboardEntry } from '~/store/types';
+import { LeaderboardPayload, WorkerLeaderboardEntry, ZoneLeaderboardEntry } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import useRole from '~/hooks/role';
@@ -12,6 +12,7 @@ import FlatListComponent from '~/components/composite/flat-list';
 import { WorkerListView } from './WorkerListView';
 import Loading from '~/components/atoms/loading';
 import dayjs from 'dayjs';
+import { ZoneListView } from './ZoneListView';
 
 const Leaderboards: React.FC = () => {
     const { user: currentUser, isSuperAdmin, isGlobalPastor } = useRole();
@@ -48,6 +49,11 @@ const Leaderboards: React.FC = () => {
 
     const renderWorkerItem = React.useCallback(
         ({ item }: { item: WorkerLeaderboardEntry; index: number }) => <WorkerListView {...item} />,
+        []
+    );
+
+    const renderZoneItem = React.useCallback(
+        ({ item }: { item: ZoneLeaderboardEntry; index: number }) => <ZoneListView {...item} />,
         []
     );
 
@@ -106,8 +112,8 @@ const Leaderboards: React.FC = () => {
                         itemHeight={216}
                         style={{ flex: 0 }}
                         data={workerLeaderboard}
-                        emptyComponent={<Loading className="mt-8" />}
                         renderItemComponent={renderWorkerItem}
+                        emptyComponent={<Loading className="mt-8" />}
                     />
                 </TabsContent>
 
@@ -116,8 +122,8 @@ const Leaderboards: React.FC = () => {
                         itemHeight={219.7}
                         style={{ flex: 0 }}
                         data={zoneLeaderboard}
+                        renderItemComponent={renderZoneItem}
                         emptyComponent={<Loading className="mt-8" />}
-                        renderItemComponent={renderWorkerItem}
                     />
                 </TabsContent>
             </Tabs>
