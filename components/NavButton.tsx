@@ -21,6 +21,10 @@ const NavButton: React.FC<NavButtonProps> = ({ onBack, className }) => {
         } else {
             if (router.canGoBack()) {
                 router.back();
+            } else {
+                if (router.canDismiss()) {
+                    router.dismiss();
+                }
             }
         }
     };
