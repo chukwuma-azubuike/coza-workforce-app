@@ -255,6 +255,7 @@ export interface ZoneLeaderboardEntry {
     coordinator: string;
     stats: ZoneStats;
     points: number;
+    position: number;
     trend: TrendDirection;
 }
 
