@@ -22,7 +22,6 @@ import { View } from 'react-native';
 import TopNav from '../top-nav';
 import { cn } from '~/lib/utils';
 import ViewWrapper from '~/components/layout/viewWrapper';
-import { ScreenHeight } from '@rneui/base';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -121,9 +120,9 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className={cn('gap', 'flex-1 mt-2')}>
+        <View className={cn('gap', 'flex-1 mt-1')}>
             <TopNav />
-            <ViewWrapper scroll onRefresh={refreshData} refreshing={false} className="pt-4">
+            <ViewWrapper scroll className="pt-4" refreshing={false} onRefresh={refreshData} style={{ flexGrow: 1 }}>
                 <Timer />
                 <If condition={isCampusPastor}>
                     <View className="gap-5 flex-1 mt-12">
@@ -140,10 +139,7 @@ const Clocker: React.FC<IClockerProps> = ({
                     <Loading />
                 ) : (
                     <If condition={!isCampusPastor}>
-                        <View
-                            className="flex-1 items-center justify-between pt-12"
-                            style={{ height: ScreenHeight - 300 }}
-                        >
+                        <View className="flex-1 items-center justify-between !py-8">
                             <ErrorBoundary>
                                 <ClockButton
                                     isInRange={!!isInRange}
