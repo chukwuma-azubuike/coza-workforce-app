@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import { ICampusCoordinates } from '@store/services/attendance';
 import useClosestCampus from '../closest-campus';
+import { Platform } from 'react-native';
 
 export interface GeoCoordinates {
     latitude: number;
@@ -64,7 +65,7 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
             },
             error => {},
             {
-                enableHighAccuracy: true,
+                enableHighAccuracy: Platform.OS !== 'android',
                 timeout: 15000,
                 maximumAge: 10000,
                 distanceFilter: 10,
@@ -80,7 +81,7 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
                 setDeviceCoordinates(position?.coords);
             },
             error => {},
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            { enableHighAccuracy: Platform.OS !== 'android', timeout: 15000, maximumAge: 10000 }
         );
 
         return result;
@@ -122,7 +123,7 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
                 setDeviceCoordinates(position?.coords);
             },
             error => {},
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            { enableHighAccuracy: Platform.OS !== 'android', timeout: 15000, maximumAge: 10000 }
         );
     }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude, nudge]);
 
