@@ -257,8 +257,8 @@ const IssueTicket: React.FC = () => {
                             isDepartment
                                 ? CreateDepartmentalTicketSchema
                                 : isCampus
-                                ? CreateCampusTicketSchema
-                                : CreateIndividualTicketSchema
+                                  ? CreateCampusTicketSchema
+                                  : CreateIndividualTicketSchema
                         }
                     >
                         {({

@@ -289,93 +289,97 @@ const CampusReportDetails: React.FC<ICampusReportProps> = props => {
     return (
         <ErrorBoundary>
             <ViewWrapper className="py-6" scroll noPadding refreshing={isLoading} onRefresh={handleRefresh}>
-            <Text className="font-bold text-2xl mb-2 ml-2">{campusName}</Text>
-            <View className="px-4 gap-5">
-                <Separator />
-                <VerticalTable
-                    isLoading={isLoading || isFetching}
-                    title="Service Attendance"
-                    tableData={serviceAttendance}
-                />
-                <Separator />
-                <HorizontalTable
-                    isLoading={isLoading || isFetching}
-                    title="Guests Attendance"
-                    tableData={guestsAttendance}
-                />
-                <Separator />
-                <VerticalTable
-                    isLoading={isLoading || isFetching}
-                    title="Childcare Report"
-                    tableData={childCareReportData}
-                />
-                <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
-                <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Bus Count (Pick Up)" tableData={busCount} />
-                <Separator />
-                <VerticalTable
-                    textWrap
-                    tableData={serviceObservation}
-                    isLoading={isLoading || isFetching}
-                    title="Service Programme Observation"
-                >
-                    <View className="mb-2 pb-2 border border-border justify-between">
-                        <Text>Start Time:</Text>
-                        <Text className="font-bold text-primary">
-                            {serviceTime?.start ? dayjs(serviceTime?.start).format('h:mm A') : '--:--'}
-                        </Text>
-                        <Text>End Time:</Text>
-                        <Text className="font-bold text-primary">
-                            {serviceTime?.end ? dayjs(serviceTime?.end).format('h:mm A') : '--:--'}
-                        </Text>
-                    </View>
-                </VerticalTable>
-                <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
-                <Separator />
-                <If condition={isGlobalPastor}>
-                    {data?.campusCoordinatorComment && (
-                        <View className="gap-2 w-full pb-5">
-                            <Text className="font-bold items-start">For the GSP's attention</Text>
-                            <Text className="line-clamp-none">{data?.campusCoordinatorComment}</Text>
-                        </View>
-                    )}
-                </If>
-                <If condition={isCampusPastor}>
-                    <Formik<IGSPReportPayload>
-                        onSubmit={onSubmit}
-                        validationSchema={GSPReportSchema}
-                        initialValues={INITIAL_VALUES as unknown as IGSPReportPayload}
+                <Text className="font-bold text-2xl mb-2 ml-2">{campusName}</Text>
+                <View className="px-4 gap-5">
+                    <Separator />
+                    <VerticalTable
+                        isLoading={isLoading || isFetching}
+                        title="Service Attendance"
+                        tableData={serviceAttendance}
+                    />
+                    <Separator />
+                    <HorizontalTable
+                        isLoading={isLoading || isFetching}
+                        title="Guests Attendance"
+                        tableData={guestsAttendance}
+                    />
+                    <Separator />
+                    <VerticalTable
+                        isLoading={isLoading || isFetching}
+                        title="Childcare Report"
+                        tableData={childCareReportData}
+                    />
+                    <Separator />
+                    <VerticalTable isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
+                    <Separator />
+                    <VerticalTable
+                        isLoading={isLoading || isFetching}
+                        title="Bus Count (Pick Up)"
+                        tableData={busCount}
+                    />
+                    <Separator />
+                    <VerticalTable
+                        textWrap
+                        tableData={serviceObservation}
+                        isLoading={isLoading || isFetching}
+                        title="Service Programme Observation"
                     >
-                        {({ errors, handleChange, handleSubmit, isValid }) => {
-                            return (
-                                <View className="gap-1">
-                                    <View>
-                                        <Label>For the GSP's attention</Label>
-                                        <Textarea
-                                            placeholder="Comment"
-                                            onChangeText={handleChange('campusCoordinatorComment')}
-                                        />
-                                        {!!errors?.campusCoordinatorComment && (
-                                            <FormErrorMessage>{errors?.campusCoordinatorComment}</FormErrorMessage>
-                                        )}
+                        <View className="mb-2 pb-2 border border-border justify-between">
+                            <Text>Start Time:</Text>
+                            <Text className="font-bold text-primary">
+                                {serviceTime?.start ? dayjs(serviceTime?.start).format('h:mm A') : '--:--'}
+                            </Text>
+                            <Text>End Time:</Text>
+                            <Text className="font-bold text-primary">
+                                {serviceTime?.end ? dayjs(serviceTime?.end).format('h:mm A') : '--:--'}
+                            </Text>
+                        </View>
+                    </VerticalTable>
+                    <Separator />
+                    <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
+                    <Separator />
+                    <If condition={isGlobalPastor}>
+                        {data?.campusCoordinatorComment && (
+                            <View className="gap-2 w-full pb-5">
+                                <Text className="font-bold items-start">For the GSP's attention</Text>
+                                <Text className="line-clamp-none">{data?.campusCoordinatorComment}</Text>
+                            </View>
+                        )}
+                    </If>
+                    <If condition={isCampusPastor}>
+                        <Formik<IGSPReportPayload>
+                            onSubmit={onSubmit}
+                            validationSchema={GSPReportSchema}
+                            initialValues={INITIAL_VALUES as unknown as IGSPReportPayload}
+                        >
+                            {({ errors, handleChange, handleSubmit, isValid }) => {
+                                return (
+                                    <View className="gap-1">
+                                        <View>
+                                            <Label>For the GSP's attention</Label>
+                                            <Textarea
+                                                placeholder="Comment"
+                                                onChangeText={handleChange('campusCoordinatorComment')}
+                                            />
+                                            {!!errors?.campusCoordinatorComment && (
+                                                <FormErrorMessage>{errors?.campusCoordinatorComment}</FormErrorMessage>
+                                            )}
+                                        </View>
+                                        <View>
+                                            <Button
+                                                disabled={!isValid}
+                                                isLoading={isSubmitLoading}
+                                                onPress={handleSubmit as (event: any) => void}
+                                            >
+                                                Submit to GSP
+                                            </Button>
+                                        </View>
                                     </View>
-                                    <View>
-                                        <Button
-                                            disabled={!isValid}
-                                            isLoading={isSubmitLoading}
-                                            onPress={handleSubmit as (event: any) => void}
-                                        >
-                                            Submit to GSP
-                                        </Button>
-                                    </View>
-                                </View>
-                            );
-                        }}
-                    </Formik>
-                </If>
-            </View>
+                                );
+                            }}
+                        </Formik>
+                    </If>
+                </View>
             </ViewWrapper>
         </ErrorBoundary>
     );

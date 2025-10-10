@@ -257,91 +257,91 @@ const Export: React.FC = () => {
     return (
         <ErrorBoundary>
             <ViewWrapper scroll className="px-4 py-4">
-            <View style={{ alignItems: 'center' }}>
-                <View style={{ gap: 16, width: '100%' }}>
-                    <View>
-                        <Label>Data Type</Label>
-                        <PickerSelect
-                            valueKey="value"
-                            labelKey="name"
-                            value={dataType}
-                            items={dataTypes}
-                            placeholder="Choose data type"
-                            onValueChange={handleDataType}
-                        />
-                    </View>
-                    <View>
-                        <Label>Campus</Label>
-                        <PickerSelect
-                            valueKey="_id"
-                            labelKey="campusName"
-                            items={allCampuses || []}
-                            disabled={cannotSwitchCampus}
-                            placeholder="Choose campus"
-                            onValueChange={handleCampus}
-                            isLoading={allCampusesLoading}
-                            value={cannotSwitchCampus ? user?.campus?._id : campusId}
-                        />
-                    </View>
-                    <If condition={!isPermission}>
+                <View style={{ alignItems: 'center' }}>
+                    <View style={{ gap: 16, width: '100%' }}>
                         <View>
-                            <Label>Service</Label>
+                            <Label>Data Type</Label>
+                            <PickerSelect
+                                valueKey="value"
+                                labelKey="name"
+                                value={dataType}
+                                items={dataTypes}
+                                placeholder="Choose data type"
+                                onValueChange={handleDataType}
+                            />
+                        </View>
+                        <View>
+                            <Label>Campus</Label>
                             <PickerSelect
                                 valueKey="_id"
-                                labelKey="name"
-                                value={serviceId}
-                                isLoading={servicesLoading}
-                                items={pastServices || []}
-                                placeholder="Choose service"
-                                onValueChange={handleService}
-                                customLabel={service =>
-                                    `${service.name} | ${
-                                        service?.serviceTime ? dayjs(service?.serviceTime).format('DD-MM-YYYY') : ''
-                                    }`
-                                }
+                                labelKey="campusName"
+                                items={allCampuses || []}
+                                disabled={cannotSwitchCampus}
+                                placeholder="Choose campus"
+                                onValueChange={handleCampus}
+                                isLoading={allCampusesLoading}
+                                value={cannotSwitchCampus ? user?.campus?._id : campusId}
                             />
                         </View>
-                    </If>
-                    <View className="w-full flex-row gap-4">
-                        <View className="flex-1">
-                            <DateTimePicker
-                                mode="date"
-                                label="Start date"
-                                placeholder="Enter start date"
-                                onConfirm={handleStartDate as unknown as (value: Date) => void}
+                        <If condition={!isPermission}>
+                            <View>
+                                <Label>Service</Label>
+                                <PickerSelect
+                                    valueKey="_id"
+                                    labelKey="name"
+                                    value={serviceId}
+                                    isLoading={servicesLoading}
+                                    items={pastServices || []}
+                                    placeholder="Choose service"
+                                    onValueChange={handleService}
+                                    customLabel={service =>
+                                        `${service.name} | ${
+                                            service?.serviceTime ? dayjs(service?.serviceTime).format('DD-MM-YYYY') : ''
+                                        }`
+                                    }
+                                />
+                            </View>
+                        </If>
+                        <View className="w-full flex-row gap-4">
+                            <View className="flex-1">
+                                <DateTimePicker
+                                    mode="date"
+                                    label="Start date"
+                                    placeholder="Enter start date"
+                                    onConfirm={handleStartDate as unknown as (value: Date) => void}
+                                />
+                            </View>
+                            <View className="flex-1">
+                                <DateTimePicker
+                                    mode="date"
+                                    label="End date"
+                                    placeholder="Enter end date"
+                                    onConfirm={handleEndDate as unknown as (value: Date) => void}
+                                />
+                            </View>
+                        </View>
+                        <View>
+                            <Label>Department</Label>
+                            <PickerSelect
+                                valueKey="_id"
+                                labelKey="departmentName"
+                                value={departmentId}
+                                items={sortedCampusDepartments || []}
+                                isLoading={campusDepartmentsLoading}
+                                placeholder="Choose department"
+                                onValueChange={handleDepartment}
                             />
                         </View>
-                        <View className="flex-1">
-                            <DateTimePicker
-                                mode="date"
-                                label="End date"
-                                placeholder="Enter end date"
-                                onConfirm={handleEndDate as unknown as (value: Date) => void}
-                            />
-                        </View>
+                        <Button
+                            isLoading={isLoading}
+                            onPress={handlePress}
+                            disabled={!dataType}
+                            startIcon={<Icon size={28} color="white" type="ionicon" name="download-outline" />}
+                        >
+                            Fetch report
+                        </Button>
                     </View>
-                    <View>
-                        <Label>Department</Label>
-                        <PickerSelect
-                            valueKey="_id"
-                            labelKey="departmentName"
-                            value={departmentId}
-                            items={sortedCampusDepartments || []}
-                            isLoading={campusDepartmentsLoading}
-                            placeholder="Choose department"
-                            onValueChange={handleDepartment}
-                        />
-                    </View>
-                    <Button
-                        isLoading={isLoading}
-                        onPress={handlePress}
-                        disabled={!dataType}
-                        startIcon={<Icon size={28} color="white" type="ionicon" name="download-outline" />}
-                    >
-                        Fetch report
-                    </Button>
                 </View>
-            </View>
             </ViewWrapper>
         </ErrorBoundary>
     );
