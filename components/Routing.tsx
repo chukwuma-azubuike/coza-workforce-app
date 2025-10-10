@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { router, Stack } from 'expo-router';
-import { SafeAreaProvider, SafeAreaView as RNCSafeAreaView } from 'react-native-safe-area-context';
-import { View, SafeAreaView as RNSafeAreaView, Platform } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Platform, View } from 'react-native';
 import NotificationModal from '~/components/composite/notification-modal';
 
 import { useAppSelector } from '~/store/hooks';
@@ -28,12 +28,13 @@ const Routing: React.FC = () => {
         update();
     }, [user?.userId]);
 
-    const SafeAreaView = Platform.OS === 'android' ? RNSafeAreaView : RNCSafeAreaView;
-
     return (
         <NotificationsProvider user={user || ({} as any)}>
             <SafeAreaProvider className="!bg-background">
-                <SafeAreaView className="flex-1 !bg-background">
+                <SafeAreaView
+                    edges={['right', 'left', 'top', Platform.OS === 'android' ? 'bottom' : 'top']}
+                    className="flex-1 !bg-background"
+                >
                     <View className="flex-1">
                         <NotificationModal />
                         <Stack>
