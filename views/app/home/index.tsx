@@ -106,29 +106,29 @@ const Home: React.FC = () => {
             <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
                 <SafeAreaView style={styles.container}>
                     <View style={styles.container}>
-                    <If condition={!!user}>
-                        <If condition={!isGlobalPastor}>
-                            <Clocker
-                                refreshLocation={refresh}
-                                isInRange={isInRange as boolean}
-                                refreshTrigger={refreshTrigger}
-                                setRefreshTrigger={setRefreshTrigger}
-                                deviceCoordinates={deviceCoordinates as any}
-                                verifyRangeBeforeAction={verifyRangeBeforeAction}
+                        <If condition={!!user}>
+                            <If condition={!isGlobalPastor}>
+                                <Clocker
+                                    refreshLocation={refresh}
+                                    isInRange={isInRange as boolean}
+                                    refreshTrigger={refreshTrigger}
+                                    setRefreshTrigger={setRefreshTrigger}
+                                    deviceCoordinates={deviceCoordinates as any}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </If>
+                            <If condition={isGlobalPastor}>
+                                <TopNav />
+                                <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
+                            </If>
+                        </If>
+                        <If condition={isCampusPastor}>
+                            <CampusReportSummary
+                                refetchService={handleRefresh}
+                                campusId={user?.campus?._id as string}
+                                serviceId={latestService?._id as string}
                             />
                         </If>
-                        <If condition={isGlobalPastor}>
-                            <TopNav />
-                            <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
-                        </If>
-                    </If>
-                    <If condition={isCampusPastor}>
-                        <CampusReportSummary
-                            refetchService={handleRefresh}
-                            campusId={user?.campus?._id as string}
-                            serviceId={latestService?._id as string}
-                        />
-                    </If>
                     </View>
                 </SafeAreaView>
             </HomeContext.Provider>

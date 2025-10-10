@@ -51,10 +51,14 @@ const CongressList: React.FC<{ updatedListItem: ICongress }> = memo(() => {
 
     const { data, isLoading, refetch, isFetching } = useGetCongresssQuery({});
 
-    const minimalCongressData = React.useMemo(() => 
-        data?.map(({ _id, name, startDate, endDate }) => ({
-            _id, name, startDate, endDate
-        })) || [],
+    const minimalCongressData = React.useMemo(
+        () =>
+            data?.map(({ _id, name, startDate, endDate }) => ({
+                _id,
+                name,
+                startDate,
+                endDate,
+            })) || [],
         [data]
     );
 

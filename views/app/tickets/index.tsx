@@ -89,25 +89,28 @@ const Tickets: React.FC = () => {
         <ErrorBoundary>
             <SafeAreaView className="flex-1">
                 <View className="flex-1 pt-4">
-                <TabComponent
-                    onIndexChange={setIndex}
-                    renderScene={renderScene}
-                    navigationState={{ index, routes: allRoutes }}
-                    tabBarScroll={allRoutes.length > 2 && isMobile}
-                />
-                <If condition={isQC}>
-                    <AddButtonComponent onPress={gotoIndividual} />
-                </If>
-                <If condition={canSearch}>
-                    <DynamicSearch
-                        data={tickets}
-                        disable={!tickets}
-                        onPress={handleUserPress as any}
-                        loading={isLoadingTickets || isFetchingTickets}
-                        searchFields={['firstName', 'lastName', 'departmentName', 'categoryName', 'status', 'user']}
-                        className={cn('!bottom-32 !right-[1.4rem]', (isCampusPastor || isGlobalPastor) && '!bottom-16')}
+                    <TabComponent
+                        onIndexChange={setIndex}
+                        renderScene={renderScene}
+                        navigationState={{ index, routes: allRoutes }}
+                        tabBarScroll={allRoutes.length > 2 && isMobile}
                     />
-                </If>
+                    <If condition={isQC}>
+                        <AddButtonComponent onPress={gotoIndividual} />
+                    </If>
+                    <If condition={canSearch}>
+                        <DynamicSearch
+                            data={tickets}
+                            disable={!tickets}
+                            onPress={handleUserPress as any}
+                            loading={isLoadingTickets || isFetchingTickets}
+                            searchFields={['firstName', 'lastName', 'departmentName', 'categoryName', 'status', 'user']}
+                            className={cn(
+                                '!bottom-32 !right-[1.4rem]',
+                                (isCampusPastor || isGlobalPastor) && '!bottom-16'
+                            )}
+                        />
+                    </If>
                 </View>
             </SafeAreaView>
         </ErrorBoundary>

@@ -96,7 +96,7 @@ export default ({ config }) => {
         config.ios = {
             bundleIdentifier: getDynamicUniqueIdentifier('ios', config),
             buildNumber: getIOSBuildNumber(config),
-            googleServicesFile: getGoogleServicesInfoPlist()
+            googleServicesFile: getGoogleServicesInfoPlist(),
         };
     }
 

@@ -79,24 +79,24 @@ const Attendance: React.FC = () => {
         <ErrorBoundary>
             <SafeAreaView className="flex-1">
                 <View className="flex-1 pt-4">
-                <TabComponent
-                    onIndexChange={setIndex}
-                    renderScene={renderScene}
-                    navigationState={{ index, routes: allRoutes }}
-                    tabBarScroll={allRoutes.length > 2 && isMobile}
-                />
-                <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                    <StaggerButtonComponent
-                        buttons={[
-                            {
-                                color: 'bg-green-600',
-                                iconName: 'download-outline',
-                                handleClick: goToExport,
-                                iconType: 'ionicon',
-                            },
-                        ]}
+                    <TabComponent
+                        onIndexChange={setIndex}
+                        renderScene={renderScene}
+                        navigationState={{ index, routes: allRoutes }}
+                        tabBarScroll={allRoutes.length > 2 && isMobile}
                     />
-                </If>
+                    <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                        <StaggerButtonComponent
+                            buttons={[
+                                {
+                                    color: 'bg-green-600',
+                                    iconName: 'download-outline',
+                                    handleClick: goToExport,
+                                    iconType: 'ionicon',
+                                },
+                            ]}
+                        />
+                    </If>
                 </View>
             </SafeAreaView>
         </ErrorBoundary>
