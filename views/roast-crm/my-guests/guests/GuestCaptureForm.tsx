@@ -66,8 +66,8 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
             try {
                 const payload = {
                     ...value,
-                    phone: value.phoneNumber
-                        ? formatToE164(value.phoneNumber, selectedCountry?.callingCode as string)
+                    phoneNumber: value.phoneNumber
+                        ? formatToE164(value.phoneNumber, (selectedCountry?.callingCode as string) ?? '+234')
                         : '',
                 };
                 const res = await addGuest(payload);

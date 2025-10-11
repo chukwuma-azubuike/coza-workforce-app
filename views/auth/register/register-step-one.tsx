@@ -12,6 +12,7 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { PhoneInput } from '~/components/ui/phone-input';
 import { ICountry } from 'react-native-international-phone-number';
+import formatToE164 from '~/utils/formatToE164';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     if (!RegisterFormContext) {
@@ -30,7 +31,11 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
 
     const onSubmit: FormikConfig<IRegisterFormStepOne>['onSubmit'] = values => {
         setFormValues(prev => {
-            return { ...prev, ...values };
+            return {
+                ...prev,
+                ...values,
+                phoneNumber: formatToE164(formValues.phoneNumber, selectedCountry?.callingCode ?? '+234'),
+            };
         });
 
         onStepPress(1);

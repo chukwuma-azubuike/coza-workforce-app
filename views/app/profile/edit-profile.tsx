@@ -254,8 +254,8 @@ const EditProfile: React.FC = () => {
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                         disabled={
-                                            (values as any)[Object.keys(values)[0]] ===
-                                            (userData as any)[Object.keys(values)[0]]
+                                            (values as any)[Object.keys(values)[0] as any] ===
+                                            (userData as any)[Object.keys(values)[0] as any]
                                         }
                                     >
                                         Save
