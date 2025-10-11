@@ -59,7 +59,11 @@ export function GuestHeader({
     const onSubmit = async (values: Guest) => {
         handleMode('view')();
         try {
-            const res = await updateGuest({ ...guest, ...values });
+            const res = await updateGuest({
+                ...guest,
+                ...values,
+                phoneNumber: formatToE164(values.phoneNumber, selectedCountry?.callingCode ?? '+234'),
+            });
 
             if (res.data) {
             }
@@ -172,12 +176,12 @@ export function GuestHeader({
                                     <PhoneInput
                                         defaultCountry="NG"
                                         error={errors.phoneNumber}
+                                        value={values.phoneNumber}
                                         placeholder="Enter phone number"
                                         selectedCountry={selectedCountry}
                                         onBlur={handleBlur('phoneNumber')}
                                         onChangeSelectedCountry={handleSelectedCountry}
                                         onChangePhoneNumber={handleChange('phoneNumber')}
-                                        value={formatToE164(values.phoneNumber, '') as string}
                                     />
                                 ) : (
                                     <View className="flex-row items-center gap-2">
