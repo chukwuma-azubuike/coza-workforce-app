@@ -1,21 +1,15 @@
-import React, { memo, useCallback, useMemo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import React, { memo, useMemo } from 'react';
+import { View } from 'react-native';
 import { Guest } from '~/store/types';
 
-import { Phone, MessageCircle, Clock, MoreVertical, MapPin, PhoneIcon } from 'lucide-react-native';
+import { Phone, MessageCircle, Clock, MapPin, PhoneIcon } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import { Text } from '~/components/ui/text';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
-import { router } from 'expo-router';
+
 import useZoneIndex from '../hooks/use-zone-index';
 
 interface KanbanCardProps {
@@ -29,10 +23,6 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
         () => getDaysSinceContact(guest?.lastContact ?? (guest?.createdAt as any)),
         [guest?.lastContact, guest?.createdAt]
     );
-
-    const handleProfileView = useCallback(() => {
-        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
-    }, [guest]);
 
     return (
         <View className="bg-background rounded-3xl">
@@ -61,22 +51,6 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                 </View>
                             </View>
                         </View>
-
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <TouchableOpacity
-                                    className="items-center justify-center p-2 rounded-full"
-                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                                >
-                                    <MoreVertical className="w-4 h-4" color="gray" />
-                                </TouchableOpacity>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" alignOffset={-20} className="rounded-2xl">
-                                <DropdownMenuItem onPress={handleProfileView}>
-                                    <Text>View Profile</Text>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </View>
 
                     <View className="gap-3">
