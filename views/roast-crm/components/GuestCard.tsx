@@ -1,18 +1,12 @@
 import React, { memo } from 'react';
 import { View, Text } from 'react-native';
-import { Phone, MessageCircle, Clock, MoreVertical } from 'lucide-react-native';
+import { Phone, MessageCircle, Clock } from 'lucide-react-native';
 
 import { Card, CardContent } from '~/components/ui/card';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { Guest } from '~/store/types';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 
 interface GuestCardProps {
@@ -22,15 +16,11 @@ interface GuestCardProps {
     className?: string;
 }
 
-export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragStart, className }: GuestCardProps) {
+export const GuestCard = memo(function GuestCard({ guest, className }: GuestCardProps) {
     const progress = React.useMemo(() => {
         const completed = guest?.milestones?.filter(m => m.status === 'COMPLETED').length ?? 0;
         return Math.round((completed / (guest?.milestones?.length ?? 0)) * 100);
     }, [guest.milestones]);
-
-    const handleViewProfile = () => {
-        onViewGuest(guest._id);
-    };
 
     return (
         <Card className={`bg-white ${className || ''}`}>
@@ -48,17 +38,6 @@ export const GuestCard = memo(function GuestCard({ guest, onViewGuest, onDragSta
                             <Text className="text-xs text-gray-500">{guest.lastName}</Text>
                         </View>
                     </View>
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button className="items-center justify-center rounded-md h-6 w-6 p-0" variant="ghost">
-                                <MoreVertical className="w-3 h-3" />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem onPress={handleViewProfile}>View Profile</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
                 </View>
 
                 <View className="space-y-2">
