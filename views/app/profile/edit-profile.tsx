@@ -34,7 +34,7 @@ const EditProfile: React.FC = () => {
 
     const { setModalState } = useModal();
 
-    const [updateUser, { reset, isLoading, isError, isSuccess, error }] = useUpdateUserMutation();
+    const [updateUser, { reset, isLoading, isError, isSuccess }] = useUpdateUserMutation();
 
     const onSubmit = (value: IEditProfilePayload) => {
         updateUser({
@@ -253,8 +253,8 @@ const EditProfile: React.FC = () => {
                                         isLoading={isLoading}
                                         onPress={handleSubmit as (event: any) => void}
                                         disabled={
-                                            (values as any)[Object.keys(values)[0]] ===
-                                            (userData as any)[Object.keys(values)[0]]
+                                            (values as any)[Object.keys(values)[0] as any] ===
+                                            (userData as any)[Object.keys(values)[0] as any]
                                         }
                                     >
                                         Save

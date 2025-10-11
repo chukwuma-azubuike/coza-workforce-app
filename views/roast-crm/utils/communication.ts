@@ -6,5 +6,5 @@ export const handleCall = (guest: Guest) => () => {
 };
 
 export const handleWhatsApp = (guest: Guest) => () => {
-    Linking.openURL(`https://wa.me/${guest.phoneNumber.replace(/\D/g, '')}`);
+    Linking.openURL(`https://wa.me/${guest.phoneNumber}`);
 };
