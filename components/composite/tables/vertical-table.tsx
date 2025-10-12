@@ -41,8 +41,9 @@ const VerticalTable: React.FC<Props> = ({ title, children, isLoading, tableData,
                             <View className="flex-1 w-full gap-1">
                                 {tableData?.rows?.map((row, index) => (
                                     <View key={`row-data-${index}`} className="space-y-1 flex-1 flex-row gap-2 w-full">
-                                        {Object.values(row)?.map(item => (
+                                        {Object.values(row)?.map((item, index) => (
                                             <View
+                                                key={index}
                                                 className={`items-center p-2 text-left text-muted-foreground bg-muted flex-1`}
                                             >
                                                 <Text className={cn('text-left', textWrap && 'line-clamp-none')}>

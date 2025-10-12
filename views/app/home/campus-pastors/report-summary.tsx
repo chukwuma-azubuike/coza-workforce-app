@@ -69,7 +69,7 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = elm => {
             onPress={handlePress(elm)}
             accessibilityRole="button"
         >
-            <View className="p-2 px-4 my-2 py-3 w-full flex-row rounded-2xl items-center bg-muted-background justify-between">
+            <View className="p-2 px-4 my-1 py-3 w-full flex-row rounded-2xl items-center bg-muted-background justify-between">
                 <Text className="text-lg text-muted-foreground">{`${elm?.departmentName} Report`}</Text>
                 <StatusTag>{elm?.report.status as any}</StatusTag>
             </View>
