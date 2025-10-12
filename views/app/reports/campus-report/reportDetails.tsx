@@ -313,6 +313,7 @@ const CampusReport: React.FC = () => {
             {isGlobalPastor && <Text className="font-bold text-4xl mb-2">{params?.campusName}</Text>}
             <View className="px-4 gap-6 mb-12">
                 <VerticalTable
+                    textWrap
                     isLoading={isLoading || isFetching}
                     title="Service Attendance"
                     tableData={serviceAttendance}
@@ -325,16 +326,18 @@ const CampusReport: React.FC = () => {
                 />
                 <Separator />
                 <VerticalTable
+                    textWrap
                     isLoading={isLoading || isFetching}
                     title="Childcare Report"
                     tableData={childCareReportData}
                 />
                 <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
+                <VerticalTable textWrap isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
                 <Separator />
                 <VerticalTable isLoading={isLoading || isFetching} title="Bus Count (Pick Up)" tableData={busCount} />
                 <Separator />
                 <VerticalTable
+                    textWrap
                     tableData={serviceObservation}
                     isLoading={isLoading || isFetching}
                     title="Service Programme Observation"
@@ -351,7 +354,12 @@ const CampusReport: React.FC = () => {
                     </View>
                 </VerticalTable>
                 <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
+                <VerticalTable
+                    textWrap
+                    isLoading={isLoading || isFetching}
+                    title="Incidents"
+                    tableData={incidentReport}
+                />
                 <Separator />
                 <If condition={isGlobalPastor}>
                     {data?.campusCoordinatorComment && (
