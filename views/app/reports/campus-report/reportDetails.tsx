@@ -151,9 +151,7 @@ const CampusReport: React.FC = () => {
                     return elm;
                 }),
                 undefined
-            ).map(elm => {
-                return { ...elm, total: +elm.minorCount + +elm.adultCount };
-            }),
+            ),
         };
     }, [data]);
 
