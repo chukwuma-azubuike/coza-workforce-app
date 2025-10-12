@@ -1,6 +1,6 @@
 import { Text } from '~/components/ui/text';
 import dayjs from 'dayjs';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 import StatusTag from '@components/atoms/status-tag';
 import FlatListComponent from '@components/composite/flat-list';
@@ -10,9 +10,12 @@ import { ICampusReport, useGetCampusReportListQuery } from '@store/services/repo
 import Utils from '@utils/index';
 import { router } from 'expo-router';
 
-export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
-    const handlePress = () => {
-        router.push({ pathname: '/reports/campus-report', params: props as any });
+export const DepartmentReportListRow: React.FC<ICampusReport> = ({ serviceId, campusId, ...props }) => {
+    const navigateToReports = () => {
+        router.push({
+            pathname: '/reports/campus-report',
+            params: { serviceId, campusId },
+        });
     };
 
     return (
@@ -20,7 +23,7 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = props => {
             disabled={false}
             delayPressIn={0}
             activeOpacity={0.6}
-            onPress={handlePress}
+            onPress={navigateToReports}
             style={{ width: '100%' }}
             accessibilityRole="button"
         >
@@ -37,16 +40,12 @@ interface ICampusReportPayload {
     campusId: string;
 }
 
-const renderCampusReportItem = ({ item }: { item: ICampusReport; index: number }) => (
-    <DepartmentReportListRow {...item} />
-);
-
 const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
     const { serviceId, campusId } = props;
 
     const [page, setPage] = React.useState<number>(0);
 
-    const { data, refetch, isLoading, isFetching, isSuccess, isError } = useGetCampusReportListQuery(
+    const { data, refetch, isLoading, isFetching, isSuccess } = useGetCampusReportListQuery(
         {
             page,
             campusId,
@@ -55,6 +54,13 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
         {
             refetchOnMountOrArgChange: true,
         }
+    );
+
+    const renderCampusReportItem = useCallback(
+        ({ item }: { item: ICampusReport; index: number }) => (
+            <DepartmentReportListRow {...item} serviceId={serviceId as string} campusId={campusId as string} />
+        ),
+        [serviceId, campusId]
     );
 
     const handleRefresh = () => {
