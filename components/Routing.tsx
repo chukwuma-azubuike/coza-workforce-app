@@ -34,7 +34,7 @@ const Routing: React.FC = () => {
         <NotificationsProvider user={user || ({} as any)}>
             <SafeAreaProvider className="!bg-background">
                 <SafeAreaView
-                    edges={['right', 'left', 'top', Platform.OS === 'android' ? 'bottom' : 'top']}
+                    edges={['right', 'left', Platform.OS === 'android' ? 'bottom' : 'top']}
                     className="flex-1 !bg-background"
                 >
                     <View className="flex-1">
