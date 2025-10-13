@@ -10,6 +10,8 @@ import { useLazyGetPermissionsReportForDownloadQuery } from '@store/services/per
 import { useLazyGetTicketsReportForDownloadQuery } from '@store/services/tickets';
 import { Alert, View } from 'react-native';
 import { Icon } from '@rneui/themed';
+import If from '@components/composite/if-container';
+import DateTimePicker from '~/components/composite/date-time-picker';
 import useRole from '@hooks/role';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { generateReportName } from '@utils/generateReportName';
@@ -19,7 +21,6 @@ import { Label } from '~/components/ui/label';
 import { useLocalSearchParams } from 'expo-router';
 import PickerSelect from '~/components/ui/picker-select';
 import { Button } from '~/components/ui/button';
-import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 export type IExportType = 'attendance' | 'tickets' | 'permissions';
 
@@ -251,6 +252,8 @@ const Export: React.FC = () => {
         permissionsIsLoading ||
         permissionIsFetching;
 
+    const isPermission = dataType === 'permissions';
+
     return (
         <ErrorBoundary>
             <ViewWrapper scroll className="px-4 py-4">
@@ -280,24 +283,53 @@ const Export: React.FC = () => {
                                 value={cannotSwitchCampus ? user?.campus?._id : campusId}
                             />
                         </View>
-                    </View>
-                    <View className="w-full flex-row gap-4">
-                        <View className="flex-1">
-                            <DateTimePickerLegend
-                                mode="date"
-                                label="Start date"
-                                placeholder="Enter start date"
-                                minimumDate={dayjs(endDate).toDate()}
-                                onConfirm={handleStartDate as unknown as (value: Date) => void}
-                            />
+                        <If condition={!isPermission}>
+                            <View>
+                                <Label>Service</Label>
+                                <PickerSelect
+                                    valueKey="_id"
+                                    labelKey="name"
+                                    value={serviceId}
+                                    isLoading={servicesLoading}
+                                    items={pastServices || []}
+                                    placeholder="Choose service"
+                                    onValueChange={handleService}
+                                    customLabel={service =>
+                                        `${service.name} | ${
+                                            service?.serviceTime ? dayjs(service?.serviceTime).format('DD-MM-YYYY') : ''
+                                        }`
+                                    }
+                                />
+                            </View>
+                        </If>
+                        <View className="w-full flex-row gap-4">
+                            <View className="flex-1">
+                                <DateTimePicker
+                                    mode="date"
+                                    label="Start date"
+                                    placeholder="Enter start date"
+                                    onConfirm={handleStartDate as unknown as (value: Date) => void}
+                                />
+                            </View>
+                            <View className="flex-1">
+                                <DateTimePicker
+                                    mode="date"
+                                    label="End date"
+                                    placeholder="Enter end date"
+                                    onConfirm={handleEndDate as unknown as (value: Date) => void}
+                                />
+                            </View>
                         </View>
-                        <View className="flex-1">
-                            <DateTimePickerLegend
-                                mode="date"
-                                label="End date"
-                                placeholder="Enter end date"
-                                minimumDate={dayjs(startDate).toDate()}
-                                onConfirm={handleEndDate as unknown as (value: Date) => void}
+                        <View>
+                            <Label>Department</Label>
+                            <PickerSelect
+                                valueKey="_id"
+                                labelKey="departmentName"
+                                value={departmentId}
+                                items={sortedCampusDepartments || []}
+                                isLoading={campusDepartmentsLoading}
+                                placeholder="Choose department"
+                                onValueChange={handleDepartment}
                             />
                         </View>
                         <Button
