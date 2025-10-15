@@ -58,7 +58,11 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
 
     const renderCampusReportItem = useCallback(
         ({ item }: { item: ICampusReport; index: number }) => (
-            <DepartmentReportListRow {...item} serviceId={serviceId as string} campusId={campusId as string} />
+            <DepartmentReportListRow
+                {...item}
+                campusId={(campusId as string) ?? item.campusId}
+                serviceId={(serviceId as string) ?? item.serviceId}
+            />
         ),
         [serviceId, campusId]
     );
@@ -71,7 +75,9 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
 
     const minimalReportData = React.useMemo(
         () =>
-            moreData?.map(({ serviceTime, serviceName, status }) => ({
+            moreData?.map(({ serviceTime, serviceName, status, serviceId, campusId }) => ({
+                serviceId,
+                campusId,
                 serviceTime,
                 serviceName,
                 status,
