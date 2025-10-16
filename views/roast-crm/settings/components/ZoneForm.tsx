@@ -10,7 +10,7 @@ import { Alert, TouchableOpacity, View } from 'react-native';
 import useRole from '~/hooks/role';
 
 import { FieldArray, Formik } from 'formik';
-import { CreateZonePayload } from '@store/types';
+import { CreateZonePayload, IDepartment } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Input } from '~/components/ui/input';
@@ -173,7 +173,7 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                             <Users2Icon color="gray" size={16} />
                                             <Label>Department</Label>
                                         </View>
-                                        <PickerSelect
+                                        <PickerSelect<IDepartment>
                                             valueKey="_id"
                                             className="!h-12"
                                             value={newDepartment}
@@ -181,9 +181,12 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                             items={departments || []}
                                             placeholder="Select department"
                                             onValueChange={newDepartment => {
+                                                if (!departmentIndex[newDepartment]) return;
+
                                                 const alreadyAdded = values.departments.map(
                                                     department => department.id
                                                 );
+
                                                 if (
                                                     newDepartment &&
                                                     Array.isArray(values.departments) &&
@@ -208,7 +211,7 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                             <View className="gap-4 flex-wrap flex-row">
                                                 {values?.departments?.map((department, idx) => (
                                                     <Badge key={idx} className="h-10 flex-row" variant="outline">
-                                                        <Text className="text-sm ml-2">{department.name}</Text>
+                                                        <Text className="text-sm ml-2">{department?.name}</Text>
                                                         <TouchableOpacity
                                                             className="p-2"
                                                             onPress={() => arrayHelpers.remove(idx)}
