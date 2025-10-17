@@ -10,7 +10,7 @@ import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
 import Utils from '@utils/index';
 import DeviceInfo from 'react-native-device-info';
-import { AVATAR_FALLBACK_URL, S3_BUCKET_FOLDERS } from '@constants/index';
+import { S3_BUCKET_FOLDERS } from '@constants/index';
 import { useAuth } from '@hooks/auth';
 import { IEditProfilePayload } from '@store/types';
 import { useUpdateUserMutation } from '@store/services/account';
@@ -19,7 +19,6 @@ import APP_VARIANT from '@config/envConfig';
 import { router } from 'expo-router';
 import useUploader from '~/hooks/use-uploader';
 import capitalize from 'lodash/capitalize';
-// import EASUpdates from '~/components/EASUpdates';
 
 const Profile: React.FC = () => {
     const { user, isGlobalPastor, refetch, isFetching } = useRole();
@@ -152,7 +151,6 @@ const Profile: React.FC = () => {
                     <Text className="py-6 text-center text-muted-foreground">
                         Version {DeviceInfo.getVersion()} ({capitalize(APP_VARIANT.ENV)})
                     </Text>
-                    {/* <EASUpdates /> */}
                 </ScrollView>
             </View>
         </ErrorBoundary>

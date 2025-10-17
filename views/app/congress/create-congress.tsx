@@ -59,8 +59,8 @@ const CreateCongress: React.FC = () => {
     } as any;
 
     return (
-        <ViewWrapper scroll noPadding className="flex-1 pt-4">
-            <View className="px-4 gap-8 items-start w-full py-6">
+        <ViewWrapper scroll noPadding className="flex-1">
+            <View className="px-4 gap-8 items-start w-full pt-4">
                 <Formik<ICongressPayload>
                     validateOnChange
                     onSubmit={onSubmit}

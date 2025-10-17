@@ -18,6 +18,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import Loading from '~/components/atoms/loading';
 import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
 import ErrorBoundary from '~/components/composite/error-boundary';
+import useExpoUpdate from '~/hooks/expo-update';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -62,6 +63,7 @@ export default function RootLayout() {
     }, []);
 
     useNotificationObserver();
+    useExpoUpdate();
 
     if (!isColorSchemeLoaded) {
         return null;
