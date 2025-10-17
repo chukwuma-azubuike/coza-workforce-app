@@ -5,7 +5,7 @@ import { View } from 'react-native';
 import useModal from '~/hooks/modal/useModal';
 import dayjs from 'dayjs';
 import ModalAlertComponent from '~/components/composite/modal-alert';
-import { HomeContext } from '..';
+import { HomeContext } from '../context';
 import { useClockInMutation, useClockOutMutation } from '~/store/services/attendance';
 import useRole from '~/hooks/role';
 import { GeoCoordinates } from '~/hooks/geo-location';
