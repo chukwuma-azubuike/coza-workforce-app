@@ -15,6 +15,7 @@ import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView as SACSafeAreaView } from 'react-native-safe-area-context';
 import TopNav from './top-nav';
+import { HomeContext } from './context';
 
 interface IInitialHomeState {
     latestService: {
@@ -31,8 +32,6 @@ interface IInitialHomeState {
     };
     currentCoordinate: LocationObjectCoords;
 }
-
-export const HomeContext = React.createContext({} as IInitialHomeState);
 
 const Home: React.FC = () => {
     const { user, isGlobalPastor, isGroupHead, isCampusPastor } = useRole();

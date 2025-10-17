@@ -16,9 +16,10 @@ import React from 'react';
 import { Platform } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import { GeoCoordinates } from '@hooks/geo-location';
-import { HomeContext } from '../home';
+import { HomeContext } from '../home/context';
 import { GroupHeadReportSummary } from '../home/campus-pastors/report-summary';
 import { useLocalSearchParams } from 'expo-router';
+import GHClocker from '../home/workers/clocker';
 
 interface IInitialHomeState {
     latestService: {
@@ -147,15 +148,15 @@ const GroupHeadServiceReport: React.FC = () => {
                 scroll
             >
                 <ErrorBoundary>
-                    <GhClocker
-                        showReport
-                        isInRange={isInRange}
+                    <GHClocker
+                        // showReport
+                        isInRange={!!isInRange}
                         refreshLocation={refresh}
                         refreshTrigger={refreshTrigger}
                         setRefreshTrigger={setRefreshTrigger}
                         deviceCoordinates={deviceCoordinates ?? { latitude: 0, longitude: 0 }}
                         verifyRangeBeforeAction={verifyRangeBeforeAction}
-                        ghReport={prop}
+                        // ghReport={prop}
                     />
                     <GroupHeadReportSummary
                         refetchService={handleRefresh}

@@ -6,6 +6,7 @@ import RegisterStepTwo from './register-step-two';
 import Stepper, { IRegisterPagesProps } from '@components/composite/stepper';
 import { IRegisterPayload } from '@store/types';
 import { router, useLocalSearchParams } from 'expo-router';
+import { RegisterFormContext } from './context';
 
 const PAGES: IRegisterPagesProps[] = [
     { label: 'Personal', component: RegisterStepOne },
@@ -13,13 +14,6 @@ const PAGES: IRegisterPagesProps[] = [
     { label: 'Social', component: RegisterStepThree },
     { label: 'Password', component: RegisterStepFour },
 ];
-
-export interface IRegisterContext {
-    formValues: IRegisterPayload;
-    setFormValues: React.Dispatch<React.SetStateAction<IRegisterPayload>>;
-}
-
-export const RegisterFormContext = React.createContext<IRegisterContext>({} as IRegisterContext);
 
 const Register: React.FC = () => {
     const INITIAL_VALUES = useLocalSearchParams() as unknown as IRegisterPayload;

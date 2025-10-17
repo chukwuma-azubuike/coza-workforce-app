@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepOne, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '~/views/auth/register';
+import { RegisterFormContext } from './context';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';

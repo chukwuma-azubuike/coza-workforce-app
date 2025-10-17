@@ -12,7 +12,7 @@ import { useGetUserByIdQuery } from '@store/services/account';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import useGeoLocation from '@hooks/geo-location';
 import Geolocation from '@react-native-community/geolocation';
-import GhClocker from '../home/workers/gh-clocker';
+import GhClocker from '../home/workers/clocker';
 
 const GroupHeadReports: React.FC<NativeStackScreenProps<ParamListBase>> = () => {
     const { user } = useRole();
@@ -62,12 +62,12 @@ const GroupHeadReports: React.FC<NativeStackScreenProps<ParamListBase>> = () => 
     return (
         <ErrorBoundary>
             <GhClocker
-                showReport
-                isInRange={isInRange}
+                // showReport
+                isInRange={!!isInRange}
                 refreshLocation={refresh}
                 refreshTrigger={refreshTrigger}
                 setRefreshTrigger={setRefreshTrigger}
-                deviceCoordinates={deviceCoordinates}
+                deviceCoordinates={deviceCoordinates as any}
                 verifyRangeBeforeAction={verifyRangeBeforeAction}
             />
             <GroupHeadReportSummary

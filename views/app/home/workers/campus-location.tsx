@@ -1,6 +1,6 @@
 import { Text } from '~/components/ui/text';
 import React from 'react';
-import { HomeContext } from '..';
+import { HomeContext } from '../context';
 import { THEME_CONFIG } from '@config/appConfig';
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
