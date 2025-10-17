@@ -38,11 +38,11 @@ export const MyAttendanceRow: React.FC<{ item: IAttendance; index: number }> = (
                     {dayjs(item.createdAt).format('MMM')} / {dayjs(item.createdAt).format('YY')}
                 </Text>
             </View>
-            <View className="justify-center items-center flex-row gap-2 flex-1">
+            <View className="justify-center items-center flex-row gap-1 flex-1">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                 <Text className="text-green-500">{item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}</Text>
             </View>
-            <View className="justify-center items-center flex-row gap-2 flex-1">
+            <View className="justify-center items-center flex-row gap-1 flex-1">
                 <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                 <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
             </View>
@@ -66,20 +66,20 @@ export const TeamAttendanceRow: React.FC<{ item: ITransformUserAttendanceList; i
                 badge={!!item.clockIn}
                 imageUrl={item.pictureUrl || AVATAR_FALLBACK_URL}
             />
-            <View className="flex-1 gap-2">
+            <View className="flex-1 gap-1">
                 <View className="flex-row justify-between">
                     <Text className="font-bold truncate">
                         {`${Utils.capitalizeFirstChar(item?.firstName)} ${Utils.capitalizeFirstChar(item?.lastName)}`}
                     </Text>
                 </View>
                 <View className="flex-row justify-between">
-                    <View className="items-center flex-row gap-2 flex-1">
+                    <View className="items-center flex-row gap-1 flex-1">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
                         <Text className="text-green-500">
                             {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
                         </Text>
                     </View>
-                    <View className="items-center flex-row gap-2 flex-1">
+                    <View className="items-center flex-row gap-1 flex-1">
                         <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
                         <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
                     </View>
@@ -107,26 +107,24 @@ export const LeadersAttendanceRow: React.FC<{ item: ITransformUserAttendanceList
                 badge={!!item.clockIn}
                 imageUrl={item?.pictureUrl || AVATAR_FALLBACK_URL}
             />
-            <View className="flex-1 gap-2">
+            <View className="flex-auto gap-1">
                 <View className="flex-row justify-between">
                     <Text className="font-bold truncate">
                         {`${Utils.capitalizeFirstChar(item?.firstName)} ${Utils.capitalizeFirstChar(item?.lastName)}`}
                     </Text>
                 </View>
-                <View className="flex-row gap-2 flex-1">
-                    <Text className="flex-1 text-muted-foreground">{item?.departmentName}</Text>
-                    <View className="flex-row flex-1 gap-4">
-                        <View className="items-center flex-row gap-2 w-5/12 justify-center">
-                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                            <Text className="text-green-500">
-                                {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
-                            </Text>
-                        </View>
-                        <View className="items-center flex-row gap-2 text-right flex-1 justify-center">
-                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                            <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
-                        </View>
-                    </View>
+                <Text className="text-muted-foreground">{item?.departmentName}</Text>
+            </View>
+            <View className="items-start gap-1">
+                <View className="items-center flex-row gap-1 flex-1 justify-center">
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <Text className="text-green-500">
+                        {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
+                    </Text>
+                </View>
+                <View className="items-center flex-row gap-1 text-right flex-1 justify-center">
+                    <Icon color={THEME_CONFIG.rose} name="arrow-up-right" type="feather" size={18} />
+                    <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -146,7 +144,7 @@ export const CampusAttendanceRow: React.FC<{ item: IAttendance; index: number }>
                 badge={!!item.clockIn}
                 imageUrl={item?.user?.pictureUrl || AVATAR_FALLBACK_URL}
             />
-            <View className="flex-1 gap-2">
+            <View className="flex-auto gap-1">
                 <View className="flex-row justify-between">
                     <Text className="font-bold truncate">
                         {`${Utils.capitalizeFirstChar(item?.user?.firstName)} ${Utils.capitalizeFirstChar(
@@ -154,20 +152,18 @@ export const CampusAttendanceRow: React.FC<{ item: IAttendance; index: number }>
                         )}`}
                     </Text>
                 </View>
-                <View className="flex-row gap-2">
-                    <Text className="w-5/12 text-muted-foreground">{item?.departmentName}</Text>
-                    <View className="flex-row flex-1 gap-2">
-                        <View className="items-center flex-row gap-2 flex-1 justify-center">
-                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                            <Text className="text-green-500">
-                                {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
-                            </Text>
-                        </View>
-                        <View className="items-center flex-row gap-2 text-right flex-1 justify-center">
-                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                            <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
-                        </View>
-                    </View>
+                <Text className="text-muted-foreground">{item?.departmentName}</Text>
+            </View>
+            <View className="items-start gap-1">
+                <View className="items-center flex-row gap-1 flex-1 justify-center">
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <Text className="text-green-500">
+                        {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
+                    </Text>
+                </View>
+                <View className="items-center flex-row gap-1 text-right flex-1 justify-center">
+                    <Icon color={THEME_CONFIG.rose} name="arrow-up-right" type="feather" size={18} />
+                    <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
                 </View>
             </View>
         </TouchableOpacity>
@@ -187,7 +183,7 @@ export const GroupAttendanceRow: React.FC<{ item: IAttendance; index: number }> 
                 badge={!!item.clockIn}
                 imageUrl={item?.user?.pictureUrl || AVATAR_FALLBACK_URL}
             />
-            <View className="flex-1 gap-2">
+            <View className="flex-auto gap-1">
                 <View className="flex-row justify-between">
                     <Text className="font-bold truncate">
                         {`${Utils.capitalizeFirstChar(item?.user?.firstName)} ${Utils.capitalizeFirstChar(
@@ -195,23 +191,21 @@ export const GroupAttendanceRow: React.FC<{ item: IAttendance; index: number }> 
                         )}`}
                     </Text>
                 </View>
-                <View className="flex-row gap-2">
-                    <Text className="w-5/12 font-semibold flex-1">
-                        {item?.campusName}{' '}
-                        <Text className="font-semibold text-muted-foreground">({item?.departmentName})</Text>
+                <Text className="w-5/12 font-semibold flex-1">
+                    {item?.campusName}{' '}
+                    <Text className="font-semibold text-muted-foreground">({item?.departmentName})</Text>
+                </Text>
+            </View>
+            <View className="items-start gap-1">
+                <View className="items-center flex-row gap-1 flex-1 justify-center">
+                    <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
+                    <Text className="text-green-500">
+                        {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
                     </Text>
-                    <View className="flex-row flex-1 gap-2">
-                        <View className="items-center flex-row gap-2 flex-1 justify-center">
-                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-down-right" type="feather" size={18} />
-                            <Text className="text-green-500">
-                                {item.clockIn ? dayjs(item.clockIn).format('h:mm A') : '--:--'}
-                            </Text>
-                        </View>
-                        <View className="items-center flex-row gap-2 text-right flex-1 justify-center">
-                            <Icon color={THEME_CONFIG.primaryLight} name="arrow-up-right" type="feather" size={18} />
-                            <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
-                        </View>
-                    </View>
+                </View>
+                <View className="items-center flex-row gap-1 text-right flex-1 justify-center">
+                    <Icon color={THEME_CONFIG.rose} name="arrow-up-right" type="feather" size={18} />
+                    <Text>{item.clockOut ? dayjs(item.clockOut).format('h:mm A') : '--:--'}</Text>
                 </View>
             </View>
         </TouchableOpacity>
