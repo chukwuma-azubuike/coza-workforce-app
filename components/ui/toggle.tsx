@@ -18,7 +18,7 @@ const toggleVariants = cva(
             variant: {
                 default: 'bg-transparent',
                 outline: cn(
-                    'border-input active:bg-accent/60 border bg-accent shadow-sm shadow-black/5',
+                    'border-border active:bg-accent/60 border bg-transparent',
                     Platform.select({
                         web: 'hover:bg-accent hover:text-accent-foreground',
                     })
