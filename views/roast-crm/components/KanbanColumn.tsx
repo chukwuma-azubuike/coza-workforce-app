@@ -21,19 +21,19 @@ const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, subTitle, stage, gue
         <View
             className={` ${
                 getStageColumnColor(stage) ?? 'border-gray-200 dark:border-gray-200/10 bg-gray-50 dark:bg-gray-500/10'
-            } border-2 border-dashed rounded-2xl transition-colors pb-0`}
+            } border-2 border-dashed rounded-2xl transition-colors flex-1`}
         >
-            <View className="px-3 pt-2">
-                <View className="flex-row items-center gap-2 ">
+            <View className="px-3 py-1">
+                <View className="flex-row items-center gap-2">
                     <Text className="font-semibold">{title}</Text>
                     <Badge variant="secondary" className={getBadgeColor(stage)}>
                         <Text>{guestCount}</Text>
                     </Badge>
                 </View>
-                <Text className="text-sm text-muted-foreground line-clamp-none">{subTitle}</Text>
+                <Text className="text-sm text-muted-foreground line-clamp-none leading-none">{subTitle}</Text>
             </View>
 
-            <View className="gap-4 p-1.5" style={{ height: (ScreenHeight ?? 0) - 480 }}>
+            <View className="gap-4 pb-1.5 px-1.5 flex-1">
                 {isLoading ? (
                     <View className="gap-2">
                         {[...Array(2)].map((_, index) => (
