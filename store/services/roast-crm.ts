@@ -382,10 +382,19 @@ export const roastCrmApi = createApi({
         }),
 
         addZone: builder.mutation<Zone, CreateZonePayload>({
-            query: timeline => ({
+            query: body => ({
                 url: '/zones',
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+            invalidatesTags: ['Zone'],
+        }),
+
+        updateZone: builder.mutation<Zone, Zone>({
+            query: ({ _id, ...body }) => ({
+                url: `/zones/${_id}`,
                 method: REST_API_VERBS.POST,
-                body: timeline,
+                body,
             }),
             invalidatesTags: ['Zone'],
         }),
@@ -677,6 +686,7 @@ export const {
     useUpdateGuestMutation,
     useGetZonesQuery,
     useAddZoneMutation,
+    useUpdateZoneMutation,
     useGetCampusZonesQuery,
     useGetUsersQuery,
     useGetTimelineQuery,
