@@ -5,12 +5,12 @@ import { Textarea } from '~/components/ui/textarea';
 import { Label } from '~/components/ui/label';
 import { MessageSquare, MapPin, User } from 'lucide-react-native';
 
-import { useAddZoneMutation } from '~/store/services/roast-crm';
+import { useAddZoneMutation, useUpdateZoneMutation } from '~/store/services/roast-crm';
 import { Alert, TouchableOpacity, View } from 'react-native';
 import useRole from '~/hooks/role';
 
 import { FieldArray, Formik } from 'formik';
-import { CreateZonePayload, IDepartment } from '@store/types';
+import { IDepartment, Zone } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Input } from '~/components/ui/input';
@@ -23,7 +23,10 @@ import { useGetDepartmentsByCampusIdQuery } from '~/store/services/department';
 import { Badge } from '~/components/ui/badge';
 import { Text } from '~/components/ui/text';
 
-const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }) => {
+const ZoneForm: React.FC<{ setModalVisible: () => void; initialValues?: Zone }> = ({
+    setModalVisible,
+    initialValues,
+}) => {
     const { user: currentUser, isSuperAdmin } = useRole();
     const [selectedCampus, setSelectedCampus] = useState(currentUser?.campus._id);
 
@@ -37,21 +40,23 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
         [departments]
     );
     const [addZone, { isLoading }] = useAddZoneMutation();
+    const [updateZone, { isLoading: updating }] = useUpdateZoneMutation();
 
     const [newDepartment, setNewDepartment] = useState<string>();
 
-    const onSubmit = useCallback(async (value: CreateZonePayload) => {
+    const onSubmit = useCallback(async (value: Partial<Zone>) => {
         try {
             const coordinates = {
                 lat: Number(value?.coordinates?.lat),
                 long: Number(value?.coordinates?.long),
             };
 
-            const res = await addZone({ ...value, coordinates });
+            const call = value?._id ? updateZone : addZone;
+            const res = await call({ ...value, coordinates } as any);
 
             if (res.data) {
                 setModalVisible();
-                Alert.alert('Zone created successfully');
+                Alert.alert(`Zone ${value?._id ? 'updated' : 'created'} successfully`);
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
 
@@ -65,13 +70,14 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
     const INITIAL_VALUES = {
         campusId: currentUser?.campus._id as string,
         departments: [] as any,
-    } as CreateZonePayload;
+        ...initialValues,
+    } as Zone;
 
     return (
         <ErrorBoundary>
             <ViewWrapper scroll avoidKeyboard className="pt-4">
-                <Formik<CreateZonePayload>
-                    onSubmit={onSubmit}
+                <Formik<Zone>
+                    onSubmit={onSubmit as any}
                     initialValues={INITIAL_VALUES}
                     validationSchema={ZoneFormValidationSchema}
                 >
@@ -121,7 +127,7 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                                 className="!h-12"
                                                 placeholder="Latitude"
                                                 keyboardType="numeric"
-                                                value={values?.coordinates?.lat as any}
+                                                value={`${values?.coordinates?.lat ?? ''}` as any}
                                                 onChangeText={handleChange('coordinates.lat')}
                                             />
                                             {errors?.coordinates?.lat && touched?.coordinates?.lat && (
@@ -133,7 +139,7 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                                 className="!h-12"
                                                 keyboardType="numeric"
                                                 placeholder="Longitude"
-                                                value={values?.coordinates?.long as any}
+                                                value={`${values?.coordinates?.long ?? ''}` as any}
                                                 onChangeText={handleChange('coordinates.long')}
                                             />
                                             {errors?.coordinates?.long && touched?.coordinates?.long && (
@@ -240,12 +246,12 @@ const ZoneForm: React.FC<{ setModalVisible: () => void }> = ({ setModalVisible }
                                 <View>
                                     <Button
                                         size="sm"
-                                        icon={<Save color="white" size={18} />}
                                         disabled={!isValid}
-                                        isLoading={isLoading}
+                                        isLoading={isLoading || updating}
+                                        icon={<Save color="white" size={18} />}
                                         onPress={handleSubmit as (event: any) => void}
                                     >
-                                        Add Zone
+                                        {values?._id ? 'Update Zone' : 'Add Zone'}
                                     </Button>
                                 </View>
                             </View>

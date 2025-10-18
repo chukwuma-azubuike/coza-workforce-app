@@ -1,19 +1,23 @@
 import dayjs from 'dayjs';
 import { Clock, MapPin } from 'lucide-react-native';
-import { useCallback } from 'react';
-import { Pressable, View } from 'react-native';
+import React, { Suspense, useCallback, useState } from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { Zone } from '~/store/types';
 import FlatListComponent from '~/components/composite/flat-list';
+const AddZoneModal = React.lazy(() => import('./AddModalZone'));
+const EditZoneModal = React.lazy(() => import('./EditModalZone'));
 
-const ZoneListItem: React.FC<Zone> = ({ name, descriptions, coordinates, address, createdAt, departments }) => {
+const ZoneListItem: React.FC<Zone & { openModal: (zone: Zone) => void }> = ({ openModal, ...props }) => {
     const handleViewZone = () => {
-        // onViewZone(guest);
+        openModal({ ...props });
     };
+
+    const { name, descriptions, coordinates, address, createdAt, departments } = props;
 
     return (
         <View className="py-4 w-full border-t border-t-border">
-            <Pressable onPress={handleViewZone}>
+            <TouchableOpacity activeOpacity={0.6} onPress={handleViewZone}>
                 <View className="flex-row items-start justify-between mb-2">
                     <View className="gap-1">
                         <Text className="font-bold text-xl">{name}</Text>
@@ -56,7 +60,7 @@ const ZoneListItem: React.FC<Zone> = ({ name, descriptions, coordinates, address
                         </View>
                     </View>
                 </View>
-            </Pressable>
+            </TouchableOpacity>
         </View>
     );
 };
@@ -66,26 +70,34 @@ const ZoneList: React.FC<{
     refetch?: () => void;
     zones: Zone[];
     handleViewZone?: (Guest: Zone) => void;
-}> = ({
-    refetch,
-    isLoading,
+}> = ({ refetch, isLoading, zones }) => {
+    const [modalVisible, setModalVisible] = useState(false);
+    const [editZoneModal, setEditZoneModal] = useState<Zone>();
+    const handleAddZone = () => setModalVisible(!modalVisible);
+    const handleEditZone = () => setEditZoneModal(undefined);
 
-    zones,
-}) => {
     const renderItemComponent = useCallback(
-        ({ item }: { item: Zone; index: number }) => <ZoneListItem {...item} />,
+        ({ item }: { item: Zone; index: number }) => <ZoneListItem openModal={setEditZoneModal} {...item} />,
         []
     );
 
     return (
-        <FlatListComponent
-            data={zones}
-            onRefresh={refetch}
-            isLoading={isLoading}
-            refreshing={isLoading}
-            renderItemComponent={renderItemComponent}
-            ListFooterComponentStyle={{ marginBottom: 0 }}
-        />
+        <>
+            <FlatListComponent
+                data={zones}
+                onRefresh={refetch}
+                isLoading={isLoading}
+                refreshing={isLoading}
+                renderItemComponent={renderItemComponent}
+                ListFooterComponentStyle={{ marginBottom: 0 }}
+            />
+            <Suspense fallback={null}>
+                <AddZoneModal modalVisible={modalVisible} setModalVisible={handleAddZone} />
+            </Suspense>
+            <Suspense fallback={null}>
+                <EditZoneModal zone={editZoneModal} modalVisible={modalVisible} setModalVisible={handleEditZone} />
+            </Suspense>
+        </>
     );
 };
 
