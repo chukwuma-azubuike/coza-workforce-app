@@ -189,11 +189,11 @@ const ZoneDashboard: React.FC = () => {
     const selectedZoneName = zoneIndex[selectedZone as string];
 
     return (
-        <View className="flex-1 bg-background pt-2 gap-6">
+        <View className="flex-1 bg-background pt-2 gap-4">
             {/* Header */}
             <View className="gap-4 px-2">
                 <View className="flex-row items-center gap-4">
-                    <Text className="text-2xl font-bold !w-[35%]">{selectedZoneName ?? 'All Zones'}</Text>
+                    <Text className="text-2xl font-bold !w-[35%] leading-none">{selectedZoneName ?? 'All Zones'}</Text>
 
                     {/* Zone Selector */}
                     <View className="flex-1">
@@ -233,7 +233,7 @@ const ZoneDashboard: React.FC = () => {
                 />
             </View>
 
-            <View className="px-2 flex-row items-center gap-2 w-full justify-between mb-1">
+            <View className="px-2 flex-row items-center gap-2 w-full justify-between">
                 <View className="flex-1">
                     <SearchAndFilter
                         viewMode={viewMode}
@@ -252,12 +252,19 @@ const ZoneDashboard: React.FC = () => {
             <View className="flex-1">
                 {viewMode === 'kanban' ? (
                     subStagesLoading ? (
-                        <View className="flex-row gap-5 pl-2">
+                        <View className="flex-row gap-5 pl-2 flex-1 pb-2">
                             <KanbanColumnSkeleton />
                             <KanbanColumnSkeleton />
                         </View>
                     ) : (
-                        <Suspense fallback={<Loading cover />}>
+                        <Suspense
+                            fallback={
+                                <View className="flex-row gap-5 pl-2 flex-1 pb-2">
+                                    <KanbanColumnSkeleton />
+                                    <KanbanColumnSkeleton />
+                                </View>
+                            }
+                        >
                             <ReactNativeKanbanBoard<Guest, HeaderParams>
                                 gapBetweenColumns={8}
                                 onDragEnd={onDragEnd}
