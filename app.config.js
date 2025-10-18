@@ -45,14 +45,17 @@ const getAndroidVersionCode = baseConfig => {
 
 // Get build number for iOS
 const getIOSBuildNumber = baseConfig => {
-    const baseBuildNumber = parseInt(baseConfig.ios?.buildNumber || '1', 10);
+    const baseBuildNumber = baseConfig.ios?.buildNumber || 1;
 
-    if (IS_DEV) {
-        return `${baseBuildNumber}.0`;
-    }
-    if (IS_PREVIEW) {
-        return `${baseBuildNumber}.1`;
-    }
+    // Revert to default ios build number increments
+    // const baseBuildNumber = parseInt(baseConfig.ios?.buildNumber || '1', 10);
+
+    // if (IS_DEV) {
+    //     return `${baseBuildNumber}.0`;
+    // }
+    // if (IS_PREVIEW) {
+    //     return `${baseBuildNumber}.1`;
+    // }
     return `${baseBuildNumber}`;
 };
 
