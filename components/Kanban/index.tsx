@@ -128,6 +128,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                 style={[
                     props.columnContainerStyle,
                     {
+                        flex: 1,
                         marginHorizontal: columnPadding,
                         width: columnContainerWidth - columnPadding * 2,
                     },
@@ -143,7 +144,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                 {props.renderColumnContainer ? (
                     props.renderColumnContainer(
                         <FlatList
-                            style={{ flex: 1 }}
+                            className="flex-1"
                             data={columnData.items}
                             renderItem={renderCard}
                             extraData={isItemInFocusedColumn}
@@ -192,13 +193,14 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
                 dragCard: dragItem?.props,
             }}
         >
-            <GestureHandlerRootView>
+            <GestureHandlerRootView className="flex-1" style={{ paddingBottom: 0 }}>
                 <GestureDetector gesture={pan}>
-                    <View>
+                    <View className="flex-1 pb-2">
                         <Animated.FlatList
                             ref={columnsHorizontalScrollRef}
                             horizontal
                             pagingEnabled
+                            className="flex-1"
                             snapToInterval={columnContainerWidth}
                             snapToAlignment={'center'}
                             decelerationRate={'fast'}
