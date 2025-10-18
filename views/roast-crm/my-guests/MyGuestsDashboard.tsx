@@ -159,45 +159,44 @@ function MyGuestsDashboard() {
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     return (
-        <View className="flex-1 bg-background">
-            <View className="h-[15.3rem]">
-                <ScrollView
-                    className="mb-0"
-                    refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
-                >
-                    {/* Header with Stats */}
-                    <View className="gap-4 px-2 pt-2">
-                        <Text className="text-2xl font-bold">My Guests</Text>
-                        <View className="flex-row flex-wrap gap-3">
-                            {loadingGuestCounts ? (
-                                <>
-                                    {[...Array(4)].map((_, index) => (
-                                        <Skeleton key={index} className="h-24 flex-1 rounded-2xl min-w-[20%]" />
-                                    ))}
-                                </>
-                            ) : (
-                                guestCounts?.count.map(stage => (
-                                    <StatsCard
-                                        count={stage.count}
-                                        key={stage.assimilationStageId}
-                                        stage={assimilationStageIndex[stage.assimilationStageId] as any}
-                                    />
-                                ))
-                            )}
+        <View className="flex-1 gap-4 bg-background">
+            <View>
+                <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
+                    <View className="gap-4">
+                        {/* Header with Stats */}
+                        <View className="gap-4 px-2 pt-2">
+                            <Text className="text-2xl font-bold leading-none">My Guests</Text>
+                            <View className="flex-row flex-wrap gap-3">
+                                {loadingGuestCounts ? (
+                                    <>
+                                        {[...Array(4)].map((_, index) => (
+                                            <Skeleton key={index} className="h-24 flex-1 rounded-2xl min-w-[20%]" />
+                                        ))}
+                                    </>
+                                ) : (
+                                    guestCounts?.count.map(stage => (
+                                        <StatsCard
+                                            count={stage.count}
+                                            key={stage.assimilationStageId}
+                                            stage={assimilationStageIndex[stage.assimilationStageId] as any}
+                                        />
+                                    ))
+                                )}
+                            </View>
                         </View>
-                    </View>
 
-                    <View className="mt-6 mx-2">
-                        <SearchAndFilter
-                            viewMode={viewMode}
-                            searchTerm={search}
-                            stageFilter={stageFilter}
-                            setSearchTerm={denouncedSearch}
-                            setStageFilter={setStageFilter}
-                            setViewMode={setViewMode as any}
-                            loading={isFetching || isLoading}
-                            assimilationSubStages={assimilationSubStages}
-                        />
+                        <View className="mx-2">
+                            <SearchAndFilter
+                                viewMode={viewMode}
+                                searchTerm={search}
+                                stageFilter={stageFilter}
+                                setSearchTerm={denouncedSearch}
+                                setStageFilter={setStageFilter}
+                                setViewMode={setViewMode as any}
+                                loading={isFetching || isLoading}
+                                assimilationSubStages={assimilationSubStages}
+                            />
+                        </View>
                     </View>
                 </ScrollView>
             </View>
@@ -205,12 +204,19 @@ function MyGuestsDashboard() {
             <View className="flex-1">
                 {viewMode === 'kanban' ? (
                     subStagesLoading ? (
-                        <View className="flex-row gap-5 pl-2">
+                        <View className="flex-row gap-5 pl-2 flex-1 pb-2">
                             <KanbanColumnSkeleton />
                             <KanbanColumnSkeleton />
                         </View>
                     ) : (
-                        <Suspense fallback={<Loading cover />}>
+                        <Suspense
+                            fallback={
+                                <View className="flex-row gap-5 pl-2 flex-1 pb-2">
+                                    <KanbanColumnSkeleton />
+                                    <KanbanColumnSkeleton />
+                                </View>
+                            }
+                        >
                             <ReactNativeKanbanBoard<Guest, HeaderParams>
                                 gapBetweenColumns={8}
                                 onDragEnd={onDragEnd}
