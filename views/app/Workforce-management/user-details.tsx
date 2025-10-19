@@ -375,11 +375,11 @@ const UserDetails: React.FC = () => {
                                 </If>
                                 <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
                                     <Text className="font-bold">Occupation</Text>
-                                    <Text>{data?.occupation}</Text>
+                                    <Text className="line-clamp-none flex-1 text-right">{data?.occupation}</Text>
                                 </View>
                                 <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
                                     <Text className="font-bold">Place of work</Text>
-                                    <Text>{data?.placeOfWork}</Text>
+                                    <Text className="line-clamp-none flex-1 text-right">{data?.placeOfWork}</Text>
                                 </View>
                                 <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row !py-4">
                                     <Text className="font-bold">Next of Kin</Text>

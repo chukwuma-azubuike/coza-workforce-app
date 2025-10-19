@@ -49,7 +49,7 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = props => {
         {
             page,
             campusId,
-            limit: 10,
+            limit: 100,
         },
         {
             refetchOnMountOrArgChange: true,
