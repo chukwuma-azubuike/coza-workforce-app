@@ -429,7 +429,7 @@ export const reportsServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: (result, error, { campusId }) => [
+            invalidatesTags: (_result, _error, { campusId }) => [
                 'GSPReport',
                 { type: 'CampusReport', id: campusId },
                 'GlobalReport',
@@ -444,9 +444,10 @@ export const reportsServiceSlice = createApi({
                 params,
             }),
 
-            providesTags: (result, error, { campusId }) => [{ type: 'CampusReport', id: campusId }, SERVICE_URL],
+            providesTags: (_result, _error, { campusId }) => [{ type: 'CampusReport', id: campusId }, SERVICE_URL],
 
-            transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
+            transformResponse: (res: IDefaultResponse<ICampusReportList>) =>
+                res?.data.filter(report => report.serviceTime <= new Date().getTime()), // Filter out services later than same day
         }),
 
         getGlobalReportList: endpoint.query<IGlobalReportList, IGlobalReportListPayload>({
