@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Formik } from 'formik';
 import { IEditProfilePayload } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
-import { useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
+import { useUpdateUserMutation } from '@store/services/account';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import dayjs from 'dayjs';
@@ -34,40 +34,41 @@ const EditProfile: React.FC = () => {
 
     const { setModalState } = useModal();
 
-    const [updateUser, { reset, isLoading, isError, isSuccess, error }] = useUpdateUserMutation();
+    const [updateUser, { isLoading, error }] = useUpdateUserMutation();
 
-    const onSubmit = (value: IEditProfilePayload) => {
-        updateUser({
-            ...value,
-            phoneNumber: value.phoneNumber
-                ? formatToE164(value.phoneNumber, selectedCountry?.callingCode as string)
-                : undefined,
-            nextOfKinPhoneNo: value.nextOfKinPhoneNo
-                ? formatToE164(value.nextOfKinPhoneNo, selectedCountry?.callingCode as string)
-                : undefined,
-            _id: user?._id,
-        });
-    };
+    const onSubmit = async (value: IEditProfilePayload) => {
+        try {
+            const res = await updateUser({
+                ...userData,
+                ...value,
+                phoneNumber: value.phoneNumber
+                    ? formatToE164(value.phoneNumber, selectedCountry?.callingCode as string)
+                    : undefined,
+                nextOfKinPhoneNo: value.nextOfKinPhoneNo
+                    ? formatToE164(value.nextOfKinPhoneNo, selectedCountry?.callingCode as string)
+                    : undefined,
+                _id: user?._id,
+            });
 
-    React.useEffect(() => {
-        if (isSuccess) {
-            reset();
-            refetchUser();
-            goBack();
-        }
+            if (res.data) {
+                goBack();
+            }
 
-        if (isError) {
+            if (res.error) {
+                setModalState({
+                    message: (error as any)?.data?.message ?? 'Oops something went wrong',
+                    status: 'error',
+                });
+            }
+        } catch (error) {
             setModalState({
                 message: 'Oops something went wrong',
                 status: 'error',
             });
-            reset();
         }
-    }, [isSuccess, isError]);
+    };
 
     const INITIAL_VALUES = (userData || {}) as IEditProfilePayload;
-
-    const { refetch: refetchUser } = useGetUserByIdQuery(user?._id);
 
     return (
         <ErrorBoundary>
