@@ -70,7 +70,11 @@ const ZoneDashboard: React.FC = () => {
         campusId: user.campus._id,
     });
     const [updateGuest] = useUpdateGuestMutation();
-    const { data: workers = [] } = useGetZoneUsersQuery({
+    const {
+        data: workers = [],
+        isLoading: loadingWorkers,
+        isFetching: fetchingWorkers,
+    } = useGetZoneUsersQuery({
         zoneId: selectedZone,
         campusId: user?.campus?._id,
         page: 1,
@@ -216,10 +220,10 @@ const ZoneDashboard: React.FC = () => {
                             items={workers}
                             className="!h-10"
                             labelKey="firstName"
-                            isLoading={isFetching}
                             value={selectedWorker}
                             placeholder="All Workers"
                             onValueChange={setSelectedWorker}
+                            isLoading={loadingWorkers || fetchingWorkers}
                             customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
                         />
                     </View>
