@@ -7,6 +7,7 @@ import { useColorScheme } from '~/lib/useColorScheme';
 import { Colors } from '~/constants/Colors';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { cn } from '~/lib/utils';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 interface PickerSelectComponentProps<T> extends Omit<PickerSelectProps, 'items'> {
     items: T[];
@@ -142,4 +143,11 @@ function PickerSelect<T = any>({
     );
 }
 
-export default PickerSelect;
+const PickerSelectWithErrorBoundary = <T,>(props: PickerSelectComponentProps<T>) => (
+    <ErrorBoundary>
+        <PickerSelect {...props} />
+    </ErrorBoundary>
+);
+
+export { PickerSelect };
+export default PickerSelectWithErrorBoundary;
