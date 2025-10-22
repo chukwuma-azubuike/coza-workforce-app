@@ -65,6 +65,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
     const animatedStyle = useAnimatedStyle(() => {
         return {
             position: 'absolute',
+            opacity: dragItem?.id ? 1 : 0,
             top: dragItem?.y,
             left: dragItem?.x,
             width: dragItem?.width,
