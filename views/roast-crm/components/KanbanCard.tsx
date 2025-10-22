@@ -47,8 +47,10 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                 <View className="flex-row gap-1 items-center">
                                     <PhoneIcon size={12} />
                                     <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
-                                    <MapPin size={12} />
-                                    <Text className="text-xs text-foreground">{zoneIndex[guest.zoneId]}</Text>
+                                    {zoneIndex[guest.zoneId] && <MapPin size={12} />}
+                                    {zoneIndex[guest.zoneId] && (
+                                        <Text className="text-xs text-foreground">{zoneIndex[guest.zoneId]}</Text>
+                                    )}
                                 </View>
                             </View>
                         </View>

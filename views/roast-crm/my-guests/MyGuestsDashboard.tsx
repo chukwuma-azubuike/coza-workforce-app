@@ -21,8 +21,8 @@ import groupBy from 'lodash/groupBy';
 import SearchAndFilter from '../components/SearchAndFilter';
 import StatsCard from '../components/StatsCard';
 
-const KanbanColumn = React.lazy(() => import('../components/KanbanColumn'));
-const KanbanUICard = React.lazy(() => import('../components/KanbanCard'));
+import KanbanColumn from '../components/KanbanColumn';
+import KanbanUICard from '../components/KanbanCard';
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
@@ -209,24 +209,15 @@ function MyGuestsDashboard() {
                             <KanbanColumnSkeleton />
                         </View>
                     ) : (
-                        <Suspense
-                            fallback={
-                                <View className="flex-row gap-5 pl-2 flex-1 pb-2">
-                                    <KanbanColumnSkeleton />
-                                    <KanbanColumnSkeleton />
-                                </View>
-                            }
-                        >
-                            <ReactNativeKanbanBoard<Guest, HeaderParams>
-                                gapBetweenColumns={8}
-                                onDragEnd={onDragEnd}
-                                onPressCard={handleProfileView}
-                                columnData={transformedAssimilationSubStages}
-                                columnContainerStyle={{ flex: 1 }}
-                                renderColumnContainer={renderContentContainer}
-                                renderItem={guest => <KanbanUICard guest={guest} />}
-                            />
-                        </Suspense>
+                        <ReactNativeKanbanBoard<Guest, HeaderParams>
+                            gapBetweenColumns={8}
+                            onDragEnd={onDragEnd}
+                            onPressCard={handleProfileView}
+                            columnData={transformedAssimilationSubStages}
+                            columnContainerStyle={{ flex: 1 }}
+                            renderColumnContainer={renderContentContainer}
+                            renderItem={guest => <KanbanUICard guest={guest} />}
+                        />
                     )
                 ) : (
                     <Suspense fallback={<Loading cover />}>
