@@ -11,6 +11,7 @@ import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 
 import useZoneIndex from '../hooks/use-zone-index';
+import { THEME_CONFIG } from '~/config/appConfig';
 
 interface KanbanCardProps {
     guest: Guest;
@@ -54,16 +55,18 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                     </View>
 
                     <View className="gap-3">
-                        <View className="flex-row items-center justify-between text-xs">
-                            <Text className="text-foreground">Progress</Text>
-                            <Text className="text-foreground">{progress}% complete</Text>
-                        </View>
+                        <View>
+                            <View className="flex-row items-center justify-between text-xs mb-1">
+                                <Text className="text-foreground">Progress</Text>
+                                <Text className="text-foreground">{progress}% complete</Text>
+                            </View>
 
-                        <View className="w-full bg-secondary rounded-full h-2">
-                            <View
-                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${progress}%` }}
-                            />
+                            <View className="w-full bg-secondary rounded-full h-2">
+                                <View
+                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    style={{ width: `${progress}%` }}
+                                />
+                            </View>
                         </View>
 
                         {guest.nextAction && (
@@ -97,7 +100,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                     className="h-6 px-2"
                                     onPress={handleWhatsApp(guest)}
                                 >
-                                    <MessageCircle className="w-3 h-3" />
+                                    <MessageCircle className="w-3 h-3" color={THEME_CONFIG.success} />
                                 </Button>
                             </View>
                         </View>
