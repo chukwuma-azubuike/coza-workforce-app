@@ -67,7 +67,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
             position: 'absolute',
             opacity: dragItem?.id ? 1 : 0,
             top: dragItem?.y,
-            left: dragItem?.x,
+            left: Math.max(...[dragItem?.x as number, 0]),
             width: dragItem?.width,
             transform: [
                 { translateY: dragY.value },
