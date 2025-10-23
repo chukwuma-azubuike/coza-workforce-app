@@ -33,6 +33,7 @@ import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
 
 import KanbanColumn from '../components/KanbanColumn';
 import KanbanUICard from '../components/KanbanCard';
+import Error from '~/components/atoms/error';
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
 
@@ -58,11 +59,16 @@ const ZoneDashboard: React.FC = () => {
     const denouncedSearch = useDebounce(setSearch);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { data: assimilationSubStages = [], isLoading: subStagesLoading } = useGetAssimilationSubStagesQuery();
+    const {
+        data: assimilationSubStages = [],
+        isLoading: subStagesLoading,
+        error: subStagesError,
+    } = useGetAssimilationSubStagesQuery();
     const {
         refetch,
         isLoading,
         isFetching,
+        error: guestsError,
         data: guests = [],
     } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone }, { pollingInterval: 10000 });
     const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
@@ -260,6 +266,8 @@ const ZoneDashboard: React.FC = () => {
                             <KanbanColumnSkeleton />
                             <KanbanColumnSkeleton />
                         </View>
+                    ) : (subStagesError || guestsError) && guests.length < 1 ? (
+                        <Error message={(subStagesError as any)?.error} />
                     ) : (
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
                             gapBetweenColumns={8}
