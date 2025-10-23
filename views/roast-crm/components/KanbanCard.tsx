@@ -12,6 +12,7 @@ import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones'
 
 import useZoneIndex from '../hooks/use-zone-index';
 import { THEME_CONFIG } from '~/config/appConfig';
+import { useAssimilationSubStagePositionIndex } from '../hooks/use-assimilation-stage-index';
 
 interface KanbanCardProps {
     guest: Guest;
@@ -19,7 +20,13 @@ interface KanbanCardProps {
 
 const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
     const zoneIndex = useZoneIndex();
-    const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones]);
+    const assimilationSubStagePositionIndex = useAssimilationSubStagePositionIndex();
+
+    const progress = useMemo(
+        () => getProgressPercentage(assimilationSubStagePositionIndex[guest.assimilationSubStageId] as number),
+        [guest.assimilationSubStageId, assimilationSubStagePositionIndex]
+    );
+
     const daysSinceContact = useMemo(
         () => getDaysSinceContact(guest?.lastContact ?? (guest?.createdAt as any)),
         [guest?.lastContact, guest?.createdAt]

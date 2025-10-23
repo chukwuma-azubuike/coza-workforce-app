@@ -1,11 +1,5 @@
-import { Guest, MilestoneStatus } from '~/store/types';
-
-export const getProgressPercentage = (milestones: Guest['milestones']) => {
-    // TODO: Random value for testing
-    return Math.round(Math.random() * 100);
-    // if (!milestones || milestones.length === 0) return 0;
-    // const completed = milestones.filter(m => m.status === MilestoneStatus.COMPLETED).length;
-    // return Math.round((completed / milestones.length) * 100);
+export const getProgressPercentage = (position: number, subStageCount = 7) => {
+    return Number((((position + 1) / subStageCount) * 100).toFixed(0) ?? 0);
 };
 
 export const getDaysSinceContact = (lastContact: Date | undefined | null) => {
