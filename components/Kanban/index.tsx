@@ -20,6 +20,7 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
     const scrollTriggerWidth = SCREEN_WIDTH * 0.3;
     const edgeColumnOff = columnContainerWidth * 1.5 - SCREEN_WIDTH * 0.5;
     const marginAlign = (responsiveWidth - columnContainerWidth) / 2;
+    const centeredColumnPositionLeft = SCREEN_WIDTH - columnContainerWidth - marginAlign;
 
     const constants = {
         columnContainerWidth,
@@ -65,10 +66,10 @@ const ReactNativeKanbanBoard = <T extends ItemType, K>(props: KanbanBoardProps<T
     const animatedStyle = useAnimatedStyle(() => {
         return {
             position: 'absolute',
-            opacity: dragItem?.id ? 1 : 0,
             top: dragItem?.y,
-            left: Math.max(...[dragItem?.x as number, 0]),
+            left: dragItem?.columnIndex === 0 ? 0 : centeredColumnPositionLeft,
             width: dragItem?.width,
+            opacity: dragItem?.id ? 1 : 0,
             transform: [
                 { translateY: dragY.value },
                 { translateX: dragX.value },
