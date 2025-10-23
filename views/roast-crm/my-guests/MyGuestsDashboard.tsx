@@ -27,7 +27,7 @@ const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('./AddGuest'));
 
 import { RefreshControl } from 'react-native';
-import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
+import useAssimilationStageIndex, { useAssimilationSubStageIndex } from '../hooks/use-assimilation-stage-index';
 import { Skeleton } from '~/components/ui/skeleton';
 import useRole from '~/hooks/role';
 import useDebounce from '~/hooks/debounce/use-debounce';
@@ -59,11 +59,9 @@ function MyGuestsDashboard() {
     const [updateGuest] = useUpdateGuestMutation();
 
     const assimilationStageIndex = useAssimilationStageIndex();
+    const assimilationSubStagesIndex = useAssimilationSubStageIndex();
+
     const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
-    const assimilationSubStagesIndex = useMemo(
-        () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
-        [assimilationSubStages]
-    );
     const transformedAssimilationSubStages = useMemo(
         (): columnDataType<Guest, HeaderParams>[] =>
             assimilationSubStages.map((stage, index) => {
