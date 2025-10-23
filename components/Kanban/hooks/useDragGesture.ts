@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Dimensions } from 'react-native';
 import { Gesture } from 'react-native-gesture-handler';
 import { runOnJS, useSharedValue, withSpring } from 'react-native-reanimated';
@@ -24,7 +24,7 @@ export const useDragGesture = <T extends ItemType, K>({
     const dragX = useSharedValue(0);
     const dragY = useSharedValue(0);
 
-    const drop = () => {
+    const drop = useCallback(() => {
         onDrop();
 
         const isBeingDragged = dragItem !== undefined;
@@ -40,34 +40,36 @@ export const useDragGesture = <T extends ItemType, K>({
 
             setDragCard(undefined);
         }
-    };
+    }, [dragItem, onDrop, onDragEndSuccess, toColumnIndex]);
 
-    const pan = Gesture.Pan()
-        .manualActivation(true)
-        .onTouchesMove((_: any, stateManager: any) => {
-            if (dragItem?.id) {
-                stateManager.activate();
-            }
-        })
-        .onChange((event: any) => {
-            dragX.value = event.translationX;
-            dragY.value = event.translationY;
+    const pan = useMemo(() => {
+        return Gesture.Pan()
+            .manualActivation(true)
+            .onTouchesMove((_: any, stateManager: any) => {
+                if (dragItem?.id) {
+                    stateManager.activate();
+                }
+            })
+            .onChange((event: any) => {
+                dragX.value = event.translationX;
+                dragY.value = event.translationY;
 
-            if (event.absoluteX > SCREEN_WIDTH - 50) {
-                runOnJS(paginate)('right');
-            }
+                if (event.absoluteX > SCREEN_WIDTH - 50) {
+                    runOnJS(paginate)('right');
+                }
 
-            if (event.absoluteX < 50) {
-                runOnJS(paginate)('left');
-            }
-        })
-        .onEnd(() => {
-            dragX.value = withSpring(0, { duration: 1000 });
-            dragY.value = withSpring(0, { duration: 1000 });
-        })
-        .onFinalize(() => {
-            runOnJS(drop)();
-        });
+                if (event.absoluteX < 50) {
+                    runOnJS(paginate)('left');
+                }
+            })
+            .onEnd(() => {
+                dragX.value = withSpring(0, { duration: 1000 });
+                dragY.value = withSpring(0, { duration: 1000 });
+            })
+            .onFinalize(() => {
+                runOnJS(drop)();
+            });
+    }, [SCREEN_WIDTH, dragItem?.id, dragX, dragY, drop, paginate]);
 
     return { pan, dragItem, setDragCard, dragX, dragY };
 };
