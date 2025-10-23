@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AssimilationStage, Guest } from '~/store/types';
 import { useGetGuestByIdQuery, useGetTimelineQuery } from '~/store/services/roast-crm';
 import { GuestHeader } from './GuestHeader';
@@ -12,7 +12,9 @@ import { View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import useRole from '~/hooks/role';
-import useAssimilationStageIndex from '../../hooks/use-assimilation-stage-index';
+import useAssimilationStageIndex, {
+    useAssimilationSubStagePositionIndex,
+} from '../../hooks/use-assimilation-stage-index';
 
 const GuestProfile: React.FC = () => {
     const { user } = useRole();
@@ -22,8 +24,14 @@ const GuestProfile: React.FC = () => {
     const { data: guestRemote, isLoading } = useGetGuestByIdQuery(guestParams?._id, { skip: !!guestParams });
     const { data: timeline = [], isLoading: loadingTimeline } = useGetTimelineQuery({ guestId }, { skip: !guestId });
     const assimilationStagesIndex = useAssimilationStageIndex();
-
     const guest = guestRemote ?? guestParams;
+
+    const assimilationSubStagePositionIndex = useAssimilationSubStagePositionIndex();
+
+    const progress = useMemo(
+        () => getProgressPercentage(assimilationSubStagePositionIndex[guest.assimilationSubStageId] as number),
+        [guest.assimilationSubStageId, assimilationSubStagePositionIndex]
+    );
 
     if (!guestId || !guest || isLoading) {
         return (
@@ -60,8 +68,8 @@ const GuestProfile: React.FC = () => {
                     guest={guest}
                     currentUser={user}
                     onCall={handleCall(guest)}
+                    progressPercentage={progress}
                     onWhatsApp={handleWhatsApp(guest)}
-                    progressPercentage={getProgressPercentage(guest.milestones)}
                     assimilationStage={assimilationStagesIndex[guest?.assimilationStageId] ?? ''}
                     stageColor={getStageColor(assimilationStagesIndex[guest?.assimilationStageId] as AssimilationStage)}
                 />

@@ -1,4 +1,4 @@
-import { Clock, MapPin, MessageCircle, MoreVertical, Phone, PhoneIcon } from 'lucide-react-native';
+import { Clock, MapPin, MessageCircle, MoreVertical, Phone } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
 import { Pressable, TouchableOpacity, View } from 'react-native';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
@@ -17,6 +17,7 @@ import { Guest, PipelineSubStage } from '~/store/types';
 import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 import useZoneIndex from '../hooks/use-zone-index';
+import { useAssimilationSubStagePositionIndex } from '../hooks/use-assimilation-stage-index';
 
 export const GuestRow: React.FC<{
     guest: Guest;
@@ -34,7 +35,13 @@ export const GuestRow: React.FC<{
         onViewGuest(guest);
     };
 
-    const progress = useMemo(() => getProgressPercentage(guest.milestones), [guest.milestones, getProgressPercentage]);
+    const assimilationSubStagePositionIndex = useAssimilationSubStagePositionIndex();
+
+    const progress = useMemo(
+        () => getProgressPercentage(assimilationSubStagePositionIndex[guest.assimilationSubStageId] as number),
+        [guest.assimilationSubStageId, assimilationSubStagePositionIndex]
+    );
+
     const daysSinceContact = useMemo(
         () => getDaysSinceContact((guest?.lastContact as any) ?? guest.createdAt),
         [guest?.lastContact, guest?.createdAt, getDaysSinceContact]
