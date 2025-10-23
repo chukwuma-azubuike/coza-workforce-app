@@ -143,11 +143,11 @@ const ZoneDashboard: React.FC = () => {
         return filtered;
     }, [userGuests, search, stageFilter]);
 
-    const onGuestUpdate = async (guestId: string, assimilationSubStageId: string) => {
+    const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
         try {
             await updateGuest({ _id: guestId, assimilationSubStageId });
         } catch (error) {}
-    };
+    }, []);
 
     const onDragEnd = useCallback(
         async (params: DragEndParams) => {
@@ -183,9 +183,9 @@ const ZoneDashboard: React.FC = () => {
         [isLoading, assimilationStageIndex]
     );
 
-    const handleProfileView = (guest: Guest) => {
+    const handleProfileView = useCallback((guest: Guest) => {
         router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
-    };
+    }, []);
 
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
     const kanbanContainerHeight = Dimensions.get('window').height - 620;

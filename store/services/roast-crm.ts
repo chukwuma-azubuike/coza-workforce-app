@@ -224,6 +224,7 @@ export const roastCrmApi = createApi({
     refetchOnFocus: true,
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
+    keepUnusedDataFor: 60 * 60 * 48, // Cache or 48 hours
 
     endpoints: builder => ({
         // Guest Queries

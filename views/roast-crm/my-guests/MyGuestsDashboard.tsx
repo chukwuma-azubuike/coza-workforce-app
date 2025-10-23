@@ -48,7 +48,7 @@ function MyGuestsDashboard() {
         isLoading,
         isFetching,
         refetch,
-    } = useGetGuestsQuery({ assignedToId: user?._id, search }, { pollingInterval: 10000 });
+    } = useGetGuestsQuery({ assignedToId: user?._id, search }, { pollingInterval: 20000 });
     const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
     const [updateGuest] = useUpdateGuestMutation();
 
@@ -111,11 +111,11 @@ function MyGuestsDashboard() {
         return filtered;
     }, [userGuests, search, stageFilter]);
 
-    const onGuestUpdate = async (guestId: string, assimilationSubStageId: string) => {
+    const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
         try {
             await updateGuest({ _id: guestId, assimilationSubStageId });
         } catch (error) {}
-    };
+    }, []);
 
     const onDragEnd = useCallback(
         async (params: DragEndParams) => {
@@ -130,9 +130,9 @@ function MyGuestsDashboard() {
         [assimilationSubStagesIndex]
     );
 
-    const handleAddGuest = () => {
+    const handleAddGuest = useCallback(() => {
         setModalVisible(prev => !prev);
-    };
+    }, [setModalVisible]);
 
     const renderContentContainer = useCallback(
         (child: ReactNode, props: HeaderParams) => {
