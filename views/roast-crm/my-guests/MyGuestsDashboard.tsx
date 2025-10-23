@@ -32,6 +32,7 @@ import { Skeleton } from '~/components/ui/skeleton';
 import useRole from '~/hooks/role';
 import useDebounce from '~/hooks/debounce/use-debounce';
 import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
+import Error from '~/components/atoms/error';
 
 function MyGuestsDashboard() {
     const { user } = useRole();
@@ -42,12 +43,17 @@ function MyGuestsDashboard() {
     const [stageFilter, setStageFilter] = useState<string | 'all'>('all');
     const [modalVisible, setModalVisible] = useState(false);
 
-    const { data: assimilationSubStages = [], isLoading: subStagesLoading } = useGetAssimilationSubStagesQuery();
+    const {
+        data: assimilationSubStages = [],
+        isLoading: subStagesLoading,
+        error: subStagesError,
+    } = useGetAssimilationSubStagesQuery();
     const {
         data: guests = [],
         isLoading,
         isFetching,
         refetch,
+        error: guestsError,
     } = useGetGuestsQuery({ assignedToId: user?._id, search }, { pollingInterval: 20000 });
     const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
     const [updateGuest] = useUpdateGuestMutation();
@@ -208,6 +214,8 @@ function MyGuestsDashboard() {
                             <KanbanColumnSkeleton />
                             <KanbanColumnSkeleton />
                         </View>
+                    ) : (subStagesError || guestsError) && guests.length < 1 ? (
+                        <Error message={(subStagesError as any)?.error} />
                     ) : (
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
                             gapBetweenColumns={8}
