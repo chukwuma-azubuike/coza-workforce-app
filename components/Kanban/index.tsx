@@ -163,7 +163,9 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
                                 keyExtractor={(_, index) => `${i}-${index}`}
                                 scrollEnabled={itemsVerticalScrollEnabledRef.current}
                                 getItemLayout={props.itemHeight ? handleItemLayout : undefined}
-                                ListEmptyComponent={<Empty width={160} message="No guests in this stage" />}
+                                ListEmptyComponent={
+                                    <Empty width={160} message="No guests in this stage" className="my-10" />
+                                }
                             />,
                             columnData.header
                         )
@@ -178,7 +180,9 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
                             keyExtractor={(_, index) => `${i}-${index}`}
                             scrollEnabled={itemsVerticalScrollEnabledRef.current}
                             getItemLayout={props.itemHeight ? handleItemLayout : undefined}
-                            ListEmptyComponent={<Empty width={160} message="No guests in this stage" />}
+                            ListEmptyComponent={
+                                <Empty width={160} message="No guests in this stage" className="my-10" />
+                            }
                         />
                     )}
                 </View>

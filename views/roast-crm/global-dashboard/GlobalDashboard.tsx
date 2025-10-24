@@ -11,13 +11,13 @@ import { TrendChart } from './charts/TrendChart';
 import { TopPerformers } from './performers/TopPerformers';
 import { DropoffAnalysis } from './analytics/DropoffAnalysis';
 import { RecommendationsCard } from './analytics/RecommendationsCard';
-import Loading from '~/components/atoms/loading';
 import { StatsCard } from './StatsCard';
 import PickerSelect from '~/components/ui/picker-select';
 import dayjs from 'dayjs';
 import { Skeleton } from '~/components/ui/skeleton';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { LeaderboardPayload } from '~/store/types';
+import Error from '~/components/atoms/error';
 
 type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
 type ZoneId = 'all' | 'central' | 'north' | 'south' | 'east' | 'west';
@@ -64,7 +64,7 @@ const GlobalDashboard: React.FC = () => {
         error,
     } = useGetGlobalAnalyticsQuery({
         ...date,
-        zoneId: 'all',
+        zoneId: selectedZone,
     });
 
     if (isLoading) {
@@ -88,7 +88,7 @@ const GlobalDashboard: React.FC = () => {
     }
 
     if (error) {
-        return <Loading cover />;
+        return <Error />;
     }
 
     if (!analytics) {
