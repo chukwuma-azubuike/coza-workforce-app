@@ -3,7 +3,17 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { createLogger } from 'redux-logger';
 import rootReducer from './root-reducer';
 import middlewaresSlices from './services/middleware';
-import { PersistConfig, persistReducer, persistStore } from 'redux-persist';
+import {
+    PersistConfig,
+    persistReducer,
+    persistStore,
+    FLUSH,
+    REHYDRATE,
+    PAUSE,
+    PERSIST,
+    PURGE,
+    REGISTER,
+} from 'redux-persist';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import userStateSlice from './actions/users';
@@ -34,7 +44,9 @@ const store = configureStore({
     reducer: persistedReducer,
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
-            serializableCheck: false,
+            serializableCheck: {
+                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            },
         }).concat([...middlewares, ...(middlewaresSlices as Array<Middleware>)]),
 });
 

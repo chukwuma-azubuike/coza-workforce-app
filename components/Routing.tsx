@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { router, Stack } from 'expo-router';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import NotificationModal from '~/components/composite/notification-modal';
 
 import { useAppSelector } from '~/store/hooks';
@@ -35,22 +34,15 @@ const Routing: React.FC = () => {
 
     return (
         <NotificationsProvider user={user || ({} as any)}>
-            <SafeAreaProvider className="!bg-background">
-                <SafeAreaView
-                    edges={['right', 'left', Platform.OS === 'android' ? 'bottom' : 'top']}
-                    className="flex-1 !bg-background"
-                >
-                    <View className="flex-1">
-                        <NotificationModal />
-                        <Stack>
-                            <Stack.Screen name="index" options={{ headerShown: false }} />
-                            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-                            <Stack.Screen name="(stack)" options={{ headerShown: false }} />
-                            <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
-                        </Stack>
-                    </View>
-                </SafeAreaView>
-            </SafeAreaProvider>
+            <View className="flex-1">
+                <NotificationModal />
+                <Stack>
+                    <Stack.Screen name="index" options={{ headerShown: false }} />
+                    <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(stack)" options={{ headerShown: false }} />
+                    <Stack.Screen name="(tabs)" options={{ headerShown: false, gestureEnabled: false }} />
+                </Stack>
+            </View>
         </NotificationsProvider>
     );
 };
