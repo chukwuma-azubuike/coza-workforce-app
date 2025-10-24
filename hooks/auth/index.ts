@@ -26,7 +26,6 @@ export const useAuth = () => {
                 logOutfn(dispatch);
             }
             if (res.error) {
-                console.log(res.error);
                 Alert.alert(
                     (res.error as any)?.error ?? (res.error as any)?.data?.message ?? 'Oops something went wrong'
                 );
@@ -43,8 +42,8 @@ export const useAuth = () => {
 };
 
 export const logOutfn = (dispatch: ThunkDispatch<IStore, any, any>) => {
-    Utils.clearCurrentUserStorage().then(res => {
-        Utils.clearStorage().then(res => {
+    Utils.clearCurrentUserStorage().then(_res => {
+        Utils.clearStorage().then(_res => {
             dispatch(userActions.clearSession());
             Utils.removeUserSession();
         });
