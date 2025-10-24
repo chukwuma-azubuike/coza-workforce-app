@@ -6,13 +6,15 @@ import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { useColorScheme } from '~/lib/useColorScheme';
+import { cn } from '~/lib/utils';
 
 const Empty: React.FC<{
     message?: string;
     width?: number;
     refresh?: () => void;
     isLoading?: boolean;
-}> = ({ message, width = 320, refresh, isLoading }) => {
+    className?: string;
+}> = ({ message, className, width = 300, refresh, isLoading }) => {
     const handleRefresh = () => {
         refresh && refresh();
     };
@@ -32,10 +34,16 @@ const Empty: React.FC<{
         : require('~/assets/json/empty.json');
 
     return (
-        <View className="items-center flex-1 justify-center">
-            <View className="items-center gap-4 justify-center">
-                <LottieView loop autoPlay style={{ width, height: width }} resizeMode="cover" source={lottieFile} />
-                <Text className="text-muted-foreground font-light">
+        <View className={cn('items-center flex-1 justify-center', className)}>
+            <View className="items-center justify-center">
+                <LottieView
+                    loop
+                    autoPlay
+                    resizeMode="cover"
+                    source={lottieFile}
+                    style={{ width, height: width < 100 ? width - 100 : width - 50 }}
+                />
+                <Text className="text-muted-foreground">
                     {isCampusPastor || isGlobalPastor
                         ? `${message ? message : EMPTY_MESSAGE} ${gender === 'M' ? 'sir' : 'ma'}`
                         : message
