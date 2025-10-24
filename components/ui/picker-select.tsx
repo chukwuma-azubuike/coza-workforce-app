@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import RNPickerSelect, { PickerSelectProps } from 'react-native-picker-select';
 import { Text } from './text';
 import { ChevronDown } from 'lucide-react-native';
@@ -8,8 +8,13 @@ import { Colors } from '~/constants/Colors';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { cn } from '~/lib/utils';
 import ErrorBoundary from '~/components/composite/error-boundary';
+import type { Item } from 'react-native-picker-select';
 
-interface PickerSelectComponentProps<T> extends Omit<PickerSelectProps, 'items'> {
+interface ValidPickerItem {
+    [key: string]: any;
+}
+
+interface PickerSelectComponentProps<T extends ValidPickerItem> extends Omit<PickerSelectProps, 'items'> {
     items: T[];
     value?: string;
     labelKey?: keyof T;
@@ -17,9 +22,10 @@ interface PickerSelectComponentProps<T> extends Omit<PickerSelectProps, 'items'>
     className?: string;
     customLabel?: (arg: T) => string;
     isLoading?: boolean;
+    onError?: (error: Error) => void;
 }
 
-function PickerSelect<T = any>({
+function PickerSelect<T extends ValidPickerItem>({
     items = [],
     labelKey,
     valueKey,
@@ -29,39 +35,84 @@ function PickerSelect<T = any>({
     className,
     value: inputValue,
     placeholder = 'Select',
+    onError,
     ...props
 }: PickerSelectComponentProps<T>) {
     const [value, setValue] = useState<string | undefined>(inputValue !== undefined ? `${inputValue}` : undefined);
+    const [error, setError] = useState<Error | null>(null);
+
+    // Validate items and props
+    useEffect(() => {
+        try {
+            if (labelKey && !items.every(item => labelKey in item)) {
+                throw new Error(`Some items are missing labelKey: ${String(labelKey)}`);
+            }
+            if (valueKey && !items.every(item => valueKey in item)) {
+                throw new Error(`Some items are missing valueKey: ${String(valueKey)}`);
+            }
+            setError(null);
+        } catch (err) {
+            const error = err instanceof Error ? err : new Error(String(err));
+            setError(error);
+            onError?.(error);
+        }
+    }, [items, labelKey, valueKey, onError]);
 
     // Keep internal value in sync with prop changes
-    React.useEffect(() => {
-        setValue(inputValue !== undefined ? `${inputValue}` : undefined);
+    useEffect(() => {
+        let mounted = true;
+        if (mounted && inputValue !== undefined) {
+            setValue(`${inputValue}`);
+        }
+        return () => {
+            mounted = false;
+        };
     }, [inputValue]);
 
-    const selectedItem = useMemo(
-        () => items?.find(item => (valueKey ? `${item[valueKey]}` === `${inputValue ?? value}` : item === inputValue)),
-        [items, value, valueKey, inputValue]
-    );
+    const selectedItem = useMemo(() => {
+        if (!items?.length) return null;
+        const currentValue = inputValue ?? value;
+        if (!currentValue) return null;
+
+        return items.find(item => {
+            if (valueKey) {
+                const itemValue = item[valueKey];
+                return itemValue != null && `${itemValue}` === currentValue;
+            }
+            return false;
+        });
+    }, [items, value, valueKey, inputValue]);
 
     const options = useMemo(() => {
+        if (!items?.length) return [] as Item[];
+
         const seen = new Set<string>();
-        const mapped =
-            items?.map(item => {
-                const rawLabel = labelKey ? (customLabel ? customLabel(item) : (item[labelKey] as any)) : (item as any);
-                const rawValue = valueKey ? (item[valueKey] as any) : (item as any);
+
+        return items.reduce<Item[]>((acc, item) => {
+            try {
+                let rawLabel: any;
+                if (customLabel && item) {
+                    rawLabel = customLabel(item);
+                } else if (labelKey && item) {
+                    rawLabel = item[labelKey];
+                } else {
+                    rawLabel = item;
+                }
+
+                const rawValue = valueKey && item ? item[valueKey] : item;
 
                 const label = rawLabel != null ? String(rawLabel) : '';
-                const val = rawValue != null ? String(rawValue) : '';
+                const value = rawValue != null ? String(rawValue) : '';
 
-                return { label, value: val };
-            }) || [];
+                if (!value || seen.has(value)) return acc;
+                seen.add(value);
 
-        return mapped.filter(opt => {
-            if (!opt.value) return false;
-            if (seen.has(opt.value)) return false;
-            seen.add(opt.value);
-            return true;
-        });
+                acc.push({ label, value });
+                return acc;
+            } catch (err) {
+                return acc;
+            }
+        }, []);
     }, [items, valueKey, labelKey, customLabel]);
 
     const { isDarkColorScheme } = useColorScheme();
@@ -72,7 +123,7 @@ function PickerSelect<T = any>({
 
             if (typeof strVal === 'string') {
                 setValue(strVal);
-                onValueChange(strVal as any, index);
+                onValueChange?.(strVal as any, index);
             }
         },
         [onValueChange]
@@ -143,11 +194,12 @@ function PickerSelect<T = any>({
     );
 }
 
-const PickerSelectWithErrorBoundary = <T,>(props: PickerSelectComponentProps<T>) => (
+const PickerSelectWithErrorBoundary = <T extends ValidPickerItem>(props: PickerSelectComponentProps<T>) => (
     <ErrorBoundary>
-        <PickerSelect {...props} />
+        <PickerSelect<T> {...props} />
     </ErrorBoundary>
 );
 
+export type { PickerSelectComponentProps };
 export { PickerSelect };
 export default PickerSelectWithErrorBoundary;
