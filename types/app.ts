@@ -4,13 +4,19 @@ export interface IModalProps {
     setModalState: React.Dispatch<React.SetStateAction<IModalState>>;
 }
 
+export type ModalStatus = 'success' | 'error' | 'info' | 'warning';
 export interface IModalState {
     open?: boolean;
     button?: boolean;
     defaultRender?: boolean;
     message?: string | null;
-    render?: React.ReactElement | JSX.Element | null;
-    status?: 'success' | 'error' | 'info' | 'warning';
+    render?: {
+        description: string;
+        status: ModalStatus;
+        iconType: string;
+        iconName: string;
+    };
+    status?: ModalStatus;
     duration?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 }
 export interface INGState {

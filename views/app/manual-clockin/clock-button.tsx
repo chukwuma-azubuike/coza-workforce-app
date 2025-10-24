@@ -4,7 +4,6 @@ import LottieView from 'lottie-react-native';
 import { View } from 'react-native';
 import useModal from '~/hooks/modal/useModal';
 import dayjs from 'dayjs';
-import ModalAlertComponent from '~/components/composite/modal-alert';
 import { useClockInMutation, useClockOutMutation, useGetAttendanceQuery } from '~/store/services/attendance';
 import { GeoCoordinates } from '~/hooks/geo-location';
 import If from '~/components/composite/if-container';
@@ -80,14 +79,12 @@ const ClockButton: React.FC<IClockButtonProps> = ({
             if ('data' in result) {
                 setModalState({
                     duration: 1,
-                    render: (
-                        <ModalAlertComponent
-                            description={`You clocked in at ${dayjs().format('hh:mm A')}`}
-                            status={isInRange ? 'success' : 'warning'}
-                            iconType={'material-community'}
-                            iconName={'timer-outline'}
-                        />
-                    ),
+                    render: {
+                        description: `You clocked in at ${dayjs().format('hh:mm A')}`,
+                        status: isInRange ? 'success' : 'warning',
+                        iconType: 'material-community',
+                        iconName: 'timer-outline',
+                    },
                 });
                 onSuccess && onSuccess();
             }
@@ -109,14 +106,12 @@ const ClockButton: React.FC<IClockButtonProps> = ({
             if ('data' in result) {
                 setClockedOut(true);
                 setModalState({
-                    render: (
-                        <ModalAlertComponent
-                            description={`You clocked out at ${dayjs().format('hh:mm A')}`}
-                            status={isInRange ? 'success' : 'warning'}
-                            iconType={'material-community'}
-                            iconName={'timer-outline'}
-                        />
-                    ),
+                    render: {
+                        description: `You clocked out at ${dayjs().format('hh:mm A')}`,
+                        status: isInRange ? 'success' : 'warning',
+                        iconType: 'material-community',
+                        iconName: 'timer-outline',
+                    },
                 });
             }
 
@@ -158,14 +153,12 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 () =>
                     setModalState({
                         duration: 1,
-                        render: (
-                            <ModalAlertComponent
-                                description={'You are not within range of any campus!'}
-                                iconName={'warning-outline'}
-                                iconType={'ionicon'}
-                                status={'warning'}
-                            />
-                        ),
+                        render: {
+                            description: 'You are not within range of any campus!',
+                            iconName: 'warning-outline',
+                            iconType: 'ionicon',
+                            status: 'warning',
+                        },
                     })
             );
             return;
@@ -200,16 +193,13 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                 if (!isInRange && (res === RESULTS.GRANTED || res === RESULTS.LIMITED)) {
                     setModalState({
                         duration: 1,
-                        render: (
-                            <ModalAlertComponent
-                                description={
-                                    'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.'
-                                }
-                                iconName={'warning-outline'}
-                                iconType={'ionicon'}
-                                status={'warning'}
-                            />
-                        ),
+                        render: {
+                            description:
+                                'You are not within range of any campus! Please check Google Maps to confirm your actual GPS location.',
+                            iconName: 'warning-outline',
+                            iconType: 'ionicon',
+                            status: 'warning',
+                        },
                     });
                     return;
                 }
@@ -264,10 +254,10 @@ const ClockButton: React.FC<IClockButtonProps> = ({
                         canClockIn && !disabled
                             ? 'bg-primary'
                             : canClockOut
-                              ? ' bg-rose-400'
-                              : disabled
-                                ? 'bg-gray-400'
-                                : 'bg-gray-400'
+                            ? ' bg-rose-400'
+                            : disabled
+                            ? 'bg-gray-400'
+                            : 'bg-gray-400'
                     )}
                 >
                     <View className="flex-1 justify-center items-center">
