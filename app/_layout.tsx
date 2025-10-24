@@ -19,6 +19,8 @@ import Loading from '~/components/atoms/loading';
 import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import useExpoUpdate from '~/hooks/expo-update';
+import removeBadPersistIfAny from '~/utils/removeBadPersistIfAny';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -49,6 +51,10 @@ export default function RootLayout() {
     const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
     useIsomorphicLayoutEffect(() => {
+        (async () => {
+            await removeBadPersistIfAny();
+        })();
+
         if (hasMounted.current) {
             return;
         }
@@ -57,6 +63,7 @@ export default function RootLayout() {
             // Adds the background color to the html element to prevent white background on overscroll.
             document.documentElement.classList.add('bg-background');
         }
+
         setAndroidNavigationBar(colorScheme);
         setIsColorSchemeLoaded(true);
         hasMounted.current = true;
@@ -70,18 +77,27 @@ export default function RootLayout() {
     }
 
     return (
-        <Provider store={store}>
-            <PersistGate loading={<Loading bootUp />} persistor={persistor}>
-                <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-                    <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                    <ConnectionStatusBar />
-                    <ErrorBoundary>
-                        <Routing />
-                    </ErrorBoundary>
-                    <PortalHost />
-                </ThemeProvider>
-            </PersistGate>
-        </Provider>
+        <SafeAreaProvider className="!bg-background">
+            <SafeAreaView
+                edges={['right', 'left', Platform.OS === 'android' ? 'bottom' : 'top']}
+                className="flex-1 !bg-background"
+            >
+                <ErrorBoundary>
+                    <Provider store={store}>
+                        <PersistGate loading={<Loading bootUp />} persistor={persistor}>
+                            <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+                                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                                <ConnectionStatusBar />
+                                <ErrorBoundary>
+                                    <Routing />
+                                </ErrorBoundary>
+                                <PortalHost />
+                            </ThemeProvider>
+                        </PersistGate>
+                    </Provider>
+                </ErrorBoundary>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
