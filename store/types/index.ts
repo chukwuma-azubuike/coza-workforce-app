@@ -111,6 +111,10 @@ export interface IToken {
 }
 
 export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
+export interface ILogoutPayload {
+    expoPushToken: string;
+    userId: string;
+}
 
 export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     roleId: string;

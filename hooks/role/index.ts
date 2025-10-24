@@ -134,9 +134,11 @@ const useRole = () => {
     const { logOut } = useAuth();
 
     React.useEffect(() => {
-        if (!currentUser?.userId) {
-            logOut();
-        }
+        (async () => {
+            if (!currentUser?.userId) {
+                await logOut();
+            }
+        })();
     }, []);
 
     React.useEffect(() => {
