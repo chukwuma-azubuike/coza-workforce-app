@@ -19,11 +19,12 @@ import APP_VARIANT from '@config/envConfig';
 import { router } from 'expo-router';
 import useUploader from '~/hooks/use-uploader';
 import capitalize from 'lodash/capitalize';
+import Loading from '~/components/atoms/loading';
 
 const Profile: React.FC = () => {
     const { user, isGlobalPastor, refetch, isFetching } = useRole();
 
-    const { logOut } = useAuth();
+    const { logOut, isLoading } = useAuth();
 
     const handleLogout = () => {
         logOut();
@@ -140,11 +141,15 @@ const Profile: React.FC = () => {
                             value={dayjs(user?.birthDay).format('DD MMM')}
                         />
                     </View>
-                    <TouchableOpacity activeOpacity={0.6} onPress={handleLogout}>
+                    <TouchableOpacity activeOpacity={0.6} onPress={handleLogout} disabled={isLoading}>
                         <View className="px-4 mt-4 py-4 bg-muted-background rounded-2xl border border-gray-300 dark:border-border">
                             <View className="flex-row">
-                                <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
-                                <Text className="ml-4">Logout</Text>
+                                {isLoading ? (
+                                    <Loading />
+                                ) : (
+                                    <Icon size={22} name="logout" type="Ionicons" color={THEME_CONFIG.lightGray} />
+                                )}
+                                <Text className="ml-4">{isLoading ? 'Logging you out...' : 'Logout'}</Text>
                             </View>
                         </View>
                     </TouchableOpacity>

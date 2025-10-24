@@ -17,16 +17,19 @@ const Routing: React.FC = () => {
     const { logOut } = useAuth();
 
     React.useEffect(() => {
-        if (user?.userId) {
-            router.replace('/(tabs)');
-        } else {
-            logOut();
-        }
+        const run = async () => {
+            if (user?.userId) {
+                router.replace('/(tabs)');
+            } else {
+                await logOut();
+            }
+        };
 
         const update = async () => {
             await inAppUpdates();
         };
 
+        run();
         update();
     }, [user?.userId]);
 

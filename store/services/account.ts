@@ -13,6 +13,7 @@ import {
     ICreateUserPayload,
     ICampusUserData,
     IAssignSecondaryRole,
+    ILogoutPayload,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 import { Platform } from 'react-native';
@@ -187,6 +188,14 @@ export const accountServiceSlice = createApi({
             },
 
             invalidatesTags: ['userDetails'],
+        }),
+
+        logout: endpoint.mutation<any, ILogoutPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/logout`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
         }),
 
         register: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
@@ -379,6 +388,7 @@ export const {
     useLazySendOTPQuery,
     useGetUsersQuery,
     useLoginMutation,
+    useLogoutMutation,
     useRegisterMutation,
     useGetUserByIdQuery,
     useCreateUserMutation,
