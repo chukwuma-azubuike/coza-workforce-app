@@ -12,19 +12,10 @@ const NotificationModal: React.FC = () => {
     const { modalState, setModalState } = useModal();
     const { open, render, button, message: raw, status, defaultRender = true } = modalState;
     const message = typeof raw === 'string' && raw ? raw : '';
-    const renderElement = React.isValidElement(render) ? render : null;
 
     const hideModal = () => {
         setModalState({ ...modalState, open: false });
     };
-
-    useEffect(() => {
-        if (render && !React.isValidElement(render)) {
-            console.warn('NotificationModal: removing invalid persisted render:', render);
-            setModalState({ ...modalState, render: null });
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [render]);
 
     useEffect(() => {
         switch (status) {
@@ -47,8 +38,13 @@ const NotificationModal: React.FC = () => {
             <DialogContent className="h-72 !w-20" showClose={false}>
                 <View className="justify-center">
                     <View className="w-full gap-2 rounded-2xl bg-transparent">
-                        {renderElement ? (
-                            renderElement
+                        {render ? (
+                            <ModalAlertComponent
+                                status={render?.status}
+                                iconType={render?.iconType}
+                                iconName={render?.iconName}
+                                description={render?.description}
+                            />
                         ) : defaultRender ? (
                             <ModalAlertComponent
                                 description={message}
