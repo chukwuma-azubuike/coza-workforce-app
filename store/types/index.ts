@@ -16,8 +16,20 @@ export enum ERROR {
 export enum CREATE_SERVICE_ENUM {
     LONG = 7.505862981744857,
     LAT = 9.005452823370131,
-    RANGE_TO_CLOCKIN = APP_VARIANT.isProd ? 100 : 100000,
 }
+
+export const DEFAULT_RANGES_TO_CLOCKIN = APP_VARIANT.isProd ? '200' : '100000';
+
+export const RANGES_TO_CLOKIN = [
+    { id: '100', label: '100m' },
+    { id: '200', label: '200m' },
+    { id: '500', label: '500m' },
+    { id: '1000', label: '1000m' },
+    { id: '2000', label: '2000m' },
+    { id: '5000', label: '5000m' },
+    { id: '10000', label: '10000m' },
+    { id: '100000', label: '100000m' },
+];
 
 export const SERVICE_TAGS = [
     { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },

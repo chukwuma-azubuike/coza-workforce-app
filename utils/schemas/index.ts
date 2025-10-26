@@ -28,10 +28,7 @@ export const RegisterSchema = Yup.object().shape({
     placeOfWork: Yup.string().required('Your place of work is required.'),
     gender: Yup.string().required('Your gender is required.'),
     maritalStatus: Yup.string().required('Your marital status is required.'),
-    birthDay: Yup.date()
-        .nullable()
-        .min(new Date(1900, 0, 1))
-        .required('Your birthday is required.'),
+    birthDay: Yup.date().nullable().min(new Date(1900, 0, 1)).required('Your birthday is required.'),
     socialMedia: Yup.object().shape({
         facebook: Yup.string(),
         instagram: Yup.string(),
@@ -116,6 +113,7 @@ export const CreateServiceSchema = Yup.object<ICreateServicePayload>().shape({
     serviceType: Yup.string().required('You are required to select the service type.'),
     name: Yup.string().required('Service name is required.'),
     serviceDate: Yup.date().required('Field required.'),
+    rangeToClockIn: Yup.number().required('Field required.'),
     serviceTime: Yup.date().required('Field required'),
     clockInStartTime: Yup.date().required('Field required'),
     serviceEndTime: Yup.date().required('Field required'),
