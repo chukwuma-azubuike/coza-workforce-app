@@ -26,9 +26,11 @@ const StatsCard: React.FC<StatsCardProps> = ({ stage, count }: StatsCardProps) =
 
     return (
         <Card className="items-center flex-1 min-w-[20%]">
-            <CardContent className="py-4 px-2">
-                <Text className={`text-3xl font-bold text-blue-600 text-center ${stageInfo?.color}`}>{count ?? 0}</Text>
-                <Text className="text-foreground">{stageInfo?.title}</Text>
+            <CardContent className="py-4 px-2 w-full items-center">
+                <Text className={`text-3xl font-bold text-blue-600 w-full text-center ${stageInfo?.color}`}>
+                    {count ?? 0}
+                </Text>
+                <Text className="text-foreground w-full text-center">{stageInfo?.title}</Text>
             </CardContent>
         </Card>
     );
