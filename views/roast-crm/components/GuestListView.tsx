@@ -1,15 +1,8 @@
-import { Clock, MapPin, MessageCircle, MoreVertical, Phone } from 'lucide-react-native';
 import { useCallback, useMemo } from 'react';
-import { Pressable, TouchableOpacity, View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu';
 import FlatListComponent from '~/components/composite/flat-list';
 import PickerSelect from '~/components/ui/picker-select';
 import { Text } from '~/components/ui/text';
@@ -18,6 +11,8 @@ import { handleCall, handleWhatsApp } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 import useZoneIndex from '../hooks/use-zone-index';
 import { useAssimilationSubStagePositionIndex } from '../hooks/use-assimilation-stage-index';
+import { THEME_CONFIG } from '~/config/appConfig';
+import { Icon } from '@rneui/base';
 
 export const GuestRow: React.FC<{
     guest: Guest;
@@ -54,7 +49,7 @@ export const GuestRow: React.FC<{
                     <View className="flex-row items-center gap-2">
                         <Avatar alt="profile-avatar" className="w-12 h-12">
                             <AvatarFallback className="text-xs">
-                                <Text>
+                                <Text className="w-full text-center">
                                     {`${guest.firstName} ${guest.lastName}`
                                         .split(' ')
                                         .map(n => n[0])
@@ -68,8 +63,8 @@ export const GuestRow: React.FC<{
                                 {guest.firstName} {guest.lastName}
                             </Text>
                             <View className="flex-row gap-1 items-center">
-                                <MapPin size={12} />
-                                <Text className="text-xs text-foreground">{zoneIndex[guest.zoneId]}</Text>
+                                <Icon type="ionicon" name="location-outline" size={12} color={THEME_CONFIG.blue} />
+                                <Text className="text-xs text-foreground w-full">{zoneIndex[guest.zoneId]}</Text>
                             </View>
                         </View>
                     </View>
@@ -84,28 +79,13 @@ export const GuestRow: React.FC<{
                             value={guest?.assimilationSubStageId}
                             onValueChange={handleGuestMove}
                         />
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <TouchableOpacity
-                                    className="items-center justify-center p-2 rounded-full"
-                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                                >
-                                    <MoreVertical className="w-4 h-4" color="gray" />
-                                </TouchableOpacity>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" alignOffset={8} className="rounded-2xl">
-                                <DropdownMenuItem onPress={handleViewGuest}>
-                                    <Text>View Profile</Text>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
                     </View>
                 </View>
 
                 <View className="gap-3">
-                    <View className="flex-row items-center justify-between text-xs">
-                        <Text className="text-foreground">Progress</Text>
-                        <Text className="text-foreground">{progress}% complete</Text>
+                    <View className="flex-row items-center justify-between text-xs w-full">
+                        <Text className="text-foreground flex-1">Progress</Text>
+                        <Text className="text-foreground flex-1 text-right">{progress}% complete</Text>
                     </View>
 
                     <View className="w-full bg-secondary rounded-full h-2">
@@ -123,9 +103,9 @@ export const GuestRow: React.FC<{
                     )}
 
                     <View className="flex-row items-center justify-between text-xs">
-                        <View className="flex-row items-center gap-2 text-foreground">
-                            <Clock className="w-3 h-3" />
-                            <Text>
+                        <View className="flex-row items-center gap-2 text-foreground flex-1">
+                            <Icon type="feather" name="clock" color={THEME_CONFIG.blue} />
+                            <Text className="flex-1">
                                 {daysSinceContact === null
                                     ? 'No contact'
                                     : daysSinceContact === 0
@@ -138,10 +118,10 @@ export const GuestRow: React.FC<{
 
                         <View className="flex-row gap-2">
                             <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
-                                <Phone className="w-3 h-3" />
+                                <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
                             </Button>
                             <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
-                                <MessageCircle className="w-3 h-3" />
+                                <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
                             </Button>
                         </View>
                     </View>
