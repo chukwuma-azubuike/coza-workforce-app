@@ -2,7 +2,6 @@ import React, { memo, useMemo } from 'react';
 import { View } from 'react-native';
 import { Guest } from '~/store/types';
 
-import { Phone, MessageCircle, Clock, MapPin, PhoneIcon } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
@@ -13,6 +12,7 @@ import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones'
 import useZoneIndex from '../hooks/use-zone-index';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { useAssimilationSubStagePositionIndex } from '../hooks/use-assimilation-stage-index';
+import { Icon } from '@rneui/base';
 
 interface KanbanCardProps {
     guest: Guest;
@@ -40,7 +40,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                         <View className="flex-row items-center gap-2">
                             <Avatar alt="profile-avatar" className="w-12 h-12">
                                 <AvatarFallback className="text-xs">
-                                    <Text>
+                                    <Text className="w-full text-center">
                                         {`${guest.firstName} ${guest.lastName}`
                                             .split(' ')
                                             .map(n => n[0])
@@ -51,12 +51,21 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                             </Avatar>
                             <View>
                                 <Text className="font-bold text-xl">{`${guest.firstName} ${guest.lastName}`}</Text>
-                                <View className="flex-row gap-1 items-center">
-                                    <PhoneIcon size={12} />
+                                <View className="flex-row gap-1 items-center flex-1">
+                                    <Icon type="feather" name="phone" size={12} color={THEME_CONFIG.blue} />
                                     <Text className="text-xs text-foreground">{guest.phoneNumber}</Text>
-                                    {zoneIndex[guest.zoneId] && <MapPin size={12} />}
                                     {zoneIndex[guest.zoneId] && (
-                                        <Text className="text-xs text-foreground">{zoneIndex[guest.zoneId]}</Text>
+                                        <Icon
+                                            type="ionicon"
+                                            name="location-outline"
+                                            size={12}
+                                            color={THEME_CONFIG.blue}
+                                        />
+                                    )}
+                                    {zoneIndex[guest.zoneId] && (
+                                        <Text className="text-xs text-foreground w-full">
+                                            {zoneIndex[guest.zoneId]}
+                                        </Text>
                                     )}
                                 </View>
                             </View>
@@ -66,8 +75,8 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                     <View className="gap-3">
                         <View>
                             <View className="flex-row items-center justify-between text-xs mb-1">
-                                <Text className="text-foreground">Progress</Text>
-                                <Text className="text-foreground">{progress}% complete</Text>
+                                <Text className="text-foreground flex-1">Progress</Text>
+                                <Text className="text-foreground flex-1 text-right">{progress}% complete</Text>
                             </View>
 
                             <View className="w-full bg-secondary rounded-full h-2">
@@ -80,15 +89,15 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
 
                         {guest.nextAction && (
                             <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2">
-                                <Text className="font-bold">Next Action: </Text>
-                                <Text>{guest.nextAction}</Text>
+                                <Text className="font-bold flex-1">Next Action: </Text>
+                                <Text className="flex-1">{guest.nextAction}</Text>
                             </View>
                         )}
 
                         <View className="flex-row items-center justify-between text-xs">
-                            <View className="flex-row items-center gap-2 text-foreground">
-                                <Clock className="w-3 h-3" />
-                                <Text>
+                            <View className="flex-row items-center gap-2 text-foreground flex-1">
+                                <Icon type="feather" name="clock" color={THEME_CONFIG.blue} />
+                                <Text className="flex-1">
                                     {daysSinceContact === null
                                         ? 'No contact'
                                         : daysSinceContact === 0
@@ -101,7 +110,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
 
                             <View className="flex-row gap-2">
                                 <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
-                                    <Phone className="w-3 h-3" />
+                                    <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
                                 </Button>
                                 <Button
                                     size="sm"
@@ -109,7 +118,7 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                                     className="h-6 px-2"
                                     onPress={handleWhatsApp(guest)}
                                 >
-                                    <MessageCircle className="w-3 h-3" color={THEME_CONFIG.success} />
+                                    <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
                                 </Button>
                             </View>
                         </View>

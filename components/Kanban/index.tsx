@@ -1,5 +1,13 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { type NativeScrollEvent, type NativeSyntheticEvent, Dimensions, FlatList, Text, View } from 'react-native';
+import {
+    type NativeScrollEvent,
+    type NativeSyntheticEvent,
+    Dimensions,
+    FlatList,
+    Platform,
+    Text,
+    View,
+} from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
     // interpolate,
@@ -13,6 +21,8 @@ import { DataCard } from './components/DataCard';
 import { DragContextValue } from './utils/DraggedCardContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Empty from '../atoms/empty';
+import { cn } from '~/lib/utils';
+import { ScreenHeight } from '@rneui/base';
 
 function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T, K>) {
     const [toColumnIndex, setToColumnIndex] = useState(0);
@@ -154,7 +164,6 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
                     {props.renderColumnContainer ? (
                         props.renderColumnContainer(
                             <FlatList
-                                className="flex-1"
                                 data={columnData.items}
                                 renderItem={renderCard}
                                 extraData={isItemInFocusedColumn}
@@ -163,6 +172,7 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
                                 keyExtractor={(_, index) => `${i}-${index}`}
                                 scrollEnabled={itemsVerticalScrollEnabledRef.current}
                                 getItemLayout={props.itemHeight ? handleItemLayout : undefined}
+                                className={cn(Platform.OS === 'ios' ? 'flex-1' : undefined)}
                                 ListEmptyComponent={
                                     <Empty width={160} message="No guests in this stage" className="my-10" />
                                 }
@@ -180,6 +190,7 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
                             keyExtractor={(_, index) => `${i}-${index}`}
                             scrollEnabled={itemsVerticalScrollEnabledRef.current}
                             getItemLayout={props.itemHeight ? handleItemLayout : undefined}
+                            className={cn(Platform.OS === 'ios' ? 'flex-1' : undefined)}
                             ListEmptyComponent={
                                 <Empty width={160} message="No guests in this stage" className="my-10" />
                             }
@@ -226,12 +237,11 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
         >
             <GestureHandlerRootView className="flex-1" style={{ paddingBottom: 0 }}>
                 <GestureDetector gesture={pan}>
-                    <View className="flex-1 pb-2">
+                    <View className={cn('pb-2', Platform.OS === 'ios' && 'flex-1')}>
                         <Animated.FlatList
                             ref={columnsHorizontalScrollRef}
                             horizontal
                             pagingEnabled
-                            className="flex-1"
                             snapToInterval={columnContainerWidth}
                             snapToAlignment={'center'}
                             decelerationRate={'fast'}

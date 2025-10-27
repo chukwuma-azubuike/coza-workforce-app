@@ -3,7 +3,7 @@ import { Card, CardHeader, CardContent } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
 import { Badge } from '~/components/ui/badge';
-import { Clock, Pencil, Plus, Save, X } from 'lucide-react-native';
+import { X } from 'lucide-react-native';
 import { ContactChannel, Timeline } from '~/store/types';
 import { TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/ui/text';
@@ -12,6 +12,8 @@ import PickerSelect from '~/components/ui/picker-select';
 import { useAddTimelineMutation, useUpdateTimelineMutation } from '~/store/services/roast-crm';
 import { Skeleton } from '~/components/ui/skeleton';
 import * as Haptics from 'expo-haptics';
+import { Icon } from '@rneui/base';
+import { THEME_CONFIG } from '~/config/appConfig';
 
 interface TimelineCardProps {
     guestId: string;
@@ -122,16 +124,16 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
             <View className="flex-row items-center justify-between">
                 <CardHeader className="flex-row items-start justify-between flex-1">
                     <View className="flex-row items-center gap-2">
-                        <Clock className="w-5 h-5" />
+                        <Icon type="feather" name="clock" size={24} color={THEME_CONFIG.blue} />
                         <Text className="text-lg font-bold">Engagement Timeline</Text>
                     </View>
                     <Button
                         size="sm"
                         variant="outline"
+                        className="!h-10"
                         disabled={isAddingNote}
-                        className="!h-10 !w-[8.4rem]"
                         onPress={handleAddingNoteVisible}
-                        icon={<Plus className="w-4 h-4" />}
+                        icon={<Icon type="feather" name="plus" size={24} color={THEME_CONFIG.blue} />}
                     >
                         Add Note
                     </Button>
@@ -180,7 +182,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                     {timeline.map((item, index) => (
                         <View key={item._id} className="flex-row gap-3">
                             <View className="items-center box-border pb-4">
-                                <View className="w-10 h-10 bg-blue-100 dark:bg-blue-600/40 rounded-full flex-row items-center justify-center text-blue-600">
+                                <View className="w-10 h-10 bg-blue-50 dark:bg-blue-600/20 rounded-full flex-row items-center justify-center text-blue-600">
                                     {getIcon(item.channel)}
                                 </View>
                                 {index < timeline.length - 1 && (
@@ -192,7 +194,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                                     <Badge variant="outline" className="capitalize">
                                         <Text>{item.channel}</Text>
                                     </Badge>
-                                    <Text className="text-sm text-muted-foreground">{getTimeline(item.createdAt)}</Text>
+                                    <Text className="text-sm text-muted-foreground flex-auto text-right">{getTimeline(item.createdAt)}</Text>
                                 </View>
                                 {isEditingNote === index ? (
                                     <NoteEditor
@@ -215,7 +217,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                                             onPress={handleUpdateNoteVisible(index, item)}
                                             activeOpacity={0.6}
                                         >
-                                            <Pencil size={20} />
+                                            <Icon type="ionicon" name="pencil" size={20} color={THEME_CONFIG.blue} />
                                         </TouchableOpacity>
                                     </View>
                                 )}
@@ -226,7 +228,13 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
 
                 {timeline.length === 0 && !loading && (
                     <View className="text-center flex-row gap-4">
-                        <Clock className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        <Icon
+                            className="mt-1.5"
+                            type="feather"
+                            name="message-circle"
+                            size={24}
+                            color={THEME_CONFIG.blue}
+                        />
                         <View>
                             <Text className="text-muted-foreground">No interactions recorded yet</Text>
                             <Text className="text-sm text-muted-foreground">
@@ -293,7 +301,7 @@ const NoteEditor: React.FC<NoteEditorProps> = memo(
                             isLoading={isLoading}
                             disabled={!channel || !newNote}
                         >
-                            <Save className="w-4 h-4 mr-1" />
+                            <Icon type="feather" name="save" size={24} color={THEME_CONFIG.blue} />
                         </Button>
                     </View>
                 </View>

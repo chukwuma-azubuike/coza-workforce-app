@@ -1,4 +1,5 @@
 const THEME_CONFIG = {
+    blue: '#2762ea',
     black: '#000',
     white: '#FFF',
     borderRadius: 'lg',
