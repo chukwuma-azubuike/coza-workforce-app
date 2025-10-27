@@ -3,7 +3,6 @@ import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Progress } from '~/components/ui/progress';
 import { Card, CardContent } from '~/components/ui/card';
-import { Phone, MessageCircle, MapPin, Calendar, Home } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Guest, IUser } from '~/store/types';
 import { TouchableOpacity, View } from 'react-native';
@@ -21,6 +20,7 @@ import PickerSelect from '~/components/ui/picker-select';
 import useZoneIndex from '../../hooks/use-zone-index';
 import Loading from '~/components/atoms/loading';
 import formatToE164 from '~/utils/formatToE164';
+import { Icon } from '@rneui/base';
 
 interface GuestHeaderProps {
     guest: Guest;
@@ -86,17 +86,17 @@ export function GuestHeader({
                                 ) : (
                                     <TouchableOpacity
                                         activeOpacity={0.6}
-                                        className="!h-8 px-3 rounded-xl border border-border"
+                                        className="!h-8 px-3 rounded-xl border border-border justify-center"
                                         onPress={isEditMode ? (handleSubmit as any) : handleMode('edit')}
                                     >
-                                        <Text className="text">{isEditMode ? 'Done' : 'Edit'}</Text>
+                                        <Text className="my-auto">{isEditMode ? 'Done' : 'Edit'}</Text>
                                     </TouchableOpacity>
                                 )}
                             </View>
                             <View className="flex-row items-start gap-4">
                                 <Avatar alt="profile-image" className="w-16 h-16">
                                     <AvatarFallback className="text-lg">
-                                        <Text>
+                                        <Text className="w-full text-center">
                                             {`${guest.firstName} ${guest.lastName}`
                                                 .split(' ')
                                                 .map(n => n[0])
@@ -142,7 +142,9 @@ export function GuestHeader({
                                                 {assimilationStage.charAt(0).toUpperCase() + assimilationStage.slice(1)}
                                             </Text>
                                         </Badge>
-                                        <Text className="text-muted-foreground">{progressPercentage}% complete</Text>
+                                        <Text className="text-muted-foreground flex-1">
+                                            {progressPercentage}% complete
+                                        </Text>
                                     </View>
                                     <Progress value={progressPercentage} />
                                 </View>
@@ -152,7 +154,15 @@ export function GuestHeader({
                             <View className="flex-row gap-2">
                                 <Button
                                     variant="outline"
-                                    icon={<Phone className="w-4 h-4 mr-2" />}
+                                    icon={
+                                        <Icon
+                                            className="mr-2"
+                                            type="feather"
+                                            name="phone"
+                                            size={22}
+                                            color={THEME_CONFIG.blue}
+                                        />
+                                    }
                                     className="flex-1"
                                     onPress={onCall}
                                     size="sm"
@@ -160,7 +170,7 @@ export function GuestHeader({
                                     Call
                                 </Button>
                                 <Button
-                                    icon={<MessageCircle className="w-4 h-4 mr-2" color={THEME_CONFIG.success} />}
+                                    icon={<Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />}
                                     variant="outline"
                                     className="flex-1"
                                     onPress={onWhatsApp}
@@ -185,13 +195,25 @@ export function GuestHeader({
                                     />
                                 ) : (
                                     <View className="flex-row items-center gap-2">
-                                        <Phone className="w-4 h-4 text-muted-foreground" />
-                                        <Text>{guest.phoneNumber}</Text>
+                                        <Icon
+                                            className="mr-2"
+                                            type="feather"
+                                            name="phone"
+                                            size={22}
+                                            color={THEME_CONFIG.blue}
+                                        />
+                                        <Text className="flex-1">{guest.phoneNumber}</Text>
                                     </View>
                                 )}
                                 {guest.address && (
                                     <View className="flex-row items-center gap-2">
-                                        <Home className="w-4 h-4 text-muted-foreground mt-0.5" />
+                                        <Icon
+                                            className="mr-2"
+                                            type="feather"
+                                            name="home"
+                                            size={22}
+                                            color={THEME_CONFIG.blue}
+                                        />
                                         {isEditMode ? (
                                             <View className="gap-2 flex-1">
                                                 <Input
@@ -205,13 +227,13 @@ export function GuestHeader({
                                                 )}
                                             </View>
                                         ) : (
-                                            <Text>{guest.address}</Text>
+                                            <Text className="flex-1">{guest.address}</Text>
                                         )}
                                     </View>
                                 )}
 
                                 <View className="flex-row items-center gap-2">
-                                    <MapPin className="w-4 h-4 text-muted-foreground mt-0.5" />
+                                    <Icon type="ionicon" name="location-outline" size={22} color={THEME_CONFIG.blue} />
                                     {isEditMode ? (
                                         <View className="flex-1">
                                             <PickerSelect
@@ -226,12 +248,12 @@ export function GuestHeader({
                                             {errors?.zoneId && <FormErrorMessage>{errors?.zoneId}</FormErrorMessage>}
                                         </View>
                                     ) : (
-                                        <Text>{zoneIndex[guest.zoneId]}</Text>
+                                        <Text className="flex-1">{zoneIndex[guest.zoneId]}</Text>
                                     )}
                                 </View>
                                 <View className="flex-row items-center gap-2">
-                                    <Calendar className="w-4 h-4 text-muted-foreground" />
-                                    <Text>Added {new Date(guest.createdAt).toLocaleString()}</Text>
+                                    <Icon type="feather" name="calendar" size={22} color={THEME_CONFIG.blue} />
+                                    <Text className="flex-1">Added {new Date(guest.createdAt).toLocaleString()}</Text>
                                 </View>
                             </View>
 
