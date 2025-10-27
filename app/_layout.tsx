@@ -79,7 +79,7 @@ export default function RootLayout() {
     return (
         <SafeAreaProvider className="!bg-background">
             <SafeAreaView
-                edges={['right', 'left', Platform.OS === 'android' ? 'bottom' : 'top']}
+                edges={['right', 'left', Platform.OS === 'android' ? 'bottom' : 'top', 'top']}
                 className="flex-1 !bg-background"
             >
                 <ErrorBoundary>
