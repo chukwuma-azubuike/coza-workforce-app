@@ -1,5 +1,7 @@
 import { ContactChannel } from '~/store/types';
 import { Clock, Phone, MessageCircle, MapPin, MessageSquare } from 'lucide-react-native';
+import { Icon } from '@rneui/base';
+import { THEME_CONFIG } from '~/config/appConfig';
 
 export const formatTimelineDate = (date: string | Date) => {
     const now = new Date();
@@ -17,14 +19,14 @@ export const formatTimelineDate = (date: string | Date) => {
 export const getTimelineIcon = (type: string) => {
     switch (type) {
         case ContactChannel.CALL:
-            return <Phone className="w-4 h-4" />;
+            return <Icon name="phone" type="feather" size={18} color={THEME_CONFIG.blue} />;
         case ContactChannel.WHATSAPP:
-            return <MessageCircle className="w-4 h-4" />;
+            return <Icon type="ionicon" name="logo-whatsapp" size={18} color={THEME_CONFIG.blue} />;
         case ContactChannel.VISIT:
-            return <MapPin className="w-4 h-4" />;
-        case 'milestone':
-            return <Clock className="w-4 h-4" />;
+            return <Icon type="ionicon" name="location-outline" size={18} color={THEME_CONFIG.blue} />;
+        case ContactChannel.SMS:
+            return <Icon type="material-community" name="message-text-outline" size={18} color={THEME_CONFIG.blue} />;
         default:
-            return <MessageSquare className="w-4 h-4" />;
+            return <Icon type="material-community" name="message-text-outline" size={18} color={THEME_CONFIG.blue} />;
     }
 };
