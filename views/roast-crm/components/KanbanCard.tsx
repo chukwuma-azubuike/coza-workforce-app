@@ -1,24 +1,27 @@
 import React, { memo, useMemo } from 'react';
 import { View } from 'react-native';
-import { Guest } from '~/store/types';
+import { ContactChannel, Guest } from '~/store/types';
 
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Text } from '~/components/ui/text';
-import { handleCall, handleWhatsApp } from '../utils/communication';
+import { openPhoneAndPersist } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 
 import useZoneIndex from '../hooks/use-zone-index';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { useAssimilationSubStagePositionIndex } from '../hooks/use-assimilation-stage-index';
 import { Icon } from '@rneui/base';
+import { useAppDispatch } from '~/store/hooks';
 
 interface KanbanCardProps {
     guest: Guest;
 }
 
 const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
+    const dispatch = useAppDispatch();
+
     const zoneIndex = useZoneIndex();
     const assimilationSubStagePositionIndex = useAssimilationSubStagePositionIndex();
 
@@ -109,14 +112,19 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                             </View>
 
                             <View className="flex-row gap-2">
-                                <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2"
+                                    onPress={openPhoneAndPersist(guest, ContactChannel.CALL, dispatch)}
+                                >
                                     <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
                                 </Button>
                                 <Button
                                     size="sm"
                                     variant="outline"
                                     className="h-6 px-2"
-                                    onPress={handleWhatsApp(guest)}
+                                    onPress={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
                                 >
                                     <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
                                 </Button>

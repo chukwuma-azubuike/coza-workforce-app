@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
-import { AssimilationStage, Guest } from '~/store/types';
+import { AssimilationStage, ContactChannel, Guest } from '~/store/types';
 import { useGetGuestByIdQuery, useGetTimelineQuery } from '~/store/services/roast-crm';
 import { GuestHeader } from './GuestHeader';
 import TimelineCard from './TimelineCard';
 import { Card, CardContent } from '~/components/ui/card';
 import { getStageColor } from '../../utils/colors';
 import { getProgressPercentage } from '../../utils/milestones';
-import { handleCall, handleWhatsApp } from '../../utils/communication';
+import { openPhoneAndPersist } from '../../utils/communication';
 import { Skeleton } from '~/components/ui/skeleton';
 import { View } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
@@ -15,10 +15,18 @@ import useRole from '~/hooks/role';
 import useAssimilationStageIndex, {
     useAssimilationSubStagePositionIndex,
 } from '../../hooks/use-assimilation-stage-index';
+import { useAppDispatch } from '~/store/hooks';
 
-const GuestProfile: React.FC = () => {
+interface GuestProfileProps {
+    guest?: Guest;
+    contactChannel?: ContactChannel;
+    onSubmitEnagegment?: () => void;
+}
+
+const GuestProfile: React.FC<GuestProfileProps> = ({ onSubmitEnagegment, guest: guestProps, contactChannel }) => {
     const { user } = useRole();
-    const guestParams = useLocalSearchParams() as unknown as Guest;
+    const dispatch = useAppDispatch();
+    const guestParams = guestProps ?? (useLocalSearchParams() as unknown as Guest);
     const guestId = guestParams?._id;
 
     const { data: guestRemote, isLoading } = useGetGuestByIdQuery(guestParams?._id, { skip: !!guestParams });
@@ -67,9 +75,9 @@ const GuestProfile: React.FC = () => {
                 <GuestHeader
                     guest={guest}
                     currentUser={user}
-                    onCall={handleCall(guest)}
                     progressPercentage={progress}
-                    onWhatsApp={handleWhatsApp(guest)}
+                    onCall={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
+                    onWhatsApp={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
                     assimilationStage={assimilationStagesIndex[guest?.assimilationStageId] ?? ''}
                     stageColor={getStageColor(assimilationStagesIndex[guest?.assimilationStageId] as AssimilationStage)}
                 />
@@ -84,6 +92,9 @@ const GuestProfile: React.FC = () => {
                     assignedToId={user?._id}
                     timeline={timeline}
                     loading={loadingTimeline}
+                    isAddingNote={!!guestProps}
+                    contactChannel={contactChannel}
+                    onSubmitEnagegment={onSubmitEnagegment}
                 />
             </View>
         </ViewWrapper>

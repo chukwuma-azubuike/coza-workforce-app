@@ -1,14 +1,22 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { FetchCache, GuestFormData } from '../types';
+import { ContactChannel, FetchCache, Guest, GuestFormData } from '../types';
 
+export interface OutgoingCall {
+    id: string;
+    type: ContactChannel;
+    startedAt: string; // ISO
+    guest: Guest | null; // optional structured metadata
+}
 export interface IUploadState {
     fetchCache: {
         [key: string]: FetchCache;
     } | null;
+    queue: OutgoingCall[]; // oldest at index 0, newest at end
 }
 
 const initialState: IUploadState = {
     fetchCache: {},
+    queue: [],
 };
 
 const roastCRMState = createSlice({
@@ -39,6 +47,30 @@ const roastCRMState = createSlice({
                 delete state.fetchCache[payload];
             }
         },
+
+        // Outgoing Calls
+        pushOutgoingCall(state, action: PayloadAction<OutgoingCall>) {
+            const exists = state.queue.find(record => record.id === action.payload.guest?._id);
+
+            if (!exists) {
+                state.queue.push(action.payload);
+            }
+
+            if (!!exists) {
+                state.queue = state.queue.filter(record => record.id !== action.payload.guest?._id);
+                state.queue.push(action.payload);
+            }
+        },
+        popOutgoingCall(state) {
+            // pop the most-recent (LIFO) — change as needed; here we pop end
+            state.queue.pop();
+        },
+        setCallQueue(state, action: PayloadAction<OutgoingCall[]>) {
+            state.queue = action.payload;
+        },
+        clearCallQueue(state) {
+            state.queue = [];
+        },
     },
     selectors: {
         selectFetchCache: (store): FetchCache<any, any>[] | undefined => {
@@ -47,7 +79,11 @@ const roastCRMState = createSlice({
 
                 return fetchCacheArray;
             }
+
+            return undefined;
         },
+
+        selectCallQueue: (store): OutgoingCall[] => store.queue,
     },
 });
 
