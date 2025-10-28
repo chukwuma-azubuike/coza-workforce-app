@@ -7,7 +7,9 @@ import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Button } from '~/components/ui/button';
 import { Guest } from '~/store/types';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
-import { handleCall, handleWhatsApp } from '../utils/communication';
+import { openPhoneAndPersist } from '../utils/communication';
+import { ContactChannel } from '../../../store/types/roast-crm';
+import { useAppDispatch } from '~/store/hooks';
 
 interface GuestCardProps {
     guest: Guest;
@@ -17,6 +19,7 @@ interface GuestCardProps {
 }
 
 export const GuestCard = memo(function GuestCard({ guest, className }: GuestCardProps) {
+    const dispatch = useAppDispatch();
     const progress = React.useMemo(() => {
         const completed = guest?.milestones?.filter(m => m.status === 'COMPLETED').length ?? 0;
         return Math.round((completed / (guest?.milestones?.length ?? 0)) * 100);
@@ -66,10 +69,20 @@ export const GuestCard = memo(function GuestCard({ guest, className }: GuestCard
                             </Text>
                         </View>
                         <View className="flex-row space-x-1">
-                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-6 px-2"
+                                onPress={openPhoneAndPersist(guest, ContactChannel.CALL, dispatch)}
+                            >
                                 <Phone className="w-3 h-3" />
                             </Button>
-                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-6 px-2"
+                                onPress={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
+                            >
                                 <MessageCircle className="w-3 h-3" />
                             </Button>
                         </View>
