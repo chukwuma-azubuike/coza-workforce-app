@@ -2,7 +2,6 @@ import React, { forwardRef } from 'react';
 import {
     KeyboardAvoidingView,
     RefreshControl,
-    ScrollView,
     View,
     ViewProps,
     useColorScheme,
@@ -33,7 +32,7 @@ const ViewWrapper = forwardRef<any, IViewWrapperProps>(
             refreshing = false,
             onRefresh,
             avoidKeyboard = false,
-            avoidKeyboardOffset = 30,
+            avoidKeyboardOffset = Platform.OS === 'ios' ? 88 : 80,
             avoidKeyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
             style,
             className,
@@ -42,15 +41,18 @@ const ViewWrapper = forwardRef<any, IViewWrapperProps>(
         },
         ref
     ) => {
-        const Container: React.ComponentType<any> = scroll ? ScrollView : View;
         const scheme = useColorScheme() === 'dark' ? 'dark' : 'light';
 
         const content = scroll ? (
             // default ScrollView when not avoiding keyboard
             <KeyboardAwareScrollView
                 innerRef={ref as any}
-                enableOnAndroid={false}
+                enableOnAndroid={true}
+                enableAutomaticScroll={true}
                 extraScrollHeight={avoidKeyboardOffset}
+                extraHeight={120}
+                enableResetScrollToCoords={false}
+                keyboardOpeningTime={0}
                 contentContainerStyle={[{ paddingHorizontal: noPadding ? 0 : 6 }, style]}
                 refreshControl={
                     onRefresh ? <RefreshControl refreshing={refreshing} onRefresh={onRefresh} /> : undefined
