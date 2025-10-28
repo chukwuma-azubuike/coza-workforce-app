@@ -6,13 +6,14 @@ import { Button } from '~/components/ui/button';
 import FlatListComponent from '~/components/composite/flat-list';
 import PickerSelect from '~/components/ui/picker-select';
 import { Text } from '~/components/ui/text';
-import { Guest, PipelineSubStage } from '~/store/types';
-import { handleCall, handleWhatsApp } from '../utils/communication';
+import { ContactChannel, Guest, PipelineSubStage } from '~/store/types';
+import { openPhoneAndPersist } from '../utils/communication';
 import { getDaysSinceContact, getProgressPercentage } from '../utils/milestones';
 import useZoneIndex from '../hooks/use-zone-index';
 import { useAssimilationSubStagePositionIndex } from '../hooks/use-assimilation-stage-index';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { Icon } from '@rneui/base';
+import { useAppDispatch } from '~/store/hooks';
 
 export const GuestRow: React.FC<{
     guest: Guest;
@@ -21,6 +22,8 @@ export const GuestRow: React.FC<{
     onViewGuest: (guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
 }> = ({ guest, onViewGuest, assimilationSubStages, onGuestUpdate }) => {
+    const dispatch = useAppDispatch();
+
     const zoneIndex = useZoneIndex();
     const handleGuestMove = async (newStageId: string) => {
         onGuestUpdate(guest._id, newStageId);
@@ -117,10 +120,20 @@ export const GuestRow: React.FC<{
                         </View>
 
                         <View className="flex-row gap-2">
-                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleCall(guest)}>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-6 px-2"
+                                onPress={openPhoneAndPersist(guest, ContactChannel.CALL, dispatch)}
+                            >
                                 <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
                             </Button>
-                            <Button size="sm" variant="outline" className="h-6 px-2" onPress={handleWhatsApp(guest)}>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-6 px-2"
+                                onPress={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
+                            >
                                 <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
                             </Button>
                         </View>
