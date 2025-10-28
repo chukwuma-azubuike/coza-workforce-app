@@ -16,16 +16,27 @@ import { Icon } from '@rneui/base';
 import { THEME_CONFIG } from '~/config/appConfig';
 
 interface TimelineCardProps {
+    isAddingNote?: boolean;
     guestId: string;
     assignedToId: string;
     timeline: Timeline[];
     loading: boolean;
+    contactChannel?: ContactChannel;
+    onSubmitEnagegment?: () => void;
 }
 
-const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading, assignedToId }) => {
+const TimelineCard: React.FC<TimelineCardProps> = ({
+    timeline,
+    guestId,
+    loading,
+    assignedToId,
+    contactChannel,
+    isAddingNote: isAddingNoteProps,
+    onSubmitEnagegment,
+}) => {
     const [newNote, setNewNote] = useState('');
-    const [channel, setChannel] = useState(ContactChannel.CALL);
-    const [isAddingNote, setIsAddingNote] = useState(false);
+    const [channel, setChannel] = useState(contactChannel ?? ContactChannel.CALL);
+    const [isAddingNote, setIsAddingNote] = useState(isAddingNoteProps ?? false);
     const [isEditingNote, setIsEditingNote] = useState<number | null>(null);
     const [addTimeline, { isLoading, error: addingError }] = useAddTimelineMutation();
     const [updateTimeline, { isLoading: isUpdating, error: updatingError }] = useUpdateTimelineMutation();
@@ -72,6 +83,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
             setIsAddingNote(false);
 
             if (res.data) {
+                onSubmitEnagegment?.();
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }
 
@@ -102,6 +114,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                 setIsEditingNote(null);
 
                 if (res.data) {
+                    onSubmitEnagegment?.();
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
                 }
 
@@ -194,7 +207,9 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ timeline, guestId, loading,
                                     <Badge variant="outline" className="capitalize">
                                         <Text>{item.channel}</Text>
                                     </Badge>
-                                    <Text className="text-sm text-muted-foreground flex-auto text-right">{getTimeline(item.createdAt)}</Text>
+                                    <Text className="text-sm text-muted-foreground flex-auto text-right">
+                                        {getTimeline(item.createdAt)}
+                                    </Text>
                                 </View>
                                 {isEditingNote === index ? (
                                     <NoteEditor
@@ -267,6 +282,7 @@ const NoteEditor: React.FC<NoteEditorProps> = memo(
         return (
             <View className="gap-4">
                 <Textarea
+                    autoFocus
                     value={newNote}
                     className="line-clamp-6"
                     onChangeText={setNewNote}
