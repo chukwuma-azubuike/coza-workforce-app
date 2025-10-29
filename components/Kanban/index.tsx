@@ -22,7 +22,6 @@ import { DragContextValue } from './utils/DraggedCardContext';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Empty from '../atoms/empty';
 import { cn } from '~/lib/utils';
-import { ScreenHeight } from '@rneui/base';
 
 function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T, K>) {
     const [toColumnIndex, setToColumnIndex] = useState(0);
@@ -47,7 +46,7 @@ function ReactNativeKanbanBoard<T extends ItemType, K>(props: KanbanBoardProps<T
 
     const columnPadding = props.gapBetweenColumns ?? 12;
     const columnsHorizontalScrollRef = useAnimatedRef<Animated.FlatList<K>>();
-    const itemsVerticalScrollEnabledRef = useRef(false);
+    const itemsVerticalScrollEnabledRef = useRef(true);
 
     const disableScroll = useCallback(() => {
         itemsVerticalScrollEnabledRef.current = false;
