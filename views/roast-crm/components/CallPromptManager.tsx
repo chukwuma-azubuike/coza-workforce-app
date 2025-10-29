@@ -73,16 +73,20 @@ const CallPromptManager: React.FC = () => {
         }, 15_000) as unknown as NodeJS.Timeout;
     };
 
+    const handleAbort = () => {
+        handleClose();
+
+        // remove the call from queue
+        dispatch(roastCRMActions.popOutgoingCall());
+    };
+
     const handleSubmit = () => {
         if (!prompt?.id) {
             setPrompt({ visible: false } as PromptState);
             return;
         }
 
-        handleClose();
-
-        // remove the call from queue
-        dispatch(roastCRMActions.popOutgoingCall());
+        handleAbort();
     };
 
     return (
@@ -98,23 +102,24 @@ const CallPromptManager: React.FC = () => {
                 className="bg-secondary dark:bg-background rounded-t-lg pb-8 flex-1"
             >
                 <View className="bg-secondary/40 rounded-t-2xl p-6 relative">
-                    <Text className="font-semibold text-lg text-center max-w-[85%] mx-auto">
-                        How was your call with{' '}
-                        <Text className="font-black text-lg text-center text-blue-600">
-                            {latest?.guest?.firstName} {latest?.guest?.lastName}
-                        </Text>
-                    </Text>
+                    <Text className="font-bold text-center text-xl">Please give feedback</Text>
                     <Button variant="ghost" className="absolute top-5 right-4 !h-8 w-8" onPress={handleClose}>
                         <X className="w-4 h-4 text-muted-foreground" />
                     </Button>
                 </View>
                 <View className="flex-1 px-2">
-                    <Text className="font-bold py-2 text-center animate-pulse duration-1000">Please give feedback</Text>
+                    <Text className="font-semibold text-lg text-center max-w-[85%] mx-auto py-2">
+                        How was your call with{' '}
+                        <Text className="font-black text-xl text-center text-blue-600">
+                            {latest?.guest?.firstName} {latest?.guest?.lastName}
+                        </Text>
+                    </Text>
                     <Suspense fallback={<Loading cover />}>
                         <GuestProfile
                             guest={latest?.guest as any}
                             contactChannel={latest?.type}
                             onSubmitEnagegment={handleSubmit}
+                            onCancelSubmitEnagegment={handleAbort}
                         />
                     </Suspense>
                 </View>
