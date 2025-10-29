@@ -16,14 +16,22 @@ import useAssimilationStageIndex, {
     useAssimilationSubStagePositionIndex,
 } from '../../hooks/use-assimilation-stage-index';
 import { useAppDispatch } from '~/store/hooks';
+import { X } from 'lucide-react-native';
+import { Button } from '~/components/ui/button';
 
 interface GuestProfileProps {
     guest?: Guest;
     contactChannel?: ContactChannel;
     onSubmitEnagegment?: () => void;
+    onCancelSubmitEnagegment?: () => void;
 }
 
-const GuestProfile: React.FC<GuestProfileProps> = ({ onSubmitEnagegment, guest: guestProps, contactChannel }) => {
+const GuestProfile: React.FC<GuestProfileProps> = ({
+    onSubmitEnagegment,
+    onCancelSubmitEnagegment,
+    guest: guestProps,
+    contactChannel,
+}) => {
     const { user } = useRole();
     const dispatch = useAppDispatch();
     const guestParams = guestProps ?? (useLocalSearchParams() as unknown as Guest);
@@ -72,15 +80,29 @@ const GuestProfile: React.FC<GuestProfileProps> = ({ onSubmitEnagegment, guest: 
         <ViewWrapper scroll avoidKeyboard className="py-6 px-2">
             <View className="gap-6">
                 {/* Guest Info Section */}
-                <GuestHeader
-                    guest={guest}
-                    currentUser={user}
-                    progressPercentage={progress}
-                    onCall={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
-                    onWhatsApp={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
-                    assimilationStage={assimilationStagesIndex[guest?.assimilationStageId] ?? ''}
-                    stageColor={getStageColor(assimilationStagesIndex[guest?.assimilationStageId] as AssimilationStage)}
-                />
+                {guestProps ? (
+                    <Button
+                        variant="outline"
+                        icon={<X className="mr-2 w-5 h-5 text-destructive" />}
+                        className="flex-1 border-destructive"
+                        onPress={onCancelSubmitEnagegment}
+                        size="sm"
+                    >
+                        I didn't contact this guest
+                    </Button>
+                ) : (
+                    <GuestHeader
+                        guest={guest}
+                        currentUser={user}
+                        progressPercentage={progress}
+                        onCall={openPhoneAndPersist(guest, ContactChannel.CALL, dispatch)}
+                        onWhatsApp={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
+                        assimilationStage={assimilationStagesIndex[guest?.assimilationStageId] ?? ''}
+                        stageColor={getStageColor(
+                            assimilationStagesIndex[guest?.assimilationStageId] as AssimilationStage
+                        )}
+                    />
+                )}
 
                 {/* Milestones Section */}
                 {/* TODO: TBD */}
