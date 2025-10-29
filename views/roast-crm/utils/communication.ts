@@ -19,16 +19,18 @@ export const openPhoneAndPersist =
             throw new Error('Device cannot open tel: URL');
         }
 
-        await Linking.openURL(url);
+        const opened = await Linking.openURL(url);
 
-        dispatch(
-            roastCRMActions.pushOutgoingCall({
-                id,
-                type,
-                guest,
-                startedAt,
-            })
-        );
+        if (opened) {
+            dispatch(
+                roastCRMActions.pushOutgoingCall({
+                    id,
+                    type,
+                    guest,
+                    startedAt,
+                })
+            );
+        }
 
         return { id, startedAt };
     };
