@@ -9,15 +9,6 @@ export const openPhoneAndPersist =
         const id = guest._id;
         const startedAt = new Date().toISOString();
 
-        dispatch(
-            roastCRMActions.pushOutgoingCall({
-                id,
-                type,
-                guest,
-                startedAt,
-            })
-        );
-
         // open dialer
         const url = type === ContactChannel.CALL ? `tel:${guest.phoneNumber}` : `https://wa.me/${guest.phoneNumber}`;
         const can = await Linking.canOpenURL(url);
@@ -29,5 +20,15 @@ export const openPhoneAndPersist =
         }
 
         await Linking.openURL(url);
+
+        dispatch(
+            roastCRMActions.pushOutgoingCall({
+                id,
+                type,
+                guest,
+                startedAt,
+            })
+        );
+
         return { id, startedAt };
     };
