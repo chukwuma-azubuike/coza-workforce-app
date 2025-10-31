@@ -2,6 +2,7 @@ import { Linking } from 'react-native';
 import { ContactChannel, Guest } from '~/store/types';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { roastCRMActions } from '~/store/actions/roast-crm';
+
 export const openPhoneAndPersist =
     (guest: Guest, type: ContactChannel, dispatch: Dispatch) =>
     async (): Promise<{ id: string; startedAt: string }> => {
