@@ -22,8 +22,8 @@ const CallPromptManager: React.FC = () => {
 
     useEffect(() => {
         const handleAppState = (nextState: AppStateStatus) => {
-            // if we went from background/inactive -> active, trigger prompt flow
-            if (appStateRef.current.match(/inactive|background/) && nextState === 'active') {
+            // if we went from background -> active, trigger prompt flow
+            if (appStateRef.current.match(/background/) && nextState === 'active') {
                 triggerPromptFlow();
             }
             appStateRef.current = nextState;
