@@ -1,9 +1,9 @@
+import React from 'react';
 import { Text } from '~/components/ui/text';
 import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
@@ -120,7 +120,7 @@ const UserDetails: React.FC = () => {
         departmentId: data?.department._id,
     } as IReAssignUserPayload;
 
-    const submitForm: FormikConfig<IReAssignUserPayload>['onSubmit'] = async (values, { resetForm }) => {
+    const submitForm: FormikConfig<IReAssignUserPayload>['onSubmit'] = async values => {
         try {
             const result = await updateUser({ ...values, _id } as unknown as IEditProfilePayload);
 
