@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Progress } from '~/components/ui/progress';
@@ -75,7 +75,12 @@ export function GuestHeader({
     };
 
     return (
-        <Formik<Guest> initialValues={guest} onSubmit={onSubmit} validationSchema={GuestFormValidationSchema}>
+        <Formik<Guest>
+            enableReinitialize
+            onSubmit={onSubmit}
+            initialValues={guest}
+            validationSchema={GuestFormValidationSchema}
+        >
             {({ handleChange, handleBlur, handleSubmit, errors, values }) => {
                 return (
                     <Card>
@@ -197,7 +202,6 @@ export function GuestHeader({
                                         error={errors.phoneNumber}
                                         value={values.phoneNumber}
                                         placeholder="Enter phone number"
-                                        defaultValue={values.phoneNumber}
                                         selectedCountry={selectedCountry}
                                         onBlur={handleBlur('phoneNumber')}
                                         onChangeSelectedCountry={handleSelectedCountry}
