@@ -80,16 +80,33 @@ export function GuestHeader({
                 return (
                     <Card>
                         <CardContent className="p-6 gap-6">
-                            <View className="absolute z-10 top-4 right-4 gap-2 flex-row">
+                            <View className="flex-1 flex-row justify-end gap-2">
+                                {isEditMode && (
+                                    <TouchableOpacity
+                                        activeOpacity={0.6}
+                                        onPress={handleMode('view')}
+                                        className="!h-8 px-3 rounded-xl border border-destructive justify-center"
+                                    >
+                                        <Text className="my-auto">Cancel</Text>
+                                    </TouchableOpacity>
+                                )}
                                 {updating ? (
                                     <Loading />
+                                ) : isEditMode ? (
+                                    <TouchableOpacity
+                                        activeOpacity={0.6}
+                                        onPress={handleSubmit as any}
+                                        className="!h-8 px-3 rounded-xl border border-blue-500 justify-center"
+                                    >
+                                        <Text className="my-auto">Save</Text>
+                                    </TouchableOpacity>
                                 ) : (
                                     <TouchableOpacity
                                         activeOpacity={0.6}
+                                        onPress={handleMode('edit')}
                                         className="!h-8 px-3 rounded-xl border border-border justify-center"
-                                        onPress={isEditMode ? (handleSubmit as any) : handleMode('edit')}
                                     >
-                                        <Text className="my-auto">{isEditMode ? 'Done' : 'Edit'}</Text>
+                                        <Text className="my-auto">Edit</Text>
                                     </TouchableOpacity>
                                 )}
                             </View>
@@ -107,10 +124,10 @@ export function GuestHeader({
                                 <View className="flex-1 gap-1">
                                     {isEditMode ? (
                                         <View className="gap-2 flex-row">
-                                            <View className="gap-1">
+                                            <View className="gap-1 flex-1">
                                                 <Input
                                                     autoFocus
-                                                    className="!h-10"
+                                                    className="!h-10 w-full"
                                                     value={values.firstName}
                                                     placeholder="First name"
                                                     onChangeText={handleChange('firstName')}
@@ -119,9 +136,9 @@ export function GuestHeader({
                                                     <FormErrorMessage>{errors?.firstName}</FormErrorMessage>
                                                 )}
                                             </View>
-                                            <View className="gap-1">
+                                            <View className="gap-1 flex-1">
                                                 <Input
-                                                    className="!h-10"
+                                                    className="!h-10 w-full"
                                                     value={values.lastName}
                                                     placeholder="Last name"
                                                     onChangeText={handleChange('lastName')}
@@ -154,15 +171,7 @@ export function GuestHeader({
                             <View className="flex-row gap-2">
                                 <Button
                                     variant="outline"
-                                    icon={
-                                        <Icon
-                                            className="mr-2"
-                                            type="feather"
-                                            name="phone"
-                                            size={22}
-                                            color={THEME_CONFIG.blue}
-                                        />
-                                    }
+                                    icon={<Icon type="feather" name="phone" size={22} color={THEME_CONFIG.blue} />}
                                     className="flex-1"
                                     onPress={onCall}
                                     size="sm"
@@ -188,6 +197,7 @@ export function GuestHeader({
                                         error={errors.phoneNumber}
                                         value={values.phoneNumber}
                                         placeholder="Enter phone number"
+                                        defaultValue={values.phoneNumber}
                                         selectedCountry={selectedCountry}
                                         onBlur={handleBlur('phoneNumber')}
                                         onChangeSelectedCountry={handleSelectedCountry}
