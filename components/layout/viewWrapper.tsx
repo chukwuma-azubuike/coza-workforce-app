@@ -32,7 +32,7 @@ const ViewWrapper = forwardRef<any, IViewWrapperProps>(
             refreshing = false,
             onRefresh,
             avoidKeyboard = false,
-            avoidKeyboardOffset = Platform.OS === 'ios' ? 88 : 80,
+            avoidKeyboardOffset = Platform.OS === 'ios' ? 24 : 20,
             avoidKeyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
             style,
             className,
