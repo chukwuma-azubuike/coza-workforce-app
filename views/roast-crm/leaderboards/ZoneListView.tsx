@@ -6,20 +6,34 @@ import { Progress } from '~/components/ui/progress';
 
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
-import { WorkerLeaderboardEntry, ZoneLeaderboardEntry } from '~/store/types';
+import { ZoneLeaderboardEntry } from '~/store/types';
 import { getRankIcon, getTrendIcon } from '../utils/icons';
-import AvatarComponent from '~/components/atoms/avatar';
 
-export const ZoneListView: React.FC<ZoneLeaderboardEntry> = ({ zone, points, position, trend }) => {
+export const ZoneListView: React.FC<ZoneLeaderboardEntry> = ({
+    zoneId,
+    zoneName,
+    campusId,
+    coordinators,
+    workersCount,
+    workers,
+    totalGuests,
+    conversion,
+    calls,
+    visits,
+    points = Math.round(Math.random() * 1000),
+    position = Math.round(Math.random() * 10),
+    conversionRates,
+    trend,
+}) => {
     return (
-        <Card key={zone} className="w-full">
+        <Card key={zoneId} className="w-full">
             <CardContent className="p-4 gap-2">
                 <View className="flex-row items-start sm:items-center gap-4 w-full">
                     <View className="flex-row items-center justify-between gap-4 w-full">
                         <View className="flex-row items-center gap-4">
                             <Text>{getRankIcon(position ?? 1)}</Text>
                             <View>
-                                <Text className="text-base text-muted-foreground">{zone} Zone</Text>
+                                <Text className="text-2xl font-semibold">{zoneName} Zone</Text>
                             </View>
                         </View>
                         <View>
@@ -40,24 +54,24 @@ export const ZoneListView: React.FC<ZoneLeaderboardEntry> = ({ zone, points, pos
                     </View>
                 </View>
 
-                {/* <View className="flex-row gap-4 text-center">
+                <View className="flex-row gap-4 text-center">
                     <View className="flex-auto items-center">
                         <Text className="font-bold text-blue-600">{conversion}</Text>
                         <Text className="text-base text-muted-foreground">Conversions</Text>
                     </View>
                     <View className="flex-auto items-center">
-                        <Text className="font-bold text-green-600">{guestCount}</Text>
+                        <Text className="font-bold text-green-600">{totalGuests}</Text>
                         <Text className="text-base text-muted-foreground">Guests</Text>
                     </View>
                     <View className="flex-auto items-center">
-                        <Text className="font-bold text-purple-600">{callsCounts}</Text>
+                        <Text className="font-bold text-purple-600">{calls}</Text>
                         <Text className="text-base text-muted-foreground">Calls</Text>
                     </View>
                     <View className="flex-auto items-center">
-                        <Text className="font-bold text-orange-600">{visitsCounts}</Text>
+                        <Text className="font-bold text-orange-600">{visits}</Text>
                         <Text className="text-base text-muted-foreground">Visits</Text>
                     </View>
-                </View> */}
+                </View>
 
                 {/* {achievement.length > 0 && (
                     <View className="mt-3 flex-row flex-wrap gap-1">
