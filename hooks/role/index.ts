@@ -25,6 +25,7 @@ export const roles = {
     AHOD: 'AHOD',
     Admin: 'admin',
     Worker: 'worker',
+    'Zonal Coordinator': 'zonalCoordinator',
     'Group Head': 'groupHead',
     'Super Admin': 'superAdmin',
     'Global Admin': 'globalAdmin',
@@ -49,9 +50,10 @@ export const departments = {
 
 export enum ROLE_HEIRARCHY {
     'worker' = 1,
-    'AHOD' = 2,
-    'HOD' = 2,
-    'internshipHOD' = 2, // Frontend generated
+    'zonalCoordinator' = 2,
+    'AHOD' = 3,
+    'HOD' = 3,
+    'internshipHOD' = 3, // Frontend generated
     // 'qcHOD' = 1, // Frontend generated
     'campusCoordinator' = 5,
     'campusPastor' = 5,
