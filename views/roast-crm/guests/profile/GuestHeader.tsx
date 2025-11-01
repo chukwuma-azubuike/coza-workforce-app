@@ -9,7 +9,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { Alert } from '~/components/ui/alert';
-import { useGetZonesQuery, useUpdateGuestMutation } from '~/store/services/roast-crm';
+import { useGetZonesQuery, useGetZoneUsersQuery, useUpdateGuestMutation } from '~/store/services/roast-crm';
 import { Input } from '~/components/ui/input';
 import { Formik } from 'formik';
 import { GuestFormValidationSchema } from '../../utils/validation';
@@ -21,6 +21,9 @@ import useZoneIndex from '../../hooks/use-zone-index';
 import Loading from '~/components/atoms/loading';
 import formatToE164 from '~/utils/formatToE164';
 import { Icon } from '@rneui/base';
+import { useGetUserByIdQuery } from '~/store/services/account';
+import { Skeleton } from '~/components/ui/skeleton';
+import useRole from '~/hooks/role';
 
 interface GuestHeaderProps {
     guest: Guest;
@@ -41,12 +44,16 @@ export function GuestHeader({
     currentUser,
     assimilationStage,
 }: GuestHeaderProps) {
+    const { isZonalCoordinator, isHOD, isAHOD, isSuperAdmin } = useRole();
     const [updateGuest, { isLoading: updating }] = useUpdateGuestMutation();
     const [mode, setMode] = useState<'edit' | 'view'>('view');
     const isEditMode = mode === 'edit';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const { data: zones = [] } = useGetZonesQuery({ campusId: currentUser?.campus._id });
+    const { data: zoneUsers } = useGetZoneUsersQuery({ zoneId: guest?.zoneId }); //TODO: Supposed to get users by zoneId
     const zoneIndex = useZoneIndex();
+    const { data: assignedTo, isLoading: loadingAssignedTo } = useGetUserByIdQuery(guest?.assignedToId as string);
+    const canReAssign = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
 
     const handleMode = (mode: 'edit' | 'view') => () => {
         setMode(mode);
@@ -197,16 +204,21 @@ export function GuestHeader({
                             {/* Contact Details */}
                             <View className="gap-3">
                                 {isEditMode ? (
-                                    <PhoneInput
-                                        defaultCountry="NG"
-                                        error={errors.phoneNumber}
-                                        value={values.phoneNumber}
-                                        placeholder="Enter phone number"
-                                        selectedCountry={selectedCountry}
-                                        onBlur={handleBlur('phoneNumber')}
-                                        onChangeSelectedCountry={handleSelectedCountry}
-                                        onChangePhoneNumber={handleChange('phoneNumber')}
-                                    />
+                                    <View className="items-center gap-2">
+                                        <PhoneInput
+                                            defaultCountry="NG"
+                                            error={errors.phoneNumber}
+                                            value={values.phoneNumber}
+                                            placeholder="Enter phone number"
+                                            selectedCountry={selectedCountry}
+                                            onBlur={handleBlur('phoneNumber')}
+                                            onChangeSelectedCountry={handleSelectedCountry}
+                                            onChangePhoneNumber={handleChange('phoneNumber')}
+                                        />
+                                        {errors?.phoneNumber && (
+                                            <FormErrorMessage>{errors?.phoneNumber}</FormErrorMessage>
+                                        )}
+                                    </View>
                                 ) : (
                                     <View className="flex-row items-center gap-2">
                                         <Icon
@@ -265,6 +277,37 @@ export function GuestHeader({
                                         <Text className="flex-1">{zoneIndex[guest.zoneId]}</Text>
                                     )}
                                 </View>
+
+                                {loadingAssignedTo ? (
+                                    <Skeleton className="w-full h-7" />
+                                ) : isEditMode && canReAssign ? (
+                                    <View className="flex-row items-center gap-2">
+                                        <Icon type="feather" name="user" size={22} color={THEME_CONFIG.blue} />
+                                        <View className="flex-1">
+                                            <PickerSelect
+                                                valueKey="_id"
+                                                className="!h-12"
+                                                items={zoneUsers || []}
+                                                placeholder="Reassign to another worker"
+                                                value={values.assignedToId as string}
+                                                onValueChange={handleChange('assignedToId') as any}
+                                                customLabel={user => `${user.firstName} ${user.lastName}`}
+                                            />
+                                            {errors?.assignedToId && (
+                                                <FormErrorMessage>{errors?.assignedToId}</FormErrorMessage>
+                                            )}
+                                        </View>
+                                    </View>
+                                ) : (
+                                    <View className="flex-row items-center gap-2">
+                                        <Icon type="feather" name="user" size={22} color={THEME_CONFIG.blue} />
+                                        <Text className="flex-1">
+                                            Assigned to {assignedTo?.firstName} {assignedTo?.lastName} (
+                                            {assignedTo?.department?.departmentName})
+                                        </Text>
+                                    </View>
+                                )}
+
                                 <View className="flex-row items-center gap-2">
                                     <Icon type="feather" name="calendar" size={22} color={THEME_CONFIG.blue} />
                                     <Text className="flex-1">Added {new Date(guest.createdAt).toLocaleString()}</Text>

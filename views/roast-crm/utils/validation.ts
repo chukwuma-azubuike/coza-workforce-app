@@ -10,11 +10,12 @@ export const GuestFormValidationSchema = Yup.object().shape({
         .phone(countryCodeIso as any, 'Please enter a valid phone number')
         .required('A phone number is required'),
     zoneId: Yup.string().required('Please select a zone'),
-    gender: Yup.string().required('Your gender is required.'),
+    gender: Yup.string().required('Gender is required.'),
     comment: Yup.string().optional(),
     assimilationStageId: Yup.string(),
     nextAction: Yup.string().optional(),
     assimilationSubStageId: Yup.string(),
+    assignedToId: Yup.string().required('Must be assigned to a user'),
 });
 
 export const ZoneFormValidationSchema = Yup.object().shape({

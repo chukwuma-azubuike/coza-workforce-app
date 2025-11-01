@@ -172,7 +172,7 @@ const useRole = () => {
         isHOD: roleName === ROLES.AHOD,
         isAHOD: roleName === ROLES.HOD,
         isAdmin: roleName === ROLES.admin,
-        isWorker: roleName === ROLES.worker,
+        isWorker: roleName === ROLES.worker || roleName === ROLES.zonalCoordinator,
         isZonalCoordinator: roleName === ROLES.zonalCoordinator,
         isGroupHead: roleName === ROLES.groupHead,
         isSuperAdmin: roleName === ROLES.superAdmin,
