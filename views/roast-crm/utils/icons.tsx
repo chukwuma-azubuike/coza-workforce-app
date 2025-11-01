@@ -1,5 +1,6 @@
 import { Award, Medal, TrendingUp, Trophy } from 'lucide-react-native';
 import { View } from 'react-native';
+import { Text } from '~/components/ui/text';
 
 export const getRankIcon = (position: number) => {
     switch (position) {
@@ -12,7 +13,7 @@ export const getRankIcon = (position: number) => {
         default:
             return (
                 <View className="w-6 h-6 flex-row items-center justify-center bg-gray-200 rounded-full text-sm font-medium">
-                    {position}
+                    <Text>{position}</Text>
                 </View>
             );
     }

@@ -113,7 +113,9 @@ const Leaderboards: React.FC = () => {
                         style={{ flex: 0 }}
                         data={workerLeaderboard}
                         renderItemComponent={renderWorkerItem}
-                        emptyComponent={<Loading className="mt-8" />}
+                        emptyComponent={
+                            <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>
+                        }
                     />
                 </TabsContent>
 
@@ -123,7 +125,9 @@ const Leaderboards: React.FC = () => {
                         style={{ flex: 0 }}
                         data={zoneLeaderboard}
                         renderItemComponent={renderZoneItem}
-                        emptyComponent={<Loading className="mt-8" />}
+                        emptyComponent={
+                            <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>
+                        }
                     />
                 </TabsContent>
             </Tabs>

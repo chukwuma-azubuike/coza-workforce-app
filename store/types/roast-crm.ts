@@ -250,13 +250,56 @@ export interface ZoneStats {
     avgResponseTime: string;
 }
 
+// TODO: Suspended from legacy
+// export interface ZoneLeaderboardEntry {
+//     zone: string;
+//     coordinator: string;
+//     stats: ZoneStats;
+//     points: number;
+//     position: number;
+//     trend: TrendDirection;
+// }
+
+export interface Worker {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
+    pictureUrl: string;
+}
+
+export interface ConversionBreakdown {
+    invitedCount: number;
+    attendedCount: number;
+    discipleCount: number;
+    joinedCount: number;
+    totalGuests: number;
+}
+
+export interface ConversionRates {
+    invitedToAttended: number;
+    attendedToDisciple: number;
+    discipleToJoined: number;
+    attendedToJoined: number;
+    breakdown: ConversionBreakdown;
+}
+
 export interface ZoneLeaderboardEntry {
-    zone: string;
-    coordinator: string;
-    stats: ZoneStats;
-    points: number;
     position: number;
-    trend: TrendDirection;
+    points: number;
+    zoneId: string;
+    zoneName: string;
+    campusId: string;
+    coordinators: any[]; // If you have a structure for coordinators, replace `any` with it
+    workersCount: number;
+    workers: Worker[];
+    totalGuests: number;
+    conversion: number;
+    calls: number;
+    visits: number;
+    conversionRates: ConversionRates;
+    trend: string; // e.g. "up"
 }
 
 export enum AchievementRarity {
