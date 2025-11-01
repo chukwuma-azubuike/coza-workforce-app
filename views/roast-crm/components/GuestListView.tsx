@@ -49,7 +49,7 @@ export const GuestRow: React.FC<{
         <View className="py-4 w-full border-t border-t-border">
             <Pressable onPress={handleViewGuest}>
                 <View className="flex-row items-start justify-between mb-2">
-                    <View className="flex-row items-center gap-2">
+                    <View className="flex-row items-center gap-2 flex-1">
                         <Avatar alt="profile-avatar" className="w-12 h-12">
                             <AvatarFallback className="text-xs">
                                 <Text className="w-full text-center">
@@ -65,24 +65,24 @@ export const GuestRow: React.FC<{
                             <Text className="font-bold text-xl">
                                 {guest.firstName} {guest.lastName}
                             </Text>
-                            <View className="flex-row gap-1 items-center">
-                                <Icon type="ionicon" name="location-outline" size={12} color={THEME_CONFIG.blue} />
-                                <Text className="text-xs text-foreground w-full">{zoneIndex[guest.zoneId]}</Text>
-                            </View>
+                            {zoneIndex[guest.zoneId] && (
+                                <View className="flex-row gap-1 items-center">
+                                    <Icon type="ionicon" name="location-outline" size={12} color={THEME_CONFIG.blue} />
+                                    <Text className="text-xs text-foreground w-full">{zoneIndex[guest.zoneId]}</Text>
+                                </View>
+                            )}
                         </View>
                     </View>
 
-                    <View className="flex-row gap-1 items-center">
-                        <PickerSelect
-                            valueKey="_id"
-                            labelKey="name"
-                            className="!w-36 !h-10"
-                            placeholder="Select stage"
-                            items={assimilationSubStages}
-                            value={guest?.assimilationSubStageId}
-                            onValueChange={handleGuestMove}
-                        />
-                    </View>
+                    <PickerSelect
+                        valueKey="_id"
+                        labelKey="name"
+                        className="!w-36 !h-10"
+                        placeholder="Select stage"
+                        items={assimilationSubStages}
+                        value={guest?.assimilationSubStageId}
+                        onValueChange={handleGuestMove}
+                    />
                 </View>
 
                 <View className="gap-3">
