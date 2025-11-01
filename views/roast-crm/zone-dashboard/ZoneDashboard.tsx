@@ -34,15 +34,17 @@ import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
 import KanbanColumn from '../components/KanbanColumn';
 import KanbanUICard from '../components/KanbanCard';
 import Error from '~/components/atoms/error';
+import Utils from '~/utils';
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
 
 const ZoneDashboard: React.FC = () => {
     const { user, isZonalCoordinator, isHOD, isAHOD } = useRole();
     const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
-    const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id });
+    const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id }); //TODO: departmentId query param is yet to work
+    const sortedDepartmentZones = useMemo(() => Utils.sortStringAscending(departmentZones, 'name'), [departmentZones]);
     const [selectedZone, setSelectedZone] = useState<string | undefined>(
-        departmentZones ? departmentZones[0]?._id : undefined
+        sortedDepartmentZones ? (sortedDepartmentZones as any)?.[0]?._id : undefined
     );
 
     useEffect(() => {
@@ -75,6 +77,7 @@ const ZoneDashboard: React.FC = () => {
         departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
         campusId: user.campus._id,
     });
+    const sortedZones = useMemo(() => Utils.sortStringAscending(zones, 'name'), [zones]);
     const [updateGuest] = useUpdateGuestMutation();
     const {
         data: workers = [],
@@ -86,6 +89,7 @@ const ZoneDashboard: React.FC = () => {
         page: 1,
         limit: 100,
     });
+    const sortedWorkers = useMemo(() => Utils.sortStringAscending(workers, 'name'), [workers]);
 
     const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
 
@@ -215,7 +219,7 @@ const ZoneDashboard: React.FC = () => {
                             placeholder="All Zones"
                             isLoading={loadingZones}
                             onValueChange={setSelectedZone}
-                            items={hasZoneRights ? departmentZones ?? [] : zones}
+                            items={hasZoneRights ? sortedDepartmentZones ?? [] : sortedZones}
                         />
                     </View>
 
@@ -223,7 +227,7 @@ const ZoneDashboard: React.FC = () => {
                     <View className="flex-1">
                         <PickerSelect
                             valueKey="_id"
-                            items={workers}
+                            items={sortedWorkers}
                             className="!h-10"
                             labelKey="firstName"
                             value={selectedWorker}
