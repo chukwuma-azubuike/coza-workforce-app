@@ -37,7 +37,7 @@ const GuestProfile: React.FC<GuestProfileProps> = ({
     const guestParams = guestProps ?? (useLocalSearchParams() as unknown as Guest);
     const guestId = guestParams?._id;
 
-    const { data: guestRemote, isLoading } = useGetGuestByIdQuery(guestParams?._id, { skip: !!guestParams });
+    const { data: guestRemote } = useGetGuestByIdQuery(guestParams?._id, { skip: !guestParams });
     const { data: timeline = [], isLoading: loadingTimeline } = useGetTimelineQuery({ guestId }, { skip: !guestId });
     const assimilationStagesIndex = useAssimilationStageIndex();
     const guest = guestRemote ?? guestParams;
@@ -49,7 +49,7 @@ const GuestProfile: React.FC<GuestProfileProps> = ({
         [guest.assimilationSubStageId, assimilationSubStagePositionIndex]
     );
 
-    if (!guestId || !guest || isLoading) {
+    if (!guestId || !guest) {
         return (
             <View className="px-4 py-6 gap-6">
                 {[...Array(3)].map((_, i) => (
