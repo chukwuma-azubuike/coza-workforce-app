@@ -7,7 +7,7 @@ import { ThunkDispatch } from '@reduxjs/toolkit';
 import { IStore } from '~/store';
 import { useLogoutMutation } from '~/store/services/account';
 import { useNotifications } from '../push-notifications/useNotifications';
-import { Alert } from 'react-native';
+// import { Alert } from 'react-native';
 
 export const useAuth = () => {
     const user = useAppSelector(userSelectors.selectCurrentUser);
@@ -26,13 +26,14 @@ export const useAuth = () => {
                 logOutfn(dispatch);
             }
             if (res.error) {
-                console.log(res.error);
-                Alert.alert(
-                    (res.error as any)?.error ?? (res.error as any)?.data?.message ?? 'Oops something went wrong'
-                );
+                // TODO: False Error returned from the server. Need to fix this.
+                // Alert.alert(
+                //     (res.error as any)?.error ?? (res.error as any)?.data?.message ?? 'Oops something went wrong'
+                // );
             }
         } catch (error) {
-            Alert.alert((error as any)?.error ?? (error as any)?.data?.message ?? 'Oops something went wrong');
+            // TODO: False Error returned from the server. Need to fix this.
+            // Alert.alert((error as any)?.error ?? (error as any)?.data?.message ?? 'Oops something went wrong');
         }
     };
 
