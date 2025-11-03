@@ -35,8 +35,8 @@ const NotificationModal: React.FC = () => {
 
     return (
         <Dialog open={open || !!render || !!message} onOpenChange={hideModal}>
-            <DialogContent className="h-72 !w-20" showClose={false}>
-                <View className="justify-center mx-auto">
+            <DialogContent className="max-h-[60%] !w-20 p-3" showClose={false}>
+                <View className="justify-center mx-auto w-full">
                     <View className="w-full gap-2 rounded-2xl bg-transparent">
                         {render ? (
                             <ModalAlertComponent
