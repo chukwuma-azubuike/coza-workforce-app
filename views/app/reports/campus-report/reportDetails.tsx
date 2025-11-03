@@ -34,8 +34,6 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Button } from '~/components/ui/button';
 
-const DEPARTMENTAL_REPORT_COUNT = 6;
-
 const CampusReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ICampusReport & { campusName: string };
     const { serviceId, campusId } = params;
@@ -274,7 +272,7 @@ const CampusReport: React.FC = () => {
 
     const onSubmit = async (values: IGSPReportPayload) => {
         //Ensure all departmental reports are approved before submitting
-        if (values?.submittedReportIds?.length < DEPARTMENTAL_REPORT_COUNT) {
+        if (values?.submittedReportIds?.length < (data?.departmentalReport?.length ?? 0)) {
             setModalState({
                 message: 'Kindly ensure all departmental reports have been approved',
                 status: 'info',

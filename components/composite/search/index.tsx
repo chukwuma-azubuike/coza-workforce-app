@@ -150,6 +150,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 header={
                     <Input
                         autoFocus
+                        autoCorrect={false}
                         clearButtonMode="always"
                         placeholder="Search"
                         onChangeText={handleTextChange}
