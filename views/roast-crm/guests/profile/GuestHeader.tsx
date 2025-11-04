@@ -24,6 +24,7 @@ import { Icon } from '@rneui/base';
 import { useGetUserByIdQuery } from '~/store/services/account';
 import { Skeleton } from '~/components/ui/skeleton';
 import useRole from '~/hooks/role';
+import * as Haptics from 'expo-haptics';
 
 interface GuestHeaderProps {
     guest: Guest;
@@ -56,6 +57,7 @@ export function GuestHeader({
     const canReAssign = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
 
     const handleMode = (mode: 'edit' | 'view') => () => {
+        Haptics.selectionAsync();
         setMode(mode);
     };
 
