@@ -206,7 +206,7 @@ const ZoneDashboard: React.FC = () => {
         <View className="flex-1 bg-background pt-2 gap-4">
             {/* Header */}
             <View className="gap-4 px-2">
-                <View className="flex-row items-center gap-4">
+                <View className="flex-row items-start gap-4">
                     <Text className="text-2xl font-bold !w-[35%] leading-none">{selectedZoneName ?? 'All Zones'}</Text>
 
                     {/* Zone Selector */}
