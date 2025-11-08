@@ -1,5 +1,6 @@
 export const getProgressPercentage = (position: number, subStageCount = 7) => {
-    return Number((((position + 1) / subStageCount) * 100).toFixed(0) ?? 0);
+    const percent = Number((((position + 1) / subStageCount) * 100).toFixed(0) ?? 0);
+    return isNaN(percent) ? 0 : percent;
 };
 
 export const getDaysSinceContact = (lastContact: Date | undefined | null) => {
