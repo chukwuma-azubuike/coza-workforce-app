@@ -17,7 +17,7 @@ export function StatCard({ value, label, color, valueUnit = '' }: StatCardProps)
                     {value.toFixed(0) ?? 0}
                     {valueUnit}
                 </Text>
-                <Text className="text-foreground line-clamp- text-center">{label}</Text>
+                <Text className="text-foreground line-clamp-2 !break-words text-center">{label}</Text>
             </CardContent>
         </Card>
     );
