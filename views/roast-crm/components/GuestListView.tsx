@@ -18,11 +18,13 @@ import { useAppDispatch } from '~/store/hooks';
 export const GuestRow: React.FC<{
     guest: Guest;
     index: number;
+    type?: 'own' | 'zone';
     onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
     onViewGuest: (guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
-}> = ({ guest, onViewGuest, assimilationSubStages, onGuestUpdate }) => {
+}> = ({ guest, onViewGuest, type, assimilationSubStages, onGuestUpdate }) => {
     const dispatch = useAppDispatch();
+    const isOwn = type === 'own';
 
     const zoneIndex = useZoneIndex();
     const handleGuestMove = async (newStageId: string) => {
@@ -86,19 +88,22 @@ export const GuestRow: React.FC<{
                 </View>
 
                 <View className="gap-3">
-                    <View className="flex-row items-center justify-between text-xs w-full">
-                        <Text className="text-foreground flex-1">Progress</Text>
-                        <Text className="text-foreground flex-1 text-right">{progress}% complete</Text>
-                    </View>
+                    {isOwn && (
+                        <View className="flex-row items-center justify-between text-xs w-full">
+                            <Text className="text-foreground flex-1">Progress</Text>
+                            <Text className="text-foreground flex-1 text-right">{progress}% complete</Text>
+                        </View>
+                    )}
 
-                    <View className="w-full bg-secondary rounded-full h-2">
-                        <View
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${progress}%` }}
-                        />
-                    </View>
-
-                    {guest.nextAction && (
+                    {isOwn && (
+                        <View className="w-full bg-secondary rounded-full h-2">
+                            <View
+                                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                style={{ width: `${progress}%` }}
+                            />
+                        </View>
+                    )}
+                    {guest.nextAction && isOwn && (
                         <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2">
                             <Text className="font-bold">Next Action: </Text>
                             <Text className="line-clamp-none">{guest.nextAction}</Text>
