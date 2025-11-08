@@ -280,7 +280,7 @@ const ZoneDashboard: React.FC = () => {
                             columnContainerStyle={{ flex: 1 }}
                             columnData={transformedAssimilationSubStages}
                             renderColumnContainer={renderContentContainer}
-                            renderItem={guest => <KanbanUICard guest={guest} />}
+                            renderItem={guest => <KanbanUICard type="zone" guest={guest} />}
                         />
                     )
                 ) : (
