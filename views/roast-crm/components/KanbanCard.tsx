@@ -17,10 +17,12 @@ import { useAppDispatch } from '~/store/hooks';
 
 interface KanbanCardProps {
     guest: Guest;
+    type?: 'own' | 'zone';
 }
 
-const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
+const KanbanUICard: React.FC<KanbanCardProps> = ({ guest, type = 'own' }) => {
     const dispatch = useAppDispatch();
+    const isOwn = type === 'own';
 
     const zoneIndex = useZoneIndex();
     const assimilationSubStagePositionIndex = useAssimilationSubStagePositionIndex();
@@ -76,21 +78,23 @@ const KanbanUICard: React.FC<KanbanCardProps> = ({ guest }) => {
                     </View>
 
                     <View className="gap-3">
-                        <View>
-                            <View className="flex-row items-center justify-between text-xs mb-1">
-                                <Text className="text-foreground flex-1">Progress</Text>
-                                <Text className="text-foreground flex-1 text-right">{progress}% complete</Text>
-                            </View>
+                        {isOwn && (
+                            <View>
+                                <View className="flex-row items-center justify-between text-xs mb-1">
+                                    <Text className="text-foreground flex-1">Progress</Text>
+                                    <Text className="text-foreground flex-1 text-right">{progress}% complete</Text>
+                                </View>
 
-                            <View className="w-full bg-secondary rounded-full h-2">
-                                <View
-                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${progress}%` }}
-                                />
+                                <View className="w-full bg-secondary rounded-full h-2">
+                                    <View
+                                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                        style={{ width: `${progress}%` }}
+                                    />
+                                </View>
                             </View>
-                        </View>
+                        )}
 
-                        {guest.nextAction && (
+                        {guest.nextAction && isOwn && (
                             <View className="text-xs bg-yellow-50 dark:bg-yellow-400/20 border border-yellow-200 dark:border-yellow-500/20 rounded p-2">
                                 <Text className="font-bold flex-1">Next Action: </Text>
                                 <Text className="flex-1">{guest.nextAction}</Text>
