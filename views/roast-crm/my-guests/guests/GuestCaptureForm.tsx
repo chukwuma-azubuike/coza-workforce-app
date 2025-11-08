@@ -105,6 +105,7 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
     );
 
     const INITIAL_VALUES = {
+        assignedToId: currentUser._id ?? currentUser?.userId,
         zoneId: defaultZone?._id as string,
         assimilationStageId: assimilationStages[0]?._id,
         assimilationSubStageId: assimilationSubStages[0]?._id,
@@ -219,7 +220,7 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
                                         valueKey="_id"
                                         labelKey="name"
                                         className="!h-12"
-                                        placeholder="Enter your gender"
+                                        placeholder="Select a gender"
                                         value={values?.gender}
                                         items={[
                                             { _id: 'M', name: 'Male' },

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import RNPickerSelect, { PickerSelectProps } from 'react-native-picker-select';
 import { Text } from './text';
 import { ChevronDown } from 'lucide-react-native';
