@@ -82,7 +82,8 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                                         {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
                                     </StatusTag>
                                 )}
-                                <StatusTag>{user?.status}</StatusTag>
+                                {/* TODO: Suspend rendering worker status until fixed from backend */}
+                                {/* <StatusTag>{user?.status}</StatusTag> */}
                             </View>
                         </TouchableOpacity>
                     </UserContextMenu>
