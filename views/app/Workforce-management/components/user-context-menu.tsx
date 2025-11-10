@@ -48,7 +48,8 @@ const UserContextMenu: React.FC<{ children: ReactNode; user: IUser }> = ({ child
                                         {isHOD ? 'HOD' : isAHOD ? 'AHOD' : ('' as any)}
                                     </StatusTag>
                                 )}
-                                <StatusTag>{user?.status}</StatusTag>
+                                {/* TODO: Suspend rendering worker status until fixed from backend */}
+                                {/* <StatusTag>{user?.status}</StatusTag> */}
                             </View>
                         </ContextMenu.Preview>
                         <ContextMenu.Item key="1" onSelect={issueTicket}>
