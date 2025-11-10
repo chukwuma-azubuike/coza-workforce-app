@@ -32,9 +32,6 @@ const PermissionDetails: React.FC = () => {
 
     const { requestor, _id, screen } = permissionParams;
 
-    const requestorId = requestor?._id;
-    const requestorRoleId = requestor?.roleId;
-
     const { user, isHOD, isAHOD, isGlobalPastor, isCampusPastor, isQC } = useRole();
 
     const {
@@ -44,6 +41,9 @@ const PermissionDetails: React.FC = () => {
         isLoading: permissionLoading,
         isFetching: permissionIsFetching,
     } = useGetPermissionByIdQuery(_id);
+
+    const requestorId = requestor?._id ?? permission?.requestor._id;
+    const requestorRoleId = requestor?.roleId ?? requestor?.roleId;
 
     const [permissionComment, setPermissionComment] = React.useState<IUpdatePermissionPayload['comment']>(
         permission?.comment as string
@@ -166,7 +166,7 @@ const PermissionDetails: React.FC = () => {
     const requestorRoleName = useRoleName(requestorRoleId)?.name;
 
     const takePermissionAction = React.useMemo(() => {
-        if (requestorId === user._id) {
+        if (requestorId === (user._id ?? user.userId)) {
             return false;
         }
         if (isQC && permission?.department._id !== user.department._id) {
@@ -180,7 +180,7 @@ const PermissionDetails: React.FC = () => {
         }
 
         return true;
-    }, [permission, requestorId, user?._id, isQC, permission?.department?._id, user?.department?._id]);
+    }, [permission, requestorId, user?._id, user?.userId, isQC, permission?.department?._id, user?.department?._id]);
 
     return (
         <ViewWrapper className="py-10 px-2" scroll refreshing={permissionLoading}>
@@ -254,8 +254,8 @@ const PermissionDetails: React.FC = () => {
                             {!isHOD && !isAHOD && !isCampusPastor
                                 ? "Leader's comment"
                                 : (isAHOD || isHOD) && requestorId === user.userId
-                                  ? "Pastor's comment"
-                                  : 'Comment'}
+                                ? "Pastor's comment"
+                                : 'Comment'}
                         </Text>
                         {!permission?.comment && (
                             <TextAreaComponent onChangeText={handleChange} isDisabled={!takePermissionAction} />
