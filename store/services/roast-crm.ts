@@ -385,7 +385,7 @@ export const roastCrmApi = createApi({
         addZone: builder.mutation<Zone, CreateZonePayload>({
             query: body => ({
                 url: '/zones',
-                method: REST_API_VERBS.PUT,
+                method: REST_API_VERBS.POST,
                 body,
             }),
             invalidatesTags: ['Zone'],
@@ -394,7 +394,7 @@ export const roastCrmApi = createApi({
         updateZone: builder.mutation<Zone, Zone>({
             query: ({ _id, ...body }) => ({
                 url: `/zones/${_id}`,
-                method: REST_API_VERBS.POST,
+                method: REST_API_VERBS.PUT,
                 body,
             }),
             invalidatesTags: ['Zone'],
@@ -623,55 +623,13 @@ export const roastCrmApi = createApi({
         // Analytics Queries
         getGlobalAnalytics: builder.query<GlobalAnalytics, RoastDashboardPayload>({
             query: params => ({
-                url: `/zones`,
-                // url: `/analytics/global`,
+                // url: `/zones`,
+                url: `/analytics/global`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            transformResponse() {
-                return {
-                    totalGuests: mockStageDistribution.reduce((sum, stage) => sum + stage.value, 0),
-                    conversionRate: Math.round(
-                        ((mockStageDistribution.find(s => s.name === 'Joined')?.value || 0) /
-                            mockStageDistribution.reduce((sum, stage) => sum + stage.value, 0)) *
-                            100
-                    ),
-                    avgTimeToConversion: 42,
-                    activeWorkers: 25,
-                    monthlyTrends: [
-                        { month: 'Jul', newGuests: 28, converted: 5 },
-                        { month: 'Aug', newGuests: 35, converted: 8 },
-                        { month: 'Sep', newGuests: 42, converted: 12 },
-                        { month: 'Oct', newGuests: 38, converted: 10 },
-                        { month: 'Nov', newGuests: 45, converted: 15 },
-                        { month: 'Dec', newGuests: 52, converted: 18 },
-                    ],
-                    zonePerformance: [
-                        { zone: 'Central', invited: 45, attended: 32, discipled: 18, joined: 12, conversion: 27 },
-                        { zone: 'North', invited: 38, attended: 28, discipled: 15, joined: 8, conversion: 21 },
-                        { zone: 'South', invited: 52, attended: 35, discipled: 22, joined: 15, conversion: 29 },
-                        { zone: 'East', invited: 41, attended: 29, discipled: 16, joined: 10, conversion: 24 },
-                        { zone: 'West', invited: 36, attended: 24, discipled: 14, joined: 9, conversion: 25 },
-                    ],
-                    stageDistribution: [
-                        { name: 'Invited', value: 212, color: '#3B82F6' },
-                        { name: 'Attended', value: 148, color: '#10B981' },
-                        { name: 'Discipled', value: 85, color: '#8B5CF6' },
-                        { name: 'Joined', value: 54, color: '#6B7280' },
-                    ],
-                    dropOffAnalysis: [
-                        { stage: 'Invited → Attended', dropOff: 30, reason: 'No follow-up call' },
-                        { stage: 'Attended → Discipled', dropOff: 43, reason: 'Not invited to small group' },
-                        { stage: 'Discipled → Joined', dropOff: 36, reason: 'Lack of mentorship' },
-                    ],
-                    topPerformers: [
-                        { name: 'John Worker', zone: 'Central', conversions: 8, trend: TrendDirection.UP },
-                        { name: 'Mary Helper', zone: 'South', conversions: 7, trend: TrendDirection.UP },
-                        { name: 'Paul Evangelist', zone: 'North', conversions: 6, trend: TrendDirection.STABLE },
-                        { name: 'Sarah Minister', zone: 'East', conversions: 5, trend: TrendDirection.DOWN },
-                        { name: 'David Pastor', zone: 'West', conversions: 5, trend: TrendDirection.UP },
-                    ],
-                };
+            transformResponse(res: IDefaultResponse<GlobalAnalytics>) {
+                return res.data ?? GlobalAnalyticsPayload;
             },
             providesTags: ['Analytics'],
         }),
@@ -710,3 +668,47 @@ export const {
     useUpdateNotificationRuleMutation,
     useGetZoneDashboardQuery,
 } = roastCrmApi;
+
+const GlobalAnalyticsPayload = {
+    totalGuests: mockStageDistribution.reduce((sum, stage) => sum + stage.value, 0),
+    conversionRate: Math.round(
+        ((mockStageDistribution.find(s => s.name === 'Joined')?.value || 0) /
+            mockStageDistribution.reduce((sum, stage) => sum + stage.value, 0)) *
+            100
+    ),
+    avgTimeToConversion: 42,
+    activeWorkers: 25,
+    monthlyTrends: [
+        { month: 'Jul', newGuests: 28, converted: 5 },
+        { month: 'Aug', newGuests: 35, converted: 8 },
+        { month: 'Sep', newGuests: 42, converted: 12 },
+        { month: 'Oct', newGuests: 38, converted: 10 },
+        { month: 'Nov', newGuests: 45, converted: 15 },
+        { month: 'Dec', newGuests: 52, converted: 18 },
+    ],
+    zonePerformance: [
+        { zone: 'Central', invited: 45, attended: 32, discipled: 18, joined: 12, conversion: 27 },
+        { zone: 'North', invited: 38, attended: 28, discipled: 15, joined: 8, conversion: 21 },
+        { zone: 'South', invited: 52, attended: 35, discipled: 22, joined: 15, conversion: 29 },
+        { zone: 'East', invited: 41, attended: 29, discipled: 16, joined: 10, conversion: 24 },
+        { zone: 'West', invited: 36, attended: 24, discipled: 14, joined: 9, conversion: 25 },
+    ],
+    stageDistribution: [
+        { name: 'Invited', value: 212, color: '#3B82F6' },
+        { name: 'Attended', value: 148, color: '#10B981' },
+        { name: 'Discipled', value: 85, color: '#8B5CF6' },
+        { name: 'Joined', value: 54, color: '#6B7280' },
+    ],
+    dropOffAnalysis: [
+        { stage: 'Invited → Attended', dropOff: 30, reason: 'No follow-up call' },
+        { stage: 'Attended → Discipled', dropOff: 43, reason: 'Not invited to small group' },
+        { stage: 'Discipled → Joined', dropOff: 36, reason: 'Lack of mentorship' },
+    ],
+    topPerformers: [
+        { name: 'John Worker', zone: 'Central', conversions: 8, trend: TrendDirection.UP },
+        { name: 'Mary Helper', zone: 'South', conversions: 7, trend: TrendDirection.UP },
+        { name: 'Paul Evangelist', zone: 'North', conversions: 6, trend: TrendDirection.STABLE },
+        { name: 'Sarah Minister', zone: 'East', conversions: 5, trend: TrendDirection.DOWN },
+        { name: 'David Pastor', zone: 'West', conversions: 5, trend: TrendDirection.UP },
+    ],
+};

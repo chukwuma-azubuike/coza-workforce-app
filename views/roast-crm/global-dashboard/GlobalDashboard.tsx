@@ -20,11 +20,10 @@ import { LeaderboardPayload } from '~/store/types';
 import Error from '~/components/atoms/error';
 
 type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
-type ZoneId = 'all' | 'central' | 'north' | 'south' | 'east' | 'west';
 type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
 
 const GlobalDashboard: React.FC = () => {
-    const [selectedZone, setSelectedZone] = useState<ZoneId>('all');
+    const [selectedZone, setSelectedZone] = useState<string>();
     const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
@@ -51,7 +50,7 @@ const GlobalDashboard: React.FC = () => {
     const { data: zones = [] } = useGetZonesQuery();
 
     const handleZoneChange = useCallback((option: Option) => {
-        setSelectedZone(option?.value as ZoneId);
+        setSelectedZone(option?.value);
     }, []);
 
     const handleTabChange = useCallback((value: string) => {
@@ -88,7 +87,7 @@ const GlobalDashboard: React.FC = () => {
     }
 
     if (error) {
-        return <Error />;
+        return <Error message={(error as any)?.data?.msg} />;
     }
 
     if (!analytics) {
