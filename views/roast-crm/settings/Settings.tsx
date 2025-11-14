@@ -1,7 +1,7 @@
 import React, { Suspense, useState } from 'react';
 import { View } from 'react-native';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { useGetCampusZonesQuery } from '~/store/services/roast-crm';
+import { useGetZonesQuery } from '~/store/services/roast-crm';
 import { Text } from '~/components/ui/text';
 import PickerSelect from '~/components/ui/picker-select';
 import { Skeleton } from '~/components/ui/skeleton';
@@ -22,7 +22,7 @@ const Settings: React.FC = () => {
     const [selectedCampus, setSelectedCampus] = useState<string>(user?.campus._id as string);
     const [selectedTab, setSelectedTab] = useState<TabValues>('zones');
 
-    const { isLoading, data: zones = [] } = useGetCampusZonesQuery(selectedCampus as string, { skip: !selectedCampus });
+    const { isLoading, data: zones = [] } = useGetZonesQuery({ campusId: selectedCampus }, { skip: !selectedCampus });
     const { data: campuses = [] } = useGetCampusesQuery();
 
     const [modalVisible, setModalVisible] = useState(false);

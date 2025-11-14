@@ -35,7 +35,7 @@ const ZoneListItem: React.FC<Zone & { openModal: (zone: Zone) => void }> = ({ op
                     <View className="flex-row flex-wrap gap-2">
                         {departments?.map(dept => (
                             <Badge variant="outline" key={dept.id}>
-                                <Text className="text-base">{dept.name}</Text>
+                                <Text className="text-base text-green-500">{dept.name}</Text>
                             </Badge>
                         ))}
                     </View>
@@ -57,7 +57,7 @@ const ZoneListItem: React.FC<Zone & { openModal: (zone: Zone) => void }> = ({ op
                     <View className="flex-row items-center justify-between text-xs">
                         <View className="flex-row items-center gap-2 text-foreground">
                             <Clock className="w-3 h-3" />
-                            <Text className="text-base">Created on {dayjs(createdAt).format('DD/MM/YYYY')}</Text>
+                            <Text className="text-base text-muted-foreground">Created on {dayjs(createdAt).format('DD/MM/YYYY')}</Text>
                         </View>
                     </View>
                 </View>
