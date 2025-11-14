@@ -1,5 +1,5 @@
-import React, { ReactNode, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { Dimensions, View } from 'react-native';
+import React, { ReactNode, Suspense, useCallback, useMemo, useState } from 'react';
+import { Dimensions, ScrollView, View } from 'react-native';
 import { AssimilationStage, Guest } from '~/store/types';
 import {
     useGetAssimilationSubStagesQuery,
@@ -35,6 +35,7 @@ import KanbanColumn from '../components/KanbanColumn';
 import KanbanUICard from '../components/KanbanCard';
 import Error from '~/components/atoms/error';
 import Utils from '~/utils';
+import { RefreshControl } from 'react-native';
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
 
@@ -46,12 +47,6 @@ const ZoneDashboard: React.FC = () => {
     const [selectedZone, setSelectedZone] = useState<string | undefined>(
         sortedDepartmentZones ? (sortedDepartmentZones as any)?.[0]?._id : undefined
     );
-
-    useEffect(() => {
-        if (!selectedZone && departmentZones) {
-            setSelectedZone(departmentZones ? departmentZones[0]?._id : undefined);
-        }
-    }, [selectedZone, departmentZones]);
 
     const [selectedWorker, setSelectedWorker] = useState<string>();
     const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
@@ -72,7 +67,10 @@ const ZoneDashboard: React.FC = () => {
         isFetching,
         error: guestsError,
         data: guests = [],
-    } = useGetGuestsQuery({ assignedToId: selectedWorker, search, zoneId: selectedZone }, { pollingInterval: 10000 });
+    } = useGetGuestsQuery(
+        { assignedToId: selectedWorker, search, zoneId: selectedZone ?? undefined },
+        { pollingInterval: 10000 }
+    );
     const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
         departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
         campusId: user.campus._id,
@@ -205,46 +203,52 @@ const ZoneDashboard: React.FC = () => {
     return (
         <View className="flex-1 bg-background pt-2 gap-4">
             {/* Header */}
-            <View className="gap-4 px-2">
-                <View className="flex-row items-start gap-4">
-                    <Text className="text-2xl font-bold !w-[35%] leading-none">{selectedZoneName ?? 'All Zones'}</Text>
+            <View>
+                <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
+                    <View className="gap-4 px-2">
+                        <View className="flex-row items-start gap-4">
+                            <Text className="text-2xl font-bold !w-[35%] leading-none">
+                                {selectedZoneName ?? 'All Zones'}
+                            </Text>
 
-                    {/* Zone Selector */}
-                    <View className="flex-1">
-                        <PickerSelect
-                            valueKey="_id"
-                            labelKey="name"
-                            className="!h-10"
-                            value={selectedZone}
-                            placeholder="All Zones"
-                            isLoading={loadingZones}
-                            onValueChange={setSelectedZone}
-                            items={hasZoneRights ? sortedDepartmentZones ?? [] : sortedZones}
+                            {/* Zone Selector */}
+                            <View className="flex-1">
+                                <PickerSelect
+                                    valueKey="_id"
+                                    labelKey="name"
+                                    className="!h-10"
+                                    value={selectedZone}
+                                    placeholder="All Zones"
+                                    isLoading={loadingZones}
+                                    onValueChange={setSelectedZone}
+                                    items={hasZoneRights ? sortedDepartmentZones ?? [] : sortedZones}
+                                />
+                            </View>
+
+                            {/* Worker Selector */}
+                            <View className="flex-1">
+                                <PickerSelect
+                                    valueKey="_id"
+                                    items={sortedWorkers}
+                                    className="!h-10"
+                                    labelKey="firstName"
+                                    value={selectedWorker}
+                                    placeholder="All Workers"
+                                    onValueChange={setSelectedWorker}
+                                    isLoading={loadingWorkers || fetchingWorkers}
+                                    customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
+                                />
+                            </View>
+                        </View>
+
+                        <ZoneStats
+                            totalGuests={zoneDashboard?.totalGuests ?? 0}
+                            conversionRate={zoneDashboard?.conversionRates.discipleToJoined ?? 0}
+                            activeThisWeek={zoneDashboard?.totalActiveUsers ?? 0}
+                            totalWorkers={zoneDashboard?.totalWorker ?? 0}
                         />
                     </View>
-
-                    {/* Worker Selector */}
-                    <View className="flex-1">
-                        <PickerSelect
-                            valueKey="_id"
-                            items={sortedWorkers}
-                            className="!h-10"
-                            labelKey="firstName"
-                            value={selectedWorker}
-                            placeholder="All Workers"
-                            onValueChange={setSelectedWorker}
-                            isLoading={loadingWorkers || fetchingWorkers}
-                            customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
-                        />
-                    </View>
-                </View>
-
-                <ZoneStats
-                    totalGuests={zoneDashboard?.totalGuests ?? 0}
-                    conversionRate={zoneDashboard?.conversionRates.discipleToJoined ?? 0}
-                    activeThisWeek={zoneDashboard?.totalActiveUsers ?? 0}
-                    totalWorkers={zoneDashboard?.totalWorker ?? 0}
-                />
+                </ScrollView>
             </View>
 
             <View className="px-2 flex-row items-center gap-2 w-full justify-between">
