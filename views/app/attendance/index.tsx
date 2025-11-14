@@ -9,7 +9,7 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import { router, useLocalSearchParams } from 'expo-router';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 
 const ROUTES = [
@@ -77,28 +77,26 @@ const Attendance: React.FC = () => {
 
     return (
         <ErrorBoundary>
-            <SafeAreaView className="flex-1">
-                <View className="flex-1 pt-4">
-                    <TabComponent
-                        onIndexChange={setIndex}
-                        renderScene={renderScene}
-                        navigationState={{ index, routes: allRoutes }}
-                        tabBarScroll={allRoutes.length > 2 && isMobile}
+            <View className="flex-1 pt-4">
+                <TabComponent
+                    onIndexChange={setIndex}
+                    renderScene={renderScene}
+                    navigationState={{ index, routes: allRoutes }}
+                    tabBarScroll={allRoutes.length > 2 && isMobile}
+                />
+                <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
+                    <StaggerButtonComponent
+                        buttons={[
+                            {
+                                color: 'bg-green-600',
+                                iconName: 'download-outline',
+                                handleClick: goToExport,
+                                iconType: 'ionicon',
+                            },
+                        ]}
                     />
-                    <If condition={isCampusPastor || isGlobalPastor || isQcHOD}>
-                        <StaggerButtonComponent
-                            buttons={[
-                                {
-                                    color: 'bg-green-600',
-                                    iconName: 'download-outline',
-                                    handleClick: goToExport,
-                                    iconType: 'ionicon',
-                                },
-                            ]}
-                        />
-                    </If>
-                </View>
-            </SafeAreaView>
+                </If>
+            </View>
         </ErrorBoundary>
     );
 };

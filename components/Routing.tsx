@@ -8,6 +8,8 @@ import { userSelectors } from '~/store/actions/users';
 import { NotificationsProvider } from './NotificationsProvider';
 import inAppUpdates from '~/utils/in-app-updates';
 import { useAuth } from '~/hooks/auth';
+import { cn } from '~/lib/utils';
+import { Platform } from 'react-native';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -34,7 +36,7 @@ const Routing: React.FC = () => {
 
     return (
         <NotificationsProvider user={user || ({} as any)}>
-            <View className="flex-1">
+            <View className={cn('flex-1', Platform.OS === 'android' && 'pt-6')}>
                 <NotificationModal />
                 <Stack>
                     <Stack.Screen name="index" options={{ headerShown: false }} />
