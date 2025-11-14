@@ -45,8 +45,8 @@ const ConnectionStatusBar: React.FC = () => {
                 opacity,
             }}
         >
-            <SafeAreaComp className={cn(netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive')}>
-                <View className="flex-1 pb-2">
+            <SafeAreaComp className={cn('pt-2', netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive')}>
+                <View className={cn('flex-1 pb-2', Platform.OS === 'android' && 'pt-4')}>
                     <Text className="text-center absolute bottom-0 w-full !text-base text-white">{`${
                         netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
                     }`}</Text>

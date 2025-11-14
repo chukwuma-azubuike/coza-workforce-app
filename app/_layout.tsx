@@ -86,7 +86,9 @@ export default function RootLayout() {
                     <Provider store={store}>
                         <PersistGate loading={<Loading bootUp />} persistor={persistor}>
                             <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-                                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                                {Platform.OS !== 'android' && (
+                                    <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                                )}
                                 <ConnectionStatusBar />
                                 <ErrorBoundary>
                                     <Routing />
