@@ -357,25 +357,13 @@ export const roastCrmApi = createApi({
         }),
 
         // Zone Queries
-        getZones: builder.query<Zone[], IDefaultQueryParams | void>({
-            query: () => ({
+        getZones: builder.query<Zone[], IDefaultQueryParams>({
+            query: params => ({
                 url: `/zones`,
                 method: REST_API_VERBS.GET,
+                params,
             }),
             transformResponse: (res: IDefaultResponse<{ data: Zone[] }>) => res.data.data,
-            providesTags: result =>
-                result
-                    ? [...result.map(({ _id }) => ({ type: 'Zone' as const, _id }))]
-                    : [{ type: 'Zone', _id: 'LIST' }],
-        }),
-
-        getCampusZones: builder.query<Zone[], string>({
-            query: campusId => ({
-                url: `/zones/${campusId}`,
-                method: REST_API_VERBS.GET,
-                params: { campusId },
-            }),
-            transformResponse: (res: IDefaultResponse<{ zones: Zone[] }>) => res.data.zones,
             providesTags: result =>
                 result
                     ? [...result.map(({ _id }) => ({ type: 'Zone' as const, _id }))]
@@ -646,7 +634,6 @@ export const {
     useGetZonesQuery,
     useAddZoneMutation,
     useUpdateZoneMutation,
-    useGetCampusZonesQuery,
     useGetUsersQuery,
     useGetTimelineQuery,
     useAddTimelineMutation,
