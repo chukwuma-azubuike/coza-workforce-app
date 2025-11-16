@@ -121,8 +121,10 @@ function PickerSelect<T extends ValidPickerItem>({
         (nextValue: any, index: number) => {
             const strVal = nextValue === null ? undefined : String(nextValue);
 
-            setValue(strVal);
-            onValueChange?.(strVal as any, index);
+            if (typeof strVal === 'string') {
+                setValue(strVal);
+                onValueChange?.(strVal as any, index);
+            }
         },
         [onValueChange]
     );
