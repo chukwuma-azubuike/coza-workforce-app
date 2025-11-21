@@ -22,7 +22,7 @@ export const GuestRow: React.FC<{
     onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
     onViewGuest: (guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
-}> = ({ guest, onViewGuest, type, assimilationSubStages, onGuestUpdate }) => {
+}> = ({ guest, onViewGuest, type = 'own', assimilationSubStages, onGuestUpdate }) => {
     const dispatch = useAppDispatch();
     const isOwn = type === 'own';
 
@@ -48,7 +48,7 @@ export const GuestRow: React.FC<{
     );
 
     return (
-        <View className="py-4 w-full border-t border-t-border">
+        <View className="pt-4 w-full border-t border-t-border">
             <Pressable onPress={handleViewGuest}>
                 <View className="flex-row items-start justify-between mb-2">
                     <View className="flex-row items-center gap-2 flex-1">
@@ -85,6 +85,21 @@ export const GuestRow: React.FC<{
                         value={guest?.assimilationSubStageId}
                         onValueChange={handleGuestMove}
                     />
+
+                    {!isOwn && (
+                        <View className="absolute -bottom-4 right-4 flex-row items-center gap-2 text-foreground flex-1 justify-center">
+                            <Icon type="feather" size={12} name="clock" color={THEME_CONFIG.blue} />
+                            <Text className="text-base">
+                                {daysSinceContact === null
+                                    ? 'No contact'
+                                    : daysSinceContact === 0
+                                    ? 'Today'
+                                    : daysSinceContact === 1
+                                    ? 'Yesterday'
+                                    : `${daysSinceContact} days ago`}
+                            </Text>
+                        </View>
+                    )}
                 </View>
 
                 <View className="gap-3">
@@ -110,39 +125,41 @@ export const GuestRow: React.FC<{
                         </View>
                     )}
 
-                    <View className="flex-row items-center justify-between text-xs">
-                        <View className="flex-row items-center gap-2 text-foreground flex-1">
-                            <Icon type="feather" name="clock" color={THEME_CONFIG.blue} />
-                            <Text className="flex-1">
-                                {daysSinceContact === null
-                                    ? 'No contact'
-                                    : daysSinceContact === 0
-                                    ? 'Today'
-                                    : daysSinceContact === 1
-                                    ? 'Yesterday'
-                                    : `${daysSinceContact} days ago`}
-                            </Text>
-                        </View>
+                    {isOwn && (
+                        <View className="flex-row items-center justify-between text-xs">
+                            <View className="flex-row items-center gap-2 text-foreground flex-1">
+                                <Icon type="feather" name="clock" color={THEME_CONFIG.blue} />
+                                <Text className="flex-1">
+                                    {daysSinceContact === null
+                                        ? 'No contact'
+                                        : daysSinceContact === 0
+                                        ? 'Today'
+                                        : daysSinceContact === 1
+                                        ? 'Yesterday'
+                                        : `${daysSinceContact} days ago`}
+                                </Text>
+                            </View>
 
-                        <View className="flex-row gap-2">
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-6 px-2"
-                                onPress={openPhoneAndPersist(guest, ContactChannel.CALL, dispatch)}
-                            >
-                                <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
-                            </Button>
-                            <Button
-                                size="sm"
-                                variant="outline"
-                                className="h-6 px-2"
-                                onPress={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
-                            >
-                                <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
-                            </Button>
+                            <View className="flex-row gap-2">
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2"
+                                    onPress={openPhoneAndPersist(guest, ContactChannel.CALL, dispatch)}
+                                >
+                                    <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-6 px-2"
+                                    onPress={openPhoneAndPersist(guest, ContactChannel.WHATSAPP, dispatch)}
+                                >
+                                    <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
+                                </Button>
+                            </View>
                         </View>
-                    </View>
+                    )}
                 </View>
             </Pressable>
         </View>
@@ -152,12 +169,14 @@ export const GuestRow: React.FC<{
 const GuestListView: React.FC<{
     isLoading?: boolean;
     refetch: () => void;
+    type?: 'own' | 'zone';
     displayGuests: Guest[];
     containerHeight: number;
     handleViewGuest: (Guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
     onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
 }> = ({
+    type,
     handleViewGuest,
     refetch,
     isLoading,
@@ -169,6 +188,7 @@ const GuestListView: React.FC<{
     const renderItemComponent = useCallback(
         ({ item }: { item: any; index: number }) => (
             <GuestRow
+                type={type}
                 onGuestUpdate={onGuestUpdate}
                 assimilationSubStages={assimilationSubStages}
                 onViewGuest={handleViewGuest}
@@ -189,12 +209,12 @@ const GuestListView: React.FC<{
             </View>
 
             <FlatListComponent
-                itemHeight={231.7}
                 onRefresh={refetch}
                 data={displayGuests}
                 isLoading={isLoading}
                 refreshing={isLoading}
                 style={{ height: containerHeight }}
+                itemHeight={type === 'zone' ? 72 : 231.7}
                 renderItemComponent={renderItemComponent}
                 ListFooterComponentStyle={{ marginBottom: 0 }}
             />
