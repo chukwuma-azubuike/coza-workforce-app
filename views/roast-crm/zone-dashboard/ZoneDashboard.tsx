@@ -254,8 +254,9 @@ const ZoneDashboard: React.FC = () => {
             <View className="px-2 flex-row items-center gap-2 w-full justify-between">
                 <View className="flex-1">
                     <SearchAndFilter
-                        viewMode={viewMode}
+                        viewMode="list"
                         searchTerm={search}
+                        showModeToggle={false}
                         stageFilter={stageFilter}
                         setSearchTerm={denouncedSearch}
                         setStageFilter={setStageFilter}
@@ -268,7 +269,8 @@ const ZoneDashboard: React.FC = () => {
 
             {/* View Guests */}
             <View className="flex-1">
-                {viewMode === 'kanban' ? (
+                {/* TODO: Disable kanban view for Zone Dashboard */}
+                {/* {viewMode === 'kanban' ? (
                     subStagesLoading ? (
                         <View className="flex-row gap-5 pl-2 flex-1 pb-2">
                             <KanbanColumnSkeleton />
@@ -287,19 +289,20 @@ const ZoneDashboard: React.FC = () => {
                             renderItem={guest => <KanbanUICard type="zone" guest={guest} />}
                         />
                     )
-                ) : (
-                    <Suspense fallback={<Loading cover />}>
-                        <GuestListView
-                            refetch={refetch}
-                            isLoading={isLoading}
-                            onGuestUpdate={onGuestUpdate}
-                            handleViewGuest={handleViewGuest}
-                            containerHeight={kanbanContainerHeight}
-                            displayGuests={displayGuests as Guest[]}
-                            assimilationSubStages={assimilationSubStages}
-                        />
-                    </Suspense>
-                )}
+                ) : ( */}
+                <Suspense fallback={<Loading cover />}>
+                    <GuestListView
+                        type="zone"
+                        refetch={refetch}
+                        isLoading={isLoading}
+                        onGuestUpdate={onGuestUpdate}
+                        handleViewGuest={handleViewGuest}
+                        containerHeight={kanbanContainerHeight}
+                        displayGuests={displayGuests as Guest[]}
+                        assimilationSubStages={assimilationSubStages}
+                    />
+                </Suspense>
+                {/* )} */}
             </View>
             <FloatButton
                 iconName="plus"

@@ -13,6 +13,7 @@ import { PipelineSubStage } from '~/store/types';
 interface SearchAndFilterProps {
     searchTerm: string;
     loading: boolean;
+    showModeToggle?: boolean;
     viewMode: 'kanban' | 'list';
     setViewMode: (arg: string) => void;
     setSearchTerm: (arg: string) => void;
@@ -28,6 +29,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     viewMode,
     stageFilter,
     setStageFilter,
+    showModeToggle = true,
     assimilationSubStages = [],
 }) => {
     const handleChange = (val: string) => {
@@ -70,20 +72,22 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                 />
             )}
 
-            <ToggleGroup
-                type="single"
-                value={viewMode}
-                className="w-max"
-                variant="outline"
-                onValueChange={handleChange as any}
-            >
-                <ToggleGroupItem isFirst value="kanban" aria-label="Kanban view">
-                    <Icon size={22} name="th-large" type="font-awesome" color={THEME_CONFIG.gray} />
-                </ToggleGroupItem>
-                <ToggleGroupItem isLast value="list" aria-label="List view">
-                    <List className="w-4 h-4 text-foreground" color="gray" />
-                </ToggleGroupItem>
-            </ToggleGroup>
+            {showModeToggle && (
+                <ToggleGroup
+                    type="single"
+                    value={viewMode}
+                    className="w-max"
+                    variant="outline"
+                    onValueChange={handleChange as any}
+                >
+                    <ToggleGroupItem isFirst value="kanban" aria-label="Kanban view">
+                        <Icon size={22} name="th-large" type="font-awesome" color={THEME_CONFIG.gray} />
+                    </ToggleGroupItem>
+                    <ToggleGroupItem isLast value="list" aria-label="List view">
+                        <List className="w-4 h-4 text-foreground" color="gray" />
+                    </ToggleGroupItem>
+                </ToggleGroup>
+            )}
         </View>
     );
 };
