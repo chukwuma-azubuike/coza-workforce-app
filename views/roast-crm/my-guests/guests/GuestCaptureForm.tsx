@@ -31,6 +31,7 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import { roastCRMActions } from '~/store/actions/roast-crm';
 import { useDispatch } from 'react-redux';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
 
 const QUICK_TIPS = [
     'Keep conversations natural, friendly and spiritual',
@@ -96,6 +97,32 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
                 }
 
                 if (res.error) {
+                    const alreadyExists = (res.error as any).data.data;
+                    if (alreadyExists) {
+                        Alert.alert(
+                            'Guest Already Exists',
+                            'A guest with this phone number already exists, we recommend you reach out to their assigned discipler to get the latest update on them.',
+                            [
+                                {
+                                    text: 'Cancel',
+                                    style: 'destructive',
+                                },
+                                {
+                                    text: 'View guest details',
+                                    onPress: () => {
+                                        router.push({
+                                            pathname: '/roast-crm/guests/profile',
+                                            params: alreadyExists,
+                                        });
+
+                                        setModalVisible();
+                                    },
+                                },
+                            ]
+                        );
+                        return;
+                    }
+
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
                     Alert.alert((res?.error as any)?.data?.message || 'Oops something went wrong');
                 }
