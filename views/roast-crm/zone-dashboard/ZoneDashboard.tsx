@@ -1,6 +1,16 @@
-import React, { ReactNode, Suspense, useCallback, useMemo, useState } from 'react';
+import React, {
+    // ReactNode,
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
 import { Dimensions, ScrollView, View } from 'react-native';
-import { AssimilationStage, Guest } from '~/store/types';
+import {
+    // AssimilationStage,
+    Guest,
+} from '~/store/types';
 import {
     useGetAssimilationSubStagesQuery,
     useGetGuestsQuery,
@@ -16,25 +26,29 @@ import { ZoneStats } from './components/ZoneStats';
 import useRole from '~/hooks/role';
 import Loading from '~/components/atoms/loading';
 
-import { columnDataType, DragEndParams, HeaderParams } from '~/components/Kanban/types';
+// import {
+// columnDataType,
+//     DragEndParams,
+//     HeaderParams,
+// } from '~/components/Kanban/types';
 
 import { router } from 'expo-router';
 
 import SearchAndFilter from '../components/SearchAndFilter';
 import PickerSelect from '~/components/ui/picker-select';
-import groupBy from 'lodash/groupBy';
+// import groupBy from 'lodash/groupBy';
 
-import ReactNativeKanbanBoard from '~/components/Kanban';
+// import ReactNativeKanbanBoard from '~/components/Kanban';
 import useDebounce from '~/hooks/debounce/use-debounce';
-import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
+// import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
 import { FloatButton } from '~/components/atoms/button';
 import useZoneIndex from '../hooks/use-zone-index';
-import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
+// import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
 
-import KanbanColumn from '../components/KanbanColumn';
-import KanbanUICard from '../components/KanbanCard';
-import Error from '~/components/atoms/error';
-import Utils from '~/utils';
+// import KanbanColumn from '../components/KanbanColumn';
+// import KanbanUICard from '../components/KanbanCard';
+// import Error from '~/components/atoms/error';
+
 import { RefreshControl } from 'react-native';
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
@@ -43,13 +57,22 @@ const ZoneDashboard: React.FC = () => {
     const { user, isZonalCoordinator, isHOD, isAHOD } = useRole();
     const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
     const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id }); //TODO: departmentId query param is yet to work
-    const sortedDepartmentZones = useMemo(() => Utils.sortStringAscending(departmentZones, 'name'), [departmentZones]);
     const [selectedZone, setSelectedZone] = useState<string | undefined>(
-        sortedDepartmentZones ? (sortedDepartmentZones as any)?.[0]?._id : undefined
+        departmentZones ? (departmentZones as any)?.[0]?._id : undefined
     );
 
+    useEffect(() => {
+        if (!selectedZone && departmentZones) {
+            setSelectedZone((departmentZones as any)?.[0]?._id);
+        }
+    }, [departmentZones, selectedZone]);
+
     const [selectedWorker, setSelectedWorker] = useState<string>();
-    const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban');
+    const [
+        ,
+        // viewMode
+        setViewMode,
+    ] = useState<'kanban' | 'list'>('kanban');
     const [stageFilter, setStageFilter] = useState<Guest['assimilationSubStageId'] | 'all'>('all');
 
     const [search, setSearch] = useState('');
@@ -58,14 +81,14 @@ const ZoneDashboard: React.FC = () => {
 
     const {
         data: assimilationSubStages = [],
-        isLoading: subStagesLoading,
-        error: subStagesError,
+        // isLoading: subStagesLoading,
+        // error: subStagesError,
     } = useGetAssimilationSubStagesQuery();
     const {
         refetch,
         isLoading,
         isFetching,
-        error: guestsError,
+        // error: guestsError,
         data: guests = [],
     } = useGetGuestsQuery(
         { assignedToId: selectedWorker, search, zoneId: selectedZone ?? undefined },
@@ -75,7 +98,7 @@ const ZoneDashboard: React.FC = () => {
         departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
         campusId: user.campus._id,
     });
-    const sortedZones = useMemo(() => Utils.sortStringAscending(zones, 'name'), [zones]);
+
     const [updateGuest] = useUpdateGuestMutation();
     const {
         data: workers = [],
@@ -87,37 +110,36 @@ const ZoneDashboard: React.FC = () => {
         page: 1,
         limit: 100,
     });
-    const sortedWorkers = useMemo(() => Utils.sortStringAscending(workers, 'name'), [workers]);
 
     const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
 
-    const assimilationStageIndex = useAssimilationStageIndex();
-    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
-    const assimilationSubStagesIndex = useMemo(
-        () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
-        [assimilationSubStages]
-    );
+    // const assimilationStageIndex = useAssimilationStageIndex();
+    // const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
+    // const assimilationSubStagesIndex = useMemo(
+    //     () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
+    //     [assimilationSubStages]
+    // );
 
-    const transformedAssimilationSubStages = useMemo(
-        (): columnDataType<Guest, HeaderParams>[] =>
-            assimilationSubStages.map((stage, index) => {
-                return {
-                    index,
-                    _id: stage._id,
-                    stageId: stage.assimilationStageId,
-                    items: groupedGuestsByAssimilationId[stage?._id] ?? [],
-                    header: {
-                        _id: stage._id,
-                        title: stage.name,
-                        subtitle: stage.descriptions,
-                        position: stage.order ?? index,
-                        stageId: stage.assimilationStageId,
-                        count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
-                    },
-                };
-            }),
-        [assimilationSubStages, groupedGuestsByAssimilationId]
-    );
+    // const transformedAssimilationSubStages = useMemo(
+    //     (): columnDataType<Guest, HeaderParams>[] =>
+    //         assimilationSubStages.map((stage, index) => {
+    //             return {
+    //                 index,
+    //                 _id: stage._id,
+    //                 stageId: stage.assimilationStageId,
+    //                 items: groupedGuestsByAssimilationId[stage?._id] ?? [],
+    //                 header: {
+    //                     _id: stage._id,
+    //                     title: stage.name,
+    //                     subtitle: stage.descriptions,
+    //                     position: stage.order ?? index,
+    //                     stageId: stage.assimilationStageId,
+    //                     count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
+    //                 },
+    //             };
+    //         }),
+    //     [assimilationSubStages, groupedGuestsByAssimilationId]
+    // );
 
     // Filter guests by current user and search term
     const userGuests = useMemo(
@@ -157,43 +179,43 @@ const ZoneDashboard: React.FC = () => {
         } catch (error) {}
     }, []);
 
-    const onDragEnd = useCallback(
-        async (params: DragEndParams) => {
-            const { fromColumnIndex, toColumnIndex, itemId: guestId } = params;
-            const assimilationSubStageId = assimilationSubStagesIndex[toColumnIndex];
+    // const onDragEnd = useCallback(
+    //     async (params: DragEndParams) => {
+    //         const { fromColumnIndex, toColumnIndex, itemId: guestId } = params;
+    //         const assimilationSubStageId = assimilationSubStagesIndex[toColumnIndex];
 
-            await onGuestUpdate(guestId, assimilationSubStageId as string);
+    //         await onGuestUpdate(guestId, assimilationSubStageId as string);
 
-            // no-op if dropped in same column
-            if (fromColumnIndex === toColumnIndex) return;
-        },
-        [assimilationSubStagesIndex]
-    );
+    //         // no-op if dropped in same column
+    //         if (fromColumnIndex === toColumnIndex) return;
+    //     },
+    //     [assimilationSubStagesIndex]
+    // );
 
     const handleAddGuest = () => {
         setModalVisible(prev => !prev);
     };
 
-    const renderContentContainer = useCallback(
-        (child: ReactNode, props: HeaderParams) => {
-            return (
-                <KanbanColumn
-                    title={props.title}
-                    isLoading={isLoading}
-                    subTitle={props.subtitle}
-                    guestCount={props.count}
-                    stage={assimilationStageIndex[props.stageId as string] as AssimilationStage}
-                >
-                    {child}
-                </KanbanColumn>
-            );
-        },
-        [isLoading, assimilationStageIndex]
-    );
+    // const renderContentContainer = useCallback(
+    //     (child: ReactNode, props: HeaderParams) => {
+    //         return (
+    //             <KanbanColumn
+    //                 title={props.title}
+    //                 isLoading={isLoading}
+    //                 subTitle={props.subtitle}
+    //                 guestCount={props.count}
+    //                 stage={assimilationStageIndex[props.stageId as string] as AssimilationStage}
+    //             >
+    //                 {child}
+    //             </KanbanColumn>
+    //         );
+    //     },
+    //     [isLoading, assimilationStageIndex]
+    // );
 
-    const handleProfileView = useCallback((guest: Guest) => {
-        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
-    }, []);
+    // const handleProfileView = useCallback((guest: Guest) => {
+    //     router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
+    // }, []);
 
     const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
@@ -221,7 +243,7 @@ const ZoneDashboard: React.FC = () => {
                                     placeholder="All Zones"
                                     isLoading={loadingZones}
                                     onValueChange={setSelectedZone}
-                                    items={hasZoneRights ? sortedDepartmentZones ?? [] : sortedZones}
+                                    items={hasZoneRights ? departmentZones ?? [] : zones}
                                 />
                             </View>
 
@@ -229,7 +251,7 @@ const ZoneDashboard: React.FC = () => {
                             <View className="flex-1">
                                 <PickerSelect
                                     valueKey="_id"
-                                    items={sortedWorkers}
+                                    items={workers}
                                     className="!h-10"
                                     labelKey="firstName"
                                     value={selectedWorker}
