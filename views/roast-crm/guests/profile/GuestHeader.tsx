@@ -51,7 +51,7 @@ export function GuestHeader({
     const isEditMode = mode === 'edit';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const { data: zones = [] } = useGetZonesQuery({ campusId: currentUser?.campus._id });
-    const { data: zoneUsers } = useGetZoneUsersQuery({ zoneId: guest?.zoneId }); //TODO: Supposed to get users by zoneId
+    const { data: zoneUsers } = useGetZoneUsersQuery({ zoneId: guest?.zoneId, limit: 1000 }); //TODO: Supposed to get users by zoneId
     const zoneIndex = useZoneIndex();
     const { data: assignedTo, isLoading: loadingAssignedTo } = useGetUserByIdQuery(guest?.assignedToId as string);
     const canReAssign = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
