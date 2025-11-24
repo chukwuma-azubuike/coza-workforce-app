@@ -54,12 +54,12 @@ class Utils {
      * @returns Sorted Array
      */
 
-    static sortStringAscending = (arrObject: Array<{ [key: string]: any }> = [], key: string) => {
+    static sortStringAscending<D = Record<string, any>>(arrObject: Array<D> = [], key: keyof D) {
         if (arrObject && typeof key === 'string') {
-            return [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+            return [...arrObject].sort((a, b) => ((a as any)[key] > (b as any)[key] ? 1 : -1));
         }
         return [];
-    };
+    }
 
     /**
      *

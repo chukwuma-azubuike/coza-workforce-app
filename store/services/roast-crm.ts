@@ -363,7 +363,8 @@ export const roastCrmApi = createApi({
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            transformResponse: (res: IDefaultResponse<{ data: Zone[] }>) => res.data.data,
+            transformResponse: (res: IDefaultResponse<{ data: Zone[] }>) =>
+                Utils.sortStringAscending(res.data.data, 'name'),
             providesTags: result =>
                 result
                     ? [...result.map(({ _id }) => ({ type: 'Zone' as const, _id }))]
@@ -476,7 +477,10 @@ export const roastCrmApi = createApi({
             providesTags: ['Zone'],
 
             transformResponse: (res: IDefaultResponse<ZoneUsersResponse>) =>
-                res.data.users?.map(worker => ({ ...worker.profile })),
+                Utils.sortStringAscending<ZoneUsersResponse['users'][0]['profile']>(
+                    res.data.users?.map(worker => ({ ...worker.profile })),
+                    'firstName'
+                ),
         }),
 
         // Leaderboard Queries
