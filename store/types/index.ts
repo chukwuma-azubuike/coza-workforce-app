@@ -41,6 +41,7 @@ export const SERVICE_TAGS = [
     { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
     { id: '12DG', value: '12DG' },
     { id: '7DG', value: '7DG' },
+    { id: 'OTHERS', value: 'Others' },
 ];
 
 export const Congress_SESSION_TAGS = [
