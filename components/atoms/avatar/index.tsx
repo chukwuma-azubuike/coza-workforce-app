@@ -46,6 +46,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                     }}
                     source={{
                         uri: imageUrl,
+                        cache: 'immutable',
                         priority: FastImage.priority.normal,
                     }}
                     onError={handleError}
