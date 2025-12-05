@@ -283,6 +283,7 @@ export interface ConversionRates {
     discipleToJoined: number;
     attendedToJoined: number;
     breakdown: ConversionBreakdown;
+    totalInvitedToJoined?: number;
 }
 
 export interface ZoneLeaderboardEntry {
@@ -328,6 +329,7 @@ export enum TrendDirection {
 
 export interface ZonePerformance {
     zone: string;
+    zoneId?: string;
     invited: number;
     attended: number;
     discipled: number;
@@ -355,21 +357,26 @@ export interface DropOffAnalysis {
 
 export interface TopPerformer {
     name: string;
-    zone: string;
+    zone?: string;
+    zoneId?: string;
     conversions: number;
     trend: TrendDirection;
 }
 
 export interface GlobalAnalytics {
     totalGuests: number;
-    conversionRate: number;
-    avgTimeToConversion: number;
-    activeWorkers: number;
+    totalConversions?: number;
+    totalActiveUsers?: number;
+    totalWorker?: number;
+    conversionRate?: number;
+    avgTimeToConversion?: number;
+    conversionRates?: ConversionRates;
     monthlyTrends: MonthlyTrend[];
     zonePerformance: ZonePerformance[];
     stageDistribution: StageDistributionItem[];
     dropOffAnalysis: DropOffAnalysis[];
-    topPerformers: TopPerformer[];
+    topPerformingWorkers: TopPerformer[];
+    topPerformingZones: TopPerformer[];
 }
 
 export interface RoastDashboardPayload {

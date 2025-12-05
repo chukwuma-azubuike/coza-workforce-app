@@ -8,7 +8,7 @@ import { Text } from '~/components/ui/text';
 import { DistributionChart } from './charts/DistributionChart';
 import { ZonePerformanceChart } from './charts/ZonePerformanceChart';
 import { TrendChart } from './charts/TrendChart';
-import { TopPerformers } from './performers/TopPerformers';
+import { TopPerformingWorkers, TopPerformingZones } from './performers/TopPerformers';
 import { DropoffAnalysis } from './analytics/DropoffAnalysis';
 import { RecommendationsCard } from './analytics/RecommendationsCard';
 import { StatsCard } from './StatsCard';
@@ -18,11 +18,13 @@ import { Skeleton } from '~/components/ui/skeleton';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { LeaderboardPayload } from '~/store/types';
 import Error from '~/components/atoms/error';
+import useRole from '~/hooks/role';
 
 type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
 type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
 
 const GlobalDashboard: React.FC = () => {
+    const { user } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>();
     const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
@@ -47,10 +49,10 @@ const GlobalDashboard: React.FC = () => {
         });
     }, []);
 
-    const { data: zones = [] } = useGetZonesQuery();
+    const { data: zones = [] } = useGetZonesQuery({});
 
     const handleZoneChange = useCallback((option: Option) => {
-        setSelectedZone(option?.value);
+        setSelectedZone((option as unknown as string) ?? undefined);
     }, []);
 
     const handleTabChange = useCallback((value: string) => {
@@ -64,6 +66,7 @@ const GlobalDashboard: React.FC = () => {
     } = useGetGlobalAnalyticsQuery({
         ...date,
         zoneId: selectedZone,
+        campusId: user.campus?._id,
     });
 
     if (isLoading) {
@@ -86,164 +89,170 @@ const GlobalDashboard: React.FC = () => {
         );
     }
 
-    if (error) {
-        return <Error message={(error as any)?.data?.msg} />;
-    }
-
-    if (!analytics) {
-        return null;
-    }
-
-    const recommendations = [
-        {
-            title: 'Improve Follow-up Process',
-            description: "30% of invited guests aren't being followed up. Consider automated reminders.",
-            type: 'info' as const,
-        },
-        {
-            title: 'Small Group Integration',
-            description: 'South Zone shows best attendance-to-discipleship conversion. Replicate their model.',
-            type: 'success' as const,
-        },
-        {
-            title: 'Mentorship Program',
-            description: '36% drop-off from discipled to joined suggests need for better mentorship matching.',
-            type: 'warning' as const,
-        },
-    ];
+    // const recommendations = [
+    //     {
+    //         title: 'Improve Follow-up Process',
+    //         description: "30% of invited guests aren't being followed up. Consider automated reminders.",
+    //         type: 'info' as const,
+    //     },
+    //     {
+    //         title: 'Small Group Integration',
+    //         description: 'South Zone shows best attendance-to-discipleship conversion. Replicate their model.',
+    //         type: 'success' as const,
+    //     },
+    //     {
+    //         title: 'Mentorship Program',
+    //         description: '36% drop-off from discipled to joined suggests need for better mentorship matching.',
+    //         type: 'warning' as const,
+    //     },
+    // ];
 
     return (
-        <ScrollView className="p-2 flex-1">
-            <View className="gap-6 pb-6">
-                {/* Header */}
-                <View className="flex-row items-center gap-4">
-                    <Text className="text-2xl !w-[45%] font-bold">Global Dashboard</Text>
-                    <View className="flex-1">
-                        <PickerSelect
-                            valueKey="_id"
-                            items={[
-                                { _id: '', name: 'All Time' },
-                                { _id: '1-month', name: 'Past 1 Month' },
-                                { _id: '3-month', name: 'Past 3 Months' },
-                                { _id: '6-month', name: 'Past 6 Months' },
-                                { _id: '1-year', name: 'Past 1 Year' },
-                            ]}
-                            labelKey="name"
-                            className="!w-28 !h-10"
-                            value={selectedPeriodCode}
-                            placeholder="Date range"
-                            onValueChange={handleDateRangeChange}
-                        />
-                    </View>
-                    <View className="flex-1">
-                        <PickerSelect
-                            valueKey="_id"
-                            items={zones}
-                            labelKey="name"
-                            value={selectedZone}
-                            className="!w-28 !h-10"
-                            placeholder="Zone"
-                            onValueChange={handleZoneChange}
-                        />
-                    </View>
+        <View className="flex-1 bg-background gap-4 p-2">
+            {/* Header */}
+            <View className="flex-row items-center gap-4">
+                <Text className="text-2xl !w-[45%] font-bold">Global Dashboard</Text>
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        items={[
+                            { _id: '', name: 'All Time' },
+                            { _id: '1-month', name: 'Past 1 Month' },
+                            { _id: '3-month', name: 'Past 3 Months' },
+                            { _id: '6-month', name: 'Past 6 Months' },
+                            { _id: '1-year', name: 'Past 1 Year' },
+                        ]}
+                        labelKey="name"
+                        className="!w-28 !h-10"
+                        value={selectedPeriodCode}
+                        placeholder="Date range"
+                        onValueChange={handleDateRangeChange}
+                    />
                 </View>
-
-                {/* Key Metrics */}
-                <View className="flex-row flex-wrap" style={{ gap: 16 }}>
-                    <View style={{ flex: 1, minWidth: 150 }}>
-                        <StatsCard
-                            title="Total Guests"
-                            value={analytics.totalGuests}
-                            icon={Users}
-                            trend={{ value: 12, label: '% this month', direction: 'up' }}
-                            iconColor="text-blue-500"
-                        />
-                    </View>
-                    <View style={{ flex: 1, minWidth: 150 }}>
-                        <StatsCard
-                            title="Conversion Rate"
-                            value={`${analytics.conversionRate}%`}
-                            icon={BarChart3}
-                            trend={{ value: 3, label: '% this month', direction: 'up' }}
-                            iconColor="text-green-500"
-                        />
-                    </View>
-                    <View style={{ flex: 1, minWidth: 150 }}>
-                        <StatsCard
-                            title="Avg. Conversion Time"
-                            value={`${analytics.avgTimeToConversion}d`}
-                            icon={Calendar}
-                            trend={{ value: -5, label: 'd this month', direction: 'down' }}
-                            iconColor="text-purple-500"
-                        />
-                    </View>
-                    <View style={{ flex: 1, minWidth: 150 }}>
-                        <StatsCard
-                            title="Active Workers"
-                            value={analytics.activeWorkers}
-                            icon={Award}
-                            trend={{ value: 2, label: ' this month', direction: 'up' }}
-                            iconColor="text-orange-500"
-                        />
-                    </View>
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        items={zones}
+                        labelKey="name"
+                        value={selectedZone}
+                        className="!w-28 !h-10"
+                        placeholder="Zone"
+                        onValueChange={handleZoneChange}
+                    />
                 </View>
-
-                <Tabs value={selectedTab} onValueChange={handleTabChange} className="gap-6">
-                    <TabsList className="flex-row gap-1">
-                        <TabsTrigger value="overview">
-                            <Text>Overview</Text>
-                        </TabsTrigger>
-                        <TabsTrigger value="zones">
-                            <Text>Zone Performance</Text>
-                        </TabsTrigger>
-                        <TabsTrigger value="trends">
-                            <Text>Trends</Text>
-                        </TabsTrigger>
-                        <TabsTrigger value="analytics">
-                            <Text>Analytics</Text>
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <TabsContent value="overview">
-                        <View className="gap-6 md:flex-row">
-                            <ErrorBoundary>
-                                <DistributionChart data={analytics.stageDistribution} />
-                            </ErrorBoundary>
-                            <ErrorBoundary>
-                                <TopPerformers performers={analytics.topPerformers} />
-                            </ErrorBoundary>
-                        </View>
-                    </TabsContent>
-
-                    <TabsContent value="zones">
-                        <ErrorBoundary>
-                            <ZonePerformanceChart data={analytics.zonePerformance as any} />
-                        </ErrorBoundary>
-                    </TabsContent>
-
-                    <TabsContent value="trends">
-                        <ErrorBoundary>
-                            <TrendChart data={analytics.monthlyTrends} />
-                        </ErrorBoundary>
-                    </TabsContent>
-
-                    <TabsContent value="analytics">
-                        <View className="flex-row flex-wrap" style={{ gap: 16 }}>
-                            <View style={{ flex: 1, minWidth: 300 }}>
-                                <ErrorBoundary>
-                                    <DropoffAnalysis data={analytics.dropOffAnalysis} />
-                                </ErrorBoundary>
-                            </View>
-                            <View style={{ flex: 1, minWidth: 300 }}>
-                                <ErrorBoundary>
-                                    <RecommendationsCard recommendations={recommendations} />
-                                </ErrorBoundary>
-                            </View>
-                        </View>
-                    </TabsContent>
-                </Tabs>
             </View>
-        </ScrollView>
+            {error || !analytics ? (
+                <Error message={(error as any)?.data?.message} />
+            ) : (
+                <ScrollView className="flex-1">
+                    <View className="gap-6 pb-6">
+                        {/* Key Metrics */}
+                        <View className="flex-row flex-wrap" style={{ gap: 16 }}>
+                            <View style={{ flex: 1, minWidth: 150 }}>
+                                <StatsCard
+                                    icon={Users}
+                                    title="Total Guests"
+                                    iconColor="text-blue-500"
+                                    value={analytics.totalGuests}
+                                    // trend={{ value: 12, label: '% this month', direction: 'up' }}
+                                />
+                            </View>
+                            <View style={{ flex: 1, minWidth: 150 }}>
+                                <StatsCard
+                                    icon={BarChart3}
+                                    title="Conversion Rate"
+                                    iconColor="text-green-500"
+                                    value={`${analytics.conversionRate ?? 0}%`}
+                                    // trend={{ value: 3, label: '% this month', direction: 'up' }}
+                                />
+                            </View>
+                            <View style={{ flex: 1, minWidth: 150 }}>
+                                <StatsCard
+                                    title="Avg. Conversion Time"
+                                    value={`${analytics.avgTimeToConversion ?? 0} days`}
+                                    icon={Calendar}
+                                    // trend={{ value: -5, label: 'd this month', direction: 'down' }}
+                                    iconColor="text-purple-500"
+                                />
+                            </View>
+                            <View style={{ flex: 1, minWidth: 150 }}>
+                                <StatsCard
+                                    icon={Award}
+                                    title="Active Workers"
+                                    iconColor="text-orange-500"
+                                    value={analytics.totalActiveUsers ?? 0}
+                                    // trend={{ value: 2, label: ' this month', direction: 'up' }}
+                                />
+                            </View>
+                        </View>
+
+                        <Tabs value={selectedTab} onValueChange={handleTabChange} className="gap-6">
+                            <TabsList className="flex-row gap-1">
+                                <TabsTrigger value="overview">
+                                    <Text>Overview</Text>
+                                </TabsTrigger>
+                                <TabsTrigger value="zones">
+                                    <Text>Zone Performance</Text>
+                                </TabsTrigger>
+                                <TabsTrigger value="trends">
+                                    <Text>Trends</Text>
+                                </TabsTrigger>
+                                <TabsTrigger value="analytics">
+                                    <Text>Analytics</Text>
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent value="overview">
+                                <View className="gap-6 md:flex-row">
+                                    <ErrorBoundary>
+                                        <DistributionChart data={analytics.stageDistribution} />
+                                    </ErrorBoundary>
+                                    <ErrorBoundary>
+                                        {selectedZone ? (
+                                            <TopPerformingWorkers performers={analytics.topPerformingWorkers ?? []} />
+                                        ) : (
+                                            <TopPerformingZones performers={analytics.topPerformingZones ?? []} />
+                                        )}
+                                    </ErrorBoundary>
+                                </View>
+                            </TabsContent>
+
+                            <TabsContent value="zones">
+                                <ErrorBoundary>
+                                    <ZonePerformanceChart data={analytics.zonePerformance as any} />
+                                </ErrorBoundary>
+                            </TabsContent>
+
+                            <TabsContent value="trends">
+                                <ErrorBoundary>
+                                    <TrendChart
+                                        date={`${dayjs(date.startDate).format('MMM, YYYY')} - ${dayjs(
+                                            date.endDate
+                                        ).format('MMM, YYYY')}`}
+                                        data={analytics.monthlyTrends}
+                                    />
+                                </ErrorBoundary>
+                            </TabsContent>
+
+                            <TabsContent value="analytics">
+                                <View className="flex-row flex-wrap" style={{ gap: 16 }}>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <DropoffAnalysis data={analytics.dropOffAnalysis} />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <RecommendationsCard recommendations={[]} />
+                                        </ErrorBoundary>
+                                    </View>
+                                </View>
+                            </TabsContent>
+                        </Tabs>
+                    </View>
+                </ScrollView>
+            )}
+        </View>
     );
 };
 
