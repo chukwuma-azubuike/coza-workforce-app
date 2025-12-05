@@ -615,13 +615,13 @@ export const roastCrmApi = createApi({
         // Analytics Queries
         getGlobalAnalytics: builder.query<GlobalAnalytics, RoastDashboardPayload>({
             query: params => ({
-                // url: `/zones`,
-                url: `/analytics/global`,
+                url: `/dashboard/global-reports`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
             transformResponse(res: IDefaultResponse<GlobalAnalytics>) {
-                return res.data ?? GlobalAnalyticsPayload;
+                return res.data;
+                //  ?? GlobalAnalyticsPayload;
             },
             providesTags: ['Analytics'],
         }),

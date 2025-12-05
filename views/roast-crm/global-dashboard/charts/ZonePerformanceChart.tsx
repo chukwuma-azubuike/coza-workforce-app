@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { CartesianChart, BarGroup } from 'victory-native';
 import { useFont } from '@shopify/react-native-skia';
 import NexaExtraLight from '~/assets/fonts/Nexa-ExtraLight.ttf';
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 import { cn } from '~/lib/utils';
-import { DATA } from './data';
 import { useColorScheme } from '~/lib/useColorScheme';
+import Legend from './Legend';
 
 interface ZoneData {
     zone: string;
@@ -23,11 +23,30 @@ interface ZonePerformanceChartProps {
 
 export function ZonePerformanceChart({ data }: ZonePerformanceChartProps) {
     const chartHeight = 400;
-    const colors = ['#3B82F6', '#10B981', '#8B5CF6', '#6B7280'];
+    const colors = ['#6B7280', '#3B82F6', '#8B5CF6', '#10B981'];
     const { isDarkColorScheme } = useColorScheme();
 
     // Load the font for the axis labels
     const font = useFont(NexaExtraLight, 12);
+
+    const transformedData = useMemo(() => {
+        return data?.map(item => ({
+            label: item.zone,
+            value: item.invited,
+            x: item.attended,
+            y: item.discipled,
+            z: item.joined,
+        }));
+    }, [data]);
+
+    const maxValue = useMemo(() => {
+        transformedData.map(item => [item.value, item.x, item.y, item.z]).flat();
+        return Math.max(
+            ...transformedData.map(item =>
+                Math.max(item.value as number, item.x as number, item.y as number, item.z as number)
+            )
+        );
+    }, [transformedData]);
 
     // Wait for font to load before rendering chart
     if (!font) {
@@ -50,12 +69,15 @@ export function ZonePerformanceChart({ data }: ZonePerformanceChartProps) {
             <CardHeader>
                 <CardTitle>Zone Performance Comparison</CardTitle>
             </CardHeader>
+            <View className="px-6 ">
+                <Legend />
+            </View>
             <CardContent className={cn('p-0')}>
                 <View style={{ height: chartHeight }}>
                     <CartesianChart
                         xKey="label"
-                        data={DATA ?? data}
-                        domain={{ y: [0, 50] }}
+                        data={transformedData}
+                        domain={{ y: [0, maxValue + 1] }}
                         yKeys={['x', 'y', 'z', 'value']}
                         padding={{ left: 10, right: 10, bottom: 10, top: 10 }}
                         domainPadding={{ left: 50, right: 50, top: 30 }}
@@ -69,10 +91,10 @@ export function ZonePerformanceChart({ data }: ZonePerformanceChartProps) {
                     >
                         {({ points, chartBounds }) => (
                             <BarGroup chartBounds={chartBounds} betweenGroupPadding={0.4} withinGroupPadding={0.1}>
-                                <BarGroup.Bar points={points.x} color={colors[0]} />
-                                <BarGroup.Bar points={points.y} color={colors[1]} />
-                                <BarGroup.Bar points={points.z} color={colors[2]} />
-                                <BarGroup.Bar points={points.value} color={colors[3]} />
+                                <BarGroup.Bar points={points.value} color={colors[0]} />
+                                <BarGroup.Bar points={points.x} color={colors[1]} />
+                                <BarGroup.Bar points={points.y} color={colors[2]} />
+                                <BarGroup.Bar points={points.z} color={colors[3]} />
                             </BarGroup>
                         )}
                     </CartesianChart>

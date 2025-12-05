@@ -1,19 +1,19 @@
-import React from 'react';
-
 import { TrendingUp, TrendingDown } from 'lucide-react-native';
 import { TrendDirection } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
+import useZoneIndex from '../../hooks/use-zone-index';
 
 interface TopPerformerCardProps {
     name: string;
-    zone: string;
+    zoneId: string;
     conversions: number;
     trend: TrendDirection;
     rank: number;
 }
 
-export function TopPerformerCard({ name, zone, conversions, trend, rank }: TopPerformerCardProps) {
+export function TopPerformerCard({ name, zoneId, conversions, trend, rank }: TopPerformerCardProps) {
+    const zoneIndex = useZoneIndex();
     return (
         <View className="flex-row items-center justify-between p-3 bg-gray-50 dark:bg-muted-background rounded-xl">
             <View className="flex-row items-center gap-3">
@@ -22,11 +22,11 @@ export function TopPerformerCard({ name, zone, conversions, trend, rank }: TopPe
                 </View>
                 <View>
                     <Text className="font-medium">{name}</Text>
-                    <Text className="text-base text-muted-foreground">{zone} Zone</Text>
+                    <Text className="text-base text-muted-foreground">{zoneIndex[zoneId]} Zone</Text>
                 </View>
             </View>
             <View className="text-right">
-                <Text className="font-medium">{conversions} conversions</Text>
+                <Text className="font-medium">{conversions ?? 0} conversions</Text>
                 <View className="flex-row items-center gap-1">
                     {trend === TrendDirection.UP ? (
                         <TrendingUp color="green" />
