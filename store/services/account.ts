@@ -14,6 +14,7 @@ import {
     ICampusUserData,
     IAssignSecondaryRole,
     ILogoutPayload,
+    IUserStatus,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 import { Platform } from 'react-native';
@@ -118,6 +119,54 @@ export interface IAddNotificationTokenPayload {
 
 export type IRegisterResponse = IDefaultResponse<IUser>;
 export type IGetUserByIdResponse = IDefaultResponse<IUser>;
+
+export interface IGetUserStatusHistoryPayload {
+    userId: string;
+    year: number;
+    month: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+    monthsBack: number;
+}
+
+export interface IGetUserStatusMetric {
+    numberOfServicesInMonth: 12;
+    numberOfServicesAttended: 6;
+    numberOfServicesWithPermission: 2;
+    totalEffectiveAttendance: 8;
+    requiredThreshold: 5;
+    isThresholdMet: true;
+    attendanceShortfall: 0;
+    isNewUser: false;
+    userAgeInMonths: 18;
+    inactiveStreak: 0;
+    dormantStreak: 0;
+    blacklistedStreak: 0;
+    statusTransitionReason: 'Maintained active status';
+}
+
+export interface IGetUserStatusReport {
+    year: number;
+    month: number;
+    monthName: string;
+    available: boolean;
+    status: IUserStatus;
+    metrics: IGetUserStatusMetric;
+}
+export interface IGetUserStatusHistoryResponse {
+    period: { year: number; month: number; monthName: string };
+    user: Pick<IUser, 'userId' | 'firstName' | 'lastName' | 'email' | 'campus' | 'campusId'>;
+    currentReport: IGetUserStatusReport;
+    history: Array<IGetUserStatusReport>;
+    aggregates: {
+        totals: { services: number; attended: number; permissionsCovered: number; effectiveAttendance: number };
+        averages: { effectiveAttendance: number };
+        complianceRate: number;
+    };
+    trend: {
+        effectiveAttendance: Array<number>;
+        statuses: Array<IUserStatus>;
+        thresholdMet: Array<boolean>;
+    };
+}
 
 export const accountServiceSlice = createApi({
     reducerPath: 'account',
@@ -379,6 +428,17 @@ export const accountServiceSlice = createApi({
             }),
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
+
+        /*********** User Status **********/
+
+        getUserStatusHistory: endpoint.query<IGetUserStatusHistoryResponse, IGetUserStatusHistoryPayload>({
+            query: params => ({
+                url: `/user-status/user-history`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse: (response: IDefaultResponse<IGetUserStatusHistoryResponse>) => response.data,
+        }),
     }),
 });
 
@@ -405,4 +465,5 @@ export const {
     useAssignSecondaryRolesMutation,
     useAddDeviceTokenMutation,
     useGetGroupHeadUsersQuery,
+    useGetUserStatusHistoryQuery,
 } = accountServiceSlice;

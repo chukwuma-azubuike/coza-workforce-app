@@ -181,7 +181,7 @@ export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD' | 'UNAPPROVED' | 'BLACKLISTED';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED';
 
 export interface ICreateUserPayload {
     firstName: string;
