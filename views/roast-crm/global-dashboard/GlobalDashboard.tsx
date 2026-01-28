@@ -19,6 +19,7 @@ import ErrorBoundary from '~/components/composite/error-boundary';
 import { LeaderboardPayload } from '~/store/types';
 import Error from '~/components/atoms/error';
 import useRole from '~/hooks/role';
+import { useGetCampusesQuery } from '~/store/services/campus';
 
 type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
 type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
@@ -26,6 +27,7 @@ type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
 const GlobalDashboard: React.FC = () => {
     const { user } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>();
+    const [selectedCampus, setSelectedCampus] = useState<string>(user?.campus?._id);
     const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
@@ -50,9 +52,14 @@ const GlobalDashboard: React.FC = () => {
     }, []);
 
     const { data: zones = [] } = useGetZonesQuery({});
+    const { data: campuses = [] } = useGetCampusesQuery();
 
     const handleZoneChange = useCallback((option: Option) => {
         setSelectedZone((option as unknown as string) ?? undefined);
+    }, []);
+
+    const handleCampusChange = useCallback((option: Option) => {
+        setSelectedCampus((option as unknown as string) ?? undefined);
     }, []);
 
     const handleTabChange = useCallback((value: string) => {
@@ -66,7 +73,7 @@ const GlobalDashboard: React.FC = () => {
     } = useGetGlobalAnalyticsQuery({
         ...date,
         zoneId: selectedZone,
-        campusId: user.campus?._id,
+        campusId: selectedCampus,
     });
 
     if (isLoading) {
@@ -112,6 +119,30 @@ const GlobalDashboard: React.FC = () => {
             {/* Header */}
             <View className="flex-row items-center gap-4">
                 <Text className="text-2xl !w-[45%] font-bold">Global Dashboard</Text>
+            </View>
+            <View className="flex-row items-center gap-4">
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        items={campuses}
+                        labelKey="campusName"
+                        value={selectedCampus}
+                        className="!h-10"
+                        placeholder="Campus"
+                        onValueChange={handleCampusChange}
+                    />
+                </View>
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        items={zones}
+                        labelKey="name"
+                        value={selectedZone}
+                        className="!h-10"
+                        placeholder="Zone"
+                        onValueChange={handleZoneChange}
+                    />
+                </View>
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
@@ -123,25 +154,14 @@ const GlobalDashboard: React.FC = () => {
                             { _id: '1-year', name: 'Past 1 Year' },
                         ]}
                         labelKey="name"
-                        className="!w-28 !h-10"
+                        className="!h-10"
                         value={selectedPeriodCode}
                         placeholder="Date range"
                         onValueChange={handleDateRangeChange}
                     />
                 </View>
-                <View className="flex-1">
-                    <PickerSelect
-                        valueKey="_id"
-                        items={zones}
-                        labelKey="name"
-                        value={selectedZone}
-                        className="!w-28 !h-10"
-                        placeholder="Zone"
-                        onValueChange={handleZoneChange}
-                    />
-                </View>
             </View>
-            {error || !analytics ? (
+            {!analytics ? (
                 <Error message={(error as any)?.data?.message} />
             ) : (
                 <ScrollView className="flex-1">
