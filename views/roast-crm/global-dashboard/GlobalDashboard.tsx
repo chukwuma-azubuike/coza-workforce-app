@@ -118,7 +118,7 @@ const GlobalDashboard: React.FC = () => {
         <View className="flex-1 bg-background gap-4 p-2">
             {/* Header */}
             <View className="flex-row items-center gap-4">
-                <Text className="text-2xl !w-[45%] font-bold">Global Dashboard</Text>
+                <Text className="text-2xl !w-[45%] font-bold">Reports</Text>
             </View>
             <View className="flex-row items-center gap-4">
                 <View className="flex-1">

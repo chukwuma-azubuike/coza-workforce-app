@@ -5,7 +5,7 @@ import { Icon } from '@rneui/themed';
 import * as Haptics from 'expo-haptics';
 import { usePathname } from 'expo-router';
 
-import useRole, { ROLES } from '@hooks/role';
+import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
 
 import { TouchableOpacity, View } from 'react-native';
 import TopNav from '~/components/TopNav';
@@ -22,6 +22,8 @@ const tabRoutes = [
         pathname: '/roast-crm/my-guests',
         options: { title: 'My Guests' },
         users: ['all'],
+        departments: ['all'],
+        departmentUsers: ['all'],
         inMenuBar: true,
         inMore: false,
         icon: { name: 'user-friends', type: 'font-awesome-5' },
@@ -30,6 +32,8 @@ const tabRoutes = [
         name: 'Zone',
         options: { title: 'Zone' },
         users: [ROLES.zonalCoordinator, ROLES.HOD, ROLES.superAdmin, ROLES.campusPastor],
+        departments: ['all'],
+        departmentUsers: [],
         inMenuBar: true,
         inMore: false,
         icon: { name: 'map-marked-alt', type: 'font-awesome-5' },
@@ -37,12 +41,14 @@ const tabRoutes = [
         pathname: '/roast-crm/zone-dashboard',
     },
     {
-        name: 'Global',
-        options: { title: 'Global' },
+        name: 'Reports',
+        options: { title: 'Reports' },
         users: [ROLES.globalAdmin, ROLES.campusPastor, ROLES.globalPastor, ROLES.superAdmin],
+        departments: ['all', DEPARTMENTS.PCU, DEPARTMENTS.ME],
+        departmentUsers: [ROLES.HOD, ROLES.AHOD],
         inMenuBar: true,
         inMore: false,
-        icon: { name: 'globe', type: 'font-awesome' },
+        icon: { name: 'bar-chart-2', type: 'feather' },
         href: '/roast-crm/(tabs)/global-dashboard',
         pathname: '/roast-crm/global-dashboard',
     },
@@ -50,6 +56,8 @@ const tabRoutes = [
         name: 'Leaderboards',
         options: { title: 'Leaderboards' },
         users: ['all'],
+        departments: ['all'],
+        departmentUsers: [],
         inMenuBar: true,
         inMore: false,
         icon: { name: 'chart-line', type: 'font-awesome-5' },
@@ -70,6 +78,8 @@ const tabRoutes = [
         name: 'Settings',
         options: { title: 'Settings' },
         users: [ROLES.superAdmin, ROLES.globalAdmin],
+        departments: ['all'],
+        departmentUsers: [],
         inMenuBar: true,
         inMore: false,
         icon: { name: 'settings-sharp', type: 'ionicon' },
@@ -80,12 +90,19 @@ const tabRoutes = [
 
 const TabLayout: React.FC = () => {
     const ready = useDeferHeavy();
-    const { role } = useRole();
+    const { role, user } = useRole();
     const pathname = usePathname();
     const { isLightColorScheme } = useColorScheme();
 
     const filteredRoutes = useMemo(
-        () => tabRoutes.filter(route => route.users.includes('all') || route.users.includes(role as string)),
+        () =>
+            tabRoutes.filter(
+                route =>
+                    route.users.includes('all') ||
+                    route.users.includes(role as string) ||
+                    (route.departments.includes(user?.department.departmentName as string) &&
+                        route.departmentUsers.includes(role as string))
+            ),
         [tabRoutes, role]
     );
 
