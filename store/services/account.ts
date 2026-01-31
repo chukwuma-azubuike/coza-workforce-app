@@ -15,6 +15,8 @@ import {
     IAssignSecondaryRole,
     ILogoutPayload,
     IUserStatus,
+    Month,
+    IAttendanceStatus,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 import { Platform } from 'react-native';
@@ -123,8 +125,8 @@ export type IGetUserByIdResponse = IDefaultResponse<IUser>;
 export interface IGetUserStatusHistoryPayload {
     userId: string;
     year: number;
-    month: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-    monthsBack: number;
+    month: Month;
+    monthsBack?: number;
 }
 
 export interface IGetUserStatusMetric {
@@ -143,6 +145,18 @@ export interface IGetUserStatusMetric {
     statusTransitionReason: 'Maintained active status';
 }
 
+type IGetUserStatusAttendance = {
+    attendanceId: string;
+    serviceId: string;
+    serviceName: string;
+    serviceTime: string;
+    serviceTag: string[];
+    clockIn: string;
+    clockOut: string;
+    status: IAttendanceStatus;
+    createdAt: string;
+};
+
 export interface IGetUserStatusReport {
     year: number;
     month: number;
@@ -150,6 +164,7 @@ export interface IGetUserStatusReport {
     available: boolean;
     status: IUserStatus;
     metrics: IGetUserStatusMetric;
+    attendances: Array<IGetUserStatusAttendance>;
 }
 export interface IGetUserStatusHistoryResponse {
     period: { year: number; month: number; monthName: string };
