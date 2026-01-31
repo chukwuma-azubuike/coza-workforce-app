@@ -3,7 +3,10 @@ import { Text, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Card } from '~/views/app/profile/status-report/card';
 
-const RollingStatusCard = () => {
+// TODO: Suggestion - Rolling status and streak should reset at the start of a new year.
+// TODO: Add skeleton
+
+const RollingStatusCard = ({ isFetching }: { isFetching: boolean }) => {
     return (
         <View className="px-4 pt-10">
             <Card className="gap-4 rounded-2xl bg-background shadow-sm p-5">
