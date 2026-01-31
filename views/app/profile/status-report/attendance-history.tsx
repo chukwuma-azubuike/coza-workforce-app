@@ -4,17 +4,32 @@ import { View } from 'react-native';
 import StatusTag from '~/components/atoms/status-tag';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '~/components/ui/accordion';
 import { Badge } from '~/components/ui/badge';
+import { Skeleton } from '~/components/ui/skeleton';
 import { Text } from '~/components/ui/text';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { cn } from '~/lib/utils';
-
 import { IGetUserStatusHistoryResponse, IGetUserStatusReport } from '~/store/services/account';
 import { IAttendanceStatus } from '~/store/types';
 
-// TODO: Create skeleton for loading state.
-// TODO: Handle empty attendance list.
+const AttendanceHistorySkeleton = () => {
+    return (
+        <View className="flex-row items-center justify-between w-full bg-background p-4 rounded-lg">
+            <View className="flex-row items-center gap-6">
+                <Skeleton className={'w-4 h-4 rounded'} />
+                <View className="gap-2">
+                    <View className="flex-row items-center gap-2">
+                        <Skeleton className={'w-32 h-5'} />
+                    </View>
+                    <Skeleton className={'h-4 w-8'} />
+                </View>
+            </View>
 
-// TODO: Suggestion - Rolling status and streak should reset at the start of a new year.
+            <View>
+                <Skeleton className={'h-6 w-20 rounded-xl'} />
+            </View>
+        </View>
+    );
+};
 
 const AttendanceHeader = ({ history, isCurrent }: { history: IGetUserStatusReport; isCurrent: boolean }) => {
     return (
@@ -34,7 +49,9 @@ const AttendanceHeader = ({ history, isCurrent }: { history: IGetUserStatusRepor
                             )}
                         </View>
                         <Text
-                            className={`text-xs font-medium text-zinc-500 ${!history.metrics?.numberOfServicesInMonth && 'hidden'}`}
+                            className={`text-xs font-medium text-zinc-500 ${
+                                !history.metrics?.numberOfServicesInMonth && 'hidden'
+                            }`}
                         >
                             {history.metrics?.numberOfServicesAttended}/{history.metrics?.numberOfServicesInMonth}{' '}
                             Services
@@ -128,6 +145,17 @@ export const AttendanceStatusRing = ({
 };
 
 const AttendanceContent = ({ history }: { history: IGetUserStatusReport }) => {
+    const noAttendance = !history.attendances?.length;
+
+    if (noAttendance) {
+        return (
+            <AccordionContent className="border-none">
+                <View className="py-5 px-2">
+                    <Text className="text-muted-foreground">No attendance record</Text>
+                </View>
+            </AccordionContent>
+        );
+    }
     return (
         <AccordionContent className="border-none">
             {history?.attendances?.map((attendance, index) => {
@@ -161,25 +189,39 @@ const AttendanceContent = ({ history }: { history: IGetUserStatusReport }) => {
 
 type AttendanceHistoryProps = {
     statusReport: IGetUserStatusHistoryResponse | undefined;
+    isFetching?: boolean;
 };
 
-const AttendanceHistory: React.FC<AttendanceHistoryProps> = ({ statusReport }) => {
+const AttendanceHistory: React.FC<AttendanceHistoryProps> = ({ statusReport, isFetching }) => {
     return (
         <View className="py-10 px-4">
             <View className="py-5">
                 <Text className="text-xl font-medium text-foreground">Attendance History</Text>
                 <Text className="text-sm font-medium text-muted-foreground">Track your progress month by month</Text>
             </View>
-            <Accordion type="multiple" collapsable className="space-y-4">
+
+            {isFetching ? (
                 <View className="gap-5">
-                    {statusReport?.history?.map((history, index) => (
-                        <AccordionItem key={history.monthName} value={history.monthName} className="!border-b-0 p-0.5">
-                            <AttendanceHeader history={history} isCurrent={index === 0} />
-                            <AttendanceContent history={history} />
-                        </AccordionItem>
+                    {Array.from({ length: 12 }).map((_, idx) => (
+                        <AttendanceHistorySkeleton key={idx} />
                     ))}
                 </View>
-            </Accordion>
+            ) : (
+                <Accordion type="multiple" collapsable className="space-y-4">
+                    <View className="gap-5">
+                        {statusReport?.history?.map((history, index) => (
+                            <AccordionItem
+                                key={history.monthName}
+                                value={history.monthName}
+                                className="!border-b-0 p-0.5"
+                            >
+                                <AttendanceHeader history={history} isCurrent={index === 0} />
+                                <AttendanceContent history={history} />
+                            </AccordionItem>
+                        ))}
+                    </View>
+                </Accordion>
+            )}
         </View>
     );
 };

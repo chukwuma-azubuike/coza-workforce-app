@@ -71,8 +71,8 @@ const StatusReport: React.FC = () => {
                         </View>
                     </View>
 
-                    <RollingStatusCard />
-                    <AttendanceHistory statusReport={userStatusHistory} />
+                    <RollingStatusCard isFetching={isFetching} />
+                    <AttendanceHistory statusReport={userStatusHistory} isFetching={isFetching} />
 
                     <StatusDescription />
                 </ScrollView>
