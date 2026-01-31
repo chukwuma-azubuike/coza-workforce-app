@@ -7,6 +7,7 @@ const ProfileScreensLayout: React.FC = () => {
         <Stack screenOptions={{ headerLeft: () => <NavButton /> }}>
             <Stack.Screen name="index" options={{ title: 'Profile' }} />
             <Stack.Screen name="edit-profile" options={{ title: 'Edit Profile' }} />
+            <Stack.Screen name="status" options={{ title: 'Status Report' }} />
         </Stack>
     );
 };
