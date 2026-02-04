@@ -28,6 +28,8 @@ import {
     LeaderboardPayload,
     ZoneUsersPayload,
     ZoneUsersResponse,
+    DropOffAnalyticsResponse,
+    RecommendationsResponse,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
@@ -219,6 +221,8 @@ export const roastCrmApi = createApi({
         'ZoneDashboard',
         'CampusDashboard',
         'GlobalDashboard',
+        'DropoffAnalytics',
+        'Recommendations',
     ],
 
     refetchOnFocus: true,
@@ -625,6 +629,30 @@ export const roastCrmApi = createApi({
             },
             providesTags: ['Analytics'],
         }),
+
+        getDropoffAnalytics: builder.query<DropOffAnalyticsResponse, RoastDashboardPayload>({
+            query: params => ({
+                url: `/leaderboards/drop-offs`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse(res: IDefaultResponse<DropOffAnalyticsResponse>) {
+                return res.data;
+            },
+            providesTags: ['DropoffAnalytics'],
+        }),
+
+        getRecommendations: builder.query<RecommendationsResponse, RoastDashboardPayload>({
+            query: params => ({
+                url: `/leaderboards/recommendations`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse(res: IDefaultResponse<RecommendationsResponse>) {
+                return res.data;
+            },
+            providesTags: ['Recommendations'],
+        }),
     }),
 });
 
@@ -658,6 +686,8 @@ export const {
     useDeletePipelineStageMutation,
     useUpdateNotificationRuleMutation,
     useGetZoneDashboardQuery,
+    useGetDropoffAnalyticsQuery,
+    useGetRecommendationsQuery,
 } = roastCrmApi;
 
 const GlobalAnalyticsPayload = {

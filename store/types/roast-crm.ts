@@ -379,6 +379,16 @@ export interface GlobalAnalytics {
     topPerformingZones: TopPerformer[];
 }
 
+export type DropOffAnalyticsResponse = { dropOffAnalysis: DropOffAnalysis[] };
+
+export interface Recommendation {
+    title: string;
+    description: string;
+    type: 'info' | 'success' | 'warning';
+}
+
+export type RecommendationsResponse = { recommendations: Recommendation[] };
+
 export interface RoastDashboardPayload {
     startDate?: string;
     endDate?: string;
