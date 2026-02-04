@@ -12,28 +12,56 @@ import StatusDescription from '~/views/app/profile/status-report/status-descript
 
 const currentMonth = (new Date().getMonth() + 1) as Month;
 const currentYear = new Date().getFullYear();
+// Using last month's status since current month's status is not yet available
+const previousMonth = (currentMonth - 1 === 0 ? 12 : currentMonth - 1) as Month;
+const previousMonthYear = previousMonth === 12 ? currentYear - 1 : currentYear;
 
 const StatusReport: React.FC = () => {
     const { user, isGlobalPastor } = useRole();
+    // Calculate months back based on current month (1-12)
+    // In January, monthsBack = 1; in December, monthsBack = 12
+    // This ensures status history always spans from January to current month
+    const monthsBack = currentMonth;
     const {
         data: userStatusHistory,
-        refetch,
-        isFetching,
+        refetch: refetchUserStatusHistory,
+        isFetching: isFetchingUserStatusHistory,
     } = useGetUserStatusHistoryQuery({
         userId: user?._id,
         month: currentMonth,
         year: currentYear,
-        monthsBack: 12,
+        monthsBack,
     });
+
+    const {
+        data: previousMonthStatus,
+        refetch: refetchPreviousMonthStatus,
+        isFetching: isFetchingPreviousMonthStatus,
+    } = useGetUserStatusHistoryQuery({
+        userId: user?._id,
+        month: previousMonth,
+        year: previousMonthYear,
+        monthsBack: 1,
+    });
+
+    const refetch = () => {
+        refetchUserStatusHistory();
+        refetchPreviousMonthStatus();
+    };
     console.log({ userStatusHistory });
     return (
         <ErrorBoundary>
-            <View className="flex-1 bg-neutral-50 dark:bg-neutral-900">
+            <View className="flex-1 bg-neutral-50 dark:bg-black/50">
                 <ScrollView
                     className=""
-                    refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
+                    refreshControl={
+                        <RefreshControl
+                            onRefresh={refetch}
+                            refreshing={isFetchingUserStatusHistory || isFetchingPreviousMonthStatus}
+                        />
+                    }
                 >
-                    <View className="py-10 px-4 border-b border-gray-200 dark:border-gray-800 shadow-sm items-center flex-row gap-6 bg-white dark:bg-black">
+                    <View className="py-10 px-4 border-b border-gray-200 dark:border-neutral-900 shadow-sm items-center flex-row gap-6 bg-white dark:bg-black">
                         <View className="border-4 border-neutral-50 dark:border-neutral-800 h-fit w-fit rounded-full shadow-sm">
                             <AvatarComponent
                                 alt="current-user-avatar"
@@ -71,8 +99,8 @@ const StatusReport: React.FC = () => {
                         </View>
                     </View>
 
-                    <RollingStatusCard isFetching={isFetching} />
-                    <AttendanceHistory statusReport={userStatusHistory} isFetching={isFetching} />
+                    <RollingStatusCard statusReport={previousMonthStatus} isFetching={isFetchingPreviousMonthStatus} />
+                    <AttendanceHistory statusReport={userStatusHistory} isFetching={isFetchingUserStatusHistory} />
 
                     <StatusDescription />
                 </ScrollView>
