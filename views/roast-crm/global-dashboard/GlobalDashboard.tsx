@@ -230,7 +230,7 @@ const GlobalDashboard: React.FC = () => {
                                         {selectedZone ? (
                                             <TopPerformingWorkers performers={analytics.topPerformingWorkers ?? []} />
                                         ) : (
-                                            <TopPerformingZones performers={analytics.topPerformingZones ?? []} />
+                                            <TopPerformingZones performers={analytics.topPerformers ?? []} />
                                         )}
                                     </ErrorBoundary>
                                 </View>

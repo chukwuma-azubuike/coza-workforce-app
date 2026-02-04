@@ -377,6 +377,7 @@ export interface GlobalAnalytics {
     dropOffAnalysis: DropOffAnalysis[];
     topPerformingWorkers: TopPerformer[];
     topPerformingZones: TopPerformer[];
+    topPerformers: TopPerformer[];
 }
 
 export type DropOffAnalyticsResponse = { dropOffAnalysis: DropOffAnalysis[] };

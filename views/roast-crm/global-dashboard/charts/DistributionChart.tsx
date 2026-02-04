@@ -14,7 +14,19 @@ interface DistributionChartProps {
 }
 
 export function DistributionChart({ data }: DistributionChartProps) {
-    const font = useFont(NexaExtraLight, 14);
+    const font = useFont(NexaExtraLight, 13);
+
+    const colorCodedData = data.map(item => ({
+        ...item,
+        color:
+            item.name === 'Attended'
+                ? '#4CAF50'
+                : item.name === 'Discipled'
+                  ? '#b821f3'
+                  : item.name === 'Joined'
+                    ? '#b5b5b5'
+                    : '#2152f3',
+    }));
 
     return (
         <Card className="flex-1">
@@ -23,12 +35,12 @@ export function DistributionChart({ data }: DistributionChartProps) {
             </CardHeader>
             <CardContent style={{ height: 300 }}>
                 {data.length > 0 ? (
-                    <PolarChart data={data} labelKey="name" valueKey="value" colorKey="color">
+                    <PolarChart data={colorCodedData} labelKey="name" valueKey="value" colorKey="color">
                         <Pie.Chart>
                             {() => (
                                 <>
                                     <Pie.Slice>
-                                        <Pie.Label font={font} color="#FFF" />
+                                        <Pie.Label font={font} color="#FFF" radiusOffset={0.7} />
                                     </Pie.Slice>
 
                                     <Pie.SliceAngularInset
