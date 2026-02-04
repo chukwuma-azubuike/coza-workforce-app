@@ -5,15 +5,17 @@ import { Badge, BadgeProps } from '~/components/ui/badge';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 import { View } from 'react-native';
+import { Skeleton } from '~/components/ui/skeleton';
 
 interface IStatusTag extends BadgeProps {
     capitalise?: boolean;
     children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;
     colorScheme?: 'default' | 'dark';
+    isLoading?: boolean;
 }
 
 const StatusTag: React.FC<IStatusTag> = props => {
-    const { children: status, capitalise = true, colorScheme = 'default', className } = props;
+    const { children: status, capitalise = true, colorScheme = 'default', className, isLoading } = props;
 
     const green =
         status === 'ACKNOWLEGDED' ||
@@ -52,6 +54,10 @@ const StatusTag: React.FC<IStatusTag> = props => {
         }
         return lightColorScheme[color];
     };
+
+    if (isLoading) {
+        return <Skeleton className="w-24 h-8" />;
+    }
 
     return (
         <View>
