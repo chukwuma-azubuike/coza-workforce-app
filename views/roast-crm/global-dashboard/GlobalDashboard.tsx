@@ -3,7 +3,12 @@ import { View, ScrollView } from 'react-native';
 import { BarChart3, Users, Award, Calendar } from 'lucide-react-native';
 import { Option } from '~/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
-import { useGetGlobalAnalyticsQuery, useGetZonesQuery } from '~/store/services/roast-crm';
+import {
+    useGetDropoffAnalyticsQuery,
+    useGetGlobalAnalyticsQuery,
+    useGetRecommendationsQuery,
+    useGetZonesQuery,
+} from '~/store/services/roast-crm';
 import { Text } from '~/components/ui/text';
 import { DistributionChart } from './charts/DistributionChart';
 import { ZonePerformanceChart } from './charts/ZonePerformanceChart';
@@ -76,6 +81,18 @@ const GlobalDashboard: React.FC = () => {
         campusId: selectedCampus,
     });
 
+    const { data: dropoffs } = useGetDropoffAnalyticsQuery({
+        ...date,
+        zoneId: selectedZone,
+        campusId: selectedCampus,
+    });
+
+    const { data: recommendations } = useGetRecommendationsQuery({
+        ...date,
+        zoneId: selectedZone,
+        campusId: selectedCampus,
+    });
+
     if (isLoading) {
         return (
             <View className="p-2 gap-6 flex-1">
@@ -95,24 +112,6 @@ const GlobalDashboard: React.FC = () => {
             </View>
         );
     }
-
-    // const recommendations = [
-    //     {
-    //         title: 'Improve Follow-up Process',
-    //         description: "30% of invited guests aren't being followed up. Consider automated reminders.",
-    //         type: 'info' as const,
-    //     },
-    //     {
-    //         title: 'Small Group Integration',
-    //         description: 'South Zone shows best attendance-to-discipleship conversion. Replicate their model.',
-    //         type: 'success' as const,
-    //     },
-    //     {
-    //         title: 'Mentorship Program',
-    //         description: '36% drop-off from discipled to joined suggests need for better mentorship matching.',
-    //         type: 'warning' as const,
-    //     },
-    // ];
 
     return (
         <View className="flex-1 bg-background gap-4 p-2">
@@ -258,12 +257,14 @@ const GlobalDashboard: React.FC = () => {
                                 <View className="flex-row flex-wrap" style={{ gap: 16 }}>
                                     <View style={{ flex: 1, minWidth: 300 }}>
                                         <ErrorBoundary>
-                                            <DropoffAnalysis data={analytics.dropOffAnalysis} />
+                                            <DropoffAnalysis data={dropoffs?.dropOffAnalysis || []} />
                                         </ErrorBoundary>
                                     </View>
                                     <View style={{ flex: 1, minWidth: 300 }}>
                                         <ErrorBoundary>
-                                            <RecommendationsCard recommendations={[]} />
+                                            <RecommendationsCard
+                                                recommendations={recommendations?.recommendations || []}
+                                            />
                                         </ErrorBoundary>
                                     </View>
                                 </View>

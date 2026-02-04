@@ -20,7 +20,7 @@ export function Recommendation({ title, description, type }: RecommendationProps
     return (
         <Alert className={`py-3 border-0 border-l-4 ${colors[type]}`}>
             <Text
-                className={`font-semibold text-muted-foreground dark:text-foreground line-clamp-none ${
+                className={`font-bold text-muted-foreground dark:text-foreground line-clamp-none ${
                     type === 'info'
                         ? 'text-blue-900 dark:text-blue-400'
                         : type === 'success'
