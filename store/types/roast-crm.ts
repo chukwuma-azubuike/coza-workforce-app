@@ -354,6 +354,7 @@ export interface DropOffAnalysis {
     stage: string;
     dropOff: number;
     reason: string;
+    percentage: number;
 }
 
 export interface TopPerformer {
