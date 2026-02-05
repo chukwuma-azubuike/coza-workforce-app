@@ -1,8 +1,9 @@
-import { TrendingUp, TrendingDown } from 'lucide-react-native';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react-native';
 import { TrendDirection } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import useZoneIndex from '../../hooks/use-zone-index';
+import { Icon } from '@rneui/themed';
 
 interface TopPerformerCardProps {
     name: string;
@@ -26,22 +27,15 @@ export function TopPerformerCard({ name, zoneId, conversions, trend, rank }: Top
                 </View>
             </View>
             <View className="text-right">
-                <Text className="font-medium">{conversions ?? 0} conversions</Text>
-                <View className="flex-row items-center gap-1">
+                <Text className="font-medium">{conversions ?? 0}% Conversion</Text>
+                <View className="flex-row justify-end gap-1">
                     {trend === TrendDirection.UP ? (
                         <TrendingUp color="green" />
                     ) : trend === TrendDirection.DOWN ? (
                         <TrendingDown color="red" />
                     ) : (
-                        <View className="w-3 h-3 bg-muted-foreground rounded-full" />
+                        <Minus color="grey" />
                     )}
-                    <Text className="text-sm text-muted-foreground">
-                        {trend === TrendDirection.UP
-                            ? 'Rising'
-                            : trend === TrendDirection.DOWN
-                            ? 'Declining'
-                            : 'Stable'}
-                    </Text>
                 </View>
             </View>
         </View>

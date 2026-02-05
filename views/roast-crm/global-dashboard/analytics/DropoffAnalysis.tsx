@@ -4,13 +4,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 import { Progress } from '~/components/ui/progress';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
+import { DropOffAnalysis } from '~/store/types';
 
 interface DropoffAnalysisProps {
-    data: Array<{
-        stage: string;
-        dropOff: number;
-        reason: string;
-    }>;
+    data: Array<DropOffAnalysis>;
 }
 
 export function DropoffAnalysis({ data }: DropoffAnalysisProps) {
@@ -28,18 +25,28 @@ export function DropoffAnalysis({ data }: DropoffAnalysisProps) {
                                 <Text
                                     className={cn(
                                         'text-lg font-bold text-destructive',
-                                        item.dropOff < 30 ? 'text-yellow-500' : 'text-red-500'
+                                        item.percentage < 1
+                                            ? 'text-green-500'
+                                            : item.percentage < 30
+                                              ? 'text-yellow-500'
+                                              : 'text-red-500'
                                     )}
                                 >
-                                    {item.dropOff}% Drop-off
+                                    {item.percentage}% Drop-off
                                 </Text>
                             </View>
                             <Text className="text-muted-foreground line-clamp-none">
                                 <Text>Primary reason:</Text> {item.reason}
                             </Text>
                             <Progress
-                                value={item.dropOff}
-                                indicatorClassName={item.dropOff < 30 ? 'bg-yellow-500' : 'bg-destructive'}
+                                value={item.percentage}
+                                indicatorClassName={
+                                    item.percentage < 1
+                                        ? 'bg-green-500'
+                                        : item.percentage < 30
+                                          ? 'bg-yellow-500'
+                                          : 'bg-destructive'
+                                }
                             />
                         </View>
                     ))}
