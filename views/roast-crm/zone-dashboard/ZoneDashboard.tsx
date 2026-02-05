@@ -61,11 +61,21 @@ const ZoneDashboard: React.FC = () => {
         departmentZones ? (departmentZones as any)?.[0]?._id : undefined
     );
 
+    const userZones = useMemo(() => {
+        // Only return zones that include the user's department id in their `departments` array
+
+        return (
+            departmentZones?.filter(zone =>
+                zone.departments?.some(dep => dep?.id === user.department._id || dep?._id === user.department._id)
+            ) ?? []
+        );
+    }, [departmentZones, hasZoneRights, user.department?._id]);
+
     useEffect(() => {
-        if (!selectedZone && departmentZones) {
-            setSelectedZone((departmentZones as any)?.[0]?._id);
+        if (!selectedZone && userZones) {
+            setSelectedZone((userZones as any)?.[0]?._id);
         }
-    }, [departmentZones, selectedZone]);
+    }, [userZones, selectedZone]);
 
     const [selectedWorker, setSelectedWorker] = useState<string>();
     const [
@@ -234,18 +244,20 @@ const ZoneDashboard: React.FC = () => {
                             </Text>
 
                             {/* Zone Selector */}
-                            <View className="flex-1">
-                                <PickerSelect
-                                    valueKey="_id"
-                                    labelKey="name"
-                                    className="!h-10"
-                                    value={selectedZone}
-                                    placeholder="All Zones"
-                                    isLoading={loadingZones}
-                                    onValueChange={setSelectedZone}
-                                    items={hasZoneRights ? departmentZones ?? [] : zones}
-                                />
-                            </View>
+                            {!hasZoneRights && (
+                                <View className="flex-1">
+                                    <PickerSelect
+                                        valueKey="_id"
+                                        labelKey="name"
+                                        className="!h-10"
+                                        value={selectedZone}
+                                        placeholder="All Zones"
+                                        isLoading={loadingZones}
+                                        onValueChange={setSelectedZone}
+                                        items={hasZoneRights ? (departmentZones ?? []) : zones}
+                                    />
+                                </View>
+                            )}
 
                             {/* Worker Selector */}
                             <View className="flex-1">
