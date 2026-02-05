@@ -23,7 +23,9 @@ export function TopPerformerCard({ name, zoneId, scores, conversions, trend, ran
                 </View>
                 <View>
                     <Text className="font-medium">{name}</Text>
-                    <Text className="text-base text-muted-foreground">{zoneIndex[zoneId]} Zone</Text>
+                    <Text className="text-base text-muted-foreground">
+                        {zoneIndex[zoneId]} {zoneId ? 'Zone' : 'Worker'}
+                    </Text>
                 </View>
             </View>
             <View className="text-right">
