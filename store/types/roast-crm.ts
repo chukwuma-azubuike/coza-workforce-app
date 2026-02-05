@@ -284,6 +284,7 @@ export interface ConversionRates {
     attendedToJoined: number;
     breakdown: ConversionBreakdown;
     totalInvitedToJoined?: number;
+    averageConversion: number;
 }
 
 export interface ZoneLeaderboardEntry {

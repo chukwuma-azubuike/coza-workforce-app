@@ -181,7 +181,7 @@ const GlobalDashboard: React.FC = () => {
                                     icon={BarChart3}
                                     title="Conversion Rate"
                                     iconColor="text-green-500"
-                                    value={`${analytics.conversionRate ?? 0}%`}
+                                    value={`${analytics.conversionRates?.averageConversion ?? 0}%`}
                                     // trend={{ value: 3, label: '% this month', direction: 'up' }}
                                 />
                             </View>
