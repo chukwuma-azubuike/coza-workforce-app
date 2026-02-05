@@ -3,17 +3,17 @@ import { TrendDirection } from '~/store/types';
 import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import useZoneIndex from '../../hooks/use-zone-index';
-import { Icon } from '@rneui/themed';
 
 interface TopPerformerCardProps {
     name: string;
     zoneId: string;
+    scores: number;
     conversions: number;
     trend: TrendDirection;
     rank: number;
 }
 
-export function TopPerformerCard({ name, zoneId, conversions, trend, rank }: TopPerformerCardProps) {
+export function TopPerformerCard({ name, zoneId, scores, conversions, trend, rank }: TopPerformerCardProps) {
     const zoneIndex = useZoneIndex();
     return (
         <View className="flex-row items-center justify-between p-3 bg-gray-50 dark:bg-muted-background rounded-xl">
@@ -27,7 +27,8 @@ export function TopPerformerCard({ name, zoneId, conversions, trend, rank }: Top
                 </View>
             </View>
             <View className="text-right">
-                <Text className="font-medium">{conversions ?? 0}% Conversion</Text>
+                {scores && <Text className="font-medium">{scores ?? 0} Points</Text>}
+                {typeof scores === 'undefined' && <Text className="font-medium">{conversions ?? 0}% Conversion</Text>}
                 <View className="flex-row justify-end gap-1">
                     {trend === TrendDirection.UP ? (
                         <TrendingUp color="green" />
