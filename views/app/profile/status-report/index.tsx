@@ -21,15 +21,15 @@ const StatusReport: React.FC = () => {
     // Calculate months back based on current month (1-12)
     // In January, monthsBack = 1; in December, monthsBack = 12
     // This ensures status history always spans from January to current month
-    const monthsBack = currentMonth;
+    const monthsBack = previousMonth;
     const {
         data: userStatusHistory,
         refetch: refetchUserStatusHistory,
         isFetching: isFetchingUserStatusHistory,
     } = useGetUserStatusHistoryQuery({
         userId: user?._id,
-        month: currentMonth,
-        year: currentYear,
+        month: previousMonth,
+        year: previousMonthYear,
         monthsBack,
     });
 
@@ -48,7 +48,7 @@ const StatusReport: React.FC = () => {
         refetchUserStatusHistory();
         refetchPreviousMonthStatus();
     };
-    console.log({ userStatusHistory });
+
     return (
         <ErrorBoundary>
             <View className="flex-1 bg-neutral-50 dark:bg-black/50">
