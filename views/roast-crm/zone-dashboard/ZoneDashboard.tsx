@@ -50,6 +50,7 @@ import useZoneIndex from '../hooks/use-zone-index';
 // import Error from '~/components/atoms/error';
 
 import { RefreshControl } from 'react-native';
+
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
 
@@ -70,6 +71,14 @@ const ZoneDashboard: React.FC = () => {
             ) ?? []
         );
     }, [departmentZones, hasZoneRights, user.department?._id]);
+
+    const handleSelectZone = (value: any) => {
+        // Prevent zonal coordinators from deselecting their zone and loading all zones
+        if (hasZoneRights && value === 'null') {
+            return;
+        }
+        setSelectedZone(value);
+    };
 
     useEffect(() => {
         if (!selectedZone && userZones) {
@@ -253,7 +262,7 @@ const ZoneDashboard: React.FC = () => {
                                     value={selectedZone}
                                     placeholder="All Zones"
                                     isLoading={loadingZones}
-                                    onValueChange={setSelectedZone}
+                                    onValueChange={handleSelectZone}
                                     items={hasZoneRights ? (userZones ?? []) : zones}
                                 />
                             </View>
