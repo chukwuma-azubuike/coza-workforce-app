@@ -10,7 +10,6 @@ import PickerSelect from '~/components/ui/picker-select';
 import { Skeleton } from '~/components/ui/skeleton';
 import FlatListComponent from '~/components/composite/flat-list';
 import { WorkerListView } from './WorkerListView';
-import Loading from '~/components/atoms/loading';
 import dayjs from 'dayjs';
 import { ZoneListView } from './ZoneListView';
 
@@ -36,7 +35,7 @@ const Leaderboards: React.FC = () => {
         });
     }, []);
 
-    const { data: workerLeaderboard = [] } = useGetWorkerLeaderboardQuery({
+    const { data: workerLeaderboard = [], isLoading: isLoadingWorkers } = useGetWorkerLeaderboardQuery({
         campusId: isGlobalPastor || isSuperAdmin ? undefined : currentUser?.campus?._id,
         limit: 10,
         ...date,
@@ -48,12 +47,16 @@ const Leaderboards: React.FC = () => {
     });
 
     const renderWorkerItem = React.useCallback(
-        ({ item }: { item: WorkerLeaderboardEntry; index: number }) => <WorkerListView {...item} />,
+        ({ item, index }: { item: WorkerLeaderboardEntry; index: number }) => (
+            <WorkerListView {...item} position={index + 1} />
+        ),
         []
     );
 
     const renderZoneItem = React.useCallback(
-        ({ item }: { item: ZoneLeaderboardEntry; index: number }) => <ZoneListView {...item} />,
+        ({ item, index }: { item: ZoneLeaderboardEntry; index: number }) => (
+            <ZoneListView {...item} position={index + 1} />
+        ),
         []
     );
 
@@ -111,6 +114,8 @@ const Leaderboards: React.FC = () => {
                     <FlatListComponent
                         itemHeight={216}
                         style={{ flex: 0 }}
+                        refreshing={false}
+                        isLoading={isLoadingWorkers}
                         data={workerLeaderboard}
                         renderItemComponent={renderWorkerItem}
                         emptyComponent={
@@ -121,9 +126,11 @@ const Leaderboards: React.FC = () => {
 
                 <TabsContent value="zones" className="pb-64">
                     <FlatListComponent
+                        refreshing={false}
                         itemHeight={219.7}
                         style={{ flex: 0 }}
                         data={zoneLeaderboard}
+                        isLoading={isLoadingZones}
                         renderItemComponent={renderZoneItem}
                         emptyComponent={
                             <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>

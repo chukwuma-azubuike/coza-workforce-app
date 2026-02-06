@@ -207,40 +207,53 @@ export interface LeaderboardPayload extends IPaginationParams {
 }
 
 export interface WorkerLeaderboardEntry {
-    worker: {
-        _id: string;
-        lastName: string;
-        firstName: string;
-        phoneNumber: string;
-        pictureUrl: string;
-    };
-    zone: {
-        _id: string;
-        name: string;
-    };
-    role: {
-        _id: string;
-        name: string;
-    };
-    createdBy: {
-        _id: string;
-        firstName: string;
-        lastName: string;
-        email: string;
-        pictureUrl: string;
-    };
+    conversions: number;
     position: number;
-    points: number;
-    guestCount: number;
-    callsCounts: number;
-    consistency: number;
-    conversion: number;
-    visitsCounts: number;
+    name: string;
+    scores: number;
+    workerId: string;
+    zone: string;
+    pictureUrl: string;
+    campus: string;
+    department: string;
+    timelines: number;
+    role: string;
     trend: TrendDirection;
-    achievement: {
-        title: string;
-        date: string;
-    }[];
+    guest: number;
+    // worker: {
+    //     _id: string;
+    //     lastName: string;
+    //     firstName: string;
+    //     phoneNumber: string;
+    //     pictureUrl: string;
+    // };
+    // zone: {
+    //     _id: string;
+    //     name: string;
+    // };
+    // role: {
+    //     _id: string;
+    //     name: string;
+    // };
+    // createdBy: {
+    //     _id: string;
+    //     firstName: string;
+    //     lastName: string;
+    //     email: string;
+    //     pictureUrl: string;
+    // };
+    // position: number;
+    // points: number;
+    // guestCount: number;
+    // callsCounts: number;
+    // consistency: number;
+    // conversion: number;
+    // visitsCounts: number;
+    // trend: TrendDirection;
+    // achievement: {
+    //     title: string;
+    //     date: string;
+    // }[];
 }
 
 export interface ZoneStats {
@@ -289,20 +302,28 @@ export interface ConversionRates {
 }
 
 export interface ZoneLeaderboardEntry {
+    // position: number;
+    // points: number;
+    // zoneId: string;
+    // zoneName: string;
+    // campusId: string;
+    // coordinators: any[]; // If you have a structure for coordinators, replace `any` with it
+    // workersCount: number;
+    // workers: Worker[];
+    // totalGuests: number;
+    // conversion: number;
+    // calls: number;
+    // visits: number;
     position: number;
-    points: number;
-    zoneId: string;
-    zoneName: string;
-    campusId: string;
-    coordinators: any[]; // If you have a structure for coordinators, replace `any` with it
-    workersCount: number;
-    workers: Worker[];
-    totalGuests: number;
-    conversion: number;
-    calls: number;
-    visits: number;
-    conversionRates: ConversionRates;
-    trend: string; // e.g. "up"
+    campus: string;
+    trend: TrendDirection;
+    attended: number;
+    conversions: number;
+    discipled: number;
+    invited: number;
+    joined: number;
+    scores: number;
+    zone: string;
 }
 
 export enum AchievementRarity {

@@ -50,6 +50,7 @@ import useZoneIndex from '../hooks/use-zone-index';
 // import Error from '~/components/atoms/error';
 
 import { RefreshControl } from 'react-native';
+import { useGetCampusesQuery } from '~/store/services/campus';
 
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
@@ -58,6 +59,7 @@ const ZoneDashboard: React.FC = () => {
     const { user, isZonalCoordinator, isHOD, isAHOD } = useRole();
     const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
     const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id }); //TODO: departmentId query param is yet to work
+    const [selectedCampus, setSelectedCampus] = useState<string | undefined>();
     const [selectedZone, setSelectedZone] = useState<string | undefined>(
         departmentZones ? (departmentZones as any)?.[0]?._id : undefined
     );
@@ -113,9 +115,11 @@ const ZoneDashboard: React.FC = () => {
         { assignedToId: selectedWorker, search, zoneId: selectedZone ?? undefined },
         { pollingInterval: 10000 }
     );
+
+    const { data: campuses = [], isLoading: loadingCampuses } = useGetCampusesQuery();
     const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
-        departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
-        campusId: user.campus._id,
+        // departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
+        campusId: selectedCampus ?? user?.campus?._id,
     });
 
     const [updateGuest] = useUpdateGuestMutation();
@@ -251,9 +255,25 @@ const ZoneDashboard: React.FC = () => {
                             <Text className="text-2xl font-bold !w-[35%] leading-none">
                                 {selectedZoneName ?? 'All Zones'}
                             </Text>
+                        </View>
+                        <View className="flex-row items-start gap-4">
+                            {/* Campus Selector */}
+                            {!hasZoneRights && (
+                                <View className="flex-1">
+                                    <PickerSelect
+                                        valueKey="_id"
+                                        labelKey="campusName"
+                                        className="!h-10"
+                                        value={selectedCampus}
+                                        placeholder="All Campuses"
+                                        isLoading={loadingCampuses}
+                                        onValueChange={setSelectedCampus}
+                                        items={campuses}
+                                    />
+                                </View>
+                            )}
 
                             {/* Zone Selector */}
-
                             <View className="flex-1">
                                 <PickerSelect
                                     valueKey="_id"
