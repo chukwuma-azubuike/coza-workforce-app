@@ -65,7 +65,7 @@ const Settings: React.FC = () => {
                                 onValueChange={setSelectedCampus}
                             />
                         </View>
-                        <View className="flex-1">
+                        {/* <View className="flex-1">
                             <PickerSelect
                                 valueKey="_id"
                                 items={zones}
@@ -75,7 +75,7 @@ const Settings: React.FC = () => {
                                 placeholder="Zone"
                                 onValueChange={setSelectedZone}
                             />
-                        </View>
+                        </View> */}
                     </View>
                 </View>
 
@@ -84,12 +84,12 @@ const Settings: React.FC = () => {
                         <TabsTrigger value="zones">
                             <Text>Zones</Text>
                         </TabsTrigger>
-                        <TabsTrigger value="assimilation">
+                        {/* <TabsTrigger value="assimilation">
                             <Text>Assimilation</Text>
-                        </TabsTrigger>
-                        <TabsTrigger value="coordinators">
+                        </TabsTrigger> */}
+                        {/* <TabsTrigger value="coordinators">
                             <Text>Coordinators</Text>
-                        </TabsTrigger>
+                        </TabsTrigger> */}
                     </TabsList>
 
                     <TabsContent value="zones" className="flex-1">
