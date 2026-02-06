@@ -489,18 +489,11 @@ export const roastCrmApi = createApi({
 
         // Leaderboard Queries
         getWorkerLeaderboard: builder.query<WorkerLeaderboardEntry[], LeaderboardPayload>({
-            query: ({ zoneId, ...params }) => ({
-                url: `/zone-users/68dbe7a7e86e2119da5f252d/guests-counts`,
-                params: { zoneId: '68dbe7a7e86e2119da5f252d', ...params },
+            query: params => ({
+                url: `/leaderboards/global-top-performing-workers`,
+                params,
                 method: REST_API_VERBS.GET,
             }),
-
-            // TODO: To be enabled when backend is fixed
-            //   query: ({ params }) => ({
-            //     url: `/leaderboards/guests-counts`,
-            //     params: { zoneId, ...params },
-            //     method: REST_API_VERBS.GET,
-            // }),
 
             transformResponse: (res: IDefaultResponse<WorkerLeaderboardEntry[]>) => res.data,
 
@@ -509,7 +502,7 @@ export const roastCrmApi = createApi({
 
         getZoneLeaderboard: builder.query<ZoneLeaderboardEntry[], LeaderboardPayload>({
             query: params => ({
-                url: `/zone-users/reports`,
+                url: `/leaderboards/global-top-performing-zones`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
