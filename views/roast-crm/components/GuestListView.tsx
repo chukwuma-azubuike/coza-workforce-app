@@ -93,10 +93,10 @@ export const GuestRow: React.FC<{
                                 {daysSinceContact === null
                                     ? 'No contact'
                                     : daysSinceContact === 0
-                                    ? 'Today'
-                                    : daysSinceContact === 1
-                                    ? 'Yesterday'
-                                    : `${daysSinceContact} days ago`}
+                                      ? 'Today'
+                                      : daysSinceContact === 1
+                                        ? 'Yesterday'
+                                        : `${daysSinceContact} days ago`}
                             </Text>
                         </View>
                     )}
@@ -133,10 +133,10 @@ export const GuestRow: React.FC<{
                                     {daysSinceContact === null
                                         ? 'No contact'
                                         : daysSinceContact === 0
-                                        ? 'Today'
-                                        : daysSinceContact === 1
-                                        ? 'Yesterday'
-                                        : `${daysSinceContact} days ago`}
+                                          ? 'Today'
+                                          : daysSinceContact === 1
+                                            ? 'Yesterday'
+                                            : `${daysSinceContact} days ago`}
                                 </Text>
                             </View>
 
@@ -201,8 +201,8 @@ const GuestListView: React.FC<{
 
     return (
         <View className="px-2 flex-1">
-            <View className="flex-row items-center justify-between">
-                <Text className="font-semibold">My Guests</Text>
+            <View className="flex-row items-center justify-between mb-2">
+                <Text className="font-semibold">Guests</Text>
                 <Badge variant="outline">
                     <Text className="text-base">{displayGuests?.length} guests</Text>
                 </Badge>

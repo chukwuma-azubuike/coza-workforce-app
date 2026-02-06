@@ -68,6 +68,7 @@ export interface Zone {
     address: string;
     departments: {
         id: string;
+        _id: string;
         name: string;
         description: string;
     }[];
