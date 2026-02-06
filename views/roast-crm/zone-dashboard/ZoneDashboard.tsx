@@ -244,20 +244,19 @@ const ZoneDashboard: React.FC = () => {
                             </Text>
 
                             {/* Zone Selector */}
-                            {!hasZoneRights && (
-                                <View className="flex-1">
-                                    <PickerSelect
-                                        valueKey="_id"
-                                        labelKey="name"
-                                        className="!h-10"
-                                        value={selectedZone}
-                                        placeholder="All Zones"
-                                        isLoading={loadingZones}
-                                        onValueChange={setSelectedZone}
-                                        items={hasZoneRights ? (departmentZones ?? []) : zones}
-                                    />
-                                </View>
-                            )}
+
+                            <View className="flex-1">
+                                <PickerSelect
+                                    valueKey="_id"
+                                    labelKey="name"
+                                    className="!h-10"
+                                    value={selectedZone}
+                                    placeholder="All Zones"
+                                    isLoading={loadingZones}
+                                    onValueChange={setSelectedZone}
+                                    items={hasZoneRights ? (userZones ?? []) : zones}
+                                />
+                            </View>
 
                             {/* Worker Selector */}
                             <View className="flex-1">
