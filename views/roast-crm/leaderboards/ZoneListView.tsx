@@ -38,10 +38,10 @@ export const ZoneListView: React.FC<ZoneLeaderboardEntry> = ({
                         </View>
                         <View>
                             <View className="flex-row items-center gap-2">
-                                <Text className="font-bold">{points}</Text>
+                                {/* <Text className="font-bold">{points}</Text> */}
                                 <Text>{getTrendIcon(trend)}</Text>
                             </View>
-                            <Text className="text-base text-muted-foreground">points</Text>
+                            {/* <Text className="text-base text-muted-foreground">points</Text> */}
                         </View>
                     </View>
 
