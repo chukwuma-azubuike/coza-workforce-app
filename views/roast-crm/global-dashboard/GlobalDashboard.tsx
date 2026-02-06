@@ -74,6 +74,7 @@ const GlobalDashboard: React.FC = () => {
     const {
         data: analytics,
         isLoading,
+        isFetching,
         error,
     } = useGetGlobalAnalyticsQuery({
         ...date,
@@ -81,13 +82,21 @@ const GlobalDashboard: React.FC = () => {
         campusId: selectedCampus,
     });
 
-    const { data: dropoffs } = useGetDropoffAnalyticsQuery({
+    const {
+        data: dropoffs,
+        isLoading: dropoffsLoading,
+        isFetching: dropoffsFetching,
+    } = useGetDropoffAnalyticsQuery({
         ...date,
         zoneId: selectedZone,
         campusId: selectedCampus,
     });
 
-    const { data: recommendations } = useGetRecommendationsQuery({
+    const {
+        data: recommendations,
+        isLoading: recommendationsLoading,
+        isFetching: recommendationsFetching,
+    } = useGetRecommendationsQuery({
         ...date,
         zoneId: selectedZone,
         campusId: selectedCampus,
@@ -224,7 +233,10 @@ const GlobalDashboard: React.FC = () => {
                             <TabsContent value="overview">
                                 <View className="gap-6 md:flex-row">
                                     <ErrorBoundary>
-                                        <DistributionChart data={analytics.stageDistribution} />
+                                        <DistributionChart
+                                            isLoading={isLoading || isFetching}
+                                            data={analytics.stageDistribution}
+                                        />
                                     </ErrorBoundary>
                                     <ErrorBoundary>
                                         {selectedZone ? (
@@ -238,7 +250,10 @@ const GlobalDashboard: React.FC = () => {
 
                             <TabsContent value="zones">
                                 <ErrorBoundary>
-                                    <ZonePerformanceChart data={analytics.zonePerformance as any} />
+                                    <ZonePerformanceChart
+                                        isLoading={isLoading || isFetching}
+                                        data={analytics.zonePerformance as any}
+                                    />
                                 </ErrorBoundary>
                             </TabsContent>
 
@@ -249,6 +264,7 @@ const GlobalDashboard: React.FC = () => {
                                             date.endDate
                                         ).format('MMM, YYYY')}`}
                                         data={analytics.monthlyTrends}
+                                        isLoading={isLoading || isFetching}
                                     />
                                 </ErrorBoundary>
                             </TabsContent>
@@ -257,13 +273,17 @@ const GlobalDashboard: React.FC = () => {
                                 <View className="flex-row flex-wrap" style={{ gap: 16 }}>
                                     <View style={{ flex: 1, minWidth: 300 }}>
                                         <ErrorBoundary>
-                                            <DropoffAnalysis data={dropoffs?.dropOffAnalysis || []} />
+                                            <DropoffAnalysis
+                                                data={dropoffs?.dropOffAnalysis || []}
+                                                isLoading={dropoffsLoading || dropoffsFetching}
+                                            />
                                         </ErrorBoundary>
                                     </View>
                                     <View style={{ flex: 1, minWidth: 300 }}>
                                         <ErrorBoundary>
                                             <RecommendationsCard
                                                 recommendations={recommendations?.recommendations || []}
+                                                isLoading={recommendationsLoading || recommendationsFetching}
                                             />
                                         </ErrorBoundary>
                                     </View>

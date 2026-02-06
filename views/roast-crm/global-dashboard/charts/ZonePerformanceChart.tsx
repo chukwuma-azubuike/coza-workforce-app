@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 import { cn } from '~/lib/utils';
 import { useColorScheme } from '~/lib/useColorScheme';
 import Legend from './Legend';
+import Loading from '~/components/atoms/loading';
 
 interface ZoneData {
     zone: string;
@@ -19,9 +20,10 @@ interface ZoneData {
 
 interface ZonePerformanceChartProps {
     data: ZoneData[];
+    isLoading?: boolean;
 }
 
-export function ZonePerformanceChart({ data }: ZonePerformanceChartProps) {
+export function ZonePerformanceChart({ data, isLoading }: ZonePerformanceChartProps) {
     const chartHeight = 400;
     const colors = ['#6B7280', '#3B82F6', '#8B5CF6', '#10B981'];
     const { isDarkColorScheme } = useColorScheme();
@@ -66,6 +68,9 @@ export function ZonePerformanceChart({ data }: ZonePerformanceChartProps) {
 
     return (
         <Card>
+            {isLoading && (
+                <Loading className="z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+            )}
             <CardHeader>
                 <CardTitle>Zone Performance Comparison</CardTitle>
             </CardHeader>

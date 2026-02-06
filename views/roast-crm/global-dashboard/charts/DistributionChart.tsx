@@ -4,8 +4,10 @@ import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
 import { useFont } from '@shopify/react-native-skia';
 import NexaExtraLight from '~/assets/fonts/Nexa-ExtraLight.ttf';
 import Empty from '~/components/atoms/empty';
+import Loading from '~/components/atoms/loading';
 
 interface DistributionChartProps {
+    isLoading?: boolean;
     data: Array<{
         name: string;
         value: number;
@@ -13,7 +15,7 @@ interface DistributionChartProps {
     }>;
 }
 
-export function DistributionChart({ data }: DistributionChartProps) {
+export function DistributionChart({ data, isLoading }: DistributionChartProps) {
     const font = useFont(NexaExtraLight, 13);
 
     const colorCodedData = data.map(item => ({
@@ -30,6 +32,7 @@ export function DistributionChart({ data }: DistributionChartProps) {
 
     return (
         <Card className="flex-1">
+            {isLoading && <Loading className="z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />}
             <CardHeader>
                 <CardTitle>Guest Distribution by Stage</CardTitle>
             </CardHeader>
