@@ -20,6 +20,7 @@ export function DistributionChart({ data, isLoading }: DistributionChartProps) {
 
     const colorCodedData = data.map(item => ({
         ...item,
+        name: `${item.name} (${item.value})`,
         color:
             item.name === 'Attended'
                 ? '#4CAF50'
@@ -32,7 +33,9 @@ export function DistributionChart({ data, isLoading }: DistributionChartProps) {
 
     return (
         <Card className="flex-1">
-            {isLoading && <Loading className="z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />}
+            {isLoading && (
+                <Loading className="z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+            )}
             <CardHeader>
                 <CardTitle>Guest Distribution by Stage</CardTitle>
             </CardHeader>

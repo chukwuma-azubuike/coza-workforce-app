@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { CartesianChart, BarGroup } from 'victory-native';
 import { useFont } from '@shopify/react-native-skia';
 import NexaExtraLight from '~/assets/fonts/Nexa-ExtraLight.ttf';
@@ -78,32 +78,34 @@ export function ZonePerformanceChart({ data, isLoading }: ZonePerformanceChartPr
                 <Legend />
             </View>
             <CardContent className={cn('p-0')}>
-                <View style={{ height: chartHeight }}>
-                    <CartesianChart
-                        xKey="label"
-                        data={transformedData}
-                        domain={{ y: [0, maxValue + 1] }}
-                        yKeys={['x', 'y', 'z', 'value']}
-                        padding={{ left: 10, right: 10, bottom: 10, top: 10 }}
-                        domainPadding={{ left: 50, right: 50, top: 30 }}
-                        axisOptions={{
-                            font: font,
-                            tickCount: 5,
-                            lineWidth: 0.15,
-                            lineColor: isDarkColorScheme ? '#FFF' : '#000',
-                            labelColor: isDarkColorScheme ? '#FFF' : '#000',
-                        }}
-                    >
-                        {({ points, chartBounds }) => (
-                            <BarGroup chartBounds={chartBounds} betweenGroupPadding={0.4} withinGroupPadding={0.1}>
-                                <BarGroup.Bar points={points.value} color={colors[0]} />
-                                <BarGroup.Bar points={points.x} color={colors[1]} />
-                                <BarGroup.Bar points={points.y} color={colors[2]} />
-                                <BarGroup.Bar points={points.z} color={colors[3]} />
-                            </BarGroup>
-                        )}
-                    </CartesianChart>
-                </View>
+                <ScrollView horizontal scrollEventThrottle={16} showsHorizontalScrollIndicator={true}>
+                    <View style={{ height: chartHeight, width: Math.max(600, transformedData.length * 100) }}>
+                        <CartesianChart
+                            xKey="label"
+                            data={transformedData}
+                            domain={{ y: [0, maxValue + 1] }}
+                            yKeys={['x', 'y', 'z', 'value']}
+                            padding={{ left: 20, right: 10, bottom: 10, top: 10 }}
+                            domainPadding={{ left: 50, right: 50, top: 30 }}
+                            axisOptions={{
+                                font: font,
+                                tickCount: 10,
+                                lineWidth: 0.15,
+                                lineColor: isDarkColorScheme ? '#FFF' : '#000',
+                                labelColor: isDarkColorScheme ? '#FFF' : '#000',
+                            }}
+                        >
+                            {({ points, chartBounds }) => (
+                                <BarGroup chartBounds={chartBounds} betweenGroupPadding={0.3} withinGroupPadding={0}>
+                                    <BarGroup.Bar points={points.value} color={colors[0]} />
+                                    <BarGroup.Bar points={points.x} color={colors[1]} />
+                                    <BarGroup.Bar points={points.y} color={colors[2]} />
+                                    <BarGroup.Bar points={points.z} color={colors[3]} />
+                                </BarGroup>
+                            )}
+                        </CartesianChart>
+                    </View>
+                </ScrollView>
             </CardContent>
         </Card>
     );
