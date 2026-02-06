@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Alert } from '~/components/ui/alert';
 import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
+import { Skeleton } from '~/components/ui/skeleton';
 import { Text } from '~/components/ui/text';
 
 interface RecommendationProps {
@@ -24,8 +25,8 @@ export function Recommendation({ title, description, type }: RecommendationProps
                     type === 'info'
                         ? 'text-blue-900 dark:text-blue-400'
                         : type === 'success'
-                        ? 'text-green-900 dark:text-green-400'
-                        : 'text-purple-900 dark:text-purple-400'
+                          ? 'text-green-900 dark:text-green-400'
+                          : 'text-purple-900 dark:text-purple-400'
                 } `}
             >
                 {title}
@@ -35,8 +36,8 @@ export function Recommendation({ title, description, type }: RecommendationProps
                     type === 'info'
                         ? 'text-blue-800 dark:text-blue-300'
                         : type === 'success'
-                        ? 'text-green-800 dark:text-green-300'
-                        : 'text-purple-800 dark:text-purple-300'
+                          ? 'text-green-800 dark:text-green-300'
+                          : 'text-purple-800 dark:text-purple-300'
                 }`}
             >
                 {description}
@@ -46,6 +47,7 @@ export function Recommendation({ title, description, type }: RecommendationProps
 }
 
 interface RecommendationsCardProps {
+    isLoading?: boolean;
     recommendations: Array<{
         title: string;
         description: string;
@@ -53,7 +55,7 @@ interface RecommendationsCardProps {
     }>;
 }
 
-export function RecommendationsCard({ recommendations }: RecommendationsCardProps) {
+export function RecommendationsCard({ recommendations, isLoading }: RecommendationsCardProps) {
     return (
         <Card>
             <CardHeader>
@@ -61,9 +63,19 @@ export function RecommendationsCard({ recommendations }: RecommendationsCardProp
             </CardHeader>
             <CardContent>
                 <View className="gap-6">
-                    {recommendations.map((rec, index) => (
-                        <Recommendation key={index} {...rec} />
-                    ))}
+                    {isLoading
+                        ? [...Array(3)].map((_, i) => (
+                              <View key={i} className="p-4 gap-4 flex-1 border border-border rounded-xl">
+                                  <Skeleton key={i} className="w-[50%] h-4 flex-1" />
+                                  <View style={{ gap: 16 }}>
+                                      <Skeleton className="w-full h-4" />
+                                      <Skeleton className="w-full h-4" />
+                                      <Skeleton className="w-full h-4" />
+                                      <Skeleton className="w-28 h-4" />
+                                  </View>
+                              </View>
+                          ))
+                        : recommendations.map((rec, index) => <Recommendation key={index} {...rec} />)}
                 </View>
             </CardContent>
         </Card>

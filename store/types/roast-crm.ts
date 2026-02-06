@@ -342,7 +342,10 @@ export interface ZonePerformance {
 export interface MonthlyTrend {
     month: string;
     newGuests: number;
-    converted: number;
+    invited: number;
+    attended: number;
+    discipled: number;
+    joined: number;
 }
 
 export interface StageDistributionItem {
