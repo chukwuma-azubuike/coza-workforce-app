@@ -32,7 +32,7 @@ type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
 const GlobalDashboard: React.FC = () => {
     const { user } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>();
-    const [selectedCampus, setSelectedCampus] = useState<string>(user?.campus?._id);
+    const [selectedCampus, setSelectedCampus] = useState<string | undefined>(user?.campus?._id);
     const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
@@ -60,10 +60,20 @@ const GlobalDashboard: React.FC = () => {
     const { data: campuses = [] } = useGetCampusesQuery();
 
     const handleZoneChange = useCallback((option: Option) => {
+        if ((option as unknown as string) === 'null') {
+            setSelectedZone(undefined);
+            return;
+        }
+
         setSelectedZone((option as unknown as string) ?? undefined);
     }, []);
 
     const handleCampusChange = useCallback((option: Option) => {
+        if ((option as unknown as string) === 'null') {
+            setSelectedCampus(undefined);
+            return;
+        }
+
         setSelectedCampus((option as unknown as string) ?? undefined);
     }, []);
 
@@ -136,7 +146,7 @@ const GlobalDashboard: React.FC = () => {
                         labelKey="campusName"
                         value={selectedCampus}
                         className="!h-10"
-                        placeholder="Campus"
+                        placeholder="Church"
                         onValueChange={handleCampusChange}
                     />
                 </View>
@@ -147,7 +157,7 @@ const GlobalDashboard: React.FC = () => {
                         labelKey="name"
                         value={selectedZone}
                         className="!h-10"
-                        placeholder="Zone"
+                        placeholder="All zones"
                         onValueChange={handleZoneChange}
                     />
                 </View>
