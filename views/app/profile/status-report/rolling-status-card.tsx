@@ -26,7 +26,7 @@ const RollingStatusCardSkeleton = () => {
                 </View>
 
                 {/* Info banner skeleton */}
-                <View className="flex-row items-start gap-2 p-4 border border-gray-200 bg-gray-50 rounded-xl">
+                <View className="flex-row items-start gap-2 p-4 border rounded-xl">
                     <Skeleton className="w-3 h-3 rounded-full mt-1" />
                     <View className="flex-1 gap-1">
                         <Skeleton className="h-4 w-full rounded-md" />
@@ -35,7 +35,7 @@ const RollingStatusCardSkeleton = () => {
                 </View>
 
                 {/* Streak card skeleton */}
-                <View className="p-4 bg-gray-200 rounded-xl">
+                <View className="p-4 rounded-xl">
                     <View className="flex-row items-center justify-between">
                         <View className="flex-row items-center gap-2">
                             <Skeleton className="w-10 h-10 rounded-full" />
@@ -137,16 +137,16 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                                 <Text>{content.emoji}</Text>
                             </View>
                             <View>
-                                <Text className="font-semibold text-lg text-white">{content.streakTitle}</Text>
-                                <Text className="whitespace-normal text-white font-medium max-w-[200px]">
+                                <Text className="font-semibold text-lg text-foreground">{content.streakTitle}</Text>
+                                <Text className="whitespace-normal text-foreground font-medium max-w-[200px]">
                                     {content.streakSubtitle}
                                 </Text>
                             </View>
                         </View>
 
                         <View className="items-end">
-                            <Text className="text-3xl font-bold text-white">{monthStreak}</Text>
-                            <Text className="text-white font-medium">{streakLabel}</Text>
+                            <Text className="text-3xl font-bold text-foreground">{monthStreak}</Text>
+                            <Text className="text-foreground font-medium">{streakLabel}</Text>
                         </View>
                     </View>
                 </LinearGradient>
