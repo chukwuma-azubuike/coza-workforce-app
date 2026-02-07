@@ -22,7 +22,7 @@ const RadioButtonGroup: React.FC<Partial<IRadioButtonProps>> = ({
     const handleValueChange = (val: string) => {
         if (props.onValueChange) {
             props.onValueChange(val);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            Haptics.selectionAsync();
         }
     };
 

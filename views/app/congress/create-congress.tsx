@@ -10,9 +10,9 @@ import { useCreateCongressMutation } from '@store/services/congress';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
-import DateTimePicker from '~/components/composite/date-time-picker';
 import { Button } from '~/components/ui/button';
 import { router } from 'expo-router';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const CreateCongress: React.FC = () => {
     const { setModalState } = useModal();
@@ -80,7 +80,7 @@ const CreateCongress: React.FC = () => {
                             </View>
                             <View className="justify-between flex-row gap-4 w-full">
                                 <View className="flex-1">
-                                    <DateTimePicker
+                                    <DateTimePickerLegend
                                         mode="date"
                                         label="Start date"
                                         error={errors.startDate}
@@ -93,7 +93,7 @@ const CreateCongress: React.FC = () => {
                                     )}
                                 </View>
                                 <View className="flex-1">
-                                    <DateTimePicker
+                                    <DateTimePickerLegend
                                         mode="date"
                                         label="End date"
                                         error={errors.endDate}
@@ -110,7 +110,7 @@ const CreateCongress: React.FC = () => {
 
                             <View className="justify-between flex-row gap-4 w-full">
                                 <View className="flex-1">
-                                    <DateTimePicker
+                                    <DateTimePickerLegend
                                         mode="date"
                                         label="Registration start date"
                                         error={errors.registrationStartDate}
@@ -125,7 +125,7 @@ const CreateCongress: React.FC = () => {
                                     )}
                                 </View>
                                 <View className="flex-1">
-                                    <DateTimePicker
+                                    <DateTimePickerLegend
                                         mode="date"
                                         label="Registration end date"
                                         error={errors.registrationEndDate}

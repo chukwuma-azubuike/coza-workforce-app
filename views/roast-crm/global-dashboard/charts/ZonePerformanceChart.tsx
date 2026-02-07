@@ -1,0 +1,112 @@
+import React, { useMemo } from 'react';
+import { View, ScrollView } from 'react-native';
+import { CartesianChart, BarGroup } from 'victory-native';
+import { useFont } from '@shopify/react-native-skia';
+import NexaExtraLight from '~/assets/fonts/Nexa-ExtraLight.ttf';
+import { Card, CardHeader, CardTitle, CardContent } from '~/components/ui/card';
+import { cn } from '~/lib/utils';
+import { useColorScheme } from '~/lib/useColorScheme';
+import Legend from './Legend';
+import Loading from '~/components/atoms/loading';
+
+interface ZoneData {
+    zone: string;
+    invited: number;
+    attended: number;
+    discipled: number;
+    joined: number;
+    [key: string]: string | number;
+}
+
+interface ZonePerformanceChartProps {
+    data: ZoneData[];
+    isLoading?: boolean;
+}
+
+export function ZonePerformanceChart({ data, isLoading }: ZonePerformanceChartProps) {
+    const chartHeight = 400;
+    const colors = ['#6B7280', '#3B82F6', '#8B5CF6', '#10B981'];
+    const { isDarkColorScheme } = useColorScheme();
+
+    // Load the font for the axis labels
+    const font = useFont(NexaExtraLight, 12);
+
+    const transformedData = useMemo(() => {
+        return data?.map(item => ({
+            label: item.zone,
+            value: item.invited,
+            x: item.attended,
+            y: item.discipled,
+            z: item.joined,
+        }));
+    }, [data]);
+
+    const maxValue = useMemo(() => {
+        transformedData.map(item => [item.value, item.x, item.y, item.z]).flat();
+        return Math.max(
+            ...transformedData.map(item =>
+                Math.max(item.value as number, item.x as number, item.y as number, item.z as number)
+            )
+        );
+    }, [transformedData]);
+
+    // Wait for font to load before rendering chart
+    if (!font) {
+        return (
+            <Card>
+                <CardHeader>
+                    <CardTitle>Zone Performance Comparison</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <View style={{ height: chartHeight, justifyContent: 'center', alignItems: 'center' }}>
+                        {/* You can add a loading indicator here if desired */}
+                    </View>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    return (
+        <Card>
+            {isLoading && (
+                <Loading className="z-50 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
+            )}
+            <CardHeader>
+                <CardTitle>Zone Performance Comparison</CardTitle>
+            </CardHeader>
+            <View className="px-6 ">
+                <Legend />
+            </View>
+            <CardContent className={cn('p-0')}>
+                <ScrollView horizontal scrollEventThrottle={16} showsHorizontalScrollIndicator={true}>
+                    <View style={{ height: chartHeight, width: Math.max(600, transformedData.length * 100) }}>
+                        <CartesianChart
+                            xKey="label"
+                            data={transformedData}
+                            domain={{ y: [0, maxValue + 1] }}
+                            yKeys={['x', 'y', 'z', 'value']}
+                            padding={{ left: 20, right: 10, bottom: 10, top: 10 }}
+                            domainPadding={{ left: 50, right: 50, top: 30 }}
+                            axisOptions={{
+                                font: font,
+                                tickCount: 10,
+                                lineWidth: 0.15,
+                                lineColor: isDarkColorScheme ? '#FFF' : '#000',
+                                labelColor: isDarkColorScheme ? '#FFF' : '#000',
+                            }}
+                        >
+                            {({ points, chartBounds }) => (
+                                <BarGroup chartBounds={chartBounds} betweenGroupPadding={0.3} withinGroupPadding={0}>
+                                    <BarGroup.Bar points={points.value} color={colors[0]} />
+                                    <BarGroup.Bar points={points.x} color={colors[1]} />
+                                    <BarGroup.Bar points={points.y} color={colors[2]} />
+                                    <BarGroup.Bar points={points.z} color={colors[3]} />
+                                </BarGroup>
+                            )}
+                        </CartesianChart>
+                    </View>
+                </ScrollView>
+            </CardContent>
+        </Card>
+    );
+}

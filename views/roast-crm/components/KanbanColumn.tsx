@@ -1,0 +1,67 @@
+import React, { memo, ReactNode } from 'react';
+import { Platform, View } from 'react-native';
+import { AssimilationStage } from '~/store/types';
+import { Text } from '~/components/ui/text';
+import { Badge } from '~/components/ui/badge';
+import { Skeleton } from '~/components/ui/skeleton';
+import { getBadgeColor, getStageColumnColor } from '../utils/colors';
+import { cn } from '~/lib/utils';
+import { ScreenHeight } from '@rneui/base';
+
+interface KanbanColumnProps {
+    title: string;
+    subTitle?: string;
+    guestCount?: number;
+    children: ReactNode;
+    isLoading?: boolean;
+    stage: AssimilationStage;
+}
+
+const KanbanColumn: React.FC<KanbanColumnProps> = ({ title, subTitle, stage, guestCount, children, isLoading }) => {
+    return (
+        <View
+            style={{ height: Platform.OS === 'android' ? ScreenHeight - 330 : undefined }}
+            className={` ${
+                getStageColumnColor(stage) ?? 'border-gray-200 dark:border-gray-200/10 bg-gray-50 dark:bg-gray-500/10'
+            } border-2 border-dashed rounded-2xl transition-colors ${Platform.OS === 'ios' ? 'flex-1' : 'pb-14'}`}
+        >
+            <View className="px-3 py-1">
+                <View className="flex-row items-center gap-2">
+                    <Text className="font-semibold">{title}</Text>
+                    <Badge variant="secondary" className={getBadgeColor(stage)}>
+                        <Text>{guestCount}</Text>
+                    </Badge>
+                </View>
+                <Text className="text-sm text-muted-foreground line-clamp-none leading-none">{subTitle}</Text>
+            </View>
+
+            <View className={cn('gap-4 pb-1.5 px-1.5', Platform.OS === 'ios' && 'flex-1')}>
+                {isLoading ? (
+                    <View className="gap-2">
+                        {[...Array(2)].map((_, index) => (
+                            <View key={index} className="gap-2 p-5 border border-border rounded-2xl">
+                                <View className="flex-row gap-4">
+                                    <Skeleton className="h-12 w-12 rounded-full" />
+                                    <View className="flex-1 gap-2">
+                                        <Skeleton className="h-4 w-2/3" />
+                                        <Skeleton className="h-4 w-1/2" />
+                                    </View>
+                                </View>
+                                <View className="gap-2">
+                                    <Skeleton className="h-10 w-full" />
+                                    <Skeleton className="h-2 w-1/2" />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                ) : (
+                    children
+                )}
+            </View>
+        </View>
+    );
+};
+
+export default memo(KanbanColumn);
+
+KanbanColumn.displayName = 'KanbanColumn';

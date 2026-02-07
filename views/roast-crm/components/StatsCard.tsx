@@ -1,0 +1,41 @@
+import React, { memo, useCallback, useMemo } from 'react';
+import { Card, CardContent } from '~/components/ui/card';
+import { Text } from '~/components/ui/text';
+import { AssimilationStage } from '~/store/types';
+
+interface StatsCardProps {
+    count: number;
+    stage: AssimilationStage;
+}
+
+const StatsCard: React.FC<StatsCardProps> = ({ stage, count }: StatsCardProps) => {
+    const getStageText = useCallback(() => {
+        switch (stage) {
+            case AssimilationStage.INVITED:
+                return { title: 'Invited', color: 'text-blue-600' };
+            case AssimilationStage.ATTENDED:
+                return { title: 'Attended', color: 'text-green-600' };
+            case AssimilationStage.BEING_DISCIPLED:
+                return { title: 'Discipled', color: 'text-purple-600' };
+            case AssimilationStage.ASSIMILATED:
+                return { title: 'Joined', color: 'text-foreground' };
+        }
+    }, [stage]);
+
+    const stageInfo = useMemo(() => getStageText(), [getStageText]);
+
+    return (
+        <Card className="items-center flex-1 min-w-[20%]">
+            <CardContent className="py-4 px-2 w-full items-center">
+                <Text className={`text-3xl font-bold text-blue-600 w-full text-center ${stageInfo?.color}`}>
+                    {count ?? 0}
+                </Text>
+                <Text className="text-foreground w-full text-center">{stageInfo?.title}</Text>
+            </CardContent>
+        </Card>
+    );
+};
+
+export default memo(StatsCard);
+
+StatsCard.displayName = 'StatsCard';

@@ -26,6 +26,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
             <View className={cn('relative', (props.editable === false || isDisabled) && 'opacity-40')}>
                 <TextInput
                     ref={ref}
+                    autoCorrect={false}
                     editable={!isDisabled}
                     secureTextEntry={secureTextEntry}
                     className={cn(
@@ -57,7 +58,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
                 {isPassword && (
                     <TouchableOpacity
                         onPress={event => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            Haptics.selectionAsync();
                             togglePasswordVisibility();
                         }}
                         className="absolute top-5 right-3"

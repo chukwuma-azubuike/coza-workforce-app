@@ -44,8 +44,8 @@ export const useAuth = () => {
 };
 
 export const logOutfn = (dispatch: ThunkDispatch<IStore, any, any>) => {
-    Utils.clearCurrentUserStorage().then(res => {
-        Utils.clearStorage().then(res => {
+    Utils.clearCurrentUserStorage().then(_res => {
+        Utils.clearStorage().then(_res => {
             dispatch(userActions.clearSession());
             Utils.removeUserSession();
         });

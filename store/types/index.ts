@@ -1,5 +1,6 @@
 import { IReportFormProps } from '@views/app/reports/forms/types';
 import APP_VARIANT from '~/config/envConfig';
+export * from './roast-crm';
 
 // General types
 export interface ILog {
@@ -9,6 +10,11 @@ export interface ILog {
     updatedAt?: string;
 }
 export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
+export interface IPaginationParams {
+    page?: number;
+    limit?: number;
+}
 
 export enum ERROR {
     NETWORK_CONNECTION_ERROR = 'TypeError: Network request failed',
@@ -81,6 +87,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
+    zoneId?: string;
     CGWCId?: string;
     cgwcId?: string;
     limit?: number;
@@ -176,6 +183,7 @@ export interface IUser {
         instagram: string;
         twitter: string;
     };
+    zoneIds?: Array<string>;
 }
 
 export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
