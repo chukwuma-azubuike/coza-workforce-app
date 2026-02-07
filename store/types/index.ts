@@ -8,6 +8,7 @@ export interface ILog {
     dateUpdated?: string;
     updatedAt?: string;
 }
+export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 
 export enum ERROR {
     NETWORK_CONNECTION_ERROR = 'TypeError: Network request failed',
@@ -181,7 +182,7 @@ export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD' | 'UNAPPROVED' | 'BLACKLISTED';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED';
 
 export interface ICreateUserPayload {
     firstName: string;

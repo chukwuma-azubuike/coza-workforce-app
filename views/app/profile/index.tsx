@@ -12,14 +12,20 @@ import Utils from '@utils/index';
 import DeviceInfo from 'react-native-device-info';
 import { S3_BUCKET_FOLDERS } from '@constants/index';
 import { useAuth } from '@hooks/auth';
-import { IEditProfilePayload } from '@store/types';
-import { useUpdateUserMutation } from '@store/services/account';
+import { IEditProfilePayload, Month } from '@store/types';
+import { useGetUserStatusHistoryQuery, useUpdateUserMutation } from '@store/services/account';
 import StatusTag from '@components/atoms/status-tag';
 import APP_VARIANT from '@config/envConfig';
 import { router } from 'expo-router';
 import useUploader from '~/hooks/use-uploader';
 import capitalize from 'lodash/capitalize';
 import Loading from '~/components/atoms/loading';
+
+const currentMonth = new Date().getMonth() + 1;
+const currentYear = new Date().getFullYear();
+// Using last month's status since current month's status is not yet available
+const lastMonth = (currentMonth - 1 === 0 ? 12 : currentMonth - 1) as Month;
+const lastMonthYear = lastMonth === 12 ? currentYear - 1 : currentYear;
 
 const Profile: React.FC = () => {
     const { user, isGlobalPastor, refetch, isFetching } = useRole();
@@ -48,6 +54,19 @@ const Profile: React.FC = () => {
         },
         allowedTypes: ['image/*'],
     });
+
+    const { data: statusHistory, isFetching: statusHistoryIsFetching } = useGetUserStatusHistoryQuery({
+        userId: user?._id,
+        month: lastMonth,
+        year: lastMonthYear,
+        monthsBack: 1,
+    });
+
+    const userCurrentStatusReport = statusHistory?.currentReport;
+
+    const handleViewFullReport = () => {
+        router.push({ pathname: '/profile/status' });
+    };
 
     const isProfilePictureLoading = updateIsLoading || isUploading;
 
@@ -117,6 +136,19 @@ const Profile: React.FC = () => {
                         </View>
                     </View>
                     <View style={{ marginHorizontal: 4 }}>
+                        <TouchableOpacity activeOpacity={0.7} onPress={handleViewFullReport}>
+                            <View className="items-center justify-between my-2 flex-row">
+                                <View className="flex flex-row gap-1 items-center">
+                                    <Text className="font-bold text-muted-foreground">Worker Status</Text>
+                                    <Text className="text-xs text-muted-foreground font-light">
+                                        (Tap to see full report)
+                                    </Text>
+                                </View>
+                                <StatusTag isLoading={statusHistoryIsFetching}>
+                                    {userCurrentStatusReport?.status}
+                                </StatusTag>
+                            </View>
+                        </TouchableOpacity>
                         <View className="items-center justify-between my-2 flex-row">
                             <Text className="font-bold text-muted-foreground">Congress Status</Text>
                             <StatusTag>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
