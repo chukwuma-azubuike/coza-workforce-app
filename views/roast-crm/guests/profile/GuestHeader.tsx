@@ -25,6 +25,8 @@ import { useGetUserByIdQuery } from '~/store/services/account';
 import { Skeleton } from '~/components/ui/skeleton';
 import useRole from '~/hooks/role';
 import * as Haptics from 'expo-haptics';
+import { useGetCampusesQuery } from '~/store/services/campus';
+import useCampusIndex from '../../hooks/use-campus-index';
 
 interface GuestHeaderProps {
     guest: Guest;
@@ -50,9 +52,14 @@ export function GuestHeader({
     const [mode, setMode] = useState<'edit' | 'view'>('view');
     const isEditMode = mode === 'edit';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
-    const { data: zones = [] } = useGetZonesQuery({ campusId: currentUser?.campus._id });
-    const { data: zoneUsers } = useGetZoneUsersQuery({ zoneId: guest?.zoneId, limit: 1000 }); //TODO: Supposed to get users by zoneId
+    const [selectedCampus, setSelectedCampus] = useState<string | undefined>(currentUser?.campusId);
+    const [selectedZone, setSelectedZone] = useState<string | undefined>(guest?.zoneId);
+
+    const { data: campuses = [] } = useGetCampusesQuery();
+    const { data: zones = [] } = useGetZonesQuery({ campusId: selectedCampus });
+    const { data: zoneUsers } = useGetZoneUsersQuery({ zoneId: selectedZone, limit: 1000 }); //TODO: Supposed to get users by zoneId
     const zoneIndex = useZoneIndex();
+    const campusIndex = useCampusIndex();
     const { data: assignedTo, isLoading: loadingAssignedTo } = useGetUserByIdQuery(guest?.assignedToId as string);
     const canReAssign = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
 
@@ -260,24 +267,61 @@ export function GuestHeader({
                                     </View>
                                 )}
 
-                                <View className="flex-row items-center gap-2">
-                                    <Icon type="ionicon" name="location-outline" size={22} color={THEME_CONFIG.blue} />
-                                    {isEditMode ? (
-                                        <View className="flex-1">
-                                            <PickerSelect
-                                                valueKey="_id"
-                                                labelKey="name"
-                                                className="!h-12"
-                                                items={zones || []}
-                                                value={values?.zoneId}
-                                                placeholder="Select zone"
-                                                onValueChange={handleChange('zoneId') as any}
-                                            />
-                                            {errors?.zoneId && <FormErrorMessage>{errors?.zoneId}</FormErrorMessage>}
-                                        </View>
-                                    ) : (
-                                        <Text className="flex-1">{zoneIndex[guest.zoneId]}</Text>
-                                    )}
+                                <View className="flex-row gap-1">
+                                    <View className="flex-row items-center gap-2 flex-1">
+                                        <Icon size={22} type="lucide" name="church" color={THEME_CONFIG.blue} />
+
+                                        {isEditMode ? (
+                                            <View className="flex-1">
+                                                <PickerSelect
+                                                    valueKey="_id"
+                                                    className="!h-12"
+                                                    labelKey="campusName"
+                                                    items={campuses || []}
+                                                    value={values?.campusId}
+                                                    placeholder="Select campus"
+                                                    onValueChange={(value: any) => {
+                                                        setSelectedCampus(value);
+                                                        handleChange('campusId')(value) as any;
+                                                    }}
+                                                />
+                                                {errors?.zoneId && (
+                                                    <FormErrorMessage>{errors?.campusId}</FormErrorMessage>
+                                                )}
+                                            </View>
+                                        ) : (
+                                            <Text className="flex-1">{campusIndex[guest.campusId as string]}</Text>
+                                        )}
+                                    </View>
+                                    <View className="flex-row items-center gap-1 flex-1">
+                                        <Icon
+                                            type="ionicon"
+                                            name="location-outline"
+                                            size={22}
+                                            color={THEME_CONFIG.blue}
+                                        />
+                                        {isEditMode ? (
+                                            <View className="flex-1">
+                                                <PickerSelect
+                                                    valueKey="_id"
+                                                    labelKey="name"
+                                                    className="!h-12"
+                                                    items={zones || []}
+                                                    value={values?.zoneId}
+                                                    placeholder="Select zone"
+                                                    onValueChange={(value: any) => {
+                                                        setSelectedZone(value);
+                                                        handleChange('zoneId')(value) as any;
+                                                    }}
+                                                />
+                                                {errors?.zoneId && (
+                                                    <FormErrorMessage>{errors?.zoneId}</FormErrorMessage>
+                                                )}
+                                            </View>
+                                        ) : (
+                                            <Text className="flex-1">{zoneIndex[guest.zoneId]}</Text>
+                                        )}
+                                    </View>
                                 </View>
 
                                 {loadingAssignedTo ? (

@@ -32,6 +32,7 @@ import { roastCRMActions } from '~/store/actions/roast-crm';
 import { useDispatch } from 'react-redux';
 import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
+import { useGetCampusesQuery } from '~/store/services/campus';
 
 const QUICK_TIPS = [
     'Keep conversations natural, friendly and spiritual',
@@ -47,8 +48,10 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
     const isOnline = netInfo.isConnected;
 
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+    const [selectedCampus, setSelectedCampus] = useState<string | undefined>(currentUser?.campusId);
 
-    const { data: zones = [] } = useGetZonesQuery({ campusId: currentUser?.campusId });
+    const { data: campuses = [] } = useGetCampusesQuery();
+    const { data: zones = [] } = useGetZonesQuery({ campusId: selectedCampus });
     const [addGuest, { isLoading }] = useCreateGuestMutation();
     const { data: assimilationSubStages = [] } = useGetAssimilationSubStagesQuery();
     const { data: assimilationStages = [] } = useGetAssimilationStagesQuery();
@@ -219,23 +222,46 @@ const GuestCaptureForm: React.FC<{ setModalVisible: () => void }> = ({ setModalV
                                     )}
                                 </View>
 
-                                <View className="gap-2">
-                                    <View className="items-center gap-2 flex-row">
-                                        <MapPin color="gray" size={16} />
-                                        <Label>Zone</Label>
+                                <View className="flex-row gap-4">
+                                    <View className="gap-2 flex-1">
+                                        <View className="items-center gap-2 flex-row">
+                                            <MapPin color="gray" size={16} />
+                                            <Label>Church</Label>
+                                        </View>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            className="!h-12"
+                                            labelKey="campusName"
+                                            items={campuses || []}
+                                            value={values?.campusId}
+                                            placeholder="Select church"
+                                            onValueChange={(value: any) => {
+                                                setSelectedCampus(value);
+                                                handleChange('campusId')(value) as any;
+                                            }}
+                                        />
+                                        {errors?.campusId && touched?.campusId && (
+                                            <FormErrorMessage>{errors?.campusId}</FormErrorMessage>
+                                        )}
                                     </View>
-                                    <PickerSelect
-                                        valueKey="_id"
-                                        labelKey="name"
-                                        className="!h-12"
-                                        items={zones || []}
-                                        value={values?.zoneId}
-                                        placeholder="Select zone"
-                                        onValueChange={handleChange('zoneId') as any}
-                                    />
-                                    {errors?.zoneId && touched?.zoneId && (
-                                        <FormErrorMessage>{errors?.zoneId}</FormErrorMessage>
-                                    )}
+                                    <View className="gap-2 flex-1">
+                                        <View className="items-center gap-2 flex-row">
+                                            <MapPin color="gray" size={16} />
+                                            <Label>Zone</Label>
+                                        </View>
+                                        <PickerSelect
+                                            valueKey="_id"
+                                            labelKey="name"
+                                            className="!h-12"
+                                            items={zones || []}
+                                            value={values?.zoneId}
+                                            placeholder="Select zone"
+                                            onValueChange={handleChange('zoneId') as any}
+                                        />
+                                        {errors?.zoneId && touched?.zoneId && (
+                                            <FormErrorMessage>{errors?.zoneId}</FormErrorMessage>
+                                        )}
+                                    </View>
                                 </View>
 
                                 <View className="gap-2">
