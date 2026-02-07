@@ -20,7 +20,7 @@ interface TrendChartProps {
     }>;
 }
 
-export function TrendChart({ data, date, isLoading }: TrendChartProps) {
+export function TrendChart({ data, isLoading }: TrendChartProps) {
     const font = useFont(NexaHeavy, 12);
     const { state, isActive } = useChartPressState({ x: 0, y: { value: 0, x: 0, y: 0 } });
 
@@ -32,7 +32,7 @@ export function TrendChart({ data, date, isLoading }: TrendChartProps) {
             y: item.newGuests,
             invited: item.invited,
             attended: item.attended,
-            discipled: item.discipled,
+            discipled: item.discipled ?? (item as any).disipled,
             joined: item.joined,
         }));
     }, [data]);
