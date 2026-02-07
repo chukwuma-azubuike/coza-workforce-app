@@ -2,7 +2,7 @@
     "expo": {
         "name": "COZA Workforce",
         "slug": "coza-workforce-app",
-        "version": "2.0.9",
+        "version": "2.2.0",
         "runtimeVersion": {
             "policy": "appVersion"
         },
@@ -28,7 +28,7 @@
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
             },
             "usesAppleSignIn": true,
-            "buildNumber": "55",
+            "buildNumber": "61",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
@@ -36,10 +36,10 @@
         },
         "android": {
             "adaptiveIcon": {
-                "foregroundImage": "./assets/images/icon.png",
+                "foregroundImage": "./assets/images/android-coza-icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "versionCode": 92,
+            "versionCode": 102,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
@@ -51,7 +51,7 @@
         "web": {
             "bundler": "metro",
             "output": "static",
-            "favicon": "./assets/images/favicon.png"
+            "favicon": "./assets/images/splash.png"
         },
         "plugins": [
             "expo-router",
@@ -61,7 +61,11 @@
                     "image": "./assets/images/splash.png",
                     "imageWidth": 200,
                     "resizeMode": "contain",
-                    "backgroundColor": "#ffffff"
+                    "backgroundColor": "#ffffff",
+                    "dark": {
+                        "image": "./assets/images/splash-icon-dark.png",
+                        "backgroundColor": "#000000"
+                    }
                 }
             ],
             "expo-font",

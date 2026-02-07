@@ -1,0 +1,57 @@
+import { throttle } from 'lodash';
+import { useCallback } from 'react';
+import type Animated from 'react-native-reanimated';
+import { useSharedValue, type AnimatedRef } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
+
+interface UseColumnPaginationProps {
+    columnsHorizontalScrollRef: AnimatedRef<Animated.FlatList<any>>;
+    constants: {
+        edgeColumnOff: number;
+        columnContainerWidth: number;
+    };
+}
+
+export const useColumnPagination = ({ columnsHorizontalScrollRef, constants }: UseColumnPaginationProps) => {
+    const { edgeColumnOff, columnContainerWidth } = constants;
+
+    const currentVisibleColumnIndex = useSharedValue(0);
+
+    const updateCurrentColumnIndex = (columnIndex: number) => {
+        currentVisibleColumnIndex.value = columnIndex;
+    };
+
+    const paginate = useCallback(
+        throttle(
+            (to: 'left' | 'right' | 'center') => {
+                Haptics.selectionAsync();
+
+                switch (to) {
+                    case 'right':
+                        columnsHorizontalScrollRef.current?.scrollToOffset({
+                            offset: edgeColumnOff + currentVisibleColumnIndex.value * columnContainerWidth,
+                            animated: true,
+                        });
+                        break;
+                    case 'center':
+                        columnsHorizontalScrollRef.current?.scrollToOffset({
+                            offset: edgeColumnOff + (currentVisibleColumnIndex.value - 1) * columnContainerWidth,
+                            animated: true,
+                        });
+                        break;
+                    case 'left':
+                        columnsHorizontalScrollRef.current?.scrollToOffset({
+                            offset: edgeColumnOff + (currentVisibleColumnIndex.value - 2) * columnContainerWidth,
+                            animated: true,
+                        });
+                        break;
+                }
+            },
+            700,
+            { leading: true, trailing: false }
+        ),
+        [columnsHorizontalScrollRef, edgeColumnOff, columnContainerWidth, currentVisibleColumnIndex]
+    );
+
+    return { paginate, updateCurrentColumnIndex };
+};

@@ -15,6 +15,7 @@ import { groupHeadServiceSlice } from '../grouphead';
 import { uploadServiceSlice } from '../upload';
 import { dismissModalListenerMiddleware } from '~/store/listener-middleware/app';
 import { Middleware } from '@reduxjs/toolkit';
+import { roastCrmApi } from '../roast-crm';
 
 const middlewaresSlices: Array<Middleware> = [
     accountServiceSlice.middleware,
@@ -33,6 +34,7 @@ const middlewaresSlices: Array<Middleware> = [
     groupHeadServiceSlice.middleware,
     uploadServiceSlice.middleware,
     dismissModalListenerMiddleware.middleware,
+    roastCrmApi.middleware,
 ];
 
 export default middlewaresSlices;

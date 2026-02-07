@@ -19,9 +19,9 @@ import useScreenFocus from '@hooks/focus';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { View } from 'react-native';
-import TopNav from '../top-nav';
 import { cn } from '~/lib/utils';
 import ViewWrapper from '~/components/layout/viewWrapper';
+import TopNav from '~/components/TopNav';
 
 interface IClockerProps {
     isInRange: boolean;
@@ -120,7 +120,7 @@ const Clocker: React.FC<IClockerProps> = ({
     }, [refreshTrigger]);
 
     return (
-        <View className={cn('gap', 'flex-1 mt-1')}>
+        <View className={cn('gap', 'flex-1')}>
             <TopNav />
             <ViewWrapper scroll className="pt-4" refreshing={false} onRefresh={refreshData} style={{ flexGrow: 1 }}>
                 <Timer />
