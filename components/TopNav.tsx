@@ -12,6 +12,7 @@ import { router } from 'expo-router';
 import ModeToggle from '~/components/ModeToggle';
 import { appSelectors } from '~/store/actions/app';
 import { useAppSelector } from '~/store/hooks';
+import Logo from './atoms/logo';
 
 const TopNav: React.FC = () => {
     const { user } = useRole();
@@ -27,7 +28,11 @@ const TopNav: React.FC = () => {
     return (
         <View className="px-2 w-full h-14 z-20 items-center justify-between flex-row bg-background">
             <View className="min-w-[36px] flex-1">
-                <ModeToggle />
+                {/* Suspend toggle until Roast is approved for release */}
+                {/* <ModeToggle /> */}
+                <View className="ml-1">
+                    <Logo size={36} />
+                </View>
             </View>
             <View className="min-w-[40%] flex-1 items-center">
                 {mode === 'ops' ? (
