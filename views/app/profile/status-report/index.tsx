@@ -61,7 +61,7 @@ const StatusReport: React.FC = () => {
                         />
                     }
                 >
-                    <View className="py-10 px-4 border-b border-gray-200 dark:border-neutral-900 shadow-sm items-center flex-row gap-6 bg-white dark:bg-black">
+                    <View className="py-6 px-4 shadow-sm items-center flex-row gap-6 bg-white dark:bg-black">
                         <View className="border-4 border-neutral-50 dark:border-neutral-800 h-fit w-fit rounded-full shadow-sm">
                             <AvatarComponent
                                 alt="current-user-avatar"

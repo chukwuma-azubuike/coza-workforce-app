@@ -52,8 +52,8 @@ const ServiceStatusCard = ({
 
 const StatusDescription = () => {
     return (
-        <View className="px-4 py-10">
-            <Card className="gap-4 rounded-2xl bg-background shadow-sm p-5">
+        <View className="px-4 py-6">
+            <Card className="gap-4 rounded-2xl bg-background shadow-sm py-5 px-0">
                 <Text className="text-xl text-foreground font-medium">Understanding Your Status</Text>
 
                 <View className="py-4 gap-4">
@@ -116,12 +116,12 @@ const StatusDescription = () => {
                 <View className="py-4 gap-4">
                     <Text className="font-semibold text-foreground">Rolling Status</Text>
                     <Text className="text-muted-foreground">Based on consecutive monthly patterns</Text>
-                    <ServiceStatusCard
+                    {/* <ServiceStatusCard
                         color="green"
                         icon={<CheckCircleIcon color={'green'} size={24} />}
                         label="Active"
                         description="Less than 3 consecutive inactive months"
-                    />
+                    /> */}
                     <ServiceStatusCard
                         color="amber"
                         icon={<CircleXIcon color={'darkorange'} size={24} />}
