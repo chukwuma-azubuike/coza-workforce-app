@@ -33,7 +33,7 @@ const AttendanceHistorySkeleton = () => {
 
 const AttendanceHeader = ({ history, isCurrent }: { history: IGetUserStatusReport; isCurrent: boolean }) => {
     return (
-        <AccordionTrigger className="py-2 px-4 rounded-xl bg-background border border-background shadow-sm min-h-[74px]">
+        <AccordionTrigger className="py-2 px-4 rounded-xl bg-background border border-border shadow-sm min-h-[74px]">
             <View className="flex-row items-center justify-between w-[92%]">
                 <View className="flex-row items-center gap-6">
                     <CalendarIcon color={THEME_CONFIG.gray} size={18} />
@@ -42,7 +42,7 @@ const AttendanceHeader = ({ history, isCurrent }: { history: IGetUserStatusRepor
                             <Text className="text-base text-foreground font-medium">
                                 {history.monthName} {history.year}
                             </Text>
-                            {isCurrent && (
+                            {false && isCurrent && (
                                 <Badge variant="outline" className="bg-blue-50 border-blue-200">
                                     <Text className="text-blue-700">Current</Text>
                                 </Badge>
@@ -194,7 +194,7 @@ type AttendanceHistoryProps = {
 
 const AttendanceHistory: React.FC<AttendanceHistoryProps> = ({ statusReport, isFetching }) => {
     return (
-        <View className="py-10 px-4">
+        <View className="py-6 px-4">
             <View className="py-5">
                 <Text className="text-xl font-medium text-foreground">Attendance History</Text>
                 <Text className="text-sm font-medium text-muted-foreground">Track your progress month by month</Text>
