@@ -5,7 +5,7 @@ import { IGetUserStatusHistoryResponse } from '~/store/services/account';
 import { Card } from '~/views/app/profile/status-report/card';
 import { Skeleton } from '~/components/ui/skeleton';
 import { IUserStatus } from '~/store/types';
-import { getStatusContent, calculateMonthStreak } from '~/views/app/profile/status-report/utils';
+import { getStatusContent, getRollingStatus, getCurrentStreak } from '~/views/app/profile/status-report/utils';
 
 type UserStatus = IUserStatus;
 
@@ -56,7 +56,7 @@ const RollingStatusCardSkeleton = () => {
 };
 
 // Helper function to get the appropriate icon based on status
-const getStatusIcon = (status: UserStatus | undefined) => {
+const getStatusIcon = (status: UserStatus | 'UNKNOWN') => {
     switch (status) {
         case 'ACTIVE':
             return CheckCircleIcon;
@@ -80,13 +80,14 @@ const formatStatusText = (status: string | undefined): string => {
 type RollingStatusCardProps = {
     statusReport: IGetUserStatusHistoryResponse | undefined;
     isFetching: boolean;
+    thirdPartyView?: boolean;
 };
-const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isFetching }) => {
+const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isFetching, thirdPartyView = false }) => {
     if (isFetching) {
         return <RollingStatusCardSkeleton />;
     }
 
-    const status = (statusReport?.currentReport?.status as UserStatus) ?? 'UNKNOWN';
+    const status = getRollingStatus(statusReport?.currentReport?.metrics);
     const content = getStatusContent(status);
 
     // Get the appropriate icon component based on status
@@ -96,7 +97,7 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
     const formattedStatus = formatStatusText(status);
 
     // Calculate the streak based on status history
-    const monthStreak = calculateMonthStreak(statusReport?.history || [], status);
+    const monthStreak = getCurrentStreak(statusReport?.currentReport?.metrics);
     const streakLabel = monthStreak === 1 ? 'month' : 'months';
 
     return (
@@ -116,14 +117,16 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                     </View>
                 </View>
 
-                <View
-                    className={`flex-row items-start gap-2 p-4 border ${content.bannerBorderColor} ${content.bannerBgColor} rounded-xl`}
-                >
-                    <View className="mt-1">
-                        <RibbonIcon color={content.iconColor} size={12} />
+                {!thirdPartyView && (
+                    <View
+                        className={`flex-row items-start gap-2 p-4 border ${content.bannerBorderColor} ${content.bannerBgColor} rounded-xl`}
+                    >
+                        <View className="mt-1">
+                            <RibbonIcon color={content.iconColor} size={12} />
+                        </View>
+                        <Text className="whitespace-normal">{content.message}</Text>
                     </View>
-                    <Text className="whitespace-normal">{content.message}</Text>
-                </View>
+                )}
 
                 <LinearGradient
                     colors={content.gradientColors}
@@ -138,9 +141,11 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                             </View>
                             <View>
                                 <Text className="font-semibold text-lg text-foreground">{content.streakTitle}</Text>
-                                <Text className="whitespace-normal text-foreground font-medium max-w-[200px]">
-                                    {content.streakSubtitle}
-                                </Text>
+                                {!thirdPartyView && (
+                                    <Text className="whitespace-normal text-foreground font-medium max-w-[200px]">
+                                        {content.streakSubtitle}
+                                    </Text>
+                                )}
                             </View>
                         </View>
 
