@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Icon } from '@rneui/themed';
 import { Formik, FormikConfig } from 'formik';
 import dayjs from 'dayjs';
-import { Alert, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import CardComponent from '@components/composite/card';
@@ -14,7 +14,12 @@ import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useScreenFocus from '@hooks/focus';
 import useModal from '@hooks/modal/useModal';
 import useRole from '@hooks/role';
-import { useDeleteUserMutation, useGetUserByIdQuery, useUpdateUserMutation } from '@store/services/account';
+import {
+    useDeleteUserMutation,
+    useGetUserByIdQuery,
+    useGetUserStatusHistoryQuery,
+    useUpdateUserMutation,
+} from '@store/services/account';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
 import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser } from '@store/types';
@@ -22,11 +27,12 @@ import Utils from '@utils/index';
 import compareObjectValueByKey from '@utils/compareObjectValuesByKey';
 import Loading from '@components/atoms/loading';
 import CenterComponent from '@components/layout/center';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Button } from '~/components/ui/button';
 import { Label } from '~/components/ui/label';
 import PickerSelect from '~/components/ui/picker-select';
 import { Switch } from '~/components/ui/switch';
+import { previousMonth, previousMonthYear } from '~/views/app/profile/status-report/utils';
 
 const UserDetails: React.FC = () => {
     const { _id } = useLocalSearchParams() as unknown as IUser;
@@ -46,6 +52,14 @@ const UserDetails: React.FC = () => {
 
     const { data, isLoading, isFetching, refetch } = useGetUserByIdQuery(_id);
     const [campusId, setCampusId] = React.useState<string>(data?.campus._id as string);
+
+    const { data: statusHistory, isFetching: statusHistoryIsFetching } = useGetUserStatusHistoryQuery({
+        userId: _id,
+        month: previousMonth,
+        year: previousMonthYear,
+        monthsBack: 1,
+    });
+    const userCurrentStatusReport = statusHistory?.currentReport;
 
     const { data: campuses, isLoading: campusesIsLoading } = useGetCampusesQuery();
     const {
@@ -192,6 +206,10 @@ const UserDetails: React.FC = () => {
 
     const rolesPermitted = React.useMemo(() => rolesPermittedToCreate(), []);
 
+    const handleViewFullReport = () => {
+        router.push({ pathname: '/workforce-summary/worker-status-report', params: { _id } });
+    };
+
     return (
         <ViewWrapper
             scroll
@@ -273,47 +291,60 @@ const UserDetails: React.FC = () => {
                                         )}
                                     </View>
                                 </If>
-                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold items-start">Role</Text>
                                     <Text>{data?.role.name}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold items-start">First name</Text>
                                     <Text>{data?.firstName}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Last name</Text>
                                     <Text>{data?.lastName}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Phone number</Text>
                                     <Text>{data?.phoneNumber}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Email</Text>
                                     <Text>{data?.email}</Text>
                                 </View>
-                                <View className="gap-4 justify-between border-b-[2px] border-border w-full rounded-xl flex-row !py-4">
+                                <View className="gap-4 justify-between border-b-[2px] border-border w-full flex-row !py-4">
                                     <Text className="font-bold">Address</Text>
                                     <Text className="line-clamp-none flex-1 text-right">{data?.address}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <TouchableOpacity activeOpacity={0.7} onPress={handleViewFullReport}>
+                                    <View className="items-center justify-between my-2 flex-row border-b-[2px] border-border !py-4">
+                                        <View className="flex flex-row gap-1 items-center">
+                                            <Text className="font-bold">Worker Status</Text>
+                                            <Text className="text-xs text-muted-foreground font-light">
+                                                (Tap to see full report)
+                                            </Text>
+                                        </View>
+                                        <StatusTag isLoading={statusHistoryIsFetching}>
+                                            {userCurrentStatusReport?.status}
+                                        </StatusTag>
+                                    </View>
+                                </TouchableOpacity>
+                                {/* <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
                                     <Text className="font-bold">Status</Text>
                                     <StatusTag>{data?.status}</StatusTag>
-                                </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                </View> */}
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Gender</Text>
                                     <Text>{data?.gender}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Marital Status</Text>
                                     <Text>{data?.maritalStatus}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Birthday</Text>
                                     <Text>{dayjs(data?.birthDay).format('DD MMMM')}</Text>
                                 </View>
-                                <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold flex-1">Campus</Text>
                                     <If condition={!isEditMode}>
                                         <Text>{data?.campus.campusName}</Text>
@@ -334,7 +365,7 @@ const UserDetails: React.FC = () => {
                                         </View>
                                     ) : null}
                                 </View>
-                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold flex-1">Department</Text>
 
                                     <If condition={!isEditMode}>
@@ -357,7 +388,7 @@ const UserDetails: React.FC = () => {
                                     ) : null}
                                 </View>
                                 <If condition={isEditMode}>
-                                    <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                    <View className="gap-1  justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                         <Text className="font-bold flex-1">Role</Text>
                                         <View className="flex-row-reverse flex-1">
                                             <PickerSelect
@@ -373,15 +404,15 @@ const UserDetails: React.FC = () => {
                                         </View>
                                     </View>
                                 </If>
-                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Occupation</Text>
                                     <Text className="line-clamp-none flex-1 text-right">{data?.occupation}</Text>
                                 </View>
-                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Place of work</Text>
                                     <Text className="line-clamp-none flex-1 text-right">{data?.placeOfWork}</Text>
                                 </View>
-                                <View className="gap-1  justify-between border-b-[2px] border-border w-full rounded-xl flex-row !py-4">
+                                <View className="gap-1  justify-between border-b-[2px] border-border w-full flex-row !py-4">
                                     <Text className="font-bold">Next of Kin</Text>
                                     <View>
                                         <Text>{data?.nextOfKin}</Text>
