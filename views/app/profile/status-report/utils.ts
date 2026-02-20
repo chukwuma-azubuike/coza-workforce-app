@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { IUserStatus } from '~/store/types';
+import { IGetUserStatusMetric } from '~/store/services/account';
+import { IUserStatus, Month } from '~/store/types';
 
 // Get start and end Unix timestamps for a specific month
 export function getMonthDateRange(year: number, month: number) {
@@ -16,7 +17,7 @@ export function getMonthDateRange(year: number, month: number) {
 }
 
 // Helper function to get status-specific content
-export const getStatusContent = (status: IUserStatus) => {
+export const getStatusContent = (status: IUserStatus | 'UNKNOWN') => {
     switch (status) {
         case 'ACTIVE':
             return {
@@ -86,41 +87,56 @@ export const getStatusContent = (status: IUserStatus) => {
     }
 };
 
-/**
- * Calculate the streak of consecutive months with the same status
- * Only counts completed months (from history), not the current month
- * @param history - Array of status reports ordered from most recent to oldest
- * @param currentStatus - The current status to match against
- * @returns The number of consecutive completed months with the same status
- */
-export const calculateMonthStreak = (
-    history: Array<{ status: IUserStatus; available: boolean }>,
-    currentStatus: IUserStatus
-): number => {
-    if (!history || history.length === 0) {
-        return 0; // If no history, streak is 0 (current month doesn't count)
+export const getRollingStatus = (metrics: IGetUserStatusMetric | undefined) => {
+    if (!metrics) {
+        return 'UNKNOWN';
     }
 
-    let streak = 0; // Start from 0, only count completed months
-
-    // Iterate through history from most recent to oldest
-    // History contains only completed months (not current month)
-    for (let i = 0; i < history.length; i++) {
-        const report = history[i];
-
-        // Only count months where data is available
-        if (!report.available) {
-            break; // Stop counting if we hit unavailable data
-        }
-
-        // Check if status matches the current status
-        if (report.status === currentStatus) {
-            streak++;
-        } else {
-            // Stop counting when status changes
-            break;
-        }
+    if (metrics?.activeStreak > 0) {
+        return 'ACTIVE';
     }
 
-    return streak;
+    if (metrics?.dormantStreak > 0) {
+        return 'DORMANT';
+    }
+
+    if (metrics?.inactiveStreak > 0) {
+        return 'INACTIVE';
+    }
+
+    if (metrics?.blacklistedStreak > 0) {
+        return 'BLACKLISTED';
+    }
+
+    return 'UNKNOWN';
 };
+
+export const getCurrentStreak = (metrics: IGetUserStatusMetric | undefined) => {
+    if (!metrics) {
+        return 0;
+    }
+
+    if (metrics?.activeStreak > 0) {
+        return metrics?.activeStreak;
+    }
+
+    if (metrics?.dormantStreak > 0) {
+        return metrics?.dormantStreak;
+    }
+
+    if (metrics?.inactiveStreak > 0) {
+        return metrics?.inactiveStreak;
+    }
+
+    if (metrics?.blacklistedStreak > 0) {
+        return metrics?.blacklistedStreak;
+    }
+
+    return 0;
+};
+
+export const currentMonth = new Date().getMonth() + 1;
+export const currentYear = new Date().getFullYear();
+// Using last month's status since current month's status is not yet available
+export const previousMonth = (currentMonth - 1 === 0 ? 12 : currentMonth - 1) as Month;
+export const previousMonthYear = previousMonth === 12 ? currentYear - 1 : currentYear;

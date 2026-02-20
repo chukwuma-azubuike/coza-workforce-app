@@ -130,19 +130,20 @@ export interface IGetUserStatusHistoryPayload {
 }
 
 export interface IGetUserStatusMetric {
-    numberOfServicesInMonth: 12;
-    numberOfServicesAttended: 6;
-    numberOfServicesWithPermission: 2;
-    totalEffectiveAttendance: 8;
-    requiredThreshold: 5;
-    isThresholdMet: true;
-    attendanceShortfall: 0;
-    isNewUser: false;
-    userAgeInMonths: 18;
-    inactiveStreak: 0;
-    dormantStreak: 0;
-    blacklistedStreak: 0;
-    statusTransitionReason: 'Maintained active status';
+    numberOfServicesInMonth: number;
+    numberOfServicesAttended: number;
+    numberOfServicesWithPermission: number;
+    totalEffectiveAttendance: number;
+    requiredThreshold: number;
+    isThresholdMet: boolean;
+    attendanceShortfall: number;
+    isNewUser: boolean;
+    userAgeInMonths: number;
+    inactiveStreak: number;
+    activeStreak: number;
+    dormantStreak: number;
+    blacklistedStreak: number;
+    statusTransitionReason: string;
 }
 
 type IGetUserStatusAttendance = {
