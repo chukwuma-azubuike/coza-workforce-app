@@ -22,9 +22,9 @@ export const getStatusContent = (status: IUserStatus | 'UNKNOWN') => {
         case 'ACTIVE':
             return {
                 subtitle: 'Good standing.',
-                message: "You're maintaining a consistent attendance. Keep it up!",
+                message: "You're doing great! We really appreciate your consistency and heart for service.",
                 streakTitle: 'Active Streak',
-                streakSubtitle: 'Keep the momentum going!',
+                streakSubtitle: "You're on fire! Keep shining.",
                 emoji: '🔥',
                 iconBgColor: 'bg-green-700',
                 bannerBorderColor: 'border-green-200',
@@ -32,38 +32,38 @@ export const getStatusContent = (status: IUserStatus | 'UNKNOWN') => {
                 iconColor: 'green',
                 gradientColors: ['#10b981', '#14b8a6'], // green-500 to teal-500
             };
-        case 'DORMANT':
-            return {
-                subtitle: 'Needs attention.',
-                message: "You've been inactive recently. We'd love to see you back!",
-                streakTitle: 'Dormant Period',
-                streakSubtitle: 'Time to get back on track!',
-                emoji: '😞',
-                iconBgColor: 'bg-amber-600',
-                bannerBorderColor: 'border-amber-200',
-                bannerBgColor: 'bg-amber-50',
-                iconColor: '#d97706', // amber-600
-                gradientColors: ['#f59e0b', '#f97316'], // amber-500 to orange-500
-            };
         case 'INACTIVE':
             return {
                 subtitle: 'Currently inactive.',
-                message: 'Your account is inactive. Please contact your administrator for assistance.',
+                message: "We've missed you! Attending service more often will help you stay active.",
                 streakTitle: 'Inactive Status',
-                streakSubtitle: 'Reach out to get reactivated.',
-                emoji: '💤',
-                iconBgColor: 'bg-gray-600',
-                bannerBorderColor: 'border-gray-200',
-                bannerBgColor: 'bg-gray-50',
-                iconColor: '#6b7280', // gray-500
-                gradientColors: ['#6b7280', '#9ca3af'], // gray-500 to gray-400
+                streakSubtitle: 'Join us for the next service to get back on track!',
+                emoji: '😟',
+                iconBgColor: 'bg-amber-400',
+                bannerBorderColor: 'border-amber-200',
+                bannerBgColor: 'bg-amber-50',
+                iconColor: '#fbbf24', // amber-400
+                gradientColors: ['#fbbf24', '#f59e0b'], // amber-400 to amber-500
+            };
+        case 'DORMANT':
+            return {
+                subtitle: 'Needs attention.',
+                message: "It's been a while! We'd love to have you back—your spot is still waiting.",
+                streakTitle: 'Dormant Period',
+                streakSubtitle: "We've missed you! Ready to start fresh?",
+                emoji: '☹️',
+                iconBgColor: 'bg-amber-600',
+                bannerBorderColor: 'border-amber-300',
+                bannerBgColor: 'bg-amber-100',
+                iconColor: '#d97706', // amber-600
+                gradientColors: ['#f59e0b', '#d97706'], // amber-500 to amber-600
             };
         case 'BLACKLISTED':
             return {
                 subtitle: 'Access restricted.',
-                message: 'Your account has been restricted. Please contact your Pastor/Campus Coordinator.',
+                message: 'Please see your Coordinator or Pastor to get this sorted and resume service.',
                 streakTitle: 'Restricted Access',
-                streakSubtitle: 'Contact your Pastor/Campus Coordinator.',
+                streakSubtitle: 'See your Coordinator to get back on track.',
                 emoji: '😩',
                 iconBgColor: 'bg-red-700',
                 bannerBorderColor: 'border-red-200',
@@ -96,12 +96,12 @@ export const getRollingStatus = (metrics: IGetUserStatusMetric | undefined) => {
         return 'ACTIVE';
     }
 
-    if (metrics?.dormantStreak > 0) {
-        return 'DORMANT';
-    }
-
     if (metrics?.inactiveStreak > 0) {
         return 'INACTIVE';
+    }
+
+    if (metrics?.dormantStreak > 0) {
+        return 'DORMANT';
     }
 
     if (metrics?.blacklistedStreak > 0) {
@@ -120,12 +120,12 @@ export const getCurrentStreak = (metrics: IGetUserStatusMetric | undefined) => {
         return metrics?.activeStreak;
     }
 
-    if (metrics?.dormantStreak > 0) {
-        return metrics?.dormantStreak;
-    }
-
     if (metrics?.inactiveStreak > 0) {
         return metrics?.inactiveStreak;
+    }
+
+    if (metrics?.dormantStreak > 0) {
+        return metrics?.dormantStreak;
     }
 
     if (metrics?.blacklistedStreak > 0) {
