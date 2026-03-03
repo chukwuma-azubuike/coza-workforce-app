@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { IStatusColors } from '~/types/app';
 import { STATUS_COLORS } from '~/constants/notification-types';
@@ -38,7 +38,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
     return (
         <View className={cn('w-12 h-12 justify-center relative', className)}>
             {imageUrl && (
-                <FastImage
+                <Image
                     style={{
                         width: '100%',
                         height: '100%',
@@ -46,8 +46,7 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                     }}
                     source={{
                         uri: imageUrl,
-                        cache: 'immutable',
-                        priority: FastImage.priority.normal,
+                        cacheKey: 'immutable',
                     }}
                     onError={handleError}
                     onLoadEnd={handleLoading(false)}
