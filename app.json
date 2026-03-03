@@ -10,7 +10,6 @@
         "icon": "./assets/images/icon.png",
         "scheme": "myapp",
         "userInterfaceStyle": "automatic",
-        "newArchEnabled": true,
         "splash": {
             "image": "./assets/images/splash-black.png",
             "resizeMode": "cover",
@@ -28,7 +27,7 @@
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
             },
             "usesAppleSignIn": true,
-            "buildNumber": "62",
+            "buildNumber": "63",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
@@ -39,7 +38,7 @@
                 "foregroundImage": "./assets/images/android-coza-icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "versionCode": 103,
+            "versionCode": 108,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
@@ -102,7 +101,8 @@
                     "defaultChannel": "default",
                     "icon": "./assets/images/icon.png"
                 }
-            ]
+            ],
+            ["@react-native-community/datetimepicker", "expo-web-browser"]
         ],
         "experiments": {
             "typedRoutes": true
