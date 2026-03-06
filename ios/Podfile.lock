@@ -1637,7 +1637,7 @@ PODS:
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
-  - react-native-blob-util (0.21.2):
+  - react-native-blob-util (0.24.7):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1703,28 +1703,6 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-menu (1.2.2):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/bridging
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
   - react-native-netinfo (11.4.1):
     - React-Core
   - react-native-pager-view (6.9.1):
@@ -1749,7 +1727,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-pdf (6.7.7):
+  - react-native-pdf-jsi (4.3.2):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2679,10 +2657,9 @@ DEPENDENCIES:
   - react-native-blob-util (from `../node_modules/react-native-blob-util`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
-  - "react-native-menu (from `../node_modules/@react-native-menu/menu`)"
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
-  - react-native-pdf (from `../node_modules/react-native-pdf`)
+  - react-native-pdf-jsi (from `../node_modules/react-native-pdf-jsi`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -2897,14 +2874,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-date-picker"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
-  react-native-menu:
-    :path: "../node_modules/@react-native-menu/menu"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
-  react-native-pdf:
-    :path: "../node_modules/react-native-pdf"
+  react-native-pdf-jsi:
+    :path: "../node_modules/react-native-pdf-jsi"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-skia:
@@ -3079,13 +3054,12 @@ SPEC CHECKSUMS:
   React-logger: c3e2f8a2e284341205f61eef3d4677ab5a309dfd
   React-Mapbuffer: 603c18db65844bb81dbe62fee8fcc976eaeb7108
   React-microtasksnativemodule: d77e0c426fce34c23227394c96ca1033b30c813c
-  react-native-blob-util: 308a91e62208addefd022265584c33bb5036f403
+  react-native-blob-util: 912a29f1ee133791adaf926bf08141ad92e3a371
   react-native-date-picker: 09329bdfe01d8a38b48d33bcc6d5b51037bf1f50
   react-native-geolocation: fe635c262940780d5cef40e03d4f1d8f72edde26
-  react-native-menu: 4a981a309e4ab6780e628f951ab104b36a072be4
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-pager-view: e37989fc447aa4b5de6d0d2ffb0229e817329246
-  react-native-pdf: c7c76d421463868d125ad3004ebaaa54cbc3ad9a
+  react-native-pdf-jsi: 4eb3bc0dede84106801878aa5b821cfece36e74b
   react-native-safe-area-context: 53f796cb6c814661bbe99fbdfd0585d07b996cdd
   react-native-skia: 009c318120ef7c6000bf14a6342ad8a89b44070b
   react-native-webview: a4f0775a31b73cf13cfc3d2d2b119aa94ec76e49
