@@ -46,7 +46,6 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                     }}
                     source={{
                         uri: imageUrl,
-                        cacheKey: 'immutable',
                     }}
                     onError={handleError}
                     onLoadEnd={handleLoading(false)}
