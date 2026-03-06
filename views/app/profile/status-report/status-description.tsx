@@ -53,7 +53,7 @@ const ServiceStatusCard = ({
 const StatusDescription = () => {
     return (
         <View className="px-4 py-6">
-            <Card className="gap-4 rounded-2xl bg-background shadow-sm py-5 px-0">
+            <Card className="gap-4 bg-none! py-5 px-0">
                 <Text className="text-xl text-foreground font-medium">Understanding Your Status</Text>
 
                 <View className="py-4 gap-4">
