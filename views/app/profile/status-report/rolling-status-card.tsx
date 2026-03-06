@@ -1,11 +1,12 @@
 import { CheckCircleIcon, RibbonIcon, CircleXIcon, BanIcon, FileQuestionIcon } from 'lucide-react-native';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { IGetUserStatusHistoryResponse } from '~/store/services/account';
 import { Card } from '~/views/app/profile/status-report/card';
 import { Skeleton } from '~/components/ui/skeleton';
 import { IUserStatus } from '~/store/types';
 import { getStatusContent, getRollingStatus, getCurrentStreak } from '~/views/app/profile/status-report/utils';
+import { Text } from '~/components/ui/text';
 
 type UserStatus = IUserStatus;
 
@@ -124,7 +125,7 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                         <View className="mt-1">
                             <RibbonIcon color={content.iconColor} size={12} />
                         </View>
-                        <Text className="whitespace-normal">{content.message}</Text>
+                        <Text className="whitespace-normal text-black line-clamp-none">{content.message}</Text>
                     </View>
                 )}
 
@@ -142,7 +143,7 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                             <View>
                                 <Text className="font-semibold text-lg text-foreground">{content.streakTitle}</Text>
                                 {!thirdPartyView && (
-                                    <Text className="whitespace-normal text-foreground font-medium max-w-[200px]">
+                                    <Text className="whitespace-normal text-foreground font-medium">
                                         {content.streakSubtitle}
                                     </Text>
                                 )}
