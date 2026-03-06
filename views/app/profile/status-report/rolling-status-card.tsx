@@ -123,7 +123,7 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                         className={`flex-row items-start gap-2 p-4 border ${content.bannerBorderColor} ${content.bannerBgColor} rounded-xl`}
                     >
                         <View className="mt-1">
-                            <RibbonIcon color={content.iconColor} size={12} />
+                            <RibbonIcon color={content.iconColor} size={24} />
                         </View>
                         <Text className="whitespace-normal text-black line-clamp-none">{content.message}</Text>
                     </View>
