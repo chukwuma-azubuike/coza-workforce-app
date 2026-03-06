@@ -1,7 +1,7 @@
 {
     "name": "coza-workforce-app",
     "main": "index.js",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "engines": {
         "node": "20.x"
     },
