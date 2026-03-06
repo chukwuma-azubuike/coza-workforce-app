@@ -1,6 +1,6 @@
-import { Text } from '~/components/ui/text';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Pressable, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { router } from 'expo-router';
@@ -28,7 +28,7 @@ const UserInfo = ({ heading, value, name, dateString }: IUserInfo) => {
     const canEdit = NON_EDITABLE.includes(name);
 
     return (
-        <TouchableOpacity activeOpacity={0.6} disabled={canEdit} onPress={handleEdit}>
+        <Pressable disabled={canEdit} onPressIn={handleEdit}>
             <View className="py-3 flex-1 flex-row items-center gap-2">
                 <Text className="font-bold text-muted-foreground">{heading}: </Text>
                 <Text className="flex-1 text-muted-foreground">{value}</Text>
@@ -36,8 +36,8 @@ const UserInfo = ({ heading, value, name, dateString }: IUserInfo) => {
                     <Icon color={THEME_CONFIG.gray} name="edit" size={18} type="antdesign" />
                 )}
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 
-export default React.memo(UserInfo);
+export default UserInfo;
