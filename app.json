@@ -38,7 +38,7 @@
                 "foregroundImage": "./assets/images/android-coza-icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "versionCode": 110,
+            "versionCode": 112,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
@@ -84,14 +84,12 @@
             [
                 "expo-build-properties",
                 {
-                    // "android": {
-                    //     "compileSdkVersion": 36,
-                    //     "targetSdkVersion": 36,
-                    //     "buildToolsVersion": "36.0.0",
-                    //     "kotlinVersion": "2.2.20"
-                    // },
                     "ios": {
                         "deploymentTarget": "15.1"
+                    },
+                    "android": {
+                        "enableMinifyInReleaseBuilds": true,
+                        "enableShrinkResourcesInReleaseBuilds": true
                     }
                 }
             ],
