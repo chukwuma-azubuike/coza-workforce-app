@@ -56,7 +56,12 @@ const Profile: React.FC = () => {
         allowedTypes: ['image/*'],
     });
 
-    const { data: statusHistory, isFetching: statusHistoryIsFetching } = useGetUserStatusHistoryQuery({
+    const {
+        data: statusHistory,
+        refetch: refetchStatusHistory,
+        isFetching: statusHistoryIsFetching,
+        isLoading: statusHistoryIsLoading,
+    } = useGetUserStatusHistoryQuery({
         userId: user?._id,
         month: lastMonth,
         year: lastMonthYear,
@@ -71,12 +76,17 @@ const Profile: React.FC = () => {
 
     const isProfilePictureLoading = updateIsLoading || isUploading;
 
+    const handleRefresh = () => {
+        refetch();
+        refetchStatusHistory();
+    };
+
     return (
         <ErrorBoundary>
             <View className="flex-1">
                 <ScrollView
                     className="px-4 pt-6 pb-12"
-                    refreshControl={<RefreshControl onRefresh={refetch} refreshing={isFetching} />}
+                    refreshControl={<RefreshControl onRefresh={handleRefresh} refreshing={isFetching} />}
                 >
                     <View className="pb-8 items-center">
                         <TouchableOpacity
@@ -140,6 +150,7 @@ const Profile: React.FC = () => {
                         <WorkerStatusCard
                             onPress={handleViewFullReport}
                             status={userCurrentStatusReport?.status as IUserStatus}
+                            loading={statusHistoryIsFetching || statusHistoryIsLoading}
                         />
                         <View className="items-center justify-between my-2 flex-row">
                             <Text className="font-bold text-muted-foreground">Congress Status</Text>
