@@ -59,13 +59,7 @@ const AttendanceHeader = ({ history, isCurrent }: { history: IGetUserStatusRepor
                     </View>
                 </View>
 
-                <View>
-                    {history.status && (
-                        <StatusTag colorScheme="dark" className="py-[1px]">
-                            {history.status}
-                        </StatusTag>
-                    )}
-                </View>
+                <View>{history.status && <StatusTag className="py-[1px]">{history.status}</StatusTag>}</View>
             </View>
         </AccordionTrigger>
     );
