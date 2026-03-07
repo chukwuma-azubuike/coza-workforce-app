@@ -103,7 +103,7 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
 
     return (
         <View className="px-4">
-            <Card className="gap-4 rounded-2xl bg-background shadow-sm py-5 px-0">
+            <Card className="gap-4 py-5 px-0 bg-none!">
                 <Text className="text-xl text-foreground font-medium">Rolling Status</Text>
 
                 <View className="flex-row items-center gap-2 mb-6">
