@@ -52,7 +52,7 @@ const WorkerStatusCard = ({ onPress, status, loading }: WorkerStatusCardProps) =
         const sheenLoop = Animated.loop(
             Animated.timing(sheenAnim, {
                 duration: 2800,
-                toValue: cardWidth * 1.5,
+                toValue: cardWidth * 2,
                 useNativeDriver: true,
             })
         );
@@ -92,7 +92,7 @@ const WorkerStatusCard = ({ onPress, status, loading }: WorkerStatusCardProps) =
                     style={[
                         styles.sheen,
                         {
-                            width: cardWidth ? cardWidth * 1.6 : 0,
+                            width: cardWidth ? cardWidth * 2 : 0,
                             transform: [{ translateX: sheenAnim }, { rotate: '-25deg' }],
                             opacity: 0.65,
                         },
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: -20,
         bottom: -20,
-        left: -200,
+        left: -400,
         shadowColor: '#FFFFFF',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.2,
