@@ -22,7 +22,7 @@ import {
 } from '@store/services/account';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '@store/services/department';
-import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser } from '@store/types';
+import { ICampus, IEditProfilePayload, IReAssignUserPayload, IUser, IUserStatus } from '@store/types';
 import Utils from '@utils/index';
 import compareObjectValueByKey from '@utils/compareObjectValuesByKey';
 import Loading from '@components/atoms/loading';
@@ -33,6 +33,7 @@ import { Label } from '~/components/ui/label';
 import PickerSelect from '~/components/ui/picker-select';
 import { Switch } from '~/components/ui/switch';
 import { previousMonth, previousMonthYear } from '~/views/app/profile/status-report/utils';
+import WorkerStatusCard from '../profile/status-report/worker-status-card';
 
 const UserDetails: React.FC = () => {
     const { _id } = useLocalSearchParams() as unknown as IUser;
@@ -53,7 +54,11 @@ const UserDetails: React.FC = () => {
     const { data, isLoading, isFetching, refetch } = useGetUserByIdQuery(_id);
     const [campusId, setCampusId] = React.useState<string>(data?.campus._id as string);
 
-    const { data: statusHistory, isFetching: statusHistoryIsFetching } = useGetUserStatusHistoryQuery({
+    const {
+        data: statusHistory,
+        isFetching: statusHistoryIsFetching,
+        isLoading: statusHistoryIsLoading,
+    } = useGetUserStatusHistoryQuery({
         userId: _id,
         month: previousMonth,
         year: previousMonthYear,
@@ -276,6 +281,13 @@ const UserDetails: React.FC = () => {
                                         </Button>
                                     </View>
                                 </If>
+                                <View className="py-6">
+                                    <WorkerStatusCard
+                                        onPress={handleViewFullReport}
+                                        status={userCurrentStatusReport?.status as IUserStatus}
+                                        loading={statusHistoryIsFetching || statusHistoryIsLoading}
+                                    />
+                                </View>
                                 <If condition={canApproveForCongress}>
                                     <View className="flex-row justify-between">
                                         <Label>{data?.isCGWCApproved ? 'Approved' : 'Approve'} for Congress</Label>
@@ -315,23 +327,7 @@ const UserDetails: React.FC = () => {
                                     <Text className="font-bold">Address</Text>
                                     <Text className="line-clamp-none flex-1 text-right">{data?.address}</Text>
                                 </View>
-                                <TouchableOpacity activeOpacity={0.7} onPress={handleViewFullReport}>
-                                    <View className="items-center justify-between my-2 flex-row border-b-[2px] border-border !py-4">
-                                        <View className="flex flex-row gap-1 items-center">
-                                            <Text className="font-bold">Worker Status</Text>
-                                            <Text className="text-xs text-muted-foreground font-light">
-                                                (Tap to see full report)
-                                            </Text>
-                                        </View>
-                                        <StatusTag isLoading={statusHistoryIsFetching}>
-                                            {userCurrentStatusReport?.status}
-                                        </StatusTag>
-                                    </View>
-                                </TouchableOpacity>
-                                {/* <View className="gap-1 justify-between border-b-[2px] border-border w-full rounded-xl flex-row items-center !py-4">
-                                    <Text className="font-bold">Status</Text>
-                                    <StatusTag>{data?.status}</StatusTag>
-                                </View> */}
+
                                 <View className="gap-1 justify-between border-b-[2px] border-border w-full flex-row items-center !py-4">
                                     <Text className="font-bold">Gender</Text>
                                     <Text>{data?.gender}</Text>

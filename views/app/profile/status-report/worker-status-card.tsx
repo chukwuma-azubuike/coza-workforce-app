@@ -51,7 +51,7 @@ const WorkerStatusCard = ({ onPress, status, loading }: WorkerStatusCardProps) =
 
         const sheenLoop = Animated.loop(
             Animated.timing(sheenAnim, {
-                duration: 2400,
+                duration: 2800,
                 toValue: cardWidth * 1.5,
                 useNativeDriver: true,
             })
@@ -79,7 +79,7 @@ const WorkerStatusCard = ({ onPress, status, loading }: WorkerStatusCardProps) =
     };
 
     return (
-        <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={onPress} className="py-2 pb-4">
+        <Pressable onPressIn={handlePressIn} onPressOut={handlePressOut} onPress={onPress}>
             <Animated.View
                 className="bg-muted-background !border-muted-foreground/20"
                 onLayout={e => setCardWidth(e.nativeEvent.layout.width)}
@@ -194,7 +194,6 @@ const styles = StyleSheet.create({
         top: -20,
         bottom: -20,
         left: -200,
-        borderRadius: 12,
         shadowColor: '#FFFFFF',
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.2,
