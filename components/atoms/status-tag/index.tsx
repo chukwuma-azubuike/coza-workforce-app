@@ -23,13 +23,8 @@ const StatusTag: React.FC<IStatusTag> = props => {
         status === 'APPROVED' ||
         status === IReportStatus.GSP_SUBMITTED;
     const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
-    const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED';
-    const red =
-        status === 'DECLINED' ||
-        status === 'INACTIVE' ||
-        status === 'REJECTED' ||
-        status === 'CONTESTED' ||
-        status === 'UNAPPROVED';
+    const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED' || status === 'INACTIVE';
+    const red = status === 'DECLINED' || status === 'REJECTED' || status === 'CONTESTED' || status === 'UNAPPROVED';
     const blue = status === 'SUBMITTED' || 'HOD' || 'AHOD';
 
     const darkColorScheme = {
