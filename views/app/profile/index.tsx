@@ -147,11 +147,13 @@ const Profile: React.FC = () => {
                         </View>
                     </View>
                     <View style={{ marginHorizontal: 4 }}>
-                        <WorkerStatusCard
-                            onPress={handleViewFullReport}
-                            status={userCurrentStatusReport?.status as IUserStatus}
-                            loading={statusHistoryIsFetching || statusHistoryIsLoading}
-                        />
+                        <View className="pt-2 pb-4">
+                            <WorkerStatusCard
+                                onPress={handleViewFullReport}
+                                status={userCurrentStatusReport?.status as IUserStatus}
+                                loading={statusHistoryIsFetching || statusHistoryIsLoading}
+                            />
+                        </View>
                         <View className="items-center justify-between my-2 flex-row">
                             <Text className="font-bold text-muted-foreground">Congress Status</Text>
                             <StatusTag>{(user?.isCGWCApproved ? 'APPROVED' : 'UNAPPROVED') as any}</StatusTag>
