@@ -2,7 +2,7 @@
     "expo": {
         "name": "COZA Workforce",
         "slug": "coza-workforce-app",
-        "version": "2.2.2",
+        "version": "2.2.3",
         "runtimeVersion": {
             "policy": "appVersion"
         },
@@ -27,7 +27,7 @@
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
             },
             "usesAppleSignIn": true,
-            "buildNumber": "65",
+            "buildNumber": "66",
             "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
@@ -38,7 +38,7 @@
                 "foregroundImage": "./assets/images/android-coza-icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-            "versionCode": 116,
+            "versionCode": 117,
             "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
