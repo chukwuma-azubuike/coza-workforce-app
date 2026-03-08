@@ -14,7 +14,7 @@ interface WorkerStatusCardProps {
     loading: boolean;
 }
 
-const WorkerStatusCard = ({ onPress, status, loading }: WorkerStatusCardProps) => {
+const WorkerStatusCard = ({ onPress, status = 'UNKNOWN', loading }: WorkerStatusCardProps) => {
     // 1. Setup Animation Values
     const scaleAnim = useRef(new Animated.Value(1)).current;
     const opacityAnim = useRef(new Animated.Value(0.6)).current;
