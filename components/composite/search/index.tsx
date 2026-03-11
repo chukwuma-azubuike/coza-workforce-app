@@ -195,8 +195,8 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
             <FloatButton
                 iconSize={24}
                 disabled={disable}
-                iconName="search1"
-                iconType="ant-design"
+                iconName="search"
+                iconType="ionicons"
                 onPress={handleSearchBar}
                 className={cn('!bottom-36 !right-[1.6rem] shadow-md !rounded-full w-[4.5rem] !h-[4.5rem]', className)}
             />
