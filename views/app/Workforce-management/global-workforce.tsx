@@ -128,7 +128,8 @@ const GlobalWorkforceSummary: React.FC = () => {
                     <FlatListSkeleton count={1} />
                 ) : (
                     <View className="mx-1 p-2 flex-row flex-wrap gap-4 border rounded-xl items-center justify-evenly border-border">
-                        {summaryList.map((item, index) => (
+                        {/* TODO: To be restored after backend fixes */}
+                        {summaryList.slice(0, 1).map((item, index) => (
                             <View key={index} className="flex-col items-center flex-wrap justify-center my-1">
                                 <Text className="">{item.title}</Text>
                                 <Text className={cn('text-4xl font-bold', item.color)}>{item.value || 0}</Text>
