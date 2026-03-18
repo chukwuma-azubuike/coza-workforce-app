@@ -34,7 +34,9 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
             return {
                 ...prev,
                 ...values,
-                phoneNumber: formatToE164(formValues.phoneNumber, selectedCountry?.callingCode ?? '+234'),
+                phoneNumber: formValues.phoneNumber
+                    ? formatToE164(formValues.phoneNumber, selectedCountry?.callingCode as string)
+                    : (undefined as any),
             };
         });
 
