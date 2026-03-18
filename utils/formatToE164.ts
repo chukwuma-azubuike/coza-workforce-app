@@ -6,9 +6,9 @@
  */
 const formatToE164 = (localNumber: string, countryDialCode: string = '+234'): string => {
     // 1) strip out everything but digits
-    const digits = localNumber.replace(/\D+/g, '');
+    const digits = localNumber?.replace(/\D+/g, '');
     // 2) drop leading zero if present
-    const national = digits.startsWith('0') ? digits.slice(1) : digits;
+    const national = digits?.startsWith('0') ? digits.slice(1) : digits;
     // 3) prefix +<countryDialCode>
     return `${countryDialCode}${national}`;
 };
