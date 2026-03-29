@@ -109,13 +109,9 @@
           "icon": "./assets/images/icon.png"
         }
       ],
-      [
-        "@react-native-community/datetimepicker",
-        "expo-web-browser"
-      ],
-      [
-        "react-native-pdf-jsi"
-      ]
+      "@react-native-community/datetimepicker",
+      "expo-web-browser",
+      "react-native-pdf-jsi"
     ],
     "experiments": {
       "typedRoutes": true
