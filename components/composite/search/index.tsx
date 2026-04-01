@@ -67,12 +67,7 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                 </View>
                 <View className="w-max">
                     {/* TODO: To be restored after backend fixes */}
-                    <StatusTag>
-                        {
-                            // item?.status ||
-                            (item?.gender === 'M' ? 'Male' : 'Female') as any
-                        }
-                    </StatusTag>
+                    <StatusTag>{item?.status || item?.gender === 'M' ? 'Male' : ('Female' as any)}</StatusTag>
                 </View>
             </View>
         </TouchableOpacity>
