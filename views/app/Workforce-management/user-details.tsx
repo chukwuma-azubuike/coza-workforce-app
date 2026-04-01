@@ -281,14 +281,13 @@ const UserDetails: React.FC = () => {
                                         </Button>
                                     </View>
                                 </If>
-                                {/* TODO: To be restored after backend fixes */}
-                                {/* <View className="py-6">
+                                <View className="py-6">
                                     <WorkerStatusCard
                                         onPress={handleViewFullReport}
                                         status={userCurrentStatusReport?.status as IUserStatus}
                                         loading={statusHistoryIsFetching || statusHistoryIsLoading}
                                     />
-                                </View> */}
+                                </View>
                                 <If condition={canApproveForCongress}>
                                     <View className="flex-row justify-between">
                                         <Label>{data?.isCGWCApproved ? 'Approved' : 'Approve'} for Congress</Label>

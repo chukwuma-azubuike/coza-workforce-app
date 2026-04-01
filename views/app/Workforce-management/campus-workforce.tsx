@@ -195,8 +195,7 @@ const CampusWorkforceSummary: React.FC = () => {
                     <FlatListSkeleton count={1} />
                 ) : (
                     <View className="p-4 flex-1 flex-row flex-wrap justify-evenly border border-border rounded-2xl">
-                        {/* TODO: To be restored after backend fixes */}
-                        {summaryList.slice(0, 1).map((item, index) => (
+                        {summaryList.map((item, index) => (
                             <View
                                 key={index}
                                 style={{
