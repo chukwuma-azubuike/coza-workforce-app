@@ -2,7 +2,7 @@
   "expo": {
     "name": "COZA Workforce",
     "slug": "coza-workforce-app",
-    "version": "2.2.6",
+    "version": "2.2.7",
     "runtimeVersion": {
       "policy": "appVersion"
     },
@@ -42,7 +42,7 @@
         "foregroundImage": "./assets/images/android-coza-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 121,
+      "versionCode": 122,
       "package": "com.cozaglobalworkforceapp",
       "googleServicesFile": "./google-services.json",
       "permissions": [
