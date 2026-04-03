@@ -49,7 +49,7 @@ const TICKET_TEMPLATE = {
         
 QC/M&E is issuing you this ticket BECAUSE ...
 
-#Dominion`,
+#GreaterHonour`,
     },
     VERBOSE: {
         id: 2,
