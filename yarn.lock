@@ -923,7 +923,7 @@
     dotenv-expand "~11.0.6"
     getenv "^2.0.0"
 
-"@expo/fingerprint@0.15.4":
+"@expo/fingerprint@0.15.4", "@expo/fingerprint@~0.15.4":
   version "0.15.4"
   resolved "https://registry.yarnpkg.com/@expo/fingerprint/-/fingerprint-0.15.4.tgz#578bd1e1179a13313f7de682ebaaacb703b2b7ac"
   integrity sha512-eYlxcrGdR2/j2M6pEDXo9zU9KXXF1vhP+V+Tl+lyY+bU8lnzrN6c637mz6Ye3em2ANy8hhUR03Raf8VsT9Ogng==

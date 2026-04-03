@@ -31,6 +31,7 @@
         "workflow:production": "eas workflow:run .eas/workflows/deploy-to-production.yml"
     },
     "dependencies": {
+        "@expo/fingerprint": "~0.15.4",
         "@expo/vector-icons": "^15.0.3",
         "@react-native-async-storage/async-storage": "2.2.0",
         "@react-native-community/datetimepicker": "8.4.4",
