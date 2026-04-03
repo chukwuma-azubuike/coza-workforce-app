@@ -42,7 +42,7 @@
         "foregroundImage": "./assets/images/android-coza-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 120,
+      "versionCode": 121,
       "package": "com.cozaglobalworkforceapp",
       "googleServicesFile": "./google-services.json",
       "permissions": [
