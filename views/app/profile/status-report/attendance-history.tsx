@@ -48,14 +48,15 @@ const AttendanceHeader = ({ history, isCurrent }: { history: IGetUserStatusRepor
                                 </Badge>
                             )}
                         </View>
-                        <Text
+                        TODO: Re-add service attendance summary when backend is fixed
+                        {/* <Text
                             className={`text-xs font-medium text-zinc-500 ${
                                 !history.metrics?.numberOfServicesInMonth && 'hidden'
                             }`}
                         >
                             {history.metrics?.numberOfServicesAttended}/{history.metrics?.numberOfServicesInMonth}{' '}
                             Services
-                        </Text>
+                        </Text> */}
                     </View>
                 </View>
 
