@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import { Icon } from '@rneui/themed';
 import dayjs from 'dayjs';
 import React, { useCallback } from 'react';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import { Linking, RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
@@ -35,6 +35,10 @@ const Profile: React.FC = () => {
 
     const handleLogout = () => {
         logOut();
+    };
+
+    const handleDeleteAccount = () => {
+        Linking.openURL('https://forms.gle/wXcApjc6ibppQDiQ6');
     };
 
     const handleEdit = useCallback(
@@ -188,6 +192,11 @@ const Profile: React.FC = () => {
                                 )}
                                 <Text className="ml-4">{isLoading ? 'Logging you out...' : 'Logout'}</Text>
                             </View>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity activeOpacity={0.6} onPress={handleDeleteAccount}>
+                        <View className="px-1 mt-4 py-4 flex-row bg-destructive rounded-2xl border border-gray-300 dark:border-border">                            
+                            <Text className="ml-4 text-destructive-foreground">🗑️ Delete My Account</Text>
                         </View>
                     </TouchableOpacity>
                     <Text className="py-6 text-center text-muted-foreground">
