@@ -75,7 +75,8 @@ export const GHSubmittedReportListRowForGSP: React.FC<IGHSubmittedReportForGSP> 
             />
             <View className="px-4 py-2 my-1 rounded-md bg-gray-50 dark:bg-gray-900 items-center justify-between">
                 <Text>{ghName}</Text>
-                <StatusTag>{props?.status as any}</StatusTag>
+                {/* TODO: Suspend rendering worker status until fixed from backend */}
+                {/* <StatusTag>{props?.status as any}</StatusTag> */}
             </View>
         </TouchableOpacity>
     );

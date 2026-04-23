@@ -9,7 +9,8 @@ import If from '@components/composite/if-container';
 import StaggerButtonComponent from '@components/composite/stagger';
 import { IReportTypes } from '../export';
 import { router, useLocalSearchParams } from 'expo-router';
-import { SafeAreaView, View } from 'react-native';
+import { View } from 'react-native';
+import ErrorBoundary from '~/components/composite/error-boundary';
 
 const ROUTES = [
     { key: 'myAttendance', title: 'My Attendance' },
@@ -75,7 +76,7 @@ const Attendance: React.FC = () => {
     }, []);
 
     return (
-        <SafeAreaView className="flex-1">
+        <ErrorBoundary>
             <View className="flex-1 pt-4">
                 <TabComponent
                     onIndexChange={setIndex}
@@ -96,7 +97,7 @@ const Attendance: React.FC = () => {
                     />
                 </If>
             </View>
-        </SafeAreaView>
+        </ErrorBoundary>
     );
 };
 

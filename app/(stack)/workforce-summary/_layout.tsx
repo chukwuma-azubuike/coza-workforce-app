@@ -15,6 +15,7 @@ const PermissionsScreens: React.FC = () => {
             <Stack.Screen name="create-campus" options={{ title: 'Create campus' }} />
             <Stack.Screen name="create-department" options={{ title: 'Create department' }} />
             <Stack.Screen name="campus-workforce" options={{ title: 'Campus workforce' }} />
+            <Stack.Screen name="worker-status-report" options={{ title: 'Worker status' }} />
         </Stack>
     );
 };

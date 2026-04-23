@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import { Alert, AlertDescription, AlertTitle } from '~/components/ui/alert';
+import { Alert, AlertDescription } from '~/components/ui/alert';
 import { THEME_CONFIG } from '@config/appConfig';
-import { Info, LucideIcon } from 'lucide-react-native';
+import { LucideIcon } from 'lucide-react-native';
 import { Icon } from '@rneui/base';
 import { View } from 'react-native';
 
@@ -17,7 +17,7 @@ interface IModalAlertComponentProps {
 }
 
 const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
-    const { status, description, iconName, iconType, color, backgroundColor, icon = Info } = props;
+    const { status, description, iconName, iconType, color } = props;
 
     return (
         <Alert iconClassName="hidden" className="max-w-sm shadow-none border-0">
@@ -29,7 +29,8 @@ const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
                         name={iconName as string}
                         color={color ? color : THEME_CONFIG[status || 'info']}
                     />
-                    <AlertDescription className="text-xl">{description}</AlertDescription>
+
+                    <AlertDescription className="text-xl line-clamp-none">{description}</AlertDescription>
                 </View>
             ) : (
                 description

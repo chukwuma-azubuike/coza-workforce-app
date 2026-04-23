@@ -14,7 +14,7 @@ const FormErrorMessage: React.FC<SlottableTextProps> = props => {
                 color={THEME_CONFIG.error}
                 className="mt-0.5"
             />
-            <Text {...props} className="text-base text-destructive line-clamp-none" />;
+            <Text {...props} className="text-base text-destructive line-clamp-none" />
         </View>
     );
 };

@@ -13,6 +13,10 @@ import {
     ICreateUserPayload,
     ICampusUserData,
     IAssignSecondaryRole,
+    ILogoutPayload,
+    IUserStatus,
+    Month,
+    IAttendanceStatus,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
 import { Platform } from 'react-native';
@@ -118,6 +122,68 @@ export interface IAddNotificationTokenPayload {
 export type IRegisterResponse = IDefaultResponse<IUser>;
 export type IGetUserByIdResponse = IDefaultResponse<IUser>;
 
+export interface IGetUserStatusHistoryPayload {
+    userId: string;
+    year: number;
+    month: Month;
+    monthsBack?: number;
+}
+
+export interface IGetUserStatusMetric {
+    numberOfServicesInMonth: number;
+    numberOfServicesAttended: number;
+    numberOfServicesWithPermission: number;
+    totalEffectiveAttendance: number;
+    requiredThreshold: number;
+    isThresholdMet: boolean;
+    attendanceShortfall: number;
+    isNewUser: boolean;
+    userAgeInMonths: number;
+    inactiveStreak: number;
+    activeStreak: number;
+    dormantStreak: number;
+    blacklistedStreak: number;
+    statusTransitionReason: string;
+}
+
+type IGetUserStatusAttendance = {
+    attendanceId: string;
+    serviceId: string;
+    serviceName: string;
+    serviceTime: string;
+    serviceTag: string[];
+    clockIn: string;
+    clockOut: string;
+    status: IAttendanceStatus;
+    createdAt: string;
+};
+
+export interface IGetUserStatusReport {
+    year: number;
+    month: number;
+    monthName: string;
+    available: boolean;
+    status: IUserStatus;
+    metrics: IGetUserStatusMetric;
+    attendances: Array<IGetUserStatusAttendance>;
+}
+export interface IGetUserStatusHistoryResponse {
+    period: { year: number; month: number; monthName: string };
+    user: Pick<IUser, 'userId' | 'firstName' | 'lastName' | 'email' | 'campus' | 'campusId'>;
+    currentReport: IGetUserStatusReport;
+    history: Array<IGetUserStatusReport>;
+    aggregates: {
+        totals: { services: number; attended: number; permissionsCovered: number; effectiveAttendance: number };
+        averages: { effectiveAttendance: number };
+        complianceRate: number;
+    };
+    trend: {
+        effectiveAttendance: Array<number>;
+        statuses: Array<IUserStatus>;
+        thresholdMet: Array<boolean>;
+    };
+}
+
 export const accountServiceSlice = createApi({
     reducerPath: 'account',
 
@@ -189,6 +255,14 @@ export const accountServiceSlice = createApi({
             invalidatesTags: ['userDetails'],
         }),
 
+        logout: endpoint.mutation<any, ILogoutPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/logout`,
+                method: REST_API_VERBS.POST,
+                body,
+            }),
+        }),
+
         register: endpoint.mutation<IRegisterResponse, IRegisterPayload>({
             query: body => ({
                 url: `/${SERVICE_URL}/register`,
@@ -223,6 +297,24 @@ export const accountServiceSlice = createApi({
                 method: REST_API_VERBS.PATCH,
                 body,
             }),
+
+            // Add optimistic updates
+            async onQueryStarted(patch, { dispatch, queryFulfilled, getState }) {
+                // Get the current cache key for user details
+                const patchResult = dispatch(
+                    accountServiceSlice.util.updateQueryData('getUserById', patch?._id as string, draft => {
+                        // Update the draft with new values
+                        Object.assign(draft, patch);
+                    })
+                );
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    // If the mutation fails, revert the optimistic update
+                    patchResult.undo();
+                }
+            },
 
             invalidatesTags: [
                 'listOfDepartmentUsers',
@@ -352,6 +444,17 @@ export const accountServiceSlice = createApi({
             }),
             transformResponse: (response: IDefaultResponse<IUser[]>) => response.data,
         }),
+
+        /*********** User Status **********/
+
+        getUserStatusHistory: endpoint.query<IGetUserStatusHistoryResponse, IGetUserStatusHistoryPayload>({
+            query: params => ({
+                url: `/user-status/user-history`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse: (response: IDefaultResponse<IGetUserStatusHistoryResponse>) => response.data,
+        }),
     }),
 });
 
@@ -361,6 +464,7 @@ export const {
     useLazySendOTPQuery,
     useGetUsersQuery,
     useLoginMutation,
+    useLogoutMutation,
     useRegisterMutation,
     useGetUserByIdQuery,
     useCreateUserMutation,
@@ -377,4 +481,5 @@ export const {
     useAssignSecondaryRolesMutation,
     useAddDeviceTokenMutation,
     useGetGroupHeadUsersQuery,
+    useGetUserStatusHistoryQuery,
 } = accountServiceSlice;

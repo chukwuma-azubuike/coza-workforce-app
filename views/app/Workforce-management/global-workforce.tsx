@@ -142,7 +142,7 @@ const GlobalWorkforceSummary: React.FC = () => {
                         <FlatListSkeleton count={6} />
                     ) : (
                         campuslist?.map((item, index) => (
-                            <View className="flex-auto flex-grow">
+                            <View className="flex-auto flex-grow" key={index}>
                                 <SmallCardComponent
                                     onPress={() => handlePress(item)}
                                     key={index}

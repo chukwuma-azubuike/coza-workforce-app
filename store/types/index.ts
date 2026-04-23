@@ -1,5 +1,6 @@
 import { IReportFormProps } from '@views/app/reports/forms/types';
 import APP_VARIANT from '~/config/envConfig';
+export * from './roast-crm';
 
 // General types
 export interface ILog {
@@ -7,6 +8,12 @@ export interface ILog {
     createdAt?: string;
     dateUpdated?: string;
     updatedAt?: string;
+}
+export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+
+export interface IPaginationParams {
+    page?: number;
+    limit?: number;
 }
 
 export enum ERROR {
@@ -16,8 +23,20 @@ export enum ERROR {
 export enum CREATE_SERVICE_ENUM {
     LONG = 7.505862981744857,
     LAT = 9.005452823370131,
-    RANGE_TO_CLOCKIN = APP_VARIANT.isProd ? 100 : 100000,
 }
+
+export const DEFAULT_RANGES_TO_CLOCKIN = APP_VARIANT.isProd ? '200' : '100000';
+
+export const RANGES_TO_CLOKIN = [
+    { id: '100', label: '100m' },
+    { id: '200', label: '200m' },
+    { id: '500', label: '500m' },
+    { id: '1000', label: '1000m' },
+    { id: '2000', label: '2000m' },
+    { id: '5000', label: '5000m' },
+    { id: '10000', label: '10000m' },
+    { id: '100000', label: '100000m' },
+];
 
 export const SERVICE_TAGS = [
     { id: 'COZA_SUNDAYS', value: 'COZA Sundays' },
@@ -29,6 +48,7 @@ export const SERVICE_TAGS = [
     { id: 'LEADERS_MEETING', value: 'Leaders Meeting' },
     { id: '12DG', value: '12DG' },
     { id: '7DG', value: '7DG' },
+    { id: 'OTHERS', value: 'Others' },
 ];
 
 export const Congress_SESSION_TAGS = [
@@ -67,6 +87,7 @@ export interface IDefaultQueryParams {
     requestor?: IUser['_id'];
     userId?: IUser['_id'];
     roleId?: IRole['_id'];
+    zoneId?: string;
     CGWCId?: string;
     cgwcId?: string;
     limit?: number;
@@ -111,6 +132,10 @@ export interface IToken {
 }
 
 export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
+export interface ILogoutPayload {
+    expoPushToken: string;
+    userId: string;
+}
 
 export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     roleId: string;
@@ -158,13 +183,14 @@ export interface IUser {
         instagram: string;
         twitter: string;
     };
+    zoneIds?: Array<string>;
 }
 
 export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'HOD' | 'AHOD' | 'UNAPPROVED' | 'BLACKLISTED';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED' |'UNKNOWN';
 
 export interface ICreateUserPayload {
     firstName: string;

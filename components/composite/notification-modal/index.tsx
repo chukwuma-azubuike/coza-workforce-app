@@ -10,7 +10,8 @@ import * as Haptics from 'expo-haptics';
 
 const NotificationModal: React.FC = () => {
     const { modalState, setModalState } = useModal();
-    const { open, render, button, message, status, defaultRender = true } = modalState;
+    const { open, render, button, message: raw, status, defaultRender = true } = modalState;
+    const message = typeof raw === 'string' && raw ? raw : '';
 
     const hideModal = () => {
         setModalState({ ...modalState, open: false });
@@ -34,11 +35,16 @@ const NotificationModal: React.FC = () => {
 
     return (
         <Dialog open={open || !!render || !!message} onOpenChange={hideModal}>
-            <DialogContent className="h-72 !w-20" showClose={false}>
-                <View className="justify-center">
+            <DialogContent className="max-h-[60%] !w-20 p-3" showClose={false}>
+                <View className="justify-center mx-auto w-full">
                     <View className="w-full gap-2 rounded-2xl bg-transparent">
                         {render ? (
-                            render
+                            <ModalAlertComponent
+                                status={render?.status}
+                                iconType={render?.iconType}
+                                iconName={render?.iconName}
+                                description={render?.description}
+                            />
                         ) : defaultRender ? (
                             <ModalAlertComponent
                                 description={message}
@@ -46,23 +52,23 @@ const NotificationModal: React.FC = () => {
                                     status === 'success'
                                         ? 'checkmark-circle-outline'
                                         : status === 'info'
-                                          ? 'info'
-                                          : status === 'warning'
-                                            ? 'warning-outline'
-                                            : status === 'error'
-                                              ? 'error-outline'
-                                              : ''
+                                        ? 'info'
+                                        : status === 'warning'
+                                        ? 'warning-outline'
+                                        : status === 'error'
+                                        ? 'error-outline'
+                                        : ''
                                 }
                                 iconType={
                                     status === 'success'
                                         ? 'ionicon'
                                         : status === 'info'
-                                          ? 'feather'
-                                          : status === 'warning'
-                                            ? 'ionicon'
-                                            : status === 'error'
-                                              ? 'material'
-                                              : 'ionicon'
+                                        ? 'feather'
+                                        : status === 'warning'
+                                        ? 'ionicon'
+                                        : status === 'error'
+                                        ? 'material'
+                                        : 'ionicon'
                                 }
                                 status={status}
                             />

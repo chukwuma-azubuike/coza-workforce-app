@@ -12,7 +12,15 @@ export default function EASUpdates() {
     useEffect(() => {
         if (isUpdatePending) {
             // Update has successfully downloaded; apply it now
-            Updates.reloadAsync();
+            Updates.reloadAsync({
+                reloadScreenOptions: {
+                    backgroundColor: '#000000',
+                    image: require('./assets/images/adaptive-icon-black.png'),
+                    imageResizeMode: 'cover',
+                    // imageFullScreen: true,
+                    fade: true,
+                },
+            });
         }
     }, [isUpdatePending]);
 

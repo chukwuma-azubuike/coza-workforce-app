@@ -12,10 +12,11 @@ import { useGetLatestServiceQuery } from '@store/services/services';
 import { STATUS_COLORS } from '@constants/notification-types';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import APP_VARIANT from '~/config/envConfig';
 
 const TopNav: React.FC = () => {
     const handleSupportPress = () => {
-        Linking.openURL(`mailto:${process.env.SUPPORT_EMAIL}`);
+        Linking.openURL(`mailto:${APP_VARIANT.SUPPORT_EMAIL}`);
     };
 
     const handlePress = () => router.push('/profile');

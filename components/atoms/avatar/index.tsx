@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import { Image } from 'expo-image';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { IStatusColors } from '~/types/app';
 import { STATUS_COLORS } from '~/constants/notification-types';
@@ -8,6 +8,7 @@ import Loading from '../loading';
 import { Text } from '~/components/ui/text';
 import AvatarPrimitive from '@rn-primitives/avatar';
 import { cn } from '~/lib/utils';
+import { AVATAR_FALLBACK_URL } from '~/constants';
 
 interface IAvatarComponentProps extends AvatarPrimitive.RootProps {
     size?: number;
@@ -22,13 +23,22 @@ interface IAvatarComponentProps extends AvatarPrimitive.RootProps {
 }
 
 const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
-    const { imageUrl, className, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE } = props;
+    const { imageUrl: inittialImageUrl, className, badge, error, isLoading, badgeColor = STATUS_COLORS.ACTIVE } = props;
     const [loading, setLoading] = React.useState<boolean>();
+    const [imageUrl, setImageUrl] = React.useState<string>(inittialImageUrl);
+
+    const handleLoading = (value: boolean) => () => {
+        setLoading(value);
+    };
+
+    const handleError = () => {
+        setImageUrl(AVATAR_FALLBACK_URL);
+    };
 
     return (
         <View className={cn('w-12 h-12 justify-center relative', className)}>
             {imageUrl && (
-                <FastImage
+                <Image
                     style={{
                         width: '100%',
                         height: '100%',
@@ -36,10 +46,10 @@ const AvatarComponent: React.FC<IAvatarComponentProps> = props => {
                     }}
                     source={{
                         uri: imageUrl,
-                        priority: FastImage.priority.normal,
                     }}
-                    onLoadEnd={() => setLoading(false)}
-                    onLoadStart={() => setLoading(true)}
+                    onError={handleError}
+                    onLoadEnd={handleLoading(false)}
+                    onLoadStart={handleLoading(true)}
                     className={cn('!w-12 !h-12 justify-center relative', className)}
                 />
             )}

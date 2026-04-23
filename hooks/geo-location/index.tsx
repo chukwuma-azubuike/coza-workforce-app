@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import { ICampusCoordinates } from '@store/services/attendance';
 import useClosestCampus from '../closest-campus';
+import { Platform } from 'react-native';
 
 export interface GeoCoordinates {
     latitude: number;
@@ -54,9 +55,9 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
         errorCallback: () => any,
         campusCoordinates: ICampusCoordinates = closestCampusCoordinates
     ) => {
-        await Geolocation.getCurrentPosition(
+        Geolocation.getCurrentPosition(
             position => {
-                if (isInRange(position?.coords, campusCoordinates)) {
+                if (isInRangeFn(position?.coords, campusCoordinates)) {
                     successCallback();
                 } else {
                     errorCallback();
@@ -64,7 +65,7 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
             },
             error => {},
             {
-                enableHighAccuracy: true,
+                enableHighAccuracy: Platform.OS !== 'android',
                 timeout: 15000,
                 maximumAge: 10000,
                 distanceFilter: 10,
@@ -75,12 +76,12 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
     const refresh = async () => {
         setNudge(prev => !prev);
 
-        const result = await Geolocation.getCurrentPosition(
+        const result = Geolocation.getCurrentPosition(
             position => {
                 setDeviceCoordinates(position?.coords);
             },
             error => {},
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            { enableHighAccuracy: Platform.OS !== 'android', timeout: 15000, maximumAge: 10000 }
         );
 
         return result;
@@ -93,23 +94,28 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
         longitude: deviceCoordinates?.longitude ?? 0,
     });
 
-    const isInRange = (
-        deviceCoordinatesArg: GeoCoordinates = deviceCoordinates ?? { latitude: 0, longitude: 0 },
-        campusCoordinatesArg: ICampusCoordinates = closestCampusCoordinates
-    ) => {
-        if (deviceCoordinatesArg && campusCoordinatesArg) {
-            try {
-                distance = distanceBetweenTwoCoordinates(deviceCoordinatesArg, campusCoordinatesArg);
+    const isInRangeFn = useCallback(
+        (
+            deviceCoordinatesArg: GeoCoordinates = deviceCoordinates ?? { latitude: 0, longitude: 0 },
+            campusCoordinatesArg: ICampusCoordinates = closestCampusCoordinates
+        ) => {
+            if (deviceCoordinatesArg && campusCoordinatesArg) {
+                try {
+                    distance = distanceBetweenTwoCoordinates(deviceCoordinatesArg, campusCoordinatesArg);
 
-                if (distance <= +rangeToClockIn) {
-                    return true;
+                    if (distance <= +rangeToClockIn) {
+                        return true;
+                    }
+                    return false;
+                } catch (err) {
+                    return false;
                 }
-                return false;
-            } catch (err) {
-                return false;
             }
-        }
-    };
+        },
+        [deviceCoordinates, closestCampusCoordinates, distanceBetweenTwoCoordinates, distance, rangeToClockIn]
+    );
+
+    const isInRange = useMemo(() => isInRangeFn(), [isInRangeFn]);
 
     React.useEffect(() => {
         Geolocation.getCurrentPosition(
@@ -117,12 +123,12 @@ const useGeoLocation = (props: IUseGeoLocationArgs) => {
                 setDeviceCoordinates(position?.coords);
             },
             error => {},
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            { enableHighAccuracy: Platform.OS !== 'android', timeout: 15000, maximumAge: 10000 }
         );
     }, [deviceCoordinates?.latitude, deviceCoordinates?.longitude, nudge]);
 
     return {
-        isInRange: !!isInRange(),
+        isInRange,
         verifyRangeBeforeAction,
         deviceCoordinates,
         distance,
