@@ -86,16 +86,14 @@ export default function RootLayout() {
     return (
         <SafeAreaProvider className="!bg-background">
             <SafeAreaView
-                edges={['right', 'left', Platform.OS === 'android' ? 'bottom' : 'top', 'top']}
+                edges={['right', 'left', Platform.OS == 'android' ? 'bottom' : 'top']}
                 className="flex-1 !bg-background"
             >
                 <ErrorBoundary>
                     <Provider store={store}>
                         <PersistGate loading={<Loading bootUp />} persistor={persistor}>
                             <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-                                {Platform.OS !== 'android' && (
-                                    <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                                )}
+                                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
                                 <ConnectionStatusBar />
                                 <ErrorBoundary>
                                     <Routing />
