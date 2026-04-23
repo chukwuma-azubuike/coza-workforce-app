@@ -46,7 +46,7 @@ const Routing: React.FC = () => {
 
     return (
         <NotificationsProvider user={user || ({} as any)}>
-            <View className={cn('flex-1', Platform.OS === 'android' && 'pt-6')}>
+            <View className={cn('flex-1', Platform.OS === 'android' ? 'pt-3':'pt-2')}>
                 <NotificationModal />
                 <Stack>
                     <Stack.Screen name="index" options={{ headerShown: false }} />
