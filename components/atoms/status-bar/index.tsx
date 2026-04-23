@@ -36,14 +36,16 @@ const ConnectionStatusBar: React.FC = () => {
     return (
         <Animated.View
             style={{
-                position: 'absolute',
-                width: '100%',
                 opacity,
+                zIndex: 10,
+                width: '100%',
+                position: 'absolute',
             }}
         >
             <SafeAreaView
+                edges={['top']}
                 className={cn(
-                    Platform.OS == 'android' ? 'pt-1.5' : 'pt-0',
+                    Platform.OS == 'android' ? 'pt-2' : 'pt-0',
                     netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive'
                 )}
             >

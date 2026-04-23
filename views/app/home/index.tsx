@@ -1,4 +1,5 @@
 import React from 'react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Clocker from './workers/clocker';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import useRole from '@hooks/role';
@@ -10,7 +11,7 @@ import Utils from '@utils/index';
 import { CampusReportSummary } from './campus-pastors/report-summary';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { HomeContext } from './context';
@@ -104,31 +105,36 @@ const Home: React.FC = () => {
     return ready ? (
         <ErrorBoundary>
             <HomeContext.Provider value={initialState as unknown as IInitialHomeState}>
-                <View style={styles.container}>
-                    <If condition={!!user}>
-                        <If condition={!isGlobalPastor}>
-                            <Clocker
-                                refreshLocation={refresh}
-                                isInRange={isInRange as boolean}
-                                refreshTrigger={refreshTrigger}
-                                setRefreshTrigger={setRefreshTrigger}
-                                deviceCoordinates={deviceCoordinates as any}
-                                verifyRangeBeforeAction={verifyRangeBeforeAction}
+                <SafeAreaView
+                    className="flex-1 !bg-background"
+                    edges={['right', 'left', Platform.OS == 'android' ? 'top' : 'left']}
+                >
+                    <View style={styles.container}>
+                        <If condition={!!user}>
+                            <If condition={!isGlobalPastor}>
+                                <Clocker
+                                    refreshLocation={refresh}
+                                    isInRange={isInRange as boolean}
+                                    refreshTrigger={refreshTrigger}
+                                    setRefreshTrigger={setRefreshTrigger}
+                                    deviceCoordinates={deviceCoordinates as any}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </If>
+                            <If condition={isGlobalPastor}>
+                                <TopNav />
+                                <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
+                            </If>
+                        </If>
+                        <If condition={isCampusPastor}>
+                            <CampusReportSummary
+                                refetchService={handleRefresh}
+                                campusId={user?.campus?._id as string}
+                                serviceId={latestService?._id as string}
                             />
                         </If>
-                        <If condition={isGlobalPastor}>
-                            <TopNav />
-                            <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
-                        </If>
-                    </If>
-                    <If condition={isCampusPastor}>
-                        <CampusReportSummary
-                            refetchService={handleRefresh}
-                            campusId={user?.campus?._id as string}
-                            serviceId={latestService?._id as string}
-                        />
-                    </If>
-                </View>
+                    </View>
+                </SafeAreaView>
             </HomeContext.Provider>
         </ErrorBoundary>
     ) : (

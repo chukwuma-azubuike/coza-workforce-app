@@ -84,8 +84,8 @@ const NavButton: React.FC<NavButtonProps> = ({ onBack, className }) => {
     };
 
     return (
-        <TouchableOpacity onPress={handleGoBack} className={cn('-left-5', className)}>
-            <ChevronLeft color={isDarkColorScheme ? THEME_CONFIG.white : THEME_CONFIG.black} size={32} />
+        <TouchableOpacity onPress={handleGoBack} className={cn(className)}>
+            <ChevronLeft size={32} color={isDarkColorScheme ? THEME_CONFIG.white : THEME_CONFIG.black} />
         </TouchableOpacity>
     );
 };
