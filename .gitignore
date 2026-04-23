@@ -57,3 +57,6 @@ coza-workforce-app-staging-firebase-adminsdk.json
 
 *.aab
 *.apk
+
+# AI
+.claude/

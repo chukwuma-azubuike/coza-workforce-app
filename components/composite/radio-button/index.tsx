@@ -22,7 +22,7 @@ const RadioButtonGroup: React.FC<Partial<IRadioButtonProps>> = ({
     const handleValueChange = (val: string) => {
         if (props.onValueChange) {
             props.onValueChange(val);
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            Haptics.selectionAsync();
         }
     };
 
@@ -34,8 +34,8 @@ const RadioButtonGroup: React.FC<Partial<IRadioButtonProps>> = ({
                 {...props}
                 onValueChange={handleValueChange as () => void}
             >
-                {radioButtons?.map(button => (
-                    <RadioGroupItemWithLabel onLabelPress={onLabelPress as () => void} {...button} />
+                {radioButtons?.map((button, index) => (
+                    <RadioGroupItemWithLabel key={index} onLabelPress={onLabelPress as () => void} {...button} />
                 ))}
             </RadioGroup>
         </View>

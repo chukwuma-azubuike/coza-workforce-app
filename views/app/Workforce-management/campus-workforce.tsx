@@ -181,7 +181,7 @@ const CampusWorkforceSummary: React.FC = () => {
                 <View className="flex-row justify-center p-4  border border-border rounded-2xl my-4">
                     {campusInfo.map((item, index) =>
                         isLoading ? (
-                            <FlexListSkeleton count={1} />
+                            <FlexListSkeleton count={1} key={index} />
                         ) : (
                             <View key={index} className="px-6 items-center">
                                 <Text>{item.name}</Text>
@@ -219,7 +219,7 @@ const CampusWorkforceSummary: React.FC = () => {
                     ) : (
                         <>
                             {Departmentlist?.map((item, index) => (
-                                <View className="flex-auto flex-grow">
+                                <View className="flex-auto flex-grow" key={index}>
                                     <SmallCardComponent
                                         key={index}
                                         label={item.title}

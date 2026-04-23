@@ -1,6 +1,6 @@
 import React, { memo, ReactNode, useCallback } from 'react';
 import { Alert, View } from 'react-native';
-import * as ContextMenu from 'zeego/context-menu';
+// import * as ContextMenu from 'zeego/context-menu';
 import { Text } from '~/components/ui/text';
 import dayjs from 'dayjs';
 import { router } from 'expo-router';
@@ -52,73 +52,71 @@ const ServiceContextMenu: React.FC<{ children: ReactNode; service: IService }> =
         ]);
     }, [service?._id, service?.name]);
 
-    return (
-        <ErrorBoundary>
-            <ContextMenu.Root>
-                <ContextMenu.Trigger className="w-full">{children}</ContextMenu.Trigger>
-                <ContextMenu.Content className="!z-40">
-                    <ContextMenu.Preview backgroundColor={{ dark: 'black', light: 'white' }}>
-                        <View className="py-4 my-2 px-4 items-center gap-2 justify-between flex-row w-full rounded-xl border-border border">
-                            <View className="gap-3 flex-1">
-                                <View className="justify-between">
-                                    <Text className="font-bold ">{service?.name}</Text>
-                                    <Text className="text-sm">
-                                        {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
-                                            service?.serviceTime
-                                        ).format('h:mm A')}`}
-                                    </Text>
-                                </View>
-                            </View>
-                            <StatusTag
-                                className={cn(
-                                    service?.isGlobalService
-                                        ? 'bg-violet-100 text-violet-700'
-                                        : 'bg-sky-100 text-sky-700'
-                                )}
-                            >
-                                {service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}
-                            </StatusTag>
-                        </View>
-                    </ContextMenu.Preview>
-
-                    {/* <ContextMenu.Label key="actions">Actions</ContextMenu.Label> */}
-                    <ContextMenu.Item key="1" onSelect={handleNagivate}>
-                        <ContextMenu.ItemTitle>Edit</ContextMenu.ItemTitle>
-                        <ContextMenu.ItemIcon
-                            ios={{
-                                name: 'pencil', // required
-                                pointSize: 16,
-                                weight: 'semibold',
-                                scale: 'medium',
-                                // can also be a color string. Requires iOS 15+
-                                hierarchicalColor: {
-                                    dark: 'white',
-                                    light: 'black',
-                                },
-                            }}
-                        />
-                    </ContextMenu.Item>
-
-                    <ContextMenu.Item key="2" onSelect={handleDelete}>
-                        <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
-                        <ContextMenu.ItemIcon
-                            ios={{
-                                name: 'trash', // required
-                                pointSize: 16,
-                                scale: 'medium',
-                                weight: 'semibold',
-                                // can also be a color string. Requires iOS 15+
-                                hierarchicalColor: {
-                                    dark: 'red',
-                                    light: 'red',
-                                },
-                            }}
-                        />
-                    </ContextMenu.Item>
-                </ContextMenu.Content>
-            </ContextMenu.Root>
-        </ErrorBoundary>
-    );
+    return <ErrorBoundary>{children}</ErrorBoundary>;
 };
 
 export default memo(ServiceContextMenu);
+
+// TODO: Context Menu render function. To be restored on next upgrade
+{
+    /* <ContextMenu.Root>
+    <ContextMenu.Trigger className="w-full">{children}</ContextMenu.Trigger>
+    <ContextMenu.Content className="!z-40">
+        <ContextMenu.Preview backgroundColor={{ dark: 'black', light: 'white' }}>
+            <View className="py-4 my-2 px-4 items-center gap-2 justify-between flex-row w-full rounded-xl border-border border">
+                <View className="gap-3 flex-1">
+                    <View className="justify-between">
+                        <Text className="font-bold ">{service?.name}</Text>
+                        <Text className="text-sm">
+                            {`${dayjs(service?.serviceTime).format('DD-MM-YYYY')} - ${dayjs(
+                                service?.serviceTime
+                            ).format('h:mm A')}`}
+                        </Text>
+                    </View>
+                </View>
+                <StatusTag
+                    className={cn(
+                        service?.isGlobalService ? 'bg-violet-100 text-violet-700' : 'bg-sky-100 text-sky-700'
+                    )}
+                >
+                    {service?.isGlobalService ? ('Global Service' as any) : 'Local Service'}
+                </StatusTag>
+            </View>
+        </ContextMenu.Preview>
+
+        <ContextMenu.Item key="1" onSelect={handleNagivate}>
+            <ContextMenu.ItemTitle>Edit</ContextMenu.ItemTitle>
+            <ContextMenu.ItemIcon
+                ios={{
+                    name: 'pencil', // required
+                    pointSize: 16,
+                    weight: 'semibold',
+                    scale: 'medium',
+                    // can also be a color string. Requires iOS 15+
+                    hierarchicalColor: {
+                        dark: 'white',
+                        light: 'black',
+                    },
+                }}
+            />
+        </ContextMenu.Item>
+
+        <ContextMenu.Item key="2" onSelect={handleDelete}>
+            <ContextMenu.ItemTitle>Delete</ContextMenu.ItemTitle>
+            <ContextMenu.ItemIcon
+                ios={{
+                    name: 'trash', // required
+                    pointSize: 16,
+                    scale: 'medium',
+                    weight: 'semibold',
+                    // can also be a color string. Requires iOS 15+
+                    hierarchicalColor: {
+                        dark: 'red',
+                        light: 'red',
+                    },
+                }}
+            />
+        </ContextMenu.Item>
+    </ContextMenu.Content>
+</ContextMenu.Root>; */
+}

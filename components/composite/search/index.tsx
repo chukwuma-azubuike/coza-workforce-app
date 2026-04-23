@@ -66,7 +66,8 @@ const SearchResult = React.memo(({ item, onPress, backgroundColor }: any) => {
                     </View>
                 </View>
                 <View className="w-max">
-                    <StatusTag>{item?.status || ((item?.gender === 'M' ? 'Male' : 'Female') as any)}</StatusTag>
+                    {/* TODO: To be restored after backend fixes */}
+                    <StatusTag>{item?.status || item?.gender === 'M' ? 'Male' : ('Female' as any)}</StatusTag>
                 </View>
             </View>
         </TouchableOpacity>
@@ -150,6 +151,7 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 header={
                     <Input
                         autoFocus
+                        autoCorrect={false}
                         clearButtonMode="always"
                         placeholder="Search"
                         onChangeText={handleTextChange}
@@ -186,11 +188,12 @@ function DynamicSearch<D extends Partial<IUser> | Partial<ITicket> | Partial<IPe
                 </View>
             </ModalComponent>
             <FloatButton
-                iconName="search1"
-                iconType="ant-design"
-                onPress={handleSearchBar}
-                className={cn('bottom-16 shadow-md !rounded-full', className)}
+                iconSize={24}
                 disabled={disable}
+                iconName="search"
+                iconType="ionicons"
+                onPress={handleSearchBar}
+                className={cn('!bottom-36 !right-[1.6rem] shadow-md !rounded-full w-[4.5rem] !h-[4.5rem]', className)}
             />
         </>
     );

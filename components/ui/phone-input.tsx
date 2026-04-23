@@ -5,7 +5,6 @@ import RNPhoneInput, { PhoneInputProps } from 'react-native-international-phone-
 
 import { cn } from '~/lib/utils';
 import { useColorScheme } from '~/lib/useColorScheme';
-import formatToE164 from '~/utils/formatToE164';
 
 const PhoneInput: React.FC<PhoneInputProps & { error?: string; touched?: boolean; callingCode?: string }> = ({
     className,
@@ -17,24 +16,25 @@ const PhoneInput: React.FC<PhoneInputProps & { error?: string; touched?: boolean
 }) => {
     const { isDarkColorScheme } = useColorScheme();
 
-    const value = React.useMemo(
-        () => formatToE164((props.value as string) || '', selectedCountry?.callingCode || '+234'),
-        [props.value, selectedCountry?.callingCode]
-    );
+    const handleChangePhoneNumber = (value: string) => {
+        if (props.onChangePhoneNumber) {
+            props.onChangePhoneNumber(value);
+        }
+    };
 
     return (
         <RNPhoneInput
             className={cn(
-                'w-full border border-input rounded-xl web:flex h-10 native:h-16 web:w-full px-3 web:py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+                'w-full border border-input rounded-xl web:flex h-10 native:h-16 web:w-full px-3 web:py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
                 props.editable === false && 'opacity-50 web:cursor-not-allowed',
                 error && touched && 'border-destructive',
                 className
             )}
+            onChangeText={handleChangePhoneNumber as any}
             selectedCountry={selectedCountry as any}
             phoneInputStyles={isDarkColorScheme ? PhoneInputStylesDark : PhoneInputStylesLight}
             theme={isDarkColorScheme ? 'dark' : 'light'}
             placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
-            value={value as any}
             {...props}
         />
     );

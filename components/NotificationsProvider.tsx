@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { Platform } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
@@ -32,7 +32,7 @@ export const registerForPushNotificationsAsync = async () => {
     }
 
     if (!Device.isDevice) {
-        alert('Must use physical device for Push Notifications');
+        // alert('Must use physical device for Push Notifications');
         return null;
     }
 
@@ -48,7 +48,9 @@ export const registerForPushNotificationsAsync = async () => {
     }
 
     try {
-        const projectId = Constants?.expoConfig?.extra?.eas?.projectId ?? Constants?.easConfig?.projectId;
+        const projectId =
+            (Constants?.expoConfig?.extra as { eas?: { projectId?: string } })?.eas?.projectId ??
+            Constants?.easConfig?.projectId;
 
         if (!projectId) {
             throw new Error('Project ID not found');
@@ -71,8 +73,6 @@ export const registerForPushNotificationsAsync = async () => {
 
 export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: IUser }> = ({ children, user }) => {
     const dispatch = useAppDispatch();
-    const notificationListener = useRef<Notifications.EventSubscription>();
-    const responseListener = useRef<Notifications.EventSubscription>();
 
     const { email } = user;
     const [addDeviceToken] = useAddDeviceTokenMutation();
@@ -112,18 +112,18 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
             );
         }
 
-        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        const notificationListener = Notifications.addNotificationReceivedListener(notification => {
             dispatch(notificationActions.setNotification(notification));
         });
 
-        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+        const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
             // Handle notification response here
             dispatch(notificationActions.setNotification(response.notification));
         });
 
         return () => {
-            notificationListener.current && Notifications.removeNotificationSubscription(notificationListener.current);
-            responseListener.current && Notifications.removeNotificationSubscription(responseListener.current);
+            notificationListener.remove();
+            responseListener.remove();
         };
     }, [dispatch]);
 

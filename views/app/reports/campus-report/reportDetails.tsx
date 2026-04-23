@@ -34,8 +34,6 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Button } from '~/components/ui/button';
 
-const DEPARTMENTAL_REPORT_COUNT = 6;
-
 const CampusReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ICampusReport & { campusName: string };
     const { serviceId, campusId } = params;
@@ -151,9 +149,7 @@ const CampusReport: React.FC = () => {
                     return elm;
                 }),
                 undefined
-            ).map(elm => {
-                return { ...elm, total: +elm.minorCount + +elm.adultCount };
-            }),
+            ),
         };
     }, [data]);
 
@@ -276,7 +272,7 @@ const CampusReport: React.FC = () => {
 
     const onSubmit = async (values: IGSPReportPayload) => {
         //Ensure all departmental reports are approved before submitting
-        if (values?.submittedReportIds?.length < DEPARTMENTAL_REPORT_COUNT) {
+        if (values?.submittedReportIds?.length < (data?.departmentalReport?.length ?? 0)) {
             setModalState({
                 message: 'Kindly ensure all departmental reports have been approved',
                 status: 'info',
@@ -315,6 +311,7 @@ const CampusReport: React.FC = () => {
             {isGlobalPastor && <Text className="font-bold text-4xl mb-2">{params?.campusName}</Text>}
             <View className="px-4 gap-6 mb-12">
                 <VerticalTable
+                    textWrap
                     isLoading={isLoading || isFetching}
                     title="Service Attendance"
                     tableData={serviceAttendance}
@@ -327,17 +324,18 @@ const CampusReport: React.FC = () => {
                 />
                 <Separator />
                 <VerticalTable
+                    textWrap
                     isLoading={isLoading || isFetching}
                     title="Childcare Report"
                     tableData={childCareReportData}
                 />
                 <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
+                <VerticalTable textWrap isLoading={isLoading || isFetching} title="Car Count" tableData={carCount} />
                 <Separator />
                 <VerticalTable isLoading={isLoading || isFetching} title="Bus Count (Pick Up)" tableData={busCount} />
                 <Separator />
                 <VerticalTable
-                    alignItemsCenter={false}
+                    textWrap
                     tableData={serviceObservation}
                     isLoading={isLoading || isFetching}
                     title="Service Programme Observation"
@@ -354,7 +352,12 @@ const CampusReport: React.FC = () => {
                     </View>
                 </VerticalTable>
                 <Separator />
-                <VerticalTable isLoading={isLoading || isFetching} title="Incidents" tableData={incidentReport} />
+                <VerticalTable
+                    textWrap
+                    isLoading={isLoading || isFetching}
+                    title="Incidents"
+                    tableData={incidentReport}
+                />
                 <Separator />
                 <If condition={isGlobalPastor}>
                     {data?.campusCoordinatorComment && (

@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 
 import dayjs from 'dayjs';
 import React from 'react';
-import { HomeContext } from '..';
+import { HomeContext } from '../context';
 import { THEME_CONFIG } from '@config/appConfig';
 import Utils from '@utils/index';
 import { IIconTypes } from '@utils/types';

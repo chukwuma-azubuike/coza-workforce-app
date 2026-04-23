@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Animated, Platform, SafeAreaView as RNSafeAreaView, View } from 'react-native';
+import { Animated, Platform, View } from 'react-native';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
@@ -33,25 +33,28 @@ const ConnectionStatusBar: React.FC = () => {
         }
     }, [netInfo.isInternetReachable]);
 
-    const isAndroid = Platform.OS === 'android';
-    const SafeAreaComp = isAndroid ? SafeAreaView : RNSafeAreaView;
-
     return (
         <Animated.View
             style={{
-                position: 'absolute',
-                width: '100%',
-                zIndex: 9999,
                 opacity,
+                zIndex: 10,
+                width: '100%',
+                position: 'absolute',
             }}
         >
-            <SafeAreaComp className={cn(netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive')}>
-                <View className="flex-1 pb-2">
+            <SafeAreaView
+                edges={['top']}
+                className={cn(
+                    Platform.OS == 'android' ? 'pt-2' : 'pt-0',
+                    netInfo.isInternetReachable ? 'bg-green-500' : 'bg-destructive'
+                )}
+            >
+                <View className={cn('flex-1 pb-2')}>
                     <Text className="text-center absolute bottom-0 w-full !text-base text-white">{`${
                         netInfo.isInternetReachable ? 'Connected' : 'No internet connection'
                     }`}</Text>
                 </View>
-            </SafeAreaComp>
+            </SafeAreaView>
         </Animated.View>
     );
 };

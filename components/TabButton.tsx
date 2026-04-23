@@ -6,6 +6,7 @@ import { Text } from './ui/text';
 import useAppColorMode from '~/hooks/theme/colorMode';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { Icon } from '@rneui/themed';
+import { cn } from '~/lib/utils';
 
 export type TabButtonProps = TabTriggerSlotProps & {
     iconName: string;
@@ -13,7 +14,7 @@ export type TabButtonProps = TabTriggerSlotProps & {
 };
 
 const TabButton = forwardRef(
-    ({ children, iconName, iconType, isFocused, ...props }: TabButtonProps, ref: Ref<View>) => {
+    ({ children, iconName, iconType, className, isFocused, ...props }: TabButtonProps, ref: Ref<View>) => {
         const { isLightMode } = useAppColorMode();
 
         return (
@@ -21,7 +22,7 @@ const TabButton = forwardRef(
                 ref={ref}
                 activeOpacity={0.6}
                 {...(props as any)}
-                className="gap-1 !flex-col items-center justify-between w-20"
+                className={cn('gap-1 !flex-col items-center justify-between w-20', className)}
             >
                 <Icon
                     size={22}

@@ -11,12 +11,17 @@ import { PortalHost } from '@rn-primitives/portal';
 import ConnectionStatusBar from '~/components/atoms/status-bar';
 import { setAndroidNavigationBar } from '~/lib/android-navigation-bar';
 import * as Notifications from 'expo-notifications';
+import { useFonts } from 'expo-font';
 
 import '~/global.css';
 import Routing from '~/components/Routing';
 import { PersistGate } from 'redux-persist/integration/react';
 import Loading from '~/components/atoms/loading';
 import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
+import ErrorBoundary from '~/components/composite/error-boundary';
+import useExpoUpdate from '~/hooks/expo-update';
+import removeBadPersistIfAny from '~/utils/removeBadPersistIfAny';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -30,6 +35,8 @@ const DARK_THEME: Theme = {
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldShowAlert: true,
+        shouldShowBanner: true,
+        shouldShowList: true,
         shouldPlaySound: true,
         shouldSetBadge: false,
         priority: Notifications.AndroidNotificationPriority.MAX,
@@ -46,39 +53,61 @@ export default function RootLayout() {
     const { colorScheme, isDarkColorScheme } = useColorScheme();
     const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
 
+    const [loaded, error] = useFonts({
+        Angelos: require('../assets/fonts/Angelos.ttf'),
+    });
+
     useIsomorphicLayoutEffect(() => {
-        if (hasMounted.current) {
+        (async () => {
+            await removeBadPersistIfAny();
+        })();
+
+        if (hasMounted.current && !loaded) {
             return;
         }
 
         if (Platform.OS === 'web') {
             // Adds the background color to the html element to prevent white background on overscroll.
-            document.documentElement.classList.add('bg-background');
+            // document.documentElement.classList.add('bg-background');
         }
+
         setAndroidNavigationBar(colorScheme);
         setIsColorSchemeLoaded(true);
         hasMounted.current = true;
     }, []);
 
     useNotificationObserver();
+    useExpoUpdate();
 
-    if (!isColorSchemeLoaded) {
+    if (!isColorSchemeLoaded || (!loaded && !error)) {
         return null;
     }
 
     return (
-        <Provider store={store}>
-            <PersistGate loading={<Loading bootUp />} persistor={persistor}>
-                <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
-                    <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
-                    <ConnectionStatusBar />
-                    <Routing />
-                    <PortalHost />
-                </ThemeProvider>
-            </PersistGate>
-        </Provider>
+        <SafeAreaProvider className="!bg-background">
+            <SafeAreaView
+                edges={['right', 'left', Platform.OS == 'android' ? 'bottom' : 'top']}
+                className="flex-1 !bg-background"
+            >
+                <ErrorBoundary>
+                    <Provider store={store}>
+                        <PersistGate loading={<Loading bootUp />} persistor={persistor}>
+                            <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
+                                <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
+                                <ConnectionStatusBar />
+                                <ErrorBoundary>
+                                    <Routing />
+                                </ErrorBoundary>
+                                <PortalHost />
+                            </ThemeProvider>
+                        </PersistGate>
+                    </Provider>
+                </ErrorBoundary>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
 const useIsomorphicLayoutEffect =
-    Platform.OS === 'web' && typeof window === 'undefined' ? React.useEffect : React.useLayoutEffect;
+    // Platform.OS === 'web' && typeof window === 'undefined' ? React.useEffect :
+    React.useLayoutEffect;

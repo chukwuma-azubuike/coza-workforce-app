@@ -93,16 +93,17 @@ export const GroupHeadTeamAttendance: React.FC<{ departmentId: string }> = React
         [membersClockedIn, mergedUsers]
     );
 
-    const minimalTeamData = useMemo(() => 
-        mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
-            _id,
-            firstName: user?.firstName,
-            lastName: user?.lastName,
-            pictureUrl: user?.pictureUrl,
-            clockIn,
-            clockOut,
-            departmentName
-        })) || [],
+    const minimalTeamData = useMemo(
+        () =>
+            mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName }) => ({
+                _id,
+                firstName: user?.firstName,
+                lastName: user?.lastName,
+                pictureUrl: user?.pictureUrl,
+                clockIn,
+                clockOut,
+                departmentName,
+            })) || [],
         [mergedAttendanceWithMemberList]
     );
 
@@ -185,22 +186,27 @@ export const GroupHeadTeamTicketsList: React.FC<{
         [preparedForSortData]
     );
 
-    const minimalTicketData = useMemo(() => 
-        sortedData?.map(({ _id, user, departmentName, category, status, isIndividual, isDepartment }) => ({
-            _id,
-            user: user ? {
-                firstName: user.firstName,
-                lastName: user.lastName,
-                pictureUrl: user.pictureUrl
-            } : undefined,
-            departmentName,
-            category: category ? {
-                categoryName: category.categoryName
-            } : undefined,
-            status,
-            isIndividual,
-            isDepartment
-        })) || [],
+    const minimalTicketData = useMemo(
+        () =>
+            sortedData?.map(({ _id, user, departmentName, category, status, isIndividual, isDepartment }) => ({
+                _id,
+                user: user
+                    ? {
+                          firstName: user.firstName,
+                          lastName: user.lastName,
+                          pictureUrl: user.pictureUrl,
+                      }
+                    : undefined,
+                departmentName,
+                category: category
+                    ? {
+                          categoryName: category.categoryName,
+                      }
+                    : undefined,
+                status,
+                isIndividual,
+                isDepartment,
+            })) || [],
         [sortedData]
     );
 

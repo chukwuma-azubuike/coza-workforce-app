@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import RNDatePicker, { DatePickerProps } from 'react-native-date-picker';
 
@@ -36,6 +36,15 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         setOpen(true);
     };
 
+    const handleConfirmDate = useCallback((date: Date) => {
+        setOpen(false);
+        setDate(date);
+
+        if (onConfirm) {
+            onConfirm(date.toISOString() as unknown as Date);
+        }
+    }, []);
+
     useEffect(() => {
         if (initialValue) {
             setDate(dayjs(initialValue).toDate());
@@ -62,8 +71,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                               mode === 'date'
                                   ? 'DD MMMM, YYYY'
                                   : mode === 'datetime'
-                                  ? 'dddd, DD MMMM, hh:mm A'
-                                  : 'hh:mm A'
+                                    ? 'dddd, DD MMMM, hh:mm A'
+                                    : 'hh:mm A'
                           )}
                 </Text>
             </Button>
@@ -74,11 +83,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                 open={open}
                 date={date}
                 mode={mode}
-                onConfirm={date => {
-                    setOpen(false);
-                    setDate(date);
-                    onConfirm && onConfirm(date.toISOString() as unknown as Date);
-                }}
+                onConfirm={handleConfirmDate}
                 onCancel={() => {
                     setOpen(false);
                 }}

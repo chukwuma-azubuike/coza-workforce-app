@@ -49,7 +49,7 @@ const TICKET_TEMPLATE = {
         
 QC/M&E is issuing you this ticket BECAUSE ...
 
-#Dominion`,
+#GreatExploits`,
     },
     VERBOSE: {
         id: 2,
@@ -257,8 +257,8 @@ const IssueTicket: React.FC = () => {
                             isDepartment
                                 ? CreateDepartmentalTicketSchema
                                 : isCampus
-                                ? CreateCampusTicketSchema
-                                : CreateIndividualTicketSchema
+                                  ? CreateCampusTicketSchema
+                                  : CreateIndividualTicketSchema
                         }
                     >
                         {({

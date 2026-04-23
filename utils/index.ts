@@ -54,22 +54,26 @@ class Utils {
      * @returns Sorted Array
      */
 
-    static sortStringAscending = (arrObject: Array<{ [key: string]: any }> = [], key: string) => {
+    static sortStringAscending<D = Record<string, any>>(arrObject: Array<D> = [], key: keyof D) {
         if (arrObject && typeof key === 'string') {
-            return [...arrObject].sort((a, b) => (a[key] > b[key] ? 1 : -1));
+            return [...arrObject].sort((a, b) => ((a as any)[key] > (b as any)[key] ? 1 : -1));
         }
         return [];
-    };
+    }
 
     /**
      *
      * @param arrObject Array to sort
      * @param key Key to sort by
+     * @param order Sort order 'asc' or 'desc' (default: 'desc')
      * @returns Sorted Array
      */
 
-    static sortByDate = (arrObject: any[] | [], key: string) => {
-        return [...arrObject]?.sort((a, b) => dayjs(b[key]).unix() - dayjs(a[key]).unix());
+    static sortByDate = (arrObject: any[] | [], key: string, order: 'asc' | 'desc' = 'desc') => {
+        return [...arrObject]?.sort((a, b) => {
+            const multiplier = order === 'asc' ? 1 : -1;
+            return multiplier * (dayjs(a[key]).unix() - dayjs(b[key]).unix());
+        });
     };
 
     /*************** Filters ****************/
@@ -300,10 +304,10 @@ class Utils {
             date && !time
                 ? dayjs(date).subtract(1, 'hour').unix()
                 : time && !date
-                  ? dayjs(time).subtract(1, 'hour').unix()
-                  : time && date
-                    ? dayjs(concatedTime).subtract(1, 'hour').unix()
-                    : dayjs(date).unix();
+                ? dayjs(time).subtract(1, 'hour').unix()
+                : time && date
+                ? dayjs(concatedTime).subtract(1, 'hour').unix()
+                : dayjs(date).unix();
 
         return res;
     };
