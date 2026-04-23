@@ -9,7 +9,6 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import dayjs from 'dayjs';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
-import { isIOS } from '@rneui/base';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
@@ -19,7 +18,10 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Textarea } from '~/components/ui/textarea';
 
 const ChildcareReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as IChildCareReportPayload;
+    const stringifiedParams = useLocalSearchParams() as unknown as { data: string };
+    const params = !!stringifiedParams?.data
+        ? (JSON.parse(stringifiedParams?.data) as IChildCareReportPayload)
+        : (stringifiedParams as unknown as IChildCareReportPayload);
 
     const { status, updatedAt } = params;
 
@@ -121,7 +123,7 @@ const ChildcareReport: React.FC = () => {
     }, []);
 
     return (
-        <ViewWrapper scroll avoidKeyboard className='px-2' >
+        <ViewWrapper scroll avoidKeyboard className="px-2">
             <Formik<IChildCareReportPayload>
                 validateOnChange
                 enableReinitialize

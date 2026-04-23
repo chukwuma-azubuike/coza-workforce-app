@@ -113,6 +113,7 @@ export const CreateServiceSchema = Yup.object<ICreateServicePayload>().shape({
     serviceType: Yup.string().required('You are required to select the service type.'),
     name: Yup.string().required('Service name is required.'),
     serviceDate: Yup.date().required('Field required.'),
+    rangeToClockIn: Yup.number().required('Field required.'),
     serviceTime: Yup.date().required('Field required'),
     clockInStartTime: Yup.date().required('Field required'),
     serviceEndTime: Yup.date().required('Field required'),

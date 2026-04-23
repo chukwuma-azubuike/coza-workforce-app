@@ -1,0 +1,328 @@
+import React, { memo, useCallback, useState } from 'react';
+import { Card, CardHeader, CardContent } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
+import { Textarea } from '~/components/ui/textarea';
+import { Badge } from '~/components/ui/badge';
+import { X } from 'lucide-react-native';
+import { ContactChannel, Timeline } from '~/store/types';
+import { TouchableOpacity, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { formatTimelineDate, getTimelineIcon } from '../../utils/time';
+import PickerSelect from '~/components/ui/picker-select';
+import { useAddTimelineMutation, useUpdateTimelineMutation } from '~/store/services/roast-crm';
+import { Skeleton } from '~/components/ui/skeleton';
+import * as Haptics from 'expo-haptics';
+import { Icon } from '@rneui/base';
+import { THEME_CONFIG } from '~/config/appConfig';
+
+interface TimelineCardProps {
+    isAddingNote?: boolean;
+    guestId: string;
+    assignedToId: string;
+    timeline: Timeline[];
+    loading: boolean;
+    contactChannel?: ContactChannel;
+    onSubmitEnagegment?: () => void;
+}
+
+const TimelineCard: React.FC<TimelineCardProps> = ({
+    timeline,
+    guestId,
+    loading,
+    assignedToId,
+    contactChannel,
+    isAddingNote: isAddingNoteProps,
+    onSubmitEnagegment,
+}) => {
+    const [newNote, setNewNote] = useState('');
+    const [channel, setChannel] = useState(contactChannel ?? ContactChannel.CALL);
+    const [isAddingNote, setIsAddingNote] = useState(isAddingNoteProps ?? false);
+    const [isEditingNote, setIsEditingNote] = useState<number | null>(null);
+    const [addTimeline, { isLoading, error: addingError }] = useAddTimelineMutation();
+    const [updateTimeline, { isLoading: isUpdating, error: updatingError }] = useUpdateTimelineMutation();
+
+    const error = addingError
+        ? (addingError as any).data?.message
+        : updatingError
+        ? (updatingError as any).data?.message
+        : null;
+
+    const handleAddingNoteVisible = () => {
+        Haptics.selectionAsync();
+        setIsEditingNote(null);
+        setIsAddingNote(prev => !prev);
+        setNewNote('');
+    };
+
+    const handleUpdateNoteVisible = (index: number | null, item?: Timeline) => () => {
+        Haptics.selectionAsync();
+        setIsAddingNote(false);
+        setIsEditingNote(index);
+
+        if (item && typeof index === 'number') {
+            setNewNote(item.notes as string);
+            setChannel(item.channel as ContactChannel);
+        } else {
+            setNewNote('');
+        }
+    };
+
+    const onSubmit = useCallback(async () => {
+        if (!newNote.trim()) return;
+
+        try {
+            const res = await addTimeline({
+                notes: newNote,
+                title: 'Timeline',
+                assignedToId,
+                channel,
+                guestId,
+            });
+
+            setNewNote('');
+            setIsAddingNote(false);
+
+            if (res.data) {
+                onSubmitEnagegment?.();
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }
+
+            if (res.error) {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
+        } catch (error) {
+            // Error handling is done in the parent component
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        }
+    }, [newNote, assignedToId, channel, guestId, addTimeline]);
+
+    const onSubmitUpdate = useCallback(
+        (_id: string) => async () => {
+            if (!newNote.trim()) return;
+
+            try {
+                const res = await updateTimeline({
+                    _id,
+                    notes: newNote,
+                    title: 'Timeline',
+                    assignedToId,
+                    channel,
+                    guestId,
+                });
+
+                setNewNote('');
+                setIsEditingNote(null);
+
+                if (res.data) {
+                    onSubmitEnagegment?.();
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
+
+                if (res.error) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+                }
+            } catch (error) {
+                // Error handling is done in the parent component
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+            }
+        },
+        [newNote, assignedToId, channel, guestId, updateTimeline]
+    );
+
+    const getTimeline = useCallback((timestamp: string | Date) => formatTimelineDate(timestamp), [formatTimelineDate]);
+    const getIcon = useCallback((type: string) => getTimelineIcon(type), [getTimelineIcon]);
+
+    return (
+        <Card>
+            <View className="flex-row items-center justify-between">
+                <CardHeader className="flex-row items-start justify-between flex-1">
+                    <View className="flex-row items-center gap-2">
+                        <Icon type="feather" name="clock" size={24} color={THEME_CONFIG.blue} />
+                        <Text className="text-lg font-bold">Engagement Timeline</Text>
+                    </View>
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="!h-10"
+                        disabled={isAddingNote}
+                        onPress={handleAddingNoteVisible}
+                        icon={<Icon type="feather" name="plus" size={24} color={THEME_CONFIG.blue} />}
+                    >
+                        Add Note
+                    </Button>
+                </CardHeader>
+            </View>
+
+            <CardContent className="gap-6">
+                {/* Add Note Form */}
+                {isAddingNote && (
+                    <NoteEditor
+                        newNote={newNote}
+                        channel={channel}
+                        onSubmit={onSubmit}
+                        isLoading={isLoading}
+                        setChannel={setChannel}
+                        setNewNote={setNewNote}
+                        handleAddingNoteVisible={handleAddingNoteVisible}
+                    />
+                )}
+
+                {/* Timeline Loading */}
+                {loading && (
+                    <View className="gap-4">
+                        {[...Array(4)].map((_, index) => (
+                            <View key={index} className="flex-row gap-3">
+                                <View className="items-center box-border pb-4">
+                                    <Skeleton className="w-10 h-10 bg-blue-100 dark:bg-blue-600/40 rounded-full flex-row items-center justify-center text-blue-600" />
+                                    <View className="w-px bg-border min-h-[1rem] flex-1 mt-2" />
+                                </View>
+                                <View className="flex-1 gap-2">
+                                    <View className="flex-row items-center justify-between mb-1">
+                                        <Skeleton className="w-8 h-4" />
+                                    </View>
+                                    <Skeleton className="w-full h-4 text-sm text-muted-foreground" />
+                                    <Skeleton className="w-full h-4 text-sm text-muted-foreground" />
+                                    <Skeleton className="w-[60%] h-4 text-sm text-muted-foreground" />
+                                    <Skeleton className="w-[40%] h-4 text-sm text-muted-foreground" />
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                {/* Timeline Items */}
+                <View className="gap-4">
+                    {timeline.map((item, index) => (
+                        <View key={item._id} className="flex-row gap-3">
+                            <View className="items-center box-border pb-4">
+                                <View className="w-10 h-10 bg-blue-50 dark:bg-blue-600/20 rounded-full flex-row items-center justify-center text-blue-600">
+                                    {getIcon(item.channel)}
+                                </View>
+                                {index < timeline.length - 1 && (
+                                    <View className="w-px bg-border min-h-[1rem] flex-1 mt-2" />
+                                )}
+                            </View>
+                            <View className="flex-1">
+                                <View className="flex-row items-center justify-between mb-1">
+                                    <Badge variant="outline" className="capitalize">
+                                        <Text>{item.channel}</Text>
+                                    </Badge>
+                                    <Text className="text-sm text-muted-foreground flex-auto text-right">
+                                        {getTimeline(item.createdAt)}
+                                    </Text>
+                                </View>
+                                {isEditingNote === index ? (
+                                    <NoteEditor
+                                        index={index}
+                                        error={error}
+                                        newNote={newNote}
+                                        channel={channel}
+                                        isLoading={isUpdating}
+                                        setChannel={setChannel}
+                                        setNewNote={setNewNote}
+                                        onSubmit={onSubmitUpdate(item._id)}
+                                        handleAddingNoteVisible={handleUpdateNoteVisible(null)}
+                                    />
+                                ) : (
+                                    <Text className="line-clamp-none">{item.notes}</Text>
+                                )}
+                                {isEditingNote !== index && (
+                                    <View className="flex-1 items-end">
+                                        <TouchableOpacity
+                                            onPress={handleUpdateNoteVisible(index, item)}
+                                            activeOpacity={0.6}
+                                        >
+                                            <Icon type="ionicon" name="pencil" size={20} color={THEME_CONFIG.blue} />
+                                        </TouchableOpacity>
+                                    </View>
+                                )}
+                            </View>
+                        </View>
+                    ))}
+                </View>
+
+                {timeline.length === 0 && !loading && (
+                    <View className="text-center flex-row gap-4">
+                        <Icon
+                            className="mt-1.5"
+                            type="feather"
+                            name="message-circle"
+                            size={24}
+                            color={THEME_CONFIG.blue}
+                        />
+                        <View>
+                            <Text className="text-muted-foreground">No interactions recorded yet</Text>
+                            <Text className="text-sm text-muted-foreground">
+                                Add your first note to start tracking engagement
+                            </Text>
+                        </View>
+                    </View>
+                )}
+            </CardContent>
+        </Card>
+    );
+};
+
+export default TimelineCard;
+
+interface NoteEditorProps {
+    index?: number;
+    newNote: string;
+    channel: string;
+    isLoading: boolean;
+    error?: string | null;
+    onSubmit: () => Promise<void>;
+    setNewNote: (arg: string) => void;
+    handleAddingNoteVisible: () => void;
+    setChannel: React.Dispatch<React.SetStateAction<ContactChannel>>;
+}
+
+const NoteEditor: React.FC<NoteEditorProps> = memo(
+    ({ newNote, setNewNote, channel, setChannel, handleAddingNoteVisible, error, isLoading, onSubmit }) => {
+        return (
+            <View className="gap-4">
+                <Textarea
+                    autoFocus
+                    value={newNote}
+                    className="line-clamp-6"
+                    onChangeText={setNewNote}
+                    placeholder="Add a note about your interaction..."
+                />
+                <View className="flex-row justify-between gap-4">
+                    <View className="flex-1 max-w-[50%]">
+                        <PickerSelect
+                            valueKey="value"
+                            labelKey="label"
+                            value={channel}
+                            className="!h-12"
+                            items={[
+                                { label: ContactChannel.CALL, value: ContactChannel.CALL },
+                                { label: ContactChannel.WHATSAPP, value: ContactChannel.WHATSAPP },
+                                { label: ContactChannel.VISIT, value: ContactChannel.VISIT },
+                                { label: ContactChannel.SMS, value: ContactChannel.SMS },
+                            ]}
+                            placeholder="Select Engagement Type"
+                            onValueChange={setChannel}
+                        />
+                    </View>
+                    <View className="flex-row gap-2">
+                        <Button size="sm" variant="outline" onPress={handleAddingNoteVisible}>
+                            <X className="w-4 h-4 text-destructive" />
+                        </Button>
+                        <Button
+                            size="sm"
+                            loadingText=""
+                            variant="outline"
+                            onPress={onSubmit}
+                            isLoading={isLoading}
+                            disabled={!channel || !newNote}
+                        >
+                            <Icon type="feather" name="save" size={24} color={THEME_CONFIG.blue} />
+                        </Button>
+                    </View>
+                </View>
+                {error && <Text className="text-sm text-destructive">{error ?? 'An error occured'}</Text>}
+            </View>
+        );
+    }
+);

@@ -19,13 +19,12 @@ const TabLayout: React.FC = () => {
 
     const pathname = usePathname();
     const progress = useSharedValue(1);
-    const isAndroid = Platform.OS === 'android';
 
     useEffect(() => {
         // animate from 0 -> 1 on path change
         progress.value = 0;
         progress.value = withTiming(1, {
-            duration: 600,
+            duration: 700,
             easing: Easing.out(Easing.cubic),
         });
     }, [pathname]);
@@ -42,7 +41,7 @@ const TabLayout: React.FC = () => {
                 backBehavior: 'order',
                 screenListeners: {
                     tabPress: () => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        Haptics.selectionAsync();
                     },
                 },
             }}
@@ -52,12 +51,17 @@ const TabLayout: React.FC = () => {
                 <TabSlot />
             </Animated.View>
 
-            <TabList asChild className={cn('!bg-background bottom-0 left-0 right-0 z-10 overflow-x-auto')}>
+            <TabList
+                asChild
+                className={cn(
+                    '!bg-background bottom-0 left-0 right-0 z-10 overflow-x-auto',
+                    Platform.OS === 'ios' && 'pb-8'
+                )}
+            >
                 <NavTabBackground>
                     {tabRoutes.map((route, index) => {
                         // Roles and permissions filter
-                        if (isWorker && !isQC && route.name === 'More') return;
-                        if (isWorker && isQC && route.name === 'Congress' && !isCGWCApproved) return;
+                        if (isWorker && !isCGWCApproved && !isQC && route.name === 'More') return;
 
                         return (
                             <TabTrigger

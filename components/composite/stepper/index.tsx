@@ -7,6 +7,7 @@ import { StepIndicatorStyles } from 'react-native-step-indicator/lib/typescript/
 import Swiper from 'react-native-swiper';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Router } from 'expo-router';
+import ErrorBoundary from '../error-boundary';
 
 export interface IRegisterPagesProps {
     label: string;
@@ -81,23 +82,25 @@ const Stepper: React.FC<IStepperProps> = ({ pages, otherProps, navigation, disab
                     />
                 </View>
             )}
-            <Swiper
-                style={{ flexGrow: 1 }}
-                scrollEnabled={!disableSwipe}
-                loadMinimal
-                loop={false}
-                dotStyle={{}}
-                autoplay={false}
-                index={currentPage}
-                onIndexChanged={page => {
-                    setCurrentPage(page);
-                }}
-                activeDotColor={THEME_CONFIG.primaryLight}
-            >
-                {pages.map((page, index) => (
-                    <page.component key={index} {...otherProps} navigation={navigation} onStepPress={onStepPress} />
-                ))}
-            </Swiper>
+            <ErrorBoundary>
+                <Swiper
+                    style={{ flexGrow: 1 }}
+                    scrollEnabled={!disableSwipe}
+                    loadMinimal
+                    loop={false}
+                    dotStyle={{}}
+                    autoplay={false}
+                    index={currentPage}
+                    onIndexChanged={page => {
+                        setCurrentPage(page);
+                    }}
+                    activeDotColor={THEME_CONFIG.primaryLight}
+                >
+                    {pages.map((page, index) => (
+                        <page.component key={index} {...otherProps} navigation={navigation} onStepPress={onStepPress} />
+                    ))}
+                </Swiper>
+            </ErrorBoundary>
         </View>
     );
 };

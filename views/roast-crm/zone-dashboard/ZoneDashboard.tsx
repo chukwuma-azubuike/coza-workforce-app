@@ -1,0 +1,386 @@
+import React, {
+    // ReactNode,
+    Suspense,
+    useCallback,
+    useEffect,
+    useMemo,
+    useState,
+} from 'react';
+import { Dimensions, ScrollView, View } from 'react-native';
+import {
+    // AssimilationStage,
+    Guest,
+} from '~/store/types';
+import {
+    useGetAssimilationSubStagesQuery,
+    useGetGuestsQuery,
+    useGetZoneDashboardQuery,
+    useGetZonesQuery,
+    useGetZoneUsersQuery,
+    useUpdateGuestMutation,
+} from '~/store/services/roast-crm';
+
+import { Text } from '~/components/ui/text';
+
+import { ZoneStats } from './components/ZoneStats';
+import useRole from '~/hooks/role';
+import Loading from '~/components/atoms/loading';
+
+// import {
+// columnDataType,
+//     DragEndParams,
+//     HeaderParams,
+// } from '~/components/Kanban/types';
+
+import { router } from 'expo-router';
+
+import SearchAndFilter from '../components/SearchAndFilter';
+import PickerSelect from '~/components/ui/picker-select';
+// import groupBy from 'lodash/groupBy';
+
+// import ReactNativeKanbanBoard from '~/components/Kanban';
+import useDebounce from '~/hooks/debounce/use-debounce';
+// import useAssimilationStageIndex from '../hooks/use-assimilation-stage-index';
+import { FloatButton } from '~/components/atoms/button';
+import useZoneIndex from '../hooks/use-zone-index';
+// import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
+
+// import KanbanColumn from '../components/KanbanColumn';
+// import KanbanUICard from '../components/KanbanCard';
+// import Error from '~/components/atoms/error';
+
+import { RefreshControl } from 'react-native';
+import { useGetCampusesQuery } from '~/store/services/campus';
+
+const GuestListView = React.lazy(() => import('../components/GuestListView'));
+const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
+
+const ZoneDashboard: React.FC = () => {
+    const { user, isZonalCoordinator, isHOD, isAHOD } = useRole();
+    const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
+    const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id }); //TODO: departmentId query param is yet to work
+    const [selectedCampus, setSelectedCampus] = useState<string | undefined>();
+    const [selectedZone, setSelectedZone] = useState<string | undefined>(
+        departmentZones ? (departmentZones as any)?.[0]?._id : undefined
+    );
+
+    const userZones = useMemo(() => {
+        // Only return zones that include the user's department id in their `departments` array
+
+        return (
+            departmentZones?.filter(zone =>
+                zone.departments?.some(dep => dep?.id === user.department._id || dep?._id === user.department._id)
+            ) ?? []
+        );
+    }, [departmentZones, hasZoneRights, user.department?._id]);
+
+    const handleSelectZone = (value: any) => {
+        // Prevent zonal coordinators from deselecting their zone and loading all zones
+        if (hasZoneRights && value === 'null') {
+            return;
+        }
+        setSelectedZone(value);
+    };
+
+    useEffect(() => {
+        if (!selectedZone && userZones) {
+            setSelectedZone((userZones as any)?.[0]?._id);
+        }
+    }, [userZones, selectedZone]);
+
+    const [selectedWorker, setSelectedWorker] = useState<string>();
+    const [
+        ,
+        // viewMode
+        setViewMode,
+    ] = useState<'kanban' | 'list'>('kanban');
+    const [stageFilter, setStageFilter] = useState<Guest['assimilationSubStageId'] | 'all'>('all');
+
+    const [search, setSearch] = useState('');
+    const denouncedSearch = useDebounce(setSearch);
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const {
+        data: assimilationSubStages = [],
+        // isLoading: subStagesLoading,
+        // error: subStagesError,
+    } = useGetAssimilationSubStagesQuery();
+    const {
+        refetch,
+        isLoading,
+        isFetching,
+        // error: guestsError,
+        data: guests = [],
+    } = useGetGuestsQuery(
+        { assignedToId: selectedWorker, search, zoneId: selectedZone ?? undefined },
+        { pollingInterval: 10000 }
+    );
+
+    const { data: campuses = [], isLoading: loadingCampuses } = useGetCampusesQuery();
+    const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
+        // departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
+        campusId: selectedCampus ?? user?.campus?._id,
+    });
+
+    const [updateGuest] = useUpdateGuestMutation();
+    const {
+        data: workers = [],
+        isLoading: loadingWorkers,
+        isFetching: fetchingWorkers,
+    } = useGetZoneUsersQuery({
+        zoneId: selectedZone,
+        campusId: user?.campus?._id,
+        page: 1,
+        limit: 100,
+    });
+
+    const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
+
+    // const assimilationStageIndex = useAssimilationStageIndex();
+    // const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
+    // const assimilationSubStagesIndex = useMemo(
+    //     () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
+    //     [assimilationSubStages]
+    // );
+
+    // const transformedAssimilationSubStages = useMemo(
+    //     (): columnDataType<Guest, HeaderParams>[] =>
+    //         assimilationSubStages.map((stage, index) => {
+    //             return {
+    //                 index,
+    //                 _id: stage._id,
+    //                 stageId: stage.assimilationStageId,
+    //                 items: groupedGuestsByAssimilationId[stage?._id] ?? [],
+    //                 header: {
+    //                     _id: stage._id,
+    //                     title: stage.name,
+    //                     subtitle: stage.descriptions,
+    //                     position: stage.order ?? index,
+    //                     stageId: stage.assimilationStageId,
+    //                     count: groupedGuestsByAssimilationId[stage?._id]?.length ?? 0,
+    //                 },
+    //             };
+    //         }),
+    //     [assimilationSubStages, groupedGuestsByAssimilationId]
+    // );
+
+    // Filter guests by current user and search term
+    const userGuests = useMemo(
+        () =>
+            guests?.filter(guest =>
+                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase())
+            ),
+        [guests, search]
+    );
+
+    const handleViewGuest = useCallback((guest: Guest) => {
+        router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
+    }, []);
+
+    const getFilteredGuests = useCallback(() => {
+        let filtered = userGuests;
+
+        if (search) {
+            filtered = filtered?.filter(
+                guest =>
+                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
+                    guest.phoneNumber.includes(search) ||
+                    (guest.address && guest.address.toLowerCase().includes(search.toLowerCase()))
+            );
+        }
+
+        if (stageFilter !== 'all') {
+            filtered = filtered?.filter(guest => guest.assimilationSubStageId === stageFilter);
+        }
+
+        return filtered;
+    }, [userGuests, search, stageFilter]);
+
+    const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
+        try {
+            await updateGuest({ _id: guestId, assimilationSubStageId });
+        } catch (error) {}
+    }, []);
+
+    // const onDragEnd = useCallback(
+    //     async (params: DragEndParams) => {
+    //         const { fromColumnIndex, toColumnIndex, itemId: guestId } = params;
+    //         const assimilationSubStageId = assimilationSubStagesIndex[toColumnIndex];
+
+    //         await onGuestUpdate(guestId, assimilationSubStageId as string);
+
+    //         // no-op if dropped in same column
+    //         if (fromColumnIndex === toColumnIndex) return;
+    //     },
+    //     [assimilationSubStagesIndex]
+    // );
+
+    const handleAddGuest = () => {
+        setModalVisible(prev => !prev);
+    };
+
+    // const renderContentContainer = useCallback(
+    //     (child: ReactNode, props: HeaderParams) => {
+    //         return (
+    //             <KanbanColumn
+    //                 title={props.title}
+    //                 isLoading={isLoading}
+    //                 subTitle={props.subtitle}
+    //                 guestCount={props.count}
+    //                 stage={assimilationStageIndex[props.stageId as string] as AssimilationStage}
+    //             >
+    //                 {child}
+    //             </KanbanColumn>
+    //         );
+    //     },
+    //     [isLoading, assimilationStageIndex]
+    // );
+
+    // const handleProfileView = useCallback((guest: Guest) => {
+    //     router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
+    // }, []);
+
+    const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
+    const kanbanContainerHeight = Dimensions.get('window').height - 620;
+    const zoneIndex = useZoneIndex();
+    const selectedZoneName = zoneIndex[selectedZone as string];
+
+    return (
+        <View className="flex-1 bg-background pt-2 gap-4">
+            {/* Header */}
+            <View>
+                <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
+                    <View className="gap-4 px-2">
+                        <View className="flex-row items-start gap-4">
+                            <Text className="text-2xl font-bold !w-[35%] leading-none">
+                                {selectedZoneName ?? 'All Zones'}
+                            </Text>
+                        </View>
+                        <View className="flex-row items-start gap-4">
+                            {/* Campus Selector */}
+                            {!hasZoneRights && (
+                                <View className="flex-1">
+                                    <PickerSelect
+                                        valueKey="_id"
+                                        labelKey="campusName"
+                                        className="!h-10"
+                                        value={selectedCampus}
+                                        placeholder="All Campuses"
+                                        isLoading={loadingCampuses}
+                                        onValueChange={setSelectedCampus}
+                                        items={campuses}
+                                    />
+                                </View>
+                            )}
+
+                            {/* Zone Selector */}
+                            <View className="flex-1">
+                                <PickerSelect
+                                    valueKey="_id"
+                                    labelKey="name"
+                                    className="!h-10"
+                                    value={selectedZone}
+                                    placeholder="All Zones"
+                                    isLoading={loadingZones}
+                                    onValueChange={handleSelectZone}
+                                    items={hasZoneRights ? (userZones ?? []) : zones}
+                                />
+                            </View>
+
+                            {/* Worker Selector */}
+                            <View className="flex-1">
+                                <PickerSelect
+                                    valueKey="_id"
+                                    items={workers}
+                                    className="!h-10"
+                                    labelKey="firstName"
+                                    value={selectedWorker}
+                                    placeholder="All Workers"
+                                    onValueChange={setSelectedWorker}
+                                    isLoading={loadingWorkers || fetchingWorkers}
+                                    customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
+                                />
+                            </View>
+                        </View>
+
+                        <ZoneStats
+                            totalGuests={zoneDashboard?.totalGuests ?? 0}
+                            conversionRate={zoneDashboard?.conversionRates.discipleToJoined ?? 0}
+                            activeThisWeek={zoneDashboard?.totalActiveUsers ?? 0}
+                            totalWorkers={zoneDashboard?.totalWorker ?? 0}
+                        />
+                    </View>
+                </ScrollView>
+            </View>
+
+            <View className="px-2 flex-row items-center gap-2 w-full justify-between">
+                <View className="flex-1">
+                    <SearchAndFilter
+                        viewMode="list"
+                        searchTerm={search}
+                        showModeToggle={false}
+                        stageFilter={stageFilter}
+                        setSearchTerm={denouncedSearch}
+                        setStageFilter={setStageFilter}
+                        setViewMode={setViewMode as any}
+                        loading={isFetching || isLoading}
+                        assimilationSubStages={assimilationSubStages}
+                    />
+                </View>
+            </View>
+
+            {/* View Guests */}
+            <View className="flex-1">
+                {/* TODO: Disable kanban view for Zone Dashboard */}
+                {/* {viewMode === 'kanban' ? (
+                    subStagesLoading ? (
+                        <View className="flex-row gap-5 pl-2 flex-1 pb-2">
+                            <KanbanColumnSkeleton />
+                            <KanbanColumnSkeleton />
+                        </View>
+                    ) : (subStagesError || guestsError) && guests.length < 1 ? (
+                        <Error message={(subStagesError as any)?.error} />
+                    ) : (
+                        <ReactNativeKanbanBoard<Guest, HeaderParams>
+                            gapBetweenColumns={8}
+                            onDragEnd={onDragEnd}
+                            onPressCard={handleProfileView}
+                            columnContainerStyle={{ flex: 1 }}
+                            columnData={transformedAssimilationSubStages}
+                            renderColumnContainer={renderContentContainer}
+                            renderItem={guest => <KanbanUICard type="zone" guest={guest} />}
+                        />
+                    )
+                ) : ( */}
+                <Suspense fallback={<Loading cover />}>
+                    <GuestListView
+                        type="zone"
+                        refetch={refetch}
+                        isLoading={isLoading}
+                        onGuestUpdate={onGuestUpdate}
+                        handleViewGuest={handleViewGuest}
+                        containerHeight={kanbanContainerHeight}
+                        displayGuests={displayGuests as Guest[]}
+                        assimilationSubStages={assimilationSubStages}
+                    />
+                </Suspense>
+                {/* )} */}
+            </View>
+            <FloatButton
+                iconName="plus"
+                className="!p-2"
+                onPress={handleAddGuest}
+                iconType="font-awesome-5"
+                iconClassname="!w-4 !h-4"
+            >
+                Add Guest
+            </FloatButton>
+
+            <Suspense fallback={null}>
+                <AddGuestModal modalVisible={modalVisible} setModalVisible={handleAddGuest} />
+            </Suspense>
+        </View>
+    );
+};
+
+export default ZoneDashboard;

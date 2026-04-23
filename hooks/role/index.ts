@@ -11,6 +11,7 @@ export enum ROLES {
     AHOD = 'AHOD',
     admin = 'Admin',
     worker = 'Worker',
+    zonalCoordinator = 'Zonal Coordinator',
     groupHead = 'Group Head',
     superAdmin = 'Super Admin',
     globalAdmin = 'Global Admin',
@@ -24,6 +25,7 @@ export const roles = {
     AHOD: 'AHOD',
     Admin: 'admin',
     Worker: 'worker',
+    'Zonal Coordinator': 'zonalCoordinator',
     'Group Head': 'groupHead',
     'Super Admin': 'superAdmin',
     'Global Admin': 'globalAdmin',
@@ -48,9 +50,10 @@ export const departments = {
 
 export enum ROLE_HEIRARCHY {
     'worker' = 1,
-    'AHOD' = 2,
-    'HOD' = 2,
-    'internshipHOD' = 2, // Frontend generated
+    'zonalCoordinator' = 2,
+    'AHOD' = 3,
+    'HOD' = 3,
+    'internshipHOD' = 3, // Frontend generated
     // 'qcHOD' = 1, // Frontend generated
     'campusCoordinator' = 5,
     'campusPastor' = 5,
@@ -85,7 +88,7 @@ const useRole = () => {
         skip: !storedUser?.userId,
         refetchOnMountOrArgChange: false,
     });
-    const currentUser = latestUser || storedUser;
+    const currentUser = latestUser ?? storedUser;
 
     const { data: roleObjects } = useGetRolesQuery(undefined, { refetchOnMountOrArgChange: false });
     const leaderRoleIds = React.useMemo(
@@ -134,9 +137,11 @@ const useRole = () => {
     const { logOut } = useAuth();
 
     React.useEffect(() => {
-        if (!!currentUser?._id && !!currentUser?.userId) {
-            logOut();
-        }
+        (async () => {
+            if (!currentUser?.userId) {
+                await logOut();
+            }
+        })();
     }, []);
 
     React.useEffect(() => {
@@ -163,11 +168,14 @@ const useRole = () => {
         //Role IDs
         leaderRoleIds,
 
+        role: roleName,
+
         // Roles
         isHOD: roleName === ROLES.AHOD,
         isAHOD: roleName === ROLES.HOD,
         isAdmin: roleName === ROLES.admin,
-        isWorker: roleName === ROLES.worker,
+        isWorker: roleName === ROLES.worker || roleName === ROLES.zonalCoordinator,
+        isZonalCoordinator: roleName === ROLES.zonalCoordinator,
         isGroupHead: roleName === ROLES.groupHead,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,

@@ -5,7 +5,14 @@ import DateTimePicker from '~/components/composite/date-time-picker';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useModal from '@hooks/modal/useModal';
 import { useUpdateServiceMutation } from '@store/services/services';
-import { CREATE_SERVICE_ENUM, IUpdateServicePayload, IService, SERVICE_TAGS } from '@store/types';
+import {
+    CREATE_SERVICE_ENUM,
+    IUpdateServicePayload,
+    IService,
+    SERVICE_TAGS,
+    DEFAULT_RANGES_TO_CLOCKIN,
+    RANGES_TO_CLOKIN,
+} from '@store/types';
 import Utils from '@utils/index';
 import { UpdateServiceSchema } from '@utils/schemas';
 import { router } from 'expo-router';
@@ -17,6 +24,7 @@ import PickerSelect from '~/components/ui/picker-select';
 import { useNavigation } from '@react-navigation/native';
 import dayjs from 'dayjs';
 import { Icon } from '@rneui/themed';
+import DateTimePickerLegend from '~/components/composite/date-time-picker/date-picker';
 
 const UpdateServiceManagement: React.FC<IService> = props => {
     const { setModalState } = useModal();
@@ -36,7 +44,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
             values.serviceDate,
             values.leadersLateStartTime
         ) as unknown as string;
-        const rangeToClockIn = CREATE_SERVICE_ENUM.RANGE_TO_CLOCKIN as number;
+
         const serviceEndTime = Utils.concatDateTime(values.serviceDate, values.serviceEndTime) as unknown as string;
         const serviceTime = Utils.concatDateTime(values.serviceDate, values.serviceTime) as unknown as string;
         const workersLateStartTime = Utils.concatDateTime(
@@ -44,19 +52,21 @@ const UpdateServiceManagement: React.FC<IService> = props => {
             values.workersLateStartTime
         ) as unknown as string;
 
-        const result = await updateService({
+        const upload = {
             _id: props?._id,
             clockInStartTime,
             coordinates,
             isGlobalService,
             leadersLateStartTime,
             name,
-            rangeToClockIn,
+            rangeToClockIn: Number(values.rangeToClockIn),
             serviceEndTime,
             serviceTime,
             tag: [values.tag],
             workersLateStartTime,
-        });
+        };
+
+        const result = await updateService(upload);
 
         if ('data' in result) {
             setModalState({
@@ -93,6 +103,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'COZA Sunday',
                         tag: 'COZA_SUNDAYS',
                         serviceType: 'local',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -108,6 +119,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'COZA Tuesday',
                         tag: 'COZA_TUESDAYS',
                         serviceType: 'global',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -123,6 +135,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'COZA Wednesday',
                         tag: 'COZA_WEDNESDAYS',
                         serviceType: 'local',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -138,6 +151,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'DPE',
                         tag: 'DPE',
                         serviceType: 'global',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -153,6 +167,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'Dominion Hour',
                         tag: 'DOMINION_HOUR',
                         serviceType: 'global',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -168,6 +183,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'Home Training',
                         tag: 'HOME_TRAINING',
                         serviceType: 'global',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -183,6 +199,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: 'Leaders Meeting',
                         tag: 'LEADERS_MEETING',
                         serviceType: 'global',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -198,6 +215,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: '12DG',
                         tag: '12DG',
                         serviceType: 'local',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -213,6 +231,7 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                         name: '7DG',
                         tag: '7DG',
                         serviceType: 'local',
+                        rangeToClockIn: DEFAULT_RANGES_TO_CLOCKIN as unknown as number,
                     } as IUpdateServicePayload,
                 });
 
@@ -292,25 +311,47 @@ const UpdateServiceManagement: React.FC<IService> = props => {
                                             <FormErrorMessage>{errors?.name}</FormErrorMessage>
                                         )}
                                     </View>
+                                    <View>
+                                        <Label>Clock in Range</Label>
+                                        <PickerSelect
+                                            valueKey="id"
+                                            labelKey="label"
+                                            items={RANGES_TO_CLOKIN}
+                                            placeholder="Select clock in range"
+                                            value={`${values.rangeToClockIn}`}
+                                            onValueChange={handleChange('rangeToClockIn') as any}
+                                        />
+                                        {!!errors?.rangeToClockIn && touched.rangeToClockIn && (
+                                            <FormErrorMessage>{errors?.rangeToClockIn}</FormErrorMessage>
+                                        )}
+                                    </View>
                                     <View className="justify-between flex-row gap-4">
-                                        <DateTimePicker
-                                            mode="date"
-                                            label="Service date"
-                                            error={errors.serviceDate}
-                                            touched={touched.serviceDate}
-                                            placeholder="Select service date"
-                                            initialValue={values.serviceTime as string}
-                                            onConfirm={handleChange('serviceDate') as unknown as (value: Date) => void}
-                                        />
-                                        <DateTimePicker
-                                            mode="time"
-                                            label="Service Start Time"
-                                            error={errors.serviceTime}
-                                            touched={touched.serviceTime}
-                                            placeholder="Select service time"
-                                            initialValue={values.serviceTime as string}
-                                            onConfirm={handleChange('serviceTime') as unknown as (value: Date) => void}
-                                        />
+                                        <View className="flex-1">
+                                            <DateTimePickerLegend
+                                                mode="date"
+                                                label="Service date"
+                                                error={errors.serviceDate}
+                                                touched={touched.serviceDate}
+                                                placeholder="Select service date"
+                                                initialValue={values.serviceTime as string}
+                                                onConfirm={
+                                                    handleChange('serviceDate') as unknown as (value: Date) => void
+                                                }
+                                            />
+                                        </View>
+                                        <View className="flex-1">
+                                            <DateTimePicker
+                                                mode="time"
+                                                label="Service Start Time"
+                                                error={errors.serviceTime}
+                                                touched={touched.serviceTime}
+                                                placeholder="Select service time"
+                                                initialValue={values.serviceTime as string}
+                                                onConfirm={
+                                                    handleChange('serviceTime') as unknown as (value: Date) => void
+                                                }
+                                            />
+                                        </View>
                                     </View>
                                     <View className="justify-between flex-row gap-4">
                                         <DateTimePicker

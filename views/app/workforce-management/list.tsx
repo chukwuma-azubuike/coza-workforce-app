@@ -55,9 +55,8 @@ const CampusListRow: React.FC<CampusUserList> = memo(user => {
                 const isAHOD = leaderRoleIds && user.roleId === leaderRoleIds[0];
 
                 return (
-                    <UserContextMenu user={user}>
+                    <UserContextMenu user={user} key={index}>
                         <TouchableOpacity
-                            key={index}
                             disabled={false}
                             delayPressIn={0}
                             activeOpacity={0.6}

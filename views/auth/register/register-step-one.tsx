@@ -2,7 +2,7 @@ import { Text } from '~/components/ui/text';
 import React, { useState } from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepOne, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '~/views/auth/register';
+import { RegisterFormContext } from './context';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_1 } from '@utils/schemas';
@@ -12,6 +12,7 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { PhoneInput } from '~/components/ui/phone-input';
 import { ICountry } from 'react-native-international-phone-number';
+import formatToE164 from '~/utils/formatToE164';
 
 const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     if (!RegisterFormContext) {
@@ -30,7 +31,13 @@ const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
 
     const onSubmit: FormikConfig<IRegisterFormStepOne>['onSubmit'] = values => {
         setFormValues(prev => {
-            return { ...prev, ...values };
+            return {
+                ...prev,
+                ...values,
+                phoneNumber: formValues.phoneNumber
+                    ? formatToE164(formValues.phoneNumber, selectedCountry?.callingCode as string)
+                    : (undefined as any),
+            };
         });
 
         onStepPress(1);

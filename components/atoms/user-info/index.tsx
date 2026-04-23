@@ -1,6 +1,6 @@
-import { Text } from '~/components/ui/text';
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { Text } from '~/components/ui/text';
+import { Pressable, TouchableOpacity, View } from 'react-native';
 import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import { router } from 'expo-router';
@@ -40,4 +40,4 @@ const UserInfo = ({ heading, value, name, dateString }: IUserInfo) => {
     );
 };
 
-export default React.memo(UserInfo);
+export default UserInfo;

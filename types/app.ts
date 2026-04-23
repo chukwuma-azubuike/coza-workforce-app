@@ -1,39 +1,24 @@
 import React from 'react';
-import messaging from '@react-native-firebase/messaging';
-// import {
-//     Ionicons,
-//     AntDesign,
-//     Entypo,
-//     EvilIcons,
-//     Feather,
-//     Fontisto,
-//     FontAwesome,
-//     FontAwesome5,
-//     FontAwesome6,
-//     Foundation,
-//     MaterialCommunityIcons,
-//     MaterialIcons,
-//     Octicons,
-//     SimpleLineIcons,
-//     Zocial,
-// } from '@expo/vector-icons';
-import { string } from 'yup';
 export interface IModalProps {
     modalState: IModalState;
     setModalState: React.Dispatch<React.SetStateAction<IModalState>>;
 }
 
+export type ModalStatus = 'success' | 'error' | 'info' | 'warning';
 export interface IModalState {
     open?: boolean;
     button?: boolean;
     defaultRender?: boolean;
     message?: string | null;
-    render?: React.ReactElement | JSX.Element | null;
-    status?: 'success' | 'error' | 'info' | 'warning';
+    render?: {
+        description: string;
+        status: ModalStatus;
+        iconType: string;
+        iconName: string;
+    };
+    status?: ModalStatus;
     duration?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 }
-
-export type RemoteMessage = Parameters<Parameters<ReturnType<typeof messaging>['onMessage']>[0]>[0];
 export interface INGState {
     state: {
         name: string;
@@ -1390,19 +1375,3 @@ export type IoniconTypes =
     | 'wine-sharp'
     | 'woman-outline'
     | 'woman-sharp';
-//  &
-//       ((typeof AntDesign) &
-//           typeof Entypo &
-//           typeof EvilIcons &
-//           typeof Feather &
-//           typeof Fontisto &
-//           typeof FontAwesome &
-//           typeof FontAwesome5 &
-//           typeof FontAwesome6 &
-//           typeof Foundation &
-//           typeof Ionicons &
-//           typeof MaterialCommunityIcons &
-//           typeof MaterialIcons &
-//           typeof Octicons &
-//           typeof SimpleLineIcons &
-//           typeof Zocial);

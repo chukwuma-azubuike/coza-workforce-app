@@ -1,11 +1,12 @@
 import React from 'react';
-import { Dimensions, StyleSheet, View } from 'react-native';
-import Pdf from 'react-native-pdf';
-import Loading from '@components/atoms/loading';
+import { ActivityIndicator, Dimensions, StyleSheet, View } from 'react-native';
+import Pdf from 'react-native-pdf-jsi';
 import useScreenFocus from '@hooks/focus';
 import { ICongressInstantMessage } from '@store/types';
 import { useNavigation } from '@react-navigation/native';
 import { useLocalSearchParams } from 'expo-router';
+import FormErrorMessage from '~/components/ui/error-message';
+import { Text } from '~/components/ui/text';
 
 const CongressResources: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ICongressInstantMessage;
@@ -19,8 +20,21 @@ const CongressResources: React.FC = () => {
         setIsLoading(false);
     };
 
+    const handleError = (error: any) => {
+        setIsLoading(false);
+        setLoadProgress(0);
+        setError(JSON.stringify(error));
+    };
+
+    const handleLoadProgress = (percent: number) => {
+        setIsLoading(true);
+        setLoadProgress(percent);
+    };
+
     const pdfRef = React.useRef<any>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [error, setError] = React.useState<string>('');
+    const [loadProgress, setLoadProgress] = React.useState<number>(0);
 
     const reloadPDF = async () => {
         if (!pdfRef.current) {
@@ -38,13 +52,20 @@ const CongressResources: React.FC = () => {
 
     return (
         <View style={styles.container}>
-            {isLoading ? (
-                <Loading className="flex-1" spinnerProps={{ className: 'flex-1 justify-center mx-auto' }} />
+            {error ? (
+                <FormErrorMessage>{error}</FormErrorMessage>
+            ) : isLoading ? (
+                <View className="flex-1 flex-row gap-2 justify-center items-center w-full">
+                    <ActivityIndicator className="text-foreground" />
+                    <Text className="flex font-semibold">{loadProgress}%</Text>
+                </View>
             ) : (
                 <Pdf
                     style={styles.pdf}
                     trustAllCerts={false}
+                    onError={handleError}
                     onLoadComplete={handleLoad}
+                    onLoadProgress={handleLoadProgress}
                     source={{ uri: params.messageLink, cache: true }}
                 />
             )}

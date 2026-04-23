@@ -1,13 +1,13 @@
 import type { TextRef, ViewRef } from '@rn-primitives/types';
 import * as React from 'react';
-import { Text, TextProps, View, ViewProps } from 'react-native';
-import { TextClassContext } from '~/components/ui/text';
+import { TextProps, View, ViewProps } from 'react-native';
+import { TextClassContext, Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 
 const Card = React.forwardRef<ViewRef, ViewProps>(({ className, ...props }, ref) => (
     <View
         ref={ref}
-        className={cn('rounded-lg border border-border bg-card shadow-sm shadow-foreground/10', className)}
+        className={cn('rounded-3xl border border-border bg-card drop-shadow-xl shadow-foreground/10', className)}
         {...props}
     />
 ));

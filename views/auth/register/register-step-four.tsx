@@ -2,7 +2,6 @@ import { Text } from '~/components/ui/text';
 import React from 'react';
 import { Input } from '~/components/ui/input';
 import { IRegisterFormStepFour, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from '~/views/auth/register';
 import { Formik, FormikConfig } from 'formik';
 import { IRegisterPayload } from '@store/types';
 import { RegisterSchema_4 } from '@utils/schemas';
@@ -15,6 +14,7 @@ import { useLoginMutation, useRegisterMutation } from '~/store/services/account'
 import { useAppDispatch } from '~/store/hooks';
 import { storeSession } from '~/store/actions/users';
 import Utils from '~/utils';
+import RegisterFormContext from './context';
 
 const RegisterStepFour: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
     if (!RegisterFormContext) return;
