@@ -27,7 +27,7 @@ const RollingStatusCardSkeleton = () => {
                 </View>
 
                 {/* Info banner skeleton */}
-                <View className="flex-row items-start gap-2 p-4 border rounded-xl">
+                <View className="flex-row items-start gap-2 p-4 rounded-xl">
                     <Skeleton className="w-3 h-3 rounded-full mt-1" />
                     <View className="flex-1 gap-1">
                         <Skeleton className="h-4 w-full rounded-md" />
@@ -102,8 +102,8 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
     const streakLabel = monthStreak === 1 ? 'month' : 'months';
 
     return (
-        <View className="px-4">
-            <Card className="gap-4 py-5 px-0 bg-none!">
+        <View className="px-4 bg-background">
+            <View className="gap-4 py-5 px-0 bg-background">
                 <Text className="text-xl text-foreground font-medium">Rolling Status</Text>
 
                 <View className="flex-row items-center gap-2 mb-6">
@@ -156,7 +156,7 @@ const RollingStatusCard: React.FC<RollingStatusCardProps> = ({ statusReport, isF
                         </View>
                     </View>
                 </LinearGradient>
-            </Card>
+            </View>
         </View>
     );
 };

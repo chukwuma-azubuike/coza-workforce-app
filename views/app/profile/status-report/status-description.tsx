@@ -53,7 +53,7 @@ const ServiceStatusCard = ({
 const StatusDescription = () => {
     return (
         <View className="px-4 py-6">
-            <Card className="gap-4 bg-none! py-5 px-0">
+            <View className="gap-4 bg-none! py-5 px-0">
                 <Text className="text-xl text-foreground font-medium">Understanding Your Status</Text>
 
                 <View className="py-4 gap-4">
@@ -135,7 +135,7 @@ const StatusDescription = () => {
                         description="Dormant for 3 consecutive months"
                     />
                 </View>
-            </Card>
+            </View>
         </View>
     );
 };
