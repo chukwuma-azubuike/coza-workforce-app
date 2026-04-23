@@ -134,7 +134,7 @@ const WorkerStatusCard = ({ onPress, status = 'UNKNOWN', loading }: WorkerStatus
                                               : 'text-gray-400'
                                 )}
                             >
-                                {status}
+                                {status ?? 'UNKNOWN'}
                             </Text>
                         </View>
                     )}
