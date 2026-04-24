@@ -1,7 +1,7 @@
 {
     "name": "coza-workforce-app",
     "main": "index.js",
-    "version": "2.2.10",
+    "version": "2.2.11",
     "engines": {
         "node": "20.x"
     },
@@ -27,7 +27,7 @@
         "update:preview": "APP_VARIANT=preview eas update --channel preview --environment preview",
         "update:prod": "APP_VARIANT=production eas update --channel production --environment production",
         "workflow:dev": "eas workflow:run .eas/workflows/create-development-build.yml",
-        "workflow:preview": "eas workflow:run .eas/workflows/publish-preview-update.yml",
+        "workflow:preview": "eas workflow:run .eas/workflows/deploy-to-staging.yml",
         "workflow:production": "eas workflow:run .eas/workflows/deploy-to-production.yml"
     },
     "dependencies": {
