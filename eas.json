@@ -12,9 +12,7 @@
                 "APP_VARIANT": "development",
                 "SENTRY_DNS": "SENTRY_DNS",
                 "EXPO_APPLE_TEAM_ID": "499THBRLGD",
-                "NODE_VERSION": "20",
-                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON",
-                "IOS_GOOGLE_SERVICES_INFO_PLIST": "$IOS_GOOGLE_SERVICES_INFO_PLIST"
+                "NODE_VERSION": "20"
             },
             "channel": "development"
         },
@@ -25,9 +23,7 @@
             "env": {
                 "APP_VARIANT": "preview",
                 "SENTRY_DNS": "SENTRY_DNS",
-                "NODE_VERSION": "20",
-                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON",
-                "IOS_GOOGLE_SERVICES_INFO_PLIST": "$IOS_GOOGLE_SERVICES_INFO_PLIST"
+                "NODE_VERSION": "20"
             },
             "channel": "preview",
             "ios": {
@@ -44,9 +40,7 @@
             "env": {
                 "APP_VARIANT": "production",
                 "SENTRY_DNS": "SENTRY_DNS",
-                "NODE_VERSION": "20",
-                "ANDROID_GOOGLE_SERVICES_JSON": "$ANDROID_GOOGLE_SERVICES_JSON",
-                "IOS_GOOGLE_SERVICES_INFO_PLIST": "$IOS_GOOGLE_SERVICES_INFO_PLIST"
+                "NODE_VERSION": "20"
             },
             "channel": "production",
             "ios": {
