@@ -8,6 +8,7 @@ env:
 jobs:
     fingerprint:
         name: Fingerprint
+        environment: preview
         outputs:
             android_fingerprint_hash: ${{ steps.fingerprint_step_id.outputs.android_fingerprint_hash }}
             ios_fingerprint_hash: ${{ steps.fingerprint_step_id.outputs.ios_fingerprint_hash }}
