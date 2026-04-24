@@ -3,7 +3,8 @@ name: Deploy to preview
 on:
     push:
         branches: ['staging']
-
+env:
+    APP_VARIANT: preview
 jobs:
     fingerprint:
         name: Fingerprint
