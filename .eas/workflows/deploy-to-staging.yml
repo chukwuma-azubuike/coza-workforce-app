@@ -22,8 +22,8 @@ jobs:
                   ANDROID_FINGERPRINT_HASH=$(echo $ANDROID_FINGERPRINT | jq -r '.hash')
                   IOS_FINGERPRINT=$(npx expo-updates fingerprint:generate --platform ios)
                   IOS_FINGERPRINT_HASH=$(echo $IOS_FINGERPRINT | jq -r '.hash')
-                  echo "ios_fingerprint_hash=$IOS_FINGERPRINT_HASH" >> $GITHUB_OUTPUT
-                  echo "android_fingerprint_hash=$ANDROID_FINGERPRINT_HASH" >> $GITHUB_OUTPUT
+                  set-output ios_fingerprint_hash $IOS_FINGERPRINT_HASH
+                  set-output android_fingerprint_hash $ANDROID_FINGERPRINT_HASH
     get_android_build:
         name: Check for existing android build
         needs: [fingerprint]
