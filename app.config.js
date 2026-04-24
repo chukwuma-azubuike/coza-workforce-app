@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const IS_PREVIEW = process.env.APP_VARIANT === 'preview';
 // Production is the default/fallback if APP_VARIANT is not 'development' or 'preview'
@@ -61,11 +63,21 @@ const getIOSBuildNumber = baseConfig => {
 
 // Get google service json for android
 const getGoogleServicesJson = () => {
+    // TODO: Revert to separate google services files for staging and production, and use the correct one based on APP_VARIANT
     // default to production
-    let googleServicesFile = './google-services-prod.json';
+    // let googleServicesFile = './google-services-prod.json';
 
-    if (IS_PREVIEW || IS_DEV) {
-        googleServicesFile = './google-services-staging.json';
+    // if (IS_PREVIEW || IS_DEV) {
+    //     googleServicesFile = './google-services-staging.json';
+    // }
+
+    let googleServicesFile = './google-services.json';
+
+    if (process.env.ANDROID_GOOGLE_SERVICES_JSON) {
+        fs.writeFileSync(
+            './google-services.json',
+            process.env.ANDROID_GOOGLE_SERVICES_JSON
+        );
     }
 
     return googleServicesFile;
@@ -76,8 +88,16 @@ const getGoogleServicesInfoPlist = () => {
     // default to production
     let googleServicesInfoPlist = './GoogleService-Info.plist';
 
-    if (IS_PREVIEW || IS_DEV) {
-        googleServicesInfoPlist = './GoogleService-Info_staging.plist';
+    // TODO: Revert to separate google services files for staging and production, and use the correct one based on APP_VARIANT
+    // if (IS_PREVIEW || IS_DEV) {
+    //     googleServicesInfoPlist = './GoogleService-Info_staging.plist';
+    // }
+
+    if (process.env.IOS_GOOGLE_SERVICES_INFO_PLIST) {
+        fs.writeFileSync(
+            './GoogleService-Info.plist',
+            process.env.IOS_GOOGLE_SERVICES_INFO_PLIST
+        );
     }
 
     return googleServicesInfoPlist;
