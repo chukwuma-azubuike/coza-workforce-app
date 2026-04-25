@@ -51,6 +51,8 @@ upload-keystore.jks
 google-services-staging.json
 google-services-prod.json
 google-services.json
+GoogleService-Info.plist
+GoogleService-Info_staging.plist
 coza-workforce-app-prod-firebase-adminsdk.json
 coza-workforce-app-staging-firebase-adminsdk.json
 *.plist
