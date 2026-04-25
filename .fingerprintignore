@@ -8,7 +8,7 @@ ios/**/*
 
 # Ignore specific package in node_modules
 node_modules/some-package/**/*
-node_modules/react-native-pdf-jsi
+node_modules/react-native-pdf-jsi/**/*
 
 # Same as above but having broader scope because packages may be nested
 **/node_modules/some-package/**/*
