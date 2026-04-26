@@ -2282,8 +2282,6 @@ PODS:
     - Yoga
   - RNDeviceInfo (14.0.4):
     - React-Core
-  - RNFS (2.20.0):
-    - React-Core
   - RNGestureHandler (2.28.0):
     - hermes-engine
     - RCTRequired
@@ -2698,7 +2696,6 @@ DEPENDENCIES:
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNFS (from `../node_modules/react-native-fs`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
@@ -2956,8 +2953,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
-  RNFS:
-    :path: "../node_modules/react-native-fs"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNPermissions:
@@ -3098,7 +3093,6 @@ SPEC CHECKSUMS:
   RNCPicker: f97c908b7774248c1093ec3831ca70d338627bf7
   RNDateTimePicker: 6fdd63f5d1e0f21faf4cc8674957c52958a7efae
   RNDeviceInfo: feea80a690d2bde1fe51461cf548039258bd03f2
-  RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
   RNGestureHandler: 6a488ce85c88e82d8610db1108daf04e9b2d5162
   RNPermissions: 98154f23e6aa4ab10f7ebd1c12b8571d875b77d3
   RNReanimated: 43f611f1c85c90e0273df7399bf1536f8e2bd125

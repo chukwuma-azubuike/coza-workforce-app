@@ -2,7 +2,6 @@ import RNFetchBlob from 'react-native-blob-util';
 import APP_VARIANT from '@config/envConfig';
 import { Alert } from 'react-native';
 import React from 'react';
-import RNFS from 'react-native-fs';
 import Share from 'react-native-share';
 
 const { API_BASE_URL } = APP_VARIANT;
@@ -47,7 +46,7 @@ export const downloadFile = (params: DownloadTicketsProps) => {
         // config: To get response by passing the downloading related options
         // fs: Root directory path to download
         const { config } = RNFetchBlob;
-        let RootDir = RNFS.DownloadDirectoryPath;
+        let RootDir = RNFetchBlob.fs.dirs.DownloadDir;
         const path = RootDir + '/file_' + Math.floor(date.getTime() + date.getSeconds() / 2) + file_ext;
         let options = {
             fileCache: true,
@@ -62,10 +61,9 @@ export const downloadFile = (params: DownloadTicketsProps) => {
         config(options)
             .fetch('GET', FILE_URL)
             .then(async response => {
-                // Save the file using RNFS
                 const fileData = (await response.blob('blob', 1)) as any;
-                const downloadDir = RNFS.DownloadDirectoryPath;
-                await RNFS.writeFile(downloadDir, fileData, 'ascii');
+                const downloadDir = RNFetchBlob.fs.dirs.DownloadDir;
+                await RNFetchBlob.fs.writeFile(downloadDir, fileData, 'ascii');
 
                 // Open the downloaded file with the default app for its type
                 await Share.open({ url: `file://${path}`, title: 'Open Excel File' });

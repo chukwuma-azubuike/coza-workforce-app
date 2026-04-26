@@ -1,4 +1,4 @@
-import RNFS from 'react-native-fs';
+import RNBlobUtil from 'react-native-blob-util';
 import { Platform } from 'react-native';
 
 const toArrayBuffer = async (fileUri: string): Promise<ArrayBuffer> => {
@@ -7,13 +7,13 @@ const toArrayBuffer = async (fileUri: string): Promise<ArrayBuffer> => {
         const normalizedPath = Platform.OS === 'ios' ? fileUri.replace('file://', '') : fileUri;
 
         // Check if the file exists
-        const fileExists = await RNFS.exists(normalizedPath);
+        const fileExists = await RNBlobUtil.fs.exists(normalizedPath);
         if (!fileExists) {
             throw new Error('File does not exist at path: ' + normalizedPath);
         }
 
         // Read file content as Base64
-        const base64Data = await RNFS.readFile(normalizedPath, 'base64');
+        const base64Data = await RNBlobUtil.fs.readFile(normalizedPath, 'base64');
 
         // Convert Base64 to binary data (ArrayBuffer)
         const binaryString = atob(base64Data);
