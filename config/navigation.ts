@@ -319,6 +319,16 @@ const AppRoutes: IAppRoute[] = [
         href: '/gh-reports-history',
     },
     {
+        name: 'GH Approvals',
+        options: { title: 'GH Approvals' },
+        submenus: [],
+        users: [ROLES.groupHead],
+        inMenuBar: false,
+        inMore: true,
+        icon: { name: 'clipboard-outline', type: 'ionicon' },
+        href: '/gh-approvals',
+    },
+    {
         name: 'Group Head Service Report',
         options: { title: 'Group Head Service Report' },
         submenus: [
@@ -465,7 +475,7 @@ const AppRoutes: IAppRoute[] = [
         name: 'Manual clock in',
         options: { title: 'Manual clock in' },
         submenus: [],
-        users: [ROLES.superAdmin, ROLES.campusPastor, DEPARTMENTS.QC, DEPARTMENTS.ME, ROLES.campusCoordinator],
+        users: [ROLES.superAdmin, ROLES.campusPastor, DEPARTMENTS.QC, DEPARTMENTS.ME, ROLES.campusCoordinator, ROLES.groupHead],
         inMenuBar: false,
         inMore: true,
         icon: { name: 'timer-outline', type: 'material-community' },
