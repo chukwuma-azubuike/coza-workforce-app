@@ -42,7 +42,7 @@ const buttonTextVariants = cva(
                 outline: 'group-active:text-accent-foreground',
                 secondary: 'text-secondary-foreground group-active:text-secondary-foreground',
                 ghost: 'group-active:text-accent-foreground',
-                link: 'text-primary group-active:underline',
+                link: 'text-primary',
             },
             size: {
                 default: '',
@@ -63,11 +63,12 @@ type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
         isLoading?: boolean;
         loadingText?: string;
         startIcon?: React.ReactNode;
+        endIcon?: React.ReactNode;
         icon?: React.ReactNode;
     };
 
 const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
-    ({ className, variant, size, isLoading, loadingText = 'Loading...', startIcon, icon, children, ...props }, ref) => {
+    ({ className, variant, size, isLoading, loadingText = 'Loading...', startIcon, endIcon, icon, children, ...props }, ref) => {
         return (
             <TextClassContext.Provider
                 value={cn(props.disabled && 'web:pointer-events-none', buttonTextVariants({ variant, size }))}
@@ -111,6 +112,7 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                             >
                                 {children}
                             </Text>
+                            {endIcon && <View className="justify-end flex-row">{endIcon}</View>}
                         </View>
                     ) : (
                         (children as any)

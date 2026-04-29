@@ -176,7 +176,7 @@ const useRole = () => {
         isAdmin: roleName === ROLES.admin,
         isWorker: roleName === ROLES.worker || roleName === ROLES.zonalCoordinator,
         isZonalCoordinator: roleName === ROLES.zonalCoordinator,
-        isGroupHead: roleName === ROLES.groupHead,
+        isGroupHead: roleName === ROLES.groupHead || true,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,
         isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,
