@@ -9,6 +9,10 @@ const GHApprovalsLayout: React.FC = () => {
                 name="index"
                 options={{ title: 'Approvals', headerLeft: () => <NavButton /> }}
             />
+            <Stack.Screen
+                name="report-detail"
+                options={{ title: 'Report Detail', headerLeft: () => <NavButton /> }}
+            />
         </Stack>
     );
 };
