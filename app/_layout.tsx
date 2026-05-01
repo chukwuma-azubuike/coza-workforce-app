@@ -16,12 +16,12 @@ import { useFonts } from 'expo-font';
 import '~/global.css';
 import Routing from '~/components/Routing';
 import { PersistGate } from 'redux-persist/integration/react';
-import Loading from '~/components/atoms/loading';
 import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import useExpoUpdate from '~/hooks/expo-update';
 import removeBadPersistIfAny from '~/utils/removeBadPersistIfAny';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import BootScreen from '~/components/atoms/loading/boot-screen';
 
 const LIGHT_THEME: Theme = {
     ...DefaultTheme,
@@ -80,7 +80,7 @@ export default function RootLayout() {
     useExpoUpdate();
 
     if (!isColorSchemeLoaded || (!loaded && !error)) {
-        return null;
+        return <BootScreen isDark={true} />
     }
 
     return (
@@ -91,7 +91,7 @@ export default function RootLayout() {
             >
                 <ErrorBoundary>
                     <Provider store={store}>
-                        <PersistGate loading={<Loading bootUp />} persistor={persistor}>
+                        <PersistGate loading={<BootScreen animated={false} isDark={true} />} persistor={persistor}>
                             <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
                                 <StatusBar style={isDarkColorScheme ? 'light' : 'dark'} />
                                 <ConnectionStatusBar />

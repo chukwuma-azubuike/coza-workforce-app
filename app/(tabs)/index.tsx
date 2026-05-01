@@ -4,7 +4,7 @@ const Home = React.lazy(() => import('~/views/app/home'));
 
 const HomeScreen: React.FC = () => {
     return (
-        <Suspense fallback={<Loading />}>
+        <Suspense fallback={<Loading cover />}>
             <Home />
         </Suspense>
     );

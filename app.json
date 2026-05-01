@@ -1,131 +1,115 @@
 {
-  "expo": {
-    "name": "COZA Workforce",
-    "slug": "coza-workforce-app",
-    "version": "2.2.16",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash-black.png",
-      "resizeMode": "cover",
-      "backgroundColor": "#FFFFFF"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.cozaworkforceapp",
-      "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [
-          "remote-notification"
+    "expo": {
+        "name": "COZA Workforce",
+        "slug": "coza-workforce-app",
+        "version": "2.2.16",
+        "runtimeVersion": {
+            "policy": "appVersion"
+        },
+        "orientation": "portrait",
+        "icon": "./assets/images/icon.png",
+        "scheme": "myapp",
+        "userInterfaceStyle": "automatic",
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.cozaworkforceapp",
+            "infoPlist": {
+                "ITSAppUsesNonExemptEncryption": false,
+                "UIBackgroundModes": ["remote-notification"],
+                "LSApplicationQueriesSchemes": ["itms-apps"],
+                "NSLocationWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
+                "NSLocationAlwaysAndWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
+                "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
+            },
+            "usesAppleSignIn": true,
+            "buildNumber": "80",
+            "googleServicesFile": "./GoogleService-Info.plist",
+            "entitlements": {
+                "aps-environment": "production"
+            }
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/images/android-coza-icon.png",
+                "backgroundColor": "#FFFFFF"
+            },
+            "versionCode": 131,
+            "package": "com.cozaglobalworkforceapp",
+            "googleServicesFile": "./google-services.json",
+            "permissions": [
+                "POST_NOTIFICATIONS",
+                "android.permission.ACCESS_COARSE_LOCATION",
+                "android.permission.ACCESS_FINE_LOCATION"
+            ]
+        },
+        "web": {
+            "bundler": "metro",
+            "output": "static",
+            "favicon": "./assets/images/coza-coloured-logo.png"
+        },
+        "plugins": [
+            "expo-router",
+            [
+                "expo-splash-screen",
+                {
+                    "backgroundColor": "#2D0060",
+                    "image": "./assets/images/coza-coloured-logo.png",
+                    "dark": {
+                        "backgroundColor": "#2D0060",
+                        "image": "./assets/images/coza-coloured-logo.png"
+                    }
+                }
+            ],
+            "expo-font",
+            "expo-secure-store",
+            [
+                "expo-location",
+                {
+                    "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+                }
+            ],
+            [
+                "react-native-permissions",
+                {
+                    "ios": ["camera", "location", "microphone", "photo"]
+                }
+            ],
+            [
+                "expo-build-properties",
+                {
+                    "ios": {
+                        "deploymentTarget": "15.1"
+                    },
+                    "android": {
+                        "enableMinifyInReleaseBuilds": true,
+                        "enableShrinkResourcesInReleaseBuilds": true
+                    }
+                }
+            ],
+            [
+                "expo-notifications",
+                {
+                    "defaultChannel": "default",
+                    "icon": "./assets/images/icon.png"
+                }
+            ],
+            "@react-native-community/datetimepicker",
+            "expo-web-browser",
+            "react-native-pdf-jsi"
         ],
-        "LSApplicationQueriesSchemes": [
-          "itms-apps"
-        ],
-        "NSLocationWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
-        "NSLocationAlwaysAndWhenInUseUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services.",
-        "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
-      },
-      "usesAppleSignIn": true,
-      "buildNumber": "80",
-      "googleServicesFile": "./GoogleService-Info.plist",
-      "entitlements": {
-        "aps-environment": "production"
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/images/android-coza-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "versionCode": 131,
-      "package": "com.cozaglobalworkforceapp",
-      "googleServicesFile": "./google-services.json",
-      "permissions": [
-        "POST_NOTIFICATIONS",
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ]
-    },
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/images/splash.png"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-splash-screen",
-        {
-          "image": "./assets/images/splash.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "image": "./assets/images/splash-icon-dark.png",
-            "backgroundColor": "#000000"
-          }
+        "experiments": {
+            "typedRoutes": true
+        },
+        "extra": {
+            "router": {
+                "origin": false
+            },
+            "eas": {
+                "projectId": "506eebf2-6601-409a-9b25-5469fb6e6695"
+            }
+        },
+        "updates": {
+            "url": "https://u.expo.dev/506eebf2-6601-409a-9b25-5469fb6e6695"
         }
-      ],
-      "expo-font",
-      "expo-secure-store",
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
-        }
-      ],
-      [
-        "react-native-permissions",
-        {
-          "ios": [
-            "camera",
-            "location",
-            "microphone",
-            "photo"
-          ]
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "deploymentTarget": "15.1"
-          },
-          "android": {
-            "enableMinifyInReleaseBuilds": true,
-            "enableShrinkResourcesInReleaseBuilds": true
-          }
-        }
-      ],
-      [
-        "expo-notifications",
-        {
-          "defaultChannel": "default",
-          "icon": "./assets/images/icon.png"
-        }
-      ],
-      "@react-native-community/datetimepicker",
-      "expo-web-browser",
-      "react-native-pdf-jsi"
-    ],
-    "experiments": {
-      "typedRoutes": true
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "506eebf2-6601-409a-9b25-5469fb6e6695"
-      }
-    },
-    "updates": {
-      "url": "https://u.expo.dev/506eebf2-6601-409a-9b25-5469fb6e6695"
     }
-  }
 }
