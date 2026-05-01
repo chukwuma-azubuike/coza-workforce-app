@@ -8,6 +8,7 @@ module.exports = function (api) {
                 {
                     root: ['.'],
                     alias: {
+                        '~': '.',
                         'react-native-device-info': './react-native-device-info.js',
                     },
                 },
