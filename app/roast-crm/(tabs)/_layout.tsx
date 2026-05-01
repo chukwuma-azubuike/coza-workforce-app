@@ -114,7 +114,7 @@ const TabLayout: React.FC = () => {
         <View className="relative flex-1">
             <TopNav />
             <View className="flex-1">{ready ? <Slot /> : <Loading cover />}</View>
-            <View className="flex-row justify-around pt-4 bg-background border-t-border border-t-[0.5px]">
+            {ready && <View className="flex-row justify-around pt-4 bg-background border-t-border border-t-[0.5px]">
                 {filteredRoutes.map((route, index) => {
                     const isFocused = pathname == route.pathname;
 
@@ -143,7 +143,7 @@ const TabLayout: React.FC = () => {
                         </Link>
                     );
                 })}
-            </View>
+            </View>}
         </View>
     );
 };
