@@ -1,33 +1,19 @@
-import RNBlobUtil from 'react-native-blob-util';
-import { Platform } from 'react-native';
+import { File } from 'expo-file-system';
 
 const toArrayBuffer = async (fileUri: string): Promise<ArrayBuffer> => {
-    try {
-        // Adjust file URI for iOS if needed
-        const normalizedPath = Platform.OS === 'ios' ? fileUri.replace('file://', '') : fileUri;
-
-        // Check if the file exists
-        const fileExists = await RNBlobUtil.fs.exists(normalizedPath);
-        if (!fileExists) {
-            throw new Error('File does not exist at path: ' + normalizedPath);
-        }
-
-        // Read file content as Base64
-        const base64Data = await RNBlobUtil.fs.readFile(normalizedPath, 'base64');
-
-        // Convert Base64 to binary data (ArrayBuffer)
-        const binaryString = atob(base64Data);
-        const buffer = new ArrayBuffer(binaryString.length);
-        const uint8Array = new Uint8Array(buffer);
-
-        for (let i = 0; i < binaryString.length; i++) {
-            uint8Array[i] = binaryString.charCodeAt(i);
-        }
-
-        return buffer;
-    } catch (error) {
-        throw error; // Re-throw to handle at a higher level
+    const normalizedUri = fileUri.startsWith('file://') ? fileUri : `file://${fileUri}`;
+    const file = new File(normalizedUri);
+    if (!file.exists) {
+        throw new Error('File does not exist at path: ' + normalizedUri);
     }
+    const base64Data = await file.base64();
+    const binaryString = atob(base64Data);
+    const buffer = new ArrayBuffer(binaryString.length);
+    const uint8Array = new Uint8Array(buffer);
+    for (let i = 0; i < binaryString.length; i++) {
+        uint8Array[i] = binaryString.charCodeAt(i);
+    }
+    return buffer;
 };
 
 export default toArrayBuffer;

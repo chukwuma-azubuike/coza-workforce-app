@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 import { THEME_CONFIG } from '@config/appConfig';
 import { Icon } from '@rneui/themed';
-import { PermissionsAndroid, TouchableOpacity, useColorScheme } from 'react-native';
-import { generateExcelFile } from '@utils/generateFile';
+import { TouchableOpacity, useColorScheme } from 'react-native';
+import { downloadFile } from '@utils/downloadFile';
 import useAppColorMode from '@hooks/theme/colorMode';
 import { View } from 'react-native';
 import { Text } from 'react-native';
@@ -105,40 +105,7 @@ interface IDownloadButton extends IButtonComponent {
 }
 
 export const DownloadButton: React.FC<IDownloadButton> = React.memo(({ data, type, fileName, ...props }) => {
-    const handleDownload = async () => {
-        try {
-            // Check for Permission (check if permission is already given or not)
-            let isPermitedExternalStorage = await PermissionsAndroid.check(
-                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-            );
-
-            if (!isPermitedExternalStorage) {
-                // Ask for permission
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-                    {
-                        buttonPositive: 'OK',
-                        buttonNegative: 'Cancel',
-                        buttonNeutral: 'Ask Me Later',
-                        title: 'Storage permission needed',
-                        message: 'We need access to store data on your local drive.',
-                    }
-                );
-
-                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                    // Permission Granted (calling our exportDataToExcel function)
-                    generateExcelFile(data, fileName);
-                } else {
-                    // Permission denied
-                }
-            } else {
-                // Already have Permission (calling our exportDataToExcel function)
-                generateExcelFile(data, fileName);
-            }
-        } catch (e) {
-            return;
-        }
-    };
+    const handleDownload = () => downloadFile(data, fileName);
 
     return (
         <Button
