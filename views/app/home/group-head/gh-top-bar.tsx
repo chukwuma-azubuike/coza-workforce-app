@@ -14,8 +14,8 @@ interface ServicePillProps {
 
 const ServicePill: React.FC<ServicePillProps> = ({ name, serviceTime }) => (
     <View className="flex-row items-center gap-1.5 h-8 px-3.5 rounded-full bg-secondary">
-        <View className="w-1.5 h-1.5 rounded-full bg-primary" />
-        <Text className="text-sm font-semibold text-primary">
+        <View className="w-1.5 h-1.5 rounded-full bg-green-500" />
+        <Text className="text-sm font-semibold">
             {name ? name + " • " + dayjs(serviceTime).format('h:mm A') : 'No service today'}
         </Text>
     </View>
@@ -51,7 +51,7 @@ const GHTopBar: React.FC<GHTopBarProps> = ({ pictureUrl, firstName, lastName, se
             <TouchableOpacity
                 activeOpacity={0.6}
                 className="w-9 h-9 items-center justify-center rounded-full"
-                // onPress={() => router.push('/notifications' as any)}
+            // onPress={() => router.push('/notifications' as any)}
             >
                 <Ionicons name="notifications-outline" size={20} color={iconColor} />
                 {unread && (

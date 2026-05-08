@@ -1,4 +1,4 @@
-import { IDefaultQueryParams, IGHSubmittedReportForGSP } from '../types/index';
+import { IDefaultQueryParams, IGHSubmittedReportForGSP, IReportHistoryEntry } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IDefaultResponse, IService, IReportStatus, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -61,6 +61,27 @@ export interface IGHReportDetail {
     narrative: string;
     highlights: string[];
     attachments: { name: string; size: string }[];
+    history: IReportHistoryEntry[];
+}
+
+// ─── Report action payloads ───────────────────────────────────────────────────
+export interface IGHApproveReportPayload {
+    reportId: string;
+    serviceId: string;
+    comment?: string;
+    idempotencyKey?: string;
+}
+
+export interface IGHRequestChangesPayload {
+    reportId: string;
+    comment: string;
+    idempotencyKey?: string;
+}
+
+export interface IGHPushBackToHodPayload {
+    reportId: string;
+    comment: string;
+    idempotencyKey?: string;
 }
 
 // ─── Word / weekly reflection reviews ────────────────────────────────────────
@@ -86,6 +107,8 @@ export const groupHeadServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQuery,
 
+    tagTypes: ['GHReport', 'GHWordReview'],
+
     refetchOnFocus: true,
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
@@ -97,6 +120,7 @@ export const groupHeadServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+            invalidatesTags: ['GHReport'],
         }),
 
         getGhReportById: endpoint.query<ICampusReportSummary, { serviceId: IService['_id'] }>({
@@ -104,7 +128,7 @@ export const groupHeadServiceSlice = createApi({
                 url: `/${SERVICE_URL}/reports/${params.serviceId}`,
                 method: REST_API_VERBS.GET,
             }),
-
+            providesTags: (_, __, { serviceId }) => [{ type: 'GHReport', id: serviceId }, 'GHReport'],
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res?.data,
         }),
 
@@ -114,7 +138,7 @@ export const groupHeadServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
                 params,
             }),
-
+            providesTags: ['GHReport'],
             transformResponse: (res: IDefaultResponse<IGHSubmittedReport[]>) => res?.data,
         }),
 
@@ -123,7 +147,7 @@ export const groupHeadServiceSlice = createApi({
                 url: `/${SERVICE_URL}/gsp/${serviceId}`,
                 method: REST_API_VERBS.GET,
             }),
-
+            providesTags: (_, __, serviceId) => [{ type: 'GHReport', id: serviceId }, 'GHReport'],
             transformResponse: (res: IDefaultResponse<Array<IGHSubmittedReportForGSP>>) => res.data,
         }),
 
@@ -133,15 +157,43 @@ export const groupHeadServiceSlice = createApi({
                 url: `/${SERVICE_URL}/reportDetail/${reportId}`,
                 method: REST_API_VERBS.GET,
             }),
+            providesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
             transformResponse: (res: IDefaultResponse<IGHReportDetail>) => res?.data,
         }),
 
-        // ─── Forward a department report to GSP ───────────────────────
-        forwardReportToGsp: endpoint.mutation<void, { reportId: string; serviceId: string }>({
-            query: ({ reportId, serviceId }) => ({
-                url: `/${SERVICE_URL}/forwardReport/${reportId}/${serviceId}`,
+        // ─── Report state transitions (v2) ────────────────────────────
+        approveReport: endpoint.mutation<void, IGHApproveReportPayload>({
+            query: ({ reportId, comment, idempotencyKey }) => ({
+                url: `/${SERVICE_URL}/reports/${reportId}/approve`,
                 method: REST_API_VERBS.POST,
+                body: { comment },
+                headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
             }),
+            invalidatesTags: (_, __, { reportId, serviceId }) => [
+                { type: 'GHReport', id: reportId },
+                { type: 'GHReport', id: serviceId },
+                'GHReport',
+            ],
+        }),
+
+        requestReportChanges: endpoint.mutation<void, IGHRequestChangesPayload>({
+            query: ({ reportId, comment, idempotencyKey }) => ({
+                url: `/${SERVICE_URL}/reports/${reportId}/request-changes`,
+                method: REST_API_VERBS.POST,
+                body: { comment },
+                headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+            }),
+            invalidatesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
+        }),
+
+        pushReportBackToHod: endpoint.mutation<void, IGHPushBackToHodPayload>({
+            query: ({ reportId, comment, idempotencyKey }) => ({
+                url: `/${SERVICE_URL}/reports/${reportId}/push-back-to-hod`,
+                method: REST_API_VERBS.POST,
+                body: { comment },
+                headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+            }),
+            invalidatesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
         }),
 
         // ─── Word / weekly reflection reviews ─────────────────────────
@@ -150,6 +202,7 @@ export const groupHeadServiceSlice = createApi({
                 url: `/${SERVICE_URL}/wordReviews/${serviceId}`,
                 method: REST_API_VERBS.GET,
             }),
+            providesTags: (_, __, { serviceId }) => [{ type: 'GHWordReview', id: serviceId }, 'GHWordReview'],
             transformResponse: (res: IDefaultResponse<IGHWordReview[]>) => res?.data,
         }),
 
@@ -158,13 +211,16 @@ export const groupHeadServiceSlice = createApi({
                 url: `/${SERVICE_URL}/wordReviews/${reviewId}/acknowledge`,
                 method: REST_API_VERBS.PATCH,
             }),
+            invalidatesTags: (_, __, { reviewId }) => [{ type: 'GHWordReview', id: reviewId }, 'GHWordReview'],
         }),
 
-        suspendGhWordReview: endpoint.mutation<void, { reviewId: string }>({
-            query: ({ reviewId }) => ({
+        suspendGhWordReview: endpoint.mutation<void, { reviewId: string; comment: string }>({
+            query: ({ reviewId, comment }) => ({
                 url: `/${SERVICE_URL}/wordReviews/${reviewId}/suspend`,
                 method: REST_API_VERBS.PATCH,
+                body: { comment },
             }),
+            invalidatesTags: (_, __, { reviewId }) => [{ type: 'GHWordReview', id: reviewId }, 'GHWordReview'],
         }),
     }),
 });
@@ -176,7 +232,9 @@ export const {
     useGetGhReportByIdQuery,
     useGetGHSubmittedReportsByServiceIdQuery,
     useGetGhReportDetailQuery,
-    useForwardReportToGspMutation,
+    useApproveReportMutation,
+    useRequestReportChangesMutation,
+    usePushReportBackToHodMutation,
     useGetGhWordReviewsQuery,
     useAcknowledgeGhWordReviewMutation,
     useSuspendGhWordReviewMutation,

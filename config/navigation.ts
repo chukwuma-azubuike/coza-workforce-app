@@ -9,6 +9,7 @@ export interface IAppRoute {
     submenus: IAppRoute[] | [];
     users: (ROLES | DEPARTMENTS)[];
     inMenuBar: boolean;
+    ghMenuBar?: boolean;
     inMore: boolean;
     hideHeader?: boolean;
     icon: { name: string; type: IIconTypes };
@@ -22,6 +23,7 @@ const AppRoutes: IAppRoute[] = [
         submenus: [],
         users: [],
         inMenuBar: true,
+        ghMenuBar: true,
         inMore: false,
         icon: { name: 'home', type: 'antdesign' },
     },
@@ -32,6 +34,7 @@ const AppRoutes: IAppRoute[] = [
         users: [],
         inMenuBar: true,
         inMore: false,
+        ghMenuBar: true,
         icon: { name: 'checklist', type: 'octicon' },
         href: '/attendance',
     },
@@ -63,6 +66,7 @@ const AppRoutes: IAppRoute[] = [
         users: [],
         inMenuBar: true,
         inMore: false,
+        ghMenuBar: true,
         icon: { name: 'hand-left-outline', type: 'ionicon' },
         href: '/permissions',
     },
@@ -319,14 +323,15 @@ const AppRoutes: IAppRoute[] = [
         href: '/gh-reports-history',
     },
     {
-        name: 'GH Approvals',
-        options: { title: 'GH Approvals' },
+        name: 'Approvals',
+        options: { title: 'Approvals' },
         submenus: [],
         users: [ROLES.groupHead],
         inMenuBar: false,
+        ghMenuBar: true,
         inMore: true,
         icon: { name: 'clipboard-outline', type: 'ionicon' },
-        href: '/gh-approvals',
+        href: '/gh-tab-approvals',
     },
     {
         name: 'Group Head Service Report',
@@ -467,9 +472,10 @@ const AppRoutes: IAppRoute[] = [
             ROLES.campusCoordinator,
         ],
         inMenuBar: false,
+        ghMenuBar: true,
         inMore: true,
         icon: { name: 'database-cog-outline', type: 'material-community' },
-        href: '/workforce-summary',
+        href: '/gh-tab-workforce',
     },
     {
         name: 'Manual clock in',
@@ -591,6 +597,27 @@ const AppRoutes: IAppRoute[] = [
         inMore: false,
         icon: { name: 'menu-outline', type: 'ionicon' },
         href: '/more',
+    },
+    {
+        name: 'Admin Groups',
+        options: { title: 'Group Management' },
+        submenus: [
+            {
+                name: 'Group Detail',
+                options: { title: 'Group Detail' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'people-outline', type: 'ionicon' },
+                href: '/admin/groups/group-detail',
+            },
+        ],
+        users: [ROLES.superAdmin],
+        inMenuBar: false,
+        inMore: true,
+        icon: { name: 'people-outline', type: 'ionicon' },
+        href: '/admin/groups',
     },
 ];
 

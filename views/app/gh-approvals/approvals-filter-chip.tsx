@@ -15,7 +15,7 @@ const FilterChip: React.FC<FilterChipProps> = ({ active, onPress, children }) =>
         onPress={onPress}
         className={cn(
             'h-8 px-3.5 rounded-full border items-center justify-center',
-            active ? 'bg-primary border-primary' : 'bg-background border-border'
+            active ? 'bg-primary/20 border-primary' : 'bg-background border-border'
         )}
     >
         <Text

@@ -6,7 +6,7 @@ import { cn } from '~/lib/utils';
 import Loading from '../atoms/loading';
 
 const buttonVariants = cva(
-    'group flex items-center justify-center !rounded-xl web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
+    'group flex items-center justify-center !rounded-full web:ring-offset-background web:transition-colors web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
     {
         variants: {
             variant: {
@@ -20,8 +20,8 @@ const buttonVariants = cva(
             },
             size: {
                 default: '!h-16 px-4 py-2 native:h-12 native:px-5 native:py-3',
-                sm: '!h-12 rounded-md px-3',
-                lg: 'h-11 rounded-md px-8 native:h-14',
+                sm: '!h-12 px-3',
+                lg: 'h-11 px-8 native:h-14',
                 icon: 'h-10 w-10',
             },
         },
@@ -65,10 +65,11 @@ type ButtonProps = React.ComponentPropsWithoutRef<typeof Pressable> &
         startIcon?: React.ReactNode;
         endIcon?: React.ReactNode;
         icon?: React.ReactNode;
+        textClassName?: string;
     };
 
 const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>(
-    ({ className, variant, size, isLoading, loadingText = 'Loading...', startIcon, endIcon, icon, children, ...props }, ref) => {
+    ({ className, textClassName, variant, size, isLoading, loadingText = 'Loading...', startIcon, endIcon, icon, children, ...props }, ref) => {
         return (
             <TextClassContext.Provider
                 value={cn(props.disabled && 'web:pointer-events-none', buttonTextVariants({ variant, size }))}
@@ -87,14 +88,15 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                     {isLoading ? (
                         <View className="flex flex-1 flex-row items-center justify-center gap-2">
                             {children && (
-                                <Loading spinnerProps={{ className: variant === 'default' ? 'text-white' : '' }} />
+                                <Loading spinnerProps={{ className: variant === 'default' ? 'text-white' : textClassName }} />
                             )}
                             {loadingText && (
                                 <Text
                                     className={cn(
                                         '!text-xl',
                                         size === 'sm' && '!text-base',
-                                        buttonTextVariants({ variant, size })
+                                        buttonTextVariants({ variant, size }),
+                                        textClassName
                                     )}
                                 >
                                     {loadingText}
@@ -107,7 +109,8 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
                             <Text
                                 className={cn(
                                     size === 'sm' ? '!text-base' : '!text-xl',
-                                    buttonTextVariants({ variant, size })
+                                    buttonTextVariants({ variant, size }),
+                                    textClassName
                                 )}
                             >
                                 {children}

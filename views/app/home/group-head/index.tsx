@@ -1,13 +1,17 @@
 import React, { useContext, useMemo } from 'react';
 import { View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import useRole from '@hooks/role';
+import useGroup from '@hooks/group';
 import useScreenFocus from '@hooks/focus';
 import { HomeContext } from '../context';
 import { GeoCoordinates } from '~/hooks/geo-location';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { Separator } from '~/components/ui/separator';
+import { Text } from '~/components/ui/text';
+import { Card } from '~/components/ui/card';
 
 import { useGetLatestServiceQuery } from '@store/services/services';
 import {
@@ -34,6 +38,25 @@ interface IGHHomeProps {
     verifyRangeBeforeAction: (ok: () => any, err: () => any) => Promise<void>;
 }
 
+const FirstTimeGHEmptyState: React.FC = () => (
+    <View className="flex-1 items-center justify-center px-8 gap-6">
+        <View className="w-20 h-20 rounded-3xl bg-secondary items-center justify-center">
+            <Ionicons name="people-outline" size={36} color="#71717a" />
+        </View>
+        <View className="items-center gap-2">
+            <Text className="text-xl font-bold text-foreground text-center">Not assigned to a Group</Text>
+            <Text className="text-md text-muted-foreground text-center leading-relaxed line-clamp-none">
+                Your Group Head account hasn't been linked to a Group yet. Contact your Super Admin to get assigned.
+            </Text>
+        </View>
+        <Card className="w-full p-2 bg-secondary/50">
+            <Text className="text-sm text-muted-foreground text-center line-clamp-none">
+                Once assigned, your Group's departments, reports, and workforce data will appear here.
+            </Text>
+        </Card>
+    </View>
+);
+
 const GHHome: React.FC<IGHHomeProps> = ({
     isInRange,
     refreshTrigger,
@@ -43,6 +66,7 @@ const GHHome: React.FC<IGHHomeProps> = ({
     verifyRangeBeforeAction,
 }) => {
     const { user } = useRole();
+    const { groupId, isFirstTimeGH } = useGroup();
     const homeCtx = useContext(HomeContext);
     const attendanceData = homeCtx?.latestAttendance?.latestAttendanceData;
     const attendanceLoading = homeCtx?.latestAttendance?.latestAttendanceIsLoading;
@@ -95,7 +119,13 @@ const GHHome: React.FC<IGHHomeProps> = ({
     );
 
     const pendingCount = useMemo(
-        () => ghReport?.departmentalReport?.filter(d => d.report.status === IReportStatus.PENDING).length ?? 0,
+        () =>
+            (ghReport?.departmentalReport ?? []).filter(
+                d =>
+                    d.report.status === IReportStatus.HOD_SUBMITTED ||
+                    d.report.status === IReportStatus.PENDING ||
+                    d.report.status === IReportStatus.CP_CHANGE_REQUESTED
+            ).length,
         [ghReport]
     );
 
@@ -129,43 +159,48 @@ const GHHome: React.FC<IGHHomeProps> = ({
                 serviceTime={latestService?.serviceTime}
                 unread={false}
             />
-            <ViewWrapper scroll noPadding refreshing={false} onRefresh={refreshAll} className="flex-1">
-                <GHGreeting
-                    firstName={user?.firstName}
-                    campus={user?.campus?.campusName}
-                />
-                <View className="px-4 gap-5 pt-2 pb-4">
-                    <ErrorBoundary>
-                        <GHClockCard
-                            isInRange={isInRange}
-                            deviceCoordinates={deviceCoordinates}
-                            service={latestService}
-                            latestAttendanceData={attendanceData}
-                            latestAttendanceIsLoading={attendanceLoading}
-                            verifyRangeBeforeAction={verifyRangeBeforeAction}
-                        />
-                    </ErrorBoundary>
 
-                    <GHKpiGrid
-                        leadersAttendance={leadersAttendance?.attendance}
-                        leaderUsers={leadersAttendance?.leaderUsers}
-                        workersAttendance={workersAttendance?.attendance}
-                        workerUsers={workersAttendance?.workerUsers}
-                        pendingReports={pendingCount}
-                        totalReports={totalReports}
-                        tickets={tickets}
-                        isLoading={ghReportLoading}
+            {isFirstTimeGH ? (
+                <FirstTimeGHEmptyState />
+            ) : (
+                <ViewWrapper scroll noPadding refreshing={false} onRefresh={refreshAll} className="flex-1">
+                    <GHGreeting
+                        firstName={user?.firstName}
+                        campus={user?.campus?.campusName}
                     />
+                    <View className="px-4 gap-5 pt-2 pb-4">
+                        <ErrorBoundary>
+                            <GHClockCard
+                                isInRange={isInRange}
+                                deviceCoordinates={deviceCoordinates}
+                                service={latestService}
+                                latestAttendanceData={attendanceData}
+                                latestAttendanceIsLoading={attendanceLoading}
+                                verifyRangeBeforeAction={verifyRangeBeforeAction}
+                            />
+                        </ErrorBoundary>
 
-                    <GHQuickActions pendingCount={pendingCount} />
+                        <GHKpiGrid
+                            leadersAttendance={leadersAttendance?.attendance}
+                            leaderUsers={leadersAttendance?.leaderUsers}
+                            workersAttendance={workersAttendance?.attendance}
+                            workerUsers={workersAttendance?.workerUsers}
+                            pendingReports={pendingCount}
+                            totalReports={totalReports}
+                            tickets={tickets}
+                            isLoading={ghReportLoading}
+                        />
 
-                    <Separator />
+                        <GHQuickActions pendingCount={pendingCount} />
 
-                    <ErrorBoundary>
-                        <GHReportsStatus ghReport={ghReport} isLoading={ghReportLoading} />
-                    </ErrorBoundary>
-                </View>
-            </ViewWrapper>
+                        <Separator />
+
+                        <ErrorBoundary>
+                            <GHReportsStatus ghReport={ghReport} isLoading={ghReportLoading} />
+                        </ErrorBoundary>
+                    </View>
+                </ViewWrapper>
+            )}
         </View>
     );
 };

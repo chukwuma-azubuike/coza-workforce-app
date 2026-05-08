@@ -171,14 +171,15 @@ const useRole = () => {
         role: roleName,
 
         // Roles
-        isHOD: roleName === ROLES.AHOD,
-        isAHOD: roleName === ROLES.HOD,
+        isHOD: roleName === ROLES.HOD,
+        isAHOD: roleName === ROLES.AHOD,
         isAdmin: roleName === ROLES.admin,
         isWorker: roleName === ROLES.worker || roleName === ROLES.zonalCoordinator,
         isZonalCoordinator: roleName === ROLES.zonalCoordinator,
         isGroupHead: roleName === ROLES.groupHead,
         isSuperAdmin: roleName === ROLES.superAdmin,
         isGlobalPastor: roleName === ROLES.globalPastor,
+        isGSP: roleName === ROLES.globalPastor,
         isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,
         isCampusPastor: roleName === ROLES.campusPastor || roleName === ROLES.campusCoordinator,
         isQcHOD: roleName === ROLES.HOD && (departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME),

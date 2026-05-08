@@ -12,7 +12,8 @@ import { Separator } from '~/components/ui/separator';
 import AvatarComponent from '@components/atoms/avatar';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { useGetPermissionsQuery } from '@store/services/permissions';
+import { useGetGroupPermissionsQuery } from '@store/services/permissions';
+import useGroup from '@hooks/group';
 import { IPermission } from '@store/types';
 import Utils from '@utils/index';
 import { cn } from '~/lib/utils';
@@ -106,9 +107,11 @@ const PermissionRow: React.FC<IPermission> = permission => {
 
 const ApprovalsPermissions: React.FC = () => {
     const [filter, setFilter] = useState<PermFilter>('PENDING');
+    const { groupId } = useGroup();
 
-    const { data: permissions = [], isLoading, refetch } = useGetPermissionsQuery(
-        { isGH: true, limit: 50 } as any
+    const { data: permissions = [], isLoading, refetch } = useGetGroupPermissionsQuery(
+        { groupId: groupId as string, status: filter, limit: 50 } as any,
+        { skip: !groupId }
     );
 
     const filtered = useMemo(

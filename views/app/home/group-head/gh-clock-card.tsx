@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
-import { Alert, StyleSheet, View } from 'react-native';
-import Animated, {
+import { Alert, View } from 'react-native';
+import {
     interpolate,
     useAnimatedStyle,
     useSharedValue,
@@ -8,7 +8,6 @@ import Animated, {
     withSequence,
     withTiming,
 } from 'react-native-reanimated';
-import LinearGradient from 'react-native-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import dayjs from 'dayjs';
@@ -16,11 +15,9 @@ import dayjs from 'dayjs';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import useRole from '@hooks/role';
-import useAppColorMode from '@hooks/theme/colorMode';
 import { useClockInMutation, useClockOutMutation } from '@store/services/attendance';
 import { THEME_CONFIG } from '@config/appConfig';
 import { GeoCoordinates } from '~/hooks/geo-location';
-import { Icon } from '@rneui/themed';
 import { Card } from '~/components/ui/card';
 
 interface GHClockCardProps {
@@ -146,17 +143,11 @@ const GHClockCard: React.FC<GHClockCardProps> = ({
     }, [verifyRangeBeforeAction, canClockIn, canClockOut, handleClockIn, handleClockOut]);
 
     return (
-        <Card>
-            <LinearGradient
-                colors={[THEME_CONFIG.primary, THEME_CONFIG.primaryVeryLight]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 0, y: 1 }}
-                style={styles.accent}
-            />
-            <View className="flex-1 p-4 gap-3">
+        <Card className='min-h-[190]'>
+            <View className="p-4 gap-4">
                 <View className="flex-row items-center gap-1.5">
-                    <Ionicons name="time-outline" size={16} color={THEME_CONFIG.primary} />
-                    <Text className="text-sm font-bold tracking-widest text-primary">
+                    <Ionicons name="time-outline" size={16} color={THEME_CONFIG.success} />
+                    <Text className="text-sm font-bold tracking-widest">
                         {headerLabel}
                     </Text>
                 </View>
@@ -206,9 +197,10 @@ const GHClockCard: React.FC<GHClockCardProps> = ({
                     <Button
                         size="sm"
                         variant="link"
+                        textClassName="text-foreground"
                         onPress={() => router.push('/manual-clock-in' as any)}
-                        className="!h-auto items-start flex-auto max-w-[50%] px-0"
-                        endIcon={<Ionicons name="chevron-forward" size={16} color={THEME_CONFIG.primary} />}
+                        className="!h-8 items-start flex-auto max-w-[50%] px-0"
+                        endIcon={<Ionicons name="chevron-forward" size={16} color={THEME_CONFIG.success} />}
                     >
                         Clock in someone
                     </Button>
@@ -217,16 +209,5 @@ const GHClockCard: React.FC<GHClockCardProps> = ({
         </Card>
     );
 };
-
-const styles = StyleSheet.create({
-    card: {
-        borderRadius: 16,
-        borderWidth: 0.5,
-        overflow: 'hidden',
-    },
-    accent: {
-        width: 4,
-    },
-});
 
 export default React.memo(GHClockCard);

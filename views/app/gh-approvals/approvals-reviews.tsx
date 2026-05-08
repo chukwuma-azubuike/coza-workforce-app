@@ -10,6 +10,7 @@ import { Card } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Skeleton } from '~/components/ui/skeleton';
 import AvatarComponent from '@components/atoms/avatar';
+import ReportCommentSheet from '@components/composite/report-comment-sheet';
 import useRole from '@hooks/role';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { THEME_CONFIG } from '@config/appConfig';
@@ -198,6 +199,7 @@ const AcknowledgedCard: React.FC<{ review: IGHWordReview }> = ({ review }) => {
 
 const ApprovalsReviews: React.FC = () => {
     const [filter, setFilter] = useState<ReviewFilter>('PENDING');
+    const [suspendTarget, setSuspendTarget] = useState<string | null>(null);
     const { user } = useRole();
     const campusId = user?.campus?._id;
 
@@ -211,7 +213,7 @@ const ApprovalsReviews: React.FC = () => {
     const reviews = apiReviews ?? MOCK_REVIEWS;
 
     const [acknowledge, { isLoading: isAcknowledging, originalArgs: ackArgs }] = useAcknowledgeGhWordReviewMutation();
-    const [suspend, { isLoading: isSuspending, originalArgs: suspArgs }] = useSuspendGhWordReviewMutation();
+    const [suspend, { isLoading: isSuspending }] = useSuspendGhWordReviewMutation();
 
     const handleAcknowledge = async (reviewId: string) => {
         try {
@@ -222,70 +224,79 @@ const ApprovalsReviews: React.FC = () => {
         }
     };
 
-    const handleSuspend = async (reviewId: string) => {
-        Alert.alert('Suspend review', 'This will flag the submission for suspension.', [
-            { text: 'Cancel', style: 'cancel' },
-            {
-                text: 'Suspend',
-                style: 'destructive',
-                onPress: async () => {
-                    try {
-                        await suspend({ reviewId }).unwrap();
-                        Alert.alert('Suspended', 'Review has been suspended.');
-                    } catch {
-                        Alert.alert('Error', 'Could not suspend review. Please try again.');
-                    }
-                },
-            },
-        ]);
+    const handleSuspend = (reviewId: string) => {
+        setSuspendTarget(reviewId);
+    };
+
+    const handleSuspendSubmit = async (comment: string) => {
+        if (!suspendTarget) return;
+        try {
+            await suspend({ reviewId: suspendTarget, comment }).unwrap();
+            setSuspendTarget(null);
+            Alert.alert('Suspended', 'Review has been suspended.');
+        } catch {
+            Alert.alert('Error', 'Could not suspend review. Please try again.');
+        }
     };
 
     const filtered = useMemo(() => reviews.filter(r => r.status === filter), [reviews, filter]);
 
     return (
-        <View className="flex-1">
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="py-3 grow-0 shrink-0"
-                contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
-            >
-                {FILTERS.map(f => (
-                    <FilterChip key={f.key} active={filter === f.key} onPress={() => setFilter(f.key)}>
-                        {f.label}
-                    </FilterChip>
-                ))}
-            </ScrollView>
+        <>
+            <View className="flex-1">
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    className="py-3 grow-0 shrink-0"
+                    contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}
+                >
+                    {FILTERS.map(f => (
+                        <FilterChip key={f.key} active={filter === f.key} onPress={() => setFilter(f.key)}>
+                            {f.label}
+                        </FilterChip>
+                    ))}
+                </ScrollView>
 
-            <ScrollView className="flex-1">
-                <View className="px-4 pb-8 gap-3">
-                    {isLoading ? (
-                        [1, 2].map(i => <Skeleton key={i} className="h-48 w-full rounded-3xl" />)
-                    ) : filtered.length === 0 ? (
-                        <View className="py-12 items-center">
-                            <Text className="!text-sm text-muted-foreground text-center">
-                                No {filter.toLowerCase()} word reviews.
-                            </Text>
-                        </View>
-                    ) : (
-                        filtered.map(review =>
-                            review.status === 'ACKNOWLEDGED' ? (
-                                <AcknowledgedCard key={review._id} review={review} />
-                            ) : (
-                                <ReviewCard
-                                    key={review._id}
-                                    review={review}
-                                    onAcknowledge={handleAcknowledge}
-                                    onSuspend={handleSuspend}
-                                    isAcknowledging={isAcknowledging && ackArgs?.reviewId === review._id}
-                                    isSuspending={isSuspending && suspArgs?.reviewId === review._id}
-                                />
+                <ScrollView className="flex-1">
+                    <View className="px-4 pb-8 gap-3">
+                        {isLoading ? (
+                            [1, 2].map(i => <Skeleton key={i} className="h-48 w-full rounded-3xl" />)
+                        ) : filtered.length === 0 ? (
+                            <View className="py-12 items-center">
+                                <Text className="!text-sm text-muted-foreground text-center">
+                                    No {filter.toLowerCase()} word reviews.
+                                </Text>
+                            </View>
+                        ) : (
+                            filtered.map(review =>
+                                review.status === 'ACKNOWLEDGED' ? (
+                                    <AcknowledgedCard key={review._id} review={review} />
+                                ) : (
+                                    <ReviewCard
+                                        key={review._id}
+                                        review={review}
+                                        onAcknowledge={handleAcknowledge}
+                                        onSuspend={handleSuspend}
+                                        isAcknowledging={isAcknowledging && ackArgs?.reviewId === review._id}
+                                        isSuspending={isSuspending && suspendTarget === review._id}
+                                    />
+                                )
                             )
-                        )
-                    )}
-                </View>
-            </ScrollView>
-        </View>
+                        )}
+                    </View>
+                </ScrollView>
+            </View>
+
+            <ReportCommentSheet
+                visible={suspendTarget !== null}
+                title="Suspend Review"
+                placeholder="Explain why this review is being suspended…"
+                submitLabel="Suspend"
+                isLoading={isSuspending}
+                onClose={() => setSuspendTarget(null)}
+                onSubmit={handleSuspendSubmit}
+            />
+        </>
     );
 };
 

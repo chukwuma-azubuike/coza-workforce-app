@@ -1,91 +1,104 @@
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import { IReportStatus, IStatus, ITicketStatus, IUserStatus } from '@store/types';
 import Utils from '@utils/index';
-import { Badge, BadgeProps } from '~/components/ui/badge';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 import { View } from 'react-native';
 import { Skeleton } from '~/components/ui/skeleton';
 
-interface IStatusTag extends BadgeProps {
+interface IStatusTag {
     capitalise?: boolean;
-    children?: IStatus | ITicketStatus | IUserStatus | IReportStatus;
-    colorScheme?: 'default' | 'dark';
+    children?: IStatus | ITicketStatus | IUserStatus | IReportStatus | string;
     isLoading?: boolean;
+    className?: string;
 }
 
-const StatusTag: React.FC<IStatusTag> = props => {
-    const { children: status, capitalise = true, colorScheme = 'default', className, isLoading } = props;
+type StatusColor = 'green' | 'yellow' | 'blue' | 'gray' | 'red';
 
-    const green =
-        status === 'ACKNOWLEGDED' ||
-        status === 'ACTIVE' ||
-        status === 'APPROVED' ||
-        status === IReportStatus.GSP_SUBMITTED;
-    const gray = status === 'PENDING' || status === 'ISSUED' || status === 'DORMANT';
-    const amber = status === 'REVIEW_REQUESTED' || status === 'RETRACTED' || status === 'INACTIVE';
-    const red = status === 'DECLINED' || status === 'REJECTED' || status === 'CONTESTED' || status === 'UNAPPROVED';
-    const blue = status === 'SUBMITTED' || 'HOD' || 'AHOD';
+const STATUS_COLOR_MAP: Record<StatusColor, { container: string; text: string }> = {
+    green: { container: 'bg-green-500/20 border-green-500/40', text: 'text-green-500' },
+    yellow: { container: 'bg-yellow-500/20 border-yellow-500/40', text: 'text-yellow-500' },
+    blue: { container: 'bg-blue-500/20 border-blue-500/40', text: 'text-blue-500' },
+    gray: { container: 'bg-gray-500/20 border-gray-500/40', text: 'text-gray-400' },
+    red: { container: 'bg-red-500/20 border-red-500/40', text: 'text-red-500' },
+};
 
-    const darkColorScheme = {
-        green: { bg: 'bg-green-700', text: 'text-white font-medium' },
-        gray: { bg: 'bg-gray-700', text: 'text-white font-medium' },
-        amber: { bg: 'bg-amber-700', text: 'text-white font-medium' },
-        red: { bg: 'bg-red-700', text: 'text-white font-medium' },
-        blue: { bg: 'bg-blue-700', text: 'text-white font-medium' },
-    };
+const resolveColor = (status: string | undefined): StatusColor => {
+    switch (status) {
+        case 'ACTIVE':
+        case 'APPROVED':
+        case 'ACKNOWLEDGED':
+        case 'ACKNOWLEGDED':
+        case IReportStatus.GH_APPROVED:
+        case IReportStatus.CP_APPROVED:
+        case IReportStatus.GSP_APPROVED:
+        case IReportStatus.GSP_SUBMITTED:
+            return 'green';
 
-    const lightColorScheme = {
-        green: { bg: 'bg-green-100', text: 'text-green-700' },
-        gray: { bg: 'bg-gray-300', text: 'text-gray-900' },
-        amber: { bg: 'bg-amber-100', text: 'text-amber-700' },
-        red: { bg: 'bg-red-100', text: 'text-red-700' },
-        blue: { bg: 'bg-blue-100', text: 'text-blue-700' },
-    };
+        case 'INACTIVE':
+        case 'RETRACTED':
+        case 'REVIEW_REQUESTED':
+        case IReportStatus.GH_CHANGE_REQUESTED:
+        case IReportStatus.CP_CHANGE_REQUESTED:
+        case IReportStatus.GSP_CHANGE_REQUESTED:
+            return 'yellow';
 
-    const getColors = (color: 'green' | 'gray' | 'amber' | 'red' | 'blue') => {
-        if (colorScheme === 'dark') {
-            return darkColorScheme[color];
-        }
-        return lightColorScheme[color];
-    };
+        case 'SUBMITTED':
+        case 'ISSUED':
+        case 'HOD':
+        case 'AHOD':
+        case IReportStatus.HOD_SUBMITTED:
+            return 'blue';
 
+        case 'DECLINED':
+        case 'REJECTED':
+        case 'CONTESTED':
+        case 'UNAPPROVED':
+        case 'BLACKLISTED':
+            return 'red';
+
+        case 'PENDING':
+        case 'DORMANT':
+        case 'DRAFT':
+        default:
+            return 'gray';
+    }
+};
+
+const StatusTag: React.FC<IStatusTag> = ({ children: status, capitalise = true, className, isLoading }) => {
     if (isLoading) {
-        return <Skeleton className="w-24 h-8" />;
+        return <Skeleton className="w-20 h-6" />;
     }
 
+    const color = resolveColor(status as string | undefined);
+    const { container, text } = STATUS_COLOR_MAP[color];
+
     return (
-        <View>
-            <Badge
-                className={cn(
-                    blue && getColors('blue').bg,
-                    green && getColors('green').bg,
-                    gray && getColors('gray').bg,
-                    amber && getColors('amber').bg,
-                    red && getColors('red').bg,
-                    className
-                )}
-            >
-                <Text
-                    className={cn(
-                        'text-sm font-normal',
-                        blue && getColors('blue').text,
-                        green && getColors('green').text,
-                        gray && getColors('gray').text,
-                        amber && getColors('amber').text,
-                        red && getColors('red').text,
-                        className
-                    )}
-                >
-                    {status
-                        ? capitalise
-                            ? Utils.capitalizeFirstChar(status.replace('Gsp ', ''), '_')
-                            : status
-                        : 'Unknown'}
-                </Text>
-            </Badge>
+        <View style={styles.badge} className={cn('border', container, className)}>
+            <Text style={styles.label} className={cn(text)}>
+                {status
+                    ? capitalise
+                        ? Utils.capitalizeFirstChar(String(status).replace('Gsp ', ''), '_')
+                        : String(status)
+                    : 'Unknown'}
+            </Text>
         </View>
     );
 };
+
+const styles = StyleSheet.create({
+    badge: {
+        alignSelf: 'flex-start',
+        borderRadius: 999,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+    },
+    label: {
+        fontSize: 12,
+        fontWeight: '600',
+        letterSpacing: 0.3,
+    },
+});
 
 export default React.memo(StatusTag);

@@ -35,7 +35,7 @@ const QuickActionTile: React.FC<QuickActionTileProps> = ({ label, iconName, onPr
 const QUICK_ACTIONS = [
     { label: 'Reports', iconName: 'document-text-outline', href: '/reports/service-report' },
     { label: 'Permissions', iconName: 'shield-checkmark-outline', href: '/permissions' },
-    { label: 'Workforce', iconName: 'people-outline', href: '/workforce' },
+    { label: 'Workforce', iconName: 'people-outline', href: '/workforce-summary' },
     { label: 'Approvals', iconName: 'clipboard-outline', href: '/gh-approvals' },
 ] as const;
 

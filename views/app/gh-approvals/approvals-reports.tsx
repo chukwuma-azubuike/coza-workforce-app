@@ -1,29 +1,48 @@
 import React, { memo, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View, useColorScheme } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import dayjs from 'dayjs';
 
 import { Text } from '~/components/ui/text';
 import { Card } from '~/components/ui/card';
 import { Skeleton } from '~/components/ui/skeleton';
 import AvatarComponent from '@components/atoms/avatar';
-import useRole from '@hooks/role';
+import ReportStatusPill from '@components/composite/report-status-pill';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
+import { getReportStatusMeta } from '@constants/report-status';
 import { useGetGhReportByIdQuery } from '@store/services/grouphead';
 import { useGetLatestServiceQuery } from '@store/services/services';
 import { IReportStatus } from '@store/types';
 import { ICampusReportSummary } from '@store/services/reports';
+import useGroup from '@hooks/group';
 import FilterChip from './approvals-filter-chip';
 
 type DeptReport = ICampusReportSummary['departmentalReport'][0];
-type ReportFilter = IReportStatus.PENDING | IReportStatus.SUBMITTED | IReportStatus.GSP_SUBMITTED;
+
+type ReportFilter =
+    | IReportStatus.HOD_SUBMITTED
+    | IReportStatus.GH_CHANGE_REQUESTED
+    | IReportStatus.GH_APPROVED
+    | IReportStatus.CP_CHANGE_REQUESTED
+    | IReportStatus.CP_APPROVED
+    | IReportStatus.GSP_APPROVED
+    | 'HISTORICAL';
 
 const REPORT_FILTERS: { key: ReportFilter; label: string }[] = [
-    { key: IReportStatus.PENDING, label: 'Pending' },
-    { key: IReportStatus.SUBMITTED, label: 'Submitted' },
-    { key: IReportStatus.GSP_SUBMITTED, label: 'GSP Submitted' },
+    { key: IReportStatus.HOD_SUBMITTED, label: 'Pending' },
+    { key: IReportStatus.GH_CHANGE_REQUESTED, label: 'Change Requested' },
+    { key: IReportStatus.GH_APPROVED, label: 'Approved' },
+    { key: IReportStatus.CP_CHANGE_REQUESTED, label: 'CP Returned' },
+    { key: IReportStatus.CP_APPROVED, label: 'CP Approved' },
+    { key: IReportStatus.GSP_APPROVED, label: 'GSP Approved' },
+    { key: 'HISTORICAL', label: 'Historical' },
 ];
+
+const HISTORICAL_STATUSES = new Set<string>([
+    IReportStatus.GSP_APPROVED,
+    IReportStatus.CP_APPROVED,
+    IReportStatus.GSP_CHANGE_REQUESTED,
+]);
 
 interface ReportCardProps {
     report: DeptReport;
@@ -31,8 +50,8 @@ interface ReportCardProps {
 }
 
 const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) => {
-    const scheme = useColorScheme();
-    const mutedIconColor = scheme === 'dark' ? '#71717a' : '#71717a';
+    const status = item.report.status as string;
+    const meta = getReportStatusMeta(status);
     const serviceLabel = serviceName ?? item.campus;
 
     const handlePress = () => {
@@ -45,7 +64,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
                 departmentName: item.departmentName,
                 campus: item.campus,
                 serviceName: serviceName ?? '',
-                status: item.report.status,
+                status,
             },
         });
     };
@@ -54,7 +73,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
         <TouchableOpacity activeOpacity={0.6} onPress={handlePress}>
             <Card className="p-0 overflow-hidden">
                 <View style={styles.row}>
-                    <View style={styles.accent} className="bg-amber-600" />
+                    <View style={[styles.accent, { backgroundColor: undefined }]} className={meta.accentClass} />
                     <View className="flex-1 p-4 gap-3">
                         <View className="flex-row items-start justify-between gap-2">
                             <View className="flex-1">
@@ -63,7 +82,7 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
                                 </Text>
                                 <Text className="!text-xs text-muted-foreground mt-0.5">{serviceLabel}</Text>
                             </View>
-                            <Ionicons name="chevron-forward" size={18} color={mutedIconColor} style={styles.chevron} />
+                            <Ionicons name="chevron-forward" size={18} color="#71717a" style={styles.chevron} />
                         </View>
 
                         <View className="flex-row items-center gap-2">
@@ -73,15 +92,10 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
 
                         <View className="flex-row items-center justify-between pt-3 border-t border-border">
                             <View className="flex-row items-center gap-1">
-                                <Ionicons name="attach-outline" size={12} color={mutedIconColor} />
+                                <Ionicons name="attach-outline" size={12} color="#71717a" />
                                 <Text className="!text-[11px] text-muted-foreground font-semibold">—</Text>
                             </View>
-                            <View className="flex-row items-center gap-1.5 rounded-full h-5 px-2 bg-amber-100 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                                <View className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                <Text className="!text-[10px] font-semibold text-amber-700 dark:text-amber-400">
-                                    Pending with you
-                                </Text>
-                            </View>
+                            <ReportStatusPill status={status} />
                         </View>
                     </View>
                 </View>
@@ -91,9 +105,9 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
 };
 
 const ApprovalsReports: React.FC = () => {
-    const [filter, setFilter] = useState<ReportFilter>(IReportStatus.PENDING);
-    const { user } = useRole();
-    const campusId = user?.campus?._id;
+    const [filter, setFilter] = useState<ReportFilter>(IReportStatus.HOD_SUBMITTED);
+    const { groupId } = useGroup();
+    const campusId = groupId;
 
     const { data: latestService } = useGetLatestServiceQuery(campusId as string, { skip: !campusId });
     const { data: ghReport, isLoading } = useGetGhReportByIdQuery(
@@ -101,10 +115,13 @@ const ApprovalsReports: React.FC = () => {
         { skip: !latestService?._id }
     );
 
-    const filtered = useMemo(
-        () => (ghReport?.departmentalReport ?? []).filter(r => r.report.status === filter),
-        [ghReport, filter]
-    );
+    const filtered = useMemo(() => {
+        const all = ghReport?.departmentalReport ?? [];
+        if (filter === 'HISTORICAL') {
+            return all.filter(r => HISTORICAL_STATUSES.has(r.report.status as string));
+        }
+        return all.filter(r => r.report.status === filter);
+    }, [ghReport, filter]);
 
     return (
         <View className="flex-1">
@@ -128,7 +145,7 @@ const ApprovalsReports: React.FC = () => {
                     ) : filtered.length === 0 ? (
                         <View className="py-12 items-center">
                             <Text className="!text-sm text-muted-foreground text-center">
-                                No {filter.toLowerCase().replace(/_/g, ' ')} reports.
+                                No {filter === 'HISTORICAL' ? 'historical' : filter.toLowerCase().replace(/_/g, ' ')} reports.
                             </Text>
                         </View>
                     ) : (

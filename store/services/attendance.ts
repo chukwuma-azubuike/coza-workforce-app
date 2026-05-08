@@ -42,7 +42,7 @@ export type IMutateAttendanceResponse = IDefaultResponse<IAttendance>;
 export type IGetAttendanceListResponse = IDefaultResponse<IAttendance[]>;
 
 export const attendanceServiceSlice = createApi({
-    tagTypes: ['Attendance'],
+    tagTypes: ['Attendance', 'GroupAttendance'],
 
     reducerPath: SERVICE_URL,
 
@@ -60,7 +60,7 @@ export const attendanceServiceSlice = createApi({
                 body,
             }),
 
-            invalidatesTags: ['Attendance'],
+            invalidatesTags: ['Attendance', 'GroupAttendance'],
 
             transformResponse: (response: IMutateAttendanceResponse) => response.data,
         }),
@@ -71,7 +71,7 @@ export const attendanceServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
             }),
 
-            invalidatesTags: ['Attendance'],
+            invalidatesTags: ['Attendance', 'GroupAttendance'],
 
             transformResponse: (response: IMutateAttendanceResponse) => response.data,
         }),
@@ -237,7 +237,40 @@ export const attendanceServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<any[]>) => res.data,
         }),
 
-        // Add your endpoints here
+        // ─── Group-scoped attendance (GH v2) ─────────────────────────
+        getGroupLeadersAttendanceReport: endpoint.query<
+            { attendance: number; leaderUsers: number },
+            { groupId: string; serviceId: string; campusId?: string }
+        >({
+            query: ({ groupId, serviceId, campusId }) => ({
+                url: `${SERVICE_URL}/group/${groupId}/leaders/${serviceId}`,
+                params: campusId ? { campusId } : undefined,
+                method: REST_API_VERBS.GET,
+            }),
+            providesTags: (_, __, { groupId, serviceId }) => [
+                { type: 'GroupAttendance', id: `${groupId}-leaders-${serviceId}` },
+                'GroupAttendance',
+                'Attendance',
+            ],
+            transformResponse: (res: IDefaultResponse<{ attendance: number; leaderUsers: number }>) => res.data,
+        }),
+
+        getGroupWorkersAttendanceReport: endpoint.query<
+            { attendance: number; workerUsers: number },
+            { groupId: string; serviceId: string; campusId?: string }
+        >({
+            query: ({ groupId, serviceId, campusId }) => ({
+                url: `${SERVICE_URL}/group/${groupId}/workers/${serviceId}`,
+                params: campusId ? { campusId } : undefined,
+                method: REST_API_VERBS.GET,
+            }),
+            providesTags: (_, __, { groupId, serviceId }) => [
+                { type: 'GroupAttendance', id: `${groupId}-workers-${serviceId}` },
+                'GroupAttendance',
+                'Attendance',
+            ],
+            transformResponse: (res: IDefaultResponse<{ attendance: number; workerUsers: number }>) => res.data,
+        }),
     }),
 });
 
@@ -257,4 +290,6 @@ export const {
     useLazyGetAttendanceReportForDownloadQuery,
     useGetLeadersCongressAttendanceReportQuery,
     useGetDepartmentCongressAttendanceReportQuery,
+    useGetGroupLeadersAttendanceReportQuery,
+    useGetGroupWorkersAttendanceReportQuery,
 } = attendanceServiceSlice;

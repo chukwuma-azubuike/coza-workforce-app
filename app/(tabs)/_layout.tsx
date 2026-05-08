@@ -9,13 +9,18 @@ import { NavTabBackground } from '~/components/NavBackgroundBlur';
 
 import { AppRoutes } from '@config/navigation';
 import useRole from '@hooks/role';
+import { ROLES } from '@hooks/role';
 import { cn } from '~/lib/utils';
 import { Platform } from 'react-native';
 
 const TabLayout: React.FC = () => {
-    const { isWorker, isQC, isCGWCApproved } = useRole();
+    const { isWorker, isQC, isCGWCApproved, role } = useRole();
+    const isGroupHead = role === ROLES.groupHead;
 
-    const tabRoutes = useMemo(() => AppRoutes.filter(route => route.inMenuBar), [AppRoutes]);
+    const tabRoutes = useMemo(
+        () => AppRoutes.filter(route => isGroupHead ? route.ghMenuBar : route.inMenuBar),
+        [isGroupHead]
+    );
 
     const pathname = usePathname();
     const progress = useSharedValue(1);

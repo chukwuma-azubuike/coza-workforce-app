@@ -8,6 +8,7 @@ import AvatarComponent from '@components/atoms/avatar';
 import UserInfo from '@components/atoms/user-info';
 import { THEME_CONFIG } from '@config/appConfig';
 import useRole from '@hooks/role';
+import useGroup from '@hooks/group';
 import Utils from '@utils/index';
 import DeviceInfo from 'react-native-device-info';
 import { S3_BUCKET_FOLDERS } from '@constants/index';
@@ -29,7 +30,8 @@ const lastMonth = (currentMonth - 1 === 0 ? 12 : currentMonth - 1) as Month;
 const lastMonthYear = lastMonth === 12 ? currentYear - 1 : currentYear;
 
 const Profile: React.FC = () => {
-    const { user, isGlobalPastor, refetch, isFetching } = useRole();
+    const { user, isGlobalPastor, isGroupHead, refetch, isFetching } = useRole();
+    const { group, departments } = useGroup();
 
     const { logOut, isLoading } = useAuth();
 
@@ -142,6 +144,11 @@ const Profile: React.FC = () => {
                             <Text className="text-center text-muted-foreground">
                                 {isGlobalPastor ? 'Global Senior Pastor' : user?.department?.departmentName}
                             </Text>
+                            {isGroupHead && group && (
+                                <Text className="text-center text-muted-foreground !text-xs mt-0.5">
+                                    {group.name} · {departments.length} dept{departments.length !== 1 ? 's' : ''}
+                                </Text>
+                            )}
                         </View>
                     </View>
                     <View className="mb-4 px-4 py-4 bg-muted-background rounded-2xl border border-gray-300 dark:border-border">
