@@ -32,14 +32,14 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
                     className={cn(
                         'web:flex z-0 h-10 native:h-16 web:w-full rounded-full border border-input bg-background px-4 web:py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground placeholder:text-muted-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
                         (props.editable === false || isDisabled) && 'web:cursor-not-allowed',
-                        (!!leftIcon || !!rightIcon) && 'px-12',
+                        (!!leftIcon || !!rightIcon) && 'px-16',
                         className
                     )}
                     placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
                     {...props}
                 />
                 {leftIcon && (
-                    <View className="absolute left-0 top-5 translate-x-1/2 z-30">
+                    <View className="absolute left-2 top-5 translate-x-1/2 z-30">
                         <Icon size={24} name={leftIcon.name} type={leftIcon.type} color={THEME_CONFIG.gray} />
                     </View>
                 )}
@@ -50,7 +50,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
                             size={24}
                             type={rightIcon.name}
                             color={THEME_CONFIG.gray}
-                            className="absolute right-0 top-5 translate-x-1/2 z-10"
+                            className="absolute right-2 top-5 translate-x-1/2 z-10"
                         />
                     </TouchableOpacity>
                 )}
@@ -61,7 +61,7 @@ const Input = React.forwardRef<React.ElementRef<typeof TextInput>, TextInputProp
                             Haptics.selectionAsync();
                             togglePasswordVisibility();
                         }}
-                        className="absolute top-5 right-3"
+                        className="absolute top-5 right-6"
                     >
                         <Ionicons name={secureTextEntry ? 'eye-off' : 'eye'} size={24} color="gray" />
                     </TouchableOpacity>
