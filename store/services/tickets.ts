@@ -241,20 +241,18 @@ export const ticketServiceSlice = createApi({
         getGroupTickets: endpoint.query<
             ITicket[],
             {
-                groupId: string;
                 scope?: 'leaders' | 'workers';
                 filter?: 'open' | 'closed' | 'month' | 'quarter';
                 page?: number;
             }
         >({
-            query: ({ groupId, ...params }) => ({
-                url: `${SERVICE_URL}/group/${groupId}`,
+            query: (params) => ({
+                url: `gh/group/tickets`,
                 params,
                 method: REST_API_VERBS.GET,
             }),
-            providesTags: (result = [], _, { groupId }) => [
+            providesTags: (result = []) => [
                 ...result.map(({ _id }) => ({ type: 'Ticket' as const, id: _id })),
-                { type: 'GroupTickets', id: groupId },
                 'GroupTickets',
                 SERVICE_URL,
             ],

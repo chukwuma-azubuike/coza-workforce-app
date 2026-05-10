@@ -7,12 +7,12 @@ const SERVICE_URL = 'group';
 
 export interface ICreateGroupPayload {
     name: string;
-    slug: string;
     description?: string;
-    campusId: string;
 }
 
-export interface IUpdateGroupPayload extends Partial<ICreateGroupPayload> {
+export interface IUpdateGroupPayload {
+    name?: string;
+    description?: string;
     isActive?: boolean;
 }
 
@@ -83,10 +83,10 @@ export const groupServiceSlice = createApi({
             providesTags: ['GroupSummary'],
         }),
 
-        getGroupSummary: endpoint.query<IGroupSummary, string>({
-            query: groupId => ({ url: `/${SERVICE_URL}/${groupId}/summary` }),
+        getGroupSummary: endpoint.query<IGroupSummary, void>({
+            query: () => ({ url: `/gh/group/summary` }),
             transformResponse: (res: IDefaultResponse<IGroupSummary>) => res?.data,
-            providesTags: (_result, _err, id) => [{ type: 'GroupSummary', id }],
+            providesTags: ['GroupSummary'],
         }),
 
         // ─── Group Head assignment ────────────────────────────────────
@@ -125,12 +125,13 @@ export const groupServiceSlice = createApi({
             invalidatesTags: (_result, _err, { groupId }) => [{ type: 'Group', id: groupId }],
         }),
 
-        reassignDepartmentPreview: endpoint.query<
+        reassignDepartmentPreview: endpoint.mutation<
             IReassignDepartmentPreview,
             { groupId: string; departmentId: string }
         >({
             query: ({ groupId, departmentId }) => ({
                 url: `/${SERVICE_URL}/${groupId}/departments/${departmentId}/reassign-preview`,
+                method: REST_API_VERBS.POST,
             }),
             transformResponse: (res: IDefaultResponse<IReassignDepartmentPreview>) => res?.data,
         }),
@@ -155,6 +156,6 @@ export const {
     useRemoveGroupHeadMutation,
     useAssignDepartmentMutation,
     useRemoveDepartmentMutation,
-    useReassignDepartmentPreviewQuery,
+    useReassignDepartmentPreviewMutation,
     useGetGroupAuditLogQuery,
 } = groupServiceSlice;

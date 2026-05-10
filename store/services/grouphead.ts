@@ -1,4 +1,5 @@
-import { IDefaultQueryParams, IGHSubmittedReportForGSP, IReportHistoryEntry } from '../types/index';
+import { IGHSubmittedReportForGSP, IReportHistoryEntry } from '../types/index';
+import type { IGHGroupDepartment, IGHReportListResponse } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IDefaultResponse, IService, IReportStatus, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -7,10 +8,10 @@ import { ICampusReportSummary } from './reports';
 const SERVICE_URL = 'gh';
 
 export interface IGHReportPayload {
-    departmentReports: string[];
-    incidentReports: string[];
-    submittedReport: string;
+    reportId: string;
+    reportType: string;
     serviceId: string;
+    departmentId: string;
 }
 
 export interface IGHSubmittedReport {
@@ -67,7 +68,6 @@ export interface IGHReportDetail {
 // ─── Report action payloads ───────────────────────────────────────────────────
 export interface IGHApproveReportPayload {
     reportId: string;
-    serviceId: string;
     comment?: string;
     idempotencyKey?: string;
 }
@@ -116,7 +116,7 @@ export const groupHeadServiceSlice = createApi({
     endpoints: endpoint => ({
         submitGhReport: endpoint.mutation<any, IGHReportPayload>({
             query: body => ({
-                url: `/${SERVICE_URL}/submitReport`,
+                url: `/${SERVICE_URL}/reports/submit`,
                 method: REST_API_VERBS.POST,
                 body,
             }),
@@ -132,14 +132,17 @@ export const groupHeadServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res?.data,
         }),
 
-        getGhReports: endpoint.query<IGHSubmittedReport[], IDefaultQueryParams>({
+        getGhReports: endpoint.query<IGHReportListResponse, { status?: string; page?: number; limit?: number }>({
             query: params => ({
                 url: `/${SERVICE_URL}/reports`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            providesTags: ['GHReport'],
-            transformResponse: (res: IDefaultResponse<IGHSubmittedReport[]>) => res?.data,
+            providesTags: (result) => [
+                ...(result?.reports ?? []).map(r => ({ type: 'GHReport' as const, id: r._id })),
+                'GHReport',
+            ],
+            transformResponse: (res: IDefaultResponse<IGHReportListResponse>) => res?.data,
         }),
 
         getGHSubmittedReportsByServiceId: endpoint.query<Array<IGHSubmittedReportForGSP>, string>({
@@ -154,7 +157,7 @@ export const groupHeadServiceSlice = createApi({
         // ─── Report detail ────────────────────────────────────────────
         getGhReportDetail: endpoint.query<IGHReportDetail, { reportId: string }>({
             query: ({ reportId }) => ({
-                url: `/${SERVICE_URL}/reportDetail/${reportId}`,
+                url: `/${SERVICE_URL}/reports/${reportId}`,
                 method: REST_API_VERBS.GET,
             }),
             providesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
@@ -169,9 +172,8 @@ export const groupHeadServiceSlice = createApi({
                 body: { comment },
                 headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
             }),
-            invalidatesTags: (_, __, { reportId, serviceId }) => [
+            invalidatesTags: (_, __, { reportId }) => [
                 { type: 'GHReport', id: reportId },
-                { type: 'GHReport', id: serviceId },
                 'GHReport',
             ],
         }),
@@ -222,6 +224,26 @@ export const groupHeadServiceSlice = createApi({
             }),
             invalidatesTags: (_, __, { reviewId }) => [{ type: 'GHWordReview', id: reviewId }, 'GHWordReview'],
         }),
+
+        // ─── Group departments & roster ───────────────────────────────
+        getGroupDepartments: endpoint.query<IGHGroupDepartment[], { campusId?: string } | void>({
+            query: (params) => ({
+                url: `/${SERVICE_URL}/group/departments`,
+                params: params ?? undefined,
+                method: REST_API_VERBS.GET,
+            }),
+            providesTags: ['GHReport'],
+            transformResponse: (res: IDefaultResponse<IGHGroupDepartment[]>) => res?.data,
+        }),
+
+        getGroupDepartmentRoster: endpoint.query<any[], { departmentId: string }>({
+            query: ({ departmentId }) => ({
+                url: `/${SERVICE_URL}/group/department/${departmentId}/roster`,
+                method: REST_API_VERBS.GET,
+            }),
+            providesTags: (_, __, { departmentId }) => [{ type: 'GHReport', id: departmentId }],
+            transformResponse: (res: IDefaultResponse<any[]>) => res?.data,
+        }),
     }),
 });
 
@@ -238,4 +260,6 @@ export const {
     useGetGhWordReviewsQuery,
     useAcknowledgeGhWordReviewMutation,
     useSuspendGhWordReviewMutation,
+    useGetGroupDepartmentsQuery,
+    useGetGroupDepartmentRosterQuery,
 } = groupHeadServiceSlice;

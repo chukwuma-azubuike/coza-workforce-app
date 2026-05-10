@@ -145,7 +145,6 @@ const ApprovalsReportDetail: React.FC = () => {
                     try {
                         await approveReport({
                             reportId: reportId as string,
-                            serviceId: serviceId as string,
                             idempotencyKey: uuid(),
                         }).unwrap();
                         setActionDone('approved');

@@ -826,6 +826,15 @@ export interface IGroupsListResponse {
     pageSize: number;
 }
 
+// Department entry inside IGroup (enriched for detail endpoints)
+export interface IGroupDepartmentEntry {
+    _id: string;
+    departmentName: string;
+    campusId?: string;
+    campusName?: string;
+    workerCount?: number;
+}
+
 // Shape returned by GET /group/:id (detail) — fully populated
 export interface IGroup extends ILog {
     _id: string;
@@ -836,7 +845,7 @@ export interface IGroup extends ILog {
     campusId?: string;
     campus?: Pick<ICampus, '_id' | 'campusName'>;
     groupHeads: Pick<IUser, '_id' | 'firstName' | 'lastName' | 'pictureUrl'>[];
-    departments: Pick<IDepartment, '_id' | 'departmentName'>[];
+    departments: IGroupDepartmentEntry[];
     ghCount?: number;
     departmentCount?: number;
     createdAt: string;
@@ -881,4 +890,57 @@ export interface IReportHistoryEntry {
     actorRole: 'HOD' | 'AHOD' | 'GH' | 'CP' | 'GSP';
     comment?: string;
     createdAt: string;
+}
+
+// ─── GH reports list (v2.0) ───────────────────────────────────────────────────
+
+export interface IGHReportListItem {
+    _id: string;
+    reportType: string;
+    serviceId: string;
+    serviceName: string;
+    departmentId: string;
+    departmentName: string;
+    campusName?: string;
+    status: IReportStatus;
+    submittedBy?: { firstName: string; lastName: string; pictureUrl?: string };
+    submittedAt: string;
+    preview?: string;
+    attachmentCount?: number;
+    createdAt: string;
+}
+
+export interface IGHReportListResponse {
+    reports: IGHReportListItem[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
+// ─── GH group departments (v2.0) ─────────────────────────────────────────────
+
+export interface IGHGroupDepartment {
+    _id: string;
+    departmentName: string;
+    campusId?: string;
+    campusName?: string;
+    workerCount: number;
+    activeCount: number;
+    dormantCount: number;
+    hodName?: string;
+    hodPictureUrl?: string;
+}
+
+// ─── GH group attendance record (v2.0) ───────────────────────────────────────
+
+export interface IGHGroupAttendanceRecord {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
+    departmentName: string;
+    status: IAttendanceStatus;
+    clockIn?: string;
+    clockOut?: string;
+    isManual?: boolean;
 }

@@ -109,14 +109,14 @@ const ApprovalsPermissions: React.FC = () => {
     const [filter, setFilter] = useState<PermFilter>('PENDING');
     const { groupId } = useGroup();
 
-    const { data: permissions = [], isLoading, refetch } = useGetGroupPermissionsQuery(
-        { groupId: groupId as string, status: filter, limit: 50 } as any,
+    const { data: permissionsData, isLoading, refetch } = useGetGroupPermissionsQuery(
+        { status: filter, page: 1 },
         { skip: !groupId }
     );
 
     const filtered = useMemo(
-        () => permissions.filter(p => p.status === filter),
-        [permissions, filter]
+        () => (permissionsData?.permissions ?? []).filter(p => p.status === filter),
+        [permissionsData, filter]
     );
 
     return (

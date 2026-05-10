@@ -239,37 +239,35 @@ export const attendanceServiceSlice = createApi({
 
         // ─── Group-scoped attendance (GH v2) ─────────────────────────
         getGroupLeadersAttendanceReport: endpoint.query<
-            { attendance: number; leaderUsers: number },
-            { groupId: string; serviceId: string; campusId?: string }
+            any[],
+            { serviceId: string; campusId?: string }
         >({
-            query: ({ groupId, serviceId, campusId }) => ({
-                url: `${SERVICE_URL}/group/${groupId}/leaders/${serviceId}`,
-                params: campusId ? { campusId } : undefined,
+            query: ({ serviceId, campusId }) => ({
+                url: `gh/group/attendance`,
+                params: { scope: 'leaders', serviceId, ...(campusId ? { campusId } : {}) },
                 method: REST_API_VERBS.GET,
             }),
-            providesTags: (_, __, { groupId, serviceId }) => [
-                { type: 'GroupAttendance', id: `${groupId}-leaders-${serviceId}` },
+            providesTags: (_, __, { serviceId }) => [
+                { type: 'GroupAttendance', id: `leaders-${serviceId}` },
                 'GroupAttendance',
-                'Attendance',
             ],
-            transformResponse: (res: IDefaultResponse<{ attendance: number; leaderUsers: number }>) => res.data,
+            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
         }),
 
         getGroupWorkersAttendanceReport: endpoint.query<
-            { attendance: number; workerUsers: number },
-            { groupId: string; serviceId: string; campusId?: string }
+            any[],
+            { serviceId: string; campusId?: string }
         >({
-            query: ({ groupId, serviceId, campusId }) => ({
-                url: `${SERVICE_URL}/group/${groupId}/workers/${serviceId}`,
-                params: campusId ? { campusId } : undefined,
+            query: ({ serviceId, campusId }) => ({
+                url: `gh/group/attendance`,
+                params: { scope: 'workers', serviceId, ...(campusId ? { campusId } : {}) },
                 method: REST_API_VERBS.GET,
             }),
-            providesTags: (_, __, { groupId, serviceId }) => [
-                { type: 'GroupAttendance', id: `${groupId}-workers-${serviceId}` },
+            providesTags: (_, __, { serviceId }) => [
+                { type: 'GroupAttendance', id: `workers-${serviceId}` },
                 'GroupAttendance',
-                'Attendance',
             ],
-            transformResponse: (res: IDefaultResponse<{ attendance: number; workerUsers: number }>) => res.data,
+            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
         }),
     }),
 });
