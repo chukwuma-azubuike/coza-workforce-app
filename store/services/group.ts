@@ -8,12 +8,26 @@ const SERVICE_URL = 'group';
 export interface ICreateGroupPayload {
     name: string;
     description?: string;
+    groupHeads?: string[];
+    departments?: string[];
 }
 
 export interface IUpdateGroupPayload {
     name?: string;
     description?: string;
     isActive?: boolean;
+}
+
+export interface ICreateGroupResponse {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    isActive?: boolean;
+    groupHeadsAssigned: { userId: string; name: string }[];
+    groupHeadsSkipped: { userId: string; reason: string }[];
+    departmentsAssigned: { departmentId: string; name: string }[];
+    departmentsSkipped: { departmentId: string; reason: string }[];
 }
 
 export interface IAssignGroupHeadPayload {
@@ -55,9 +69,9 @@ export const groupServiceSlice = createApi({
             providesTags: (_result, _err, id) => [{ type: 'Group', id }],
         }),
 
-        createGroup: endpoint.mutation<IGroup, ICreateGroupPayload>({
+        createGroup: endpoint.mutation<ICreateGroupResponse, ICreateGroupPayload>({
             query: body => ({ url: `/${SERVICE_URL}`, method: REST_API_VERBS.POST, body }),
-            transformResponse: (res: IDefaultResponse<IGroup>) => res?.data,
+            transformResponse: (res: IDefaultResponse<ICreateGroupResponse>) => res?.data,
             invalidatesTags: ['Group'],
         }),
 

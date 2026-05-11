@@ -475,7 +475,7 @@ const AppRoutes: IAppRoute[] = [
         ghMenuBar: true,
         inMore: true,
         icon: { name: 'database-cog-outline', type: 'material-community' },
-        href: '/gh-tab-workforce',
+        href: '/workforce-summary',
     },
     {
         name: 'Manual clock in',

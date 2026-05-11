@@ -55,6 +55,7 @@ export enum ROLE_HEIRARCHY {
     'HOD' = 3,
     'internshipHOD' = 3, // Frontend generated
     // 'qcHOD' = 1, // Frontend generated
+    'groupHead' = 5,
     'campusCoordinator' = 5,
     'campusPastor' = 5,
     'admin' = 6,
