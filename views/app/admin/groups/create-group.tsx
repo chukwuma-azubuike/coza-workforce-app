@@ -10,7 +10,7 @@ import { Separator } from '~/components/ui/separator';
 import AvatarComponent from '@components/atoms/avatar';
 import AdminMultiPicker from '@components/composite/admin-multi-picker';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import Utils from '@utils/index';
+import Utils, { extractApiError } from '@utils/index';
 import { useCreateGroupMutation, ICreateGroupResponse } from '@store/services/group';
 import { useGetCampusesQuery } from '@store/services/campus';
 import { useGetGroupHeadUsersQuery, useGetUsersQuery } from '@store/services/account';
@@ -114,8 +114,8 @@ const AdminCreateGroup: React.FC = () => {
             const hasSkipped = (res.groupHeadsSkipped?.length ?? 0) > 0 || (res.departmentsSkipped?.length ?? 0) > 0;
             const title = hasSkipped ? 'Group created — some items skipped' : 'Group created';
             Alert.alert(title, buildSkippedSummary(res), [{ text: 'OK', onPress: () => router.back() }]);
-        } catch {
-            Alert.alert('Error', 'Could not create group. Please try again.');
+        } catch (err) {
+            Alert.alert('Error', extractApiError(err, 'Could not create group. Please try again.'));
         }
     };
 

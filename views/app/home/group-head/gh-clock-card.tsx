@@ -19,6 +19,7 @@ import { useClockInMutation, useClockOutMutation } from '@store/services/attenda
 import { THEME_CONFIG } from '@config/appConfig';
 import { GeoCoordinates } from '~/hooks/geo-location';
 import { Card } from '~/components/ui/card';
+import { extractApiError } from '@utils/index';
 
 interface GHClockCardProps {
     isInRange: boolean;
@@ -116,21 +117,22 @@ const GHClockCard: React.FC<GHClockCardProps> = ({
     }, [user, service, clockIn, deviceCoordinates]);
 
     const handleClockOut = useCallback(() => {
-        if (!latestAttendanceData?.[0]) return;
+        const attendanceId = latestAttendanceData?.[0]?._id;
+        if (!attendanceId) return;
         Alert.alert('Confirm clock out', 'Are you sure you want to clock out now?', [
             { text: 'No', style: 'cancel' },
             {
                 text: 'Yes',
                 onPress: async () => {
-                    await clockOut({
-                        attendanceId: latestAttendanceData[0]._id,
-                        clockOut: `${dayjs().unix()}`,
-                        userId: user?.userId,
-                    } as any);
+                    try {
+                        await clockOut(attendanceId).unwrap();
+                    } catch (err) {
+                        Alert.alert('Error', extractApiError(err, 'Could not clock out. Please try again.'));
+                    }
                 },
             },
         ]);
-    }, [latestAttendanceData, clockOut, user]);
+    }, [latestAttendanceData, clockOut]);
 
     const handlePress = useCallback(() => {
         verifyRangeBeforeAction(

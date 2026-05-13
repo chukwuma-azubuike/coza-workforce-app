@@ -25,6 +25,7 @@ import {
 } from '@store/services/grouphead';
 import { IReportStatus, IReportHistoryEntry } from '@store/types';
 import { cn } from '~/lib/utils';
+import { extractApiError } from '@utils/index';
 
 interface RouteParams {
     reportId: string;
@@ -148,8 +149,8 @@ const ApprovalsReportDetail: React.FC = () => {
                             idempotencyKey: uuid(),
                         }).unwrap();
                         setActionDone('approved');
-                    } catch {
-                        Alert.alert('Error', 'Could not approve report. Please try again.');
+                    } catch (err) {
+                        Alert.alert('Error', extractApiError(err, 'Could not approve report. Please try again.'));
                     }
                 },
             },
@@ -165,8 +166,8 @@ const ApprovalsReportDetail: React.FC = () => {
             }).unwrap();
             setShowRequestChanges(false);
             setActionDone('changes-requested');
-        } catch {
-            Alert.alert('Error', 'Could not request changes. Please try again.');
+        } catch (err) {
+            Alert.alert('Error', extractApiError(err, 'Could not request changes. Please try again.'));
         }
     };
 
@@ -179,8 +180,8 @@ const ApprovalsReportDetail: React.FC = () => {
             }).unwrap();
             setShowPushBack(false);
             setActionDone('pushed-back');
-        } catch {
-            Alert.alert('Error', 'Could not push report back. Please try again.');
+        } catch (err) {
+            Alert.alert('Error', extractApiError(err, 'Could not push report back. Please try again.'));
         }
     };
 
