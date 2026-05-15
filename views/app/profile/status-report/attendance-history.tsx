@@ -73,28 +73,22 @@ const AttendanceStatusBadge = ({ status }: { status: IAttendanceStatus }) => {
             case 'LATE':
                 return {
                     label: 'Attended',
-                    class: 'bg-green-50 border-green-200 w-fit',
-                    textClass: 'text-green-700 text-xs',
                 };
             case 'ABSENT_WITH_PERMISSION':
                 return {
                     label: 'Permission',
-                    class: 'bg-blue-50 border-blue-200 w-fit',
-                    textClass: 'text-blue-700 text-xs',
                 };
             case 'ABSENT':
             default:
                 return {
                     label: 'Absent',
-                    class: 'bg-red-50 border-red-200 w-fit',
-                    textClass: 'text-red-700 text-xs',
                 };
         }
     })();
     return (
-        <Badge variant="outline" className={badgeVariant.class}>
-            <Text className={badgeVariant.textClass}>{badgeVariant.label}</Text>
-        </Badge>
+        <StatusTag>
+            {badgeVariant.label}
+        </StatusTag>
     );
 };
 

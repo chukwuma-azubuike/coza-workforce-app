@@ -162,20 +162,22 @@ export const permissionsServiceSlice = createApi({
 
         // ─── Group-scoped permissions (GH v2) ─────────────────────────
         getGroupPermissions: endpoint.query<
-            { permissions: IPermission[]; total: number; page: number; limit: number },
-            { status?: string; page?: number }
+            IPermission[],
+            { status?: string; page?: number; limit?: number }
         >({
             query: (params) => ({
                 url: `gh/group/permissions`,
                 params,
                 method: REST_API_VERBS.GET,
             }),
-            providesTags: (result) => [
-                ...(result?.permissions ?? []).map(({ _id }) => ({ type: 'Permission' as const, id: _id })),
+            providesTags: (result = []) => [
+                ...result.map(({ _id }) => ({ type: 'Permission' as const, id: _id })),
                 'GroupPermissions',
                 SERVICE_URL,
             ],
-            transformResponse: (res: IDefaultResponse<{ permissions: IPermission[]; total: number; page: number; limit: number }>) => res.data,
+            transformResponse: (
+                res: IDefaultResponse<{ permissions: IPermission[]; total: number; page: number; limit: number }>
+            ) => res.data?.permissions ?? [],
         }),
     }),
 });

@@ -115,7 +115,7 @@ const ApprovalsPermissions: React.FC = () => {
     );
 
     const filtered = useMemo(
-        () => (permissionsData?.permissions ?? []).filter(p => p.status === filter),
+        () => (permissionsData ?? []).filter(p => p.status === filter),
         [permissionsData, filter]
     );
 

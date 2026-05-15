@@ -12,7 +12,7 @@ import useMoreRoutes from '~/hooks/more-routes';
 
 const More: React.FC = () => {
     const {
-        user: { userId },
+        user: { userId, }
     } = useRole();
 
     const { refetch, isLoading } = useGetUserByIdQuery(userId);

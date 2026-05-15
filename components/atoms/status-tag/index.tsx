@@ -34,6 +34,7 @@ const resolveColor = (status: string | undefined): StatusColor => {
         case IReportStatus.CP_APPROVED:
         case IReportStatus.GSP_APPROVED:
         case IReportStatus.GSP_SUBMITTED:
+        case "Attended":
             return 'green';
 
         case 'INACTIVE':
@@ -42,6 +43,7 @@ const resolveColor = (status: string | undefined): StatusColor => {
         case IReportStatus.GH_CHANGE_REQUESTED:
         case IReportStatus.CP_CHANGE_REQUESTED:
         case IReportStatus.GSP_CHANGE_REQUESTED:
+        case 'LATE':
             return 'yellow';
 
         case 'SUBMITTED':
@@ -49,6 +51,7 @@ const resolveColor = (status: string | undefined): StatusColor => {
         case 'HOD':
         case 'AHOD':
         case IReportStatus.HOD_SUBMITTED:
+        case 'ABSENT_WITH_PERMISSION':
             return 'blue';
 
         case 'DECLINED':
@@ -56,6 +59,7 @@ const resolveColor = (status: string | undefined): StatusColor => {
         case 'CONTESTED':
         case 'UNAPPROVED':
         case 'BLACKLISTED':
+        case 'Absent':
             return 'red';
 
         case 'PENDING':
@@ -92,7 +96,6 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         borderRadius: 999,
         paddingHorizontal: 10,
-        paddingVertical: 3,
     },
     label: {
         fontSize: 12,

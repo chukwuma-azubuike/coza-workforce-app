@@ -1,4 +1,4 @@
-import { IGHSubmittedReportForGSP, IReportHistoryEntry } from '../types/index';
+import { IGHSubmittedReportForGSP, IReportHistoryEntry, IGHRosterMember } from '../types/index';
 import type { IGHGroupDepartment, IGHReportListResponse } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IDefaultResponse, IService, IReportStatus, REST_API_VERBS } from '../types';
@@ -138,7 +138,7 @@ export const groupHeadServiceSlice = createApi({
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            providesTags: (result) => [
+            providesTags: result => [
                 ...(result?.reports ?? []).map(r => ({ type: 'GHReport' as const, id: r._id })),
                 'GHReport',
             ],
@@ -172,10 +172,7 @@ export const groupHeadServiceSlice = createApi({
                 body: { comment },
                 headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
             }),
-            invalidatesTags: (_, __, { reportId }) => [
-                { type: 'GHReport', id: reportId },
-                'GHReport',
-            ],
+            invalidatesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
         }),
 
         requestReportChanges: endpoint.mutation<void, IGHRequestChangesPayload>({
@@ -227,7 +224,7 @@ export const groupHeadServiceSlice = createApi({
 
         // ─── Group departments & roster ───────────────────────────────
         getGroupDepartments: endpoint.query<IGHGroupDepartment[], { campusId?: string } | void>({
-            query: (params) => ({
+            query: params => ({
                 url: `/${SERVICE_URL}/group/departments`,
                 params: params ?? undefined,
                 method: REST_API_VERBS.GET,
@@ -236,13 +233,13 @@ export const groupHeadServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IGHGroupDepartment[]>) => res?.data,
         }),
 
-        getGroupDepartmentRoster: endpoint.query<any[], { departmentId: string }>({
+        getGroupDepartmentRoster: endpoint.query<IGHRosterMember[], { departmentId: string }>({
             query: ({ departmentId }) => ({
                 url: `/${SERVICE_URL}/group/department/${departmentId}/roster`,
                 method: REST_API_VERBS.GET,
             }),
             providesTags: (_, __, { departmentId }) => [{ type: 'GHReport', id: departmentId }],
-            transformResponse: (res: IDefaultResponse<any[]>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGHRosterMember[]>) => res?.data,
         }),
     }),
 });

@@ -944,3 +944,17 @@ export interface IGHGroupAttendanceRecord {
     clockOut?: string;
     isManual?: boolean;
 }
+
+// ─── GH group department roster member (v2.0) ────────────────────────────────
+
+export interface IGHRosterMember {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
+    email?: string;
+    role: { _id: string; name: string };
+    membershipStatus?: 'active' | 'dormant' | 'inactive';
+    clockedInToday?: boolean;
+    ticketCount?: number;
+}

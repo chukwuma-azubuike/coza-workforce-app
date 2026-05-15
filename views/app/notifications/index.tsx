@@ -9,7 +9,7 @@ import ViewWrapper from '@components/layout/viewWrapper';
 import { Text } from '~/components/ui/text';
 import { Skeleton } from '~/components/ui/skeleton';
 import { Separator } from '~/components/ui/separator';
-import { useAppSelector } from '@store/hooks';
+
 
 type NotifFilter = 'ALL' | 'PERMISSIONS' | 'REPORTS' | 'REVIEWS' | 'TICKETS' | 'CONFERENCE';
 

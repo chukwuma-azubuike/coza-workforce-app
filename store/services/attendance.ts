@@ -6,6 +6,7 @@ import {
     ICampus,
     IDefaultQueryParams,
     IDefaultResponse,
+    IGHGroupAttendanceRecord,
     IReportDownloadPayload,
     IUser,
     IUserReportType,
@@ -239,7 +240,7 @@ export const attendanceServiceSlice = createApi({
 
         // ─── Group-scoped attendance (GH v2) ─────────────────────────
         getGroupLeadersAttendanceReport: endpoint.query<
-            any[],
+            IGHGroupAttendanceRecord[],
             { serviceId: string; campusId?: string }
         >({
             query: ({ serviceId, campusId }) => ({
@@ -251,11 +252,11 @@ export const attendanceServiceSlice = createApi({
                 { type: 'GroupAttendance', id: `leaders-${serviceId}` },
                 'GroupAttendance',
             ],
-            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<IGHGroupAttendanceRecord[]>) => res.data,
         }),
 
         getGroupWorkersAttendanceReport: endpoint.query<
-            any[],
+            IGHGroupAttendanceRecord[],
             { serviceId: string; campusId?: string }
         >({
             query: ({ serviceId, campusId }) => ({
@@ -267,7 +268,7 @@ export const attendanceServiceSlice = createApi({
                 { type: 'GroupAttendance', id: `workers-${serviceId}` },
                 'GroupAttendance',
             ],
-            transformResponse: (res: IDefaultResponse<any[]>) => res.data,
+            transformResponse: (res: IDefaultResponse<IGHGroupAttendanceRecord[]>) => res.data,
         }),
     }),
 });

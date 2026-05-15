@@ -7,7 +7,7 @@ import TabComponent from '@components/composite/tabs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import ApprovalsPermissions from './approvals-permissions';
 import ApprovalsReports from './approvals-reports';
-import ApprovalsReviews from './approvals-reviews';
+// import ApprovalsReviews from './approvals-reviews';
 
 const PermissionsTab: React.FC = memo(() => (
     <ErrorBoundary>
@@ -21,22 +21,22 @@ const ReportsTab: React.FC = memo(() => (
     </ErrorBoundary>
 ));
 
-const ReviewsTab: React.FC = memo(() => (
-    <ErrorBoundary>
-        <ApprovalsReviews />
-    </ErrorBoundary>
-));
+// const ReviewsTab: React.FC = memo(() => (
+//     <ErrorBoundary>
+//         <ApprovalsReviews />
+//     </ErrorBoundary>
+// ));
 
 const ROUTES = [
     { key: 'permissions', title: 'Permissions' },
     { key: 'reports', title: 'Reports' },
-    { key: 'reviews', title: 'Reviews' },
+    // { key: 'reviews', title: 'Reviews' },
 ];
 
 const renderScene = SceneMap({
     permissions: PermissionsTab,
     reports: ReportsTab,
-    reviews: ReviewsTab,
+    // reviews: ReviewsTab, //TODO: Temporarily hide reviews tab until backend support is ready
 });
 
 const GHApprovals: React.FC = () => {

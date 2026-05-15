@@ -6,7 +6,7 @@ import StatusTag from '@components/atoms/status-tag';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import useRole from '@hooks/role';
-import { useGetPermissionsQuery } from '@store/services/permissions';
+import { useGetGroupPermissionsQuery, useGetPermissionsQuery } from '@store/services/permissions';
 import { IDefaultQueryParams, IPermission } from '@store/types';
 import Utils from '@utils/index';
 import SectionListComponent from '~/components/composite/section-list';
@@ -371,12 +371,9 @@ const GroupPermissionsList: React.FC = memo(() => {
         fetchNextPage,
         refetch,
         hasNextPage,
-    } = useInfiniteData<IPermission, Omit<IDefaultQueryParams, 'userId'>>(
-        {
-            limit: 20, // TODO: Restore after backend is fixed
-            isGH: true,
-        },
-        useGetPermissionsQuery as any,
+    } = useInfiniteData<IPermission, { status?: string; limit?: number }>(
+        { limit: 20 },
+        useGetGroupPermissionsQuery as any,
         '_id'
     );
 

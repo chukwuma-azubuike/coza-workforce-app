@@ -33,10 +33,10 @@ const QuickActionTile: React.FC<QuickActionTileProps> = ({ label, iconName, onPr
 );
 
 const QUICK_ACTIONS = [
-    { label: 'Reports', iconName: 'document-text-outline', href: '/reports/service-report' },
+    { label: 'Reports', iconName: 'document-text-outline', href: '/gh-tab-approvals' },
     { label: 'Permissions', iconName: 'shield-checkmark-outline', href: '/permissions' },
-    { label: 'Workforce', iconName: 'people-outline', href: '/workforce-summary' },
-    { label: 'Approvals', iconName: 'clipboard-outline', href: '/gh-approvals' },
+    { label: 'Workforce', iconName: 'people-outline', href: '/gh-tab-workforce' },
+    { label: 'Approvals', iconName: 'clipboard-outline', href: '/gh-tab-approvals' },
 ] as const;
 
 interface GHQuickActionsProps {
@@ -53,7 +53,7 @@ const GHQuickActions: React.FC<GHQuickActionsProps> = ({ pendingCount }) => (
                     label={label}
                     iconName={iconName}
                     onPress={() => router.push(href as any)}
-                    badge={href === '/gh-approvals' ? pendingCount : undefined}
+                    badge={href === '/gh-tab-approvals' ? pendingCount : undefined}
                 />
             ))}
         </View>

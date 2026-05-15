@@ -13,7 +13,6 @@ import AvatarComponent from '@components/atoms/avatar';
 import ReportCommentSheet from '@components/composite/report-comment-sheet';
 import useRole from '@hooks/role';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { THEME_CONFIG } from '@config/appConfig';
 import {
     IGHWordReview,
     useAcknowledgeGhWordReviewMutation,
@@ -21,7 +20,6 @@ import {
     useSuspendGhWordReviewMutation,
 } from '@store/services/grouphead';
 import { useGetLatestServiceQuery } from '@store/services/services';
-import { cn } from '~/lib/utils';
 import FilterChip from './approvals-filter-chip';
 
 type ReviewFilter = 'PENDING' | 'ACKNOWLEDGED' | 'SUSPENDED';
@@ -30,52 +28,6 @@ const FILTERS: { key: ReviewFilter; label: string }[] = [
     { key: 'PENDING', label: 'Pending' },
     { key: 'ACKNOWLEDGED', label: 'Acknowledged' },
     { key: 'SUSPENDED', label: 'Suspended' },
-];
-
-// TODO: Remove MOCK_REVIEWS once GET /gh/wordReviews/:serviceId is live on backend.
-const MOCK_REVIEWS: IGHWordReview[] = [
-    {
-        _id: 'mock-1',
-        firstName: 'Bisi',
-        lastName: 'Olatunji',
-        role: 'HOD',
-        departmentName: 'Praise & Worship',
-        weekEnding: dayjs().subtract(3, 'day').toISOString(),
-        wordCount: 342,
-        preview:
-            'Studied John 4:23-24 on worship in spirit and truth. Three things stood out — the Father is actively seeking worshippers, worship is a posture before it is an activity, and truth here is the person of Jesus, not just accuracy.',
-        status: 'PENDING',
-        isLate: false,
-        submittedAt: dayjs().subtract(4, 'hour').toISOString(),
-    },
-    {
-        _id: 'mock-2',
-        firstName: 'Sola',
-        lastName: 'Akande',
-        role: 'HOD',
-        departmentName: 'PCU (Children)',
-        weekEnding: dayjs().subtract(3, 'day').toISOString(),
-        wordCount: 287,
-        preview:
-            'Reflected on Mark 10:14 — "let the little children come". Children are not a junior congregation; they are a present audience for the gospel. We must guard against entertaining them while withholding substance.',
-        status: 'PENDING',
-        isLate: false,
-        submittedAt: dayjs().subtract(6, 'hour').toISOString(),
-    },
-    {
-        _id: 'mock-3',
-        firstName: 'Yemi',
-        lastName: 'Falade',
-        role: 'AHOD',
-        departmentName: 'Protocol',
-        weekEnding: dayjs().subtract(10, 'day').toISOString(),
-        wordCount: 198,
-        preview:
-            'Considered Matthew 25:21. "Faithful in a few things" reorders my view of small assignments — protocol is not crowd control, it is hospitality on behalf of the Lord of the house.',
-        status: 'PENDING',
-        isLate: true,
-        submittedAt: dayjs().subtract(2, 'day').toISOString(),
-    },
 ];
 
 interface ReviewCardProps {
@@ -210,7 +162,7 @@ const ApprovalsReviews: React.FC = () => {
     );
 
     // Use live data if available, fall back to mock so the UI is always populated
-    const reviews = apiReviews ?? MOCK_REVIEWS;
+    const reviews = apiReviews
 
     const [acknowledge, { isLoading: isAcknowledging, originalArgs: ackArgs }] = useAcknowledgeGhWordReviewMutation();
     const [suspend, { isLoading: isSuspending }] = useSuspendGhWordReviewMutation();
@@ -239,7 +191,7 @@ const ApprovalsReviews: React.FC = () => {
         }
     };
 
-    const filtered = useMemo(() => reviews.filter(r => r.status === filter), [reviews, filter]);
+    const filtered = useMemo(() => reviews?.filter(r => r.status === filter), [reviews, filter]);
 
     return (
         <>
@@ -261,14 +213,14 @@ const ApprovalsReviews: React.FC = () => {
                     <View className="px-4 pb-8 gap-3">
                         {isLoading ? (
                             [1, 2].map(i => <Skeleton key={i} className="h-48 w-full rounded-3xl" />)
-                        ) : filtered.length === 0 ? (
+                        ) : filtered?.length === 0 ? (
                             <View className="py-12 items-center">
                                 <Text className="!text-sm text-muted-foreground text-center">
                                     No {filter.toLowerCase()} word reviews.
                                 </Text>
                             </View>
                         ) : (
-                            filtered.map(review =>
+                            filtered?.map(review =>
                                 review.status === 'ACKNOWLEDGED' ? (
                                     <AcknowledgedCard key={review._id} review={review} />
                                 ) : (

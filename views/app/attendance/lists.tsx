@@ -7,18 +7,24 @@ import {
     MyAttendanceRow,
     TeamAttendanceRow,
 } from './row-components';
-import { useGetAttendanceQuery } from '@store/services/attendance';
+import {
+    useGetAttendanceQuery,
+    useGetGroupLeadersAttendanceReportQuery,
+    useGetGroupWorkersAttendanceReportQuery,
+} from '@store/services/attendance';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
 import { useGetServicesQuery } from '@store/services/services';
-import { useGetGroupHeadUsersQuery, useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
+import { useGetUsersByDepartmentIdQuery, useGetUsersQuery } from '@store/services/account';
 import dayjs from 'dayjs';
 import ErrorBoundary from '@components/composite/error-boundary';
 import useFetchMoreData from '@hooks/fetch-more-data';
 import Utils from '@utils/index';
-import { Platform, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
+import { Text } from '~/components/ui/text';
 // import { useGetGHCampusByIdQuery } from '@store/services/campus';
 import PickerSelect from '~/components/ui/picker-select';
+import useDepartmentIndex from '~/hooks/department-index';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -476,10 +482,13 @@ export const CampusAttendance: React.FC = React.memo(() => {
     );
 });
 
+type GroupAttendanceScope = 'leaders' | 'workers';
+
 export const GroupAttendance: React.FC = React.memo(() => {
     const { data: services, refetch: refetchServices, isLoading: serviceIsLoading } = useGetServicesQuery({});
 
     const [serviceId, setServiceId] = React.useState<IService['_id']>();
+    const [scope, setScope] = React.useState<GroupAttendanceScope>('leaders');
 
     const setService = useCallback((value: IService['_id']) => {
         setServiceId(value);
@@ -500,76 +509,51 @@ export const GroupAttendance: React.FC = React.memo(() => {
     }, [sortedServices]);
 
     const {
-        isLoading,
-        isFetching,
-        refetch: refetchAttendance,
-        data: membersClockedIn,
-    } = useGetAttendanceQuery({
-        serviceId: serviceId,
-        isGH: true,
-    });
+        data: leadersData,
+        isLoading: leadersLoading,
+        isFetching: leadersFetching,
+        refetch: refetchLeaders,
+    } = useGetGroupLeadersAttendanceReportQuery(
+        { serviceId: serviceId as string },
+        { skip: !serviceId || scope !== 'leaders' }
+    );
 
     const {
-        data: members,
-        refetch: usersRefetch,
-        isLoading: membersLoading,
-        isFetching: membersFetching,
-    } = useGetGroupHeadUsersQuery({});
-
-    const allMembers = React.useMemo(() => {
-        if (!members?.length) return [];
-
-        return members?.map(member => {
-            return {
-                ...member,
-                userId: member._id,
-            };
-        });
-    }, [members]);
-
-    const membersClockedInValid = React.useMemo(() => {
-        if (!membersClockedIn?.length) return [];
-
-        return membersClockedIn?.map(member => {
-            return {
-                ...member,
-                userId: member?.user?._id,
-            };
-        });
-    }, [membersClockedIn]);
-
-    const mergedUsers = useMemo(
-        () => [...membersClockedInValid, ...allMembers] as any,
-        [membersClockedInValid, allMembers]
+        data: workersData,
+        isLoading: workersLoading,
+        isFetching: workersFetching,
+        refetch: refetchWorkers,
+    } = useGetGroupWorkersAttendanceReportQuery(
+        { serviceId: serviceId as string },
+        { skip: !serviceId || scope !== 'workers' }
     );
 
-    const mergedAttendanceWithMemberList = React.useMemo(
-        () => Utils.mergeDuplicatesByKey<IAttendance>(mergedUsers, 'userId'),
-        [mergedUsers]
-    );
+    const departmentIndex = useDepartmentIndex();
 
-    const minimalGroupData = useMemo(
-        () =>
-            mergedAttendanceWithMemberList?.map(({ _id, user, clockIn, clockOut, departmentName, campusName }) => ({
-                _id,
-                user: {
-                    firstName: user?.firstName,
-                    lastName: user?.lastName,
-                    pictureUrl: user?.pictureUrl,
-                },
-                clockIn,
-                clockOut,
-                departmentName,
-                campusName,
-            })),
-        [mergedAttendanceWithMemberList]
-    );
+    const isLoading = scope === 'leaders' ? leadersLoading : workersLoading;
+    const isFetching = scope === 'leaders' ? leadersFetching : workersFetching;
+
+    const minimalGroupData = useMemo(() => {
+        const source = (scope === 'leaders' ? leadersData : workersData) ?? [];
+        return source.map((row: any) => ({
+            _id: row._id ?? row.userId,
+            user: {
+                firstName: row.user?.firstName ?? row.firstName,
+                lastName: row.user?.lastName ?? row.lastName,
+                pictureUrl: row.user?.pictureUrl ?? row.pictureUrl,
+            },
+            clockIn: row.clockIn,
+            clockOut: row.clockOut,
+            departmentName: departmentIndex[row.departmentId],
+            campusName: row.campusName ?? row.campus?.campusName ?? row.user?.campus?.campusName,
+        }));
+    }, [scope, leadersData, workersData]);
 
     const handleRefetch = useCallback(() => {
-        usersRefetch();
         refetchServices();
-        refetchAttendance();
-    }, []);
+        if (scope === 'leaders') refetchLeaders();
+        else refetchWorkers();
+    }, [scope, refetchServices, refetchLeaders, refetchWorkers]);
 
     const handleCustomLabel = useCallback(
         (session: IService) => `${session.name} | ${dayjs(session.serviceTime).format('DD MMM YYYY')}`,
@@ -578,7 +562,7 @@ export const GroupAttendance: React.FC = React.memo(() => {
 
     return (
         <ErrorBoundary>
-            <View className="px-2 mb-2 pt-4">
+            <View className="px-2 mb-2 pt-4 gap-3">
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"
@@ -589,6 +573,27 @@ export const GroupAttendance: React.FC = React.memo(() => {
                     onValueChange={setService}
                     customLabel={handleCustomLabel}
                 />
+                <View className="flex-row gap-2">
+                    {(['leaders', 'workers'] as GroupAttendanceScope[]).map(s => {
+                        const active = scope === s;
+                        return (
+                            <Pressable
+                                key={s}
+                                onPress={() => setScope(s)}
+                                className={`flex-1 py-2 rounded-full items-center border ${active
+                                    ? 'bg-primary border-primary'
+                                    : 'bg-secondary border-border'
+                                    }`}
+                            >
+                                <Text
+                                    className={`font-semibold capitalize text-foreground`}
+                                >
+                                    {s}
+                                </Text>
+                            </Pressable>
+                        );
+                    })}
+                </View>
             </View>
             <View className="px-2 flex-1">
                 <FlatListComponent
