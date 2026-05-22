@@ -151,7 +151,7 @@ const GHKpiGrid: React.FC<GHKpiGridProps> = ({
                     accent={pendingReports > 0 ? 'Awaiting' : pendingReports == 0 ? "No reports" : 'All reviewed'}
                     accentTone={pendingReports > 0 ? 'warn' : 'good'}
                     isLoading={isLoading}
-                    onPress={() => router.push('/gh-tab-approvals' as any)}
+                    onPress={() => router.push('/gh-approvals' as any)}
                 />
                 <GHKpiTile
                     value={tickets}

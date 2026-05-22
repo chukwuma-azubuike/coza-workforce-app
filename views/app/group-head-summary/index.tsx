@@ -4,7 +4,7 @@ import { Text } from '~/components/ui/text';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { THEME_CONFIG } from '@config/appConfig';
-import { AVATAR_FALLBACK_URL } from '@constants/index';
+import { AVATAR_GROUP_FALLBACK_URL } from '@constants/index';
 import AvatarComponent from '@components/atoms/avatar';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ErrorBoundary from '@components/composite/error-boundary';
@@ -170,7 +170,7 @@ const DepartmentRow: React.FC<{ item: IGHGroupDepartment }> = React.memo(({ item
             <AvatarComponent
                 alt="hod"
                 className="h-12 w-12"
-                imageUrl={item.hodPictureUrl || AVATAR_FALLBACK_URL}
+                imageUrl={item.hodPictureUrl || AVATAR_GROUP_FALLBACK_URL}
             />
 
             {/* Department info */}

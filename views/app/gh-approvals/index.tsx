@@ -28,14 +28,14 @@ const ReportsTab: React.FC = memo(() => (
 // ));
 
 const ROUTES = [
-    { key: 'permissions', title: 'Permissions' },
     { key: 'reports', title: 'Reports' },
+    { key: 'permissions', title: 'Permissions' },
     // { key: 'reviews', title: 'Reviews' },
 ];
 
 const renderScene = SceneMap({
-    permissions: PermissionsTab,
     reports: ReportsTab,
+    permissions: PermissionsTab,
     // reviews: ReviewsTab, //TODO: Temporarily hide reviews tab until backend support is ready
 });
 

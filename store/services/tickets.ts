@@ -256,7 +256,9 @@ export const ticketServiceSlice = createApi({
                 'GroupTickets',
                 SERVICE_URL,
             ],
-            transformResponse: (res: IDefaultResponse<ITicket[]>) => res.data,
+            transformResponse: (
+                res: IDefaultResponse<{ data: ITicket[]; total: number; page: number; limit: number }>
+            ) => res.data?.data ?? [],
         }),
     }),
 });

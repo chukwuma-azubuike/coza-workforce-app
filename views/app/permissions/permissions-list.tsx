@@ -68,7 +68,7 @@ export const PermissionSectionRow: React.FC<IPermission & { type: 'own' | 'team'
                                             requestor?.firstName
                                         )} ${Utils.capitalizeFirstChar(requestor?.lastName)}`}
                                     </Text>
-                                    <Text className="font-bold text-base">{campus.campusName ?? ''}</Text>
+                                    <Text className="font-bold text-base">{campus?.campusName ?? ''}</Text>
                                     <Text className="text-base">{departmentName}</Text>
                                     <Text className="text-base text-muted-foreground">{categoryName}</Text>
                                 </>

@@ -25,6 +25,7 @@ const More: React.FC = () => {
 
     const handlePress = useCallback(
         (href: Href) => () => {
+            console.log({href})
             router.push(href);
         },
         []

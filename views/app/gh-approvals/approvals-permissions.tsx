@@ -16,49 +16,18 @@ import { useGetGroupPermissionsQuery } from '@store/services/permissions';
 import useGroup from '@hooks/group';
 import { IPermission } from '@store/types';
 import Utils from '@utils/index';
-import { cn } from '~/lib/utils';
 import FilterChip from './approvals-filter-chip';
+import StatusTag from '~/components/atoms/status-tag';
+import Loading from '~/components/atoms/loading';
+import RefreshControl from '~/components/RefreshControl';
 
-type PermFilter = 'PENDING' | 'APPROVED' | 'DECLINED';
+type PermFilter = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 const FILTERS: { key: PermFilter; label: string }[] = [
     { key: 'PENDING', label: 'Pending' },
     { key: 'APPROVED', label: 'Approved' },
-    { key: 'DECLINED', label: 'Declined' },
+    { key: 'REJECTED', label: 'Rejected' },
 ];
-
-const STATUS_STYLES: Record<string, { container: string; dot: string; text: string }> = {
-    PENDING: {
-        container: 'bg-amber-100 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800',
-        dot: 'bg-amber-500',
-        text: 'text-amber-700 dark:text-amber-400',
-    },
-    APPROVED: {
-        container: 'bg-green-100 dark:bg-green-900/20 border border-green-200 dark:border-green-800',
-        dot: 'bg-green-600',
-        text: 'text-green-700 dark:text-green-400',
-    },
-    DECLINED: {
-        container: 'bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800',
-        dot: 'bg-red-600',
-        text: 'text-red-700 dark:text-red-400',
-    },
-    REJECTED: {
-        container: 'bg-red-100 dark:bg-red-900/20 border border-red-200 dark:border-red-800',
-        dot: 'bg-red-600',
-        text: 'text-red-700 dark:text-red-400',
-    },
-    REVIEW_REQUESTED: {
-        container: 'bg-amber-100 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800',
-        dot: 'bg-amber-500',
-        text: 'text-amber-700 dark:text-amber-400',
-    },
-    SUBMITTED: {
-        container: 'bg-blue-100 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800',
-        dot: 'bg-blue-500',
-        text: 'text-blue-700 dark:text-blue-400',
-    },
-};
 
 const PermissionRow: React.FC<IPermission> = permission => {
     const { requestor, categoryName, startDate, endDate, dateCreated, status } = permission;
@@ -67,10 +36,6 @@ const PermissionRow: React.FC<IPermission> = permission => {
     const dayCount = Math.max(1, dayjs(endDate).diff(dayjs(startDate), 'day') + 1);
     const durationText = `${dayCount} ${dayCount === 1 ? 'day' : 'days'} · ${dayjs(startDate).format('D MMM')} – ${dayjs(endDate).format('D MMM')}`;
     const submittedWhen = dateCreated ? `submitted ${dayjs(dateCreated).fromNow()}` : '';
-
-    const statusKey = (status ?? 'PENDING') as string;
-    const style = STATUS_STYLES[statusKey] ?? STATUS_STYLES.PENDING;
-    const statusLabel = Utils.capitalizeFirstChar((status ?? 'PENDING').replace(/_/g, ' '));
 
     const handlePress = () => {
         router.push({ pathname: '/permissions/permission-details', params: permission as any });
@@ -87,17 +52,12 @@ const PermissionRow: React.FC<IPermission> = permission => {
                 <View className="flex-1 gap-1">
                     <View className="flex-row items-center justify-between gap-2">
                         <Text className="!text-sm font-semibold text-foreground flex-1 leading-snug">{name}</Text>
-                        <View className="self-start flex-row items-center gap-1 rounded-full h-6 px-2.5 bg-secondary border border-border">
-                            <Text className="!text-[11px] font-semibold text-primary">{categoryName}</Text>
-                        </View>
+                        <StatusTag>{categoryName}</StatusTag>
                     </View>
                     <Text className="!text-xs font-medium text-foreground">{durationText}</Text>
                     <View className="flex-row items-center justify-between gap-2 mt-0.5">
-                        <Text className="!text-[11px] text-muted-foreground">{submittedWhen}</Text>
-                        <View className={cn('flex-row items-center gap-1.5 rounded-full h-5 px-2', style.container)}>
-                            <View className={cn('w-1.5 h-1.5 rounded-full', style.dot)} />
-                            <Text className={cn('!text-[10px] font-semibold', style.text)}>{statusLabel}</Text>
-                        </View>
+                        <Text className="!text-sm text-muted-foreground">{submittedWhen}</Text>
+                        <StatusTag>{status}</StatusTag>
                     </View>
                 </View>
             </View>
@@ -109,7 +69,7 @@ const ApprovalsPermissions: React.FC = () => {
     const [filter, setFilter] = useState<PermFilter>('PENDING');
     const { groupId } = useGroup();
 
-    const { data: permissionsData, isLoading, refetch } = useGetGroupPermissionsQuery(
+    const { data: permissionsData, isLoading, isFetching, refetch } = useGetGroupPermissionsQuery(
         { status: filter, page: 1 },
         { skip: !groupId }
     );
@@ -142,7 +102,7 @@ const ApprovalsPermissions: React.FC = () => {
                         </View>
                     ) : filtered.length === 0 ? (
                         <View className="py-12 items-center">
-                            <Text className="!text-sm text-muted-foreground text-center">
+                            <Text className="text-muted-foreground text-center">
                                 No {filter.toLowerCase()} permissions.
                             </Text>
                         </View>

@@ -176,8 +176,8 @@ export const permissionsServiceSlice = createApi({
                 SERVICE_URL,
             ],
             transformResponse: (
-                res: IDefaultResponse<{ permissions: IPermission[]; total: number; page: number; limit: number }>
-            ) => res.data?.permissions ?? [],
+                res: IDefaultResponse<{ data: IPermission[]; total: number; page: number; limit: number }>
+            ) => res.data?.data ?? [],
         }),
     }),
 });
