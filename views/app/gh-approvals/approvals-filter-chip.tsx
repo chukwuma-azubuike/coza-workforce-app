@@ -14,13 +14,13 @@ const FilterChip: React.FC<FilterChipProps> = ({ active, onPress, children }) =>
         activeOpacity={0.7}
         onPress={onPress}
         className={cn(
-            'h-8 px-3.5 rounded-full border items-center justify-center',
+            'px-4 py-1 rounded-full border items-center justify-center',
             active ? 'bg-primary/20 border-primary' : 'bg-background border-border'
         )}
     >
         <Text
             className={cn(
-                '!text-sm font-semibold',
+                'font-semibold',
                 active ? 'text-primary-foreground dark:text-white' : 'text-foreground'
             )}
         >

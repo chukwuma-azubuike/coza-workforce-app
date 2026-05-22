@@ -581,8 +581,8 @@ export const GroupAttendance: React.FC = React.memo(() => {
                                 key={s}
                                 onPress={() => setScope(s)}
                                 className={`flex-1 py-2 rounded-full items-center border ${active
-                                    ? 'bg-primary border-primary'
-                                    : 'bg-secondary border-border'
+                                    ? 'bg-primary/20 border-primary'
+                                    : 'bg-secondary/20 border-border'
                                     }`}
                             >
                                 <Text

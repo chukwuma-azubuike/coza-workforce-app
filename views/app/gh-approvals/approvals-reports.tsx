@@ -10,14 +10,10 @@ import AvatarComponent from '@components/atoms/avatar';
 import ReportStatusPill from '@components/composite/report-status-pill';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { getReportStatusMeta } from '@constants/report-status';
-import { useGetGhReportByIdQuery } from '@store/services/grouphead';
-import { useGetLatestServiceQuery } from '@store/services/services';
-import { IReportStatus } from '@store/types';
-import { ICampusReportSummary } from '@store/services/reports';
-import useGroup from '@hooks/group';
+import { useGetGhReportsQuery } from '@store/services/grouphead';
+import { IGHReportListItem, IReportStatus } from '@store/types';
+import Utils from '@utils/index';
 import FilterChip from './approvals-filter-chip';
-
-type DeptReport = ICampusReportSummary['departmentalReport'][0];
 
 type ReportFilter =
     | IReportStatus.HOD_SUBMITTED
@@ -44,27 +40,54 @@ const HISTORICAL_STATUSES = new Set<string>([
     IReportStatus.GSP_CHANGE_REQUESTED,
 ]);
 
-interface ReportCardProps {
-    report: DeptReport;
-    serviceName?: string;
-}
+// ─── Skeleton ────────────────────────────────────────────────────────────────
 
-const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) => {
-    const status = item.report.status as string;
-    const meta = getReportStatusMeta(status);
-    const serviceLabel = serviceName ?? item.campus;
+const ReportCardSkeleton: React.FC = () => (
+    <Card className="p-0 overflow-hidden">
+        <View style={styles.row}>
+            {/* accent bar */}
+            <Skeleton className="w-1 rounded-none" />
+            <View className="flex-1 p-4 gap-3">
+                {/* dept name + service label */}
+                <View className="gap-1.5">
+                    <Skeleton className="h-4 w-2/3 rounded" />
+                    <Skeleton className="h-3 w-1/3 rounded" />
+                </View>
+                {/* avatar + name row */}
+                <View className="flex-row items-center gap-2">
+                    <Skeleton className="w-7 h-7 rounded-full" />
+                    <Skeleton className="h-3 w-2/5 rounded" />
+                </View>
+                {/* bottom bar */}
+                <View className="flex-row items-center justify-between pt-3 border-t border-border">
+                    <Skeleton className="h-3 w-8 rounded" />
+                    <Skeleton className="h-6 w-24 rounded-full" />
+                </View>
+            </View>
+        </View>
+    </Card>
+);
+
+// ─── Report card ──────────────────────────────────────────────────────────────
+
+const ReportCard: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
+    const meta = getReportStatusMeta(item.status as string);
+    const submitterName =
+        item.submittedBy
+            ? `${Utils.capitalizeFirstChar(item.submittedBy.firstName)} ${Utils.capitalizeFirstChar(item.submittedBy.lastName)}`
+            : 'Head of Department';
 
     const handlePress = () => {
         router.push({
             pathname: '/gh-approvals/report-detail' as any,
             params: {
-                reportId: item.report._id,
-                departmentId: item.report.departmentId,
-                serviceId: item.report.serviceId,
+                reportId: item._id,
+                departmentId: item.departmentId,
+                serviceId: item.serviceId,
                 departmentName: item.departmentName,
-                campus: item.campus,
-                serviceName: serviceName ?? '',
-                status,
+                campus: item.campusName ?? '',
+                serviceName: item.serviceName ?? '',
+                status: item.status as string,
             },
         });
     };
@@ -73,29 +96,37 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
         <TouchableOpacity activeOpacity={0.6} onPress={handlePress}>
             <Card className="p-0 overflow-hidden">
                 <View style={styles.row}>
-                    <View style={[styles.accent, { backgroundColor: undefined }]} className={meta.accentClass} />
+                    <View style={styles.accent} className={meta.accentClass} />
                     <View className="flex-1 p-4 gap-3">
                         <View className="flex-row items-start justify-between gap-2">
                             <View className="flex-1">
                                 <Text className="!text-base font-bold text-foreground leading-tight">
                                     {item.departmentName}
                                 </Text>
-                                <Text className="!text-xs text-muted-foreground mt-0.5">{serviceLabel}</Text>
+                                <Text className="!text-xs text-muted-foreground mt-0.5">
+                                    {item.serviceName ?? item.campusName}
+                                </Text>
                             </View>
                             <Ionicons name="chevron-forward" size={18} color="#71717a" style={styles.chevron} />
                         </View>
 
                         <View className="flex-row items-center gap-2">
-                            <AvatarComponent alt="hod" className="w-7 h-7" imageUrl={AVATAR_FALLBACK_URL} />
-                            <Text className="!text-xs font-medium text-foreground">Head of Department</Text>
+                            <AvatarComponent
+                                alt="hod"
+                                className="w-7 h-7"
+                                imageUrl={item.submittedBy?.pictureUrl || AVATAR_FALLBACK_URL}
+                            />
+                            <Text className="!text-xs font-medium text-foreground">{submitterName}</Text>
                         </View>
 
                         <View className="flex-row items-center justify-between pt-3 border-t border-border">
                             <View className="flex-row items-center gap-1">
                                 <Ionicons name="attach-outline" size={12} color="#71717a" />
-                                <Text className="!text-[11px] text-muted-foreground font-semibold">—</Text>
+                                <Text className="!text-[11px] text-muted-foreground font-semibold">
+                                    {item.attachmentCount ?? '—'}
+                                </Text>
                             </View>
-                            <ReportStatusPill status={status} />
+                            <ReportStatusPill status={item.status as string} />
                         </View>
                     </View>
                 </View>
@@ -104,27 +135,34 @@ const ReportCard: React.FC<ReportCardProps> = ({ report: item, serviceName }) =>
     );
 };
 
+// ─── Main screen ──────────────────────────────────────────────────────────────
+
 const ApprovalsReports: React.FC = () => {
     const [filter, setFilter] = useState<ReportFilter>(IReportStatus.HOD_SUBMITTED);
-    const { groupId } = useGroup();
-    const campusId = groupId;
 
-    const { data: latestService } = useGetLatestServiceQuery(campusId as string, { skip: !campusId });
-    const { data: ghReport, isLoading } = useGetGhReportByIdQuery(
-        { serviceId: latestService?._id as string },
-        { skip: !latestService?._id }
+    // Pass status directly to the API — each filter change is a distinct query
+    // argument so RTK Query makes a new request (with caching on revisit).
+    // 'HISTORICAL' has no server-side enum, so we fetch all and filter locally.
+    const statusParam = filter === 'HISTORICAL' ? undefined : (filter as string);
+
+    const { data, isLoading, isFetching } = useGetGhReportsQuery(
+        { status: statusParam, limit: 50 },
+        { refetchOnMountOrArgChange: true }
     );
 
-    const filtered = useMemo(() => {
-        const all = ghReport?.departmentalReport ?? [];
+    const reports = useMemo(() => {
+        const all = data?.reports ?? [];
         if (filter === 'HISTORICAL') {
-            return all.filter(r => HISTORICAL_STATUSES.has(r.report.status as string));
+            return all.filter(r => HISTORICAL_STATUSES.has(r.status as string));
         }
-        return all.filter(r => r.report.status === filter);
-    }, [ghReport, filter]);
+        return all;
+    }, [data, filter]);
+
+    const loading = isLoading || isFetching;
 
     return (
         <View className="flex-1">
+            {/* Filter chips */}
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -138,24 +176,19 @@ const ApprovalsReports: React.FC = () => {
                 ))}
             </ScrollView>
 
+            {/* Report list */}
             <ScrollView className="flex-1">
                 <View className="px-4 pb-8 gap-3">
-                    {isLoading ? (
-                        [1, 2, 3].map(i => <Skeleton key={i} className="h-40 w-full rounded-3xl" />)
-                    ) : filtered.length === 0 ? (
+                    {loading ? (
+                        [1, 2, 3].map(i => <ReportCardSkeleton key={i} />)
+                    ) : reports.length === 0 ? (
                         <View className="py-12 items-center">
-                            <Text className="!text-sm text-muted-foreground text-center">
-                                No {filter === 'HISTORICAL' ? 'historical' : filter.toLowerCase().replace(/_/g, ' ')} reports.
+                            <Text className="text-muted-foreground text-center">
+                                {`No ${filter === 'HISTORICAL' ? 'historical' : filter.toLowerCase().replace(/_/g, ' ')} reports.`}
                             </Text>
                         </View>
                     ) : (
-                        filtered.map(report => (
-                            <ReportCard
-                                key={report.report._id}
-                                report={report}
-                                serviceName={latestService?.name}
-                            />
-                        ))
+                        reports.map(item => <ReportCard key={item._id} item={item} />)
                     )}
                 </View>
             </ScrollView>
