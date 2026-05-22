@@ -23,7 +23,7 @@ export const ticketServiceSlice = createApi({
     reducerPath: SERVICE_URL,
     baseQuery: fetchUtils.baseQuery,
 
-    tagTypes: [SERVICE_URL, 'Ticket', 'UserTickets', 'DepartmentTickets', 'CampusTickets', 'TicketCategories'],
+    tagTypes: [SERVICE_URL, 'Ticket', 'UserTickets', 'DepartmentTickets', 'CampusTickets', 'GroupTickets', 'TicketCategories'],
 
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -41,6 +41,7 @@ export const ticketServiceSlice = createApi({
                 { type: 'UserTickets', id: userId },
                 { type: 'DepartmentTickets', id: departmentId },
                 { type: 'CampusTickets', id: campusId },
+                'GroupTickets',
                 'Ticket',
                 SERVICE_URL,
             ],
@@ -61,6 +62,7 @@ export const ticketServiceSlice = createApi({
                 { type: 'UserTickets', id: userId },
                 { type: 'DepartmentTickets', id: departmentId },
                 { type: 'CampusTickets', id: campusId },
+                'GroupTickets',
                 SERVICE_URL,
             ],
 
@@ -102,6 +104,7 @@ export const ticketServiceSlice = createApi({
                 'UserTickets',
                 'DepartmentTickets',
                 'CampusTickets',
+                'GroupTickets',
                 SERVICE_URL,
             ],
 
@@ -119,6 +122,7 @@ export const ticketServiceSlice = createApi({
                 'UserTickets',
                 'DepartmentTickets',
                 'CampusTickets',
+                'GroupTickets',
                 SERVICE_URL,
             ],
 
@@ -232,6 +236,30 @@ export const ticketServiceSlice = createApi({
 
             transformResponse: (res: IDefaultResponse<any[]>) => res.data,
         }),
+
+        // ─── Group-scoped tickets (GH v2) ─────────────────────────────
+        getGroupTickets: endpoint.query<
+            ITicket[],
+            {
+                scope?: 'leaders' | 'workers';
+                filter?: 'open' | 'closed' | 'month' | 'quarter';
+                page?: number;
+            }
+        >({
+            query: (params) => ({
+                url: `gh/group/tickets`,
+                params,
+                method: REST_API_VERBS.GET,
+            }),
+            providesTags: (result = []) => [
+                ...result.map(({ _id }) => ({ type: 'Ticket' as const, id: _id })),
+                'GroupTickets',
+                SERVICE_URL,
+            ],
+            transformResponse: (
+                res: IDefaultResponse<{ data: ITicket[]; total: number; page: number; limit: number }>
+            ) => res.data?.data ?? [],
+        }),
     }),
 });
 
@@ -254,4 +282,5 @@ export const {
     useLazyGetDepartmentTicketsQuery,
     useGetTicketsReportForDownloadQuery,
     useLazyGetTicketsReportForDownloadQuery,
+    useGetGroupTicketsQuery,
 } = ticketServiceSlice;

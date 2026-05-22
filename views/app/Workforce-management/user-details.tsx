@@ -356,6 +356,7 @@ const UserDetails: React.FC = () => {
                                                 items={sortedCampuses || []}
                                                 isLoading={campusesIsLoading}
                                                 placeholder="Choose campus"
+                                                disabled={!isSuperAdmin && !isGlobalPastor}
                                                 onValueChange={handleCampusIdChange}
                                             />
                                         </View>

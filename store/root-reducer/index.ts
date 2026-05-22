@@ -13,6 +13,7 @@ import { scoreServiceSlice } from '../services/score';
 import { roleServiceSlice } from '../services/role';
 import { congressServiceSlice } from '../services/congress';
 import { groupHeadServiceSlice } from '@store/services/grouphead';
+import { groupServiceSlice } from '@store/services/group';
 import { uploadServiceSlice } from '@store/services/upload';
 import userStateSlice from '../actions/users';
 import appStateSlice from '../actions/app';
@@ -36,6 +37,7 @@ const rootReducer = combineReducers({
     [congressServiceSlice.reducerPath]: congressServiceSlice.reducer,
     [scoreMappingServiceSlice.reducerPath]: scoreMappingServiceSlice.reducer,
     [groupHeadServiceSlice.reducerPath]: groupHeadServiceSlice.reducer,
+    [groupServiceSlice.reducerPath]: groupServiceSlice.reducer,
     [uploadServiceSlice.reducerPath]: uploadServiceSlice.reducer,
     [userStateSlice.reducerPath]: userStateSlice.reducer,
     [notificationsSlice.reducerPath]: notificationsSlice.reducer,

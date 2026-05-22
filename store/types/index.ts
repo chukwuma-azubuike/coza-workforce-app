@@ -113,12 +113,29 @@ export interface IDefaultErrorResponse<D = null> {
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED' | 'REJECTED' | 'SUBMITTED';
 
 export enum IReportStatus {
+    DRAFT = 'DRAFT',
+    HOD_SUBMITTED = 'HOD_SUBMITTED',
+    GH_CHANGE_REQUESTED = 'GH_CHANGE_REQUESTED',
+    GH_APPROVED = 'GH_APPROVED',
+    CP_CHANGE_REQUESTED = 'CP_CHANGE_REQUESTED',
+    CP_APPROVED = 'CP_APPROVED',
+    GSP_CHANGE_REQUESTED = 'GSP_CHANGE_REQUESTED',
+    GSP_APPROVED = 'GSP_APPROVED',
+    // v1 legacy values — kept so old records decode without crashing
     PENDING = 'PENDING',
     APPROVED = 'APPROVED',
     SUBMITTED = 'SUBMITTED',
     GSP_SUBMITTED = 'GSP_SUBMITTED',
     REVIEW_REQUESTED = 'REVIEW_REQUESTED',
 }
+
+export const LEGACY_TO_V2_STATUS: Record<string, IReportStatus> = {
+    PENDING: IReportStatus.HOD_SUBMITTED,
+    SUBMITTED: IReportStatus.GH_APPROVED,
+    GSP_SUBMITTED: IReportStatus.CP_APPROVED,
+    APPROVED: IReportStatus.GSP_APPROVED,
+    REVIEW_REQUESTED: IReportStatus.GH_CHANGE_REQUESTED,
+};
 
 // Authentication
 export interface IAuthParams extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
@@ -178,6 +195,7 @@ export interface IUser {
     campus: ICampus;
     campusName?: string;
     status: IUserStatus;
+    groupId?: string;
     socialMedia: {
         facebook: string;
         instagram: string;
@@ -394,6 +412,7 @@ export interface IDepartment {
     _id: string;
     departmentName: string;
     campusId: string;
+    groupId?: string;
     description: string;
     createdAt: string;
     __v: number;
@@ -459,11 +478,12 @@ export interface IAssignSecondaryRole {
     roleId: string;
 }
 
-// Department
+// Department (second reference — keep in sync with the one above)
 export interface IDepartment {
     _id: string;
     departmentName: string;
     campusId: string;
+    groupId?: string;
     description: string;
     createdAt: string;
     __v: number;
@@ -780,4 +800,161 @@ export interface IScoreMapping {
     totalMaxPoints: boolean;
     totalScore: number;
     cummulativeScore: number;
+}
+
+// ─── Group entity (v2.0) ───────────────────────────────────────────────────────
+
+// Shape returned by GET /group (list) — uses count fields, no populated arrays
+export interface IGroupListItem {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    isActive: boolean;
+    campusId?: string;
+    campus?: Pick<ICampus, '_id' | 'campusName'>;
+    ghCount: number;
+    departmentCount: number;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IGroupsListResponse {
+    groups: IGroupListItem[];
+    total: number;
+    page: number;
+    pageSize: number;
+}
+
+// Department entry inside IGroup (enriched for detail endpoints)
+export interface IGroupDepartmentEntry {
+    _id: string;
+    departmentName: string;
+    campusId?: string;
+    campusName?: string;
+    workerCount?: number;
+}
+
+// Shape returned by GET /group/:id (detail) — fully populated
+export interface IGroup extends ILog {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    isActive: boolean;
+    campusId?: string;
+    campus?: Pick<ICampus, '_id' | 'campusName'>;
+    groupHeads: Pick<IUser, '_id' | 'firstName' | 'lastName' | 'pictureUrl'>[];
+    departments: IGroupDepartmentEntry[];
+    ghCount?: number;
+    departmentCount?: number;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IGroupSummary {
+    groupId: string;
+    groupName: string;
+    departmentCount: number;
+    totalWorkers: number;
+    activeWorkers: number;
+    dormantWorkers: number;
+    inactiveWorkers: number;
+}
+
+export interface IGroupAuditEntry {
+    _id: string;
+    action: string;
+    actorId: string;
+    actorName: string;
+    targetId?: string;
+    targetType?: string;
+    description: string;
+    createdAt: string;
+}
+
+// ─── Report history / audit trail (v2.0) ─────────────────────────────────────
+
+export interface IReportHistoryEntry {
+    _id: string;
+    action:
+        | 'SUBMITTED'
+        | 'GH_APPROVED'
+        | 'GH_CHANGE_REQUESTED'
+        | 'CP_APPROVED'
+        | 'CP_CHANGE_REQUESTED'
+        | 'GSP_APPROVED'
+        | 'GSP_CHANGE_REQUESTED';
+    actorId: string;
+    actorName: string;
+    actorRole: 'HOD' | 'AHOD' | 'GH' | 'CP' | 'GSP';
+    comment?: string;
+    createdAt: string;
+}
+
+// ─── GH reports list (v2.0) ───────────────────────────────────────────────────
+
+export interface IGHReportListItem {
+    _id: string;
+    reportType: string;
+    serviceId: string;
+    serviceName: string;
+    departmentId: string;
+    departmentName: string;
+    campusName?: string;
+    status: IReportStatus;
+    submittedBy?: { firstName: string; lastName: string; pictureUrl?: string };
+    submittedAt: string;
+    preview?: string;
+    attachmentCount?: number;
+    createdAt: string;
+}
+
+export interface IGHReportListResponse {
+    reports: IGHReportListItem[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
+// ─── GH group departments (v2.0) ─────────────────────────────────────────────
+
+export interface IGHGroupDepartment {
+    _id: string;
+    departmentName: string;
+    campusId?: string;
+    campusName?: string;
+    workerCount: number;
+    activeCount: number;
+    dormantCount: number;
+    hodName?: string;
+    hodPictureUrl?: string;
+}
+
+// ─── GH group attendance record (v2.0) ───────────────────────────────────────
+
+export interface IGHGroupAttendanceRecord {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
+    departmentName: string;
+    status: IAttendanceStatus;
+    clockIn?: string;
+    clockOut?: string;
+    isManual?: boolean;
+}
+
+// ─── GH group department roster member (v2.0) ────────────────────────────────
+
+export interface IGHRosterMember {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
+    email?: string;
+    role: { _id: string; name: string };
+    membershipStatus?: 'active' | 'dormant' | 'inactive';
+    clockedInToday?: boolean;
+    ticketCount?: number;
 }

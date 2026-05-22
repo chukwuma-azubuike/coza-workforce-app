@@ -5,7 +5,7 @@ import AvatarComponent from '@components/atoms/avatar';
 import StatusTag from '@components/atoms/status-tag';
 import { AVATAR_FALLBACK_URL, AVATAR_GROUP_FALLBACK_URL } from '@constants/index';
 import useRole from '@hooks/role';
-import { useGetTicketsQuery } from '@store/services/tickets';
+import { useGetGroupTicketsQuery, useGetTicketsQuery } from '@store/services/tickets';
 import { IDefaultQueryParams, ITicket } from '@store/types';
 import Utils from '@utils/index';
 import { router } from 'expo-router';
@@ -322,13 +322,10 @@ const CampusTickets: React.FC = memo(() => {
 const GroupTicketsList: React.FC = memo(() => {
     const { data, isLoading, isFetchingNextPage, fetchNextPage, refetch, hasNextPage } = useInfiniteData<
         ITicket,
-        Omit<IDefaultQueryParams, 'userId'>
+        { scope?: 'leaders' | 'workers'; filter?: 'open' | 'closed' | 'month' | 'quarter'; limit?: number }
     >(
-        {
-            limit: 20, // TODO: Restore after backend is fixed
-            isGH: true,
-        },
-        useGetTicketsQuery as any,
+        { limit: 20 },
+        useGetGroupTicketsQuery as any,
         '_id'
     );
 

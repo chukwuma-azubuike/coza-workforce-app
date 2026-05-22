@@ -87,11 +87,11 @@ const Style = StyleSheet.create({
     indicator: {
         backgroundColor: THEME_CONFIG.primary,
         borderRadius: 6,
-        height: '100%',
+        // height: '100%', //TOD
     },
     tab: {
         borderRadius: 6,
-        borderWidth: 0.6,
+        // borderWidth: 0.6,
         paddingHorizontal: 0,
         marginHorizontal: 4.5,
         borderColor: THEME_CONFIG.primary,

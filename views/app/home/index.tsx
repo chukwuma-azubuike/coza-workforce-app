@@ -1,6 +1,7 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clocker from './workers/clocker';
+import GHHome from './group-head';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -36,7 +37,7 @@ interface IInitialHomeState {
 }
 
 const Home: React.FC = () => {
-    const { user, isGlobalPastor, isCampusPastor } = useRole();
+    const { user, isGlobalPastor, isCampusPastor, isGroupHead } = useRole();
 
     const {
         isError,
@@ -111,7 +112,17 @@ const Home: React.FC = () => {
                 >
                     <View style={styles.container}>
                         <If condition={!!user}>
-                            <If condition={!isGlobalPastor}>
+                            <If condition={isGroupHead}>
+                                <GHHome
+                                    refreshLocation={refresh}
+                                    isInRange={isInRange as boolean}
+                                    refreshTrigger={refreshTrigger}
+                                    setRefreshTrigger={setRefreshTrigger}
+                                    deviceCoordinates={deviceCoordinates as any}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </If>
+                            <If condition={!isGlobalPastor && !isGroupHead}>
                                 <Clocker
                                     refreshLocation={refresh}
                                     isInRange={isInRange as boolean}
