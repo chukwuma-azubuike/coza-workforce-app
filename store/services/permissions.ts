@@ -41,6 +41,7 @@ export const permissionsServiceSlice = createApi({
         'TeamPermissions',
         'CampusPermissions',
         'LeaderPermissions',
+        'GroupPermissions',
     ],
 
     refetchOnFocus: true,
@@ -60,6 +61,7 @@ export const permissionsServiceSlice = createApi({
                 { type: 'CampusPermissions', id: campusId },
                 'TeamPermissions',
                 'LeaderPermissions',
+                'GroupPermissions',
                 'Permission',
                 SERVICE_URL,
             ],
@@ -79,6 +81,7 @@ export const permissionsServiceSlice = createApi({
                 'TeamPermissions',
                 'CampusPermissions',
                 'LeaderPermissions',
+                'GroupPermissions',
                 SERVICE_URL,
             ],
 
@@ -97,6 +100,7 @@ export const permissionsServiceSlice = createApi({
                 'TeamPermissions',
                 'CampusPermissions',
                 'LeaderPermissions',
+                'GroupPermissions',
                 SERVICE_URL,
             ],
 
@@ -155,6 +159,26 @@ export const permissionsServiceSlice = createApi({
 
             transformResponse: (res: IDefaultResponse<any[]>) => res.data,
         }),
+
+        // ─── Group-scoped permissions (GH v2) ─────────────────────────
+        getGroupPermissions: endpoint.query<
+            IPermission[],
+            { status?: string; page?: number; limit?: number }
+        >({
+            query: (params) => ({
+                url: `gh/group/permissions`,
+                params,
+                method: REST_API_VERBS.GET,
+            }),
+            providesTags: (result = []) => [
+                ...result.map(({ _id }) => ({ type: 'Permission' as const, id: _id })),
+                'GroupPermissions',
+                SERVICE_URL,
+            ],
+            transformResponse: (
+                res: IDefaultResponse<{ data: IPermission[]; total: number; page: number; limit: number }>
+            ) => res.data?.data ?? [],
+        }),
     }),
 });
 
@@ -168,4 +192,5 @@ export const {
     useDeclinePermissionMutation,
     useGetPermissionCategoriesQuery,
     useLazyGetPermissionsReportForDownloadQuery,
+    useGetGroupPermissionsQuery,
 } = permissionsServiceSlice;

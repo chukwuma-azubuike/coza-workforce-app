@@ -168,7 +168,7 @@ function PickerSelect<T extends ValidPickerItem>({
         >
             <View
                 className={cn(
-                    'rounded-xl !h-16 justify-between items-center flex-row !px-3 border border-input',
+                    'rounded-full !h-16 justify-between items-center flex-row !px-6 border border-input',
                     className
                 )}
             >

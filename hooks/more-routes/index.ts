@@ -3,7 +3,7 @@ import useRole, { DEPARTMENTS, ROLES } from '../role';
 import { AppRoutes } from '~/config/navigation';
 
 const useMoreRoutes = () => {
-    const { user, isSuperAdmin, isCampusPastor, isCGWCApproved } = useRole();
+    const { user, isSuperAdmin, isCampusPastor, isCGWCApproved, isGroupHead } = useRole();
 
     const roleName = user?.role?.name;
     const departmentName = user?.department?.departmentName;
@@ -11,7 +11,10 @@ const useMoreRoutes = () => {
     const filteredRoutes = useMemo(
         () =>
             AppRoutes.filter(route => {
-                if (!route.inMore) {
+                if (isGroupHead && route.ghMore) {
+                    return route;
+                }
+                if (!route.inMore && !route.ghMore) {
                     return;
                 }
                 if (!isCGWCApproved && !isCampusPastor && !isSuperAdmin && route.name === 'Congress') {
@@ -23,8 +26,9 @@ const useMoreRoutes = () => {
                 const rolesAndDepartments = route.users;
 
                 if (
-                    rolesAndDepartments.includes(roleName as ROLES) ||
-                    rolesAndDepartments.includes(departmentName as DEPARTMENTS)
+                    !isGroupHead &&
+                    (rolesAndDepartments.includes(roleName as ROLES) ||
+                        rolesAndDepartments.includes(departmentName as DEPARTMENTS))
                 ) {
                     return route;
                 }

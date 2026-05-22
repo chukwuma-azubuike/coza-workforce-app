@@ -13,9 +13,12 @@ import { cn } from '~/lib/utils';
 import { Platform } from 'react-native';
 
 const TabLayout: React.FC = () => {
-    const { isWorker, isQC, isCGWCApproved } = useRole();
+    const { isWorker, isQC, isCGWCApproved, isGroupHead } = useRole();
 
-    const tabRoutes = useMemo(() => AppRoutes.filter(route => route.inMenuBar), [AppRoutes]);
+    const tabRoutes = useMemo(
+        () => AppRoutes.filter(route => isGroupHead ? route.ghMenuBar : route.inMenuBar),
+        [isGroupHead]
+    );
 
     const pathname = usePathname();
     const progress = useSharedValue(1);

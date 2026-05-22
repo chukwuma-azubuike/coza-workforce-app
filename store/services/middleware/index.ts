@@ -12,6 +12,7 @@ import { roleServiceSlice } from '../role';
 import { congressServiceSlice } from '../congress';
 import { scoreMappingServiceSlice } from '../score-mapping';
 import { groupHeadServiceSlice } from '../grouphead';
+import { groupServiceSlice } from '../group';
 import { uploadServiceSlice } from '../upload';
 import { dismissModalListenerMiddleware } from '~/store/listener-middleware/app';
 import { Middleware } from '@reduxjs/toolkit';
@@ -32,6 +33,7 @@ const middlewaresSlices: Array<Middleware> = [
     congressServiceSlice.middleware,
     scoreMappingServiceSlice.middleware,
     groupHeadServiceSlice.middleware,
+    groupServiceSlice.middleware,
     uploadServiceSlice.middleware,
     dismissModalListenerMiddleware.middleware,
     roastCrmApi.middleware,
