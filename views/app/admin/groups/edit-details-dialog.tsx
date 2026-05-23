@@ -70,7 +70,7 @@ const EditGroupDetailsDialog: React.FC<IProps> = ({
 
                 <View className="gap-3">
                     <View className="gap-1.5">
-                        <Text className="!text-[12px] text-muted-foreground font-medium">Group name *</Text>
+                        <Text className="text-base text-muted-foreground font-medium">Group name *</Text>
                         <Input
                             value={name}
                             onChangeText={setName}
@@ -79,7 +79,7 @@ const EditGroupDetailsDialog: React.FC<IProps> = ({
                         />
                     </View>
                     <View className="gap-1.5">
-                        <Text className="!text-[12px] text-muted-foreground font-medium">Description</Text>
+                        <Text className="text-base text-muted-foreground font-medium">Description</Text>
                         <Input
                             value={description}
                             onChangeText={setDescription}
