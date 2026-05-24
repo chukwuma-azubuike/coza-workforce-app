@@ -1,9 +1,7 @@
-import { Text } from '~/components/ui/text';
 import React, { useCallback } from 'react';
 import { TabBar, TabBarProps, TabView, TabViewProps } from 'react-native-tab-view';
 import { THEME_CONFIG } from '@config/appConfig';
 import { StyleSheet, useWindowDimensions } from 'react-native';
-import useAppColorMode from '@hooks/theme/colorMode';
 import Loading from '~/components/atoms/loading';
 
 interface ITabComponentProps extends TabViewProps<any> {
@@ -12,7 +10,6 @@ interface ITabComponentProps extends TabViewProps<any> {
 }
 
 const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = props => {
-    const { isLightMode } = useAppColorMode();
 
     return (
         <>
@@ -21,13 +18,10 @@ const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = prop
                     gap={4}
                     {...props}
                     style={Style.base}
-                    activeColor="white"
                     tabStyle={Style.tab}
                     indicatorStyle={Style.indicator}
-                    inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primary}
-                    pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-                    labelStyle={{ color: THEME_CONFIG.primary }}
-                    renderLabel={({ route }: any) => <Text>{route.title}</Text>}
+                    activeColor={THEME_CONFIG.primary}
+                    inactiveColor={THEME_CONFIG.primary}
                 />
             )}
         </>
@@ -35,7 +29,6 @@ const renderTabBar: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = prop
 };
 
 const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> = props => {
-    const { isLightMode } = useAppColorMode();
 
     return (
         <>
@@ -45,13 +38,10 @@ const renderTabBarScroll: React.FC<TabBarProps<any> & { hideTabBar?: boolean }> 
                     {...props}
                     scrollEnabled
                     style={Style.base}
-                    activeColor="white"
                     tabStyle={Style.tab}
+                    activeColor={THEME_CONFIG.primary}
+                    inactiveColor={THEME_CONFIG.primary}
                     indicatorStyle={Style.indicatorScroll}
-                    labelStyle={{ color: THEME_CONFIG.primary }}
-                    inactiveColor={isLightMode ? THEME_CONFIG.primary : THEME_CONFIG.primaryLight}
-                    pressColor={isLightMode ? THEME_CONFIG.primaryVeryLight : THEME_CONFIG.primaryTransparent}
-                    renderLabel={({ route, focused, color }: any) => <Text>{route.title}</Text>}
                 />
             )}
         </>
@@ -87,11 +77,9 @@ const Style = StyleSheet.create({
     indicator: {
         backgroundColor: THEME_CONFIG.primary,
         borderRadius: 6,
-        // height: '100%', //TOD
     },
     tab: {
         borderRadius: 6,
-        // borderWidth: 0.6,
         paddingHorizontal: 0,
         marginHorizontal: 4.5,
         borderColor: THEME_CONFIG.primary,
@@ -99,6 +87,5 @@ const Style = StyleSheet.create({
     indicatorScroll: {
         backgroundColor: THEME_CONFIG.primary,
         borderRadius: 6,
-        height: '100%',
     },
 });

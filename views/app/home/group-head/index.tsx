@@ -28,6 +28,7 @@ import GHClockCard from './gh-clock-card';
 import { GHKpiGrid } from './gh-kpi-grid';
 import GHReportsStatus from './gh-reports-status';
 import GHQuickActions from './gh-quick-actions';
+import GHHomeSkeleton from './gh-home-skeleton';
 
 interface IGHHomeProps {
     isInRange: boolean;
@@ -149,6 +150,8 @@ const GHHome: React.FC<IGHHomeProps> = ({
         }
     }, [refreshTrigger]);
 
+    const isInitialLoad = serviceUninitialized || (!!campusId && ghReportLoading && !ghReport);
+
     return (
         <View className="flex-1">
             <GHTopBar
@@ -162,6 +165,8 @@ const GHHome: React.FC<IGHHomeProps> = ({
 
             {isFirstTimeGH ? (
                 <FirstTimeGHEmptyState />
+            ) : isInitialLoad ? (
+                <GHHomeSkeleton />
             ) : (
                 <ViewWrapper scroll noPadding refreshing={false} onRefresh={refreshAll} className="flex-1">
                     <GHGreeting
