@@ -121,7 +121,7 @@ export const groupHeadServiceSlice = createApi({
                 params,
             }),
             providesTags: result => [
-                ...(result?.reports ?? []).map(r => ({ type: 'GHReport' as const, id: r._id })),
+                ...(result?.reports ?? []).map(r => ({ type: 'GHReport' as const, id: r.reportId ?? r._id })),
                 'GHReport',
             ],
             transformResponse: (res: IDefaultResponse<IGHReportListResponse>) => res?.data,

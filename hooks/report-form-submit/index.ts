@@ -1,11 +1,16 @@
 import { router } from 'expo-router';
-import { v4 as uuid } from 'uuid';
 
 import useRole from '@hooks/role';
 import useModal from '@hooks/modal/useModal';
 import { useTransitionReportMutation } from '@store/services/grouphead';
 import { IReportStatus } from '@store/types';
-import { actionsFor, resolveReportType, toLogicalRole, transitionErrorMessage } from '@constants/report-actions';
+import {
+    actionsFor,
+    makeIdempotencyKey,
+    resolveReportType,
+    toLogicalRole,
+    transitionErrorMessage,
+} from '@constants/report-actions';
 
 type UpdateTrigger = (body: any) => { unwrap: () => Promise<any> } | Promise<{ data?: unknown; error?: any }>;
 
@@ -56,7 +61,7 @@ export function useReportFormSubmit(updateReport: UpdateTrigger, params: ReportF
                     reportId: params._id,
                     reportType,
                     toStatus: submitAction.toStatus,
-                    idempotencyKey: uuid(),
+                    idempotencyKey: makeIdempotencyKey(),
                 }).unwrap();
             } catch (err) {
                 setModalState({ status: 'error', message: transitionErrorMessage(err).message });

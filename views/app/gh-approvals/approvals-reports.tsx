@@ -82,7 +82,7 @@ const ReportCard: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
         router.push({
             pathname: '/gh-approvals/report-detail' as any,
             params: {
-                reportId: item._id,
+                reportId: item.reportId ?? item._id,
                 reportType: item.reportType,
                 departmentId: item.departmentId,
                 serviceId: item.serviceId,
@@ -191,7 +191,7 @@ const ApprovalsReports: React.FC = () => {
                             </Text>
                         </View>
                     ) : (
-                        reports.map(item => <ReportCard key={item._id} item={item} />)
+                        reports.map(item => <ReportCard key={item.reportId ?? item._id} item={item} />)
                     )}
                 </View>
             </ScrollView>

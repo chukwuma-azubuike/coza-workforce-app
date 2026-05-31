@@ -889,7 +889,10 @@ export interface IReviewHistoryEntry {
 // ─── GH reports list (v2.0) ───────────────────────────────────────────────────
 
 export interface IGHReportListItem {
-    _id: string;
+    // Backend identifies a report by `reportId` (+ reportType). `_id` kept optional
+    // for any legacy/cached rows.
+    reportId: string;
+    _id?: string;
     reportType: string;
     serviceId: string;
     serviceName: string;

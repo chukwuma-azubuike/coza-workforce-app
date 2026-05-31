@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { v4 as uuid } from 'uuid';
 
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
@@ -11,7 +10,7 @@ import useRole from '@hooks/role';
 import useModal from '@hooks/modal/useModal';
 import { useTransitionReportMutation } from '@store/services/grouphead';
 import { IReportStatus } from '@store/types';
-import { actionsFor, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
+import { actionsFor, makeIdempotencyKey, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
 
 interface ReportWorkflowActionsProps {
     reportId?: string;
@@ -77,7 +76,7 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
                 reportType,
                 toStatus: action.toStatus,
                 comment,
-                idempotencyKey: uuid(),
+                idempotencyKey: makeIdempotencyKey(),
             }).unwrap();
             setPendingCommentAction(null);
             setModalState({ status: 'success', message: `Report ${action.variant === 'approve' ? 'approved' : 'returned'}` });
