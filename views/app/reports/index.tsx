@@ -1,6 +1,6 @@
 import { Text } from '~/components/ui/text';
-import React, { useCallback } from 'react';
-import { RefreshControl, ScrollView, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { FlatList, RefreshControl, TouchableOpacity, View } from 'react-native';
 import { Href, router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
@@ -26,37 +26,18 @@ import { IReportFormProps } from './forms/types';
 import { IIncidentReportPayload, IReportStatus } from '@store/types';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
-
-// ─── Section header ─────────────────────────────────────────────────────────
-const SectionHeader: React.FC<{ icon: keyof typeof Ionicons.glyphMap; title: string; count?: number }> = ({
-    icon,
-    title,
-    count,
-}) => (
-    <View className="flex-row items-center gap-2 mt-2 mb-1">
-        <Ionicons name={icon} size={15} color="#71717a" />
-        <Text className="!text-[13px] font-bold uppercase tracking-wider text-muted-foreground">{title}</Text>
-        {typeof count === 'number' && count > 0 ? (
-            <View className="rounded-full bg-secondary px-2 py-0.5">
-                <Text className="!text-[11px] font-semibold text-muted-foreground">{count}</Text>
-            </View>
-        ) : null}
-    </View>
-);
+import FilterChip from '../gh-approvals/approvals-filter-chip';
 
 // ─── History rows ───────────────────────────────────────────────────────────
-export const DepartmentReportListRow: React.FC<Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'>> =
-    React.memo(props => {
-        const {
-            user: { department },
-        } = useRole();
-
+export const DepartmentReportListRow: React.FC<
+    Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'> & { departmentName?: string }
+> = React.memo(({ departmentName, ...props }) => {
         const handlePress = useCallback(() => {
             router.push({
-                pathname: `/reports/${ReportRouteIndex[department?.departmentName]}` as any,
-                params: department?.departmentName === 'Children Ministry' ? { data: JSON.stringify(props) } : props,
+                pathname: `/reports/${ReportRouteIndex[departmentName ?? '']}` as any,
+                params: departmentName === 'Children Ministry' ? { data: JSON.stringify(props) } : props,
             });
-        }, [props, department?.departmentName]);
+        }, [props, departmentName]);
 
         const meta = getReportStatusMeta(props?.status as string);
 
@@ -137,13 +118,10 @@ const HodReports: React.FC<HodReportsProps> = ({
     onRefresh,
 }) => {
     const needsChanges = currentStatus === IReportStatus.GH_CHANGE_REQUESTED;
+    const [tab, setTab] = useState<'departmental' | 'incidents'>('departmental');
 
     return (
-        <ScrollView
-            className="flex-1"
-            contentContainerStyle={{ paddingBottom: 140 }}
-            refreshControl={<RefreshControl refreshing={!!isLoading} onRefresh={onRefresh} />}
-        >
+        <View className="flex-1">
             {/* Service header */}
             <View className="px-1 pt-2 pb-1">
                 <Text className="!text-xl font-bold text-foreground">{serviceName || 'Latest service'}</Text>
@@ -208,23 +186,48 @@ const HodReports: React.FC<HodReportsProps> = ({
                 )}
             </Card>
 
-            {/* History */}
-            <SectionHeader icon="documents-outline" title="Report history" count={departmentReports.length} />
-            {isLoading ? (
-                [1, 2].map(i => <Skeleton key={i} className="h-16 w-full rounded-2xl mb-2" />)
-            ) : departmentReports.length === 0 ? (
-                <Text className="!text-sm text-muted-foreground py-3">No past reports yet.</Text>
-            ) : (
-                departmentReports.map((item, i) => <DepartmentReportListRow key={i} {...item} />)
-            )}
+            {/* History — segmented by type */}
+            <View className="flex-row gap-2 mt-4 mb-1">
+                <FilterChip active={tab === 'departmental'} onPress={() => setTab('departmental')}>
+                    {`Departmental${departmentReports.length ? ` (${departmentReports.length})` : ''}`}
+                </FilterChip>
+                <FilterChip active={tab === 'incidents'} onPress={() => setTab('incidents')}>
+                    {`Incidents${incidentReports.length ? ` (${incidentReports.length})` : ''}`}
+                </FilterChip>
+            </View>
 
-            <SectionHeader icon="warning-outline" title="Incident reports" count={incidentReports.length} />
-            {incidentReports.length === 0 ? (
-                <Text className="!text-sm text-muted-foreground py-3">No incidents reported.</Text>
-            ) : (
-                incidentReports.map((item, i) => <IncidentReportListRow key={i} {...item} />)
-            )}
-        </ScrollView>
+            <FlatList
+                className="flex-1 mt-2"
+                data={tab === 'departmental' ? departmentReports : incidentReports}
+                keyExtractor={(item, i) => item?._id ?? `${i}`}
+                renderItem={({ item }) =>
+                    tab === 'departmental' ? (
+                        <DepartmentReportListRow {...item} departmentName={departmentName} />
+                    ) : (
+                        <IncidentReportListRow {...item} />
+                    )
+                }
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 140 }}
+                removeClippedSubviews
+                initialNumToRender={8}
+                windowSize={7}
+                refreshControl={<RefreshControl refreshing={!!isLoading} onRefresh={onRefresh} />}
+                ListEmptyComponent={
+                    isLoading && tab === 'departmental' ? (
+                        <View>
+                            {[1, 2].map(i => (
+                                <Skeleton key={i} className="h-16 w-full rounded-2xl mb-2" />
+                            ))}
+                        </View>
+                    ) : (
+                        <Text className="text-muted-foreground py-6 text-center">
+                            {tab === 'departmental' ? 'No past reports yet.' : 'No incidents reported.'}
+                        </Text>
+                    )
+                }
+            />
+        </View>
     );
 };
 
@@ -264,7 +267,6 @@ const Reports: React.FC = () => {
     const {
         refetch: reportsRefetch,
         isLoading: reportsIsLoading,
-        isFetching: reportsIsFetching,
         data: departmentAndIncidentReport,
     } = useGetDepartmentReportsListQuery(user?.department?._id);
 
@@ -316,18 +318,24 @@ const Reports: React.FC = () => {
             });
             return;
         }
+        const report = {
+            ...(currentReport ?? {}),
+            _id: currentReport?._id,
+            departmentId: user?.department?._id,
+            serviceId: latestServiceData?._id,
+            campusId: user?.campus?._id,
+            userId: user?.userId,
+        };
+        // Mirror the list-row navigation: Children Ministry carries its nested age
+        // bands as a JSON string (expo-router params can't hold nested objects).
         router.push({
             pathname: route as any,
-            params: {
-                ...(currentReport ?? {}),
-                _id: currentReport?._id,
-                departmentId: user?.department._id,
-                serviceId: latestServiceData?._id,
-                campusId: user?.campus._id,
-                userId: user?.userId,
-            },
+            params:
+                user?.department?.departmentName === 'Children Ministry'
+                    ? ({ data: JSON.stringify(report) } as any)
+                    : (report as any),
         });
-    }, [data, currentReport]);
+    }, [currentReport, user, latestServiceData?._id]);
 
     return (
         <ErrorBoundary>
