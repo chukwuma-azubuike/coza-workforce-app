@@ -1,26 +1,25 @@
-import { Text } from '~/components/ui/text';
-import { View } from 'react-native';
 import * as React from 'react';
+import { View } from 'react-native';
 import { Formik } from 'formik';
-import { IAttendanceReportPayload, IReportStatus } from '@store/types';
+import { IAttendanceReportPayload } from '@store/types';
 import { useCreateAttendanceReportMutation } from '@store/services/reports';
-import ViewWrapper from '@components/layout/viewWrapper';
-import dayjs from 'dayjs';
+import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
 import ReportWorkflowActions from '@components/composite/report-workflow-actions';
-import If from '@components/composite/if-container';
-import { Input } from '~/components/ui/input';
-import FormErrorMessage from '~/components/ui/error-message';
-import { Separator } from '~/components/ui/separator';
-import { Button } from '~/components/ui/button';
+import {
+    FormSection,
+    NumberField,
+    ReportFormShell,
+    SubmitButton,
+    TextAreaField,
+    TotalChip,
+    submitLabelForStatus,
+} from '@components/composite/report-form-kit';
 import { useLocalSearchParams } from 'expo-router';
-import { Textarea } from '~/components/ui/textarea';
-import { Label } from '~/components/ui/label';
 
 const AttendanceReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as IAttendanceReportPayload;
-
     const { status, updatedAt } = params;
 
     const { isCampusPastor, isGSP } = useRole();
@@ -33,117 +32,79 @@ const AttendanceReport: React.FC = () => {
         femaleGuestCount: params.femaleGuestCount || '',
         maleGuestCount: params.maleGuestCount || '',
         otherInfo: params.otherInfo || '',
-        imageUrl: params.imageUrl || '',
         infants: params.infants || '',
         total: params.total || '',
     };
 
-    const addValues = React.useCallback((values: IAttendanceReportPayload) => {
-        return `${+values.femaleGuestCount + +values.maleGuestCount + +values.infants}`;
-    }, []);
+    const computeTotal = React.useCallback(
+        (values: IAttendanceReportPayload) => `${+values.femaleGuestCount + +values.maleGuestCount + +values.infants}`,
+        []
+    );
 
     return (
-        <ViewWrapper scroll avoidKeyboard>
-            <Formik<IAttendanceReportPayload>
-                validateOnChange
-                enableReinitialize
-                onSubmit={onSubmit}
-                initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
-            >
-                {({ handleChange, handleSubmit, values, errors, touched, setFieldValue }) => (
-                    <View className="pt-4 gap-4 flex-1">
-                        <Text className="text-muted-foreground text-center">
-                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
-                        </Text>
-                        <View className="px-2 gap-4 mt-2">
-                            <View className="gap-1">
-                                <Label>Number of Male Guests</Label>
-                                <Input
-                                    placeholder="0"
-                                    inputMode="numeric"
-                                    keyboardType="numeric"
-                                    isDisabled={isCampusPastor}
-                                    value={`${values.maleGuestCount}`}
-                                    onChangeText={handleChange('maleGuestCount')}
-                                />
-                                {errors.maleGuestCount && touched.maleGuestCount && (
-                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                )}
-                            </View>
-                            <View className="gap-1">
-                                <Label>Number of Female Guests</Label>
-                                <Input
-                                    placeholder="0"
-                                    inputMode="numeric"
-                                    keyboardType="numeric"
-                                    isDisabled={isCampusPastor}
-                                    value={`${values.femaleGuestCount}`}
-                                    onChangeText={handleChange('femaleGuestCount')}
-                                />
-                                {errors.femaleGuestCount && touched.femaleGuestCount && (
-                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                )}
-                            </View>
-                            <View className="gap-1">
-                                <Label>Number of Infant Guests</Label>
-                                <Input
-                                    placeholder="0"
-                                    inputMode="numeric"
-                                    keyboardType="numeric"
-                                    isDisabled={isCampusPastor}
-                                    value={`${values.infants}`}
-                                    onChangeText={handleChange('infants')}
-                                />
-                                {errors.infants && touched.infants && (
-                                    <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                )}
-                            </View>
-                            <View className="gap-1">
-                                <Label>Total</Label>
-                                <Input
-                                    isDisabled
-                                    placeholder="0"
-                                    inputMode="numeric"
-                                    keyboardType="numeric"
-                                    value={addValues(values)}
-                                    onChangeText={handleChange('total')}
-                                />
-                            </View>
-                            <Separator className="my-2" />
-                            <View>
-                                <Textarea
-                                    isDisabled={isCampusPastor}
-                                    placeholder="Any other information"
-                                    onChangeText={handleChange('otherInfo')}
-                                    value={!!values?.otherInfo ? values?.otherInfo : undefined}
-                                />
-                            </View>
-                            <ReportWorkflowActions
-                                reportId={params?._id}
-                                reportType={reportType}
-                                status={status}
-                                ghComment={(params as any)?.ghComment}
-                                pastorComment={(params as any)?.pastorComment}
-                                gspComment={(params as any)?.gspComment}
-                            />
-                            <If condition={!isCampusPastor && !isGSP}>
-                                <View className="mt-1">
-                                    <Button
-                                        isLoading={isLoading || isTransitioning}
-                                        onPress={() => {
-                                            setFieldValue('total', addValues(values));
-                                            handleSubmit();
-                                        }}
-                                    >
-                                        {status === IReportStatus.GH_CHANGE_REQUESTED ? 'Resubmit' : !status ? 'Submit' : 'Update'}
-                                    </Button>
-                                </View>
-                            </If>
+        <Formik<IAttendanceReportPayload>
+            validateOnChange
+            enableReinitialize
+            onSubmit={onSubmit}
+            initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
+        >
+            {({ handleChange, handleSubmit, values, setFieldValue }) => (
+                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                    <FormSection title="Attendance">
+                        <NumberField
+                            label="Number of male guests"
+                            isDisabled={isCampusPastor}
+                            value={values.maleGuestCount as any}
+                            onChangeText={handleChange('maleGuestCount')}
+                        />
+                        <NumberField
+                            label="Number of female guests"
+                            isDisabled={isCampusPastor}
+                            value={values.femaleGuestCount as any}
+                            onChangeText={handleChange('femaleGuestCount')}
+                        />
+                        <NumberField
+                            label="Number of infant guests"
+                            isDisabled={isCampusPastor}
+                            value={values.infants as any}
+                            onChangeText={handleChange('infants')}
+                        />
+                        <View className="flex-row gap-2 pt-1">
+                            <TotalChip label="Total attendance" value={computeTotal(values)} />
                         </View>
-                    </View>
-                )}
-            </Formik>
-        </ViewWrapper>
+                    </FormSection>
+
+                    <FormSection title="Notes">
+                        <TextAreaField
+                            label="Other information"
+                            placeholder="Any other information"
+                            isDisabled={isCampusPastor}
+                            value={values?.otherInfo ?? ''}
+                            onChangeText={handleChange('otherInfo')}
+                        />
+                    </FormSection>
+
+                    <ReportWorkflowActions
+                        reportId={params?._id}
+                        reportType={reportType}
+                        status={status}
+                        ghComment={(params as any)?.ghComment}
+                        pastorComment={(params as any)?.pastorComment}
+                        gspComment={(params as any)?.gspComment}
+                    />
+                    <If condition={!isCampusPastor && !isGSP}>
+                        <SubmitButton
+                            label={submitLabelForStatus(status as string)}
+                            isLoading={isLoading || isTransitioning}
+                            onPress={() => {
+                                setFieldValue('total', computeTotal(values));
+                                handleSubmit();
+                            }}
+                        />
+                    </If>
+                </ReportFormShell>
+            )}
+        </Formik>
     );
 };
 

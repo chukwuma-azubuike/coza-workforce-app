@@ -1,21 +1,20 @@
-import { Text } from '~/components/ui/text';
-import { View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
-import { IPruReportPayload, IReportStatus } from '@store/types';
+import { IPruReportPayload } from '@store/types';
 import { useCreatePruReportMutation } from '@store/services/reports';
-import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
-import dayjs from 'dayjs';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
 import ReportWorkflowActions from '@components/composite/report-workflow-actions';
+import {
+    FormSection,
+    NumberField,
+    ReportFormShell,
+    SubmitButton,
+    TextAreaField,
+    submitLabelForStatus,
+} from '@components/composite/report-form-kit';
 import { useLocalSearchParams } from 'expo-router';
-import { Label } from '~/components/ui/label';
-import { Input } from '~/components/ui/input';
-import { Separator } from '~/components/ui/separator';
-import { Textarea } from '~/components/ui/textarea';
 
 const NUMERIC_FIELDS: { key: keyof IPruReportPayload; label: string }[] = [
     { key: 'enquiryCount', label: 'Enquiries handled' },
@@ -50,56 +49,45 @@ const PruReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IPruReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ViewWrapper scroll avoidKeyboard>
-                    <View className="pb-4 mt-4 gap-4">
-                        <Text className="text-muted-foreground text-center mb-2">
-                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
-                        </Text>
-                        <View className="px-2 gap-4">
-                            {NUMERIC_FIELDS.map(field => (
-                                <View key={field.key as string}>
-                                    <Label>{field.label}</Label>
-                                    <Input
-                                        placeholder="0"
-                                        inputMode="numeric"
-                                        keyboardType="numeric"
-                                        isDisabled={isCampusPastor}
-                                        value={`${values[field.key] ?? ''}`}
-                                        onChangeText={handleChange(field.key as string)}
-                                    />
-                                </View>
-                            ))}
-                            <Separator className="my-2" />
-                            <View>
-                                <Label>Comment</Label>
-                                <Textarea
-                                    isDisabled={isCampusPastor}
-                                    placeholder="Any other information"
-                                    onChangeText={handleChange('comment')}
-                                    value={values?.comment ?? ''}
-                                />
-                            </View>
-                            <ReportWorkflowActions
-                                reportId={params?._id}
-                                reportType={reportType}
-                                status={status}
-                                ghComment={(params as any)?.ghComment}
-                                pastorComment={(params as any)?.pastorComment}
-                                gspComment={(params as any)?.gspComment}
+                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                    <FormSection title="Desk activity">
+                        {NUMERIC_FIELDS.map(field => (
+                            <NumberField
+                                key={field.key as string}
+                                label={field.label}
+                                isDisabled={isCampusPastor}
+                                value={values[field.key] as any}
+                                onChangeText={handleChange(field.key as string)}
                             />
-                            <If condition={!isCampusPastor && !isGSP}>
-                                <View>
-                                    <ButtonComponent
-                                        isLoading={isLoading || isTransitioning}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
-                                        {status === IReportStatus.GH_CHANGE_REQUESTED ? 'Resubmit' : !status ? 'Submit' : 'Update'}
-                                    </ButtonComponent>
-                                </View>
-                            </If>
-                        </View>
-                    </View>
-                </ViewWrapper>
+                        ))}
+                    </FormSection>
+
+                    <FormSection title="Notes">
+                        <TextAreaField
+                            label="Comment"
+                            placeholder="Any other information"
+                            isDisabled={isCampusPastor}
+                            value={values?.comment ?? ''}
+                            onChangeText={handleChange('comment')}
+                        />
+                    </FormSection>
+
+                    <ReportWorkflowActions
+                        reportId={params?._id}
+                        reportType={reportType}
+                        status={status}
+                        ghComment={(params as any)?.ghComment}
+                        pastorComment={(params as any)?.pastorComment}
+                        gspComment={(params as any)?.gspComment}
+                    />
+                    <If condition={!isCampusPastor && !isGSP}>
+                        <SubmitButton
+                            label={submitLabelForStatus(status as string)}
+                            isLoading={isLoading || isTransitioning}
+                            onPress={handleSubmit as () => void}
+                        />
+                    </If>
+                </ReportFormShell>
             )}
         </Formik>
     );
