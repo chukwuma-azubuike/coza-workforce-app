@@ -198,7 +198,7 @@ const useRole = () => {
         isSecurity: departmentName === DEPARTMENTS.security,
         isChildcare: departmentName === DEPARTMENTS.childcare,
         isWitty: departmentName === DEPARTMENTS.witty,
-        isInternship: departmentName === DEPARTMENTS.internship,
+        isInternship: departmentName === DEPARTMENTS.internship || departmentName === 'Internship',
         isWelfare: departmentName === DEPARTMENTS.welfare,
         isProtocol: departmentName === DEPARTMENTS.protocol,
         isQC: departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME,
