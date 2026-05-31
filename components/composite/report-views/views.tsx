@@ -8,8 +8,10 @@ import {
     HeroStat,
     InfoChip,
     LinkButton,
+    LinkRow,
     NoteBlock,
     ReportSection,
+    StatGrid,
     StatTile,
     num,
 } from './primitives';
@@ -61,12 +63,14 @@ export const AttendanceReportView: React.FC<{ data: AnyReport }> = ({ data }) =>
     return (
         <>
             <ReportSection title="Attendance">
-                <View className="flex-row gap-2">
-                    <StatTile label="Male" value={male} containerClass="bg-blue-100 dark:bg-blue-900/20" textClass="text-blue-700 dark:text-blue-400" />
-                    <StatTile label="Female" value={female} containerClass="bg-pink-100 dark:bg-pink-900/20" textClass="text-pink-700 dark:text-pink-400" />
-                    <StatTile label="Infants" value={infants} containerClass="bg-amber-100 dark:bg-amber-900/20" textClass="text-amber-700 dark:text-amber-400" />
-                    <StatTile label="Total" value={total} containerClass="bg-green-100 dark:bg-green-900/20" textClass="text-green-700 dark:text-green-400" />
-                </View>
+                <StatGrid
+                    items={[
+                        { label: 'Male', value: male, containerClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400' },
+                        { label: 'Female', value: female, containerClass: 'bg-pink-100 dark:bg-pink-900/20', textClass: 'text-pink-700 dark:text-pink-400' },
+                        { label: 'Infants', value: infants, containerClass: 'bg-amber-100 dark:bg-amber-900/20', textClass: 'text-amber-700 dark:text-amber-400' },
+                        { label: 'Total', value: total, containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                    ]}
+                />
             </ReportSection>
             <NoteBlock label="Other information" text={data?.otherInfo} />
             <AttachmentImage url={data?.imageUrl} />
@@ -173,28 +177,27 @@ export const IncidentReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
 // ─── Witty Inventions ───────────────────────────────────────────────────────
 export const WittyReportView: React.FC<{ data: AnyReport }> = ({ data }) => {
     const posts: AnyReport[] = Array.isArray(data?.socialMediaPosts) ? data.socialMediaPosts : [];
-    const rows = posts.filter(p => p?.platform || p?.url).map(p => [p?.platform || '—', p?.url || '—']);
+    const linkedPosts = posts.filter(p => p?.platform || p?.url);
     return (
         <>
             <ReportSection title="Online reach">
-                <View className="flex-row gap-2">
-                    <StatTile
-                        label="Online first timers"
-                        value={num(data?.onlineFirstTimersCount)}
-                        containerClass="bg-indigo-100 dark:bg-indigo-900/20"
-                        textClass="text-indigo-700 dark:text-indigo-400"
-                    />
-                    <StatTile
-                        label="Online new converts"
-                        value={num(data?.onlineConvertsCount)}
-                        containerClass="bg-green-100 dark:bg-green-900/20"
-                        textClass="text-green-700 dark:text-green-400"
-                    />
-                </View>
+                <StatGrid
+                    items={[
+                        { label: 'Online first timers', value: num(data?.onlineFirstTimersCount), containerClass: 'bg-indigo-100 dark:bg-indigo-900/20', textClass: 'text-indigo-700 dark:text-indigo-400' },
+                        { label: 'Online new converts', value: num(data?.onlineConvertsCount), containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                    ]}
+                />
             </ReportSection>
-            {rows.length > 0 && (
+            {linkedPosts.length > 0 && (
                 <ReportSection title="Social media posts">
-                    <DataTable headers={['Platform', 'Link']} rows={rows} />
+                    {linkedPosts.map((p, i) => (
+                        <LinkRow
+                            key={i}
+                            label={p?.platform || 'Post'}
+                            url={p?.url}
+                            isLast={i === linkedPosts.length - 1}
+                        />
+                    ))}
                 </ReportSection>
             )}
             <NoteBlock label="Online inquiries" text={data?.onlineInquiries} />
@@ -241,12 +244,14 @@ export const InternshipReportView: React.FC<{ data: AnyReport }> = ({ data }) =>
 export const PruReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
     <>
         <ReportSection title="Desk activity">
-            <View className="flex-row gap-2">
-                <StatTile label="Enquiries" value={num(data?.enquiryCount)} containerClass="bg-blue-100 dark:bg-blue-900/20" textClass="text-blue-700 dark:text-blue-400" />
-                <StatTile label="Vehicle dedications" value={num(data?.vehicleDedicationCount)} containerClass="bg-indigo-100 dark:bg-indigo-900/20" textClass="text-indigo-700 dark:text-indigo-400" />
-                <StatTile label="Missing items" value={num(data?.missingItemsCount)} containerClass="bg-amber-100 dark:bg-amber-900/20" textClass="text-amber-700 dark:text-amber-400" />
-                <StatTile label="Praise reports" value={num(data?.praiseReportDeskCount)} containerClass="bg-green-100 dark:bg-green-900/20" textClass="text-green-700 dark:text-green-400" />
-            </View>
+            <StatGrid
+                items={[
+                    { label: 'Enquiries', value: num(data?.enquiryCount), containerClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400' },
+                    { label: 'Vehicle dedications', value: num(data?.vehicleDedicationCount), containerClass: 'bg-indigo-100 dark:bg-indigo-900/20', textClass: 'text-indigo-700 dark:text-indigo-400' },
+                    { label: 'Missing items', value: num(data?.missingItemsCount), containerClass: 'bg-amber-100 dark:bg-amber-900/20', textClass: 'text-amber-700 dark:text-amber-400' },
+                    { label: 'Praise reports', value: num(data?.praiseReportDeskCount), containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                ]}
+            />
         </ReportSection>
         <NoteBlock label="Comment" text={data?.comment} />
         <AttachmentImage url={data?.imageUrl} />
@@ -257,12 +262,14 @@ export const PruReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
 export const WelfareReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
     <>
         <ReportSection title="Support & aid">
-            <View className="flex-row gap-2">
-                <StatTile label="Medical support" value={num(data?.medicalSupportCount)} containerClass="bg-blue-100 dark:bg-blue-900/20" textClass="text-blue-700 dark:text-blue-400" />
-                <StatTile label="Aid requests" value={num(data?.aidRequestCount)} containerClass="bg-secondary" />
-                <StatTile label="Aid treated" value={num(data?.aidTreatedCount)} containerClass="bg-green-100 dark:bg-green-900/20" textClass="text-green-700 dark:text-green-400" />
-                <StatTile label="Aid declined" value={num(data?.aidDeclinedCount)} containerClass="bg-red-100 dark:bg-red-900/20" textClass="text-red-700 dark:text-red-400" />
-            </View>
+            <StatGrid
+                items={[
+                    { label: 'Medical support', value: num(data?.medicalSupportCount), containerClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400' },
+                    { label: 'Aid requests', value: num(data?.aidRequestCount) },
+                    { label: 'Aid treated', value: num(data?.aidTreatedCount), containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                    { label: 'Aid declined', value: num(data?.aidDeclinedCount), containerClass: 'bg-red-100 dark:bg-red-900/20', textClass: 'text-red-700 dark:text-red-400' },
+                ]}
+            />
         </ReportSection>
         <NoteBlock label="Medical incident" text={data?.medicalIncident} />
         <NoteBlock label="Comment" text={data?.comment} />

@@ -37,6 +37,28 @@ export const StatTile: React.FC<{
     </View>
 );
 
+export interface StatItem {
+    label: string;
+    value: React.ReactNode;
+    containerClass?: string;
+    textClass?: string;
+}
+
+// Lays stat tiles out so labels never get cramped: 1–2 tiles share a row,
+// 3+ tiles wrap into a 2-up grid (so long labels like "Aid requests" fit).
+export const StatGrid: React.FC<{ items: StatItem[] }> = ({ items }) => {
+    const twoUp = items.length > 2;
+    return (
+        <View className="flex-row flex-wrap gap-2">
+            {items.map((it, i) => (
+                <View key={i} className={twoUp ? 'w-[48%] grow' : 'flex-1'}>
+                    <StatTile label={it.label} value={it.value} containerClass={it.containerClass} textClass={it.textClass} />
+                </View>
+            ))}
+        </View>
+    );
+};
+
 // Full-width emphasized hero figure for the headline metric of a report.
 export const HeroStat: React.FC<{ label: string; value: React.ReactNode; sublabel?: string }> = ({
     label,
@@ -124,6 +146,25 @@ export const LinkButton: React.FC<{ label: string; url?: string | null }> = ({ l
         >
             <Ionicons name="link-outline" size={15} color="#6d28d9" />
             <Text className="!text-[13px] font-semibold text-primary">{label}</Text>
+        </TouchableOpacity>
+    );
+};
+
+// Pressable link row: a label on the left, the (truncated) URL + open icon on
+// the right. Tapping opens the URL in the device browser.
+export const LinkRow: React.FC<{ label?: string; url?: string; isLast?: boolean }> = ({ label, url, isLast }) => {
+    if (!url) return null;
+    return (
+        <TouchableOpacity
+            activeOpacity={0.6}
+            onPress={() => Linking.openURL(url)}
+            className={cn('flex-row items-center gap-3 py-2.5', !isLast && 'border-b border-border')}
+        >
+            {label ? <Text className="!text-[13px] font-medium text-foreground shrink-0">{label}</Text> : null}
+            <Text className="!text-[12px] text-primary flex-1 text-right" numberOfLines={1}>
+                {url}
+            </Text>
+            <Ionicons name="open-outline" size={14} color="#6d28d9" />
         </TouchableOpacity>
     );
 };
