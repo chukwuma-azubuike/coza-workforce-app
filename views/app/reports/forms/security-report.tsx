@@ -1,8 +1,7 @@
 import { Text } from '~/components/ui/text';
 import * as React from 'react';
 import { FieldArray, Formik } from 'formik';
-import useModal from '@hooks/modal/useModal';
-import { ISecurityReportPayload } from '@store/types';
+import { ISecurityReportPayload, IReportStatus } from '@store/types';
 import {
     ICampusReportSummary,
     useCreateSecurityReportMutation,
@@ -14,20 +13,19 @@ import { Icon } from '@rneui/themed';
 import { THEME_CONFIG } from '@config/appConfig';
 import If from '@components/composite/if-container';
 import useRole, { DEPARTMENTS } from '@hooks/role';
+import { useReportFormSubmit } from '@hooks/report-form-submit';
+import ReportWorkflowActions from '@components/composite/report-workflow-actions';
 import { View } from 'react-native';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { Separator } from '~/components/ui/separator';
 import { Textarea } from '~/components/ui/textarea';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import Loading from '~/components/atoms/loading';
 
 const SecurityReport: React.FC = () => {
-    const {
-        isCampusPastor,
-        user: { userId },
-    } = useRole();
+    const { isCampusPastor, isGSP } = useRole();
     const params = useLocalSearchParams() as unknown as ISecurityReportPayload;
 
     const { data, isLoading: loadingReport } = useGetCampusReportSummaryQuery({
@@ -39,64 +37,8 @@ const SecurityReport: React.FC = () => {
 
     const { status, updatedAt } = params;
 
-    const [updateReport, { error, isLoading }] = useCreateSecurityReportMutation();
-
-    const onSubmit = async (values: ISecurityReportPayload) => {
-        try {
-            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
-
-            onResponse(res);
-        } catch (error) {}
-    };
-
-    const onRequestReview = async (values: ISecurityReportPayload) => {
-        try {
-            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
-
-            onResponse(res);
-        } catch (error) {}
-    };
-
-    const onApprove = async (values: ISecurityReportPayload) => {
-        try {
-            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
-
-            onResponse(res);
-        } catch (error) {}
-    };
-
-    const onResponse = React.useCallback(
-        (
-            res:
-                | {
-                      data: void;
-                      error?: undefined;
-                  }
-                | {
-                      data?: undefined;
-                      error: any;
-                  }
-        ) => {
-            if (res.data) {
-                setModalState({
-                    defaultRender: true,
-                    status: 'success',
-                    message: 'Report updated',
-                });
-                router.back();
-            }
-            if (res.error) {
-                setModalState({
-                    defaultRender: true,
-                    status: 'error',
-                    message: (error as any)?.data?.message || 'Something went wrong!',
-                });
-            }
-        },
-        []
-    );
-
-    const { setModalState } = useModal();
+    const [updateReport, { isLoading }] = useCreateSecurityReportMutation();
+    const { submit: onSubmit, isTransitioning, reportType } = useReportFormSubmit(updateReport as any, params);
 
     const INITIAL_VALUES = {
         ...params,
@@ -218,45 +160,24 @@ const SecurityReport: React.FC = () => {
                                 onChangeText={handleChange('otherInfo')}
                             />
                         </View>
-                        <If condition={!isCampusPastor}>
+                        <ReportWorkflowActions
+                            reportId={params?._id}
+                            reportType={reportType}
+                            status={status}
+                            ghComment={(params as any)?.ghComment}
+                            pastorComment={(params as any)?.pastorComment}
+                            gspComment={(params as any)?.gspComment}
+                        />
+                        <If condition={!isCampusPastor && !isGSP}>
                             <View>
                                 <Button
-                                    isLoading={isLoading}
+                                    isLoading={isLoading || isTransitioning}
                                     onPress={() => {
                                         setFieldValue('totalCarCount', addValues(values));
                                         handleSubmit();
                                     }}
                                 >
-                                    {`${!status ? 'Submit' : 'Update'}`}
-                                </Button>
-                            </View>
-                        </If>
-                        <If condition={isCampusPastor}>
-                            <View className="mb-3">
-                                <Textarea
-                                    isDisabled={!isCampusPastor}
-                                    placeholder="Pastor's comment"
-                                    onChangeText={handleChange('pastorComment')}
-                                    value={values?.pastorComment ? values?.pastorComment : ''}
-                                />
-                            </View>
-                            <View className="flex-row justify-between gap-2">
-                                <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="flex-1"
-                                    isLoading={isLoading}
-                                    onPress={() => onRequestReview(values)}
-                                >
-                                    Request Review
-                                </Button>
-                                <Button
-                                    size="sm"
-                                    className="flex-1"
-                                    isLoading={isLoading}
-                                    onPress={() => onApprove(values)}
-                                >
-                                    Approve
+                                    {status === IReportStatus.GH_CHANGE_REQUESTED ? 'Resubmit' : !status ? 'Submit' : 'Update'}
                                 </Button>
                             </View>
                         </If>

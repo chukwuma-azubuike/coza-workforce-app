@@ -1,4 +1,4 @@
-import { IGHSubmittedReportForGSP, IReportHistoryEntry, IGHRosterMember } from '../types/index';
+import { IGHSubmittedReportForGSP, IReviewHistoryEntry, IGHRosterMember } from '../types/index';
 import type { IGHGroupDepartment, IGHReportListResponse } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IDefaultResponse, IService, IReportStatus, REST_API_VERBS } from '../types';
@@ -40,48 +40,39 @@ export interface IGHApprovalReportExtra {
 export type IGHApprovalReportSummary = ICampusReportSummary<IGHApprovalReportExtra>;
 
 // ─── Report detail ────────────────────────────────────────────────────────────
-// New endpoint: GET /gh/reportDetail/:reportId
-// Returns full detail for a single department report for the GH review flow.
-export interface IGHReportDetail {
-    _id: string;
-    departmentName: string;
-    serviceName: string;
+// GET /gh/reports/:reportId — returns the real department report document plus the
+// review trail and the latest note per stage. `reportData` is the full report doc
+// (all data fields + status + reportType + hodId + reviewHistory + comment fields).
+export interface IGHReportDetail<TReportData = Record<string, any>> {
+    reportId: string;
+    reportType: string;
     status: IReportStatus;
-    submittedBy: {
-        firstName: string;
-        lastName: string;
-        pictureUrl?: string;
-    };
-    submittedAt: string;
-    attendance: {
-        present: number;
-        late: number;
-        absent: number;
-        total: number;
-    };
-    narrative: string;
-    highlights: string[];
-    attachments: { name: string; size: string }[];
-    history: IReportHistoryEntry[];
+    reportData: TReportData;
+    reviewHistory: IReviewHistoryEntry[];
+    departmentName: string;
+    groupId?: string;
+    campusName?: string;
+    serviceName?: string;
+    serviceTime?: number;
+    submittedBy?: string;
+    // latest note per stage
+    ghComment?: string | null;
+    pastorComment?: string | null;
+    gspComment?: string | null;
 }
 
-// ─── Report action payloads ───────────────────────────────────────────────────
-export interface IGHApproveReportPayload {
+// ─── Report transition payload (replaces the six old action endpoints) ──────────
+export interface IGHTransitionPayload {
     reportId: string;
-    comment?: string;
+    reportType?: string; // recommended — single-collection lookup instead of a 12-collection fan-out
+    toStatus: IReportStatus;
+    comment?: string; // required (≥ 20 chars) for any *_CHANGE_REQUESTED target
     idempotencyKey?: string;
 }
 
-export interface IGHRequestChangesPayload {
-    reportId: string;
-    comment: string;
-    idempotencyKey?: string;
-}
-
-export interface IGHPushBackToHodPayload {
-    reportId: string;
-    comment: string;
-    idempotencyKey?: string;
+export interface IGHTransitionResponse {
+    status: IReportStatus;
+    reviewHistory: IReviewHistoryEntry[];
 }
 
 // ─── Word / weekly reflection reviews ────────────────────────────────────────
@@ -114,15 +105,6 @@ export const groupHeadServiceSlice = createApi({
     refetchOnMountOrArgChange: true,
 
     endpoints: endpoint => ({
-        submitGhReport: endpoint.mutation<any, IGHReportPayload>({
-            query: body => ({
-                url: `/${SERVICE_URL}/reports/submit`,
-                method: REST_API_VERBS.POST,
-                body,
-            }),
-            invalidatesTags: ['GHReport'],
-        }),
-
         getGhReportById: endpoint.query<ICampusReportSummary, { serviceId: IService['_id'] }>({
             query: params => ({
                 url: `/${SERVICE_URL}/reports/${params.serviceId}`,
@@ -155,43 +137,27 @@ export const groupHeadServiceSlice = createApi({
         }),
 
         // ─── Report detail ────────────────────────────────────────────
-        getGhReportDetail: endpoint.query<IGHReportDetail, { reportId: string }>({
-            query: ({ reportId }) => ({
+        getGhReportDetail: endpoint.query<IGHReportDetail, { reportId: string; reportType?: string }>({
+            query: ({ reportId, reportType }) => ({
                 url: `/${SERVICE_URL}/reports/${reportId}`,
                 method: REST_API_VERBS.GET,
+                params: reportType ? { reportType } : undefined,
             }),
             providesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
             transformResponse: (res: IDefaultResponse<IGHReportDetail>) => res?.data,
         }),
 
-        // ─── Report state transitions (v2) ────────────────────────────
-        approveReport: endpoint.mutation<void, IGHApproveReportPayload>({
-            query: ({ reportId, comment, idempotencyKey }) => ({
-                url: `/${SERVICE_URL}/reports/${reportId}/approve`,
+        // ─── Unified report workflow transition (replaces the six old endpoints) ──
+        // The backend derives who-can-do-what from the target status, so the client
+        // just sends the desired `toStatus` (+ a comment for *_CHANGE_REQUESTED).
+        transitionReport: endpoint.mutation<IGHTransitionResponse, IGHTransitionPayload>({
+            query: ({ reportId, reportType, toStatus, comment, idempotencyKey }) => ({
+                url: `/${SERVICE_URL}/reports/${reportId}/transition`,
                 method: REST_API_VERBS.POST,
-                body: { comment },
+                body: { reportType, toStatus, comment },
                 headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
             }),
-            invalidatesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
-        }),
-
-        requestReportChanges: endpoint.mutation<void, IGHRequestChangesPayload>({
-            query: ({ reportId, comment, idempotencyKey }) => ({
-                url: `/${SERVICE_URL}/reports/${reportId}/request-changes`,
-                method: REST_API_VERBS.POST,
-                body: { comment },
-                headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
-            }),
-            invalidatesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
-        }),
-
-        pushReportBackToHod: endpoint.mutation<void, IGHPushBackToHodPayload>({
-            query: ({ reportId, comment, idempotencyKey }) => ({
-                url: `/${SERVICE_URL}/reports/${reportId}/push-back-to-hod`,
-                method: REST_API_VERBS.POST,
-                body: { comment },
-                headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
-            }),
+            transformResponse: (res: IDefaultResponse<IGHTransitionResponse>) => res?.data,
             invalidatesTags: (_, __, { reportId }) => [{ type: 'GHReport', id: reportId }, 'GHReport'],
         }),
 
@@ -246,14 +212,11 @@ export const groupHeadServiceSlice = createApi({
 
 // Use exported hook in relevant components
 export const {
-    useSubmitGhReportMutation,
     useGetGhReportsQuery,
     useGetGhReportByIdQuery,
     useGetGHSubmittedReportsByServiceIdQuery,
     useGetGhReportDetailQuery,
-    useApproveReportMutation,
-    useRequestReportChangesMutation,
-    usePushReportBackToHodMutation,
+    useTransitionReportMutation,
     useGetGhWordReviewsQuery,
     useAcknowledgeGhWordReviewMutation,
     useSuspendGhWordReviewMutation,

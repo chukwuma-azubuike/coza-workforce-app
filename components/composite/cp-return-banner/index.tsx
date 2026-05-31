@@ -8,10 +8,10 @@ dayjs.extend(relativeTime);
 import { Text } from '~/components/ui/text';
 import AvatarComponent from '@components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { IReportHistoryEntry } from '@store/types';
+import { IReviewHistoryEntry } from '@store/types';
 
 interface CpReturnBannerProps {
-    entry: IReportHistoryEntry;
+    entry: IReviewHistoryEntry;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -24,7 +24,7 @@ const ROLE_LABELS: Record<string, string> = {
 
 const CpReturnBanner: React.FC<CpReturnBannerProps> = ({ entry }) => {
     const roleLabel = ROLE_LABELS[entry.actorRole] ?? entry.actorRole;
-    const timeAgo = dayjs(entry.createdAt).fromNow();
+    const timeAgo = dayjs(entry.timestamp).fromNow();
 
     return (
         <View className="rounded-2xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 p-4 gap-3">
@@ -36,16 +36,10 @@ const CpReturnBanner: React.FC<CpReturnBannerProps> = ({ entry }) => {
             </View>
 
             <View className="flex-row items-start gap-3">
-                <AvatarComponent
-                    alt={entry.actorName}
-                    className="w-8 h-8"
-                    imageUrl={AVATAR_FALLBACK_URL}
-                />
+                <AvatarComponent alt={roleLabel} className="w-8 h-8" imageUrl={AVATAR_FALLBACK_URL} />
                 <View className="flex-1 gap-0.5">
-                    <Text className="!text-[13px] font-semibold text-foreground">{entry.actorName}</Text>
-                    <Text className="!text-[11px] text-muted-foreground">
-                        {roleLabel} · {timeAgo}
-                    </Text>
+                    <Text className="!text-[13px] font-semibold text-foreground">{roleLabel}</Text>
+                    <Text className="!text-[11px] text-muted-foreground">{timeAgo}</Text>
                 </View>
             </View>
 

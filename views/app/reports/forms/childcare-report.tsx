@@ -2,19 +2,20 @@ import { Text } from '~/components/ui/text';
 import { View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
-import useModal from '@hooks/modal/useModal';
-import { IChildCareReportPayload } from '@store/types';
+import { IChildCareReportPayload, IReportStatus } from '@store/types';
 import { useCreateChildCareReportMutation } from '@store/services/reports';
 import ViewWrapper from '@components/layout/viewWrapper';
 import dayjs from 'dayjs';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
+import { useReportFormSubmit } from '@hooks/report-form-submit';
+import ReportWorkflowActions from '@components/composite/report-workflow-actions';
 import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { Textarea } from '~/components/ui/textarea';
 
 const ChildcareReport: React.FC = () => {
@@ -25,70 +26,10 @@ const ChildcareReport: React.FC = () => {
 
     const { status, updatedAt } = params;
 
-    const {
-        isCampusPastor,
-        user: { userId },
-    } = useRole();
+    const { isCampusPastor, isGSP } = useRole();
 
-    const [updateReport, { error, isLoading }] = useCreateChildCareReportMutation();
-    const onSubmit = async (values: IChildCareReportPayload) => {
-        delete (values as any).__EXPO_ROUTER_key;
-
-        try {
-            const res = await updateReport({ ...values, userId, status: 'SUBMITTED' });
-
-            onResponse(res);
-        } catch (error) {}
-    };
-
-    const onRequestReview = async (values: IChildCareReportPayload) => {
-        try {
-            const res = await updateReport({ ...values, userId, status: 'REVIEW_REQUESTED' });
-
-            onResponse(res);
-        } catch (error) {}
-    };
-
-    const onApprove = async (values: IChildCareReportPayload) => {
-        try {
-            const res = await updateReport({ ...values, userId, status: 'APPROVED' });
-
-            onResponse(res);
-        } catch (error) {}
-    };
-
-    const onResponse = React.useCallback(
-        (
-            res:
-                | {
-                      data: void;
-                      error?: undefined;
-                  }
-                | {
-                      data?: undefined;
-                      error: any;
-                  }
-        ) => {
-            if (res.data) {
-                setModalState({
-                    defaultRender: true,
-                    status: 'success',
-                    message: 'Report updated',
-                });
-                router.back();
-            }
-            if (res.error) {
-                setModalState({
-                    defaultRender: true,
-                    status: 'error',
-                    message: (error as any)?.data?.message || 'Something went wrong!',
-                });
-            }
-        },
-        []
-    );
-
-    const { setModalState } = useModal();
+    const [updateReport, { isLoading }] = useCreateChildCareReportMutation();
+    const { submit: onSubmit, isTransitioning, reportType } = useReportFormSubmit(updateReport as any, params);
 
     const INITIAL_VALUES = {
         ...params,
@@ -305,9 +246,17 @@ const ChildcareReport: React.FC = () => {
                                 placeholder="Any other information"
                                 value={!!values?.otherInfo ? values?.otherInfo : undefined}
                             />
-                            <If condition={!isCampusPastor}>
+                            <ReportWorkflowActions
+                                reportId={params?._id}
+                                reportType={reportType}
+                                status={status}
+                                ghComment={(params as any)?.ghComment}
+                                pastorComment={(params as any)?.pastorComment}
+                                gspComment={(params as any)?.gspComment}
+                            />
+                            <If condition={!isCampusPastor && !isGSP}>
                                 <Button
-                                    isLoading={isLoading}
+                                    isLoading={isLoading || isTransitioning}
                                     onPress={() => {
                                         setFieldValue('subTotal.male', addSubTotal(values, 'male'));
                                         setFieldValue('subTotal.female', addSubTotal(values, 'female'));
@@ -315,35 +264,8 @@ const ChildcareReport: React.FC = () => {
                                         handleSubmit();
                                     }}
                                 >
-                                    {`${!status ? 'Submit' : 'Update'}`}
+                                    {status === IReportStatus.GH_CHANGE_REQUESTED ? 'Resubmit' : !status ? 'Submit' : 'Update'}
                                 </Button>
-                            </If>
-                            <If condition={isCampusPastor}>
-                                <Textarea
-                                    isDisabled={!isCampusPastor}
-                                    placeholder="Pastor's comment"
-                                    onChangeText={handleChange('pastorComment')}
-                                    value={values?.pastorComment ? values?.pastorComment : ''}
-                                />
-                                <View className="justify-between gap-4 flex-row">
-                                    <Button
-                                        onPress={() => onRequestReview(values)}
-                                        isLoading={isLoading}
-                                        className="flex-1"
-                                        variant="outline"
-                                        size="sm"
-                                    >
-                                        Request Review
-                                    </Button>
-                                    <Button
-                                        onPress={() => onApprove(values)}
-                                        isLoading={isLoading}
-                                        className="flex-1"
-                                        size="sm"
-                                    >
-                                        Approve
-                                    </Button>
-                                </View>
                             </If>
                         </View>
                     </View>
