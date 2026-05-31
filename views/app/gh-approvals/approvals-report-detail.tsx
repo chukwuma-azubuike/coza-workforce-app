@@ -277,10 +277,10 @@ const ApprovalsReportDetail: React.FC = () => {
 
                     {/* Report history */}
                     {!isLoading && reversedHistory.length > 0 && (
-                        <Card className="p-4 gap-3">
+                        <Card className="px-4 gap-3">
                             <View className="flex-row items-center justify-between">
                                 <SectionLabel>Approval history</SectionLabel>
-                                <Button variant="ghost" size="sm" onPress={() => setShowHistory(h => !h)}>
+                                <Button variant="ghost" textClassName='!text-sm' size="sm" onPress={() => setShowHistory(h => !h)}>
                                     {showHistory ? 'Hide' : 'Show all'}
                                 </Button>
                             </View>

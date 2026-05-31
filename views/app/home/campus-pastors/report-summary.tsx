@@ -28,6 +28,11 @@ enum ReportSummaryMap {
     Security = 'security-report',
     Programme = 'service-report',
     Childcare = 'childcare-report',
+    Witty = 'witty-report',
+    Internship = 'internship-report',
+    PRU = 'pru-report',
+    Welfare = 'welfare-report',
+    Protocol = 'protocol-report',
 }
 
 interface ReportSummaryMapIndex {
@@ -42,6 +47,11 @@ export const ReportRouteIndex: ReportSummaryMapIndex = {
     'Traffic & Security': ReportSummaryMap.Security,
     'Digital Surveillance Security': ReportSummaryMap.Security,
     'Programme Coordination': ReportSummaryMap.Programme,
+    'Witty Inventions': ReportSummaryMap.Witty,
+    'COZA Internship': ReportSummaryMap.Internship,
+    'Public Relations Unit (PRU)': ReportSummaryMap.PRU,
+    'Welfare and Special Needs Assignment': ReportSummaryMap.Welfare,
+    Protocol: ReportSummaryMap.Protocol,
 };
 
 const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = elm => {

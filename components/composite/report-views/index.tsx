@@ -8,15 +8,32 @@ import {
     ChildCareReportView,
     GuestReportView,
     IncidentReportView,
+    InternshipReportView,
+    ProtocolReportView,
+    PruReportView,
     SecurityReportView,
     ServiceReportView,
     TransferReportView,
+    WelfareReportView,
+    WittyReportView,
 } from './views';
 
 // Report data is dynamically shaped per department; intentionally untyped here.
 type AnyReport = any;
 
-type ViewKey = 'childcare' | 'attendance' | 'guest' | 'security' | 'transfer' | 'service' | 'incident';
+type ViewKey =
+    | 'childcare'
+    | 'attendance'
+    | 'guest'
+    | 'security'
+    | 'transfer'
+    | 'service'
+    | 'incident'
+    | 'witty'
+    | 'internship'
+    | 'pru'
+    | 'welfare'
+    | 'protocol';
 
 const VIEWS: Record<ViewKey, React.FC<{ data: AnyReport }>> = {
     childcare: ChildCareReportView,
@@ -26,6 +43,11 @@ const VIEWS: Record<ViewKey, React.FC<{ data: AnyReport }>> = {
     transfer: TransferReportView,
     service: ServiceReportView,
     incident: IncidentReportView,
+    witty: WittyReportView,
+    internship: InternshipReportView,
+    pru: PruReportView,
+    welfare: WelfareReportView,
+    protocol: ProtocolReportView,
 };
 
 // Match a (possibly drifting) backend reportType string to a known view.
@@ -39,6 +61,11 @@ const matchByType = (reportType?: string): ViewKey | null => {
     if (t.includes('transfer') || t.includes('cts')) return 'transfer';
     if (t.includes('service') || t.includes('programme') || t.includes('program')) return 'service';
     if (t.includes('incident')) return 'incident';
+    if (t.includes('witty')) return 'witty';
+    if (t.includes('internship')) return 'internship';
+    if (t.includes('pru') || t.includes('publicrelations')) return 'pru';
+    if (t.includes('welfare') || t.includes('specialneeds')) return 'welfare';
+    if (t.includes('protocol')) return 'protocol';
     return null;
 };
 
@@ -51,6 +78,15 @@ const matchByShape = (data?: AnyReport): ViewKey | null => {
     if (Array.isArray(data.locations) && data.locations[0] && 'carCount' in data.locations[0]) return 'security';
     if (Array.isArray(data.locations) && data.locations[0] && 'adultCount' in data.locations[0]) return 'transfer';
     if (data.serviceStartTime != null || data.serviceReportLink != null) return 'service';
+    if (Array.isArray(data.socialMediaPosts) || data.onlineConvertsCount != null || data.onlineFirstTimersCount != null)
+        return 'witty';
+    if (data.classMemberCount != null || data.classTaken != null || data.convertsCompletedClassCount != null)
+        return 'internship';
+    if (data.enquiryCount != null || data.vehicleDedicationCount != null || data.praiseReportDeskCount != null)
+        return 'pru';
+    if (data.medicalSupportCount != null || data.aidRequestCount != null || data.medicalIncident != null)
+        return 'welfare';
+    if (data.incidentCount != null || data.specialGuestCount != null || data.theft != null) return 'protocol';
     if (data.incident != null || data.details != null) return 'incident';
     return null;
 };

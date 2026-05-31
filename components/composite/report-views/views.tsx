@@ -169,3 +169,128 @@ export const IncidentReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
         <AttachmentImage url={data?.imageUrl} />
     </>
 );
+
+// ─── Witty Inventions ───────────────────────────────────────────────────────
+export const WittyReportView: React.FC<{ data: AnyReport }> = ({ data }) => {
+    const posts: AnyReport[] = Array.isArray(data?.socialMediaPosts) ? data.socialMediaPosts : [];
+    const rows = posts.filter(p => p?.platform || p?.url).map(p => [p?.platform || '—', p?.url || '—']);
+    return (
+        <>
+            <ReportSection title="Online reach">
+                <View className="flex-row gap-2">
+                    <StatTile
+                        label="Online first timers"
+                        value={num(data?.onlineFirstTimersCount)}
+                        containerClass="bg-indigo-100 dark:bg-indigo-900/20"
+                        textClass="text-indigo-700 dark:text-indigo-400"
+                    />
+                    <StatTile
+                        label="Online new converts"
+                        value={num(data?.onlineConvertsCount)}
+                        containerClass="bg-green-100 dark:bg-green-900/20"
+                        textClass="text-green-700 dark:text-green-400"
+                    />
+                </View>
+            </ReportSection>
+            {rows.length > 0 && (
+                <ReportSection title="Social media posts">
+                    <DataTable headers={['Platform', 'Link']} rows={rows} />
+                </ReportSection>
+            )}
+            <NoteBlock label="Online inquiries" text={data?.onlineInquiries} />
+            <NoteBlock label="Incident report" text={data?.incidentReport} />
+            <NoteBlock label="Comment" text={data?.comment} />
+            <AttachmentImage url={data?.imageUrl} />
+        </>
+    );
+};
+
+// ─── COZA Internship ──────────────────────────────────────────────────────────
+export const InternshipReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
+    <>
+        <ReportSection title="Class attendance">
+            <View className="flex-row gap-2">
+                <StatTile
+                    label="Class members"
+                    value={num(data?.classMemberCount)}
+                    containerClass="bg-blue-100 dark:bg-blue-900/20"
+                    textClass="text-blue-700 dark:text-blue-400"
+                />
+                <StatTile
+                    label="Completed class"
+                    value={num(data?.convertsCompletedClassCount)}
+                    containerClass="bg-green-100 dark:bg-green-900/20"
+                    textClass="text-green-700 dark:text-green-400"
+                />
+            </View>
+        </ReportSection>
+        {(data?.classTaken || data?.location) && (
+            <ReportSection title="Class details">
+                <View className="flex-row gap-2">
+                    {data?.classTaken ? <InfoChip label="Class taken" value={data.classTaken} /> : null}
+                    {data?.location ? <InfoChip label="Location" value={data.location} /> : null}
+                </View>
+            </ReportSection>
+        )}
+        <NoteBlock label="Comment" text={data?.comment} />
+        <AttachmentImage url={data?.imageUrl} />
+    </>
+);
+
+// ─── Public Relations Unit ────────────────────────────────────────────────────
+export const PruReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
+    <>
+        <ReportSection title="Desk activity">
+            <View className="flex-row gap-2">
+                <StatTile label="Enquiries" value={num(data?.enquiryCount)} containerClass="bg-blue-100 dark:bg-blue-900/20" textClass="text-blue-700 dark:text-blue-400" />
+                <StatTile label="Vehicle dedications" value={num(data?.vehicleDedicationCount)} containerClass="bg-indigo-100 dark:bg-indigo-900/20" textClass="text-indigo-700 dark:text-indigo-400" />
+                <StatTile label="Missing items" value={num(data?.missingItemsCount)} containerClass="bg-amber-100 dark:bg-amber-900/20" textClass="text-amber-700 dark:text-amber-400" />
+                <StatTile label="Praise reports" value={num(data?.praiseReportDeskCount)} containerClass="bg-green-100 dark:bg-green-900/20" textClass="text-green-700 dark:text-green-400" />
+            </View>
+        </ReportSection>
+        <NoteBlock label="Comment" text={data?.comment} />
+        <AttachmentImage url={data?.imageUrl} />
+    </>
+);
+
+// ─── Welfare and Special Needs Assignment ─────────────────────────────────────
+export const WelfareReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
+    <>
+        <ReportSection title="Support & aid">
+            <View className="flex-row gap-2">
+                <StatTile label="Medical support" value={num(data?.medicalSupportCount)} containerClass="bg-blue-100 dark:bg-blue-900/20" textClass="text-blue-700 dark:text-blue-400" />
+                <StatTile label="Aid requests" value={num(data?.aidRequestCount)} containerClass="bg-secondary" />
+                <StatTile label="Aid treated" value={num(data?.aidTreatedCount)} containerClass="bg-green-100 dark:bg-green-900/20" textClass="text-green-700 dark:text-green-400" />
+                <StatTile label="Aid declined" value={num(data?.aidDeclinedCount)} containerClass="bg-red-100 dark:bg-red-900/20" textClass="text-red-700 dark:text-red-400" />
+            </View>
+        </ReportSection>
+        <NoteBlock label="Medical incident" text={data?.medicalIncident} />
+        <NoteBlock label="Comment" text={data?.comment} />
+        <AttachmentImage url={data?.imageUrl} />
+    </>
+);
+
+// ─── Protocol ─────────────────────────────────────────────────────────────────
+export const ProtocolReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
+    <>
+        <ReportSection title="Protocol activity">
+            <View className="flex-row gap-2">
+                <StatTile
+                    label="Incidents"
+                    value={num(data?.incidentCount)}
+                    containerClass="bg-amber-100 dark:bg-amber-900/20"
+                    textClass="text-amber-700 dark:text-amber-400"
+                />
+                <StatTile
+                    label="Special guests"
+                    value={num(data?.specialGuestCount)}
+                    containerClass="bg-indigo-100 dark:bg-indigo-900/20"
+                    textClass="text-indigo-700 dark:text-indigo-400"
+                />
+            </View>
+        </ReportSection>
+        <NoteBlock label="Theft incidents" text={data?.theft} />
+        <NoteBlock label="Comment" text={data?.comment} />
+        <AttachmentImage url={data?.imageUrl} />
+    </>
+);

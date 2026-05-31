@@ -131,6 +131,11 @@ export const DEPARTMENT_TO_REPORT_TYPE: Record<string, string> = {
     'Digital Surveillance Security': 'SecurityReport',
     'COZA Transfer Service': 'TransferReport',
     'Programme Coordination': 'ServiceReport',
+    'Witty Inventions': 'WittyReport',
+    'COZA Internship': 'InternshipReport',
+    'Public Relations Unit (PRU)': 'PruReport',
+    'Welfare and Special Needs Assignment': 'WelfareReport',
+    Protocol: 'ProtocolReport',
 };
 
 export function resolveReportType(params: { reportType?: string; departmentName?: string }): string | undefined {

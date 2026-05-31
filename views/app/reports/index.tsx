@@ -109,6 +109,11 @@ const Reports: React.FC = () => {
         isPrograms,
         isGlobalPastor,
         isGroupHead,
+        isWitty,
+        isInternship,
+        isPRU,
+        isWelfare,
+        isProtocol,
     } = useRole();
 
     const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus._id as string, { skip: !user });
@@ -159,6 +164,22 @@ const Reports: React.FC = () => {
         if (isChildcare) {
             return '/reports/childcare-report';
         }
+        if (isWitty) {
+            return '/reports/witty-report';
+        }
+        if (isInternship) {
+            return '/reports/internship-report';
+        }
+        if (isPRU) {
+            return '/reports/pru-report';
+        }
+        if (isWelfare) {
+            return '/reports/welfare-report';
+        }
+        if (isProtocol) {
+            return '/reports/protocol-report';
+        }
+        return undefined;
     };
 
     const goToIncidentReport = useCallback(() => {
