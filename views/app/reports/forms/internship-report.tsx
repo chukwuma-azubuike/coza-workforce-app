@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { View } from 'react-native';
 import { Formik } from 'formik';
-import { IAttendanceReportPayload } from '@store/types';
-import { useCreateAttendanceReportMutation } from '@store/services/reports';
+import { IInternshipReportPayload } from '@store/types';
+import { useCreateInternshipReportMutation } from '@store/services/reports';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
@@ -13,74 +12,77 @@ import {
     ReportFormShell,
     SubmitButton,
     TextAreaField,
-    TotalChip,
+    TextField,
     submitLabelForStatus,
 } from '@components/composite/report-form-kit';
 import { useLocalSearchParams } from 'expo-router';
 
-const AttendanceReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as IAttendanceReportPayload;
+const InternshipReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IInternshipReportPayload;
     const { status, updatedAt } = params;
 
     const { isCampusPastor, isGSP } = useRole();
 
-    const [updateReport, { isLoading }] = useCreateAttendanceReportMutation();
+    const [updateReport, { isLoading }] = useCreateInternshipReportMutation();
     const { submit: onSubmit, isTransitioning, reportType } = useReportFormSubmit(updateReport as any, params);
 
     const INITIAL_VALUES = {
         ...params,
-        femaleGuestCount: params.femaleGuestCount || '',
-        maleGuestCount: params.maleGuestCount || '',
-        otherInfo: params.otherInfo || '',
-        infants: params.infants || '',
-        total: params.total || '',
+        classMemberCount: params.classMemberCount || '',
+        classTaken: params.classTaken || '',
+        convertsCompletedClassCount: params.convertsCompletedClassCount || '',
+        location: params.location || '',
+        comment: params.comment || '',
     };
 
-    const computeTotal = React.useCallback(
-        (values: IAttendanceReportPayload) => `${+values.femaleGuestCount + +values.maleGuestCount + +values.infants}`,
-        []
-    );
-
     return (
-        <Formik<IAttendanceReportPayload>
+        <Formik<IInternshipReportPayload>
             validateOnChange
             enableReinitialize
             onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
+            initialValues={INITIAL_VALUES as unknown as IInternshipReportPayload}
         >
-            {({ handleChange, handleSubmit, values, setFieldValue }) => (
+            {({ handleChange, handleSubmit, values }) => (
                 <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                    <FormSection title="Class">
+                        <TextField
+                            label="Class taken"
+                            placeholder="Topic or title of the class"
+                            isDisabled={isCampusPastor}
+                            value={values?.classTaken ?? ''}
+                            onChangeText={handleChange('classTaken')}
+                        />
+                        <TextField
+                            label="Location"
+                            placeholder="Venue where the class was held"
+                            isDisabled={isCampusPastor}
+                            value={values?.location ?? ''}
+                            onChangeText={handleChange('location')}
+                        />
+                    </FormSection>
+
                     <FormSection title="Attendance">
                         <NumberField
-                            label="Number of male guests"
+                            label="Class attendance"
                             isDisabled={isCampusPastor}
-                            value={values.maleGuestCount as any}
-                            onChangeText={handleChange('maleGuestCount')}
+                            value={values.classMemberCount as any}
+                            onChangeText={handleChange('classMemberCount')}
                         />
                         <NumberField
-                            label="Number of female guests"
+                            label="Converts who completed the class"
                             isDisabled={isCampusPastor}
-                            value={values.femaleGuestCount as any}
-                            onChangeText={handleChange('femaleGuestCount')}
+                            value={values.convertsCompletedClassCount as any}
+                            onChangeText={handleChange('convertsCompletedClassCount')}
                         />
-                        <NumberField
-                            label="Number of infant guests"
-                            isDisabled={isCampusPastor}
-                            value={values.infants as any}
-                            onChangeText={handleChange('infants')}
-                        />
-                        <View className="flex-row gap-2 pt-1">
-                            <TotalChip label="Total attendance" value={computeTotal(values)} />
-                        </View>
                     </FormSection>
 
                     <FormSection title="Notes">
                         <TextAreaField
-                            label="Other information"
+                            label="Comment"
                             placeholder="Any other information"
                             isDisabled={isCampusPastor}
-                            value={values?.otherInfo ?? ''}
-                            onChangeText={handleChange('otherInfo')}
+                            value={values?.comment ?? ''}
+                            onChangeText={handleChange('comment')}
                         />
                     </FormSection>
 
@@ -96,10 +98,7 @@ const AttendanceReport: React.FC = () => {
                         <SubmitButton
                             label={submitLabelForStatus(status as string)}
                             isLoading={isLoading || isTransitioning}
-                            onPress={() => {
-                                setFieldValue('total', computeTotal(values));
-                                handleSubmit();
-                            }}
+                            onPress={handleSubmit as () => void}
                         />
                     </If>
                 </ReportFormShell>
@@ -108,4 +107,4 @@ const AttendanceReport: React.FC = () => {
     );
 };
 
-export default AttendanceReport;
+export default InternshipReport;

@@ -19,6 +19,11 @@ const ReportsLayout: React.FC = () => {
             <Stack.Screen name="security-report" options={{ title: 'Security report' }} />
             <Stack.Screen name="service-report" options={{ title: 'Service report' }} />
             <Stack.Screen name="transfer-report" options={{ title: 'Transfer report' }} />
+            <Stack.Screen name="witty-report" options={{ title: 'Witty report' }} />
+            <Stack.Screen name="internship-report" options={{ title: 'Internship report' }} />
+            <Stack.Screen name="pru-report" options={{ title: 'PRU report' }} />
+            <Stack.Screen name="welfare-report" options={{ title: 'Welfare report' }} />
+            <Stack.Screen name="protocol-report" options={{ title: 'Protocol report' }} />
         </Stack>
     );
 };

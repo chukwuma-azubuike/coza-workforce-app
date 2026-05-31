@@ -28,6 +28,11 @@ enum ReportSummaryMap {
     Security = 'security-report',
     Programme = 'service-report',
     Childcare = 'childcare-report',
+    Witty = 'witty-report',
+    Internship = 'internship-report',
+    PRU = 'pru-report',
+    Welfare = 'welfare-report',
+    Protocol = 'protocol-report',
 }
 
 interface ReportSummaryMapIndex {
@@ -42,7 +47,22 @@ export const ReportRouteIndex: ReportSummaryMapIndex = {
     'Traffic & Security': ReportSummaryMap.Security,
     'Digital Surveillance Security': ReportSummaryMap.Security,
     'Programme Coordination': ReportSummaryMap.Programme,
+    'Witty Inventions': ReportSummaryMap.Witty,
+    'COZA Internship': ReportSummaryMap.Internship,
+    'Public Relations Unit (PRU)': ReportSummaryMap.PRU,
+    'Welfare and Special Needs Assignment': ReportSummaryMap.Welfare,
+    Protocol: ReportSummaryMap.Protocol,
 };
+
+// Departments whose report data has nested arrays/objects that can't survive
+// expo-router param serialization — they travel as a JSON `data` string instead.
+const NESTED_PARAM_DEPTS = new Set([
+    'Children Ministry',
+    'Witty Inventions',
+    'Traffic & Security',
+    'Digital Surveillance Security',
+    'COZA Transfer Service',
+]);
 
 const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = elm => {
     const { isLightMode } = useAppColorMode();
@@ -52,10 +72,9 @@ const ReportSummaryListRow: React.FC<ReportSummaryListRowProps> = elm => {
         (elm: any) => () => {
             router.push({
                 pathname: `/reports/${ReportRouteIndex[elm?.departmentName]}` as any,
-                params:
-                    elm?.departmentName === 'Children Ministry'
-                        ? ({ data: JSON.stringify(elm.report) } as any)
-                        : elm.report,
+                params: NESTED_PARAM_DEPTS.has(elm?.departmentName)
+                    ? ({ data: JSON.stringify(elm.report) } as any)
+                    : elm.report,
             });
         },
         [ReportRouteIndex, elm?.departmentName, elm.report]
@@ -82,7 +101,9 @@ const GHReportSummaryListRow: React.FC<ReportSummaryListRowProps> = reportItem =
         (reportItem: any) => () => {
             router.push({
                 pathname: `/reports/${ReportRouteIndex[reportItem?.departmentName]}` as any,
-                params: reportItem.report as any,
+                params: NESTED_PARAM_DEPTS.has(reportItem?.departmentName)
+                    ? ({ data: JSON.stringify(reportItem.report) } as any)
+                    : (reportItem.report as any),
             });
         },
         [ReportRouteIndex]

@@ -19,7 +19,7 @@ import {
     useGetWorkersAttendanceReportQuery,
 } from '@store/services/attendance';
 import { useGetCampusTicketReportQuery } from '@store/services/tickets';
-import { useGetGhReportByIdQuery } from '@store/services/grouphead';
+import { useGetGhReportsQuery } from '@store/services/grouphead';
 import { IReportStatus } from '@store/types';
 
 import GHTopBar from './gh-top-bar';
@@ -110,27 +110,32 @@ const GHHome: React.FC<IGHHomeProps> = ({
     );
 
     const {
-        data: ghReport,
+        data: ghReportList,
         refetch: refetchGhReport,
         isUninitialized: ghReportUninitialized,
         isLoading: ghReportLoading,
-    } = useGetGhReportByIdQuery(
-        { serviceId: serviceId as string },
-        { skip: !serviceId }
-    );
+    } = useGetGhReportsQuery({ serviceId }, { skip: !serviceId });
+
+    // The list endpoint is group-scoped (all services). Narrow to the current
+    // service when the rows carry a serviceId; otherwise show the group's rows.
+    const serviceReports = useMemo(() => {
+        const all = ghReportList?.reports ?? [];
+        const hasServiceIds = all.some(r => !!r.serviceId);
+        return hasServiceIds ? all.filter(r => r.serviceId === serviceId) : all;
+    }, [ghReportList, serviceId]);
 
     const pendingCount = useMemo(
         () =>
-            (ghReport?.departmentalReport ?? []).filter(
-                d =>
-                    d.report.status === IReportStatus.HOD_SUBMITTED ||
-                    d.report.status === IReportStatus.PENDING ||
-                    d.report.status === IReportStatus.CP_CHANGE_REQUESTED
+            serviceReports.filter(
+                r =>
+                    r.status === IReportStatus.HOD_SUBMITTED ||
+                    r.status === IReportStatus.PENDING ||
+                    r.status === IReportStatus.CP_CHANGE_REQUESTED
             ).length,
-        [ghReport]
+        [serviceReports]
     );
 
-    const totalReports = ghReport?.departmentalReport?.length ?? 0;
+    const totalReports = serviceReports.length;
 
     const refreshAll = () => {
         refreshLocation();
@@ -150,7 +155,7 @@ const GHHome: React.FC<IGHHomeProps> = ({
         }
     }, [refreshTrigger]);
 
-    const isInitialLoad = serviceUninitialized || (!!campusId && ghReportLoading && !ghReport);
+    const isInitialLoad = serviceUninitialized || (!!campusId && ghReportLoading && !ghReportList);
 
     return (
         <View className="flex-1">
@@ -201,7 +206,7 @@ const GHHome: React.FC<IGHHomeProps> = ({
                         <Separator />
 
                         <ErrorBoundary>
-                            <GHReportsStatus ghReport={ghReport} isLoading={ghReportLoading} />
+                            <GHReportsStatus reports={serviceReports} isLoading={ghReportLoading} />
                         </ErrorBoundary>
                     </View>
                 </ViewWrapper>

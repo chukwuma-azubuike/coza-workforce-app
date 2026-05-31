@@ -115,6 +115,11 @@ export function transitionErrorMessage(err: unknown): TransitionErrorInfo {
 // Client-side guard mirroring the backend's comment requirement.
 export const TRANSITION_COMMENT_MIN = 20;
 
+// Unique-per-attempt key for the Idempotency-Key header. Avoids the `uuid`
+// package, which throws in React Native without a crypto.getRandomValues polyfill.
+export const makeIdempotencyKey = (): string =>
+    `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+
 // ─── departmentName → reportType fallback ───────────────────────────────────
 // The backend now stamps `reportType` onto each report document, so prefer that.
 // This map is only a fallback for entry points that don't carry it through yet.
@@ -126,6 +131,11 @@ export const DEPARTMENT_TO_REPORT_TYPE: Record<string, string> = {
     'Digital Surveillance Security': 'SecurityReport',
     'COZA Transfer Service': 'TransferReport',
     'Programme Coordination': 'ServiceReport',
+    'Witty Inventions': 'WittyReport',
+    'COZA Internship': 'InternshipReport',
+    'Public Relations Unit (PRU)': 'PruReport',
+    'Welfare and Special Needs Assignment': 'WelfareReport',
+    Protocol: 'ProtocolReport',
 };
 
 export function resolveReportType(params: { reportType?: string; departmentName?: string }): string | undefined {

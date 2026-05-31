@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { View } from 'react-native';
 import { Formik } from 'formik';
-import { IAttendanceReportPayload } from '@store/types';
-import { useCreateAttendanceReportMutation } from '@store/services/reports';
+import { IProtocolReportPayload } from '@store/types';
+import { useCreateProtocolReportMutation } from '@store/services/reports';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
@@ -13,74 +12,65 @@ import {
     ReportFormShell,
     SubmitButton,
     TextAreaField,
-    TotalChip,
     submitLabelForStatus,
 } from '@components/composite/report-form-kit';
 import { useLocalSearchParams } from 'expo-router';
 
-const AttendanceReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as IAttendanceReportPayload;
+const ProtocolReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IProtocolReportPayload;
     const { status, updatedAt } = params;
 
     const { isCampusPastor, isGSP } = useRole();
 
-    const [updateReport, { isLoading }] = useCreateAttendanceReportMutation();
+    const [updateReport, { isLoading }] = useCreateProtocolReportMutation();
     const { submit: onSubmit, isTransitioning, reportType } = useReportFormSubmit(updateReport as any, params);
 
     const INITIAL_VALUES = {
         ...params,
-        femaleGuestCount: params.femaleGuestCount || '',
-        maleGuestCount: params.maleGuestCount || '',
-        otherInfo: params.otherInfo || '',
-        infants: params.infants || '',
-        total: params.total || '',
+        incidentCount: params.incidentCount || '',
+        theft: params.theft || '',
+        specialGuestCount: params.specialGuestCount || '',
+        comment: params.comment || '',
     };
 
-    const computeTotal = React.useCallback(
-        (values: IAttendanceReportPayload) => `${+values.femaleGuestCount + +values.maleGuestCount + +values.infants}`,
-        []
-    );
-
     return (
-        <Formik<IAttendanceReportPayload>
+        <Formik<IProtocolReportPayload>
             validateOnChange
             enableReinitialize
             onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
+            initialValues={INITIAL_VALUES as unknown as IProtocolReportPayload}
         >
-            {({ handleChange, handleSubmit, values, setFieldValue }) => (
+            {({ handleChange, handleSubmit, values }) => (
                 <ReportFormShell updatedAt={updatedAt} status={status as string}>
-                    <FormSection title="Attendance">
+                    <FormSection title="Protocol activity">
                         <NumberField
-                            label="Number of male guests"
+                            label="Incidents recorded"
                             isDisabled={isCampusPastor}
-                            value={values.maleGuestCount as any}
-                            onChangeText={handleChange('maleGuestCount')}
+                            value={values.incidentCount as any}
+                            onChangeText={handleChange('incidentCount')}
                         />
                         <NumberField
-                            label="Number of female guests"
+                            label="Special guests received"
                             isDisabled={isCampusPastor}
-                            value={values.femaleGuestCount as any}
-                            onChangeText={handleChange('femaleGuestCount')}
+                            value={values.specialGuestCount as any}
+                            onChangeText={handleChange('specialGuestCount')}
                         />
-                        <NumberField
-                            label="Number of infant guests"
+                        <TextAreaField
+                            label="Theft incidents"
+                            placeholder="Narrative of any theft incidents"
                             isDisabled={isCampusPastor}
-                            value={values.infants as any}
-                            onChangeText={handleChange('infants')}
+                            value={values?.theft ?? ''}
+                            onChangeText={handleChange('theft')}
                         />
-                        <View className="flex-row gap-2 pt-1">
-                            <TotalChip label="Total attendance" value={computeTotal(values)} />
-                        </View>
                     </FormSection>
 
                     <FormSection title="Notes">
                         <TextAreaField
-                            label="Other information"
+                            label="Comment"
                             placeholder="Any other information"
                             isDisabled={isCampusPastor}
-                            value={values?.otherInfo ?? ''}
-                            onChangeText={handleChange('otherInfo')}
+                            value={values?.comment ?? ''}
+                            onChangeText={handleChange('comment')}
                         />
                     </FormSection>
 
@@ -96,10 +86,7 @@ const AttendanceReport: React.FC = () => {
                         <SubmitButton
                             label={submitLabelForStatus(status as string)}
                             isLoading={isLoading || isTransitioning}
-                            onPress={() => {
-                                setFieldValue('total', computeTotal(values));
-                                handleSubmit();
-                            }}
+                            onPress={handleSubmit as () => void}
                         />
                     </If>
                 </ReportFormShell>
@@ -108,4 +95,4 @@ const AttendanceReport: React.FC = () => {
     );
 };
 
-export default AttendanceReport;
+export default ProtocolReport;

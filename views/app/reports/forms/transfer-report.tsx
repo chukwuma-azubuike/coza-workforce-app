@@ -1,33 +1,36 @@
-import { Text } from '~/components/ui/text';
 import * as React from 'react';
+import { TouchableOpacity, View } from 'react-native';
 import { FieldArray, Formik } from 'formik';
-import { ITransferReportPayload, IReportStatus } from '@store/types';
+import { Ionicons } from '@expo/vector-icons';
+import { ITransferReportPayload } from '@store/types';
 import {
     ICampusReportSummary,
     useCreateTransferReportMutation,
     useGetCampusReportSummaryQuery,
 } from '@store/services/reports';
-import ViewWrapper from '@components/layout/viewWrapper';
-import ButtonComponent from '@components/atoms/button';
-import dayjs from 'dayjs';
-import { Icon } from '@rneui/themed';
-import { THEME_CONFIG } from '@config/appConfig';
 import useRole, { DEPARTMENTS } from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
 import ReportWorkflowActions from '@components/composite/report-workflow-actions';
 import If from '@components/composite/if-container';
-import { View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { Label } from '~/components/ui/label';
+import {
+    Field,
+    FormSection,
+    ReportFormShell,
+    SubmitButton,
+    TextAreaField,
+    TotalChip,
+    coerceArray,
+    readReportParams,
+    submitLabelForStatus,
+} from '@components/composite/report-form-kit';
+import { Text } from '~/components/ui/text';
 import { Input } from '~/components/ui/input';
-// import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
-import { Separator } from '~/components/ui/separator';
-import { Textarea } from '~/components/ui/textarea';
+import { useLocalSearchParams } from 'expo-router';
 import Loading from '~/components/atoms/loading';
 
 const TransferReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as ITransferReportPayload;
+    const params = readReportParams<ITransferReportPayload>(useLocalSearchParams() as any);
     const { status, updatedAt } = params;
 
     const { data, isLoading: loadingReport } = useGetCampusReportSummaryQuery({
@@ -46,16 +49,16 @@ const TransferReport: React.FC = () => {
         ...params,
         imageUrl: params.imageUrl || '',
         otherInfo: params.otherInfo || '',
-        locations: params?.locations?.length ? params?.locations : [{ name: '', adultCount: '', minorCount: '' }],
-    } as ITransferReportPayload;
+        locations: coerceArray(params?.locations, [{ name: '', adultCount: '', minorCount: '' }]),
+    } as unknown as ITransferReportPayload;
 
-    const addValues = React.useCallback((values: ITransferReportPayload, field: 'adultCount' | 'minorCount') => {
-        return values?.locations?.length > 0
-            ? ((values?.locations?.map(a => a[field]) ?? [])?.reduce((a, b) => +a + +b) as unknown as string)
-            : '0';
-    }, []);
+    const sum = React.useCallback(
+        (values: ITransferReportPayload, field: 'adultCount' | 'minorCount') =>
+            values?.locations?.reduce((s, l) => s + (+l[field] || 0), 0) ?? 0,
+        []
+    );
 
-    const securityReport = React.useMemo(
+    const transferReport = React.useMemo(
         () => typedData?.departmentalReport?.find(report => report.departmentName === DEPARTMENTS.CTS)?.report,
         [typedData?.departmentalReport]
     ) as any;
@@ -65,166 +68,115 @@ const TransferReport: React.FC = () => {
     }
 
     return (
-        <ViewWrapper scroll avoidKeyboard>
-            <Formik<ITransferReportPayload>
-                validateOnChange
-                onSubmit={onSubmit}
-                enableReinitialize
-                initialValues={securityReport || INITIAL_VALUES}
-            >
-                {({ handleChange, handleSubmit, values, setFieldValue }) => (
-                    <View className="pb-4 mt-4 gap-4">
-                        <Text className="text-muted-foreground text-center mb-2">
-                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
-                        </Text>
-
+        <Formik<ITransferReportPayload>
+            validateOnChange
+            onSubmit={onSubmit}
+            enableReinitialize
+            initialValues={transferReport || INITIAL_VALUES}
+        >
+            {({ handleChange, handleSubmit, values, setFieldValue }) => (
+                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                    <FormSection title="Pick-up locations">
                         <FieldArray
                             name="locations"
                             render={arrayHelpers => (
-                                <View className="gap-4">
+                                <View className="gap-3">
                                     {values?.locations?.map((location, idx) => (
-                                        <View key={idx} className="items-center gap-4 flex-row">
-                                            <View className="w-1/3 gap-1">
-                                                <Label>
-                                                    <Text className="flex-1">Location</Text>
-                                                </Label>
-                                                <Input
-                                                    style={{
-                                                        padding: 0,
-                                                        fontSize: 14,
-                                                    }}
-                                                    placeholder="Name"
-                                                    value={`${location.name}`}
-                                                    isDisabled={isCampusPastor}
-                                                    onChangeText={handleChange(`locations[${idx}].name`)}
-                                                />
+                                        <View key={idx} className="gap-2 rounded-xl bg-muted-background p-3">
+                                            <View className="flex-row items-center justify-between">
+                                                <Text className="!text-xs font-semibold text-muted-foreground">
+                                                    Location {idx + 1}
+                                                </Text>
+                                                {!isCampusPastor && values.locations.length > 1 && (
+                                                    <TouchableOpacity onPress={() => arrayHelpers.remove(idx)}>
+                                                        <Ionicons name="trash-outline" size={16} color="#ef4444" />
+                                                    </TouchableOpacity>
+                                                )}
                                             </View>
-                                            <View className="flex-1 gap-1">
-                                                <Label>
-                                                    <Text className="flex-1">Adults</Text>
-                                                </Label>
-                                                <Input
-                                                    style={{
-                                                        fontSize: 14,
-                                                    }}
-                                                    inputMode="numeric"
-                                                    placeholder="0"
-                                                    keyboardType="numeric"
-                                                    isDisabled={isCampusPastor}
-                                                    value={`${location.adultCount}`}
-                                                    onChangeText={handleChange(`locations[${idx}].adultCount`)}
-                                                />
-                                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
-                                            </View>
-                                            <View className="flex-1 gap-1">
-                                                <Text className="line-clamp-1 truncate">Children/Teens</Text>
-                                                <Input
-                                                    style={{
-                                                        fontSize: 14,
-                                                    }}
-                                                    placeholder="0"
-                                                    inputMode="numeric"
-                                                    keyboardType="numeric"
-                                                    isDisabled={isCampusPastor}
-                                                    value={`${location.minorCount}`}
-                                                    onChangeText={handleChange(`locations[${idx}].minorCount`)}
-                                                />
-                                                {/* <FormErrorMessage>This field cannot be empty</FormErrorMessage> */}
-                                            </View>
-                                            <View
-                                                className="!w-max"
-                                                style={{
-                                                    marginTop: 0,
-                                                    paddingBottom: 0,
-                                                }}
-                                            >
-                                                <Button
-                                                    style={{
-                                                        paddingVertical: 8,
-                                                        marginVertical: 0,
-                                                        marginTop: 31,
-                                                    }}
-                                                    className="flex-1"
-                                                    onPress={() => arrayHelpers.remove(idx)}
-                                                    disabled={isCampusPastor}
-                                                    variant="outline"
-                                                    size="sm"
-                                                >
-                                                    <Icon name="minus" type="entypo" color="red" />
-                                                </Button>
+                                            <Input
+                                                placeholder="Location name"
+                                                value={`${location.name ?? ''}`}
+                                                isDisabled={isCampusPastor}
+                                                onChangeText={handleChange(`locations[${idx}].name`)}
+                                            />
+                                            <View className="flex-row gap-2">
+                                                <View className="flex-1">
+                                                    <Field label="Adults">
+                                                        <Input
+                                                            placeholder="0"
+                                                            keyboardType="numeric"
+                                                            isDisabled={isCampusPastor}
+                                                            value={`${location.adultCount ?? ''}`}
+                                                            onChangeText={handleChange(`locations[${idx}].adultCount`)}
+                                                        />
+                                                    </Field>
+                                                </View>
+                                                <View className="flex-1">
+                                                    <Field label="Children / teens">
+                                                        <Input
+                                                            placeholder="0"
+                                                            keyboardType="numeric"
+                                                            isDisabled={isCampusPastor}
+                                                            value={`${location.minorCount ?? ''}`}
+                                                            onChangeText={handleChange(`locations[${idx}].minorCount`)}
+                                                        />
+                                                    </Field>
+                                                </View>
                                             </View>
                                         </View>
                                     ))}
-
-                                    <View>
+                                    <If condition={!isCampusPastor}>
                                         <Button
-                                            icon={<Icon name="plus" type="entypo" color={THEME_CONFIG.primary} />}
-                                            onPress={() => {
-                                                arrayHelpers.push({
-                                                    name: '',
-                                                    adultCount: '',
-                                                    minorCount: '',
-                                                });
-                                            }}
-                                            style={{ flex: 1 }}
-                                            disabled={isCampusPastor || isLoading}
-                                            variant="outline"
                                             size="sm"
+                                            variant="outline"
+                                            disabled={isLoading}
+                                            onPress={() => arrayHelpers.push({ name: '', adultCount: '', minorCount: '' })}
+                                            startIcon={<Ionicons name="add" size={16} color="#6d28d9" />}
                                         >
-                                            Add Location
+                                            Add location
                                         </Button>
+                                    </If>
+                                    <View className="flex-row gap-2 pt-1">
+                                        <TotalChip label="Adults" value={sum(values, 'adultCount')} />
+                                        <TotalChip label="Children / teens" value={sum(values, 'minorCount')} />
                                     </View>
                                 </View>
                             )}
                         />
+                    </FormSection>
 
-                        <View className="gap-4 mb-2 flex-row">
-                            <View className="flex-1">
-                                <Label>Total Adults</Label>
-                                <Input isDisabled placeholder="0" value={`${addValues(values, 'adultCount')}`} />
-                            </View>
-                            <View className="flex-1">
-                                <Label>Total Children/Teens</Label>
-                                <Input isDisabled placeholder="0" value={`${addValues(values, 'minorCount')}`} />
-                            </View>
-                        </View>
-
-                        <Separator className="my-2" />
-
-                        <View className="my-2">
-                            <Textarea
-                                isDisabled={isCampusPastor}
-                                value={`${values.otherInfo}`}
-                                placeholder="Any other information"
-                                onChangeText={handleChange('otherInfo')}
-                            />
-                        </View>
-                        <ReportWorkflowActions
-                            reportId={params?._id}
-                            reportType={reportType}
-                            status={status}
-                            ghComment={(params as any)?.ghComment}
-                            pastorComment={(params as any)?.pastorComment}
-                            gspComment={(params as any)?.gspComment}
+                    <FormSection title="Notes">
+                        <TextAreaField
+                            label="Other information"
+                            placeholder="Any other information"
+                            isDisabled={isCampusPastor}
+                            value={values?.otherInfo ?? ''}
+                            onChangeText={handleChange('otherInfo')}
                         />
-                        <If condition={!isCampusPastor && !isGSP}>
-                            <View>
-                                <ButtonComponent
-                                    isLoading={isLoading || isTransitioning}
-                                    onPress={() => {
-                                        setFieldValue('total.adults', addValues(values, 'adultCount'));
-                                        setFieldValue('total.minors', addValues(values, 'minorCount'));
-                                        handleSubmit();
-                                    }}
-                                >
-                                    {status === IReportStatus.GH_CHANGE_REQUESTED ? 'Resubmit' : !status ? 'Submit' : 'Update'}
-                                </ButtonComponent>
-                            </View>
-                        </If>
-                    </View>
-                )}
-            </Formik>
-        </ViewWrapper>
+                    </FormSection>
+
+                    <ReportWorkflowActions
+                        reportId={params?._id}
+                        reportType={reportType}
+                        status={status}
+                        ghComment={(params as any)?.ghComment}
+                        pastorComment={(params as any)?.pastorComment}
+                        gspComment={(params as any)?.gspComment}
+                    />
+                    <If condition={!isCampusPastor && !isGSP}>
+                        <SubmitButton
+                            label={submitLabelForStatus(status as string)}
+                            isLoading={isLoading || isTransitioning}
+                            onPress={() => {
+                                setFieldValue('total.adults', `${sum(values, 'adultCount')}`);
+                                setFieldValue('total.minors', `${sum(values, 'minorCount')}`);
+                                handleSubmit();
+                            }}
+                        />
+                    </If>
+                </ReportFormShell>
+            )}
+        </Formik>
     );
 };
 

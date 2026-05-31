@@ -704,6 +704,52 @@ export interface IIncidentReportPayload extends IReportFormProps {
     incident: string;
 }
 
+export interface IWittyReportPayload extends IReportFormProps {
+    incidentReport: string | null;
+    onlineInquiries: string | null;
+    socialMediaPosts: { platform: string; url: string }[];
+    onlineConvertsCount: number;
+    onlineFirstTimersCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IInternshipReportPayload extends IReportFormProps {
+    classMemberCount: number;
+    classTaken: string | null;
+    convertsCompletedClassCount: number;
+    location: string | null;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IPruReportPayload extends IReportFormProps {
+    enquiryCount: number;
+    vehicleDedicationCount: number;
+    missingItemsCount: number;
+    praiseReportDeskCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IWelfareReportPayload extends IReportFormProps {
+    medicalSupportCount: number;
+    medicalIncident: string | null;
+    aidRequestCount: number;
+    aidTreatedCount: number;
+    aidDeclinedCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IProtocolReportPayload extends IReportFormProps {
+    incidentCount: number;
+    theft: string | null;
+    specialGuestCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
 export interface IDepartmentReportResponse {
     departmentName: string;
     departmentalReport: {
@@ -889,7 +935,10 @@ export interface IReviewHistoryEntry {
 // ─── GH reports list (v2.0) ───────────────────────────────────────────────────
 
 export interface IGHReportListItem {
-    _id: string;
+    // Backend identifies a report by `reportId` (+ reportType). `_id` kept optional
+    // for any legacy/cached rows.
+    reportId: string;
+    _id?: string;
     reportType: string;
     serviceId: string;
     serviceName: string;

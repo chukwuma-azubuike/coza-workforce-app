@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Formik } from 'formik';
-import { IGuestReportPayload } from '@store/types';
-import { useCreateGuestReportMutation } from '@store/services/reports';
+import { IPruReportPayload } from '@store/types';
+import { useCreatePruReportMutation } from '@store/services/reports';
 import If from '@components/composite/if-container';
 import useRole from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
@@ -16,53 +16,59 @@ import {
 } from '@components/composite/report-form-kit';
 import { useLocalSearchParams } from 'expo-router';
 
-const GuestReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as IGuestReportPayload;
+const NUMERIC_FIELDS: { key: keyof IPruReportPayload; label: string }[] = [
+    { key: 'enquiryCount', label: 'Enquiries handled' },
+    { key: 'vehicleDedicationCount', label: 'Vehicle dedications' },
+    { key: 'missingItemsCount', label: 'Missing items reported' },
+    { key: 'praiseReportDeskCount', label: 'Praise reports received' },
+];
+
+const PruReport: React.FC = () => {
+    const params = useLocalSearchParams() as unknown as IPruReportPayload;
     const { status, updatedAt } = params;
 
     const { isCampusPastor, isGSP } = useRole();
 
-    const [updateReport, { isLoading }] = useCreateGuestReportMutation();
+    const [updateReport, { isLoading }] = useCreatePruReportMutation();
     const { submit: onSubmit, isTransitioning, reportType } = useReportFormSubmit(updateReport as any, params);
 
     const INITIAL_VALUES = {
         ...params,
-        firstTimersCount: params.firstTimersCount || '',
-        newConvertsCount: params.newConvertsCount || '',
-        otherInfo: params.otherInfo || '',
+        enquiryCount: params.enquiryCount || '',
+        vehicleDedicationCount: params.vehicleDedicationCount || '',
+        missingItemsCount: params.missingItemsCount || '',
+        praiseReportDeskCount: params.praiseReportDeskCount || '',
+        comment: params.comment || '',
     };
 
     return (
-        <Formik<IGuestReportPayload>
+        <Formik<IPruReportPayload>
             validateOnChange
             enableReinitialize
             onSubmit={onSubmit}
-            initialValues={INITIAL_VALUES as unknown as IGuestReportPayload}
+            initialValues={INITIAL_VALUES as unknown as IPruReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
                 <ReportFormShell updatedAt={updatedAt} status={status as string}>
-                    <FormSection title="Guests">
-                        <NumberField
-                            label="Number of first timers"
-                            isDisabled={isCampusPastor}
-                            value={values.firstTimersCount as any}
-                            onChangeText={handleChange('firstTimersCount')}
-                        />
-                        <NumberField
-                            label="Number of new converts"
-                            isDisabled={isCampusPastor}
-                            value={values.newConvertsCount as any}
-                            onChangeText={handleChange('newConvertsCount')}
-                        />
+                    <FormSection title="Desk activity">
+                        {NUMERIC_FIELDS.map(field => (
+                            <NumberField
+                                key={field.key as string}
+                                label={field.label}
+                                isDisabled={isCampusPastor}
+                                value={values[field.key] as any}
+                                onChangeText={handleChange(field.key as string)}
+                            />
+                        ))}
                     </FormSection>
 
                     <FormSection title="Notes">
                         <TextAreaField
-                            label="Other information"
+                            label="Comment"
                             placeholder="Any other information"
                             isDisabled={isCampusPastor}
-                            value={values?.otherInfo ?? ''}
-                            onChangeText={handleChange('otherInfo')}
+                            value={values?.comment ?? ''}
+                            onChangeText={handleChange('comment')}
                         />
                     </FormSection>
 
@@ -87,4 +93,4 @@ const GuestReport: React.FC = () => {
     );
 };
 
-export default GuestReport;
+export default PruReport;

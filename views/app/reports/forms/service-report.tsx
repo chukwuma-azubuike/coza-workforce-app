@@ -1,31 +1,33 @@
-import { Text } from '~/components/ui/text';
-import { Linking, Pressable, View } from 'react-native';
+import { Linking, View } from 'react-native';
 import * as React from 'react';
 import { Formik } from 'formik';
-import { IServiceReportPayload, IReportStatus } from '@store/types';
+import { Ionicons } from '@expo/vector-icons';
+import { IServiceReportPayload } from '@store/types';
 import { useCreateServiceReportMutation } from '@store/services/reports';
-import ViewWrapper from '@components/layout/viewWrapper';
 import DateTimePicker from '~/components/composite/date-time-picker';
-import dayjs from 'dayjs';
 import useRole from '@hooks/role';
 import { useReportFormSubmit } from '@hooks/report-form-submit';
 import ReportWorkflowActions from '@components/composite/report-workflow-actions';
 import If from '@components/composite/if-container';
 import { ServiceReportSchema } from '@utils/schemas';
+import {
+    Field,
+    FormSection,
+    ReportFormShell,
+    SubmitButton,
+    TextAreaField,
+    submitLabelForStatus,
+} from '@components/composite/report-form-kit';
 import { useLocalSearchParams } from 'expo-router';
-import FormErrorMessage from '~/components/ui/error-message';
-import { Separator } from '~/components/ui/separator';
-import { Label } from '~/components/ui/label';
 import { Input } from '~/components/ui/input';
-import { Textarea } from '~/components/ui/textarea';
 import { Button } from '~/components/ui/button';
 
 const ServiceReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as IServiceReportPayload;
-
     const { status, updatedAt } = params;
 
     const { isCampusPastor, isGlobalPastor, isGSP } = useRole();
+    const readOnly = isCampusPastor || isGlobalPastor;
 
     const [updateReport, { isLoading }] = useCreateServiceReportMutation();
     const { submit: onSubmit, isTransitioning, reportType } = useReportFormSubmit(updateReport as any, params);
@@ -48,87 +50,83 @@ const ServiceReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IServiceReportPayload}
         >
             {({ handleChange, errors, handleSubmit, values, touched }) => (
-                <ViewWrapper scroll noPadding>
-                    <View className="mt-4 gap-4">
-                        <Text className="w-full text-muted-foreground text-center">
-                            {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
-                        </Text>
-                        <View className="px-4 gap-4">
-                            <View className="gap-4 flex-row">
+                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                    <FormSection title="Service times">
+                        <View className="flex-row gap-3">
+                            <View className="flex-1">
                                 <DateTimePicker
                                     mode="time"
-                                    label="Service Start Time"
+                                    label="Start time"
                                     error={errors.serviceStartTime}
                                     touched={touched.serviceStartTime}
                                     placeholder="Select start time"
                                     initialValue={values.serviceStartTime}
-                                    disabled={isCampusPastor || isGlobalPastor}
+                                    disabled={readOnly}
                                     onConfirm={handleChange('serviceStartTime') as unknown as (value: Date) => void}
                                 />
+                            </View>
+                            <View className="flex-1">
                                 <DateTimePicker
                                     mode="time"
-                                    label="Service end Time"
+                                    label="End time"
                                     error={errors.serviceEndTime}
                                     touched={touched.serviceEndTime}
                                     placeholder="Select end time"
                                     initialValue={values.serviceEndTime}
-                                    disabled={isCampusPastor || isGlobalPastor}
+                                    disabled={readOnly}
                                     onConfirm={handleChange('serviceEndTime') as unknown as (value: Date) => void}
                                 />
                             </View>
-                            {!isCampusPastor && !isGlobalPastor && (
-                                <View>
-                                    <Label>Link to Service Report</Label>
-                                    <Input
-                                        keyboardType="url"
-                                        value={values.serviceReportLink}
-                                        placeholder="https://www.link-to-report.com"
-                                        onChangeText={handleChange('serviceReportLink')}
-                                    />
-                                    {errors.serviceReportLink && touched.serviceReportLink && (
-                                        <FormErrorMessage>This field cannot be empty</FormErrorMessage>
-                                    )}
-                                </View>
-                            )}
-                            {values?.serviceReportLink && (isCampusPastor || isGlobalPastor) && (
-                                <Pressable
-                                    onPress={() => {
-                                        Linking.openURL(values?.serviceReportLink);
-                                    }}
-                                >
-                                    <Text className="text-xl text-green-500 text-center">Press to view report</Text>
-                                </Pressable>
-                            )}
-                            <Separator className="my-2" />
-
-                            <Textarea
-                                isDisabled={isCampusPastor}
-                                placeholder="Service Observations"
-                                onChangeText={handleChange('observations')}
-                                value={!!values?.observations ? values?.observations : undefined}
-                            />
-
-                            <ReportWorkflowActions
-                                reportId={params?._id}
-                                reportType={reportType}
-                                status={status}
-                                ghComment={(params as any)?.ghComment}
-                                pastorComment={(params as any)?.pastorComment}
-                                gspComment={(params as any)?.gspComment}
-                            />
-                            <If condition={!isCampusPastor && !isGSP}>
-                                <View>
-                                    <Button
-                                        isLoading={isLoading || isTransitioning}
-                                        onPress={handleSubmit as (event: any) => void}
-                                    >
-                                        {status === IReportStatus.GH_CHANGE_REQUESTED ? 'Resubmit' : !status ? 'Submit' : 'Update'}
-                                    </Button>
-                                </View>
-                            </If>
                         </View>
-                    </View>
-                </ViewWrapper>
+
+                        {!readOnly && (
+                            <Field label="Link to service report" error={errors.serviceReportLink && touched.serviceReportLink ? 'Enter a valid link' : undefined}>
+                                <Input
+                                    keyboardType="url"
+                                    autoCapitalize="none"
+                                    value={values.serviceReportLink}
+                                    placeholder="https://www.link-to-report.com"
+                                    onChangeText={handleChange('serviceReportLink')}
+                                />
+                            </Field>
+                        )}
+                        {values?.serviceReportLink && readOnly ? (
+                            <Button
+                                variant="outline"
+                                onPress={() => Linking.openURL(values?.serviceReportLink)}
+                                startIcon={<Ionicons name="link-outline" size={15} color="#6d28d9" />}
+                            >
+                                Open service report
+                            </Button>
+                        ) : null}
+                    </FormSection>
+
+                    <FormSection title="Observations">
+                        <TextAreaField
+                            label="Service observations"
+                            placeholder="Service observations"
+                            isDisabled={isCampusPastor}
+                            value={values?.observations ?? ''}
+                            onChangeText={handleChange('observations')}
+                        />
+                    </FormSection>
+
+                    <ReportWorkflowActions
+                        reportId={params?._id}
+                        reportType={reportType}
+                        status={status}
+                        ghComment={(params as any)?.ghComment}
+                        pastorComment={(params as any)?.pastorComment}
+                        gspComment={(params as any)?.gspComment}
+                    />
+                    <If condition={!isCampusPastor && !isGSP}>
+                        <SubmitButton
+                            label={submitLabelForStatus(status as string)}
+                            isLoading={isLoading || isTransitioning}
+                            onPress={handleSubmit as () => void}
+                        />
+                    </If>
+                </ReportFormShell>
             )}
         </Formik>
     );

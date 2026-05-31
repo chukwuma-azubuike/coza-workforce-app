@@ -46,6 +46,8 @@ export const departments = {
     'Public Relations Unit (PRU)': 'PRU',
     'Traffic & Security': 'security',
     'COZA Internship': 'internship',
+    'Welfare and Special Needs Assignment': 'welfare',
+    Protocol: 'protocol',
 };
 
 export enum ROLE_HEIRARCHY {
@@ -76,6 +78,8 @@ export enum DEPARTMENTS {
     PRU = 'Public Relations Unit (PRU)',
     security = 'Traffic & Security',
     internship = 'COZA Internship',
+    welfare = 'Welfare and Special Needs Assignment',
+    protocol = 'Protocol',
 }
 
 const useRole = () => {
@@ -193,6 +197,10 @@ const useRole = () => {
         isPrograms: departmentName === DEPARTMENTS.programs,
         isSecurity: departmentName === DEPARTMENTS.security,
         isChildcare: departmentName === DEPARTMENTS.childcare,
+        isWitty: departmentName === DEPARTMENTS.witty,
+        isInternship: departmentName === DEPARTMENTS.internship,
+        isWelfare: departmentName === DEPARTMENTS.welfare,
+        isProtocol: departmentName === DEPARTMENTS.protocol,
         isQC: departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME,
 
         // Role Creation

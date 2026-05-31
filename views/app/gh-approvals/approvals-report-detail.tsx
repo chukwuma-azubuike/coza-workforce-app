@@ -5,7 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 dayjs.extend(relativeTime);
-import { v4 as uuid } from 'uuid';
 
 import { Text } from '~/components/ui/text';
 import { Card } from '~/components/ui/card';
@@ -15,9 +14,10 @@ import AvatarComponent from '@components/atoms/avatar';
 import ReportStatusPill from '@components/composite/report-status-pill';
 import ReportCommentSheet from '@components/composite/report-comment-sheet';
 import CpReturnBanner from '@components/composite/cp-return-banner';
+import ReportDataView from '@components/composite/report-views';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { getReportStatusMeta } from '@constants/report-status';
-import { actionsFor, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
+import { actionsFor, makeIdempotencyKey, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
 import { useGetGhReportDetailQuery, useTransitionReportMutation } from '@store/services/grouphead';
 import { IReportStatus, IReviewHistoryEntry } from '@store/types';
 import useRole from '@hooks/role';
@@ -52,108 +52,12 @@ const HISTORY_ACTION_LABELS: Record<string, string> = {
     CHANGE_REQUESTED: 'Requested changes',
 };
 
-// ─── Report data renderer ──────────────────────────────────────────────────
-// Derives a readable view straight from the raw report document. Skips the
-// workflow/meta fields so only the department's own data is rendered.
-const META_KEYS = new Set([
-    '_id',
-    'status',
-    'reportType',
-    'hodId',
-    'userId',
-    'departmentId',
-    'departmentName',
-    'campusId',
-    'serviceId',
-    'reviewHistory',
-    'ghComment',
-    'pastorComment',
-    'gspComment',
-    'imageUrl',
-    'createdAt',
-    'updatedAt',
-    '__v',
-]);
-
 const humanize = (key: string): string =>
     key
         .replace(/([A-Z])/g, ' $1')
         .replace(/[_-]+/g, ' ')
         .replace(/\b\w/g, c => c.toUpperCase())
         .trim();
-
-const ScalarRow: React.FC<{ label: string; value: React.ReactNode }> = ({ label, value }) => (
-    <View className="flex-row items-center justify-between py-1.5">
-        <Text className="!text-[13px] text-muted-foreground flex-1">{label}</Text>
-        <Text className="!text-[13px] font-semibold text-foreground">{value}</Text>
-    </View>
-);
-
-const DataField: React.FC<{ name: string; value: any }> = ({ name, value }) => {
-    const label = humanize(name);
-
-    if (value === null || value === undefined || value === '') {
-        return <ScalarRow label={label} value="—" />;
-    }
-
-    // Array of objects → list of rows; array of scalars → comma-joined
-    if (Array.isArray(value)) {
-        if (value.length === 0) return <ScalarRow label={label} value="—" />;
-        if (typeof value[0] === 'object' && value[0] !== null) {
-            return (
-                <View className="py-1.5 gap-1.5">
-                    <Text className="!text-[13px] text-muted-foreground">{label}</Text>
-                    {value.map((item, i) => (
-                        <View key={i} className="bg-secondary rounded-lg px-3 py-2 flex-row flex-wrap gap-x-4 gap-y-0.5">
-                            {Object.entries(item as Record<string, any>).map(([k, v]) => (
-                                <Text key={k} className="!text-[12px] text-foreground">
-                                    {humanize(k)}: <Text className="!text-[12px] font-semibold">{`${v}`}</Text>
-                                </Text>
-                            ))}
-                        </View>
-                    ))}
-                </View>
-            );
-        }
-        return <ScalarRow label={label} value={value.join(', ')} />;
-    }
-
-    // Nested object (e.g. age band { male, female }) → label + inline sub-values
-    if (typeof value === 'object') {
-        return (
-            <View className="py-1.5">
-                <View className="flex-row items-center justify-between">
-                    <Text className="!text-[13px] text-muted-foreground flex-1">{label}</Text>
-                    <View className="flex-row gap-4">
-                        {Object.entries(value as Record<string, any>).map(([k, v]) => (
-                            <Text key={k} className="!text-[13px] font-semibold text-foreground">
-                                {humanize(k)} {`${v}`}
-                            </Text>
-                        ))}
-                    </View>
-                </View>
-            </View>
-        );
-    }
-
-    return <ScalarRow label={label} value={`${value}`} />;
-};
-
-const ReportDataCard: React.FC<{ data?: Record<string, any> }> = ({ data }) => {
-    const entries = useMemo(
-        () => Object.entries(data ?? {}).filter(([k]) => !META_KEYS.has(k)),
-        [data]
-    );
-    if (!entries.length) return null;
-    return (
-        <Card className="p-4 gap-1">
-            <SectionLabel>Report data</SectionLabel>
-            {entries.map(([k, v]) => (
-                <DataField key={k} name={k} value={v} />
-            ))}
-        </Card>
-    );
-};
 
 const HistoryRow: React.FC<{ entry: IReviewHistoryEntry; isLast: boolean }> = ({ entry, isLast }) => (
     <View className="flex-row gap-3">
@@ -164,16 +68,16 @@ const HistoryRow: React.FC<{ entry: IReviewHistoryEntry; isLast: boolean }> = ({
             {!isLast && <View className="w-0.5 flex-1 bg-border mt-1" />}
         </View>
         <View className="flex-1 pb-4 gap-0.5">
-            <Text className="!text-[13px] font-semibold text-foreground">
+            <Text className="text-sm font-semibold text-foreground">
                 {HISTORY_ROLE_LABELS[entry.actorRole] ?? entry.actorRole}
             </Text>
-            <Text className="!text-[11px] text-muted-foreground">{dayjs(entry.timestamp).fromNow()}</Text>
-            <Text className="!text-[12px] text-foreground mt-1">
+            <Text className="text-sm leading-8 text-muted-foreground">{dayjs(entry.timestamp).fromNow()}</Text>
+            <Text className="text-sm leading-8 text-foreground mt-1">
                 {HISTORY_ACTION_LABELS[entry.action] ?? humanize(entry.action)}
             </Text>
             {entry.comment ? (
                 <View className="mt-1.5 bg-secondary rounded-xl px-3 py-2">
-                    <Text className="!text-[12px] text-foreground leading-snug">"{entry.comment}"</Text>
+                    <Text className="text-sm text-foreground leading-snug">"{entry.comment}"</Text>
                 </View>
             ) : null}
         </View>
@@ -208,6 +112,13 @@ const ApprovalsReportDetail: React.FC = () => {
     const reportStatus = (detail?.status ?? status) as IReportStatus;
     const actions = useMemo(() => actionsFor(reportStatus, role), [reportStatus, role]);
 
+    // Resolve the report fields and type defensively: the backend may nest the
+    // doc under `reportData`/`report`, return it flat on the detail object, or
+    // omit `reportType` (in which case the list row's value carries through).
+    const d = detail as any;
+    const resolvedReportType = (d?.reportType ?? reportType) as string | undefined;
+    const resolvedReportData = d?.reportData ?? d?.report ?? d ?? undefined;
+
     const reviewHistory = detail?.reviewHistory ?? [];
 
     const cpReturnEntry = useMemo<IReviewHistoryEntry | null>(() => {
@@ -227,7 +138,7 @@ const ApprovalsReportDetail: React.FC = () => {
                 reportType: reportType as string,
                 toStatus: action.toStatus,
                 comment,
-                idempotencyKey: uuid(),
+                idempotencyKey: makeIdempotencyKey(),
             }).unwrap();
             setPendingCommentAction(null);
             setDoneStatus(res?.status ?? action.toStatus);
@@ -287,7 +198,7 @@ const ApprovalsReportDetail: React.FC = () => {
                         startIcon={
                             <Ionicons
                                 name={action.variant === 'approve' ? 'checkmark' : 'create-outline'}
-                                size={15}
+                                size={20}
                                 color={action.variant === 'approve' ? 'white' : '#71717a'}
                             />
                         }
@@ -327,10 +238,13 @@ const ApprovalsReportDetail: React.FC = () => {
                                     imageUrl={AVATAR_FALLBACK_URL}
                                 />
                                 <View className="flex-1">
-                                    <Text className="!text-sm font-semibold text-foreground">{submittedByName}</Text>
-                                    <Text className="!text-[11px] text-muted-foreground mt-0.5">
+                                    <Text className="font-semibold text-foreground">{submittedByName}</Text>
+                                    <Text className="text-sm text-muted-foreground mt-0.5">
                                         {departmentName || detail?.departmentName}
                                         {serviceLabel ? ` · ${serviceLabel}` : ''}
+                                    </Text>
+                                    <Text className="text-sm text-muted-foreground mt-0.5">
+                                        {dayjs(detail?.serviceTime).format('DD MMM YYYY, hh:mm A')}
                                     </Text>
                                 </View>
                                 <ReportStatusPill status={reportStatus} size="sm" />
@@ -358,15 +272,15 @@ const ApprovalsReportDetail: React.FC = () => {
                             <Skeleton className="h-3.5 w-4/5 rounded" />
                         </Card>
                     ) : (
-                        <ReportDataCard data={detail?.reportData} />
+                        <ReportDataView reportType={resolvedReportType} data={resolvedReportData} />
                     )}
 
                     {/* Report history */}
                     {!isLoading && reversedHistory.length > 0 && (
-                        <Card className="p-4 gap-3">
+                        <Card className="px-4 gap-3">
                             <View className="flex-row items-center justify-between">
                                 <SectionLabel>Approval history</SectionLabel>
-                                <Button variant="ghost" size="sm" onPress={() => setShowHistory(h => !h)}>
+                                <Button variant="ghost" textClassName='!text-sm' size="sm" onPress={() => setShowHistory(h => !h)}>
                                     {showHistory ? 'Hide' : 'Show all'}
                                 </Button>
                             </View>
