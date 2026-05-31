@@ -68,16 +68,16 @@ const HistoryRow: React.FC<{ entry: IReviewHistoryEntry; isLast: boolean }> = ({
             {!isLast && <View className="w-0.5 flex-1 bg-border mt-1" />}
         </View>
         <View className="flex-1 pb-4 gap-0.5">
-            <Text className="!text-[13px] font-semibold text-foreground">
+            <Text className="text-sm font-semibold text-foreground">
                 {HISTORY_ROLE_LABELS[entry.actorRole] ?? entry.actorRole}
             </Text>
-            <Text className="!text-[11px] text-muted-foreground">{dayjs(entry.timestamp).fromNow()}</Text>
-            <Text className="!text-[12px] text-foreground mt-1">
+            <Text className="text-sm leading-8 text-muted-foreground">{dayjs(entry.timestamp).fromNow()}</Text>
+            <Text className="text-sm leading-8 text-foreground mt-1">
                 {HISTORY_ACTION_LABELS[entry.action] ?? humanize(entry.action)}
             </Text>
             {entry.comment ? (
                 <View className="mt-1.5 bg-secondary rounded-xl px-3 py-2">
-                    <Text className="!text-[12px] text-foreground leading-snug">"{entry.comment}"</Text>
+                    <Text className="text-sm text-foreground leading-snug">"{entry.comment}"</Text>
                 </View>
             ) : null}
         </View>

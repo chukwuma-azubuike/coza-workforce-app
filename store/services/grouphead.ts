@@ -114,7 +114,10 @@ export const groupHeadServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<ICampusReportSummary>) => res?.data,
         }),
 
-        getGhReports: endpoint.query<IGHReportListResponse, { status?: string; page?: number; limit?: number }>({
+        getGhReports: endpoint.query<
+            IGHReportListResponse,
+            { status?: string; page?: number; limit?: number; serviceId?: string }
+        >({
             query: params => ({
                 url: `/${SERVICE_URL}/reports`,
                 method: REST_API_VERBS.GET,
