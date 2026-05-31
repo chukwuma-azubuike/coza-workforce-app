@@ -18,6 +18,8 @@ import {
     SubmitButton,
     TextAreaField,
     TotalChip,
+    coerceArray,
+    readReportParams,
     submitLabelForStatus,
 } from '@components/composite/report-form-kit';
 import { Text } from '~/components/ui/text';
@@ -28,7 +30,7 @@ import Loading from '~/components/atoms/loading';
 
 const SecurityReport: React.FC = () => {
     const { isCampusPastor, isGSP } = useRole();
-    const params = useLocalSearchParams() as unknown as ISecurityReportPayload;
+    const params = readReportParams<ISecurityReportPayload>(useLocalSearchParams() as any);
 
     const { data, isLoading: loadingReport } = useGetCampusReportSummaryQuery({
         serviceId: params?.serviceId as string,
@@ -46,8 +48,8 @@ const SecurityReport: React.FC = () => {
         ...params,
         imageUrl: params?.imageUrl || '',
         otherInfo: params?.otherInfo || '',
-        locations: params?.locations?.length ? params?.locations : [{ name: '', carCount: '' }],
-    } as ISecurityReportPayload;
+        locations: coerceArray(params?.locations, [{ name: '', carCount: '' }]),
+    } as unknown as ISecurityReportPayload;
 
     const securityReport = React.useMemo(
         () => typedData?.departmentalReport?.find(report => report.departmentName === DEPARTMENTS.security)?.report,

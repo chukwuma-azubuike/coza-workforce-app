@@ -28,6 +28,16 @@ import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
 import FilterChip from '../gh-approvals/approvals-filter-chip';
 
+// Departments whose report data has nested arrays/objects that can't survive
+// expo-router param serialization — they travel as a JSON `data` string instead.
+const NESTED_PARAM_DEPTS = new Set([
+    'Children Ministry',
+    'Witty Inventions',
+    'Traffic & Security',
+    'Digital Surveillance Security',
+    'COZA Transfer Service',
+]);
+
 // ─── History rows ───────────────────────────────────────────────────────────
 export const DepartmentReportListRow: React.FC<
     Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'> & { departmentName?: string }
@@ -35,7 +45,7 @@ export const DepartmentReportListRow: React.FC<
         const handlePress = useCallback(() => {
             router.push({
                 pathname: `/reports/${ReportRouteIndex[departmentName ?? '']}` as any,
-                params: departmentName === 'Children Ministry' ? { data: JSON.stringify(props) } : props,
+                params: NESTED_PARAM_DEPTS.has(departmentName ?? '') ? { data: JSON.stringify(props) } : props,
             });
         }, [props, departmentName]);
 
@@ -48,8 +58,8 @@ export const DepartmentReportListRow: React.FC<
                         <View className={`w-1 ${meta.accentClass}`} />
                         <View className="flex-1 flex-row items-center justify-between p-3.5">
                             <View className="gap-0.5">
-                                <Text className="!text-sm font-semibold text-foreground">Departmental report</Text>
-                                <Text className="!text-xs text-muted-foreground">
+                                <Text className="font-semibold text-foreground">Departmental report</Text>
+                                <Text className="text-muted-foreground">
                                     {dayjs(props.updatedAt || props.createdAt).format('DD MMM, YYYY')}
                                 </Text>
                             </View>
@@ -330,10 +340,9 @@ const Reports: React.FC = () => {
         // bands as a JSON string (expo-router params can't hold nested objects).
         router.push({
             pathname: route as any,
-            params:
-                user?.department?.departmentName === 'Children Ministry'
-                    ? ({ data: JSON.stringify(report) } as any)
-                    : (report as any),
+            params: NESTED_PARAM_DEPTS.has(user?.department?.departmentName ?? '')
+                ? ({ data: JSON.stringify(report) } as any)
+                : (report as any),
         });
     }, [currentReport, user, latestServiceData?._id]);
 

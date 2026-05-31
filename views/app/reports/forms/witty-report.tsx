@@ -21,8 +21,25 @@ import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { useLocalSearchParams } from 'expo-router';
 
+// socialMediaPosts is a nested array, which doesn't survive expo-router param
+// serialization — so it may arrive as a JSON string, a mangled value, or absent.
+const coercePosts = (value: any): { platform: string; url: string }[] => {
+    let posts = value;
+    if (typeof posts === 'string') {
+        try {
+            posts = JSON.parse(posts);
+        } catch {
+            posts = undefined;
+        }
+    }
+    return Array.isArray(posts) && posts.length ? posts : [{ platform: '', url: '' }];
+};
+
 const WittyReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as IWittyReportPayload;
+    const stringifiedParams = useLocalSearchParams() as unknown as { data?: string };
+    const params = stringifiedParams?.data
+        ? (JSON.parse(stringifiedParams.data) as IWittyReportPayload)
+        : (stringifiedParams as unknown as IWittyReportPayload);
     const { status, updatedAt } = params;
 
     const { isCampusPastor, isGSP } = useRole();
@@ -37,7 +54,7 @@ const WittyReport: React.FC = () => {
         onlineConvertsCount: params.onlineConvertsCount || '',
         onlineFirstTimersCount: params.onlineFirstTimersCount || '',
         comment: params.comment || '',
-        socialMediaPosts: params.socialMediaPosts?.length ? params.socialMediaPosts : [{ platform: '', url: '' }],
+        socialMediaPosts: coercePosts(params.socialMediaPosts),
     };
 
     return (

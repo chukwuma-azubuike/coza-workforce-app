@@ -151,3 +151,24 @@ export const submitLabelForStatus = (status?: string): string => {
     if (!status) return 'Submit';
     return 'Update';
 };
+
+// ─── Param helpers ──────────────────────────────────────────────────────────
+// Reports with nested data travel through expo-router as a JSON `data` string
+// (nested arrays/objects don't survive plain param serialization). These helpers
+// let any form decode that uniformly and guard nested fields against a value
+// that arrived mangled (e.g. a stringified array).
+export const readReportParams = <T,>(raw: { data?: string } & Record<string, any>): T => {
+    return raw?.data ? (JSON.parse(raw.data) as T) : (raw as unknown as T);
+};
+
+export const coerceArray = <T,>(value: any, fallback: T[]): T[] => {
+    let v = value;
+    if (typeof v === 'string') {
+        try {
+            v = JSON.parse(v);
+        } catch {
+            v = undefined;
+        }
+    }
+    return Array.isArray(v) && v.length ? (v as T[]) : fallback;
+};

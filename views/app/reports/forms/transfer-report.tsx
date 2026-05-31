@@ -19,6 +19,8 @@ import {
     SubmitButton,
     TextAreaField,
     TotalChip,
+    coerceArray,
+    readReportParams,
     submitLabelForStatus,
 } from '@components/composite/report-form-kit';
 import { Text } from '~/components/ui/text';
@@ -28,7 +30,7 @@ import { useLocalSearchParams } from 'expo-router';
 import Loading from '~/components/atoms/loading';
 
 const TransferReport: React.FC = () => {
-    const params = useLocalSearchParams() as unknown as ITransferReportPayload;
+    const params = readReportParams<ITransferReportPayload>(useLocalSearchParams() as any);
     const { status, updatedAt } = params;
 
     const { data, isLoading: loadingReport } = useGetCampusReportSummaryQuery({
@@ -47,8 +49,8 @@ const TransferReport: React.FC = () => {
         ...params,
         imageUrl: params.imageUrl || '',
         otherInfo: params.otherInfo || '',
-        locations: params?.locations?.length ? params?.locations : [{ name: '', adultCount: '', minorCount: '' }],
-    } as ITransferReportPayload;
+        locations: coerceArray(params?.locations, [{ name: '', adultCount: '', minorCount: '' }]),
+    } as unknown as ITransferReportPayload;
 
     const sum = React.useCallback(
         (values: ITransferReportPayload, field: 'adultCount' | 'minorCount') =>
