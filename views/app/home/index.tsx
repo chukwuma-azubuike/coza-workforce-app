@@ -9,7 +9,7 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import If from '@components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '@utils/index';
-import { CampusReportSummary } from './campus-pastors/report-summary';
+import CPHome from './campus-pastors/cp-home';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, View } from 'react-native';
@@ -122,7 +122,17 @@ const Home: React.FC = () => {
                                     verifyRangeBeforeAction={verifyRangeBeforeAction}
                                 />
                             </If>
-                            <If condition={!isGlobalPastor && !isGroupHead}>
+                            <If condition={isCampusPastor}>
+                                <CPHome
+                                    refreshLocation={refresh}
+                                    isInRange={isInRange as boolean}
+                                    refreshTrigger={refreshTrigger}
+                                    setRefreshTrigger={setRefreshTrigger}
+                                    deviceCoordinates={deviceCoordinates as any}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </If>
+                            <If condition={!isGlobalPastor && !isGroupHead && !isCampusPastor}>
                                 <Clocker
                                     refreshLocation={refresh}
                                     isInRange={isInRange as boolean}
@@ -136,13 +146,6 @@ const Home: React.FC = () => {
                                 <TopNav />
                                 <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
                             </If>
-                        </If>
-                        <If condition={isCampusPastor}>
-                            <CampusReportSummary
-                                refetchService={handleRefresh}
-                                campusId={user?.campus?._id as string}
-                                serviceId={latestService?._id as string}
-                            />
                         </If>
                     </View>
                 </SafeAreaView>

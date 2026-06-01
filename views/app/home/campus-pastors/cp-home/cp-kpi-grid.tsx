@@ -2,10 +2,9 @@ import React, { useMemo } from 'react';
 import { View } from 'react-native';
 import { router } from 'expo-router';
 
-import KpiTile from '../components/kpi-tile';
-export { default as GHKpiTile } from '../components/kpi-tile';
+import KpiTile from '../../components/kpi-tile';
 
-interface GHKpiGridProps {
+interface CPKpiGridProps {
     leadersAttendance?: number;
     leaderUsers?: number;
     workersAttendance?: number;
@@ -16,7 +15,7 @@ interface GHKpiGridProps {
     isLoading?: boolean;
 }
 
-const GHKpiGrid: React.FC<GHKpiGridProps> = ({
+const CPKpiGrid: React.FC<CPKpiGridProps> = ({
     leadersAttendance, leaderUsers, workersAttendance, workerUsers,
     pendingReports = 0, totalReports, tickets = 0, isLoading,
 }) => {
@@ -33,13 +32,13 @@ const GHKpiGrid: React.FC<GHKpiGridProps> = ({
                 <KpiTile value={workersAttendance} total={workerUsers} label="Workforce present"
                     isLoading={isLoading} accentTone={wrkPct >= 80 ? 'good' : 'warn'}
                     accent={leaderUsers ? (wrkPct >= 80 ? 'On track' : 'Low') : undefined}
-                    onPress={() => router.push({ pathname: '/attendance', params: { route: 'groupAttendance' } } as any)} />
+                    onPress={() => router.push({ pathname: '/attendance', params: { route: 'campusAttendance' } } as any)} />
             </View>
             <View className="flex-row gap-4">
-                <KpiTile value={pendingReports} total={totalReports} label="Pending reports"
-                    accent={pendingReports > 0 ? 'Awaiting' : totalReports === 0 ? 'No reports' : 'All reviewed'}
+                <KpiTile value={pendingReports} total={totalReports} label="Dept. reports"
+                    accent={pendingReports > 0 ? 'Need review' : totalReports === 0 ? 'No reports' : 'All reviewed'}
                     accentTone={pendingReports > 0 ? 'warn' : 'good'} isLoading={isLoading}
-                    onPress={() => router.push('/gh-approvals' as any)} />
+                    onPress={() => router.push('/reports' as any)} />
                 <KpiTile value={tickets} label="Tickets" isLoading={isLoading}
                     accentTone={tickets > 0 ? 'bad' : 'good'}
                     accent={tickets > 0 ? 'Action needed' : 'All clear'}
@@ -49,4 +48,4 @@ const GHKpiGrid: React.FC<GHKpiGridProps> = ({
     );
 };
 
-export { GHKpiGrid };
+export default React.memo(CPKpiGrid);

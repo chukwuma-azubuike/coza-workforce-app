@@ -22,13 +22,13 @@ import { useGetCampusTicketReportQuery } from '@store/services/tickets';
 import { useGetGhReportsQuery } from '@store/services/grouphead';
 import { IReportStatus } from '@store/types';
 
-import GHTopBar from './gh-top-bar';
-import GHGreeting from './gh-greeting';
-import GHClockCard from './gh-clock-card';
+import HomeTopBar from '../components/top-bar';
+import HomeGreeting from '../components/greeting';
+import HomeClockCard from '../components/clock-card';
 import { GHKpiGrid } from './gh-kpi-grid';
 import GHReportsStatus from './gh-reports-status';
 import GHQuickActions from './gh-quick-actions';
-import GHHomeSkeleton from './gh-home-skeleton';
+import HomeSkeleton from '../components/home-skeleton';
 
 interface IGHHomeProps {
     isInRange: boolean;
@@ -159,7 +159,7 @@ const GHHome: React.FC<IGHHomeProps> = ({
 
     return (
         <View className="flex-1">
-            <GHTopBar
+            <HomeTopBar
                 firstName={user?.firstName}
                 lastName={user?.lastName}
                 pictureUrl={user?.pictureUrl}
@@ -171,16 +171,16 @@ const GHHome: React.FC<IGHHomeProps> = ({
             {isFirstTimeGH ? (
                 <FirstTimeGHEmptyState />
             ) : isInitialLoad ? (
-                <GHHomeSkeleton />
+                <HomeSkeleton />
             ) : (
                 <ViewWrapper scroll noPadding refreshing={false} onRefresh={refreshAll} className="flex-1">
-                    <GHGreeting
+                    <HomeGreeting
                         firstName={user?.firstName}
                         campus={user?.campus?.campusName}
                     />
                     <View className="px-4 gap-5 pt-2 pb-4">
                         <ErrorBoundary>
-                            <GHClockCard
+                            <HomeClockCard
                                 isInRange={isInRange}
                                 deviceCoordinates={deviceCoordinates}
                                 service={latestService}
