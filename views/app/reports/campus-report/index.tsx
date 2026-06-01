@@ -53,7 +53,7 @@ export const DepartmentReportListRow: React.FC<ICampusReport> = ({ serviceId, ca
                             <Text className="!text-sm font-bold text-foreground flex-1" numberOfLines={1}>
                                 {props?.serviceName}
                             </Text>
-                            <ReportStatusPill status={props?.status as string} size="sm" />
+                            <ReportStatusPill status={props?.status as string} size="sm" role="CAMPUS_PASTOR" />
                         </View>
                         <View className="flex-row items-center gap-3">
                             <View className="flex-row items-center gap-1">

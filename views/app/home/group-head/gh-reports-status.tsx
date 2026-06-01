@@ -36,7 +36,7 @@ const ReportRow: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
                 }`}
             >
                 <Text className="!text-base text-muted-foreground flex-1 mr-3">{item.departmentName}</Text>
-                <ReportStatusPill status={status} />
+                <ReportStatusPill status={status} role="GROUP_HEAD" />
             </View>
         </TouchableOpacity>
     );

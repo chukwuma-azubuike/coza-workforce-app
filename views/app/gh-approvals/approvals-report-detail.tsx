@@ -247,7 +247,7 @@ const ApprovalsReportDetail: React.FC = () => {
                                         {dayjs(detail?.serviceTime).format('DD MMM YYYY, hh:mm A')}
                                     </Text>
                                 </View>
-                                <ReportStatusPill status={reportStatus} size="sm" />
+                                <ReportStatusPill status={reportStatus} size="sm" role="GROUP_HEAD" />
                             </View>
                         )}
                     </Card>

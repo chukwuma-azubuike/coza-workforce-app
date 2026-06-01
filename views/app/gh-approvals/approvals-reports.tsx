@@ -129,7 +129,7 @@ const ReportCard: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
                                 </Text>
                             </View>
                             <View />
-                            <ReportStatusPill status={item.status as string} />
+                            <ReportStatusPill status={item.status as string} role="GROUP_HEAD" />
                         </View>
                     </View>
                 </View>

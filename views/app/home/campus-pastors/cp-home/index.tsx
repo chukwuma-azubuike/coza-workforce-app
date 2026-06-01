@@ -73,7 +73,7 @@ const DeptReportRow: React.FC<{ item: any; campusId?: string; serviceId?: string
                                 </Text>
                             ) : null}
                         </View>
-                        <ReportStatusPill status={item?.report?.status as string} size="sm" />
+                        <ReportStatusPill status={item?.report?.status as string} size="sm" role="CAMPUS_PASTOR" />
                     </View>
                 </View>
             </Card>
@@ -123,6 +123,14 @@ const CPHome: React.FC<CPHomeProps> = ({
         () => deptReports.filter(d => {
             const s = d?.report?.status;
             return s === IReportStatus.HOD_SUBMITTED || s === IReportStatus.PENDING || s === IReportStatus.GH_APPROVED;
+        }).length,
+        [deptReports]
+    );
+
+    const cpReviewedCount = useMemo(
+        () => deptReports.filter(d => {
+            const s = d?.report?.status;
+            return s === IReportStatus.CP_APPROVED;
         }).length,
         [deptReports]
     );
@@ -184,6 +192,7 @@ const CPHome: React.FC<CPHomeProps> = ({
                             pendingReports={pendingCount}
                             totalReports={deptReports.length}
                             tickets={tickets}
+                            approvedCount={cpReviewedCount}
                             isLoading={summaryLoading}
                         />
 

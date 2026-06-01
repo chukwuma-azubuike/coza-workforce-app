@@ -27,6 +27,7 @@ import { IIncidentReportPayload, IReportStatus } from '@store/types';
 import GlobalReportDetails from './gsp-report';
 import { GlobalReportProvider } from './gsp-report/context';
 import FilterChip from '../gh-approvals/approvals-filter-chip';
+import { toLogicalRole } from '@constants/report-actions';
 
 // Departments whose report data has nested arrays/objects that can't survive
 // expo-router param serialization — they travel as a JSON `data` string instead.
@@ -40,8 +41,8 @@ const NESTED_PARAM_DEPTS = new Set([
 
 // ─── History rows ───────────────────────────────────────────────────────────
 export const DepartmentReportListRow: React.FC<
-    Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'> & { departmentName?: string }
-> = React.memo(({ departmentName, ...props }) => {
+    Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'> & { departmentName?: string; logicalRole?: ReturnType<typeof toLogicalRole> }
+> = React.memo(({ departmentName, logicalRole, ...props }) => {
         const handlePress = useCallback(() => {
             router.push({
                 pathname: `/reports/${ReportRouteIndex[departmentName ?? '']}` as any,
@@ -63,7 +64,7 @@ export const DepartmentReportListRow: React.FC<
                                     {dayjs(props.updatedAt || props.createdAt).format('DD MMM, YYYY')}
                                 </Text>
                             </View>
-                            <ReportStatusPill status={props?.status as string} size="sm" />
+                            <ReportStatusPill status={props?.status as string} size="sm" role={logicalRole} />
                         </View>
                     </View>
                 </Card>
@@ -106,6 +107,7 @@ interface HodReportsProps {
     incidentReports: any[];
     isLoading?: boolean;
     onRefresh: () => void;
+    logicalRole?: ReturnType<typeof toLogicalRole>;
 }
 
 const ctaForStatus = (status?: string): string => {
@@ -126,6 +128,7 @@ const HodReports: React.FC<HodReportsProps> = ({
     incidentReports,
     isLoading,
     onRefresh,
+    logicalRole,
 }) => {
     const needsChanges = currentStatus === IReportStatus.GH_CHANGE_REQUESTED;
     const [tab, setTab] = useState<'departmental' | 'incidents'>('departmental');
@@ -161,7 +164,7 @@ const HodReports: React.FC<HodReportsProps> = ({
                                     {departmentName || 'Department'} report
                                 </Text>
                             </View>
-                            {currentStatus ? <ReportStatusPill status={currentStatus} size="sm" /> : null}
+                            {currentStatus ? <ReportStatusPill status={currentStatus} size="sm" role={logicalRole} /> : null}
                         </View>
 
                         {needsChanges && ghComment ? (
@@ -212,7 +215,7 @@ const HodReports: React.FC<HodReportsProps> = ({
                 keyExtractor={(item, i) => item?._id ?? `${i}`}
                 renderItem={({ item }) =>
                     tab === 'departmental' ? (
-                        <DepartmentReportListRow {...item} departmentName={departmentName} />
+                        <DepartmentReportListRow {...item} departmentName={departmentName} logicalRole={logicalRole} />
                     ) : (
                         <IncidentReportListRow {...item} />
                     )
@@ -254,12 +257,16 @@ const Reports: React.FC = () => {
         isAHOD,
         isPrograms,
         isGlobalPastor,
+        isGroupHead,
         isWitty,
         isInternship,
         isPRU,
         isWelfare,
         isProtocol,
+        isGSP,
     } = useRole();
+
+    const logicalRole = toLogicalRole({ isHOD, isAHOD, isGroupHead, isCampusPastor, isGSP });
 
     const { data: latestServiceData, refetch } = useGetLatestServiceQuery(user?.campus._id as string, { skip: !user });
 
@@ -368,6 +375,7 @@ const Reports: React.FC = () => {
                             incidentReports={departmentAndIncidentReport?.incidentReport || []}
                             isLoading={currentLoading || reportsIsLoading}
                             onRefresh={reportsRefetch}
+                            logicalRole={logicalRole}
                         />
                     </If>
                     <If condition={isGlobalPastor}>

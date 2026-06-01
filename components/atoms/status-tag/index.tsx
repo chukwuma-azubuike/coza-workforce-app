@@ -15,9 +15,11 @@ interface IStatusTag {
     size?: 'sm' | 'md';
     /** Overrides the displayed text while still resolving colour from `children`. */
     label?: string;
+    /** Overrides the auto-resolved colour. Used by ReportStatusPill for role-aware display. */
+    color?: StatusColor;
 }
 
-type StatusColor = 'green' | 'yellow' | 'blue' | 'gray' | 'red';
+export type StatusColor = 'green' | 'yellow' | 'blue' | 'gray' | 'red';
 
 const STATUS_COLOR_MAP: Record<StatusColor, { container: string; text: string }> = {
     green: { container: 'bg-green-500/20 border-green-500/40', text: 'text-green-500' },
@@ -80,6 +82,7 @@ const StatusTag: React.FC<IStatusTag> = ({
     isLoading,
     size = 'md',
     label,
+    color: colorOverride,
 }) => {
     const isSm = size === 'sm';
 
@@ -87,7 +90,7 @@ const StatusTag: React.FC<IStatusTag> = ({
         return <Skeleton className={isSm ? 'w-16 h-5' : 'w-20 h-6'} />;
     }
 
-    const color = resolveColor(status as string | undefined);
+    const color = colorOverride ?? resolveColor(status as string | undefined);
     const { container, text } = STATUS_COLOR_MAP[color];
 
     return (

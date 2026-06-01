@@ -13,11 +13,12 @@ interface CPKpiGridProps {
     totalReports?: number;
     tickets?: number;
     isLoading?: boolean;
+    approvedCount?: number;
 }
 
 const CPKpiGrid: React.FC<CPKpiGridProps> = ({
     leadersAttendance, leaderUsers, workersAttendance, workerUsers,
-    pendingReports = 0, totalReports, tickets = 0, isLoading,
+    pendingReports = 0, totalReports = 0, tickets = 0, isLoading, approvedCount = 0
 }) => {
     const leadPct = useMemo(() => leaderUsers ? Math.round(((leadersAttendance ?? 0) / leaderUsers) * 100) : 0, [leaderUsers, leadersAttendance]);
     const wrkPct = useMemo(() => workerUsers ? Math.round(((workersAttendance ?? 0) / workerUsers) * 100) : 0, [workerUsers, workersAttendance]);
@@ -36,12 +37,12 @@ const CPKpiGrid: React.FC<CPKpiGridProps> = ({
             </View>
             <View className="flex-row gap-4">
                 <KpiTile value={pendingReports} total={totalReports} label="Dept. reports"
-                    accent={pendingReports > 0 ? 'Need review' : totalReports === 0 ? 'No reports' : 'All reviewed'}
-                    accentTone={pendingReports > 0 ? 'warn' : 'good'} isLoading={isLoading}
+                    accent={pendingReports > 0 ? 'Need review' : totalReports === 0 ? 'No reports' : totalReports === approvedCount ? 'All reviewed' : 'Ready for review'}
+                    accentTone={totalReports !== approvedCount ? 'warn' : 'good'} isLoading={isLoading}
                     onPress={() => router.push('/reports' as any)} />
                 <KpiTile value={tickets} label="Tickets" isLoading={isLoading}
                     accentTone={tickets > 0 ? 'bad' : 'good'}
-                    accent={tickets > 0 ? 'Action needed' : 'All clear'}
+                    accent={tickets > 0 ? 'Some issues' : 'All clear'}
                     onPress={() => router.push({ pathname: '/tickets', params: { tab: 'campus' } } as any)} />
             </View>
         </View>
