@@ -121,7 +121,34 @@ const CampusReport: React.FC = () => {
                 ) : null}
 
                 {isLoading || isFetching ? (
-                    [1, 2, 3].map(i => <Skeleton key={i} className="h-40 w-full rounded-3xl" />)
+                    // Mirror the real layout: dept header row + a report-data card beneath it
+                    [1, 2, 3, 4].map(i => (
+                        <View key={i} className="gap-2">
+                            {/* Department name + status pill */}
+                            <View className="flex-row items-center justify-between px-1">
+                                <Skeleton className="h-5 w-2/5 rounded" />
+                                <Skeleton className="h-6 w-24 rounded-full" />
+                            </View>
+                            {/* Report data card */}
+                            <View className="rounded-3xl border border-border overflow-hidden">
+                                {/* Section label */}
+                                <View className="px-4 pt-4 pb-2">
+                                    <Skeleton className="h-3 w-1/3 rounded" />
+                                </View>
+                                {/* 2-up stat tiles */}
+                                <View className="flex-row gap-2 px-4 pb-4">
+                                    <View className="flex-1 rounded-xl bg-secondary p-3 gap-2">
+                                        <Skeleton className="h-7 w-10 rounded" />
+                                        <Skeleton className="h-3 w-3/4 rounded" />
+                                    </View>
+                                    <View className="flex-1 rounded-xl bg-secondary p-3 gap-2">
+                                        <Skeleton className="h-7 w-10 rounded" />
+                                        <Skeleton className="h-3 w-3/4 rounded" />
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    ))
                 ) : (
                     <>
                         {departments.map((dept, i) => (
