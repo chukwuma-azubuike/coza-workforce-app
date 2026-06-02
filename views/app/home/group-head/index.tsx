@@ -75,6 +75,7 @@ const GHHome: React.FC<IGHHomeProps> = ({
     const campusId = user?.campus?._id;
 
     const {
+        isLoading: serviceLoading,
         data: latestService,
         refetch: refetchService,
         isUninitialized: serviceUninitialized,
@@ -155,7 +156,7 @@ const GHHome: React.FC<IGHHomeProps> = ({
         }
     }, [refreshTrigger]);
 
-    const isInitialLoad = serviceUninitialized || (!!campusId && ghReportLoading && !ghReportList);
+    const isInitialLoad = serviceLoading || ghReportLoading
 
     return (
         <View className="flex-1">

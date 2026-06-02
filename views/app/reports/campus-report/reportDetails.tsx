@@ -156,7 +156,7 @@ const CampusReport: React.FC = () => {
                                 <View className="flex-row items-center justify-between px-1">
                                     <Text className="!text-base font-bold text-foreground">{dept.departmentName}</Text>
                                     {dept?.report?.status ? (
-                                        <ReportStatusPill status={dept.report.status as string} size="sm" />
+                                        <ReportStatusPill status={dept.report.status as string} size="sm" role="CAMPUS_PASTOR" />
                                     ) : null}
                                 </View>
                                 <ReportDataView

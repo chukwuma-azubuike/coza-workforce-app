@@ -1,11 +1,5 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { Alert, View } from 'react-native';
-import {
-    useSharedValue,
-    withRepeat,
-    withSequence,
-    withTiming,
-} from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import dayjs from 'dayjs';
@@ -64,15 +58,6 @@ const HomeClockCard: React.FC<HomeClockCardProps> = ({
         : "You're outside the geo-fence.";
     const btnLabel = canClockIn ? 'Clock me in' : canClockOut ? 'Clock out'
         : alreadyClockedOut ? 'Clocked out' : 'No service';
-
-    const glow = useSharedValue(0);
-    useEffect(() => {
-        if (canClockIn && isInRange) {
-            glow.value = withRepeat(withSequence(withTiming(1, { duration: 1100 }), withTiming(0, { duration: 1100 })), -1, false);
-        } else {
-            glow.value = 0;
-        }
-    }, [canClockIn, isInRange]);
 
     const handleClockIn = useCallback(async () => {
         if (!user?.userId || !service?._id) return;
