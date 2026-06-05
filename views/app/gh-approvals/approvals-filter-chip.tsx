@@ -21,7 +21,7 @@ const FilterChip: React.FC<FilterChipProps> = ({ active, onPress, children }) =>
         <Text
             className={cn(
                 'font-semibold',
-                active ? 'text-primary-foreground dark:text-white' : 'text-foreground'
+                active ? 'text-primary dark:text-white' : 'text-foreground'
             )}
         >
             {children}

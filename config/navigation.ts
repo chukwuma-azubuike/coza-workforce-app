@@ -523,7 +523,7 @@ const AppRoutes: IAppRoute[] = [
         ],
         inMenuBar: false,
         inMore: true,
-        ghMore: true,
+        ghMore: false,
         icon: { name: 'download-outline', type: 'ionicon' },
         href: '/export-data',
     },

@@ -12,9 +12,14 @@ interface IStatusTag {
     children?: IStatus | ITicketStatus | IUserStatus | IReportStatus | string;
     isLoading?: boolean;
     className?: string;
+    size?: 'sm' | 'md';
+    /** Overrides the displayed text while still resolving colour from `children`. */
+    label?: string;
+    /** Overrides the auto-resolved colour. Used by ReportStatusPill for role-aware display. */
+    color?: StatusColor;
 }
 
-type StatusColor = 'green' | 'yellow' | 'blue' | 'gray' | 'red';
+export type StatusColor = 'green' | 'yellow' | 'blue' | 'gray' | 'red';
 
 const STATUS_COLOR_MAP: Record<StatusColor, { container: string; text: string }> = {
     green: { container: 'bg-green-500/20 border-green-500/40', text: 'text-green-500' },
@@ -70,22 +75,33 @@ const resolveColor = (status: string | undefined): StatusColor => {
     }
 };
 
-const StatusTag: React.FC<IStatusTag> = ({ children: status, capitalise = true, className, isLoading }) => {
+const StatusTag: React.FC<IStatusTag> = ({
+    children: status,
+    capitalise = true,
+    className,
+    isLoading,
+    size = 'md',
+    label,
+    color: colorOverride,
+}) => {
+    const isSm = size === 'sm';
+
     if (isLoading) {
-        return <Skeleton className="w-20 h-6" />;
+        return <Skeleton className={isSm ? 'w-16 h-5' : 'w-20 h-6'} />;
     }
 
-    const color = resolveColor(status as string | undefined);
+    const color = colorOverride ?? resolveColor(status as string | undefined);
     const { container, text } = STATUS_COLOR_MAP[color];
 
     return (
-        <View style={styles.badge} className={cn('border', container, className)}>
-            <Text style={styles.label} className={cn(text)}>
-                {status
-                    ? capitalise
-                        ? Utils.capitalizeFirstChar(String(status).replace('Gsp ', ''), '_')
-                        : String(status)
-                    : 'Unknown'}
+        <View style={[styles.badge, isSm && styles.badgeSm]} className={cn('border', container, className)}>
+            <Text style={[styles.label, isSm && styles.labelSm]} className={cn(text)}>
+                {label ??
+                    (status
+                        ? capitalise
+                            ? Utils.capitalizeFirstChar(String(status).replace('Gsp ', ''), '_')
+                            : String(status)
+                        : 'Unknown')}
             </Text>
         </View>
     );
@@ -97,10 +113,16 @@ const styles = StyleSheet.create({
         borderRadius: 999,
         paddingHorizontal: 10,
     },
+    badgeSm: {
+        paddingHorizontal: 8,
+    },
     label: {
         fontSize: 12,
         fontWeight: '600',
         letterSpacing: 0.3,
+    },
+    labelSm: {
+        fontSize: 10,
     },
 });
 

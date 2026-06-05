@@ -14,6 +14,7 @@ import { useGetGhReportsQuery } from '@store/services/grouphead';
 import { IGHReportListItem, IReportStatus } from '@store/types';
 import Utils from '@utils/index';
 import FilterChip from './approvals-filter-chip';
+import dayjs from 'dayjs';
 
 type ReportFilter =
     | IReportStatus.HOD_SUBMITTED
@@ -81,7 +82,8 @@ const ReportCard: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
         router.push({
             pathname: '/gh-approvals/report-detail' as any,
             params: {
-                reportId: item._id,
+                reportId: item.reportId ?? item._id,
+                reportType: item.reportType,
                 departmentId: item.departmentId,
                 serviceId: item.serviceId,
                 departmentName: item.departmentName,
@@ -100,11 +102,11 @@ const ReportCard: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
                     <View className="flex-1 p-4 gap-3">
                         <View className="flex-row items-start justify-between gap-2">
                             <View className="flex-1">
-                                <Text className="!text-base font-bold text-foreground leading-tight">
+                                <Text className="font-bold text-foreground leading-tight">
                                     {item.departmentName}
                                 </Text>
-                                <Text className="!text-xs text-muted-foreground mt-0.5">
-                                    {item.serviceName ?? item.campusName}
+                                <Text className="!text-sm text-muted-foreground mt-0.5">
+                                    {item.serviceName ?? item.campusName} {item.serviceTime ? ' | ' + dayjs(item.serviceTime).format('D MMM YYYY, h:mm A') : ''}
                                 </Text>
                             </View>
                             <Ionicons name="chevron-forward" size={18} color="#71717a" style={styles.chevron} />
@@ -116,17 +118,18 @@ const ReportCard: React.FC<{ item: IGHReportListItem }> = ({ item }) => {
                                 className="w-7 h-7"
                                 imageUrl={item.submittedBy?.pictureUrl || AVATAR_FALLBACK_URL}
                             />
-                            <Text className="!text-xs font-medium text-foreground">{submitterName}</Text>
+                            <Text className="!text-sm font-medium text-foreground">{submitterName}</Text>
                         </View>
 
                         <View className="flex-row items-center justify-between pt-3 border-t border-border">
                             <View className="flex-row items-center gap-1">
-                                <Ionicons name="attach-outline" size={12} color="#71717a" />
-                                <Text className="!text-[11px] text-muted-foreground font-semibold">
+                                <Ionicons name="attach-outline" size={16} color="#71717a" />
+                                <Text className="text-sm text-muted-foreground font-semibold">
                                     {item.attachmentCount ?? '—'}
                                 </Text>
                             </View>
-                            <ReportStatusPill status={item.status as string} />
+                            <View />
+                            <ReportStatusPill status={item.status as string} role="GROUP_HEAD" />
                         </View>
                     </View>
                 </View>
@@ -146,7 +149,7 @@ const ApprovalsReports: React.FC = () => {
     const statusParam = filter === 'HISTORICAL' ? undefined : (filter as string);
 
     const { data, isLoading, isFetching } = useGetGhReportsQuery(
-        { status: statusParam, limit: 50 },
+        { status: statusParam, limit: 25 },
         { refetchOnMountOrArgChange: true }
     );
 
@@ -188,7 +191,7 @@ const ApprovalsReports: React.FC = () => {
                             </Text>
                         </View>
                     ) : (
-                        reports.map(item => <ReportCard key={item._id} item={item} />)
+                        reports.map(item => <ReportCard key={item.reportId ?? item._id} item={item} />)
                     )}
                 </View>
             </ScrollView>

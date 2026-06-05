@@ -208,7 +208,7 @@ export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED' |'UNKNOWN';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED' | 'UNKNOWN';
 
 export interface ICreateUserPayload {
     firstName: string;
@@ -704,6 +704,52 @@ export interface IIncidentReportPayload extends IReportFormProps {
     incident: string;
 }
 
+export interface IWittyReportPayload extends IReportFormProps {
+    incidentReport: string | null;
+    onlineInquiries: string | null;
+    socialMediaPosts: { platform: string; url: string }[];
+    onlineConvertsCount: number;
+    onlineFirstTimersCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IInternshipReportPayload extends IReportFormProps {
+    classMemberCount: number;
+    classTaken: string | null;
+    convertsCompletedClassCount: number;
+    location: string | null;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IPruReportPayload extends IReportFormProps {
+    enquiryCount: number;
+    vehicleDedicationCount: number;
+    missingItemsCount: number;
+    praiseReportDeskCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IWelfareReportPayload extends IReportFormProps {
+    medicalSupportCount: number;
+    medicalIncident: string | null;
+    aidRequestCount: number;
+    aidTreatedCount: number;
+    aidDeclinedCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IProtocolReportPayload extends IReportFormProps {
+    incidentCount: number;
+    theft: string | null;
+    specialGuestCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
 export interface IDepartmentReportResponse {
     departmentName: string;
     departmentalReport: {
@@ -875,27 +921,24 @@ export interface IGroupAuditEntry {
 
 // ─── Report history / audit trail (v2.0) ─────────────────────────────────────
 
-export interface IReportHistoryEntry {
-    _id: string;
-    action:
-        | 'SUBMITTED'
-        | 'GH_APPROVED'
-        | 'GH_CHANGE_REQUESTED'
-        | 'CP_APPROVED'
-        | 'CP_CHANGE_REQUESTED'
-        | 'GSP_APPROVED'
-        | 'GSP_CHANGE_REQUESTED';
-    actorId: string;
-    actorName: string;
+// ─── Review history (v2.1) — shape returned by the unified /transition workflow ──
+// Each entry is the canonical audit record written on a report's reviewHistory[].
+// NOTE: the backend returns the actor's userId (not a display name) and a `timestamp`.
+export interface IReviewHistoryEntry {
+    action: 'SUBMIT' | 'APPROVE' | 'CHANGE_REQUESTED' | string;
+    actor: string; // userId
     actorRole: 'HOD' | 'AHOD' | 'GH' | 'CP' | 'GSP';
-    comment?: string;
-    createdAt: string;
+    comment: string | null;
+    timestamp: string;
 }
 
 // ─── GH reports list (v2.0) ───────────────────────────────────────────────────
 
 export interface IGHReportListItem {
-    _id: string;
+    // Backend identifies a report by `reportId` (+ reportType). `_id` kept optional
+    // for any legacy/cached rows.
+    reportId: string;
+    _id?: string;
     reportType: string;
     serviceId: string;
     serviceName: string;
@@ -905,6 +948,7 @@ export interface IGHReportListItem {
     status: IReportStatus;
     submittedBy?: { firstName: string; lastName: string; pictureUrl?: string };
     submittedAt: string;
+    serviceTime: string;
     preview?: string;
     attachmentCount?: number;
     createdAt: string;

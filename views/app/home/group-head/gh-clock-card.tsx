@@ -51,10 +51,10 @@ const GHClockCard: React.FC<GHClockCardProps> = ({
     const isDisabled = isLoading || alreadyClockedOut || !service?._id;
 
     const clockInTime = latestAttendanceData?.[0]?.clockIn
-        ? dayjs.unix(Number(latestAttendanceData[0].clockIn)).format('h:mm A')
+        ? dayjs(Number(latestAttendanceData[0].clockIn)).format('h:mm A')
         : null;
     const clockOutTime = latestAttendanceData?.[0]?.clockOut
-        ? dayjs.unix(Number(latestAttendanceData[0].clockOut)).format('h:mm A')
+        ? dayjs(Number(latestAttendanceData[0].clockOut)).format('h:mm A')
         : null;
 
     const headerLabel = canClockIn
@@ -167,8 +167,8 @@ const GHClockCard: React.FC<GHClockCardProps> = ({
                             In: <Text className="font-semibold text-green-600 dark:text-green-400">{clockInTime}</Text>
                         </Text>
                         {clockOutTime && (
-                            <Text className="text-muted-foreground">
-                                Out: <Text className="font-semibold text-muted-foreground">{clockOutTime}</Text>
+                            <Text className="text-muted-foreground ml-2">
+                                Out: <Text className="font-semibold text-rose-400">{clockOutTime}</Text>
                             </Text>
                         )}
                     </View>

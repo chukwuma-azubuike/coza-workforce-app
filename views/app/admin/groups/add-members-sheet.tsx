@@ -31,6 +31,21 @@ const filterByText = (q: string, fields: (string | undefined)[]) => {
     return fields.some(f => (f ?? '').toLowerCase().includes(needle));
 };
 
+const MODE_META = {
+    heads: {
+        icon: 'person-add-outline' as const,
+        title: 'Add Group Heads',
+        color: '#3b82f6',
+        bg: '#dbeafe',
+    },
+    departments: {
+        icon: 'grid-outline' as const,
+        title: 'Add Departments',
+        color: '#8b5cf6',
+        bg: '#ede9fe',
+    },
+};
+
 const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, excludeIds, onAdded }) => {
     const [campusId, setCampusId] = useState<string | null>(null);
     const [query, setQuery] = useState('');
@@ -38,7 +53,6 @@ const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, exclu
 
     const { data: campuses = [] } = useGetCampusesQuery();
 
-    // ─── Group heads data ──────────────────────────────────────────────
     const { data: campusUsers = [], isLoading: campusUsersLoading } = useGetUsersQuery(
         { campusId: campusId as string },
         { skip: mode !== 'heads' || !campusId }
@@ -48,7 +62,6 @@ const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, exclu
         { skip: mode !== 'heads' || !!campusId }
     );
 
-    // ─── Departments data ──────────────────────────────────────────────
     const { data: campusDepartments = [], isLoading: deptByCampusLoading } = useGetDepartmentsByCampusIdQuery(
         campusId as string,
         { skip: mode !== 'departments' || !campusId }
@@ -73,12 +86,8 @@ const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, exclu
 
     const isLoading =
         mode === 'heads'
-            ? campusId
-                ? campusUsersLoading
-                : allGhLoading
-            : campusId
-              ? deptByCampusLoading
-              : allDeptLoading;
+            ? campusId ? campusUsersLoading : allGhLoading
+            : campusId ? deptByCampusLoading : allDeptLoading;
 
     const [assignHead, { isLoading: isAddingHead }] = useAssignGroupHeadMutation();
     const [assignDept, { isLoading: isAddingDept }] = useAssignDepartmentMutation();
@@ -120,11 +129,16 @@ const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, exclu
         }
     };
 
-    const title = mode === 'heads' ? 'Add Group Heads' : 'Add Departments';
-    const cta =
+    const meta = MODE_META[mode];
+
+    const ctaLabel =
         selectedIds.length === 0
-            ? `Add ${mode === 'heads' ? 'group heads' : 'departments'}`
-            : `Add ${selectedIds.length} ${mode === 'heads' ? (selectedIds.length === 1 ? 'group head' : 'group heads') : selectedIds.length === 1 ? 'department' : 'departments'}`;
+            ? `Select ${mode === 'heads' ? 'group heads' : 'departments'}`
+            : `Add ${selectedIds.length} ${
+                  mode === 'heads'
+                      ? selectedIds.length === 1 ? 'group head' : 'group heads'
+                      : selectedIds.length === 1 ? 'department' : 'departments'
+              }`;
 
     return (
         <Modal
@@ -138,15 +152,57 @@ const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, exclu
                     style={{ flex: 1 }}
                     behavior={Platform.OS === 'ios' ? 'padding' : undefined}
                 >
-                    {/* Header */}
-                    <View className="flex-row items-center justify-between px-4 py-3 border-b border-border">
-                        <Text className="text-lg font-bold text-foreground">{title}</Text>
-                        <TouchableOpacity onPress={handleClose} hitSlop={10}>
-                            <Ionicons name="close" size={22} color="#888" />
-                        </TouchableOpacity>
+                    {/* ─── Header ──────────────────────────────────────── */}
+                    <View className="px-4 pt-3 pb-3 border-b border-border gap-3">
+                        <View className="flex-row items-center justify-between">
+                            <View className="flex-row items-center gap-3">
+                                <View
+                                    className="w-9 h-9 rounded-xl items-center justify-center"
+                                    style={{ backgroundColor: meta.bg }}
+                                >
+                                    <Ionicons name={meta.icon} size={17} color={meta.color} />
+                                </View>
+                                <View>
+                                    <Text className="text-base font-bold text-foreground">{meta.title}</Text>
+                                    {selectedIds.length > 0 && (
+                                        <Text className="!text-xs text-muted-foreground">
+                                            {selectedIds.length} selected
+                                        </Text>
+                                    )}
+                                </View>
+                            </View>
+                            <TouchableOpacity
+                                onPress={handleClose}
+                                hitSlop={10}
+                                className="w-8 h-8 rounded-full bg-secondary items-center justify-center"
+                            >
+                                <Ionicons name="close" size={16} color="#71717a" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Selection count badge */}
+                        {selectedIds.length > 0 && (
+                            <View
+                                className="flex-row items-center gap-2 px-3 py-2 rounded-xl"
+                                style={{ backgroundColor: meta.bg }}
+                            >
+                                <Ionicons name="checkmark-circle" size={14} color={meta.color} />
+                                <Text className="!text-xs font-semibold flex-1" style={{ color: meta.color }}>
+                                    {selectedIds.length} {mode === 'heads' ? 'head' : 'department'}{selectedIds.length !== 1 ? 's' : ''} selected
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => setSelectedIds([])}
+                                    hitSlop={8}
+                                >
+                                    <Text className="!text-xs font-semibold" style={{ color: meta.color }}>
+                                        Clear
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        )}
                     </View>
 
-                    {/* Picker */}
+                    {/* ─── Picker ──────────────────────────────────────── */}
                     <View className="flex-1 px-4 pt-3">
                         {mode === 'heads' ? (
                             <AdminMultiPicker<IUser>
@@ -231,14 +287,14 @@ const AddMembersSheet: React.FC<IProps> = ({ open, onClose, mode, groupId, exclu
                         )}
                     </View>
 
-                    {/* Footer CTA */}
+                    {/* ─── Footer CTA ───────────────────────────────────── */}
                     <View className="px-4 py-3 border-t border-border">
                         <Button
                             onPress={handleSubmit}
                             disabled={selectedIds.length === 0 || isSubmitting}
                             isLoading={isSubmitting}
                         >
-                            {cta}
+                            {ctaLabel}
                         </Button>
                     </View>
                 </KeyboardAvoidingView>
