@@ -5,7 +5,7 @@ import { Separator } from '~/components/ui/separator';
 import { useGetGspWorkforceOverviewQuery, useGetGspWorkforceTrendQuery } from '@store/services/gsp-dashboard';
 import { THEME_CONFIG } from '@config/appConfig';
 import Section from '../components/section';
-import { SectionCard, SectionEmpty, SectionError, SectionSkeleton } from '../components/states';
+import { SectionCard, SectionEmpty, SectionError, WorkforceSkeleton } from '../components/states';
 import LeagueTable, { LeagueRow } from '../components/league-table';
 import ShareDonut from '../components/share-donut';
 import SegmentedBar from '../components/segmented-bar';
@@ -82,7 +82,7 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
 
             <SectionCard className="gap-4">
                 {isLoading ? (
-                    <SectionSkeleton rows={5} />
+                    <WorkforceSkeleton />
                 ) : isError ? (
                     <SectionError onRetry={refetch} />
                 ) : isEmpty ? (

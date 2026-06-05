@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useGetGspServicesQuery } from '@store/services/gsp-dashboard';
 import { THEME_CONFIG } from '@config/appConfig';
 import Section from '../components/section';
-import { SectionCard, SectionEmpty, SectionError, SectionSkeleton } from '../components/states';
+import { SectionCard, SectionEmpty, SectionError, ServicesSkeleton } from '../components/states';
 import LeagueTable, { LeagueRow } from '../components/league-table';
 import { IUseGspFilters } from '../use-gsp-filters';
 import { gspRoutes } from '../routes';
@@ -49,7 +49,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ filters, onCheckCompl
         >
             <SectionCard>
                 {isLoading ? (
-                    <SectionSkeleton rows={4} />
+                    <ServicesSkeleton />
                 ) : isError ? (
                     <SectionError onRetry={refetch} />
                 ) : isEmpty ? (

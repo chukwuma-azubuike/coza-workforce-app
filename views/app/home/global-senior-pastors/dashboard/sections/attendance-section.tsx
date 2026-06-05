@@ -6,7 +6,7 @@ import { Separator } from '~/components/ui/separator';
 import { useGetGspAttendanceByCampusQuery, useGetGspAttendanceTrendQuery } from '@store/services/gsp-dashboard';
 import { THEME_CONFIG } from '@config/appConfig';
 import Section from '../components/section';
-import { SectionCard, SectionEmpty, SectionError, SectionSkeleton } from '../components/states';
+import { AttendanceSkeleton, SectionCard, SectionEmpty, SectionError } from '../components/states';
 import LeagueTable, { LeagueRow } from '../components/league-table';
 import ShareDonut from '../components/share-donut';
 import TrendChart from '../components/trend-chart';
@@ -73,7 +73,7 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ filters, onCheckC
         >
             <SectionCard className="gap-4">
                 {isLoading ? (
-                    <SectionSkeleton rows={5} />
+                    <AttendanceSkeleton />
                 ) : isError ? (
                     <SectionError onRetry={refetch} />
                 ) : isEmpty ? (

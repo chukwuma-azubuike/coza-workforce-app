@@ -6,7 +6,7 @@ import { Separator } from '~/components/ui/separator';
 import { useGetGspCompletenessQuery } from '@store/services/gsp-dashboard';
 import { THEME_CONFIG } from '@config/appConfig';
 import Section from '../components/section';
-import { SectionCard, SectionError, SectionSkeleton } from '../components/states';
+import { CompletenessSkeleton, SectionCard, SectionError } from '../components/states';
 import CompletenessFunnel from '../components/completeness-funnel';
 import LeagueTable, { LeagueRow } from '../components/league-table';
 import { IUseGspFilters } from '../use-gsp-filters';
@@ -45,7 +45,7 @@ const CompletenessSection: React.FC<CompletenessSectionProps> = ({ filters }) =>
         <Section title="Report completeness" subtitle="Approval pipeline & per-campus progress" actionLabel="Details" onActionPress={() => gspRoutes.completeness(win)}>
             <SectionCard className="gap-4">
                 {isLoading ? (
-                    <SectionSkeleton rows={5} />
+                    <CompletenessSkeleton />
                 ) : isError ? (
                     <SectionError onRetry={refetch} />
                 ) : (

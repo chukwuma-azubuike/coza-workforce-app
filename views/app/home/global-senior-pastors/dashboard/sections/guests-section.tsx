@@ -5,7 +5,7 @@ import { Text } from '~/components/ui/text';
 import { useGetGspGuestsQuery } from '@store/services/gsp-dashboard';
 import { THEME_CONFIG } from '@config/appConfig';
 import Section from '../components/section';
-import { SectionCard, SectionEmpty, SectionError, SectionSkeleton } from '../components/states';
+import { GuestsSkeleton, SectionCard, SectionEmpty, SectionError } from '../components/states';
 import KpiCard from '../components/kpi-card';
 import LeagueTable, { LeagueRow } from '../components/league-table';
 import TrendChart from '../components/trend-chart';
@@ -55,7 +55,7 @@ const GuestsSection: React.FC<GuestsSectionProps> = ({ filters, onCheckCompleten
         >
             <SectionCard className="gap-4">
                 {isLoading ? (
-                    <SectionSkeleton rows={4} />
+                    <GuestsSkeleton />
                 ) : isError ? (
                     <SectionError onRetry={refetch} />
                 ) : isEmpty ? (
