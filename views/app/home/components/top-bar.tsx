@@ -42,7 +42,7 @@ const HomeTopBar: React.FC<HomeTopBarProps> = ({
             </TouchableOpacity>
             <ServicePill name={serviceName} serviceTime={serviceTime} />
             <TouchableOpacity activeOpacity={0.6} className="w-9 h-9 items-center justify-center rounded-full">
-                <Ionicons name="notifications-outline" size={20} color={iconColor} />
+                <Ionicons name="notifications-outline" size={26} color={iconColor} />
                 {unread && <View className="absolute top-1 right-1 w-2 h-2 rounded-full bg-destructive" />}
             </TouchableOpacity>
         </View>

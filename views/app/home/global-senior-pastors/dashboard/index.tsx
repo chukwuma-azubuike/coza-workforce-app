@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
-import { FileSpreadsheet, ChevronRight, Download } from 'lucide-react-native';
+import { Download } from 'lucide-react-native';
 
 import useRole from '@hooks/role';
 import { useAppDispatch } from '@store/hooks';
@@ -9,7 +9,7 @@ import { gspDashboardServiceSlice } from '@store/services/gsp-dashboard';
 import ViewWrapper from '~/components/layout/viewWrapper';
 import ErrorBoundary from '@components/composite/error-boundary';
 import { Text } from '~/components/ui/text';
-import { Card } from '~/components/ui/card';
+import HomeTopBar from '../../components/top-bar';
 import { Separator } from '~/components/ui/separator';
 import { THEME_CONFIG } from '@config/appConfig';
 
@@ -23,6 +23,7 @@ import WorkforceSection from './sections/workforce-section';
 import GuestsSection from './sections/guests-section';
 import ServicesSection from './sections/services-section';
 import CompletenessSection from './sections/completeness-section';
+import { useGetLatestServiceQuery } from '~/store/services/services';
 
 /**
  * GSP Global Dashboard — the bird's-eye view across every campus.
@@ -68,8 +69,23 @@ const GSPDashboard: React.FC = () => {
         setExporting(false);
     }, [filters.window, filters.isGlobal, filters.campusId]);
 
+    const campusId = user?.campus?._id;
+
+    const {
+        data: latestService,
+    } = useGetLatestServiceQuery(campusId as string, { skip: !campusId });
+
+
     return (
         <View className="flex-1">
+            <HomeTopBar
+                firstName={user?.firstName}
+                lastName={user?.lastName}
+                pictureUrl={user?.pictureUrl}
+                serviceName={latestService?.name}
+                serviceTime={latestService?.serviceTime}
+                unread={false}
+            />
             <View className="px-4 pt-2 pb-3 flex-row items-center justify-between gap-3">
                 <View className="flex-1 gap-0.5">
                     <Text className="!text-[13px] font-semibold uppercase tracking-widest text-muted-foreground">
