@@ -81,6 +81,18 @@ export const GSP_METRIC_CATALOGUE: IGspMetricMeta[] = [
 export const getMetricMeta = (key: string): IGspMetricMeta =>
     GSP_METRIC_CATALOGUE.find(m => m.key === key) ?? { key: key as IGspMetricKey, label: key, format: 'count' };
 
+/**
+ * Unwraps the standard `{ ..., data }` response envelope. Tolerant by design:
+ * if the backend ever returns the payload unwrapped (no `data` key), fall back to
+ * the raw response so the dashboard still renders instead of showing empty zeros.
+ */
+const unwrap = <T>(res: IDefaultResponse<T> | T): T => {
+    if (res && typeof res === 'object' && 'data' in (res as object)) {
+        return (res as IDefaultResponse<T>).data;
+    }
+    return res as T;
+};
+
 /* ────────────────────────────────────────────────────────────────────────────
  * Shared query params
  * ──────────────────────────────────────────────────────────────────────────── */
@@ -297,43 +309,43 @@ export const gspDashboardServiceSlice = createApi({
         getGspOverview: endpoint.query<IGspOverview, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/overview`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspOverview>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspOverview>) => unwrap(res),
         }),
 
         getGspAttendanceByCampus: endpoint.query<IGspAttendanceByCampus, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/attendance/by-campus`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspAttendanceByCampus>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspAttendanceByCampus>) => unwrap(res),
         }),
 
         getGspAttendanceTrend: endpoint.query<IGspTrend, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/attendance/trend`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspTrend>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspTrend>) => unwrap(res),
         }),
 
         getGspWorkforceOverview: endpoint.query<IGspWorkforceOverview, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/workforce/overview`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspWorkforceOverview>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspWorkforceOverview>) => unwrap(res),
         }),
 
         getGspWorkforceTrend: endpoint.query<IGspWorkforceTrend, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/workforce/trend`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspWorkforceTrend>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspWorkforceTrend>) => unwrap(res),
         }),
 
         getGspGuests: endpoint.query<IGspGuests, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/guests`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspGuests>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspGuests>) => unwrap(res),
         }),
 
         getGspCompleteness: endpoint.query<IGspCompleteness, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/reports/completeness`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspCompleteness>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspCompleteness>) => unwrap(res),
         }),
 
         getGspCampus: endpoint.query<IGspCampusDrilldown, { campusId: string } & IGspBaseParams>({
@@ -343,13 +355,13 @@ export const gspDashboardServiceSlice = createApi({
                 params,
             }),
             providesTags: (_, __, { campusId }) => [{ type: 'GspDashboard', id: campusId }, 'GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspCampusDrilldown>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspCampusDrilldown>) => unwrap(res),
         }),
 
         getGspServices: endpoint.query<IGspServices, IGspBaseParams>({
             query: params => ({ url: `/${SERVICE_URL}/services`, method: REST_API_VERBS.GET, params }),
             providesTags: ['GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspServices>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspServices>) => unwrap(res),
         }),
 
         getGspMetric: endpoint.query<IGspMetricBreakdown, { metricKey: string } & IGspBaseParams>({
@@ -359,7 +371,7 @@ export const gspDashboardServiceSlice = createApi({
                 params,
             }),
             providesTags: (_, __, { metricKey }) => [{ type: 'GspDashboard', id: metricKey }, 'GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspMetricBreakdown>) => res?.data,
+            transformResponse: (res: IDefaultResponse<IGspMetricBreakdown>) => unwrap(res),
         }),
     }),
 });

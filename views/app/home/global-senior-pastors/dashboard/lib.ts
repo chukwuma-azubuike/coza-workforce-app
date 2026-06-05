@@ -150,3 +150,17 @@ export const rateTone = (rate?: number): 'good' | 'warn' | 'bad' => {
     if (rate >= 0.5) return 'warn';
     return 'bad';
 };
+
+/** Best-effort human message from an RTK Query error (envelope `message`, HTTP status, etc.). */
+export const getQueryErrorMessage = (error: unknown): string => {
+    const e = error as { status?: number | string; data?: any; error?: string } | undefined;
+    if (!e) return 'Request failed.';
+    const fromData =
+        typeof e.data === 'string' ? e.data : e.data?.message || e.data?.error || (e.data ? undefined : undefined);
+    const status = e.status !== undefined ? ` (${e.status})` : '';
+    if (fromData) return `${fromData}${status}`;
+    if (e.status === 403) return 'You are not authorised to view this dashboard (403).';
+    if (e.status === 401) return 'Your session has expired. Please sign in again (401).';
+    if (e.error) return `${e.error}${status}`;
+    return `Could not load data${status}.`;
+};

@@ -69,7 +69,7 @@ const CompletenessBanner: React.FC<CompletenessBannerProps> = ({
                     </View>
                     <View className="flex-1">
                         <Text className="text-sm font-semibold text-foreground">Submission completeness</Text>
-                        <Text numberOfLines={1} className="!text-[12px] text-muted-foreground">
+                        <Text numberOfLines={1} className="text-sm mt-1 line-clamp-none text-muted-foreground">
                             {campusesReporting ?? 0} of {campusesTotal ?? 0} campuses reported
                             {reportsExpected ? ` · ${reportsApproved ?? 0}/${reportsExpected} reports approved` : ''}
                         </Text>

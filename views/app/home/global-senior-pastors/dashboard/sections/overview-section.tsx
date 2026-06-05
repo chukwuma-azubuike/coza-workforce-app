@@ -4,9 +4,10 @@ import { useGetGspOverviewQuery } from '@store/services/gsp-dashboard';
 import { THEME_CONFIG } from '@config/appConfig';
 import KpiCard from '../components/kpi-card';
 import CompletenessBanner from '../components/completeness-banner';
+import { SectionCard, SectionError } from '../components/states';
 import { IUseGspFilters } from '../use-gsp-filters';
 import { gspRoutes } from '../routes';
-import { formatPercent } from '../lib';
+import { formatPercent, getQueryErrorMessage } from '../lib';
 
 interface OverviewSectionProps {
     filters: IUseGspFilters;
@@ -17,10 +18,25 @@ interface OverviewSectionProps {
  * "accumulate" layer — every total here is tappable into its by-campus breakdown.
  */
 const OverviewSection: React.FC<OverviewSectionProps> = ({ filters }) => {
-    const { data, isLoading } = useGetGspOverviewQuery(filters.paramsWithCompare);
+    const { data, isLoading, isError, error, refetch } = useGetGspOverviewQuery(filters.paramsWithCompare);
+
+    React.useEffect(() => {
+        if (__DEV__ && isError) {
+            // eslint-disable-next-line no-console
+            console.warn('[GSP /overview] request failed', error);
+        }
+    }, [isError, error]);
 
     const k = data?.kpis;
     const win = { startDate: filters.window.start, endDate: filters.window.end, campusId: filters.isGlobal ? undefined : filters.campusId };
+
+    if (isError) {
+        return (
+            <SectionCard>
+                <SectionError message={getQueryErrorMessage(error)} onRetry={refetch} />
+            </SectionCard>
+        );
+    }
 
     return (
         <View className="gap-4">

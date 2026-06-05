@@ -121,7 +121,7 @@ const GSPDashboard: React.FC = () => {
                     </ErrorBoundary>
 
                     {/* Drill-down to the legacy single-service report view */}
-                    <Card className="p-0">
+                    {/* <Card className="p-0">
                         <TouchableOpacity
                             activeOpacity={0.7}
                             onPress={() => gspRoutes.serviceReport()}
@@ -132,13 +132,13 @@ const GSPDashboard: React.FC = () => {
                             </View>
                             <View className="flex-1">
                                 <Text className="text-sm font-semibold text-foreground">Single service report</Text>
-                                <Text className="!text-[12px] text-muted-foreground">
+                                <Text className="text-sm line-clamp-none text-muted-foreground">
                                     Detailed per-service workforce & attendance summary
                                 </Text>
                             </View>
                             <ChevronRight size={18} color={THEME_CONFIG.lightGray} />
                         </TouchableOpacity>
-                    </Card>
+                    </Card> */}
                 </View>
             </ViewWrapper>
         </View>

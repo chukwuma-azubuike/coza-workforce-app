@@ -50,7 +50,7 @@ const LeagueTable: React.FC<LeagueTableProps> = ({ rows, maxRows = 6, valueForma
                     >
                         <View className="flex-row items-center justify-between gap-2">
                             <View className="flex-row items-center gap-2 flex-1">
-                                <Text className="!text-[12px] font-bold text-muted-foreground w-4">{i + 1}</Text>
+                                <Text className="text-xs line-clamp-none font-bold text-muted-foreground w-4">{i + 1}</Text>
                                 <View className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
                                 <Text numberOfLines={1} className="text-md font-semibold text-foreground flex-1">
                                     {row.label}

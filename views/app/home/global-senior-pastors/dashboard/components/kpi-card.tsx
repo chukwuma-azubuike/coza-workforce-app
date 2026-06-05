@@ -63,7 +63,7 @@ const KpiCard: React.FC<KpiCardProps> = ({
                         )}
                         <Text
                             numberOfLines={1}
-                            className="text-[12px] font-bold uppercase tracking-wider text-muted-foreground flex-1"
+                            className="text-[12px] font-bold uppercase text-muted-foreground flex-1"
                         >
                             {label}
                         </Text>
