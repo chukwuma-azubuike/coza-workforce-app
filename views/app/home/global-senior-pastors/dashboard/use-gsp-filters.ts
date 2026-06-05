@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { gspDashboardActions, IGspWindowPreset } from '@store/actions/gsp-dashboard';
 import { IGspBaseParams } from '@store/services/gsp-dashboard';
@@ -48,23 +48,46 @@ const useGspFilters = (): IUseGspFilters => {
         [window.start, window.end, isGlobal, campusId]
     );
 
-    const paramsWithCompare = useMemo<IGspBaseParams>(
-        () => ({ ...params, compareTo: 'previous' }),
-        [params]
+    const paramsWithCompare = useMemo<IGspBaseParams>(() => ({ ...params, compareTo: 'previous' }), [params]);
+
+    // Stable identities so sections (React.memo) only re-render when a filter value
+    // actually changes — not on every unrelated parent re-render (refresh/export state).
+    const setWindowPreset = useCallback(
+        (preset: IGspWindowPreset) => dispatch(gspDashboardActions.setWindowPreset(preset)),
+        [dispatch]
+    );
+    const setCampus = useCallback((id: string) => dispatch(gspDashboardActions.setCampus(id)), [dispatch]);
+    const setTrendGroupBy = useCallback(
+        (groupBy: 'month' | 'service') => dispatch(gspDashboardActions.setTrendGroupBy(groupBy)),
+        [dispatch]
     );
 
-    return {
-        windowPreset,
-        campusId,
-        isGlobal,
-        trendGroupBy,
-        window,
-        params,
-        paramsWithCompare,
-        setWindowPreset: preset => dispatch(gspDashboardActions.setWindowPreset(preset)),
-        setCampus: id => dispatch(gspDashboardActions.setCampus(id)),
-        setTrendGroupBy: groupBy => dispatch(gspDashboardActions.setTrendGroupBy(groupBy)),
-    };
+    return useMemo<IUseGspFilters>(
+        () => ({
+            windowPreset,
+            campusId,
+            isGlobal,
+            trendGroupBy,
+            window,
+            params,
+            paramsWithCompare,
+            setWindowPreset,
+            setCampus,
+            setTrendGroupBy,
+        }),
+        [
+            windowPreset,
+            campusId,
+            isGlobal,
+            trendGroupBy,
+            window,
+            params,
+            paramsWithCompare,
+            setWindowPreset,
+            setCampus,
+            setTrendGroupBy,
+        ]
+    );
 };
 
 export default useGspFilters;

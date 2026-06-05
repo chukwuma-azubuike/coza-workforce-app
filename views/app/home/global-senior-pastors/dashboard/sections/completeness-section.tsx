@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { ClipboardCheck } from 'lucide-react-native';
+import { ChevronRight, ClipboardCheck } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { useGetGspCompletenessQuery } from '@store/services/gsp-dashboard';
@@ -50,16 +50,28 @@ const CompletenessSection: React.FC<CompletenessSectionProps> = ({ filters }) =>
                     <SectionError onRetry={refetch} />
                 ) : (
                     <>
-                        {(data?.pendingGspApproval ?? 0) > 0 && (
+                        {(data?.pendingGspApproval ?? 0) > 0 ? (
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={() => gspRoutes.completeness(win)}
+                                onPress={() => gspRoutes.approvals()}
                                 className="flex-row items-center gap-3 p-3 rounded-xl bg-amber-100 dark:bg-amber-900/20"
                             >
                                 <ClipboardCheck size={20} color={THEME_CONFIG.warning} />
                                 <Text className="text-sm font-semibold text-amber-700 dark:text-amber-400 flex-1">
-                                    {data?.pendingGspApproval} reports awaiting your approval
+                                    {data?.pendingGspApproval} report{data?.pendingGspApproval === 1 ? '' : 's'} awaiting
+                                    your approval
                                 </Text>
+                                <ChevronRight size={18} color={THEME_CONFIG.warning} />
+                            </TouchableOpacity>
+                        ) : (
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => gspRoutes.approvals()}
+                                className="flex-row items-center gap-3 p-3 rounded-xl bg-secondary"
+                            >
+                                <ClipboardCheck size={20} color={THEME_CONFIG.primary} />
+                                <Text className="text-sm font-semibold text-foreground flex-1">Open approvals inbox</Text>
+                                <ChevronRight size={18} color={THEME_CONFIG.lightGray} />
                             </TouchableOpacity>
                         )}
 

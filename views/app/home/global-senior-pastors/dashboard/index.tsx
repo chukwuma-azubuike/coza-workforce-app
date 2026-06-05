@@ -1,6 +1,6 @@
 import React from 'react';
 import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
-import { Download } from 'lucide-react-native';
+import { ClipboardList, Download } from 'lucide-react-native';
 
 import useRole from '@hooks/role';
 import { useAppDispatch } from '@store/hooks';
@@ -36,6 +36,12 @@ const GSPDashboard: React.FC = () => {
     const { user } = useRole();
     const dispatch = useAppDispatch();
     const filters = useGspFilters();
+
+    // The filter bar reacts to `filters` instantly (so a pill highlights on tap),
+    // while the heavy section subtree consumes a deferred copy — React renders it at
+    // lower priority and can interrupt it, keeping the tap/scroll responsive.
+    const deferredFilters = React.useDeferredValue(filters);
+    const isStale = filters !== deferredFilters;
 
     const { data: campuses, isLoading: campusesLoading } = useGetCampusesQuery();
 
@@ -95,19 +101,29 @@ const GSPDashboard: React.FC = () => {
                         {user?.firstName ? `Welcome, ${user.firstName}` : 'Global Dashboard'}
                     </Text>
                 </View>
-                <TouchableOpacity
-                    activeOpacity={0.7}
-                    onPress={onExport}
-                    disabled={exporting}
-                    accessibilityLabel="Export dashboard to spreadsheet"
-                    className="w-11 h-11 rounded-full bg-secondary items-center justify-center"
-                >
-                    {exporting ? (
-                        <ActivityIndicator size="small" color={THEME_CONFIG.primary} />
-                    ) : (
-                        <Download size={20} color={THEME_CONFIG.primary} />
-                    )}
-                </TouchableOpacity>
+                <View className="flex-row items-center gap-2">
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => gspRoutes.approvals()}
+                        accessibilityLabel="Open approvals inbox"
+                        className="w-11 h-11 rounded-full bg-muted-background items-center justify-center"
+                    >
+                        <ClipboardList size={20} color={THEME_CONFIG.primary} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={onExport}
+                        disabled={exporting}
+                        accessibilityLabel="Export dashboard to spreadsheet"
+                        className="w-11 h-11 rounded-full bg-muted-background items-center justify-center"
+                    >
+                        {exporting ? (
+                            <ActivityIndicator size="small" color={THEME_CONFIG.primary} />
+                        ) : (
+                            <Download size={20} color={THEME_CONFIG.primary} />
+                        )}
+                    </TouchableOpacity>
+                </View>
             </View>
 
             <View className="pb-3">
@@ -116,24 +132,24 @@ const GSPDashboard: React.FC = () => {
             <Separator />
 
             <ViewWrapper scroll noPadding refreshing={refreshing} onRefresh={onRefresh} className="flex-1">
-                <View className="px-4 gap-6 pt-4 pb-10">
+                <View className="px-4 gap-6 pt-4 pb-10" style={{ opacity: isStale ? 0.6 : 1 }}>
                     <ErrorBoundary>
-                        <OverviewSection filters={filters} />
+                        <OverviewSection filters={deferredFilters} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <AttendanceSection filters={filters} onCheckCompleteness={openCompleteness} />
+                        <AttendanceSection filters={deferredFilters} onCheckCompleteness={openCompleteness} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <WorkforceSection filters={filters} onCheckCompleteness={openCompleteness} />
+                        <WorkforceSection filters={deferredFilters} onCheckCompleteness={openCompleteness} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <GuestsSection filters={filters} onCheckCompleteness={openCompleteness} />
+                        <GuestsSection filters={deferredFilters} onCheckCompleteness={openCompleteness} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <ServicesSection filters={filters} onCheckCompleteness={openCompleteness} />
+                        <ServicesSection filters={deferredFilters} onCheckCompleteness={openCompleteness} />
                     </ErrorBoundary>
                     <ErrorBoundary>
-                        <CompletenessSection filters={filters} />
+                        <CompletenessSection filters={deferredFilters} />
                     </ErrorBoundary>
 
                     {/* Drill-down to the legacy single-service report view */}
