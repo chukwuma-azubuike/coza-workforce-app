@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import RNPickerSelect, { PickerSelectProps } from 'react-native-picker-select';
 import { Text } from './text';
 import { ChevronDown } from 'lucide-react-native';
@@ -36,6 +36,7 @@ function PickerSelect<T extends ValidPickerItem>({
     value: inputValue,
     placeholder = 'Select',
     onError,
+    onDonePress: onDonePressProp,
     ...props
 }: PickerSelectComponentProps<T>) {
     const [value, setValue] = useState<string | undefined>(inputValue !== undefined ? `${inputValue}` : undefined);
@@ -117,17 +118,54 @@ function PickerSelect<T extends ValidPickerItem>({
 
     const { isDarkColorScheme } = useColorScheme();
 
+    // Holds the most recent scroll selection that has not yet been propagated to the parent.
+    const pendingChangeRef = useRef<{ value: string; index: number } | null>(null);
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const flushPendingChange = useCallback(() => {
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+            debounceRef.current = null;
+        }
+        const pending = pendingChangeRef.current;
+        if (pending) {
+            pendingChangeRef.current = null;
+            onValueChange?.(pending.value as any, pending.index);
+        }
+    }, [onValueChange]);
+
     const handleValueChange = useCallback(
         (nextValue: any, index: number) => {
             const strVal = nextValue === null ? undefined : String(nextValue);
 
             if (typeof strVal === 'string') {
+                // Keep the controlled value in lockstep with the wheel so the native picker
+                // doesn't snap back to the previous selection on the next re-render.
                 setValue(strVal);
-                onValueChange?.(strVal as any, index);
+
+                // Defer the upward notification: on iOS the wheel fires onValueChange for every
+                // row it scrolls past, and the parent's handler swaps the `items` array (via
+                // refetches) which mutates the native picker's data source mid-animation -> an
+                // uncatchable native index-out-of-range crash. Debouncing lets the wheel settle
+                // before the items can change.
+                pendingChangeRef.current = { value: strVal, index };
+                if (debounceRef.current) {
+                    clearTimeout(debounceRef.current);
+                }
+                debounceRef.current = setTimeout(flushPendingChange, 300);
             }
         },
-        [onValueChange]
+        [flushPendingChange]
     );
+
+    // Commit immediately when the user confirms (iOS Done), then run any caller handler.
+    const handleDonePress = useCallback(() => {
+        flushPendingChange();
+        onDonePressProp?.();
+    }, [flushPendingChange, onDonePressProp]);
+
+    // Flush any buffered selection on unmount so a fast pick-and-leave isn't dropped.
+    useEffect(() => () => flushPendingChange(), [flushPendingChange]);
 
     return (
         <RNPickerSelect
@@ -141,6 +179,7 @@ function PickerSelect<T extends ValidPickerItem>({
             value={value}
             items={options}
             onValueChange={handleValueChange}
+            onDonePress={handleDonePress}
             darkTheme={isDarkColorScheme}
             style={{
                 modalViewBottom: {
