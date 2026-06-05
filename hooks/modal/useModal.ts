@@ -7,7 +7,7 @@ const useModal = () => {
     const modalState = useAppSelector(appSelectors.selectToast);
 
     const setModalState = (state: IModalState) => {
-        dispatch(appActions.toast(state));
+        dispatch(appActions.toast({ duration: 3, ...state }));
     };
 
     return {
