@@ -191,6 +191,34 @@ export const groupHeadServiceSlice = createApi({
             invalidatesTags: (_, __, { reviewId }) => [{ type: 'GHWordReview', id: reviewId }, 'GHWordReview'],
         }),
 
+        // ─── Group-scoped KPI stats ────────────────────────────────────
+        getGHLeaderAttendanceReport: endpoint.query<
+            { totalLeaders: number; present: number; late: number; attended: number; absent: number },
+            { serviceId: string; campusId?: string }
+        >({
+            query: params => ({ url: `/${SERVICE_URL}/group/leader-attendance-report`, params }),
+            providesTags: ['GHReport'],
+            transformResponse: (res: IDefaultResponse<any>) => res?.data,
+        }),
+
+        getGHWorkersAttendanceReport: endpoint.query<
+            { totalWorkers: number; present: number; late: number; attended: number; absent: number },
+            { serviceId: string; campusId?: string }
+        >({
+            query: params => ({ url: `/${SERVICE_URL}/group/workers-attendance-report`, params }),
+            providesTags: ['GHReport'],
+            transformResponse: (res: IDefaultResponse<any>) => res?.data,
+        }),
+
+        getGHTicketReport: endpoint.query<
+            { tickets: number },
+            { serviceId: string; campusId?: string }
+        >({
+            query: params => ({ url: `/${SERVICE_URL}/group/ticket-report`, params }),
+            providesTags: ['GHReport'],
+            transformResponse: (res: IDefaultResponse<any>) => res?.data,
+        }),
+
         // ─── Group departments & roster ───────────────────────────────
         getGroupDepartments: endpoint.query<IGHGroupDepartment[], { campusId?: string } | void>({
             query: params => ({
@@ -225,4 +253,7 @@ export const {
     useSuspendGhWordReviewMutation,
     useGetGroupDepartmentsQuery,
     useGetGroupDepartmentRosterQuery,
+    useGetGHLeaderAttendanceReportQuery,
+    useGetGHWorkersAttendanceReportQuery,
+    useGetGHTicketReportQuery,
 } = groupHeadServiceSlice;

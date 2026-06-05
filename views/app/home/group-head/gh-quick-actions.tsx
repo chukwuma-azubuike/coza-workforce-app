@@ -20,7 +20,7 @@ const QuickActionTile: React.FC<QuickActionTileProps> = ({ label, iconName, onPr
             <View className="relative w-10 h-10 rounded-full bg-secondary items-center justify-center">
                 <Ionicons name={iconName as any} size={19} color={THEME_CONFIG.primary} />
                 {!!badge && (
-                    <View className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-destructive items-center justify-center">
+                    <View className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-green-700 items-center justify-center p-1">
                         <Text className="text-sm text-white font-bold leading-none">
                             {badge > 9 ? '9+' : `${badge}`}
                         </Text>

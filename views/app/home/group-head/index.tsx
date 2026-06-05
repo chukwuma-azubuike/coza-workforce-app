@@ -15,11 +15,11 @@ import { Card } from '~/components/ui/card';
 
 import { useGetLatestServiceQuery } from '@store/services/services';
 import {
-    useGetLeadersAttendanceReportQuery,
-    useGetWorkersAttendanceReportQuery,
-} from '@store/services/attendance';
-import { useGetCampusTicketReportQuery } from '@store/services/tickets';
-import { useGetGhReportsQuery } from '@store/services/grouphead';
+    useGetGhReportsQuery,
+    useGetGHLeaderAttendanceReportQuery,
+    useGetGHWorkersAttendanceReportQuery,
+    useGetGHTicketReportQuery,
+} from '@store/services/grouphead';
 import { IReportStatus } from '@store/types';
 
 import HomeTopBar from '../components/top-bar';
@@ -87,8 +87,8 @@ const GHHome: React.FC<IGHHomeProps> = ({
         data: leadersAttendance,
         refetch: refetchLeaders,
         isUninitialized: leadersUninitialized,
-    } = useGetLeadersAttendanceReportQuery(
-        { serviceId: serviceId as string, campusId: campusId as string },
+    } = useGetGHLeaderAttendanceReportQuery(
+        { serviceId: serviceId as string, campusId },
         { skip: !serviceId }
     );
 
@@ -96,17 +96,17 @@ const GHHome: React.FC<IGHHomeProps> = ({
         data: workersAttendance,
         refetch: refetchWorkers,
         isUninitialized: workersUninitialized,
-    } = useGetWorkersAttendanceReportQuery(
-        { serviceId: serviceId as string, campusId: campusId as string },
+    } = useGetGHWorkersAttendanceReportQuery(
+        { serviceId: serviceId as string, campusId },
         { skip: !serviceId }
     );
 
     const {
-        data: tickets,
+        data: ticketReport,
         refetch: refetchTickets,
         isUninitialized: ticketsUninitialized,
-    } = useGetCampusTicketReportQuery(
-        { serviceId: serviceId as string, campusId: campusId as string },
+    } = useGetGHTicketReportQuery(
+        { serviceId: serviceId as string, campusId },
         { skip: !serviceId }
     );
 
@@ -192,13 +192,13 @@ const GHHome: React.FC<IGHHomeProps> = ({
                         </ErrorBoundary>
 
                         <GHKpiGrid
-                            leadersAttendance={leadersAttendance?.attendance}
-                            leaderUsers={leadersAttendance?.leaderUsers}
-                            workersAttendance={workersAttendance?.attendance}
-                            workerUsers={workersAttendance?.workerUsers}
+                            leadersAttendance={leadersAttendance?.attended}
+                            leaderUsers={leadersAttendance?.totalLeaders}
+                            workersAttendance={workersAttendance?.attended}
+                            workerUsers={workersAttendance?.totalWorkers}
                             pendingReports={pendingCount}
                             totalReports={totalReports}
-                            tickets={tickets}
+                            tickets={ticketReport?.tickets}
                             isLoading={ghReportLoading}
                         />
 

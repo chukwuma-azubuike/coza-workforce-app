@@ -19,6 +19,7 @@ import { HomeContext } from './context';
 import TopNav from '~/components/TopNav';
 import useDeferHeavy from '~/hooks/performance/defer-heavy';
 import Loading from '~/components/atoms/loading';
+import useScreenFocus from '~/hooks/focus';
 
 interface IInitialHomeState {
     latestService: {
@@ -96,6 +97,8 @@ const Home: React.FC = () => {
         setRefreshTrigger(true);
         Utils.checkLocationPermission(refresh);
     };
+
+    useScreenFocus({ onFocus: handleRefresh });
 
     React.useEffect(() => {
         Utils.checkLocationPermission(refresh);
