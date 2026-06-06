@@ -30,7 +30,7 @@ const FILTERS: { key: GspFilter; label: string }[] = [
 ];
 
 const EMPTY_COPY: Record<GspFilter, string> = {
-    [IReportStatus.CP_APPROVED]: "You're all caught up — no reports awaiting your review.",
+    [IReportStatus.CP_APPROVED]: "No reports awaiting your review.",
     [IReportStatus.GSP_CHANGE_REQUESTED]: 'No reports are currently returned for changes.',
     [IReportStatus.GSP_APPROVED]: 'No reports have been finalised in this view yet.',
 };
@@ -144,7 +144,7 @@ const GSPApprovals: React.FC = () => {
     const [filter, setFilter] = useState<GspFilter>(IReportStatus.CP_APPROVED);
 
     const { data, isLoading, isFetching, refetch } = useGetGhReportsQuery(
-        { status: filter, limit: 100 },
+        { limit: 100 },
         { refetchOnMountOrArgChange: true }
     );
 
