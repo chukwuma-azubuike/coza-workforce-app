@@ -64,7 +64,13 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ filters }) => {
                     <KpiCard
                         label="Workforce Attendance"
                         displayValue={k ? formatPercent(k.workforceAttendance.rate) : undefined}
-                        footnote={k ? `${k.workforceAttendance.present.toLocaleString()} present` : undefined}
+                        footnote={
+                            k
+                                ? k.workforceAttendance.permitted
+                                    ? `${k.workforceAttendance.present.toLocaleString()} present · ${k.workforceAttendance.permitted.toLocaleString()} permitted`
+                                    : `${k.workforceAttendance.present.toLocaleString()} present`
+                                : undefined
+                        }
                         delta={k?.workforceAttendance.delta}
                         accentColor={THEME_CONFIG.info}
                         isLoading={isLoading}

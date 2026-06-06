@@ -128,7 +128,17 @@ export interface IGspOverview {
     kpis: {
         churchAttendanceTotal: IGspKpiValue & { adults?: number; children?: number };
         workforceTotal: { value: number; active: number; inactive?: number; dormant?: number; blacklisted?: number };
-        workforceAttendance: { rate: number; present: number; late: number; absent: number; delta?: number };
+        workforceAttendance: {
+            rate: number;
+            present: number;
+            late: number;
+            /** present + late + absent — the attendance-rate denominator. */
+            expected: number;
+            absent: number;
+            /** Approved-permission absences — display only, excluded from rate. */
+            permitted?: number;
+            delta?: number;
+        };
         firstTimers: IGspKpiValue;
         newConverts: IGspKpiValue;
         totalGuestsTransferred: { value: number };
@@ -168,13 +178,19 @@ export interface IGspTrend {
     series: IGspSeriesPoint[];
 }
 
-/** Workforce trend points expose present/late/total — not a generic `value`. */
+/** Workforce trend points carry the full attendance breakdown — not a generic `value`. */
 export interface IGspWorkforceTrendPoint {
     key: string;
     label: string;
     present: number;
     late: number;
-    total: number;
+    /** present + late + absent — the attendance-rate denominator. */
+    expected: number;
+    absent: number;
+    /** Approved-permission absences — display only, excluded from rate. */
+    permitted?: number;
+    /** 0..1 attendance rate, (present + late) / expected. */
+    rate: number;
     serviceTime?: number;
 }
 
@@ -191,13 +207,26 @@ export interface IGspWorkforceCampusRow {
     active: number;
     present: number;
     late: number;
+    /** present + late + absent — the attendance-rate denominator. */
+    expected: number;
     absent: number;
+    /** Approved-permission absences — display only, excluded from rate. */
+    permitted?: number;
     rate: number;
 }
 
 export interface IGspWorkforceOverview {
     roster: { total: number; active: number; inactive: number; dormant: number; blacklisted: number };
-    attendance: { present: number; late: number; absent: number; rate: number };
+    attendance: {
+        present: number;
+        late: number;
+        /** present + late + absent — the attendance-rate denominator. */
+        expected: number;
+        absent: number;
+        /** Approved-permission absences — display only, excluded from rate. */
+        permitted?: number;
+        rate: number;
+    };
     gender: { male: number; female: number };
     byCampus: IGspWorkforceCampusRow[];
 }
@@ -259,7 +288,18 @@ export interface IGspCampusDrilldown {
         classMemberCount?: number;
         onlineConverts?: number;
         incidents?: number;
-        workforce: { total: number; active?: number; present: number; late: number; absent: number; rate?: number };
+        workforce: {
+            total: number;
+            active?: number;
+            present: number;
+            late: number;
+            /** present + late + absent — the attendance-rate denominator. */
+            expected?: number;
+            absent: number;
+            /** Approved-permission absences — display only, excluded from rate. */
+            permitted?: number;
+            rate?: number;
+        };
     };
     services: IGspCampusServiceRow[];
 }

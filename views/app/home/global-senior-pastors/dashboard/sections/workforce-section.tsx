@@ -29,13 +29,13 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
 
     const win = filters.win;
 
-    // Workforce trend points expose present/late/total — derive an attendance-rate %.
+    // Workforce trend points carry the server-computed attendance rate (0..1).
     const trendPoints = React.useMemo(
         () =>
             (trend?.series ?? []).map(p => ({
                 key: p.key,
                 label: p.label,
-                value: p.total ? Math.round(((p.present + p.late) / p.total) * 100) : 0,
+                value: Math.round((p.rate ?? 0) * 100),
             })),
         [trend]
     );
@@ -65,7 +65,7 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
                 id: c.campusId,
                 label: c.campusName,
                 value: Math.round(c.rate * 100),
-                secondary: `${formatCompactNumber(c.present)}/${formatCompactNumber(c.total)} present`,
+                secondary: `${formatCompactNumber(c.present + c.late)}/${formatCompactNumber(c.expected)} present`,
                 color: campusColor(c.campusId),
             })),
         [data]
@@ -88,7 +88,18 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
                         <SegmentedBar
                             segments={attendanceSegments}
                             headline={formatPercent(data?.attendance.rate)}
-                            headlineCaption="attendance rate"
+                            headlineCaption={
+                                data?.attendance.expected
+                                    ? `${formatCompactNumber(
+                                          (data.attendance.present ?? 0) + (data.attendance.late ?? 0)
+                                      )} of ${formatCompactNumber(data.attendance.expected)} expected`
+                                    : 'attendance rate'
+                            }
+                            footnote={
+                                data?.attendance.permitted
+                                    ? `${formatCompactNumber(data.attendance.permitted)} on approved permission`
+                                    : undefined
+                            }
                         />
 
                         <Separator />

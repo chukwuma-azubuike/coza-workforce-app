@@ -13,10 +13,12 @@ interface SegmentedBarProps {
     /** Optional headline number shown above the bar. */
     headline?: string;
     headlineCaption?: string;
+    /** Small muted note rendered below the legend (e.g. "N on approved permission"). */
+    footnote?: string;
 }
 
 /** A single proportional stacked bar with a labelled legend (present/late/absent etc.). */
-const SegmentedBar: React.FC<SegmentedBarProps> = ({ segments, headline, headlineCaption }) => {
+const SegmentedBar: React.FC<SegmentedBarProps> = ({ segments, headline, headlineCaption, footnote }) => {
     const total = segments.reduce((sum, s) => sum + (s.value || 0), 0) || 1;
 
     return (
@@ -49,6 +51,7 @@ const SegmentedBar: React.FC<SegmentedBarProps> = ({ segments, headline, headlin
                     </View>
                 ))}
             </View>
+            {!!footnote && <Text className="!text-[12px] text-muted-foreground">{footnote}</Text>}
         </View>
     );
 };

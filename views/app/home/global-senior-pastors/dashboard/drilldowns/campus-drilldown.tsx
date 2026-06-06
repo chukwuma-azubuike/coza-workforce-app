@@ -15,7 +15,7 @@ import SegmentedBar from '../components/segmented-bar';
 import LeagueTable, { LeagueRow } from '../components/league-table';
 import { SectionCard, SectionEmpty, SectionError, SectionSkeleton } from '../components/states';
 import Section from '../components/section';
-import { formatCompactNumber } from '../lib';
+import { formatCompactNumber, formatPercent } from '../lib';
 
 /** Single-campus drill-down — the same metric rhythm scoped to one location. */
 const CampusDrilldown: React.FC = () => {
@@ -121,11 +121,24 @@ const CampusDrilldown: React.FC = () => {
                         <Section title="Workforce attendance">
                             <SectionCard>
                                 <SegmentedBar
+                                    headline={m?.workforce.rate !== undefined ? formatPercent(m.workforce.rate) : undefined}
+                                    headlineCaption={
+                                        m?.workforce.expected
+                                            ? `${formatCompactNumber(
+                                                  (m.workforce.present ?? 0) + (m.workforce.late ?? 0)
+                                              )} of ${formatCompactNumber(m.workforce.expected)} expected`
+                                            : undefined
+                                    }
                                     segments={[
                                         { label: 'Present', value: m?.workforce.present ?? 0, color: THEME_CONFIG.success },
                                         { label: 'Late', value: m?.workforce.late ?? 0, color: THEME_CONFIG.warning },
                                         { label: 'Absent', value: m?.workforce.absent ?? 0, color: THEME_CONFIG.error },
                                     ]}
+                                    footnote={
+                                        m?.workforce.permitted
+                                            ? `${formatCompactNumber(m.workforce.permitted)} on approved permission`
+                                            : undefined
+                                    }
                                 />
                             </SectionCard>
                         </Section>
