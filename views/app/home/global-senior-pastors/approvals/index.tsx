@@ -1,233 +1,234 @@
 import React, { memo, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import dayjs from 'dayjs';
 
 import { Text } from '~/components/ui/text';
 import { Card } from '~/components/ui/card';
 import { Skeleton } from '~/components/ui/skeleton';
+import PickerSelect from '~/components/ui/picker-select';
 import ViewWrapper from '~/components/layout/viewWrapper';
-import AvatarComponent from '@components/atoms/avatar';
 import ReportStatusPill from '@components/composite/report-status-pill';
-import { AVATAR_FALLBACK_URL } from '@constants/index';
-import { getReportStatusMeta } from '@constants/report-status';
-import { resolveReportType } from '@constants/report-actions';
-import { useGetGhReportsQuery } from '@store/services/grouphead';
-import { IGHReportListItem, IReportStatus } from '@store/types';
+import { useGetServicesQuery } from '@store/services/services';
+import { IGlobalReport, useGetGlobalReportListQuery } from '@store/services/reports';
+import { IReportStatus, IService } from '@store/types';
 import { THEME_CONFIG } from '@config/appConfig';
 import Utils from '@utils/index';
-import { cn } from '~/lib/utils';
 
 import { campusColor } from '../dashboard/lib';
 import { gspRoutes } from '../dashboard/routes';
 
-type GspFilter = IReportStatus.CP_APPROVED | IReportStatus.GSP_CHANGE_REQUESTED | IReportStatus.GSP_APPROVED;
+// Campus rollups whose status sits at one of these stages are still waiting on the GSP.
+const AWAITING = new Set<string>([IReportStatus.GSP_SUBMITTED, IReportStatus.CP_APPROVED]);
 
-const FILTERS: { key: GspFilter; label: string }[] = [
-    { key: IReportStatus.CP_APPROVED, label: 'Awaiting Review' },
-    { key: IReportStatus.GSP_CHANGE_REQUESTED, label: 'Returned' },
-    { key: IReportStatus.GSP_APPROVED, label: 'Approved' },
-];
-
-const EMPTY_COPY: Record<GspFilter, string> = {
-    [IReportStatus.CP_APPROVED]: "No reports awaiting your review.",
-    [IReportStatus.GSP_CHANGE_REQUESTED]: 'No reports are currently returned for changes.',
-    [IReportStatus.GSP_APPROVED]: 'No reports have been finalised in this view yet.',
+// Group ordering + friendly section titles (awaiting first).
+const GROUP_ORDER: Record<string, number> = {
+    [IReportStatus.GSP_SUBMITTED]: 0,
+    [IReportStatus.CP_APPROVED]: 0,
+    [IReportStatus.GSP_CHANGE_REQUESTED]: 1,
+    [IReportStatus.GSP_APPROVED]: 2,
 };
 
-// ─── Filter chip ──────────────────────────────────────────────────────────────
-const Chip: React.FC<{ label: string; count?: number; active: boolean; onPress: () => void }> = ({
-    label,
-    count,
-    active,
-    onPress,
-}) => (
-    <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={onPress}
-        className={cn(
-            'px-3.5 h-9 rounded-full flex-row items-center gap-1.5 border',
-            active ? 'bg-primary border-primary' : 'bg-background border-border'
-        )}
-    >
-        <Text className={cn('text-sm font-semibold', active ? '!text-white' : 'text-muted-foreground')}>{label}</Text>
-        {count !== undefined && count > 0 && (
-            <View className={cn('px-1.5 rounded-full min-w-5 items-center', active ? 'bg-white/25' : 'bg-secondary')}>
-                <Text className={cn('!text-[11px] font-bold', active ? '!text-white' : 'text-muted-foreground')}>
-                    {count}
+const GROUP_TITLE: Record<string, string> = {
+    [IReportStatus.GSP_SUBMITTED]: 'Awaiting your review',
+    [IReportStatus.CP_APPROVED]: 'Awaiting your review',
+    [IReportStatus.GSP_CHANGE_REQUESTED]: 'Returned for changes',
+    [IReportStatus.GSP_APPROVED]: 'Approved',
+};
+
+const humanize = (s: string) =>
+    s
+        .replace(/_/g, ' ')
+        .toLowerCase()
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+// ─── Campus row ──────────────────────────────────────────────────────────────
+const CampusRow: React.FC<{ item: IGlobalReport; onPress: () => void }> = memo(({ item, onPress }) => (
+    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
+        <Card className="p-0 overflow-hidden">
+            <View className="flex-row items-center gap-3 p-4">
+                <View className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: campusColor(item.campusId) }} />
+                <Text numberOfLines={1} className="font-semibold text-foreground flex-1">
+                    {item.campusName?.replace('Campus', '').trim() || 'Campus'}
                 </Text>
+                <ReportStatusPill status={item.status as string} role="GSP" />
+                <Ionicons name="chevron-forward" size={18} color={THEME_CONFIG.lightGray} />
             </View>
-        )}
+        </Card>
     </TouchableOpacity>
-);
+));
 
-// ─── Report card ────────────────────────────────────────────────────────────────
-const ReportCard: React.FC<{ item: IGHReportListItem }> = memo(({ item }) => {
-    const meta = getReportStatusMeta(item.status as string);
-    const submitter = item.submittedBy
-        ? `${Utils.capitalizeFirstChar(item.submittedBy.firstName)} ${Utils.capitalizeFirstChar(item.submittedBy.lastName)}`
-        : 'Head of Department';
-
-    const onPress = () =>
-        gspRoutes.approvalDetail({
-            reportId: (item.reportId ?? item._id) as string,
-            reportType: resolveReportType({ reportType: item.reportType, departmentName: item.departmentName }),
-            departmentId: item.departmentId,
-            serviceId: item.serviceId,
-            departmentName: item.departmentName,
-            campus: item.campusName ?? '',
-            serviceName: item.serviceName ?? '',
-            status: item.status as string,
-        });
-
-    return (
-        <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
-            <Card className="p-0 overflow-hidden">
-                <View style={styles.row}>
-                    <View style={styles.accent} className={meta.accentClass} />
-                    <View className="flex-1 p-4 gap-3">
-                        <View className="flex-row items-start justify-between gap-2">
-                            <View className="flex-1">
-                                <Text className="font-bold text-foreground leading-tight">{item.departmentName}</Text>
-                                <Text className="!text-sm text-muted-foreground mt-0.5">
-                                    {item.serviceName ?? item.campusName}
-                                    {item.serviceTime ? ` · ${dayjs(item.serviceTime).format('D MMM, h:mm A')}` : ''}
-                                </Text>
-                            </View>
-                            <Ionicons name="chevron-forward" size={18} color={THEME_CONFIG.lightGray} style={styles.chevron} />
-                        </View>
-
-                        <View className="flex-row items-center justify-between pt-3 border-t border-border">
-                            <View className="flex-row items-center gap-2 flex-1">
-                                <AvatarComponent
-                                    alt="submitter"
-                                    className="w-6 h-6"
-                                    imageUrl={item.submittedBy?.pictureUrl || AVATAR_FALLBACK_URL}
-                                />
-                                <Text numberOfLines={1} className="!text-sm font-medium text-foreground flex-1">
-                                    {submitter}
-                                </Text>
-                                {!!item.attachmentCount && (
-                                    <View className="flex-row items-center gap-1">
-                                        <Ionicons name="attach-outline" size={15} color={THEME_CONFIG.lightGray} />
-                                        <Text className="!text-[12px] text-muted-foreground font-semibold">
-                                            {item.attachmentCount}
-                                        </Text>
-                                    </View>
-                                )}
-                            </View>
-                            <View className="pl-2">
-                                <ReportStatusPill status={item.status as string} role="GSP" />
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </Card>
-        </TouchableOpacity>
-    );
-});
-
-// ─── Skeleton ────────────────────────────────────────────────────────────────
-const CardSkeleton: React.FC = () => (
-    <Card className="p-4 gap-3">
-        <Skeleton className="h-4 w-2/3 rounded" />
-        <Skeleton className="h-3 w-1/3 rounded" />
-        <View className="flex-row items-center justify-between pt-3 border-t border-border">
-            <Skeleton className="h-6 w-1/3 rounded-full" />
-            <Skeleton className="h-6 w-24 rounded-full" />
-        </View>
-    </Card>
-);
+const CardSkeleton: React.FC = () => <Skeleton className="h-16 rounded-2xl" />;
 
 // ─── Inbox ──────────────────────────────────────────────────────────────────────
 const GSPApprovals: React.FC = () => {
-    const [filter, setFilter] = useState<GspFilter>(IReportStatus.CP_APPROVED);
+    const { data: services, isLoading: servicesLoading } = useGetServicesQuery({ limit: 100, page: 1 });
 
-    const { data, isLoading, isFetching, refetch } = useGetGhReportsQuery(
-        { limit: 100 },
-        { refetchOnMountOrArgChange: true }
+    // Only services that have already started can have reports; latest first.
+    const sortedServices = useMemo<IService[]>(() => {
+        const started = (services ?? []).filter(s => dayjs().unix() > dayjs(s.clockInStartTime).unix());
+        return Utils.sortByDate(started, 'serviceTime') as IService[];
+    }, [services]);
+
+    const [serviceId, setServiceId] = useState<string | undefined>();
+    React.useEffect(() => {
+        const first = sortedServices[0];
+        if (!serviceId && first) setServiceId(first._id);
+    }, [serviceId, sortedServices]);
+
+    const { data, isLoading, isFetching, refetch, isUninitialized } = useGetGlobalReportListQuery(
+        { serviceId: serviceId as string },
+        { refetchOnMountOrArgChange: true, skip: !serviceId }
     );
 
-    const reports = data?.reports ?? [];
+    const reports = data ?? [];
 
-    // GSP reviews across every campus — group the inbox by campus so the workload
-    // reads at a glance, each with its stable campus colour.
-    const groups = useMemo(() => {
-        const map = new Map<string, IGHReportListItem[]>();
+    // Accurate state breakdown for the GSP: a campus is either awaiting the GSP,
+    // finalised (approved), returned for changes, or hasn't reached the GSP yet
+    // (still in an earlier pipeline stage). "Reviewed" ≠ "not awaiting me".
+    const counts = useMemo(() => {
+        let awaiting = 0;
+        let approved = 0;
+        let returned = 0;
+        let pending = 0;
         for (const r of reports) {
-            const key = r.campusName || 'Unassigned';
+            const s = r.status as string;
+            if (AWAITING.has(s)) awaiting++;
+            else if (s === IReportStatus.GSP_APPROVED) approved++;
+            else if (s === IReportStatus.GSP_CHANGE_REQUESTED) returned++;
+            else pending++;
+        }
+        return { awaiting, approved, returned, pending, total: reports.length };
+    }, [reports]);
+
+    // Group campuses by review status, awaiting-first.
+    const groups = useMemo(() => {
+        const map = new Map<string, IGlobalReport[]>();
+        for (const r of reports) {
+            const key = r.status as string;
             const bucket = map.get(key);
             if (bucket) bucket.push(r);
             else map.set(key, [r]);
         }
-        return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+        return [...map.entries()].sort((a, b) => (GROUP_ORDER[a[0]] ?? 3) - (GROUP_ORDER[b[0]] ?? 3));
     }, [reports]);
 
-    const awaitingCount = filter === IReportStatus.CP_APPROVED ? reports.length : undefined;
+    const loading = (isLoading || isFetching) && !data;
 
     return (
         <View className="flex-1">
-            {/* Filter chips */}
-            <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="py-3 grow-0 shrink-0"
-                contentContainerStyle={styles.chips}
+            {/* Service selector */}
+            <View className="px-4 pt-3 pb-2">
+                <PickerSelect<IService>
+                    valueKey="_id"
+                    labelKey="name"
+                    value={serviceId}
+                    isLoading={servicesLoading}
+                    items={sortedServices}
+                    placeholder="Select service"
+                    onValueChange={(v: string) => setServiceId(v)}
+                    customLabel={s => `${s.name} · ${dayjs(s.clockInStartTime).format('DD MMM YYYY')}`}
+                    className="!h-12"
+                />
+            </View>
+
+            <ViewWrapper
+                scroll
+                noPadding
+                refreshing={isFetching && !isLoading}
+                onRefresh={() => !isUninitialized && refetch()}
+                className="flex-1"
             >
-                {FILTERS.map(f => (
-                    <Chip
-                        key={f.key}
-                        label={f.label}
-                        active={filter === f.key}
-                        count={f.key === IReportStatus.CP_APPROVED ? awaitingCount : undefined}
-                        onPress={() => setFilter(f.key)}
-                    />
-                ))}
-            </ScrollView>
-
-            <ViewWrapper scroll noPadding refreshing={isFetching && !isLoading} onRefresh={refetch} className="flex-1">
                 <View className="px-4 pb-10 gap-4">
-                    {/* Hero — only meaningful for the action queue */}
-                    {filter === IReportStatus.CP_APPROVED && !isLoading && reports.length > 0 && (
-                        <Card className="p-4 bg-secondary/40">
-                            <View className="flex-row items-center gap-3">
-                                <View className="w-10 h-10 rounded-2xl bg-amber-100 dark:bg-amber-900/20 items-center justify-center">
-                                    <Ionicons name="clipboard-outline" size={20} color={THEME_CONFIG.warning} />
-                                </View>
-                                <Text className="text-md font-semibold text-foreground flex-1 line-clamp-none">
-                                    {reports.length} report{reports.length === 1 ? '' : 's'} awaiting your final approval
-                                    across {groups.length} campus{groups.length === 1 ? '' : 'es'}.
-                                </Text>
-                            </View>
-                        </Card>
-                    )}
+                    {/* Hero summary — accurate to the GSP's actual queue state */}
+                    {!loading && reports.length > 0 && (() => {
+                        const campusWord = `campus${counts.total === 1 ? '' : 'es'}`;
+                        const allApproved = counts.approved === counts.total;
+                        const primary =
+                            counts.awaiting > 0
+                                ? `${counts.awaiting} of ${counts.total} ${campusWord} awaiting your review`
+                                : allApproved
+                                  ? `All ${counts.total} ${campusWord} approved`
+                                  : `No ${campusWord} awaiting your review`;
 
-                    {isLoading ? (
-                        [1, 2, 3].map(i => <CardSkeleton key={i} />)
+                        const breakdown = [
+                            counts.approved ? `${counts.approved} approved` : null,
+                            counts.returned ? `${counts.returned} returned` : null,
+                            counts.pending ? `${counts.pending} not yet submitted` : null,
+                        ]
+                            .filter(Boolean)
+                            .join('  ·  ');
+
+                        const tone =
+                            counts.awaiting > 0 ? 'warn' : allApproved ? 'good' : 'neutral';
+                        const toneIcon = {
+                            warn: { bg: 'bg-amber-100 dark:bg-amber-900/20', color: THEME_CONFIG.warning, name: 'clipboard-outline' as const },
+                            good: { bg: 'bg-green-100 dark:bg-green-900/20', color: THEME_CONFIG.success, name: 'checkmark-done-outline' as const },
+                            neutral: { bg: 'bg-secondary', color: THEME_CONFIG.primary, name: 'clipboard-outline' as const },
+                        }[tone];
+
+                        return (
+                            <Card className="p-4 bg-secondary/40">
+                                <View className="flex-row items-center gap-3">
+                                    <View className={`w-10 h-10 rounded-2xl items-center justify-center ${toneIcon.bg}`}>
+                                        <Ionicons name={toneIcon.name} size={20} color={toneIcon.color} />
+                                    </View>
+                                    <View className="flex-1 gap-0.5">
+                                        <Text className="text-md font-semibold text-foreground line-clamp-none">
+                                            {primary}
+                                        </Text>
+                                        {!!breakdown && (
+                                            <Text className="!text-[12px] text-muted-foreground line-clamp-none">
+                                                {breakdown}
+                                            </Text>
+                                        )}
+                                    </View>
+                                </View>
+                            </Card>
+                        );
+                    })()}
+
+                    {!serviceId ? (
+                        <View className="py-16 items-center">
+                            <Text className="text-sm text-muted-foreground text-center px-8">
+                                Select a service to review campus reports.
+                            </Text>
+                        </View>
+                    ) : loading ? (
+                        [1, 2, 3, 4].map(i => <CardSkeleton key={i} />)
                     ) : reports.length === 0 ? (
                         <View className="py-16 items-center gap-3">
                             <View className="w-14 h-14 rounded-3xl bg-secondary items-center justify-center">
-                                <Ionicons name="checkmark-done-outline" size={28} color={THEME_CONFIG.success} />
+                                <Ionicons name="document-text-outline" size={28} color={THEME_CONFIG.lightGray} />
                             </View>
                             <Text className="text-sm text-muted-foreground text-center px-8 line-clamp-none">
-                                {EMPTY_COPY[filter]}
+                                No campus reports submitted for this service yet.
                             </Text>
                         </View>
                     ) : (
-                        groups.map(([campus, items]) => (
-                            <View key={campus} className="gap-3">
+                        groups.map(([status, items]) => (
+                            <View key={status} className="gap-3">
                                 <View className="flex-row items-center gap-2 px-1">
-                                    <View
-                                        className="w-2.5 h-2.5 rounded-full"
-                                        style={{ backgroundColor: campusColor(campus) }}
-                                    />
-                                    <Text className="text-md font-bold text-foreground flex-1">{campus}</Text>
+                                    <Text className="text-md font-bold text-foreground flex-1">
+                                        {GROUP_TITLE[status] ?? humanize(status)}
+                                    </Text>
                                     <Text className="!text-[12px] font-semibold text-muted-foreground">
                                         {items.length}
                                     </Text>
                                 </View>
                                 {items.map(item => (
-                                    <ReportCard key={(item.reportId ?? item._id) as string} item={item} />
+                                    <CampusRow
+                                        key={item.campusId}
+                                        item={item}
+                                        onPress={() =>
+                                            gspRoutes.campusReview({
+                                                serviceId: serviceId as string,
+                                                campusId: item.campusId,
+                                                campusName: item.campusName,
+                                                status: item.status as string,
+                                            })
+                                        }
+                                    />
                                 ))}
                             </View>
                         ))
@@ -239,10 +240,3 @@ const GSPApprovals: React.FC = () => {
 };
 
 export default memo(GSPApprovals);
-
-const styles = StyleSheet.create({
-    row: { flexDirection: 'row', overflow: 'hidden', borderRadius: 24 },
-    accent: { width: 4 },
-    chevron: { marginTop: 2 },
-    chips: { paddingHorizontal: 16, gap: 8 },
-});

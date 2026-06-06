@@ -44,18 +44,10 @@ export const gspRoutes = {
 
     serviceReport: () => router.push('/gsp/service-report' as any),
 
-    /** GSP approvals inbox — reports Campus Pastors have approved, awaiting GSP sign-off. */
+    /** GSP approvals inbox — per-campus reports awaiting the GSP's review for a service. */
     approvals: () => router.push('/gsp/approvals' as any),
 
-    /** A single report's review/approval detail. */
-    approvalDetail: (params: {
-        reportId: string;
-        reportType?: string;
-        departmentId?: string;
-        serviceId?: string;
-        departmentName?: string;
-        campus?: string;
-        serviceName?: string;
-        status?: string;
-    }) => router.push({ pathname: '/gsp/approval-detail', params: params as any }),
+    /** A single campus's full report for the selected service (GSP review). */
+    campusReview: (params: { serviceId: string; campusId: string; campusName?: string; status?: string }) =>
+        router.push({ pathname: '/gsp/campus-review', params: params as any }),
 };

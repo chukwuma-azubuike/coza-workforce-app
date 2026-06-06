@@ -11,7 +11,7 @@ const GSPScreens: React.FC = () => {
             <Stack.Screen name="completeness" options={{ title: 'Completeness' }} />
             <Stack.Screen name="service-report" options={{ title: 'Service Report' }} />
             <Stack.Screen name="approvals" options={{ title: 'Approvals' }} />
-            <Stack.Screen name="approval-detail" options={{ title: 'Report Detail' }} />
+            <Stack.Screen name="campus-review" options={{ title: 'Campus Report' }} />
         </Stack>
     );
 };
