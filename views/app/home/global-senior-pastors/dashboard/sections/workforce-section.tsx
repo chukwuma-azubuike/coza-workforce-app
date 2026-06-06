@@ -43,19 +43,19 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
 
     const rosterSlices = React.useMemo(
         () => [
-            { id: 'active', label: 'Active', value: data?.roster.active ?? 0, color: THEME_CONFIG.success },
-            { id: 'inactive', label: 'Inactive', value: data?.roster.inactive ?? 0, color: THEME_CONFIG.lightGray },
-            { id: 'dormant', label: 'Dormant', value: data?.roster.dormant ?? 0, color: THEME_CONFIG.warning },
-            { id: 'blacklisted', label: 'Blacklisted', value: data?.roster.blacklisted ?? 0, color: THEME_CONFIG.error },
+            { id: 'active', label: 'Active', value: data?.roster?.active ?? 0, color: THEME_CONFIG.success },
+            { id: 'inactive', label: 'Inactive', value: data?.roster?.inactive ?? 0, color: THEME_CONFIG.lightGray },
+            { id: 'dormant', label: 'Dormant', value: data?.roster?.dormant ?? 0, color: THEME_CONFIG.warning },
+            { id: 'blacklisted', label: 'Blacklisted', value: data?.roster?.blacklisted ?? 0, color: THEME_CONFIG.error },
         ],
         [data]
     );
 
     const attendanceSegments = React.useMemo(
         () => [
-            { label: 'Present', value: data?.attendance.present ?? 0, color: THEME_CONFIG.success },
-            { label: 'Late', value: data?.attendance.late ?? 0, color: THEME_CONFIG.warning },
-            { label: 'Absent', value: data?.attendance.absent ?? 0, color: THEME_CONFIG.error },
+            { label: 'Present', value: data?.attendance?.present ?? 0, color: THEME_CONFIG.success },
+            { label: 'Late', value: data?.attendance?.late ?? 0, color: THEME_CONFIG.warning },
+            { label: 'Absent', value: data?.attendance?.absent ?? 0, color: THEME_CONFIG.error },
         ],
         [data]
     );
@@ -65,17 +65,26 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
             (data?.byCampus ?? []).map(c => ({
                 id: c.campusId,
                 label: c.campusName,
-                value: Math.round(c.rate * 100),
-                secondary: `${formatCompactNumber(c.present + c.late)}/${formatCompactNumber(c.expected)} present`,
+                value: Math.round((c.rate ?? 0) * 100),
+                secondary: `${formatCompactNumber((c.present ?? 0) + (c.late ?? 0))}/${formatCompactNumber(c.expected ?? 0)} present`,
                 color: campusColor(c.campusId),
             })),
         [data]
     );
 
-    const isEmpty = !isLoading && !isError && !data?.roster.total && !data?.attendance.present;
+    const isEmpty = !isLoading && !isError && !data?.roster?.total && !data?.attendance?.present;
 
     return (
-        <Section title="Workforce" subtitle="Roster health & service attendance">
+        <Section
+            title="Workforce"
+            subtitle="Workforce Status & service attendance"
+            actionLabel={!filters.isGlobal && filters.campusId ? 'Departments' : undefined}
+            onActionPress={
+                !filters.isGlobal && filters.campusId
+                    ? () => gspRoutes.workforceDepartments(filters.campusId, win)
+                    : undefined
+            }
+        >
 
             <SectionCard className="gap-4">
                 {isLoading ? (
@@ -88,24 +97,24 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
                     <>
                         <SegmentedBar
                             segments={attendanceSegments}
-                            headline={formatPercent(data?.attendance.rate)}
+                            headline={formatPercent(data?.attendance?.rate)}
                             headlineCaption={
-                                data?.attendance.expected
+                                data?.attendance?.expected
                                     ? `${formatCompactNumber(
-                                          (data.attendance.present ?? 0) + (data.attendance.late ?? 0)
-                                      )} of ${formatCompactNumber(data.attendance.expected)} expected`
+                                          (data.attendance?.present ?? 0) + (data.attendance?.late ?? 0)
+                                      )} of ${formatCompactNumber(data.attendance?.expected)} expected`
                                     : 'attendance rate'
                             }
                             footnote={
-                                data?.attendance.permitted
-                                    ? `${formatCompactNumber(data.attendance.permitted)} on approved permission`
+                                data?.attendance?.permitted
+                                    ? `${formatCompactNumber(data.attendance?.permitted)} on approved permission`
                                     : undefined
                             }
                         />
 
                         <Separator />
 
-                        <Text className="text-md font-semibold text-foreground">Roster health</Text>
+                        <Text className="text-md font-semibold text-foreground">Workforce Status</Text>
                         <ShareDonut
                             slices={rosterSlices}
                             centerValue={formatCompactNumber(data?.roster.total)}
@@ -119,7 +128,7 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
                                 <LeagueTable
                                     rows={rows}
                                     valueFormatter={v => `${v}%`}
-                                    onRowPress={r => gspRoutes.campus(r.id, win)}
+                                    onRowPress={r => gspRoutes.workforceDepartments(r.id, win, r.label)}
                                 />
                             </>
                         )}

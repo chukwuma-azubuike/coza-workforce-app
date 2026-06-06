@@ -62,4 +62,25 @@ export const gspRoutes = {
     /** A single campus's full report for the selected service (GSP review). */
     campusReview: (params: { serviceId: string; campusId: string; campusName?: string; status?: string }) =>
         router.push({ pathname: '/gsp/campus-review', params: params as any }),
+
+    /** Departments breakdown for a campus (workforce drill-down level 2). */
+    workforceDepartments: (campusId: string, win: DrilldownWindow, campusName?: string) =>
+        router.push({
+            pathname: '/gsp/workforce-departments',
+            params: { campusId, campusName, startDate: win.startDate, endDate: win.endDate } as any,
+        }),
+
+    /** Workers list for a department (workforce drill-down level 3). */
+    workforceWorkers: (departmentId: string, win: DrilldownWindow, departmentName?: string) =>
+        router.push({
+            pathname: '/gsp/workforce-workers',
+            params: { departmentId, departmentName, startDate: win.startDate, endDate: win.endDate } as any,
+        }),
+
+    /** Individual worker dossier (workforce drill-down level 4). */
+    worker: (userId: string, win: DrilldownWindow, workerName?: string) =>
+        router.push({
+            pathname: '/gsp/worker',
+            params: { userId, workerName, startDate: win.startDate, endDate: win.endDate } as any,
+        }),
 };

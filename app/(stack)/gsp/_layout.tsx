@@ -12,6 +12,9 @@ const GSPScreens: React.FC = () => {
             <Stack.Screen name="service-report" options={{ title: 'Service Report' }} />
             <Stack.Screen name="approvals" options={{ title: 'Approvals' }} />
             <Stack.Screen name="campus-review" options={{ title: 'Campus Report' }} />
+            <Stack.Screen name="workforce-departments" options={{ title: 'Departments' }} />
+            <Stack.Screen name="workforce-workers" options={{ title: 'Workers' }} />
+            <Stack.Screen name="worker" options={{ title: 'Worker' }} />
         </Stack>
     );
 };

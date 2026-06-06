@@ -333,6 +333,134 @@ export interface IGspMetricBreakdown {
 }
 
 /* ────────────────────────────────────────────────────────────────────────────
+ * Workforce drill-down: Campus → Departments → Workers → Worker dossier
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+/** Reused across all drill-down levels — the corrected attendance model. */
+export interface IGspAttendanceShape {
+    present: number;
+    late: number;
+    absent: number;
+    /** Approved-permission absences — display only, never add to totals. */
+    permitted?: number;
+    /** present + late + absent — the rate denominator. */
+    expected: number;
+    /** 0..1, (present + late) / expected. */
+    rate: number;
+}
+
+/** Pre-built deeplink URIs from the server. Only render a button if the field exists. */
+export interface IGspContact {
+    tel?: string;
+    sms?: string;
+    whatsapp?: string;
+    email?: string;
+}
+
+/** Navigation breadcrumb returned by all three drill-down endpoints. */
+export interface IGspBreadcrumb {
+    type: 'overview' | 'campus' | 'department' | 'worker';
+    id?: string;
+    label: string;
+}
+
+export interface IGspDepartmentRow {
+    departmentId: string;
+    departmentName: string;
+    attendance: IGspAttendanceShape;
+    permissionsPending: number;
+    openTickets: number;
+}
+
+export interface IGspCampusDepartments {
+    campus: {
+        campusId: string;
+        campusName: string;
+        attendance: IGspAttendanceShape;
+    };
+    departments: IGspDepartmentRow[];
+    breadcrumb: IGspBreadcrumb[];
+}
+
+export interface IGspWorkerRow {
+    userId: string;
+    name: string;
+    photo?: string;
+    isLeader: boolean;
+    roleLabel?: string;
+    attendance: IGspAttendanceShape;
+    permissionsApproved: number;
+    openTickets: number;
+    contact: IGspContact;
+}
+
+export interface IGspDepartmentWorkers {
+    department: {
+        departmentId: string;
+        departmentName: string;
+    };
+    workers: IGspWorkerRow[];
+    breadcrumb: IGspBreadcrumb[];
+}
+
+export interface IGspWorkerHistoryEntry {
+    serviceId: string;
+    serviceName: string;
+    /** Epoch seconds. */
+    serviceDate: number;
+    status: 'present' | 'late' | 'absent' | 'permitted';
+    clockIn?: string;
+    clockOut?: string;
+}
+
+export interface IGspWorkerPermission {
+    permissionId: string;
+    category: string;
+    reason: string;
+    status: string;
+    createdAt: string;
+}
+
+export interface IGspWorkerTicket {
+    ticketId: string;
+    category: string;
+    status: string;
+    createdAt: string;
+}
+
+export interface IGspWorkerProfile {
+    userId: string;
+    name: string;
+    photo?: string;
+    gender?: string;
+    maritalStatus?: string;
+    occupation?: string;
+    campus: { campusId: string; campusName: string };
+    departments: {
+        primary: { departmentId: string; departmentName: string };
+        secondary?: { departmentId: string; departmentName: string };
+    };
+    memberSince?: string;
+}
+
+export interface IGspWorkerDossier {
+    worker: IGspWorkerProfile;
+    contact: IGspContact;
+    attendance: {
+        summary: IGspAttendanceShape;
+        history: IGspWorkerHistoryEntry[];
+    };
+    permissions: IGspWorkerPermission[];
+    tickets: IGspWorkerTicket[];
+    score: {
+        total: number;
+        average: number;
+        servicesScored: number;
+    };
+    breadcrumb: IGspBreadcrumb[];
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
  * Service slice
  * ──────────────────────────────────────────────────────────────────────────── */
 export const gspDashboardServiceSlice = createApi({
@@ -413,6 +541,36 @@ export const gspDashboardServiceSlice = createApi({
             providesTags: (_, __, { metricKey }) => [{ type: 'GspDashboard', id: metricKey }, 'GspDashboard'],
             transformResponse: (res: IDefaultResponse<IGspMetricBreakdown>) => unwrap(res),
         }),
+
+        getGspCampusDepartments: endpoint.query<IGspCampusDepartments, { campusId: string; startDate?: number; endDate?: number }>({
+            query: ({ campusId, ...params }) => ({
+                url: `/${SERVICE_URL}/workforce/campus/${campusId}/departments`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            providesTags: (_, __, { campusId }) => [{ type: 'GspDashboard', id: `dept-${campusId}` }, 'GspDashboard'],
+            transformResponse: (res: IDefaultResponse<IGspCampusDepartments>) => unwrap(res),
+        }),
+
+        getGspDepartmentWorkers: endpoint.query<IGspDepartmentWorkers, { departmentId: string; startDate?: number; endDate?: number }>({
+            query: ({ departmentId, ...params }) => ({
+                url: `/${SERVICE_URL}/workforce/department/${departmentId}/workers`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            providesTags: (_, __, { departmentId }) => [{ type: 'GspDashboard', id: `wkr-${departmentId}` }, 'GspDashboard'],
+            transformResponse: (res: IDefaultResponse<IGspDepartmentWorkers>) => unwrap(res),
+        }),
+
+        getGspWorker: endpoint.query<IGspWorkerDossier, { userId: string; startDate?: number; endDate?: number }>({
+            query: ({ userId, ...params }) => ({
+                url: `/${SERVICE_URL}/workforce/worker/${userId}`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            providesTags: (_, __, { userId }) => [{ type: 'GspDashboard', id: `worker-${userId}` }, 'GspDashboard'],
+            transformResponse: (res: IDefaultResponse<IGspWorkerDossier>) => unwrap(res),
+        }),
     }),
 });
 
@@ -427,4 +585,7 @@ export const {
     useGetGspCampusQuery,
     useGetGspServicesQuery,
     useGetGspMetricQuery,
+    useGetGspCampusDepartmentsQuery,
+    useGetGspDepartmentWorkersQuery,
+    useGetGspWorkerQuery,
 } = gspDashboardServiceSlice;
