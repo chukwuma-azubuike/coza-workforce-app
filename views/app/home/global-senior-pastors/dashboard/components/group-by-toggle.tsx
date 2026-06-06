@@ -25,7 +25,7 @@ const GroupByToggle: React.FC<GroupByToggleProps> = ({ value, onChange }) => (
                     onPress={() => onChange(o.value)}
                     className={cn('px-3 h-8 rounded-full items-center justify-center', active && 'bg-background')}
                 >
-                    <Text className={cn('!text-[12px] font-semibold', active ? 'text-primary' : 'text-muted-foreground')}>
+                    <Text className={cn('!text-[12px] font-semibold', active ? 'text-foreground' : 'text-muted-foreground')}>
                         {o.label}
                     </Text>
                 </TouchableOpacity>

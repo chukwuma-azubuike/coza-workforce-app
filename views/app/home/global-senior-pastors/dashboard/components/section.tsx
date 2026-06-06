@@ -29,8 +29,8 @@ const Section: React.FC<SectionProps> = ({ title, subtitle, actionLabel, onActio
                     onPress={onActionPress}
                     className="flex-row items-center gap-0.5 -mb-0.5"
                 >
-                    <Text className="text-sm font-semibold text-primary">{actionLabel}</Text>
-                    <ChevronRight size={16} color={THEME_CONFIG.primary} />
+                    <Text className="text-sm font-semibold text-blue-600">{actionLabel}</Text>
+                    <ChevronRight size={16} color={THEME_CONFIG.blue} />
                 </TouchableOpacity>
             )}
         </View>
