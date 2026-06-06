@@ -8,6 +8,8 @@ export interface TrendPoint {
     key: string;
     label: string;
     value: number;
+    /** Epoch seconds — used as a date fallback label when `label` is empty (groupBy=service). */
+    serviceTime?: number;
 }
 
 interface TrendChartProps {
@@ -30,8 +32,19 @@ const MAX_X_LABELS = 4;
 const AXIS_TEXT = THEME_CONFIG.lightGray;
 const GRID = 'rgba(120,120,120,0.18)';
 
-/** Keep axis labels short so they never overlap. */
-const shortLabel = (s: string) => (s.length > 10 ? `${s.slice(0, 9)}…` : s);
+const fmtServiceDate = (ts: number) => {
+    const d = new Date(ts * 1000);
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+};
+
+/** Truncate long labels; null/undefined returns empty string so SVG renders nothing visible. */
+const shortLabel = (s: string | null | undefined): string => {
+    if (!s) return '';
+    return s.length > 10 ? `${s.slice(0, 9)}…` : s;
+};
+
+const pointLabel = (p: TrendPoint): string =>
+    shortLabel(p.label) || (p.serviceTime ? fmtServiceDate(p.serviceTime) : p.key.slice(0, 9));
 
 /**
  * Smooth area + line trend chart (pure SVG). A light 3-tick y-axis and a handful
@@ -48,7 +61,10 @@ const TrendChart: React.FC<TrendChartProps> = ({
     const [width, setWidth] = React.useState(0);
     const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
-    const points = React.useMemo(() => (maxPoints ? data.slice(-maxPoints) : data), [data, maxPoints]);
+    const points = React.useMemo(() => {
+        if (!data?.length) return [];
+        return maxPoints ? data.slice(-maxPoints) : data;
+    }, [data, maxPoints]);
 
     if (!points.length) return null;
 
@@ -153,7 +169,7 @@ const TrendChart: React.FC<TrendChartProps> = ({
                                 fill={AXIS_TEXT}
                                 textAnchor={anchor}
                             >
-                                {shortLabel(c.label)}
+                                {pointLabel(c)}
                             </SvgText>
                         );
                     })}

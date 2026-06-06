@@ -36,6 +36,7 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
                 key: p.key,
                 label: p.label,
                 value: Math.round((p.rate ?? 0) * 100),
+                serviceTime: p.serviceTime,
             })),
         [trend]
     );
