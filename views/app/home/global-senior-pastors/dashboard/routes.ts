@@ -9,13 +9,14 @@ export interface DrilldownWindow {
     startDate?: number;
     endDate?: number;
     campusId?: string;
+    serviceId?: string;
 }
 
 export const gspRoutes = {
     campus: (campusId: string, win: DrilldownWindow) =>
         router.push({
             pathname: '/gsp/campus',
-            params: { campusId, startDate: win.startDate, endDate: win.endDate } as any,
+            params: { campusId, startDate: win.startDate, endDate: win.endDate, serviceId: win.serviceId } as any,
         }),
 
     metric: (metricKey: string, groupBy: 'campus' | 'service' | 'month', win: DrilldownWindow) =>
@@ -27,19 +28,30 @@ export const gspRoutes = {
                 startDate: win.startDate,
                 endDate: win.endDate,
                 campusId: win.campusId,
+                serviceId: win.serviceId,
             } as any,
         }),
 
     services: (win: DrilldownWindow) =>
         router.push({
             pathname: '/gsp/services',
-            params: { startDate: win.startDate, endDate: win.endDate, campusId: win.campusId } as any,
+            params: {
+                startDate: win.startDate,
+                endDate: win.endDate,
+                campusId: win.campusId,
+                serviceId: win.serviceId,
+            } as any,
         }),
 
     completeness: (win: DrilldownWindow) =>
         router.push({
             pathname: '/gsp/completeness',
-            params: { startDate: win.startDate, endDate: win.endDate, campusId: win.campusId } as any,
+            params: {
+                startDate: win.startDate,
+                endDate: win.endDate,
+                campusId: win.campusId,
+                serviceId: win.serviceId,
+            } as any,
         }),
 
     serviceReport: () => router.push('/gsp/service-report' as any),

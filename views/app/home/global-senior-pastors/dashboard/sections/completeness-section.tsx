@@ -23,11 +23,7 @@ const toneColor = { good: THEME_CONFIG.success, warn: THEME_CONFIG.warning, bad:
 const CompletenessSection: React.FC<CompletenessSectionProps> = ({ filters }) => {
     const { data, isLoading, isError, refetch } = useGetGspCompletenessQuery(filters.params);
 
-    const win = {
-        startDate: filters.window.start,
-        endDate: filters.window.end,
-        campusId: filters.isGlobal ? undefined : filters.campusId,
-    };
+    const win = filters.win;
 
     const rows: LeagueRow[] = React.useMemo(
         () =>

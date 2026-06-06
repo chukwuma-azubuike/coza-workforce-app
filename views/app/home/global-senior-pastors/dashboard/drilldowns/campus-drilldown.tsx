@@ -19,10 +19,11 @@ import { formatCompactNumber } from '../lib';
 
 /** Single-campus drill-down — the same metric rhythm scoped to one location. */
 const CampusDrilldown: React.FC = () => {
-    const { campusId, startDate, endDate } = useLocalSearchParams<{
+    const { campusId, startDate, endDate, serviceId } = useLocalSearchParams<{
         campusId: string;
         startDate?: string;
         endDate?: string;
+        serviceId?: string;
     }>();
 
     const { data, isLoading, isError, refetch } = useGetGspCampusQuery(
@@ -30,6 +31,7 @@ const CampusDrilldown: React.FC = () => {
             campusId: campusId as string,
             startDate: startDate ? Number(startDate) : undefined,
             endDate: endDate ? Number(endDate) : undefined,
+            serviceId: serviceId || undefined,
         },
         { skip: !campusId }
     );

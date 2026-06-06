@@ -14,16 +14,18 @@ import { formatCompactNumber } from '../lib';
 
 /** Full service-on-service comparison for the selected window. */
 const ServicesCompare: React.FC = () => {
-    const { startDate, endDate, campusId } = useLocalSearchParams<{
+    const { startDate, endDate, campusId, serviceId } = useLocalSearchParams<{
         startDate?: string;
         endDate?: string;
         campusId?: string;
+        serviceId?: string;
     }>();
 
     const { data, isLoading, isError, refetch } = useGetGspServicesQuery({
         startDate: startDate ? Number(startDate) : undefined,
         endDate: endDate ? Number(endDate) : undefined,
         campusId: campusId || undefined,
+        serviceId: serviceId || undefined,
     });
 
     const rows: LeagueRow[] = React.useMemo(

@@ -31,6 +31,7 @@ const MetricExplorer: React.FC = () => {
         startDate?: string;
         endDate?: string;
         campusId?: string;
+        serviceId?: string;
     }>();
 
     const [groupBy, setGroupBy] = React.useState<IGspGroupBy>(params.groupBy ?? 'campus');
@@ -40,13 +41,14 @@ const MetricExplorer: React.FC = () => {
     const startDate = params.startDate ? Number(params.startDate) : undefined;
     const endDate = params.endDate ? Number(params.endDate) : undefined;
     const campusId = params.campusId || undefined;
+    const serviceId = params.serviceId || undefined;
 
     const { data, isLoading, isError, isFetching, refetch } = useGetGspMetricQuery(
-        { metricKey: params.metricKey as string, groupBy, startDate, endDate, campusId },
+        { metricKey: params.metricKey as string, groupBy, startDate, endDate, campusId, serviceId },
         { skip: !params.metricKey }
     );
 
-    const win = { startDate, endDate, campusId };
+    const win = { startDate, endDate, campusId, serviceId };
 
     const fmt = (v: number) => (isRate ? `${Math.round(v <= 1 ? v * 100 : v)}%` : formatCompactNumber(v));
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 import { ClipboardList, Download } from 'lucide-react-native';
 
@@ -12,6 +13,8 @@ import { Text } from '~/components/ui/text';
 import HomeTopBar from '../../components/top-bar';
 import { Separator } from '~/components/ui/separator';
 import { THEME_CONFIG } from '@config/appConfig';
+import { IService } from '@store/types';
+import Utils from '@utils/index';
 
 import useGspFilters from './use-gsp-filters';
 import { gspRoutes } from './routes';
@@ -23,7 +26,7 @@ import WorkforceSection from './sections/workforce-section';
 import GuestsSection from './sections/guests-section';
 import ServicesSection from './sections/services-section';
 import CompletenessSection from './sections/completeness-section';
-import { useGetLatestServiceQuery } from '~/store/services/services';
+import { useGetLatestServiceQuery, useGetServicesQuery } from '~/store/services/services';
 
 /**
  * GSP Global Dashboard — the bird's-eye view across every campus.
@@ -44,6 +47,23 @@ const GSPDashboard: React.FC = () => {
     const isStale = filters !== deferredFilters;
 
     const { data: campuses, isLoading: campusesLoading } = useGetCampusesQuery();
+    const { data: services, isLoading: servicesLoading } = useGetServicesQuery({ limit: 100, page: 1 });
+
+    // Services within the active window, latest first — the service picker's options.
+    const windowServices = React.useMemo<IService[]>(() => {
+        const within = (services ?? []).filter(s => {
+            const t = dayjs(s.serviceTime ?? s.clockInStartTime).unix();
+            return t >= filters.window.start && t <= filters.window.end;
+        });
+        return Utils.sortByDate(within, 'serviceTime') as IService[];
+    }, [services, filters.window.start, filters.window.end]);
+
+    // If the persisted service no longer falls within the chosen window, drop back to All.
+    React.useEffect(() => {
+        if (!servicesLoading && filters.serviceId && !windowServices.some(s => s._id === filters.serviceId)) {
+            filters.setService(undefined);
+        }
+    }, [servicesLoading, filters.serviceId, windowServices, filters.setService]);
 
     const [refreshing, setRefreshing] = React.useState(false);
     const onRefresh = React.useCallback(() => {
@@ -53,27 +73,14 @@ const GSPDashboard: React.FC = () => {
         setTimeout(() => setRefreshing(false), 800);
     }, [dispatch]);
 
-    const openCompleteness = React.useCallback(
-        () =>
-            gspRoutes.completeness({
-                startDate: filters.window.start,
-                endDate: filters.window.end,
-                campusId: filters.isGlobal ? undefined : filters.campusId,
-            }),
-        [filters.window.start, filters.window.end, filters.isGlobal, filters.campusId]
-    );
+    const openCompleteness = React.useCallback(() => gspRoutes.completeness(filters.win), [filters.win]);
 
     const [exporting, setExporting] = React.useState(false);
     const onExport = React.useCallback(async () => {
         setExporting(true);
-        await exportGspDashboard({
-            startDate: filters.window.start,
-            endDate: filters.window.end,
-            campusId: filters.isGlobal ? undefined : filters.campusId,
-            fileName: `GSP-Dashboard-${filters.window.label}`,
-        });
+        await exportGspDashboard({ ...filters.win, fileName: `GSP-Dashboard-${filters.window.label}` });
         setExporting(false);
-    }, [filters.window, filters.isGlobal, filters.campusId]);
+    }, [filters.win, filters.window.label]);
 
     const campusId = user?.campus?._id;
 
@@ -127,7 +134,13 @@ const GSPDashboard: React.FC = () => {
             </View>
 
             <View className="pb-3">
-                <FilterBar filters={filters} campuses={campuses} campusesLoading={campusesLoading} />
+                <FilterBar
+                    filters={filters}
+                    campuses={campuses}
+                    campusesLoading={campusesLoading}
+                    services={windowServices}
+                    servicesLoading={servicesLoading}
+                />
             </View>
             <Separator />
 

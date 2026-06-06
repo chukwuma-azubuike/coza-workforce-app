@@ -27,11 +27,7 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
         groupBy: filters.trendGroupBy,
     });
 
-    const win = {
-        startDate: filters.window.start,
-        endDate: filters.window.end,
-        campusId: filters.isGlobal ? undefined : filters.campusId,
-    };
+    const win = filters.win;
 
     // Workforce trend points expose present/late/total — derive an attendance-rate %.
     const trendPoints = React.useMemo(
@@ -116,7 +112,7 @@ const WorkforceSection: React.FC<WorkforceSectionProps> = ({ filters, onCheckCom
                             </>
                         )}
 
-                        {trendPoints.length > 0 && (
+                        {!filters.hasService && trendPoints.length > 0 && (
                             <>
                                 <Separator />
                                 <View className="flex-row items-center justify-between">

@@ -9,6 +9,7 @@ interface ExportParams {
     startDate?: number;
     endDate?: number;
     campusId?: string;
+    serviceId?: string;
     fileName?: string;
 }
 
@@ -30,7 +31,13 @@ const blobToBase64 = (blob: Blob): Promise<string> =>
  * directly with the bearer token, base64-encode it, and hand it to the shared
  * file-write/share helper.
  */
-export const exportGspDashboard = async ({ startDate, endDate, campusId, fileName }: ExportParams): Promise<void> => {
+export const exportGspDashboard = async ({
+    startDate,
+    endDate,
+    campusId,
+    serviceId,
+    fileName,
+}: ExportParams): Promise<void> => {
     try {
         const session = (await Utils.retrieveUserSession()) || '';
         const token = session ? JSON.parse(session)?.token?.token : undefined;
@@ -39,6 +46,7 @@ export const exportGspDashboard = async ({ startDate, endDate, campusId, fileNam
         if (startDate) qs.set('startDate', String(startDate));
         if (endDate) qs.set('endDate', String(endDate));
         if (campusId) qs.set('campusId', campusId);
+        if (serviceId) qs.set('serviceId', serviceId);
 
         const response = await fetch(`${API_BASE_URL}/gsp/dashboard/export?${qs.toString()}`, {
             headers: token ? { Authorization: `Bearer ${token}` } : undefined,

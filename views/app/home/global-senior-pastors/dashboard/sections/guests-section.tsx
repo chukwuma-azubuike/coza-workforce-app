@@ -21,11 +21,7 @@ interface GuestsSectionProps {
 const GuestsSection: React.FC<GuestsSectionProps> = ({ filters, onCheckCompleteness }) => {
     const { data, isLoading, isError, refetch } = useGetGspGuestsQuery(filters.params);
 
-    const win = {
-        startDate: filters.window.start,
-        endDate: filters.window.end,
-        campusId: filters.isGlobal ? undefined : filters.campusId,
-    };
+    const win = filters.win;
 
     const rows: LeagueRow[] = React.useMemo(
         () =>
@@ -87,7 +83,7 @@ const GuestsSection: React.FC<GuestsSectionProps> = ({ filters, onCheckCompleten
                             </>
                         )}
 
-                        {trendPoints.length > 0 && (
+                        {!filters.hasService && trendPoints.length > 0 && (
                             <>
                                 <Separator />
                                 <Text className="text-md font-semibold text-foreground">Total guests trend</Text>

@@ -28,7 +28,7 @@ const OverviewSection: React.FC<OverviewSectionProps> = ({ filters }) => {
     }, [isError, error]);
 
     const k = data?.kpis;
-    const win = { startDate: filters.window.start, endDate: filters.window.end, campusId: filters.isGlobal ? undefined : filters.campusId };
+    const win = filters.win;
 
     if (isError) {
         return (

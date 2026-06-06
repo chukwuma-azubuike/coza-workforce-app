@@ -18,16 +18,18 @@ const toneColor = { good: THEME_CONFIG.success, warn: THEME_CONFIG.warning, bad:
 
 /** Full submission/approval completeness breakdown for the selected window. */
 const CompletenessDetail: React.FC = () => {
-    const { startDate, endDate, campusId } = useLocalSearchParams<{
+    const { startDate, endDate, campusId, serviceId } = useLocalSearchParams<{
         startDate?: string;
         endDate?: string;
         campusId?: string;
+        serviceId?: string;
     }>();
 
     const { data, isLoading, isError, refetch } = useGetGspCompletenessQuery({
         startDate: startDate ? Number(startDate) : undefined,
         endDate: endDate ? Number(endDate) : undefined,
         campusId: campusId || undefined,
+        serviceId: serviceId || undefined,
     });
 
     const rows: LeagueRow[] = React.useMemo(

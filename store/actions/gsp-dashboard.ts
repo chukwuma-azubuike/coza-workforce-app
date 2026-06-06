@@ -9,6 +9,8 @@ export interface IGspDashboardState {
     windowPreset: IGspWindowPreset;
     /** Selected campus id, or `global` for the accumulated all-campuses view. */
     campusId: string;
+    /** Selected service id, or `undefined` to aggregate across all services in the window. */
+    serviceId?: string;
     /** Breakdown dimension for trend charts. */
     trendGroupBy: Extract<IGspGroupBy, 'month' | 'service'>;
 }
@@ -16,6 +18,7 @@ export interface IGspDashboardState {
 const initialState: IGspDashboardState = {
     windowPreset: 'thisMonth',
     campusId: 'global',
+    serviceId: undefined,
     trendGroupBy: 'month',
 };
 
@@ -35,6 +38,9 @@ const gspDashboardStateSlice = createGspDashboardSlice({
         setCampus: (state, { payload }: PayloadAction<string>) => {
             state.campusId = payload;
         },
+        setService: (state, { payload }: PayloadAction<string | undefined>) => {
+            state.serviceId = payload;
+        },
         setTrendGroupBy: (state, { payload }: PayloadAction<IGspDashboardState['trendGroupBy']>) => {
             state.trendGroupBy = payload;
         },
@@ -44,6 +50,7 @@ const gspDashboardStateSlice = createGspDashboardSlice({
     selectors: {
         selectWindowPreset: store => store.windowPreset,
         selectCampusId: store => store.campusId,
+        selectServiceId: store => store.serviceId,
         selectTrendGroupBy: store => store.trendGroupBy,
     },
 });

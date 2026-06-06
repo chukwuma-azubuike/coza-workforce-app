@@ -18,11 +18,7 @@ interface ServicesSectionProps {
 const ServicesSection: React.FC<ServicesSectionProps> = ({ filters, onCheckCompleteness }) => {
     const { data, isLoading, isError, refetch } = useGetGspServicesQuery(filters.params);
 
-    const win = {
-        startDate: filters.window.start,
-        endDate: filters.window.end,
-        campusId: filters.isGlobal ? undefined : filters.campusId,
-    };
+    const win = filters.win;
 
     const rows: LeagueRow[] = React.useMemo(
         () =>

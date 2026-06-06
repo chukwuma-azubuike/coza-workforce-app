@@ -27,11 +27,7 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ filters, onCheckC
         groupBy: filters.trendGroupBy,
     });
 
-    const win = {
-        startDate: filters.window.start,
-        endDate: filters.window.end,
-        campusId: filters.isGlobal ? undefined : filters.campusId,
-    };
+    const win = filters.win;
 
     const rows: LeagueRow[] = React.useMemo(
         () =>
@@ -103,7 +99,7 @@ const AttendanceSection: React.FC<AttendanceSectionProps> = ({ filters, onCheckC
                             </>
                         )}
 
-                        {!!trend?.series?.length && (
+                        {!filters.hasService && !!trend?.series?.length && (
                             <>
                                 <Separator />
                                 <View className="flex-row items-center justify-between">
