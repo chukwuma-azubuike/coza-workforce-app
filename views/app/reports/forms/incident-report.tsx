@@ -16,7 +16,13 @@ const IncidentReport: React.FC = () => {
 
     const onSubmit = async (values: IIncidentReportPayload) => {
         try {
-            const res = await updateReport({ ...values, status: 'SUBMITTED' });
+            // Backend now requires a non-empty `incident` string alongside `details`.
+            // The form captures a single narrative, so mirror it into `incident`.
+            const res = await updateReport({
+                ...values,
+                incident: values.incident || values.details,
+                status: 'SUBMITTED',
+            });
 
             if (res.data) {
                 setModalState({ defaultRender: true, status: 'success', message: 'Report updated' });

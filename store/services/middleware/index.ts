@@ -17,6 +17,7 @@ import { uploadServiceSlice } from '../upload';
 import { dismissModalListenerMiddleware } from '~/store/listener-middleware/app';
 import { Middleware } from '@reduxjs/toolkit';
 import { roastCrmApi } from '../roast-crm';
+import { gspDashboardServiceSlice } from '../gsp-dashboard';
 
 const middlewaresSlices: Array<Middleware> = [
     accountServiceSlice.middleware,
@@ -37,6 +38,7 @@ const middlewaresSlices: Array<Middleware> = [
     uploadServiceSlice.middleware,
     dismissModalListenerMiddleware.middleware,
     roastCrmApi.middleware,
+    gspDashboardServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;

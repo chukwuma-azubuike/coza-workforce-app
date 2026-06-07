@@ -1,44 +1,25 @@
-// import { VStack } from 'native-base';
 import React from 'react';
 import { IService } from '@store/types';
-// import TabComponent from '@components/composite/tabs';
-// import { SceneMap } from 'react-native-tab-view';
-// import ChurchGrowth from './church-growth';
-// import WorkforceAnalytics from './workforce-analytics';
-import WorkForceSummary from './workforce-summary';
 import { SafeAreaView, View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
+import GSPDashboard from './dashboard';
 
 interface GSPViewProps {
     servicesIsSuccess: boolean;
     services: IService[];
 }
 
-const GSPView: React.FC<GSPViewProps> = ({ services, servicesIsSuccess }) => {
-    // TODO: Return if analytics is needed
-    // const ROUTES = [
-    //     { key: 'churchGrowth', title: 'Church Growth' },
-    //     { key: 'workforce', title: 'Workforce' },
-    // ];
-
-    // const renderScene = SceneMap({
-    //     churchGrowth: ChurchGrowth,
-    //     workforce: WorkforceAnalytics,
-    // });
-
-    // const [index, setIndex] = React.useState(0);
-
+/**
+ * GSP home — the new Global Dashboard is the primary view. The legacy
+ * single-service WorkForceSummary remains reachable as a drill-down
+ * (`/gsp/service-report`) from inside the dashboard.
+ */
+const GSPView: React.FC<GSPViewProps> = () => {
     return (
         <ErrorBoundary>
             <SafeAreaView className="flex-1">
                 <View className="flex-1">
-                    {/* <TabComponent
-                tabBarScroll={false}
-                onIndexChange={setIndex}
-                renderScene={renderScene}
-                navigationState={{ index, routes: ROUTES }}
-            /> */}
-                    <WorkForceSummary servicesIsSuccess={servicesIsSuccess} services={services} />
+                    <GSPDashboard />
                 </View>
             </SafeAreaView>
         </ErrorBoundary>

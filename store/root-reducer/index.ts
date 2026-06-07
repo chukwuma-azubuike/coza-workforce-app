@@ -20,6 +20,8 @@ import appStateSlice from '../actions/app';
 import notificationsSlice from '../actions/notifications';
 import { roastCrmApi } from '../services/roast-crm';
 import roastCRMState from '../actions/roast-crm';
+import { gspDashboardServiceSlice } from '../services/gsp-dashboard';
+import gspDashboardStateSlice from '../actions/gsp-dashboard';
 
 const rootReducer = combineReducers({
     [appStateSlice.reducerPath]: appStateSlice.reducer,
@@ -43,6 +45,8 @@ const rootReducer = combineReducers({
     [notificationsSlice.reducerPath]: notificationsSlice.reducer,
     [roastCrmApi.reducerPath]: roastCrmApi.reducer,
     [roastCRMState.reducerPath]: roastCRMState.reducer,
+    [gspDashboardServiceSlice.reducerPath]: gspDashboardServiceSlice.reducer,
+    [gspDashboardStateSlice.reducerPath]: gspDashboardStateSlice.reducer,
 });
 
 export default rootReducer;

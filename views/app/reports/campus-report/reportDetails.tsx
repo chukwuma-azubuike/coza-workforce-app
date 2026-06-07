@@ -1,7 +1,12 @@
 import { Text } from '~/components/ui/text';
-import { View } from 'react-native';
+import { Alert, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { Formik } from 'formik';
 import React from 'react';
+import { THEME_CONFIG } from '@config/appConfig';
+import { Button } from '~/components/ui/button';
+import ReportCommentSheet from '@components/composite/report-comment-sheet';
+import { TRANSITION_COMMENT_MIN } from '@constants/report-actions';
 import If from '@components/composite/if-container';
 import ViewWrapper from '@components/layout/viewWrapper';
 import useScreenFocus from '@hooks/focus';
@@ -25,8 +30,10 @@ import { router, useLocalSearchParams } from 'expo-router';
 
 const CampusReport: React.FC = () => {
     const params = useLocalSearchParams() as unknown as ICampusReport & { campusName: string };
-    const { serviceId, campusId } = params;
+    const { serviceId, campusId, status: campusStatus } = params;
     const { user, isCampusPastor, isGlobalPastor } = useRole();
+
+    const [pendingChangeRequest, setPendingChangeRequest] = React.useState(false);
 
     const { data, refetch, isLoading, isFetching } = useGetCampusReportSummaryQuery(
         {
@@ -113,7 +120,45 @@ const CampusReport: React.FC = () => {
         }
     };
 
+    // ─── GSP decision (approve / request changes on the campus report) ───────────
+    // Reuses the campus-report submit endpoint with a GSP status. A campus is still
+    // actionable while it sits at a pre-GSP-final stage; once finalised/returned we
+    // just reflect the status.
+    const AWAITING_GSP: string[] = [IReportStatus.GSP_SUBMITTED, IReportStatus.CP_APPROVED];
+    const gspCanAct = isGlobalPastor && (!campusStatus || AWAITING_GSP.includes(campusStatus as string));
+
+    const submitGspDecision = async (status: IReportStatus, comment?: string) => {
+        const result = await submitGSPReport({
+            campusId,
+            serviceId,
+            userId: user?._id,
+            submittedReportIds,
+            incidentReportIds,
+            campusCoordinatorComment: comment ?? '',
+            status,
+        } as unknown as IGSPReportPayload);
+
+        if ('data' in result) {
+            setModalState({
+                message: status === IReportStatus.GSP_APPROVED ? 'Campus report approved' : 'Changes requested',
+                status: 'success',
+            });
+            setPendingChangeRequest(false);
+            router.back();
+        }
+        if ('error' in result) {
+            setModalState({ message: (error as any)?.data?.message || 'Something went wrong', status: 'error' });
+        }
+    };
+
+    const onGspApprove = () =>
+        Alert.alert('Approve campus report', 'Approve this campus report as final?', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Approve', onPress: () => submitGspDecision(IReportStatus.GSP_APPROVED) },
+        ]);
+
     return (
+        <>
         <ViewWrapper scroll noPadding avoidKeyboard refreshing={isLoading} onRefresh={handleRefresh}>
             <View className="px-4 pt-3 pb-12 gap-4">
                 {isGlobalPastor && params?.campusName ? (
@@ -149,6 +194,15 @@ const CampusReport: React.FC = () => {
                             </View>
                         </View>
                     ))
+                ) : departments.length === 0 && incidentRows.length === 0 ? (
+                    <View className="py-16 items-center gap-3">
+                        <View className="w-14 h-14 rounded-3xl bg-secondary items-center justify-center">
+                            <Ionicons name="document-text-outline" size={28} color={THEME_CONFIG.lightGray} />
+                        </View>
+                        <Text className="text-sm text-muted-foreground text-center px-8 line-clamp-none">
+                            No departmental reports found for this campus and service yet.
+                        </Text>
+                    </View>
                 ) : (
                     <>
                         {departments.map((dept, i) => (
@@ -177,7 +231,7 @@ const CampusReport: React.FC = () => {
                     </>
                 )}
 
-                {/* GSP view of the CP's note */}
+                {/* GSP view of the CP's note + approve / request-changes actions */}
                 <If condition={isGlobalPastor}>
                     {data?.campusCoordinatorComment ? (
                         <ReportSection title="For the GSP's attention">
@@ -185,6 +239,34 @@ const CampusReport: React.FC = () => {
                                 {data.campusCoordinatorComment}
                             </Text>
                         </ReportSection>
+                    ) : null}
+
+                    {!isLoading && !isFetching && departments.length > 0 ? (
+                        gspCanAct ? (
+                            <View className="flex-row items-center gap-2 pt-1">
+                                <Button
+                                    variant="outline"
+                                    className="flex-1"
+                                    isLoading={isSubmitLoading}
+                                    startIcon={<Ionicons name="create-outline" size={20} color={THEME_CONFIG.gray} />}
+                                    onPress={() => setPendingChangeRequest(true)}
+                                >
+                                    Request changes
+                                </Button>
+                                <Button
+                                    className="flex-1"
+                                    isLoading={isSubmitLoading}
+                                    startIcon={<Ionicons name="checkmark" size={20} color="white" />}
+                                    onPress={onGspApprove}
+                                >
+                                    Approve
+                                </Button>
+                            </View>
+                        ) : campusStatus ? (
+                            <View className="pt-1 flex-row">
+                                <ReportStatusPill status={campusStatus as string} role="GSP" />
+                            </View>
+                        ) : null
                     ) : null}
                 </If>
 
@@ -217,6 +299,26 @@ const CampusReport: React.FC = () => {
                 </If>
             </View>
         </ViewWrapper>
+
+        <ReportCommentSheet
+            visible={pendingChangeRequest}
+            title="Request changes"
+            placeholder="Explain what the campus needs to revise…"
+            submitLabel="Request changes"
+            isLoading={isSubmitLoading}
+            onClose={() => setPendingChangeRequest(false)}
+            onSubmit={comment => {
+                if ((comment?.trim().length ?? 0) < TRANSITION_COMMENT_MIN) {
+                    setModalState({
+                        message: `Please provide a comment of at least ${TRANSITION_COMMENT_MIN} characters.`,
+                        status: 'info',
+                    });
+                    return;
+                }
+                submitGspDecision(IReportStatus.GSP_CHANGE_REQUESTED, comment);
+            }}
+        />
+        </>
     );
 };
 

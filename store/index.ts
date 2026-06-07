@@ -20,6 +20,7 @@ import userStateSlice from './actions/users';
 import appStateSlice from './actions/app';
 import roastCRMState from './actions/roast-crm';
 import notificationsSlice from './actions/notifications';
+import gspDashboardStateSlice from './actions/gsp-dashboard';
 
 const middlewares: Middleware[] = [];
 
@@ -32,6 +33,7 @@ const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {
         appStateSlice.reducerPath,
         roastCRMState.reducerPath,
         notificationsSlice.reducerPath,
+        gspDashboardStateSlice.reducerPath,
     ],
 };
 

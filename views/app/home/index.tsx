@@ -16,7 +16,6 @@ import { Platform, View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { HomeContext } from './context';
-import TopNav from '~/components/TopNav';
 import useDeferHeavy from '~/hooks/performance/defer-heavy';
 import Loading from '~/components/atoms/loading';
 import useScreenFocus from '~/hooks/focus';
@@ -146,7 +145,6 @@ const Home: React.FC = () => {
                                 />
                             </If>
                             <If condition={isGlobalPastor}>
-                                <TopNav />
                                 <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
                             </If>
                         </If>
