@@ -27,8 +27,7 @@ import RatePill from '../components/rate-pill';
 import { formatCompactNumber, formatPercent } from '../lib';
 import { cn } from '~/lib/utils';
 import StatusTag from '~/components/atoms/status-tag';
-
-const AVATAR_FALLBACK = 'https://ui-avatars.com/api/?background=random&size=256';
+import { AVATAR_FALLBACK_URL } from '~/constants';
 
 type DossierTab = 'attendance' | 'history' | 'permissions' | 'tickets';
 
@@ -143,14 +142,6 @@ const WorkerDossier: React.FC = () => {
         ]
         : [];
 
-    const pendingPermissions = (data?.permissions ?? []).filter(p => p.status.toLowerCase() === 'pending').length;
-    const openTickets = (data?.tickets ?? []).filter(t => t.status.toLowerCase() === 'open').length;
-
-    const tabBadge: Partial<Record<DossierTab, number>> = {
-        permissions: pendingPermissions || undefined,
-        tickets: openTickets || undefined,
-    };
-
     return (
         <ViewWrapper scroll noPadding refreshing={false} onRefresh={refetch} className="flex-1">
             <View className="pb-10">
@@ -180,7 +171,7 @@ const WorkerDossier: React.FC = () => {
                                     alt={w.lastName}
                                     firstName={w.firstName}
                                     lastName={w.lastName}
-                                    imageUrl={w.pictureUrl ?? AVATAR_FALLBACK}
+                                    imageUrl={w.pictureUrl ?? AVATAR_FALLBACK_URL}
                                     className="!w-20 !h-20"
                                 />
                                 <View className="items-center gap-2 justify-center">
@@ -252,7 +243,6 @@ const WorkerDossier: React.FC = () => {
                         >
                             {TABS.map(tab => {
                                 const active = tab.value === activeTab;
-                                const badge = tabBadge[tab.value];
                                 return (
                                     <TouchableOpacity
                                         key={tab.value}
@@ -273,23 +263,6 @@ const WorkerDossier: React.FC = () => {
                                         >
                                             {tab.label}
                                         </Text>
-                                        {!!badge && (
-                                            <View
-                                                className={cn(
-                                                    'w-5 h-5 rounded-full items-center justify-center',
-                                                    active ? 'bg-white/25' : 'bg-primary/10'
-                                                )}
-                                            >
-                                                <Text
-                                                    className={cn(
-                                                        '!text-[10px] font-bold',
-                                                        active ? 'text-white' : 'text-primary'
-                                                    )}
-                                                >
-                                                    {badge}
-                                                </Text>
-                                            </View>
-                                        )}
                                     </TouchableOpacity>
                                 );
                             })}

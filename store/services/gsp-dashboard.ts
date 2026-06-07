@@ -367,9 +367,17 @@ export interface IGspBreadcrumb {
 export interface IGspDepartmentRow {
     departmentId: string;
     departmentName: string;
-    attendance: IGspAttendanceShape;
     permissionsPending: number;
     openTickets: number;
+    absent: number;
+    activeCount: number;
+    expected: number;
+    late: number;
+    permitted: number;
+    present: number;
+    rate: number;
+    share: number;
+    workerCount: number;
 }
 
 export interface IGspCampusDepartments {
@@ -384,8 +392,9 @@ export interface IGspCampusDepartments {
 
 export interface IGspWorkerRow {
     userId: string;
-    name: string;
-    photo?: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
     isLeader: boolean;
     roleLabel?: string;
     attendance: IGspAttendanceShape;

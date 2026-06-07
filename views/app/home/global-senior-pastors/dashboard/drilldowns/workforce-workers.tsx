@@ -14,60 +14,56 @@ import RatePill from '../components/rate-pill';
 import ContactRow from '../components/contact-row';
 import { formatCompactNumber } from '../lib';
 import { gspRoutes } from '../routes';
-
-const AVATAR_FALLBACK = 'https://ui-avatars.com/api/?background=random&size=128';
+import StatusTag from '~/components/atoms/status-tag';
+import { AVATAR_FALLBACK_URL } from '~/constants';
 
 const WorkerCard: React.FC<{
     worker: IGspWorkerRow;
     win: { startDate?: number; endDate?: number };
     isLast: boolean;
-}> = React.memo(({ worker, win, isLast }) => (
+}> = React.memo(({ worker, win, isLast }) =>
+(
     <React.Fragment>
         <TouchableOpacity
             activeOpacity={0.7}
-            onPress={() => gspRoutes.worker(worker.userId, win, worker.name)}
-            className="py-4 gap-3"
+            className="py-2"
+            onPress={() => gspRoutes.worker(worker.userId, win, `${worker.firstName} ${worker.lastName}`)}
         >
             {/* Avatar row */}
             <View className="flex-row items-center gap-3">
                 <AvatarComponent
-                    alt={worker.name}
-                    imageUrl={worker.photo ?? AVATAR_FALLBACK}
+                    alt={worker.firstName}
+                    imageUrl={worker.pictureUrl || AVATAR_FALLBACK_URL}
                     className="w-11 h-11"
                 />
                 <View className="flex-1 gap-0.5">
                     <View className="flex-row items-center gap-2 flex-wrap">
                         <Text numberOfLines={1} className="text-md font-semibold text-foreground flex-1">
-                            {worker.name}
+                            {worker.firstName} {worker.lastName}
                         </Text>
                         {worker.isLeader && (
-                            <View className="flex-row items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10">
-                                <Shield size={10} color={THEME_CONFIG.primary} />
-                                <Text className="!text-[10px] font-bold text-primary">
-                                    {worker.roleLabel ?? 'Leader'}
-                                </Text>
-                            </View>
+                            <StatusTag>{worker.roleLabel ?? 'Leader'}</StatusTag>
                         )}
                     </View>
-                    <View className="flex-row items-center gap-3">
-                        <RatePill rate={worker?.attendance?.rate} size="sm" />
-                        <Text className="!text-[12px] text-muted-foreground">
-                            {formatCompactNumber((worker?.attendance?.present ?? 0) + (worker?.attendance?.late ?? 0))}/{formatCompactNumber(worker?.attendance?.expected ?? 0)} attended
-                        </Text>
-                    </View>
+                    {/* <View className="flex-row items-center gap-3">
+                            <RatePill rate={worker?.attendance?.rate} size="sm" />
+                            <Text className="!text-[12px] text-muted-foreground">
+                                {formatCompactNumber((worker?.attendance?.present ?? 0) + (worker?.attendance?.late ?? 0))}/{formatCompactNumber(worker?.attendance?.expected ?? 0)} attended
+                            </Text>
+                        </View> */}
                 </View>
             </View>
 
             {/* Mini attendance bar */}
-            <View className="flex-row h-1.5 rounded-full overflow-hidden bg-secondary ml-14">
-                {[
-                    { v: worker?.attendance?.present, c: THEME_CONFIG.success },
-                    { v: worker?.attendance?.late, c: THEME_CONFIG.warning },
-                    { v: worker?.attendance?.absent, c: THEME_CONFIG.error },
-                ].map(({ v, c }, i) => (
-                    <View key={i} style={{ flex: Math.max(0.0001, v), backgroundColor: c }} />
-                ))}
-            </View>
+            {/* <View className="flex-row h-1.5 rounded-full overflow-hidden bg-secondary ml-14">
+                    {[
+                        { v: worker?.attendance?.present, c: THEME_CONFIG.success },
+                        { v: worker?.attendance?.late, c: THEME_CONFIG.warning },
+                        { v: worker?.attendance?.absent, c: THEME_CONFIG.error },
+                    ].map(({ v, c }, i) => (
+                        <View key={i} style={{ flex: Math.max(0.0001, v), backgroundColor: c }} />
+                    ))}
+                </View> */}
 
             {/* Badges + quick-contact */}
             <View className="flex-row items-center gap-3 ml-14">
@@ -84,9 +80,9 @@ const WorkerCard: React.FC<{
             </View>
 
             {/* Inline contact icons — only the available ones */}
-            <View className="ml-14">
-                <ContactRow contact={worker.contact} />
-            </View>
+            {/* <View className="ml-14">
+                    <ContactRow contact={worker.contact} />
+                </View> */}
         </TouchableOpacity>
         {!isLast && <Separator />}
     </React.Fragment>

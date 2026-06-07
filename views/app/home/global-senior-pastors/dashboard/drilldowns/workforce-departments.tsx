@@ -36,10 +36,10 @@ const WorkforceDepartments: React.FC = () => {
 
     const attendanceSegments = campus?.attendance
         ? [
-              { label: 'Present', value: campus.attendance.present ?? 0, color: THEME_CONFIG.success },
-              { label: 'Late', value: campus.attendance.late ?? 0, color: THEME_CONFIG.warning },
-              { label: 'Absent', value: campus.attendance.absent ?? 0, color: THEME_CONFIG.error },
-          ]
+            { label: 'Present', value: campus.attendance.present ?? 0, color: THEME_CONFIG.success },
+            { label: 'Late', value: campus.attendance.late ?? 0, color: THEME_CONFIG.warning },
+            { label: 'Absent', value: campus.attendance.absent ?? 0, color: THEME_CONFIG.error },
+        ]
         : [];
 
     return (
@@ -94,6 +94,7 @@ const WorkforceDepartments: React.FC = () => {
                         <SectionCard className="gap-0">
                             {departments.map((dept, i) => {
                                 const isLast = i === departments.length - 1;
+
                                 return (
                                     <React.Fragment key={dept.departmentId}>
                                         <TouchableOpacity
@@ -111,15 +112,15 @@ const WorkforceDepartments: React.FC = () => {
                                                 >
                                                     {dept.departmentName}
                                                 </Text>
-                                                <RatePill rate={dept?.attendance?.rate} />
+                                                <RatePill rate={dept?.rate} />
                                             </View>
 
                                             {/* Mini bar */}
                                             <View className="flex-row h-2 rounded-full overflow-hidden bg-secondary">
                                                 {[
-                                                    { v: dept?.attendance?.present, c: THEME_CONFIG.success },
-                                                    { v: dept?.attendance?.late, c: THEME_CONFIG.warning },
-                                                    { v: dept?.attendance?.absent, c: THEME_CONFIG.error },
+                                                    { v: dept?.present, c: THEME_CONFIG.success },
+                                                    { v: dept?.late, c: THEME_CONFIG.warning },
+                                                    { v: dept?.absent, c: THEME_CONFIG.error },
                                                 ].map(({ v, c }, si) => (
                                                     <View
                                                         key={si}
@@ -135,10 +136,10 @@ const WorkforceDepartments: React.FC = () => {
                                             <View className="flex-row items-center gap-4">
                                                 <Text className="!text-[12px] text-muted-foreground">
                                                     <Text className="font-semibold text-foreground">
-                                                        {formatCompactNumber((dept?.attendance?.present ?? 0) + (dept?.attendance?.late ?? 0))}
+                                                        {formatCompactNumber((dept?.present ?? 0) + (dept?.late ?? 0))}
                                                     </Text>
                                                     {' / '}
-                                                    {formatCompactNumber(dept?.attendance?.expected ?? 0)} attended
+                                                    {formatCompactNumber(dept?.expected ?? 0)} attended
                                                 </Text>
                                                 {(dept?.permissionsPending ?? 0) > 0 && (
                                                     <View className="flex-row items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40">
