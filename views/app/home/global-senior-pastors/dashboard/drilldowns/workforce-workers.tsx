@@ -71,12 +71,12 @@ const WorkerCard: React.FC<{
 
             {/* Badges + quick-contact */}
             <View className="flex-row items-center gap-3 ml-14">
-                {worker?.permissionsApproved && worker.permissionsApproved > 0 && (
+                {(worker?.permissionsApproved ?? 0) > 0 && (
                     <Text className="!text-[11px] text-amber-600 dark:text-amber-400 font-medium">
                         {worker.permissionsApproved} permissions
                     </Text>
                 )}
-                {worker?.openTickets && worker.openTickets > 0 && (
+                {(worker?.openTickets ?? 0) > 0 && (
                     <Text className="!text-[11px] text-red-600 dark:text-red-400 font-medium">
                         {worker.openTickets} tickets
                     </Text>

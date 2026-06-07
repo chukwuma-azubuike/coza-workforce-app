@@ -30,7 +30,7 @@ interface LeagueTableProps {
  * relative magnitude reads at a glance; colour is stable per id and always paired
  * with a label + numeric value (never colour alone).
  */
-const LeagueTable: React.FC<LeagueTableProps> = ({ rows, maxRows = 6, valueFormatter = formatCompactNumber, onRowPress }) => {
+const LeagueTable: React.FC<LeagueTableProps> = ({ rows, maxRows = 20, valueFormatter = formatCompactNumber, onRowPress }) => {
     const sorted = React.useMemo(() => [...rows].sort((a, b) => b.value - a.value), [rows]);
     const max = sorted[0]?.value || 1;
     const visible = sorted.slice(0, maxRows);

@@ -406,41 +406,62 @@ export interface IGspDepartmentWorkers {
 export interface IGspWorkerHistoryEntry {
     serviceId: string;
     serviceName: string;
-    /** Epoch seconds. */
-    serviceDate: number;
-    status: 'present' | 'late' | 'absent' | 'permitted';
-    clockIn?: string;
-    clockOut?: string;
+    /** Epoch SECONDS. Render with dayjs.unix(Number(v)). */
+    serviceTime?: string | number;
+    /** Epoch SECONDS. Render with dayjs.unix(Number(v)). */
+    createdAt?: string | number;
+    /** Backend may send any casing — normalised in the UI via resolveStatus(). */
+    status: string;
+    /** Epoch SECONDS. Render with dayjs.unix(Number(v)). */
+    clockIn?: string | number;
+    /** Epoch SECONDS. Render with dayjs.unix(Number(v)). */
+    clockOut?: string | number;
 }
 
 export interface IGspWorkerPermission {
     permissionId: string;
     category: string;
-    reason: string;
+    description?: string;
     status: string;
-    createdAt: string;
+    /** Epoch SECONDS. Use dayjs.unix(Number(v)). */
+    dateCreated: string | number;
+    startDate: number;
+    endDate: number;
 }
 
 export interface IGspWorkerTicket {
     ticketId: string;
-    category: string;
+    /** Flat category name — most common in aggregated GSP endpoints. */
+    category?: string;
+    /** Free-text summary. */
+    summary?: string;
+    /** Free-text remarks (standard ITicket field). */
+    remarks?: string;
+    /** Generic name/label fallbacks. */
+    name?: string;
+    title?: string;
+    label?: string;
+    type?: string;
     status: string;
-    createdAt: string;
+    /** Epoch SECONDS. Use dayjs.unix(Number(v)). */
+    createdAt: string | number;
 }
 
 export interface IGspWorkerProfile {
     userId: string;
-    name: string;
-    photo?: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
     gender?: string;
     maritalStatus?: string;
     occupation?: string;
+    /** ISO date string e.g. "1995-03-22". */
+    birthDay?: string;
     campus: { campusId: string; campusName: string };
     departments: {
         primary: { departmentId: string; departmentName: string };
         secondary?: { departmentId: string; departmentName: string };
     };
-    memberSince?: string;
 }
 
 export interface IGspWorkerDossier {
@@ -542,7 +563,10 @@ export const gspDashboardServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IGspMetricBreakdown>) => unwrap(res),
         }),
 
-        getGspCampusDepartments: endpoint.query<IGspCampusDepartments, { campusId: string; startDate?: number; endDate?: number }>({
+        getGspCampusDepartments: endpoint.query<
+            IGspCampusDepartments,
+            { campusId: string; startDate?: number; endDate?: number }
+        >({
             query: ({ campusId, ...params }) => ({
                 url: `/${SERVICE_URL}/workforce/campus/${campusId}/departments`,
                 method: REST_API_VERBS.GET,
@@ -552,13 +576,19 @@ export const gspDashboardServiceSlice = createApi({
             transformResponse: (res: IDefaultResponse<IGspCampusDepartments>) => unwrap(res),
         }),
 
-        getGspDepartmentWorkers: endpoint.query<IGspDepartmentWorkers, { departmentId: string; startDate?: number; endDate?: number }>({
+        getGspDepartmentWorkers: endpoint.query<
+            IGspDepartmentWorkers,
+            { departmentId: string; startDate?: number; endDate?: number }
+        >({
             query: ({ departmentId, ...params }) => ({
                 url: `/${SERVICE_URL}/workforce/department/${departmentId}/workers`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
-            providesTags: (_, __, { departmentId }) => [{ type: 'GspDashboard', id: `wkr-${departmentId}` }, 'GspDashboard'],
+            providesTags: (_, __, { departmentId }) => [
+                { type: 'GspDashboard', id: `wkr-${departmentId}` },
+                'GspDashboard',
+            ],
             transformResponse: (res: IDefaultResponse<IGspDepartmentWorkers>) => unwrap(res),
         }),
 
@@ -569,7 +599,10 @@ export const gspDashboardServiceSlice = createApi({
                 params,
             }),
             providesTags: (_, __, { userId }) => [{ type: 'GspDashboard', id: `worker-${userId}` }, 'GspDashboard'],
-            transformResponse: (res: IDefaultResponse<IGspWorkerDossier>) => unwrap(res),
+            transformResponse: (res: IDefaultResponse<IGspWorkerDossier>) => {
+                const d = unwrap(res);
+                return d;
+            },
         }),
     }),
 });

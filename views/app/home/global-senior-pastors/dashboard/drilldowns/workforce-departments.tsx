@@ -140,14 +140,14 @@ const WorkforceDepartments: React.FC = () => {
                                                     {' / '}
                                                     {formatCompactNumber(dept?.attendance?.expected ?? 0)} attended
                                                 </Text>
-                                                {dept?.permissionsPending && dept.permissionsPending > 0 && (
+                                                {(dept?.permissionsPending ?? 0) > 0 && (
                                                     <View className="flex-row items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40">
                                                         <Text className="!text-[11px] font-semibold text-amber-700 dark:text-amber-400">
                                                             {dept.permissionsPending} pending
                                                         </Text>
                                                     </View>
                                                 )}
-                                                {dept?.openTickets && dept.openTickets > 0 && (
+                                                {(dept?.openTickets ?? 0) > 0 && (
                                                     <View className="flex-row items-center gap-1 px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/40">
                                                         <Text className="!text-[11px] font-semibold text-red-700 dark:text-red-400">
                                                             {dept.openTickets} tickets

@@ -26,6 +26,7 @@ import ContactRow from '../components/contact-row';
 import RatePill from '../components/rate-pill';
 import { formatCompactNumber, formatPercent } from '../lib';
 import { cn } from '~/lib/utils';
+import StatusTag from '~/components/atoms/status-tag';
 
 const AVATAR_FALLBACK = 'https://ui-avatars.com/api/?background=random&size=256';
 
@@ -70,24 +71,34 @@ const STATUS_CONFIG: Record<
 };
 
 /* ── Sub-components ────────────────────────────────────────────────────────── */
+
+/** Resolve status: normalize casing, fall back to clockIn presence when status is missing/unknown. */
+const resolveStatus = (entry: IGspWorkerHistoryEntry): IGspWorkerHistoryEntry['status'] => {
+    const normalised = (entry.status ?? '').toLowerCase() as IGspWorkerHistoryEntry['status'];
+    if (normalised in STATUS_CONFIG) return normalised;
+    return entry.clockIn ? 'present' : 'absent';
+};
+
 const HistoryEntry: React.FC<{ entry: IGspWorkerHistoryEntry; isLast: boolean }> = React.memo(({ entry, isLast }) => {
-    const cfg = STATUS_CONFIG[entry.status] ?? STATUS_CONFIG.absent;
+    const status = resolveStatus(entry);
+    const cfg = STATUS_CONFIG[status];
+    const serviceDate = entry.serviceTime ?? entry.createdAt;
     return (
         <View className="flex-row gap-3">
             <View className="items-center" style={{ width: 24 }}>
-                <View className={`w-6 h-6 rounded-full ${cfg.bg} items-center justify-center`}>{cfg.icon}</View>
+                <View className={`w-6 h-6 rounded-full ${cfg?.bg} items-center justify-center`}>{cfg?.icon}</View>
                 {!isLast && <View className="flex-1 w-px bg-border mt-1" />}
             </View>
             <View className="flex-1 pb-4 gap-0.5">
                 <Text className="text-sm font-semibold text-foreground">{entry.serviceName}</Text>
                 <Text className="!text-[12px] text-muted-foreground">
-                    {dayjs.unix(entry.serviceDate).format('ddd D MMM YYYY')}
+                    {serviceDate ? dayjs.unix(Number(serviceDate)).format('ddd D MMM YYYY') : '—'}
                 </Text>
-                <View className={`self-start mt-1 px-2 py-0.5 rounded-full ${cfg.bg}`}>
-                    <Text style={{ color: cfg.color }} className="!text-[11px] font-bold">
-                        {cfg.label}
-                        {entry.clockIn ? ` · in ${entry.clockIn}` : ''}
-                        {entry.clockOut ? ` out ${entry.clockOut}` : ''}
+                <View className={`self-start mt-1 px-2 py-0.5 rounded-full ${cfg?.bg}`}>
+                    <Text style={{ color: cfg?.color }} className="!text-[11px] font-bold">
+                        {cfg?.label}
+                        {entry.clockIn ? ` · at ${dayjs.unix(Number(entry.clockIn)).format('HH:mm A')}` : ''}
+                        {entry.clockOut ? ` · Out at ${dayjs.unix(Number(entry.clockOut)).format('HH:mm A')}` : ''}
                     </Text>
                 </View>
             </View>
@@ -96,39 +107,9 @@ const HistoryEntry: React.FC<{ entry: IGspWorkerHistoryEntry; isLast: boolean }>
 });
 HistoryEntry.displayName = 'HistoryEntry';
 
-const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
-    const s = status.toLowerCase();
-    const isGood = s === 'approved' || s === 'resolved' || s === 'closed';
-    const isPending = s === 'pending';
-    const isBad = s === 'rejected' || s === 'denied';
-    return (
-        <View
-            className={cn(
-                'px-2 py-0.5 rounded-full',
-                isGood && 'bg-green-100 dark:bg-green-900/40',
-                isPending && 'bg-amber-100 dark:bg-amber-900/40',
-                isBad && 'bg-red-100 dark:bg-red-900/40',
-                !isGood && !isPending && !isBad && 'bg-secondary'
-            )}
-        >
-            <Text
-                className={cn(
-                    '!text-[10px] font-bold capitalize',
-                    isGood && 'text-green-700 dark:text-green-400',
-                    isPending && 'text-amber-700 dark:text-amber-400',
-                    isBad && 'text-red-700 dark:text-red-400',
-                    !isGood && !isPending && !isBad && 'text-muted-foreground'
-                )}
-            >
-                {status}
-            </Text>
-        </View>
-    );
-};
-
 /* ── Main screen ────────────────────────────────────────────────────────────── */
 const WorkerDossier: React.FC = () => {
-    const { userId, startDate, endDate } = useLocalSearchParams<{
+    const { userId, workerName, startDate, endDate } = useLocalSearchParams<{
         userId: string;
         workerName?: string;
         startDate?: string;
@@ -156,10 +137,10 @@ const WorkerDossier: React.FC = () => {
 
     const attendanceSegments = att?.summary
         ? [
-              { label: 'Present', value: att.summary.present ?? 0, color: THEME_CONFIG.success },
-              { label: 'Late', value: att.summary.late ?? 0, color: THEME_CONFIG.warning },
-              { label: 'Absent', value: att.summary.absent ?? 0, color: THEME_CONFIG.error },
-          ]
+            { label: 'Present', value: att.summary.present ?? 0, color: THEME_CONFIG.success },
+            { label: 'Late', value: att.summary.late ?? 0, color: THEME_CONFIG.warning },
+            { label: 'Absent', value: att.summary.absent ?? 0, color: THEME_CONFIG.error },
+        ]
         : [];
 
     const pendingPermissions = (data?.permissions ?? []).filter(p => p.status.toLowerCase() === 'pending').length;
@@ -194,14 +175,18 @@ const WorkerDossier: React.FC = () => {
                         {/* ── Sticky header region (profile + contact + info) ──── */}
                         <View className="px-4 pt-4 gap-4">
                             {/* Profile */}
-                            <View className="items-center gap-3">
+                            <View className="items-center gap-6">
                                 <AvatarComponent
-                                    alt={w.name}
-                                    imageUrl={w.photo ?? AVATAR_FALLBACK}
+                                    alt={w.lastName}
+                                    firstName={w.firstName}
+                                    lastName={w.lastName}
+                                    imageUrl={w.pictureUrl ?? AVATAR_FALLBACK}
                                     className="!w-20 !h-20"
                                 />
-                                <View className="items-center gap-1">
-                                    <Text className="text-xl font-bold text-foreground text-center">{w.name}</Text>
+                                <View className="items-center gap-2 justify-center">
+                                    <Text className="text-xl font-bold text-foreground text-center">
+                                        {`${w.firstName} ${w.lastName}`.trim() || workerName}
+                                    </Text>
                                     {w.departments?.primary?.departmentName && (
                                         <Text className="text-sm text-muted-foreground text-center">
                                             {w.departments.primary.departmentName}
@@ -210,7 +195,9 @@ const WorkerDossier: React.FC = () => {
                                                 : ''}
                                         </Text>
                                     )}
-                                    <RatePill rate={att?.summary?.rate} />
+                                    <View className="flex-row items-center">
+                                        <RatePill rate={att?.summary?.rate} />
+                                    </View>
                                 </View>
                             </View>
 
@@ -220,7 +207,7 @@ const WorkerDossier: React.FC = () => {
                                     <AlertTriangle size={20} color={THEME_CONFIG.error} />
                                     <View className="flex-1">
                                         <Text className="text-sm font-bold text-red-700 dark:text-red-400">At Risk</Text>
-                                        <Text className="!text-[12px] text-red-600 dark:text-red-500">
+                                        <Text className="!text-[12px] line-clamp-none text-red-600 dark:text-red-500">
                                             Attendance rate below 50% — pastoral follow-up recommended.
                                         </Text>
                                     </View>
@@ -242,9 +229,9 @@ const WorkerDossier: React.FC = () => {
                                         icon: <Briefcase size={15} color={THEME_CONFIG.lightGray} />,
                                         label: w.occupation,
                                     },
-                                    w.memberSince && {
+                                    w.birthDay && {
                                         icon: <Calendar size={15} color={THEME_CONFIG.lightGray} />,
-                                        label: `Member since ${dayjs(w.memberSince).format('MMM YYYY')}`,
+                                        label: `Born ${dayjs(w.birthDay).format('D MMM YYYY')}`,
                                     },
                                 ]
                                     .filter(Boolean)
@@ -394,26 +381,20 @@ const WorkerDossier: React.FC = () => {
                                 <SectionCard>
                                     {data.permissions.length ? (
                                         <View className="gap-0">
-                                            {data.permissions.map((p, i) => (
-                                                <React.Fragment key={p.permissionId}>
-                                                    {i > 0 && <Separator />}
-                                                    <View className="py-3 gap-1.5">
-                                                        <View className="flex-row items-center justify-between gap-2">
-                                                            <Text className="text-sm font-semibold text-foreground flex-1">
-                                                                {p.category}
-                                                            </Text>
-                                                            <StatusBadge status={p.status} />
-                                                        </View>
-                                                        {!!p.reason && (
-                                                            <Text className="text-sm text-muted-foreground line-clamp-none">
-                                                                {p.reason}
-                                                            </Text>
-                                                        )}
-                                                        <Text className="!text-[11px] text-muted-foreground">
-                                                            {dayjs(p.createdAt).format('D MMM YYYY')}
+                                            {data.permissions.map((p, i) => (<React.Fragment key={p.permissionId}>
+                                                {i > 0 && <Separator />}
+                                                <View className="py-2 gap-1.5">
+                                                    <View className="flex-row items-center justify-between gap-2">
+                                                        <Text className="text-base font-semibold text-foreground flex-1">
+                                                            {p.category}
                                                         </Text>
+                                                        <StatusTag>{p.status}</StatusTag>
                                                     </View>
-                                                </React.Fragment>
+                                                    <Text className="text-sm text-muted-foreground">
+                                                        {dayjs.unix((p.startDate)).format('D MMM YYYY')} - {dayjs.unix((p.endDate)).format('D MMM YYYY')}
+                                                    </Text>
+                                                </View>
+                                            </React.Fragment>
                                             ))}
                                         </View>
                                     ) : (
@@ -432,17 +413,18 @@ const WorkerDossier: React.FC = () => {
                                                     {i > 0 && <Separator />}
                                                     <View className="py-3 gap-1.5">
                                                         <View className="flex-row items-center justify-between gap-2">
-                                                            <Text className="text-sm font-semibold text-foreground flex-1">
-                                                                {t.category}
+                                                            <Text className="text-base font-semibold text-foreground flex-1">
+                                                                {t.category || '—'}
                                                             </Text>
-                                                            <StatusBadge status={t.status} />
+                                                            <StatusTag>{t.status}</StatusTag>
                                                         </View>
-                                                        <Text className="!text-[11px] text-muted-foreground">
-                                                            {dayjs(t.createdAt).format('D MMM YYYY')}
+                                                        <Text className="text-sm text-muted-foreground">
+                                                            {dayjs.unix(Number(t.createdAt)).format('D MMM YYYY')}
                                                         </Text>
                                                     </View>
                                                 </React.Fragment>
-                                            ))}
+                                            )
+                                            )}
                                         </View>
                                     ) : (
                                         <SectionEmpty message="No tickets on record." />
