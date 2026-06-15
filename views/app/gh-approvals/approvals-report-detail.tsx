@@ -110,7 +110,10 @@ const ApprovalsReportDetail: React.FC = () => {
     const [transition, { isLoading: isTransitioning }] = useTransitionReportMutation();
 
     const reportStatus = (detail?.status ?? status) as IReportStatus;
-    const actions = useMemo(() => actionsFor(reportStatus, role), [reportStatus, role]);
+    const actions = useMemo(
+        () => actionsFor(reportStatus, role, detail?.awaitingRole),
+        [reportStatus, role, detail?.awaitingRole]
+    );
 
     // Resolve the report fields and type defensively: the backend may nest the
     // doc under `reportData`/`report`, return it flat on the detail object, or

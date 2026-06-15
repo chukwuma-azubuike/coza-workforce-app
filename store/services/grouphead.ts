@@ -1,5 +1,5 @@
 import { IGHSubmittedReportForGSP, IReviewHistoryEntry, IGHRosterMember } from '../types/index';
-import type { IGHGroupDepartment, IGHReportListResponse } from '../types/index';
+import type { IGHGroupDepartment, IGHReportListResponse, AwaitingRole } from '../types/index';
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { IDefaultResponse, IService, IReportStatus, REST_API_VERBS } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -47,6 +47,7 @@ export interface IGHReportDetail<TReportData = Record<string, any>> {
     reportId: string;
     reportType: string;
     status: IReportStatus;
+    awaitingRole?: AwaitingRole;
     reportData: TReportData;
     reviewHistory: IReviewHistoryEntry[];
     departmentName: string;
@@ -72,6 +73,7 @@ export interface IGHTransitionPayload {
 
 export interface IGHTransitionResponse {
     status: IReportStatus;
+    awaitingRole?: AwaitingRole;
     reviewHistory: IReviewHistoryEntry[];
 }
 
@@ -120,6 +122,29 @@ export const groupHeadServiceSlice = createApi({
         >({
             query: params => ({
                 url: `/${SERVICE_URL}/reports`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            providesTags: result => [
+                ...(result?.reports ?? []).map(r => ({ type: 'GHReport' as const, id: r.reportId ?? r._id })),
+                'GHReport',
+            ],
+            transformResponse: (res: IDefaultResponse<IGHReportListResponse>) => res?.data,
+        }),
+
+        // ─── Campus Pastor report queue (v2.1) ────────────────────────
+        // GET /gh/campus/:campusId/reports — every department report for a campus
+        // across all statuses. CPs/coordinators are server-scoped to their own
+        // campus (a foreign campusId returns 403). Filter the result on
+        // `awaitingRole === 'CAMPUS_PASTOR'` to surface what needs CP action — this
+        // covers both the normal path (GH_APPROVED) and the headless path
+        // (HOD_SUBMITTED, no Group Head) without the client knowing which is which.
+        getCampusReports: endpoint.query<
+            IGHReportListResponse,
+            { campusId: string; serviceId?: string; page?: number; limit?: number }
+        >({
+            query: ({ campusId, ...params }) => ({
+                url: `/${SERVICE_URL}/campus/${campusId}/reports`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
@@ -244,6 +269,7 @@ export const groupHeadServiceSlice = createApi({
 // Use exported hook in relevant components
 export const {
     useGetGhReportsQuery,
+    useGetCampusReportsQuery,
     useGetGhReportByIdQuery,
     useGetGHSubmittedReportsByServiceIdQuery,
     useGetGhReportDetailQuery,

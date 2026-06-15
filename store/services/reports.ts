@@ -18,6 +18,7 @@ import {
     IDepartmentReportResponse,
     IService,
     IReportStatus,
+    AwaitingRole,
     REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -90,12 +91,14 @@ export interface ICampusReportSummary<R = unknown> {
     departmentalReport: {
         campus: string;
         status: IReportStatus;
+        awaitingRole?: AwaitingRole;
         departmentName: string;
         report: {
             _id: string;
             departmentId: string;
             serviceId: string;
             status: IReportStatus;
+            awaitingRole?: AwaitingRole;
         } & R;
     }[];
     incidentReport: {

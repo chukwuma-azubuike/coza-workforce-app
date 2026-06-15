@@ -155,6 +155,7 @@ const WittyReport: React.FC = () => {
                         reportId={params?._id}
                         reportType={reportType}
                         status={status}
+                        awaitingRole={(params as any)?.awaitingRole}
                         ghComment={(params as any)?.ghComment}
                         pastorComment={(params as any)?.pastorComment}
                         gspComment={(params as any)?.gspComment}

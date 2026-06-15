@@ -9,13 +9,17 @@ import ReportCommentSheet from '@components/composite/report-comment-sheet';
 import useRole from '@hooks/role';
 import useModal from '@hooks/modal/useModal';
 import { useTransitionReportMutation } from '@store/services/grouphead';
-import { IReportStatus } from '@store/types';
-import { actionsFor, makeIdempotencyKey, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
+import { IReportStatus, AwaitingRole } from '@store/types';
+import { actionsFor, isGhTierSkipped, makeIdempotencyKey, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
 
 interface ReportWorkflowActionsProps {
     reportId?: string;
     reportType?: string;
     status?: IReportStatus | string;
+    // Backend-authoritative role this report is waiting on. Drives the headless-GH
+    // path (CP acts at HOD_SUBMITTED when a department has no Group Head). Absent
+    // pre-rollout → normal flow.
+    awaitingRole?: AwaitingRole;
     // Latest note per stage, surfaced to the reviewing role for context.
     ghComment?: string | null;
     pastorComment?: string | null;
@@ -38,6 +42,7 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
     reportId,
     reportType,
     status,
+    awaitingRole,
     ghComment,
     pastorComment,
     gspComment,
@@ -49,7 +54,8 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
     const [pendingCommentAction, setPendingCommentAction] = useState<ReportAction | null>(null);
     const [transition, { isLoading }] = useTransitionReportMutation();
 
-    const actions = useMemo(() => actionsFor(status as IReportStatus, role), [status, role]);
+    const actions = useMemo(() => actionsFor(status as IReportStatus, role, awaitingRole), [status, role, awaitingRole]);
+    const ghSkipped = isGhTierSkipped(status, awaitingRole);
 
     const isReviewer = role === 'CAMPUS_PASTOR' || role === 'GSP';
     const isHodLike = role === 'HOD' || role === 'AHOD';
@@ -109,6 +115,15 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
 
     return (
         <View className="gap-4">
+            {ghSkipped && (
+                <View className="flex-row items-center gap-2 rounded-2xl border border-border bg-muted-background px-4 py-3">
+                    <Ionicons name="information-circle-outline" size={16} color="#71717a" />
+                    <Text className="!text-[12px] text-muted-foreground leading-snug flex-1">
+                        This department has no Group Head — it's reviewed directly by the Campus Pastor.
+                    </Text>
+                </View>
+            )}
+
             {noteForRole && <NoteCard label={noteForRole.label} comment={noteForRole.comment} />}
 
             {actions.length > 0 && (

@@ -1,4 +1,4 @@
-import { IReportStatus } from '@store/types';
+import { IReportStatus, AwaitingRole } from '@store/types';
 import { extractApiError } from '@utils/index';
 
 // ─── Logical roles ──────────────────────────────────────────────────────────
@@ -55,9 +55,45 @@ export const ACTIONS: Partial<Record<IReportStatus, Partial<Record<LogicalRole, 
     [IReportStatus.GSP_APPROVED]: {}, // terminal — no actions
 };
 
-export function actionsFor(status: IReportStatus | string | undefined, role: LogicalRole | null): ReportAction[] {
+// ─── Headless-GH routing (no Group Head) ──────────────────────────────────────
+// When a department has no active Group Head the backend collapses the GH tier and
+// the Campus Pastor becomes the first reviewer. The transitions differ from the
+// normal table (Approve jumps straight to CP_APPROVED; a returned report comes
+// back to the HOD, not a non-existent GH), so these entries REPLACE — not merge
+// with — the normal entries for the two affected statuses. We detect the skip from
+// the report's backend-authoritative `awaitingRole`, never from group membership.
+const SKIPPED_GH_ACTIONS: Partial<Record<IReportStatus, Partial<Record<LogicalRole, ReportAction[]>>>> = {
+    [IReportStatus.HOD_SUBMITTED]: {
+        CAMPUS_PASTOR: [
+            { label: 'Approve', toStatus: IReportStatus.CP_APPROVED, requireComment: false, variant: 'approve' },
+            { label: 'Request changes', toStatus: IReportStatus.CP_CHANGE_REQUESTED, requireComment: true, variant: 'reject' },
+        ],
+    },
+    [IReportStatus.CP_CHANGE_REQUESTED]: {
+        HOD: [{ label: 'Resubmit', toStatus: IReportStatus.HOD_SUBMITTED, requireComment: false, variant: 'approve' }],
+        AHOD: [{ label: 'Resubmit', toStatus: IReportStatus.HOD_SUBMITTED, requireComment: false, variant: 'approve' }],
+    },
+};
+
+// True when the GH tier was skipped for this report — i.e. the report is awaiting a
+// role that the normal table doesn't serve at this status. `awaitingRole` is the
+// backend's source of truth; when it's absent (pre-rollout) this is always false so
+// every report reads as normal-flow and nothing changes.
+export function isGhTierSkipped(status: IReportStatus | string | undefined, awaitingRole?: AwaitingRole): boolean {
+    return (
+        (status === IReportStatus.HOD_SUBMITTED && awaitingRole === 'CAMPUS_PASTOR') ||
+        (status === IReportStatus.CP_CHANGE_REQUESTED && awaitingRole === 'HOD')
+    );
+}
+
+export function actionsFor(
+    status: IReportStatus | string | undefined,
+    role: LogicalRole | null,
+    awaitingRole?: AwaitingRole
+): ReportAction[] {
     if (!status || !role) return [];
-    return ACTIONS[status as IReportStatus]?.[role] ?? [];
+    const table = isGhTierSkipped(status, awaitingRole) ? SKIPPED_GH_ACTIONS : ACTIONS;
+    return table[status as IReportStatus]?.[role] ?? [];
 }
 
 // ─── Role flag → logical role ───────────────────────────────────────────────

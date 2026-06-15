@@ -137,6 +137,15 @@ export const LEGACY_TO_V2_STATUS: Record<string, IReportStatus> = {
     REVIEW_REQUESTED: IReportStatus.GH_CHANGE_REQUESTED,
 };
 
+// ─── Headless-GH routing (v2.1) ───────────────────────────────────────────────
+// The role a report is currently waiting on. Backend-authoritative — use this as
+// the single source of truth for who can act, never re-derive it from group
+// membership or status. `null` means terminal (GSP_APPROVED). When a department
+// has no active Group Head the backend collapses the GH tier, so a HOD_SUBMITTED
+// report can carry `awaitingRole: 'CAMPUS_PASTOR'` and a CP_CHANGE_REQUESTED one
+// can carry `awaitingRole: 'HOD'`.
+export type AwaitingRole = 'HOD' | 'GROUP_HEAD' | 'CAMPUS_PASTOR' | 'GSP' | null;
+
 // Authentication
 export interface IAuthParams extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     password: string;
@@ -946,6 +955,7 @@ export interface IGHReportListItem {
     departmentName: string;
     campusName?: string;
     status: IReportStatus;
+    awaitingRole?: AwaitingRole;
     submittedBy?: { firstName: string; lastName: string; pictureUrl?: string };
     submittedAt: string;
     serviceTime: string;
