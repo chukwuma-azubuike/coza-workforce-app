@@ -89,7 +89,7 @@ export const GuestRow: React.FC<{
                     {!isOwn && (
                         <View className="absolute -bottom-4 right-4 flex-row items-center gap-2 text-foreground flex-1 justify-center">
                             <Icon type="feather" size={12} name="clock" color={THEME_CONFIG.blue} />
-                            <Text className="text-base">
+                            <Text className="text-sm">
                                 {daysSinceContact === null
                                     ? 'No contact'
                                     : daysSinceContact === 0

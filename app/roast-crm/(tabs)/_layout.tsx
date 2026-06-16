@@ -98,11 +98,11 @@ const TabLayout: React.FC = () => {
         () =>
             tabRoutes.filter(
                 route =>
-                    route.users.includes('all') ||
-                    route.users.includes(role as string) ||
-                    (route.departments.includes(user?.department.departmentName as string) &&
-                        route.departmentUsers.includes(role as string))
-            ),
+                    route?.users?.includes('all') ||
+                    route?.users?.includes(role as string) ||
+                    (route?.departments?.includes(user?.department?.departmentName as string) &&
+                        route?.departmentUsers?.includes(role as string))
+            ) ?? [],
         [tabRoutes, role]
     );
 

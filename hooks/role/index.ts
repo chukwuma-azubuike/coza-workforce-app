@@ -82,6 +82,57 @@ export enum DEPARTMENTS {
     protocol = 'Protocol',
 }
 
+const ROAST_ALPHA_TESTERS = [
+    'samueldaniels501@gmail.com',
+    'seun4olaku@gmail.com',
+    'oyinkansolaabifarin@gmail.com',
+    'tomiwasotubo@gmail.com',
+    'bamideleristch@gmail.com',
+    'gazagodiyajoy@gmail.com',
+    'jeldi2000@yahoo.com',
+    'dthreeng@yahoo.com',
+    'shegcyus@yahoo.com',
+    'badewumi2015@gmail.com',
+    'ov.ademola@gmail.com',
+    'ajibikeolamide1@gmail.com',
+    'kristeyshaydesigns@gmail.com',
+    'abiwopelumi@gmail.com',
+    'ijeomaserena@gmail.com',
+    'adelekeola2017@gmail.com',
+    'tabithaaoye@gmail.com',
+    'keazort@gmail.com',
+    'abbeyrotimi86@gmail.com',
+    'ichullblessing@gmail.com',
+    'abexkem85@gmail.com',
+    'charitykalu825@gmail.com',
+    'oyindamolaoketola@gmail.com',
+    'mos4luv@yahoo.com',
+    'danieltofunmi21@gmail.com',
+    'praised314@gmail.com',
+    'bestyole9@gmail.com',
+    'graciaubi@gmail.com',
+    'toydonduke@gmail.com',
+    'samuelayomide889@gmail.com',
+    'olafab@yahoo.com',
+    'olayinks7@gmail.com',
+    'rallylawalson@gmail.com',
+    'mfon.peter418@gmail.com',
+    'funmilayomoses19@gmail.com',
+    'suzanneojeifoidris@gmail.com',
+    'pojosonia91@gmail.com',
+    'adeyemotemitope1@gmail.com',
+    'lolaajiboyejones@gmail.com',
+    'preciousoguntona@gmail.com',
+    'princehollarmedey@gmail.com',
+    'magdaleneeyo1999@gmail.com',
+    'ehixgux@gmail.com',
+    'chiomajaneonyema@gmail.com',
+    'oreofebeloved@gmail.com',
+    'pastorflow@yahoo.com',
+    'soflarity@hotmail.com',
+    'chukwumaazubuike@gmail.com'
+];
+
 const useRole = () => {
     const dispatch = useAppDispatch();
     const storedUser = useAppSelector(userSelectors.selectCurrentUser);
@@ -155,6 +206,11 @@ const useRole = () => {
         }
     }, [latestUser]);
 
+    const isAlphaTester = React.useMemo(
+        () => (currentUser?.email ? ROAST_ALPHA_TESTERS.includes(currentUser?.email) : null),
+        [currentUser?.email]
+    );
+
     return {
         // User Object
         user: {
@@ -205,6 +261,9 @@ const useRole = () => {
 
         // Role Creation
         rolesPermittedToCreate,
+
+        // Alpha Testers
+        isAlphaTester,
     };
 };
 

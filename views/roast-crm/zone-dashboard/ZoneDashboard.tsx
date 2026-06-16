@@ -258,7 +258,8 @@ const ZoneDashboard: React.FC = () => {
                         </View>
                         <View className="flex-row items-start gap-4">
                             {/* Campus Selector */}
-                            {!hasZoneRights && (
+                            {/* TODO: Restore on full roll out */}
+                            {/* {!hasZoneRights && (
                                 <View className="flex-1">
                                     <PickerSelect
                                         valueKey="_id"
@@ -271,7 +272,7 @@ const ZoneDashboard: React.FC = () => {
                                         items={campuses}
                                     />
                                 </View>
-                            )}
+                            )} */}
 
                             {/* Zone Selector */}
                             <View className="flex-1">
