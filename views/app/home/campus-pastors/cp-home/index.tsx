@@ -202,7 +202,7 @@ const CPHome: React.FC<CPHomeProps> = ({
                         <View className="gap-3">
                             <View className="flex-row items-center justify-between">
                                 <Text className="font-semibold">Department Reports</Text>
-                                <TouchableOpacity
+                                {deptReports.length > 0 && <TouchableOpacity
                                     activeOpacity={0.6}
                                     onPress={() =>
                                         router.push({
@@ -214,7 +214,7 @@ const CPHome: React.FC<CPHomeProps> = ({
                                 >
                                     <Text className="text-base text-primary font-medium">View full report</Text>
                                     <Ionicons name="open-outline" size={20} color={THEME_CONFIG.primary} />
-                                </TouchableOpacity>
+                                </TouchableOpacity>}
                             </View>
 
                             {summaryLoading ? (
