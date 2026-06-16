@@ -114,7 +114,7 @@ const CampusReportDetails: React.FC<ICampusReportPayload> = ({ serviceId, campus
             <DepartmentReportListRow
                 {...item}
                 campusId={campusId ?? item.campusId}
-                serviceId={serviceId ?? item.serviceId}
+                serviceId={item.serviceId ?? serviceId}
             />
         ),
         [serviceId, campusId]

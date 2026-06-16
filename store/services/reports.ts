@@ -529,8 +529,7 @@ export const reportsServiceSlice = createApi({
 
             providesTags: (_result, _error, { campusId }) => [{ type: 'CampusReport', id: campusId }, SERVICE_URL],
 
-            transformResponse: (res: IDefaultResponse<ICampusReportList>) =>
-                res?.data.filter(report => report.serviceTime <= new Date().getTime()), // Filter out services later than same day
+            transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
         }),
 
         getGlobalReportList: endpoint.query<IGlobalReportList, IGlobalReportListPayload>({
