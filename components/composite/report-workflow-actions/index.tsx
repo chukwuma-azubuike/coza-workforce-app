@@ -42,7 +42,7 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
     reportId,
     reportType,
     status,
-    awaitingRole,
+    awaitingRole = 'CAMPUS_PASTOR', // TODO: fallback to CP in the interim until backend sends awaitingRole
     ghComment,
     pastorComment,
     gspComment,
@@ -108,17 +108,17 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
         role === 'CAMPUS_PASTOR' && status === IReportStatus.GSP_CHANGE_REQUESTED && gspComment
             ? { label: 'GSP requested changes', comment: gspComment }
             : role === 'GSP' && pastorComment
-              ? { label: 'Campus Pastor note', comment: pastorComment }
-              : ghComment && role === 'CAMPUS_PASTOR'
-                ? { label: 'Group Head note', comment: ghComment }
-                : null;
+                ? { label: 'Campus Pastor note', comment: pastorComment }
+                : ghComment && role === 'CAMPUS_PASTOR'
+                    ? { label: 'Group Head note', comment: ghComment }
+                    : null;
 
     return (
         <View className="gap-4">
             {ghSkipped && (
                 <View className="flex-row items-center gap-2 rounded-2xl border border-border bg-muted-background px-4 py-3">
                     <Ionicons name="information-circle-outline" size={16} color="#71717a" />
-                    <Text className="!text-[12px] text-muted-foreground leading-snug flex-1">
+                    <Text className="!text-[12px] text-muted-foreground leading-snug flex-1 line-clamp-none">
                         This department has no Group Head — it's reviewed directly by the Campus Pastor.
                     </Text>
                 </View>
