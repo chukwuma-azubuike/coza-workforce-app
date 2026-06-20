@@ -44,9 +44,12 @@ export const DepartmentReportListRow: React.FC<
     Pick<IReportFormProps, 'updatedAt' | 'createdAt' | 'status'> & { departmentName?: string; logicalRole?: ReturnType<typeof toLogicalRole> }
 > = React.memo(({ departmentName, logicalRole, ...props }) => {
         const handlePress = useCallback(() => {
+            // departmentName is destructured above for the route lookup — re-attach it
+            // so the destination form still receives it (used by resolveReportType()).
+            const reportData = { ...props, departmentName };
             router.push({
                 pathname: `/reports/${ReportRouteIndex[departmentName ?? '']}` as any,
-                params: NESTED_PARAM_DEPTS.has(departmentName ?? '') ? { data: JSON.stringify(props) } : props,
+                params: NESTED_PARAM_DEPTS.has(departmentName ?? '') ? { data: JSON.stringify(reportData) } : reportData,
             });
         }, [props, departmentName]);
 
