@@ -42,7 +42,7 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
     reportId,
     reportType,
     status,
-    awaitingRole = 'CAMPUS_PASTOR', // TODO: fallback to CP in the interim until backend sends awaitingRole
+    awaitingRole,
     ghComment,
     pastorComment,
     gspComment,

@@ -112,6 +112,7 @@ export interface ICampusReportSummary<R = unknown> {
 export interface IDepartmentReportListById {
     _id: string;
     status: IStatus;
+    awaitingRole?: AwaitingRole;
     createdAt: string;
     updatedAt: string;
     updatedBy: string;

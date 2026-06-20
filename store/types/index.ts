@@ -766,6 +766,11 @@ export interface IDepartmentReportResponse {
         departmentName: string;
         report: {
             _id: string;
+            status?: IReportStatus;
+            awaitingRole?: AwaitingRole;
+            ghComment?: string | null;
+            pastorComment?: string | null;
+            gspComment?: string | null;
         };
     };
     incidentReport: unknown[];

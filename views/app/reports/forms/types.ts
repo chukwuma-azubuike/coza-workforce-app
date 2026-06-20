@@ -1,7 +1,10 @@
 import { ICampus, IDepartment, IDepartmentReportResponse, ILog, IReportStatus, IService, IUser } from '@store/types';
 import { IStatus } from '@store/types';
 
-export type IReportFormProps = Pick<IDepartmentReportResponse['departmentalReport']['report'], '_id'> &
+export type IReportFormProps = Pick<
+    IDepartmentReportResponse['departmentalReport']['report'],
+    '_id' | 'awaitingRole' | 'ghComment' | 'gspComment'
+> &
     ILog & {
         departmentName: IDepartment['departmentName'];
         departmentId: IDepartment['_id'];
