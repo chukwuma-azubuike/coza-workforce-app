@@ -177,3 +177,26 @@ export const DEPARTMENT_TO_REPORT_TYPE: Record<string, string> = {
 export function resolveReportType(params: { reportType?: string; departmentName?: string }): string | undefined {
     return params.reportType ?? (params.departmentName ? DEPARTMENT_TO_REPORT_TYPE[params.departmentName] : undefined);
 }
+
+// ─── Canonical report-pipeline departments (backend-validated) ──────────────
+// The backend only accepts these exact `departmentName` spellings (case-sensitive)
+// for departments that participate in the HOD→GH→CP→GSP pipeline, and pairs each
+// 1:1 with a `reportType` enum value accepted by createDepartment/updateDepartment.
+// Use this — not DEPARTMENT_TO_REPORT_TYPE above — as the source of truth when
+// creating/editing a department, so the name can never drift from what the
+// backend will actually seed reports for. ("Digital Surveillance Security" is a
+// pre-existing department name that predates this validated list — see
+// DEPARTMENT_TO_REPORT_TYPE — and is intentionally NOT offered here for new departments.)
+export const REPORT_PIPELINE_DEPARTMENTS: { departmentName: string; reportType: string }[] = [
+    { departmentName: 'Children Ministry', reportType: 'ChildCareReport' },
+    { departmentName: 'Ushery Board', reportType: 'AttendanceReport' },
+    { departmentName: 'PCU', reportType: 'GuestReport' },
+    { departmentName: 'Traffic & Security', reportType: 'SecurityReport' },
+    { departmentName: 'COZA Transfer Service', reportType: 'TransferReport' },
+    { departmentName: 'Programme Coordination', reportType: 'ServiceReport' },
+    { departmentName: 'COZA Internship', reportType: 'InternshipReport' },
+    { departmentName: 'Welfare and Special Needs Assignment', reportType: 'WelfareReport' },
+    { departmentName: 'Witty Inventions', reportType: 'WittyReport' },
+    { departmentName: 'Public Relations Unit (PRU)', reportType: 'PruReport' },
+    { departmentName: 'Protocol', reportType: 'ProtocolReport' },
+];

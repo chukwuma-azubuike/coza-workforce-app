@@ -234,6 +234,9 @@ export interface ICreateDepartmentPayload {
     name: string;
     campusId: string;
     description: string;
+    // One of the backend's validated report-type enums. Omit for departments that
+    // don't participate in the HOD→GH→CP→GSP report pipeline.
+    reportType?: string;
 }
 
 export interface IReAssignUserPayload {
@@ -425,6 +428,9 @@ export interface IDepartment {
     description: string;
     createdAt: string;
     __v: number;
+    // Authoritative signal report-seeding reads first. Absent for departments
+    // outside the HOD→GH→CP→GSP report pipeline.
+    reportType?: string;
 }
 
 // Campus
@@ -496,6 +502,9 @@ export interface IDepartment {
     description: string;
     createdAt: string;
     __v: number;
+    // Authoritative signal report-seeding reads first. Absent for departments
+    // outside the HOD→GH→CP→GSP report pipeline.
+    reportType?: string;
 }
 
 export interface IGHDepartment {
