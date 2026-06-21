@@ -3,7 +3,7 @@ import { IStatus } from '@store/types';
 
 export type IReportFormProps = Pick<
     IDepartmentReportResponse['departmentalReport']['report'],
-    '_id' | 'awaitingRole' | 'ghComment' | 'gspComment'
+    '_id' | 'awaitingRole' | 'ghComment' | 'gspComment' | 'reviewHistory'
 > &
     ILog & {
         departmentName: IDepartment['departmentName'];

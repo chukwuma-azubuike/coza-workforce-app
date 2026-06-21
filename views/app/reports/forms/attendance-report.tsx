@@ -49,7 +49,7 @@ const AttendanceReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
         >
             {({ handleChange, handleSubmit, values, setFieldValue }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Attendance">
                         <NumberField
                             label="Number of male guests"

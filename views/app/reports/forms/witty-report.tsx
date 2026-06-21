@@ -65,7 +65,7 @@ const WittyReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IWittyReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Online reach">
                         <NumberField
                             label="Online first timers"

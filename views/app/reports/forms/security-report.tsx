@@ -74,7 +74,7 @@ const SecurityReport: React.FC = () => {
             initialValues={securityReport || INITIAL_VALUES}
         >
             {({ handleChange, handleSubmit, values, setFieldValue }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Car parks">
                         <FieldArray
                             name="locations"

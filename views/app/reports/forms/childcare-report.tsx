@@ -69,7 +69,7 @@ const ChildcareReport: React.FC = () => {
             initialValues={INITIAL_VALUES}
         >
             {({ handleChange, values, handleSubmit, setFieldValue }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Children present">
                         {/* header */}
                         <View className="flex-row items-center gap-3">

@@ -43,7 +43,7 @@ const WelfareReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IWelfareReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Medical support">
                         <NumberField
                             label="People given medical support"

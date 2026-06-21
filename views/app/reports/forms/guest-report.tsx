@@ -40,7 +40,7 @@ const GuestReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IGuestReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Guests">
                         <NumberField
                             label="Number of first timers"

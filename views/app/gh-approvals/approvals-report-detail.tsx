@@ -14,6 +14,7 @@ import AvatarComponent from '@components/atoms/avatar';
 import ReportStatusPill from '@components/composite/report-status-pill';
 import ReportCommentSheet from '@components/composite/report-comment-sheet';
 import CpReturnBanner from '@components/composite/cp-return-banner';
+import ReviewHistory from '@components/composite/review-history';
 import ReportDataView from '@components/composite/report-views';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { getReportStatusMeta } from '@constants/report-status';
@@ -38,52 +39,6 @@ const SectionLabel: React.FC<{ children: string }> = ({ children }) => (
     <Text className="!text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{children}</Text>
 );
 
-const HISTORY_ROLE_LABELS: Record<string, string> = {
-    HOD: 'Head of Department',
-    AHOD: 'Asst. HOD',
-    GH: 'Group Head',
-    CP: 'Campus Pastor',
-    GSP: 'Global Senior Pastor',
-};
-
-const HISTORY_ACTION_LABELS: Record<string, string> = {
-    SUBMIT: 'Submitted report',
-    APPROVE: 'Approved',
-    CHANGE_REQUESTED: 'Requested changes',
-};
-
-const humanize = (key: string): string =>
-    key
-        .replace(/([A-Z])/g, ' $1')
-        .replace(/[_-]+/g, ' ')
-        .replace(/\b\w/g, c => c.toUpperCase())
-        .trim();
-
-const HistoryRow: React.FC<{ entry: IReviewHistoryEntry; isLast: boolean }> = ({ entry, isLast }) => (
-    <View className="flex-row gap-3">
-        <View className="items-center">
-            <View className="w-8 h-8 rounded-full bg-secondary items-center justify-center">
-                <Ionicons name="person-outline" size={14} color="#71717a" />
-            </View>
-            {!isLast && <View className="w-0.5 flex-1 bg-border mt-1" />}
-        </View>
-        <View className="flex-1 pb-4 gap-0.5">
-            <Text className="text-sm font-semibold text-foreground">
-                {HISTORY_ROLE_LABELS[entry.actorRole] ?? entry.actorRole}
-            </Text>
-            <Text className="text-sm leading-8 text-muted-foreground">{dayjs(entry.timestamp).fromNow()}</Text>
-            <Text className="text-sm leading-8 text-foreground mt-1">
-                {HISTORY_ACTION_LABELS[entry.action] ?? humanize(entry.action)}
-            </Text>
-            {entry.comment ? (
-                <View className="mt-1.5 bg-secondary rounded-xl px-3 py-2">
-                    <Text className="text-sm text-foreground leading-snug">"{entry.comment}"</Text>
-                </View>
-            ) : null}
-        </View>
-    </View>
-);
-
 const CommentCard: React.FC<{ label: string; comment: string }> = ({ label, comment }) => (
     <Card className="p-4 gap-1.5">
         <SectionLabel>{label}</SectionLabel>
@@ -99,7 +54,6 @@ const ApprovalsReportDetail: React.FC = () => {
     const role = toLogicalRole({ isHOD, isAHOD, isGroupHead, isCampusPastor, isGSP });
 
     const [pendingCommentAction, setPendingCommentAction] = useState<ReportAction | null>(null);
-    const [showHistory, setShowHistory] = useState(false);
     const [doneStatus, setDoneStatus] = useState<IReportStatus | null>(null);
 
     const { data: detail, isLoading, refetch } = useGetGhReportDetailQuery(
@@ -131,8 +85,6 @@ const ApprovalsReportDetail: React.FC = () => {
                 .find(e => e.actorRole === 'CP' && e.action === 'CHANGE_REQUESTED') ?? null
         );
     }, [reviewHistory]);
-
-    const reversedHistory = useMemo(() => [...reviewHistory].reverse(), [reviewHistory]);
 
     const runAction = async (action: ReportAction, comment?: string) => {
         try {
@@ -279,27 +231,7 @@ const ApprovalsReportDetail: React.FC = () => {
                     )}
 
                     {/* Report history */}
-                    {!isLoading && reversedHistory.length > 0 && (
-                        <Card className="px-4 gap-3">
-                            <View className="flex-row items-center justify-between">
-                                <SectionLabel>Approval history</SectionLabel>
-                                <Button variant="ghost" textClassName='!text-sm' size="sm" onPress={() => setShowHistory(h => !h)}>
-                                    {showHistory ? 'Hide' : 'Show all'}
-                                </Button>
-                            </View>
-                            {showHistory && (
-                                <View className="gap-0">
-                                    {reversedHistory.map((entry, i) => (
-                                        <HistoryRow
-                                            key={`${entry.timestamp}-${i}`}
-                                            entry={entry}
-                                            isLast={i === reversedHistory.length - 1}
-                                        />
-                                    ))}
-                                </View>
-                            )}
-                        </Card>
-                    )}
+                    {!isLoading && <ReviewHistory history={reviewHistory} />}
 
                     {/* Actions */}
                     <View className="flex-row items-center gap-2 pt-1">{renderActionBar()}</View>

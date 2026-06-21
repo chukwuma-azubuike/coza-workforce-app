@@ -780,6 +780,7 @@ export interface IDepartmentReportResponse {
             ghComment?: string | null;
             pastorComment?: string | null;
             gspComment?: string | null;
+            reviewHistory?: IReviewHistoryEntry[];
         };
     };
     incidentReport: unknown[];
@@ -948,7 +949,8 @@ export interface IGroupAuditEntry {
 // Each entry is the canonical audit record written on a report's reviewHistory[].
 // NOTE: the backend returns the actor's userId (not a display name) and a `timestamp`.
 export interface IReviewHistoryEntry {
-    action: 'SUBMIT' | 'APPROVE' | 'CHANGE_REQUESTED' | string;
+    _id?: string;
+    action: 'SUBMIT' | 'RESUBMIT' | 'APPROVE' | 'CHANGE_REQUESTED' | string;
     actor: string; // userId
     actorRole: 'HOD' | 'AHOD' | 'GH' | 'CP' | 'GSP';
     comment: string | null;

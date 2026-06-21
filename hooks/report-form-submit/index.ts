@@ -69,6 +69,10 @@ export function useReportFormSubmit(updateReport: UpdateTrigger, params: ReportF
                     reportId: params._id,
                     reportType,
                     toStatus: submitAction.toStatus,
+                    // Some report forms (welfare, pru, protocol, witty, internship) collect
+                    // a "Comment" field — carry it onto the transition so it lands in
+                    // reviewHistory, not just the report document.
+                    comment: values.comment || undefined,
                     idempotencyKey: makeIdempotencyKey(),
                 }).unwrap();
             } catch (err) {

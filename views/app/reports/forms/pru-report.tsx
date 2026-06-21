@@ -49,7 +49,7 @@ const PruReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IPruReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Desk activity">
                         {NUMERIC_FIELDS.map(field => (
                             <NumberField

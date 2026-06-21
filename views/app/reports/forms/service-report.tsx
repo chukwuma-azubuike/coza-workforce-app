@@ -50,7 +50,7 @@ const ServiceReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IServiceReportPayload}
         >
             {({ handleChange, errors, handleSubmit, values, touched }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Service times">
                         <View className="flex-row gap-3">
                             <View className="flex-1">
