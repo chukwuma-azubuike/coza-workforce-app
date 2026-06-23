@@ -81,8 +81,15 @@ const WelcomeVerifyEmail: React.FC = () => {
         const response = await validateEmail({ email, otp: +otp });
 
         if (response.data) {
+            const params = response.data as any;
             setModalVisible(false);
-            router.replace({ pathname: '/register', params: response.data as any });
+            // Defer navigation until the dialog's FadeOut exit animation (300ms)
+            // has finished. Replacing the screen while the modal is still
+            // animating out tears the native view down mid-draw and crashes
+            // Android's new architecture (Fabric dispatchGetDisplayList NPE).
+            setTimeout(() => {
+                router.replace({ pathname: '/register', params });
+            }, 500);
             return;
         }
 

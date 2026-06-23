@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { SafeAreaView } from 'react-native';
 import { ICountry } from 'react-native-international-phone-number';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router, useLocalSearchParams } from 'expo-router';
 import { IRegisterPayload } from '@store/types';
 import RegisterStepOne from './register-step-one';
@@ -8,6 +8,7 @@ import RegisterStepTwo from './register-step-two';
 import RegisterStepThree from './register-step-three';
 import RegisterStepFour from './register-step-four';
 import { RegisterFormContext } from './context';
+import { isIOS } from '@rneui/base';
 
 const STEPS: React.FC[] = [RegisterStepOne, RegisterStepTwo, RegisterStepThree, RegisterStepFour];
 
@@ -50,7 +51,7 @@ const Register: React.FC = () => {
         });
     }, []);
 
-    const ActiveStep = STEPS[currentStep];
+    const ActiveStep = STEPS[currentStep] as any;
 
     return (
         <RegisterFormContext.Provider
@@ -67,7 +68,7 @@ const Register: React.FC = () => {
                 setNextOfKinCountry,
             }}
         >
-            <SafeAreaView className="flex-1">
+            <SafeAreaView className='flex-1' edges={[isIOS ? 'bottom' : 'top']} >
                 <ActiveStep />
             </SafeAreaView>
         </RegisterFormContext.Provider>

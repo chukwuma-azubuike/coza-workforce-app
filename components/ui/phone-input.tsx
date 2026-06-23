@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import { StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import RNPhoneInput, { PhoneInputProps } from 'react-native-international-phone-number';
 
 import { cn } from '~/lib/utils';
@@ -24,6 +25,10 @@ const PhoneInput: React.FC<PhoneInputProps & { error?: string; touched?: boolean
 
     return (
         <RNPhoneInput
+            // The library's default caret is a zero-size CSS triangle (transparent
+            // borders) which crashes Android's Fabric draw pass (dispatchGetDisplayList
+            // NPE). A real glyph avoids the border-triangle render path.
+            customCaret={<Ionicons name="chevron-down" size={16} color={isDarkColorScheme ? '#F3F3F3' : '#b5b5be'} />}
             className={cn(
                 'w-full border border-input rounded-xl web:flex h-10 native:h-16 web:w-full px-3 web:py-2 text-base lg:text-sm native:text-lg native:leading-[1.25] text-foreground web:ring-offset-background file:border-0 file:bg-transparent file:font-medium web:focus-visible:outline-none web:focus-visible:ring-2 web:focus-visible:ring-ring web:focus-visible:ring-offset-2',
                 props.editable === false && 'opacity-50 web:cursor-not-allowed',
@@ -70,7 +75,7 @@ const PhoneInputStylesLight = StyleSheet.create({
     },
     callingCode: {
         fontSize: 16,
-        fontWeight: 'light',
+        fontWeight: '300',
         color: '#333',
     },
     input: {

@@ -161,7 +161,7 @@ const RegisterStepFour: React.FC = () => {
                         {!!submitError && (
                             <View className="flex-row items-start gap-2 rounded-2xl bg-destructive/10 p-3">
                                 <Ionicons name="alert-circle" size={20} color={THEME_CONFIG.error} />
-                                <Text className="flex-1 text-sm text-destructive">{submitError}</Text>
+                                <Text className="flex-1 text-sm line-clamp-none text-destructive">{submitError}</Text>
                             </View>
                         )}
                     </View>
