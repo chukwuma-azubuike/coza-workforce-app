@@ -169,6 +169,7 @@ export const GuestRow: React.FC<{
 const GuestListView: React.FC<{
     isLoading?: boolean;
     refetch: () => void;
+    total: number;
     type?: 'own' | 'zone';
     displayGuests: Guest[];
     containerHeight: number;
@@ -177,6 +178,7 @@ const GuestListView: React.FC<{
     onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
 }> = ({
     type,
+    total,
     handleViewGuest,
     refetch,
     isLoading,
@@ -204,7 +206,7 @@ const GuestListView: React.FC<{
             <View className="flex-row items-center justify-between mb-2">
                 <Text className="font-semibold">Guests</Text>
                 <Badge variant="outline">
-                    <Text className="text-base">{displayGuests?.length} guests</Text>
+                    <Text className="text-base">{total} guests</Text>
                 </Badge>
             </View>
 

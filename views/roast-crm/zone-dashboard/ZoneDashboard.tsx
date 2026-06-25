@@ -50,7 +50,7 @@ import useZoneIndex from '../hooks/use-zone-index';
 // import Error from '~/components/atoms/error';
 
 import { RefreshControl } from 'react-native';
-import { useGetCampusesQuery } from '~/store/services/campus';
+// import { useGetCampusesQuery } from '~/store/services/campus';
 
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 const AddGuestModal = React.lazy(() => import('../my-guests/AddGuest'));
@@ -116,7 +116,7 @@ const ZoneDashboard: React.FC = () => {
         { pollingInterval: 10000 }
     );
 
-    const { data: campuses = [], isLoading: loadingCampuses } = useGetCampusesQuery();
+    // const { data: campuses = [], isLoading: loadingCampuses } = useGetCampusesQuery();
     const { data: zones = [], isLoading: loadingZones } = useGetZonesQuery({
         // departmentId: hasZoneRights ? user?.department?._id : undefined, // Restrict zonal coordinators from loading other zones
         campusId: selectedCampus ?? user?.campus?._id,
@@ -199,7 +199,7 @@ const ZoneDashboard: React.FC = () => {
     const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
         try {
             await updateGuest({ _id: guestId, assimilationSubStageId });
-        } catch (error) {}
+        } catch (error) { }
     }, []);
 
     // const onDragEnd = useCallback(
@@ -360,6 +360,7 @@ const ZoneDashboard: React.FC = () => {
                         isLoading={isLoading}
                         onGuestUpdate={onGuestUpdate}
                         handleViewGuest={handleViewGuest}
+                        total={zoneDashboard?.totalGuests ?? 0}
                         containerHeight={kanbanContainerHeight}
                         displayGuests={displayGuests as Guest[]}
                         assimilationSubStages={assimilationSubStages}
