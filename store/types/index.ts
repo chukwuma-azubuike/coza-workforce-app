@@ -14,6 +14,8 @@ export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export interface IPaginationParams {
     page?: number;
     limit?: number;
+    totalPages?: number;
+    total?: number;
 }
 
 export enum ERROR {
@@ -100,6 +102,7 @@ export interface IDefaultResponse<D = unknown> {
     isError: boolean;
     isSuccessful: boolean;
     data: D;
+    pagination: IPaginationParams;
 }
 
 export interface IDefaultErrorResponse<D = null> {

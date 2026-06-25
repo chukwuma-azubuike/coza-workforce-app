@@ -19,6 +19,8 @@ import {
     useGetZoneUsersQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
+import useInfiniteData from '~/hooks/fetch-more-data/use-infinite-data';
+import type { GetGuestPayload } from '~/store/types/roast-crm';
 
 import { Text } from '~/components/ui/text';
 
@@ -109,11 +111,21 @@ const ZoneDashboard: React.FC = () => {
         refetch,
         isLoading,
         isFetching,
-        // error: guestsError,
-        data: guests = [],
-    } = useGetGuestsQuery(
-        { assignedToId: selectedWorker, search, zoneId: selectedZone ?? undefined },
-        { pollingInterval: 10000 }
+        hasNextPage,
+        fetchNextPage,
+        pagination,
+        isFetchingNextPage,
+        data: guests,
+    } = useInfiniteData<Guest, GetGuestPayload>(
+        {
+            limit: 20,
+            search,
+            assignedToId: selectedWorker,
+            zoneId: selectedZone ?? undefined,
+            assimilationSubStageId: stageFilter === 'all' ? undefined : stageFilter,
+        },
+        useGetGuestsQuery as any,
+        '_id'
     );
 
     // const { data: campuses = [], isLoading: loadingCampuses } = useGetCampusesQuery();
@@ -137,7 +149,7 @@ const ZoneDashboard: React.FC = () => {
     const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
 
     // const assimilationStageIndex = useAssimilationStageIndex();
-    // const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
+    // const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests?.data, 'assimilationSubStageId'), [guests?.data]);
     // const assimilationSubStagesIndex = useMemo(
     //     () => Object.fromEntries(assimilationSubStages?.map((stage, index) => [index, stage._id])),
     //     [assimilationSubStages]
@@ -164,37 +176,12 @@ const ZoneDashboard: React.FC = () => {
     //     [assimilationSubStages, groupedGuestsByAssimilationId]
     // );
 
-    // Filter guests by current user and search term
-    const userGuests = useMemo(
-        () =>
-            guests?.filter(guest =>
-                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase())
-            ),
-        [guests, search]
-    );
+    // Search, worker and stage filtering are applied server-side (see useInfiniteData params above),
+    // so the paginated `guests` list is already the data we render.
 
     const handleViewGuest = useCallback((guest: Guest) => {
         router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     }, []);
-
-    const getFilteredGuests = useCallback(() => {
-        let filtered = userGuests;
-
-        if (search) {
-            filtered = filtered?.filter(
-                guest =>
-                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-                    guest.phoneNumber.includes(search) ||
-                    (guest.address && guest.address.toLowerCase().includes(search.toLowerCase()))
-            );
-        }
-
-        if (stageFilter !== 'all') {
-            filtered = filtered?.filter(guest => guest.assimilationSubStageId === stageFilter);
-        }
-
-        return filtered;
-    }, [userGuests, search, stageFilter]);
 
     const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
         try {
@@ -240,7 +227,6 @@ const ZoneDashboard: React.FC = () => {
     //     router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     // }, []);
 
-    const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
     const zoneIndex = useZoneIndex();
     const selectedZoneName = zoneIndex[selectedZone as string];
@@ -358,11 +344,14 @@ const ZoneDashboard: React.FC = () => {
                         type="zone"
                         refetch={refetch}
                         isLoading={isLoading}
+                        hasNextPage={hasNextPage}
                         onGuestUpdate={onGuestUpdate}
+                        fetchNextPage={fetchNextPage}
+                        total={pagination?.total ?? 0}
                         handleViewGuest={handleViewGuest}
-                        total={zoneDashboard?.totalGuests ?? 0}
+                        displayGuests={guests as Guest[]}
+                        isFetchingNextPage={isFetchingNextPage}
                         containerHeight={kanbanContainerHeight}
-                        displayGuests={displayGuests as Guest[]}
                         assimilationSubStages={assimilationSubStages}
                     />
                 </Suspense>
