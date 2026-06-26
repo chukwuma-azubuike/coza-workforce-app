@@ -5,10 +5,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 import { Button } from '~/components/ui/button';
 import { THEME_CONFIG } from '@config/appConfig';
-import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
-import { AppRoutes } from '~/config/navigation';
-
-const MANUAL_CLOCK_IN_ROUTE = AppRoutes.find(route => route.href === '/manual-clock-in');
 
 /**
  * Secondary action surfaced on the home screen that lets authorised users
@@ -17,27 +13,12 @@ const MANUAL_CLOCK_IN_ROUTE = AppRoutes.find(route => route.href === '/manual-cl
  * the canonical permission source.
  */
 const ManualClockInButton: React.FC = () => {
-    const { user } = useRole();
-
-    const roleName = user?.role?.name;
-    const departmentName = user?.department?.departmentName;
-
-    const canManualClockIn = React.useMemo(
-        () =>
-            !!MANUAL_CLOCK_IN_ROUTE?.users?.length &&
-            (MANUAL_CLOCK_IN_ROUTE.users.includes(roleName as ROLES) ||
-                MANUAL_CLOCK_IN_ROUTE.users.includes(departmentName as DEPARTMENTS)),
-        [roleName, departmentName]
-    );
 
     const handlePress = React.useCallback(() => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
         router.push('/manual-clock-in' as any);
     }, []);
 
-    if (!canManualClockIn) {
-        return null;
-    }
 
     return (
         <Button
