@@ -30,7 +30,7 @@ type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
 type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
 
 const GlobalDashboard: React.FC = () => {
-    const { user } = useRole();
+    const { user, isCampusPastor } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>();
     const [selectedCampus, setSelectedCampus] = useState<string | undefined>(user?.campus?._id);
     const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
@@ -147,6 +147,7 @@ const GlobalDashboard: React.FC = () => {
                         value={selectedCampus}
                         className="!h-10"
                         placeholder="Church"
+                        disabled={isCampusPastor}
                         onValueChange={handleCampusChange}
                     />
                 </View>
@@ -161,7 +162,8 @@ const GlobalDashboard: React.FC = () => {
                         onValueChange={handleZoneChange}
                     />
                 </View>
-                <View className="flex-1">
+                {/* TODO: Suspended until backend is ready */}
+                {/* <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
                         items={[
@@ -177,7 +179,7 @@ const GlobalDashboard: React.FC = () => {
                         placeholder="Date range"
                         onValueChange={handleDateRangeChange}
                     />
-                </View>
+                </View> */}
             </View>
             {!analytics ? (
                 <Error message={(error as any)?.data?.message} />
@@ -192,7 +194,7 @@ const GlobalDashboard: React.FC = () => {
                                     title="Total Guests"
                                     iconColor="text-blue-500"
                                     value={analytics.totalGuests}
-                                    // trend={{ value: 12, label: '% this month', direction: 'up' }}
+                                // trend={{ value: 12, label: '% this month', direction: 'up' }}
                                 />
                             </View>
                             <View style={{ flex: 1, minWidth: 150 }}>
@@ -201,7 +203,7 @@ const GlobalDashboard: React.FC = () => {
                                     title="Conversion Rate"
                                     iconColor="text-green-500"
                                     value={`${analytics.conversionRates?.averageConversion ?? 0}%`}
-                                    // trend={{ value: 3, label: '% this month', direction: 'up' }}
+                                // trend={{ value: 3, label: '% this month', direction: 'up' }}
                                 />
                             </View>
                             <View style={{ flex: 1, minWidth: 150 }}>
@@ -219,7 +221,7 @@ const GlobalDashboard: React.FC = () => {
                                     title="Active Workers"
                                     iconColor="text-orange-500"
                                     value={analytics.totalActiveUsers ?? 0}
-                                    // trend={{ value: 2, label: ' this month', direction: 'up' }}
+                                // trend={{ value: 2, label: ' this month', direction: 'up' }}
                                 />
                             </View>
                         </View>
