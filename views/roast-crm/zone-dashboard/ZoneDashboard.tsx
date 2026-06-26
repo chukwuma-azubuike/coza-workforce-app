@@ -266,6 +266,7 @@ const ZoneDashboard: React.FC = () => {
                                     valueKey="_id"
                                     labelKey="name"
                                     className="!h-10"
+                                    disabled={hasZoneRights}
                                     value={selectedZone}
                                     placeholder="All Zones"
                                     isLoading={loadingZones}

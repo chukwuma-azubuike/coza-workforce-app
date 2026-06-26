@@ -207,6 +207,7 @@ function PickerSelect<T extends ValidPickerItem>({
         >
             <View
                 className={cn(
+                    props.disabled && 'opacity-50',
                     'rounded-full !h-16 justify-between items-center flex-row !px-6 border border-input',
                     className
                 )}
