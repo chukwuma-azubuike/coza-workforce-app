@@ -13,33 +13,44 @@ import { WorkerListView } from './WorkerListView';
 import dayjs from 'dayjs';
 import { ZoneListView } from './ZoneListView';
 
+// Matches the same cool -> warm -> green funnel-progress convention used for the assimilation
+// funnel/stage cards elsewhere in Roast CRM (see STAGE_BAR_COLOR in zone-dashboard/components/ZoneStats.tsx).
+const LEGEND_DOT_COLOR: Record<string, string> = {
+    invited: 'bg-blue-600',
+    attended: 'bg-cyan-600',
+    discipled: 'bg-amber-600',
+    assimilated: 'bg-green-600',
+};
+
 const Leaderboards: React.FC = () => {
     const { user: currentUser, isSuperAdmin, isGlobalPastor } = useRole();
     const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'> | undefined>({
-        startDate: dayjs().subtract(7, 'day').toISOString(),
-        endDate: dayjs().toISOString(),
+        startDate: dayjs().subtract(7, 'day').valueOf(),
+        endDate: dayjs().valueOf(),
     });
     const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
     const [activeTab, setActiveTab] = useState('workers');
 
-    const handleDateRangeChange = useCallback((period: '7d' | '30d' | '90d') => {
+    const handleDateRangeChange = useCallback((period: '' | '7d' | '30d' | '90d') => {
         setSelectedPeriodCode(period);
 
-        if (typeof period !== 'object') return setDate(undefined);
+        if (!period) return setDate(undefined);
 
         setDate({
             startDate: dayjs()
-                ?.subtract(Number((period as any)?.replace('d', '')), 'day')
-                ?.toISOString(),
-            endDate: dayjs()?.toISOString(),
+                ?.subtract(Number(period.replace('d', '')), 'day')
+                ?.valueOf(),
+            endDate: dayjs()?.valueOf(),
         });
     }, []);
 
-    const { data: workerLeaderboard = [], isLoading: isLoadingWorkers } = useGetWorkerLeaderboardQuery({
+    const { data: workerLeaderboardData, isLoading: isLoadingWorkers } = useGetWorkerLeaderboardQuery({
         campusId: isGlobalPastor || isSuperAdmin ? undefined : currentUser?.campus?._id,
         limit: 10,
         ...date,
     });
+    const workerLeaderboard = workerLeaderboardData?.entries ?? [];
+    const scoringLegend = workerLeaderboardData?.scoringLegend;
     const { data: zoneLeaderboard = [], isLoading: isLoadingZones } = useGetZoneLeaderboardQuery({
         campusId: isGlobalPastor || isSuperAdmin ? undefined : currentUser?.campus?._id,
         limit: 10,
@@ -99,6 +110,21 @@ const Leaderboards: React.FC = () => {
                 />
                 {/* </View> */}
             </View>
+
+            {activeTab === 'workers' && !!scoringLegend && (
+                <View className="flex-row flex-wrap gap-x-4 gap-y-1.5">
+                    {Object.entries(scoringLegend).map(([key, entry]) =>
+                        entry ? (
+                            <View key={key} className="flex-row items-center gap-1.5">
+                                <View className={`w-2.5 h-2.5 rounded-full ${LEGEND_DOT_COLOR[key] ?? 'bg-muted'}`} />
+                                <Text className="text-muted-foreground text-sm">
+                                    {entry.label} +{entry.pointsPerGuest}/guest
+                                </Text>
+                            </View>
+                        ) : null
+                    )}
+                </View>
+            )}
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-1">
                 <TabsList>

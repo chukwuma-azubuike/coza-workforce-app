@@ -6,17 +6,24 @@ import React, {
     useMemo,
     useState,
 } from 'react';
-import { Dimensions, ScrollView, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { ChevronRight } from 'lucide-react-native';
+import { Card, CardContent } from '~/components/ui/card';
 import {
     // AssimilationStage,
     Guest,
 } from '~/store/types';
 import {
+    useGetActiveWorkersQuery,
+    useGetAssimilationStagesQuery,
     useGetAssimilationSubStagesQuery,
     useGetGuestsQuery,
+    useGetInactiveWorkersQuery,
+    useGetZeroEngagementWorkersQuery,
     useGetZoneDashboardQuery,
     useGetZonesQuery,
     useGetZoneUsersQuery,
+    useReassignGuestMutation,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
 import useInfiniteData from '~/hooks/fetch-more-data/use-infinite-data';
@@ -24,7 +31,7 @@ import type { GetGuestPayload } from '~/store/types/roast-crm';
 
 import { Text } from '~/components/ui/text';
 
-import { ZoneStats } from './components/ZoneStats';
+import { AssimilationFunnel, StatCard, ZoneStats } from './components/ZoneStats';
 import useRole from '~/hooks/role';
 import Loading from '~/components/atoms/loading';
 
@@ -37,6 +44,7 @@ import Loading from '~/components/atoms/loading';
 import { router } from 'expo-router';
 
 import SearchAndFilter from '../components/SearchAndFilter';
+import { BulkActions } from './components/BulkActions';
 import PickerSelect from '~/components/ui/picker-select';
 // import groupBy from 'lodash/groupBy';
 
@@ -51,7 +59,6 @@ import useZoneIndex from '../hooks/use-zone-index';
 // import KanbanUICard from '../components/KanbanCard';
 // import Error from '~/components/atoms/error';
 
-import { RefreshControl } from 'react-native';
 // import { useGetCampusesQuery } from '~/store/services/campus';
 
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
@@ -62,9 +69,8 @@ const ZoneDashboard: React.FC = () => {
     const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
     const { data: departmentZones } = useGetZonesQuery({ departmentId: user.department._id }); //TODO: departmentId query param is yet to work
     const [selectedCampus, setSelectedCampus] = useState<string | undefined>();
-    const [selectedZone, setSelectedZone] = useState<string | undefined>(
-        departmentZones ? (departmentZones as any)?.[0]?._id : undefined
-    );
+    // Undefined = "All Zones". Zone-scoped roles (below) always get pinned to a real zone instead.
+    const [selectedZone, setSelectedZone] = useState<string | undefined>();
 
     const userZones = useMemo(() => {
         // Only return zones that include the user's department id in their `departments` array
@@ -81,14 +87,15 @@ const ZoneDashboard: React.FC = () => {
         if (hasZoneRights && value === 'null') {
             return;
         }
-        setSelectedZone(value);
+        setSelectedZone(value === 'null' ? undefined : value);
     };
 
     useEffect(() => {
-        if (!selectedZone && userZones) {
+        // Only zone-scoped roles get force-selected into a zone - everyone else defaults to "All Zones".
+        if (hasZoneRights && !selectedZone && userZones.length) {
             setSelectedZone((userZones as any)?.[0]?._id);
         }
-    }, [userZones, selectedZone]);
+    }, [hasZoneRights, userZones, selectedZone]);
 
     const [selectedWorker, setSelectedWorker] = useState<string>();
     const [
@@ -97,11 +104,55 @@ const ZoneDashboard: React.FC = () => {
         setViewMode,
     ] = useState<'kanban' | 'list'>('kanban');
     const [stageFilter, setStageFilter] = useState<Guest['assimilationSubStageId'] | 'all'>('all');
+    const [stageIdFilter, setStageIdFilter] = useState<string | undefined>();
+
+    const handleSubStageFilterChange = useCallback((value: Guest['assimilationSubStageId'] | 'all') => {
+        setStageFilter(value);
+        setStageIdFilter(undefined);
+    }, []);
+
+    const handleSelectAssimilationStage = useCallback((stageId: string | undefined) => {
+        setStageIdFilter(stageId);
+        setStageFilter('all');
+    }, []);
 
     const [search, setSearch] = useState('');
     const denouncedSearch = useDebounce(setSearch);
     const [modalVisible, setModalVisible] = useState(false);
 
+    const [bulkReassignMode, setBulkReassignMode] = useState(false);
+    const [selectedGuests, setSelectedGuests] = useState<string[]>([]);
+    const [reassignGuest] = useReassignGuestMutation();
+
+    const handleBulkReassignStart = useCallback(() => {
+        setBulkReassignMode(true);
+    }, []);
+
+    const handleBulkReassignCancel = useCallback(() => {
+        setBulkReassignMode(false);
+        setSelectedGuests([]);
+    }, []);
+
+    const handleToggleSelectGuest = useCallback((guestId: string) => {
+        setSelectedGuests(prev => (prev.includes(guestId) ? prev.filter(id => id !== guestId) : [...prev, guestId]));
+    }, []);
+
+    const handleBulkWorkerSelect = useCallback(
+        async (toWorkerId: string) => {
+            await Promise.allSettled(
+                selectedGuests.map(guestId => reassignGuest({ guestId, toWorkerId }).unwrap())
+            );
+            setBulkReassignMode(false);
+            setSelectedGuests([]);
+        },
+        [selectedGuests, reassignGuest]
+    );
+
+    const { data: assimilationStagesRaw = [] } = useGetAssimilationStagesQuery();
+    const assimilationStages = useMemo(
+        () => [...assimilationStagesRaw].sort((a, b) => a.order - b.order),
+        [assimilationStagesRaw]
+    );
     const {
         data: assimilationSubStages = [],
         // isLoading: subStagesLoading,
@@ -122,6 +173,7 @@ const ZoneDashboard: React.FC = () => {
             search,
             assignedToId: selectedWorker,
             zoneId: selectedZone ?? undefined,
+            assimilationStageId: stageIdFilter,
             assimilationSubStageId: stageFilter === 'all' ? undefined : stageFilter,
         },
         useGetGuestsQuery as any,
@@ -147,6 +199,29 @@ const ZoneDashboard: React.FC = () => {
     });
 
     const { data: zoneDashboard } = useGetZoneDashboardQuery({ zoneId: selectedZone });
+
+    const zoneIndex = useZoneIndex();
+    const selectedZoneName = zoneIndex[selectedZone as string];
+
+    const { data: activeWorkers = [] } = useGetActiveWorkersQuery(
+        { zoneId: selectedZone as string },
+        { skip: !selectedZone }
+    );
+    const { data: inactiveWorkers = [] } = useGetInactiveWorkersQuery(
+        { zoneId: selectedZone as string },
+        { skip: !selectedZone }
+    );
+    const { data: zeroEngagementWorkers = [] } = useGetZeroEngagementWorkersQuery({ zoneId: selectedZone });
+
+    const handleViewZoneWorkers = useCallback(
+        (filter: 'active' | 'inactive' | 'zero-engagement') => {
+            router.push({
+                pathname: '/roast-crm/zone-workers',
+                params: { filter, zoneId: selectedZone, zoneName: selectedZoneName },
+            });
+        },
+        [selectedZone, selectedZoneName]
+    );
 
     // const assimilationStageIndex = useAssimilationStageIndex();
     // const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests?.data, 'assimilationSubStageId'), [guests?.data]);
@@ -227,137 +302,168 @@ const ZoneDashboard: React.FC = () => {
     //     router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     // }, []);
 
-    const kanbanContainerHeight = Dimensions.get('window').height - 620;
-    const zoneIndex = useZoneIndex();
-    const selectedZoneName = zoneIndex[selectedZone as string];
-
-    return (
-        <View className="flex-1 bg-background pt-2 gap-4">
-            {/* Header */}
-            <View>
-                <ScrollView refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}>
-                    <View className="gap-4 px-2">
-                        <View className="flex-row items-start gap-4">
-                            <Text className="text-2xl font-bold !w-[35%] leading-none">
-                                {selectedZoneName ?? 'All Zones'}
-                            </Text>
-                        </View>
-                        <View className="flex-row items-start gap-4">
-                            {/* Campus Selector */}
-                            {/* TODO: Restore on full roll out */}
-                            {/* {!hasZoneRights && (
-                                <View className="flex-1">
-                                    <PickerSelect
-                                        valueKey="_id"
-                                        labelKey="campusName"
-                                        className="!h-10"
-                                        value={selectedCampus}
-                                        placeholder="All Campuses"
-                                        isLoading={loadingCampuses}
-                                        onValueChange={setSelectedCampus}
-                                        items={campuses}
-                                    />
-                                </View>
-                            )} */}
-
-                            {/* Zone Selector */}
-                            <View className="flex-1">
-                                <PickerSelect
-                                    valueKey="_id"
-                                    labelKey="name"
-                                    className="!h-10"
-                                    disabled={hasZoneRights}
-                                    value={selectedZone}
-                                    placeholder="All Zones"
-                                    isLoading={loadingZones}
-                                    onValueChange={handleSelectZone}
-                                    items={hasZoneRights ? (userZones ?? []) : zones}
-                                />
-                            </View>
-
-                            {/* Worker Selector */}
-                            <View className="flex-1">
-                                <PickerSelect
-                                    valueKey="_id"
-                                    items={workers}
-                                    className="!h-10"
-                                    labelKey="firstName"
-                                    value={selectedWorker}
-                                    placeholder="All Workers"
-                                    onValueChange={setSelectedWorker}
-                                    isLoading={loadingWorkers || fetchingWorkers}
-                                    customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
-                                />
-                            </View>
-                        </View>
-
-                        <ZoneStats
-                            totalGuests={zoneDashboard?.totalGuests ?? 0}
-                            conversionRate={zoneDashboard?.conversionRates.discipleToJoined ?? 0}
-                            activeThisWeek={zoneDashboard?.totalActiveUsers ?? 0}
-                            totalWorkers={zoneDashboard?.totalWorker ?? 0}
+    const dashboardHeader = (
+        <View className="gap-4 pb-3">
+            <View className="flex-row items-start gap-4">
+                {/* Campus Selector */}
+                {/* TODO: Restore on full roll out */}
+                {/* {!hasZoneRights && (
+                    <View className="flex-1">
+                        <PickerSelect
+                            valueKey="_id"
+                            labelKey="campusName"
+                            className="!h-10"
+                            value={selectedCampus}
+                            placeholder="All Campuses"
+                            isLoading={loadingCampuses}
+                            onValueChange={setSelectedCampus}
+                            items={campuses}
                         />
                     </View>
-                </ScrollView>
+                )} */}
+
+                {/* Zone Selector */}
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        labelKey="name"
+                        className="!h-10"
+                        disabled={hasZoneRights}
+                        value={selectedZone}
+                        placeholder="All Zones"
+                        isLoading={loadingZones}
+                        onValueChange={handleSelectZone}
+                        items={hasZoneRights ? (userZones ?? []) : [{ _id: 'null', name: 'All Zones' }, ...zones]}
+                    />
+                </View>
+
+                {/* Worker Selector */}
+                <View className="flex-1">
+                    <PickerSelect
+                        valueKey="_id"
+                        items={workers}
+                        className="!h-10"
+                        labelKey="firstName"
+                        value={selectedWorker}
+                        placeholder="All Workers"
+                        onValueChange={setSelectedWorker}
+                        isLoading={loadingWorkers || fetchingWorkers}
+                        customLabel={({ firstName, lastName }) => `${firstName} ${lastName}`}
+                    />
+                </View>
             </View>
 
-            <View className="px-2 flex-row items-center gap-2 w-full justify-between">
+            <View className="gap-1.5">
+                <Text className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Overview</Text>
+                <ZoneStats
+                    totalGuests={zoneDashboard?.totalGuests ?? 0}
+                    totalWorkers={zoneDashboard?.totalWorker ?? 0}
+                />
+            </View>
+
+            {!!selectedZone && (
+                <View className="gap-4">
+                    <Text className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                        Workers
+                    </Text>
+                    <View className="flex-row flex-wrap gap-4">
+                        <View className="flex-1">
+                            <StatCard
+                                value={activeWorkers.length}
+                                label="Active this week"
+                                color="text-green-600"
+                                onPress={() => handleViewZoneWorkers('active')}
+                            />
+                        </View>
+                        <View className="flex-1">
+                            <StatCard
+                                value={inactiveWorkers.length}
+                                label="Inactive this week"
+                                color="text-red-600"
+                                onPress={() => handleViewZoneWorkers('inactive')}
+                            />
+                        </View>
+                    </View>
+
+                    {zeroEngagementWorkers.length > 0 && (
+                        <Pressable onPress={() => handleViewZoneWorkers('zero-engagement')}>
+                            <Card className="border-amber-400 dark:border-amber-500/40">
+                                <CardContent className="p-4 flex-row items-center justify-between">
+                                    <View>
+                                        <Text className="font-semibold">Needs Attention</Text>
+                                        <Text className="text-muted-foreground">
+                                            {zeroEngagementWorkers.length} worker
+                                            {zeroEngagementWorkers.length === 1 ? '' : 's'} with zero engagement
+                                        </Text>
+                                    </View>
+                                    <ChevronRight className="w-5 h-5 text-muted-foreground" />
+                                </CardContent>
+                            </Card>
+                        </Pressable>
+                    )}
+                </View>
+            )}
+
+            <View className="gap-1.5">
+                <Text className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Guests by Stage</Text>
+                <AssimilationFunnel
+                    stages={assimilationStages}
+                    breakdown={zoneDashboard?.conversionRates?.breakdown}
+                    selectedStageId={stageIdFilter}
+                    onSelectStage={handleSelectAssimilationStage}
+                />
+            </View>
+
+            <View className="flex-row items-center gap-2 w-full justify-between">
                 <View className="flex-1">
                     <SearchAndFilter
                         viewMode="list"
                         searchTerm={search}
+                        showSelector={false}
                         showModeToggle={false}
                         stageFilter={stageFilter}
                         setSearchTerm={denouncedSearch}
-                        setStageFilter={setStageFilter}
+                        setStageFilter={handleSubStageFilterChange}
                         setViewMode={setViewMode as any}
                         loading={isFetching || isLoading}
                         assimilationSubStages={assimilationSubStages}
                     />
                 </View>
-            </View>
-
-            {/* View Guests */}
-            <View className="flex-1">
-                {/* TODO: Disable kanban view for Zone Dashboard */}
-                {/* {viewMode === 'kanban' ? (
-                    subStagesLoading ? (
-                        <View className="flex-row gap-5 pl-2 flex-1 pb-2">
-                            <KanbanColumnSkeleton />
-                            <KanbanColumnSkeleton />
-                        </View>
-                    ) : (subStagesError || guestsError) && guests.length < 1 ? (
-                        <Error message={(subStagesError as any)?.error} />
-                    ) : (
-                        <ReactNativeKanbanBoard<Guest, HeaderParams>
-                            gapBetweenColumns={8}
-                            onDragEnd={onDragEnd}
-                            onPressCard={handleProfileView}
-                            columnContainerStyle={{ flex: 1 }}
-                            columnData={transformedAssimilationSubStages}
-                            renderColumnContainer={renderContentContainer}
-                            renderItem={guest => <KanbanUICard type="zone" guest={guest} />}
-                        />
-                    )
-                ) : ( */}
-                <Suspense fallback={<Loading cover />}>
-                    <GuestListView
-                        type="zone"
-                        refetch={refetch}
-                        isLoading={isLoading}
-                        hasNextPage={hasNextPage}
-                        onGuestUpdate={onGuestUpdate}
-                        fetchNextPage={fetchNextPage}
-                        total={pagination?.total ?? 0}
-                        handleViewGuest={handleViewGuest}
-                        displayGuests={guests as Guest[]}
-                        isFetchingNextPage={isFetchingNextPage}
-                        containerHeight={kanbanContainerHeight}
-                        assimilationSubStages={assimilationSubStages}
+                {hasZoneRights && (
+                    <BulkActions
+                        workers={workers}
+                        bulkReassignMode={bulkReassignMode}
+                        selectedGuests={selectedGuests}
+                        onWorkerSelect={handleBulkWorkerSelect}
+                        onBulkReassignStart={handleBulkReassignStart}
+                        onBulkReassignCancel={handleBulkReassignCancel}
                     />
-                </Suspense>
-                {/* )} */}
+                )}
             </View>
+        </View>
+    );
+
+    return (
+        <View className="flex-1 bg-background pt-2">
+            <Suspense fallback={<Loading cover />}>
+                <GuestListView
+                    type="zone"
+                    refetch={refetch}
+                    isLoading={isLoading}
+                    hasNextPage={hasNextPage}
+                    onGuestUpdate={onGuestUpdate}
+                    fetchNextPage={fetchNextPage}
+                    total={pagination?.total ?? 0}
+                    handleViewGuest={handleViewGuest}
+                    displayGuests={guests as Guest[]}
+                    isFetchingNextPage={isFetchingNextPage}
+                    assimilationSubStages={assimilationSubStages}
+                    selectionMode={bulkReassignMode}
+                    selectedIds={selectedGuests}
+                    onToggleSelect={handleToggleSelectGuest}
+                    ListHeaderComponent={dashboardHeader}
+                />
+            </Suspense>
             <FloatButton
                 iconName="plus"
                 className="!p-2"

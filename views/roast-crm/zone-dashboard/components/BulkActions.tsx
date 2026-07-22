@@ -8,7 +8,7 @@ import PickerSelect from '~/components/ui/picker-select';
 interface BulkActionsProps {
     bulkReassignMode: boolean;
     selectedGuests: string[];
-    workers: IUser[];
+    workers: Array<Pick<IUser, '_id' | 'firstName' | 'lastName'>>;
     onBulkReassignStart: () => void;
     onBulkReassignCancel: () => void;
     onWorkerSelect: (workerId: string) => void;

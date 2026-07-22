@@ -5,3 +5,5 @@ export * from './notifications';
 export * from './settings';
 export * from './zone-dashboard';
 export * from './leaderboards';
+export * from './worker-profile';
+export * from './zone-workers';

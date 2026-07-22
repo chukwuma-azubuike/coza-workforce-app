@@ -5,11 +5,18 @@ import { Progress } from '~/components/ui/progress';
 import { Card, CardContent } from '~/components/ui/card';
 import { Button } from '~/components/ui/button';
 import { Guest, IUser } from '~/store/types';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert as RNAlert, TouchableOpacity, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { THEME_CONFIG } from '~/config/appConfig';
 import { Alert } from '~/components/ui/alert';
-import { useGetZonesQuery, useGetZoneUsersQuery, useUpdateGuestMutation } from '~/store/services/roast-crm';
+import {
+    useDeleteGuestMutation,
+    useGetZonesQuery,
+    useGetZoneUsersQuery,
+    useReassignGuestMutation,
+    useUpdateGuestMutation,
+} from '~/store/services/roast-crm';
+import { router } from 'expo-router';
 import { Input } from '~/components/ui/input';
 import { Formik } from 'formik';
 import { GuestFormValidationSchema } from '../../utils/validation';
@@ -49,6 +56,8 @@ export function GuestHeader({
 }: GuestHeaderProps) {
     const { isZonalCoordinator, isHOD, isAHOD, isSuperAdmin } = useRole();
     const [updateGuest, { isLoading: updating }] = useUpdateGuestMutation();
+    const [deleteGuest, { isLoading: deleting }] = useDeleteGuestMutation();
+    const [reassignGuest] = useReassignGuestMutation();
     const [mode, setMode] = useState<'edit' | 'view'>('view');
     const isEditMode = mode === 'edit';
     const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
@@ -62,6 +71,7 @@ export function GuestHeader({
     const campusIndex = useCampusIndex();
     const { data: assignedTo, isLoading: loadingAssignedTo } = useGetUserByIdQuery(guest?.assignedToId as string);
     const canReAssign = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
+    const canDelete = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
 
     const handleMode = (mode: 'edit' | 'view') => () => {
         Haptics.selectionAsync();
@@ -75,19 +85,42 @@ export function GuestHeader({
     const onSubmit = async (values: Guest) => {
         handleMode('view')();
         try {
-            const res = await updateGuest({
-                ...guest,
-                ...values,
-                phoneNumber: formatToE164(values.phoneNumber, selectedCountry?.callingCode ?? '+234'),
-            });
+            const { assignedToId, ...rest } = values;
+            const results = await Promise.all([
+                updateGuest({
+                    ...guest,
+                    ...rest,
+                    phoneNumber: formatToE164(rest.phoneNumber, selectedCountry?.callingCode ?? '+234'),
+                }),
+                canReAssign && assignedToId && assignedToId !== guest.assignedToId
+                    ? reassignGuest({ guestId: guest._id, toWorkerId: assignedToId })
+                    : Promise.resolve(undefined),
+            ]);
 
-            if (res.data) {
-            }
-
-            if (res.error) {
+            if (results.some(res => res && 'error' in res)) {
                 handleMode('edit')();
             }
         } catch (error) {}
+    };
+
+    const handleDelete = () => {
+        RNAlert.alert(
+            `Delete ${guest.firstName} ${guest.lastName}?`,
+            'This permanently deletes this guest and their entire contact/timeline history. This cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: async () => {
+                        try {
+                            await deleteGuest(guest._id).unwrap();
+                            router.back();
+                        } catch (error) {}
+                    },
+                },
+            ]
+        );
     };
 
     return (
@@ -102,6 +135,16 @@ export function GuestHeader({
                     <Card>
                         <CardContent className="p-6 gap-6">
                             <View className="flex-1 flex-row justify-end gap-2">
+                                {!isEditMode && canDelete && (
+                                    <TouchableOpacity
+                                        activeOpacity={0.6}
+                                        onPress={handleDelete}
+                                        disabled={deleting}
+                                        className="!h-8 px-3 rounded-xl border border-destructive justify-center"
+                                    >
+                                        {deleting ? <Loading /> : <Text className="my-auto text-destructive">Delete</Text>}
+                                    </TouchableOpacity>
+                                )}
                                 {isEditMode && (
                                     <TouchableOpacity
                                         activeOpacity={0.6}

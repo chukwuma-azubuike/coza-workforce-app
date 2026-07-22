@@ -4,6 +4,7 @@ import { BarChart3, Users, Award, Calendar } from 'lucide-react-native';
 import { Option } from '~/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import {
+    useGetAnalyticsQuery,
     useGetDropoffAnalyticsQuery,
     useGetGlobalAnalyticsQuery,
     useGetRecommendationsQuery,
@@ -16,6 +17,13 @@ import { TrendChart } from './charts/TrendChart';
 import { TopPerformingWorkers, TopPerformingZones } from './performers/TopPerformers';
 import { DropoffAnalysis } from './analytics/DropoffAnalysis';
 import { RecommendationsCard } from './analytics/RecommendationsCard';
+import {
+    ActiveVsInactiveTrendCard,
+    StageDropOffCard,
+    StageFunnelCard,
+    WeeklyGuestTrendCard,
+    WorkerLeaderboardTrendCard,
+} from './charts/InsightsPanels';
 import { StatsCard } from './StatsCard';
 import PickerSelect from '~/components/ui/picker-select';
 import dayjs from 'dayjs';
@@ -26,8 +34,8 @@ import Error from '~/components/atoms/error';
 import useRole from '~/hooks/role';
 import { useGetCampusesQuery } from '~/store/services/campus';
 
-type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
-type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
+type TimeRange = '1-month' | '3-month' | '6-month' | '1-year';
+type TabValues = 'overview' | 'zones' | 'trends' | 'analytics' | 'insights';
 
 const GlobalDashboard: React.FC = () => {
     const { user, isCampusPastor } = useRole();
@@ -37,11 +45,11 @@ const GlobalDashboard: React.FC = () => {
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
     const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'>>({
-        startDate: dayjs().subtract(7, 'day').toISOString(),
-        endDate: dayjs().toISOString(),
+        startDate: dayjs().subtract(7, 'day').valueOf(),
+        endDate: dayjs().valueOf(),
     });
 
-    const handleDateRangeChange = useCallback((period: TimeRange) => {
+    const handleDateRangeChange = useCallback((period: TimeRange | '') => {
         setSelectedPeriodCode(period);
 
         if (!period.includes('-')) return;
@@ -51,8 +59,8 @@ const GlobalDashboard: React.FC = () => {
         setDate({
             startDate: dayjs()
                 .subtract(Number(number), category as 'month' | 'year')
-                .toISOString(),
-            endDate: dayjs().toISOString(),
+                .valueOf(),
+            endDate: dayjs().valueOf(),
         });
     }, []);
 
@@ -112,6 +120,16 @@ const GlobalDashboard: React.FC = () => {
         campusId: selectedCampus,
     });
 
+    const {
+        data: insights,
+        isLoading: insightsLoading,
+        isFetching: insightsFetching,
+    } = useGetAnalyticsQuery({
+        ...date,
+        zoneId: selectedZone,
+        campusId: selectedCampus,
+    });
+
     if (isLoading) {
         return (
             <View className="p-2 gap-6 flex-1">
@@ -162,8 +180,7 @@ const GlobalDashboard: React.FC = () => {
                         onValueChange={handleZoneChange}
                     />
                 </View>
-                {/* TODO: Suspended until backend is ready */}
-                {/* <View className="flex-1">
+                <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
                         items={[
@@ -179,7 +196,7 @@ const GlobalDashboard: React.FC = () => {
                         placeholder="Date range"
                         onValueChange={handleDateRangeChange}
                     />
-                </View> */}
+                </View>
             </View>
             {!analytics ? (
                 <Error message={(error as any)?.data?.message} />
@@ -240,6 +257,9 @@ const GlobalDashboard: React.FC = () => {
                                 <TabsTrigger value="analytics">
                                     <Text>Analytics</Text>
                                 </TabsTrigger>
+                                <TabsTrigger value="insights">
+                                    <Text>Insights</Text>
+                                </TabsTrigger>
                             </TabsList>
 
                             <TabsContent value="overview">
@@ -296,6 +316,45 @@ const GlobalDashboard: React.FC = () => {
                                             <RecommendationsCard
                                                 recommendations={recommendations?.recommendations || []}
                                                 isLoading={recommendationsLoading || recommendationsFetching}
+                                            />
+                                        </ErrorBoundary>
+                                    </View>
+                                </View>
+                            </TabsContent>
+
+                            <TabsContent value="insights">
+                                <View className="flex-row flex-wrap" style={{ gap: 16 }}>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <StageFunnelCard data={insights?.stageFunnel} isLoading={insightsLoading || insightsFetching} />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <StageDropOffCard data={insights?.stageDropOff} isLoading={insightsLoading || insightsFetching} />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <WeeklyGuestTrendCard
+                                                data={insights?.weeklyGuestTrend}
+                                                isLoading={insightsLoading || insightsFetching}
+                                            />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <WorkerLeaderboardTrendCard
+                                                data={insights?.workerLeaderboardTrend}
+                                                isLoading={insightsLoading || insightsFetching}
+                                            />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <ActiveVsInactiveTrendCard
+                                                data={insights?.activeVsInactiveTrend}
+                                                isLoading={insightsLoading || insightsFetching}
                                             />
                                         </ErrorBoundary>
                                     </View>

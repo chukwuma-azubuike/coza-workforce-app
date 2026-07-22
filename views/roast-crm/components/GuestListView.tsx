@@ -4,6 +4,7 @@ import { FlashList } from '@shopify/flash-list';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Badge } from '~/components/ui/badge';
 import { Button } from '~/components/ui/button';
+import { Checkbox } from '~/components/ui/checkbox';
 import Empty from '~/components/atoms/empty';
 import { FlatListSkeleton } from '~/components/layout/skeleton';
 import PickerSelect from '~/components/ui/picker-select';
@@ -30,6 +31,9 @@ const GuestRowComponent: React.FC<{
     onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
     onViewGuest: (guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
+    selectionMode?: boolean;
+    isSelected?: boolean;
+    onToggleSelect?: (guestId: string) => void;
 }> = ({
     guest,
     onViewGuest,
@@ -39,6 +43,9 @@ const GuestRowComponent: React.FC<{
     zoneIndex,
     subStagePositionIndex,
     dispatch,
+    selectionMode,
+    isSelected,
+    onToggleSelect,
 }) => {
         const isOwn = type === 'own';
 
@@ -49,9 +56,14 @@ const GuestRowComponent: React.FC<{
             [guest._id, onGuestUpdate]
         );
 
+        const handleToggleSelect = useCallback(() => {
+            onToggleSelect?.(guest._id);
+        }, [guest._id, onToggleSelect]);
+
         const handleViewGuest = useCallback(() => {
+            if (selectionMode) return handleToggleSelect();
             onViewGuest(guest);
-        }, [guest, onViewGuest]);
+        }, [guest, onViewGuest, selectionMode, handleToggleSelect]);
 
         const progress = useMemo(
             () => getProgressPercentage(subStagePositionIndex[guest.assimilationSubStageId] as number),
@@ -92,15 +104,19 @@ const GuestRowComponent: React.FC<{
                             </View>
                         </View>
 
-                        <PickerSelect
-                            valueKey="_id"
-                            labelKey="name"
-                            className="!w-36 !h-10"
-                            placeholder="Select stage"
-                            items={assimilationSubStages}
-                            value={guest?.assimilationSubStageId}
-                            onValueChange={handleGuestMove}
-                        />
+                        {selectionMode ? (
+                            <Checkbox checked={!!isSelected} onCheckedChange={handleToggleSelect} />
+                        ) : (
+                            <PickerSelect
+                                valueKey="_id"
+                                labelKey="name"
+                                className="!w-36 !h-10"
+                                placeholder="Select stage"
+                                items={assimilationSubStages}
+                                value={guest?.assimilationSubStageId}
+                                onValueChange={handleGuestMove}
+                            />
+                        )}
 
                         {!isOwn && (
                             <View className="absolute -bottom-4 right-4 flex-row items-center gap-2 text-foreground flex-1 justify-center">
@@ -197,6 +213,10 @@ const GuestListView: React.FC<{
     handleViewGuest: (Guest: Guest) => void;
     assimilationSubStages: Array<PipelineSubStage>;
     onGuestUpdate: (guestId: string, assimilationStageId: string) => Promise<void>;
+    selectionMode?: boolean;
+    selectedIds?: string[];
+    onToggleSelect?: (guestId: string) => void;
+    ListHeaderComponent?: React.ReactElement | null;
 }> = ({
     type,
     handleViewGuest,
@@ -209,6 +229,10 @@ const GuestListView: React.FC<{
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
+    selectionMode,
+    selectedIds,
+    onToggleSelect,
+    ListHeaderComponent,
 }) => {
         const dispatch = useAppDispatch();
         // Hoisted out of the row so the underlying queries are subscribed once for the
@@ -227,9 +251,23 @@ const GuestListView: React.FC<{
                     onViewGuest={handleViewGuest}
                     subStagePositionIndex={subStagePositionIndex}
                     assimilationSubStages={assimilationSubStages}
+                    selectionMode={selectionMode}
+                    isSelected={selectedIds?.includes(item._id)}
+                    onToggleSelect={onToggleSelect}
                 />
             ),
-            [type, dispatch, zoneIndex, subStagePositionIndex, assimilationSubStages, onGuestUpdate, handleViewGuest]
+            [
+                type,
+                dispatch,
+                zoneIndex,
+                subStagePositionIndex,
+                assimilationSubStages,
+                onGuestUpdate,
+                handleViewGuest,
+                selectionMode,
+                selectedIds,
+                onToggleSelect,
+            ]
         );
 
         const keyExtractor = useCallback((item: Guest) => item._id, []);
@@ -248,17 +286,23 @@ const GuestListView: React.FC<{
             [isFetchingNextPage]
         );
 
-        return (
-            <View className="px-2 flex-1">
-                <View className="flex-row items-center justify-between mb-2">
-                    <Text className="font-semibold">Guests</Text>
-                    <Badge variant="outline">
-                        <Text className="text-base">{total ?? 0} {total && total === 1 ? "guest" : 'guests'}</Text>
-                    </Badge>
-                </View>
+        const guestsHeader = (
+            <View className="flex-row items-center justify-between mb-2">
+                <Text className="font-semibold">Guests</Text>
+                <Badge variant="outline">
+                    <Text className="text-base">{total ?? 0} {total && total === 1 ? "guest" : 'guests'}</Text>
+                </Badge>
+            </View>
+        );
 
+        return (
+            <View className="flex-1">
                 {isLoading && (displayGuests?.length ?? 0) < 1 ? (
-                    <FlatListSkeleton />
+                    <View className="flex-1 px-2">
+                        {ListHeaderComponent}
+                        {guestsHeader}
+                        <FlatListSkeleton />
+                    </View>
                 ) : (
                     <FlashList
                         data={displayGuests}
@@ -268,8 +312,14 @@ const GuestListView: React.FC<{
                         onEndReachedThreshold={0.3}
                         removeClippedSubviews
                         showsVerticalScrollIndicator={false}
+                        ListHeaderComponent={
+                            <>
+                                {ListHeaderComponent}
+                                {guestsHeader}
+                            </>
+                        }
                         ListFooterComponent={listFooter}
-                        contentContainerStyle={{ paddingBottom: 24 }}
+                        contentContainerStyle={{ paddingHorizontal: 8, paddingBottom: 24 }}
                         refreshControl={<RefreshControl refreshing={!!isLoading} onRefresh={refetch} />}
                         ListEmptyComponent={
                             <Empty width={320} isLoading={isLoading} message="No guests yet" refresh={refetch} />

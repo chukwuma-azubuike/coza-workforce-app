@@ -95,10 +95,8 @@ const ROAST_ALPHA_TESTERS = [
     'badewumi2015@gmail.com',
     'ov.ademola@gmail.com',
     'ajibikeolamide1@gmail.com',
-    'kristeyshaydesigns@gmail.com',
     'abiwopelumi@gmail.com',
     'ijeomaserena@gmail.com',
-    'adelekeola2017@gmail.com',
     'tabithaaoye@gmail.com',
     'keazort@gmail.com',
     'abbeyrotimi86@gmail.com',
@@ -113,7 +111,6 @@ const ROAST_ALPHA_TESTERS = [
     'graciaubi@gmail.com',
     'toydonduke@gmail.com',
     'samuelayomide889@gmail.com',
-    'olafab@yahoo.com',
     'olayinks7@gmail.com',
     'rallylawalson@gmail.com',
     'mfon.peter418@gmail.com',
@@ -124,7 +121,6 @@ const ROAST_ALPHA_TESTERS = [
     'lolaajiboyejones@gmail.com',
     'preciousoguntona@gmail.com',
     'princehollarmedey@gmail.com',
-    'magdaleneeyo1999@gmail.com',
     'ehixgux@gmail.com',
     'chiomajaneonyema@gmail.com',
     'oreofebeloved@gmail.com',
@@ -160,7 +156,9 @@ const ROAST_ALPHA_TESTERS = [
     'adeolabamiji1@gmail.com',
     'adeolaoluseyi579@gmail.com',
     'sijigangan@yahoo.com',
-    'wealsegun@gmail.com'
+    'wealsegun@gmail.com',
+    'kristyogunwale93@gmail.com',
+    'olafabtech@gmail.com',
 ];
 
 const useRole = () => {
