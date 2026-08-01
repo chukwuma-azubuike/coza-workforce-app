@@ -40,6 +40,7 @@ import {
     AnalyticsResponse,
     AnalyticsPayload,
     ScoringLegend,
+    UserZoneDetailsResponse,
 } from '../types';
 import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
@@ -597,6 +598,19 @@ export const roastCrmApi = createApi({
             providesTags: ['Zone'],
         }),
 
+        getUserZoneDetails: builder.query<UserZoneDetailsResponse, string>({
+            query: userId => ({
+                url: `/zone-users/user-zone-details/${userId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            // No published response schema - tolerate either a `{ data: {...} }` envelope or a bare object.
+            transformResponse: (res: IDefaultResponse<UserZoneDetailsResponse> | UserZoneDetailsResponse) =>
+                (res as IDefaultResponse<UserZoneDetailsResponse>)?.data ?? (res as UserZoneDetailsResponse) ?? {},
+
+            providesTags: ['Zone'],
+        }),
+
         // Leaderboard Queries
         getWorkerLeaderboard: builder.query<
             { entries: WorkerLeaderboardEntry[]; scoringLegend?: ScoringLegend },
@@ -823,6 +837,7 @@ export const {
     useGetActiveWorkersQuery,
     useGetInactiveWorkersQuery,
     useGetZeroEngagementWorkersQuery,
+    useGetUserZoneDetailsQuery,
     useGetGlobalDashboardQuery,
     useGetGlobalAnalyticsQuery,
     useGetAnalyticsQuery,

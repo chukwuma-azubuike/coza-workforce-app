@@ -4,23 +4,30 @@ import { router, useLocalSearchParams } from 'expo-router';
 import dayjs from 'dayjs';
 import { Text } from '~/components/ui/text';
 import { Skeleton } from '~/components/ui/skeleton';
+import { Button } from '~/components/ui/button';
+import { Icon } from '@rneui/base';
 import PickerSelect from '~/components/ui/picker-select';
 import AvatarComponent from '~/components/atoms/avatar';
 import Loading from '~/components/atoms/loading';
 import { getRankIcon, getTrendIcon } from '../utils/icons';
+import { openPhoneNumber } from '../utils/communication';
 import { AssimilationFunnel, StatCard, AssimilationStageBreakdown } from '../zone-dashboard/components/ZoneStats';
 import {
     useGetAssimilationStagesQuery,
     useGetAssimilationSubStagesQuery,
+    useGetUserZoneDetailsQuery,
     useGetWorkerGuestsByStageQuery,
     useGetWorkerProfileQuery,
     useGetZonesQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
+import { useGetUserByIdQuery } from '~/store/services/account';
 import useInfiniteData from '~/hooks/fetch-more-data/use-infinite-data';
-import { AssimilationStage, Guest, WorkerLeaderboardEntry } from '~/store/types';
+import useRole from '~/hooks/role';
+import { AssimilationStage, ContactChannel, Guest, WorkerLeaderboardEntry } from '~/store/types';
 import type { WorkerGuestsPayload, WorkerStageBreakdown } from '~/store/types/roast-crm';
 import { AVATAR_FALLBACK_URL } from '~/constants';
+import { THEME_CONFIG } from '~/config/appConfig';
 
 const GuestListView = React.lazy(() => import('../components/GuestListView'));
 
@@ -52,13 +59,18 @@ export function WorkerProfile() {
     const params = useLocalSearchParams() as unknown as WorkerProfileParams;
     const { workerId, name, pictureUrl, zone: zoneName, campus, trend } = params;
 
-    const [selectedPeriodCode, setSelectedPeriodCode] = useState<'' | '7d' | '30d' | '90d'>('');
+    const { isZonalCoordinator, isCampusPastor, isPCU, isInternship, isQC, isSuperAdmin } = useRole();
+    const canContactWorker = isZonalCoordinator || isCampusPastor || isPCU || isInternship || isQC || isSuperAdmin;
+    const { data: workerUser } = useGetUserByIdQuery(workerId, { skip: !workerId || !canContactWorker });
+
+    // 'all' matches the empty `date` default below, so the control always states the applied filter.
+    const [selectedPeriodCode, setSelectedPeriodCode] = useState<'all' | '7d' | '30d' | '90d'>('all');
     const [date, setDate] = useState<{ startDate?: number; endDate?: number }>({});
 
-    const handleDateRangeChange = useCallback((period: '' | '7d' | '30d' | '90d') => {
+    const handleDateRangeChange = useCallback((period: 'all' | '7d' | '30d' | '90d') => {
         setSelectedPeriodCode(period);
 
-        if (!period) return setDate({});
+        if (period === 'all') return setDate({});
 
         setDate({
             startDate: dayjs().subtract(Number(period.replace('d', '')), 'day').valueOf(),
@@ -66,13 +78,18 @@ export function WorkerProfile() {
         });
     }, []);
 
-    // The worker leaderboard row only carries a zone *name*, not an id, but the
-    // worker-profile endpoint is scoped by zoneId - resolve it from the zones list.
-    // Try an exact match first, then fall back to a loose contains-match in case the
-    // leaderboard's zone label and the canonical zone name differ slightly.
+    // Resolve zoneId authoritatively from the worker's own user-zone-details record.
+    // Falls back to fuzzy-matching the leaderboard row's zone *name* against the zones list
+    // only if that lookup doesn't resolve one (e.g. still loading, or an unrecognized shape).
+    const { data: userZoneDetails } = useGetUserZoneDetailsQuery(workerId, { skip: !workerId });
     const { data: zones = [] } = useGetZonesQuery({});
     const zoneId = useMemo(() => {
-        const target = zoneName?.trim().toLowerCase();
+        const resolvedId = userZoneDetails?.zoneId ?? userZoneDetails?.zone?._id;
+        if (resolvedId) return resolvedId;
+
+        const target = (userZoneDetails?.zoneName ?? userZoneDetails?.zone?.name ?? zoneName)
+            ?.trim()
+            .toLowerCase();
         if (!target) return undefined;
 
         const exact = zones.find(z => z.name?.trim().toLowerCase() === target);
@@ -83,7 +100,7 @@ export function WorkerProfile() {
             return zn && (zn.includes(target) || target.includes(zn));
         });
         return partial?._id;
-    }, [zones, zoneName]);
+    }, [zones, zoneName, userZoneDetails]);
 
     const { data: assimilationStagesRaw = [] } = useGetAssimilationStagesQuery();
     const assimilationStages = useMemo(
@@ -167,6 +184,29 @@ export function WorkerProfile() {
                 {!!trend && getTrendIcon(trend)}
             </View>
 
+            {canContactWorker && !!workerUser?.phoneNumber && (
+                <View className="flex-row gap-2">
+                    <Button
+                        variant="outline"
+                        icon={<Icon type="feather" name="phone" size={22} color={THEME_CONFIG.blue} />}
+                        className="flex-1"
+                        onPress={openPhoneNumber(workerUser.phoneNumber, ContactChannel.CALL)}
+                        size="sm"
+                    >
+                        Call
+                    </Button>
+                    <Button
+                        icon={<Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />}
+                        variant="outline"
+                        className="flex-1"
+                        onPress={openPhoneNumber(workerUser.phoneNumber, ContactChannel.WHATSAPP)}
+                        size="sm"
+                    >
+                        WhatsApp
+                    </Button>
+                </View>
+            )}
+
             <View className="gap-4">
                 <View className="flex-row items-center justify-between gap-4">
                     <Text className="font-semibold text-lg">Score Breakdown</Text>
@@ -175,7 +215,7 @@ export function WorkerProfile() {
                             valueKey="_id"
                             labelKey="name"
                             items={[
-                                { _id: '', name: 'All Time' },
+                                { _id: 'all', name: 'All Time' },
                                 { _id: '7d', name: 'Last 7 Days' },
                                 { _id: '30d', name: 'Last 30 Days' },
                                 { _id: '90d', name: 'Last 90 Days' },

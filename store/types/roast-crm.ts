@@ -277,6 +277,15 @@ export interface ZoneWorkersPeriodPayload {
     endDate?: number;
 }
 
+// Unverified - GET /zone-users/user-zone-details/:userId publishes no response schema in
+// Swagger (like most of this API). Kept lenient/optional; used defensively to resolve a
+// worker's zoneId directly instead of fuzzy-matching a zone name.
+export interface UserZoneDetailsResponse {
+    zoneId?: string;
+    zoneName?: string;
+    zone?: { _id?: string; name?: string };
+}
+
 export interface ZeroEngagementWorkersPayload {
     zoneId?: string;
     campusId?: string;
@@ -375,9 +384,12 @@ export interface AnalyticsPayload {
 }
 
 // Verified 2026-07-19 - present on both /leaderboards/global-top-performing-workers and /analytics.
+// Updated 2026-08-01: backend added an `engagement` entry, scored per-engagement (not
+// per-guest) via a differently-named `pointsPerEngagement` field.
 export interface ScoringLegendEntry {
     label: string;
-    pointsPerGuest: number;
+    pointsPerGuest?: number;
+    pointsPerEngagement?: number;
 }
 
 export interface ScoringLegend {
@@ -385,6 +397,7 @@ export interface ScoringLegend {
     attended?: ScoringLegendEntry;
     discipled?: ScoringLegendEntry;
     assimilated?: ScoringLegendEntry;
+    engagement?: ScoringLegendEntry;
 }
 
 export interface WorkerLeaderboardEntry {

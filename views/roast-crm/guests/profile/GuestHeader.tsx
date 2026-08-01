@@ -21,8 +21,6 @@ import { Input } from '~/components/ui/input';
 import { Formik } from 'formik';
 import { GuestFormValidationSchema } from '../../utils/validation';
 import FormErrorMessage from '~/components/ui/error-message';
-import { PhoneInput } from '~/components/ui/phone-input';
-import { ICountry } from 'react-native-international-phone-number';
 import PickerSelect from '~/components/ui/picker-select';
 import useZoneIndex from '../../hooks/use-zone-index';
 import Loading from '~/components/atoms/loading';
@@ -54,13 +52,12 @@ export function GuestHeader({
     currentUser,
     assimilationStage,
 }: GuestHeaderProps) {
-    const { isZonalCoordinator, isHOD, isAHOD, isSuperAdmin } = useRole();
+    const { isZonalCoordinator, isSuperAdmin, isInternshipHOD, isCampusPastor } = useRole();
     const [updateGuest, { isLoading: updating }] = useUpdateGuestMutation();
     const [deleteGuest, { isLoading: deleting }] = useDeleteGuestMutation();
     const [reassignGuest] = useReassignGuestMutation();
     const [mode, setMode] = useState<'edit' | 'view'>('view');
     const isEditMode = mode === 'edit';
-    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
     const [selectedCampus, setSelectedCampus] = useState<string | undefined>(currentUser?.campusId);
     const [selectedZone, setSelectedZone] = useState<string | undefined>(guest?.zoneId);
 
@@ -70,16 +67,12 @@ export function GuestHeader({
     const zoneIndex = useZoneIndex();
     const campusIndex = useCampusIndex();
     const { data: assignedTo, isLoading: loadingAssignedTo } = useGetUserByIdQuery(guest?.assignedToId as string);
-    const canReAssign = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
-    const canDelete = isZonalCoordinator || isHOD || isAHOD || isSuperAdmin;
+    const canReAssign = isZonalCoordinator || isInternshipHOD || isSuperAdmin || isCampusPastor;
+    const canDelete = isZonalCoordinator || isInternshipHOD || isSuperAdmin || isCampusPastor;
 
     const handleMode = (mode: 'edit' | 'view') => () => {
         Haptics.selectionAsync();
         setMode(mode);
-    };
-
-    const handleSelectedCountry = (country: ICountry) => {
-        setSelectedCountry(country);
     };
 
     const onSubmit = async (values: Guest) => {
@@ -90,7 +83,7 @@ export function GuestHeader({
                 updateGuest({
                     ...guest,
                     ...rest,
-                    phoneNumber: formatToE164(rest.phoneNumber, selectedCountry?.callingCode ?? '+234'),
+                    phoneNumber: formatToE164(rest.phoneNumber),
                 }),
                 canReAssign && assignedToId && assignedToId !== guest.assignedToId
                     ? reassignGuest({ guestId: guest._id, toWorkerId: assignedToId })
@@ -100,7 +93,7 @@ export function GuestHeader({
             if (results.some(res => res && 'error' in res)) {
                 handleMode('edit')();
             }
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const handleDelete = () => {
@@ -116,7 +109,7 @@ export function GuestHeader({
                         try {
                             await deleteGuest(guest._id).unwrap();
                             router.back();
-                        } catch (error) {}
+                        } catch (error) { }
                     },
                 },
             ]
@@ -256,16 +249,14 @@ export function GuestHeader({
                             {/* Contact Details */}
                             <View className="gap-3">
                                 {isEditMode ? (
-                                    <View className="items-center gap-2">
-                                        <PhoneInput
-                                            defaultCountry="NG"
-                                            error={errors.phoneNumber}
+                                    <View className="gap-2">
+                                        <Input
+                                            className="!h-10 w-full"
                                             value={values.phoneNumber}
                                             placeholder="Enter phone number"
-                                            selectedCountry={selectedCountry}
                                             onBlur={handleBlur('phoneNumber')}
-                                            onChangeSelectedCountry={handleSelectedCountry}
-                                            onChangePhoneNumber={handleChange('phoneNumber')}
+                                            onChangeText={handleChange('phoneNumber')}
+                                            keyboardType="phone-pad"
                                         />
                                         {errors?.phoneNumber && (
                                             <FormErrorMessage>{errors?.phoneNumber}</FormErrorMessage>

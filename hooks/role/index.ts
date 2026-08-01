@@ -159,6 +159,7 @@ const ROAST_ALPHA_TESTERS = [
     'wealsegun@gmail.com',
     'kristyogunwale93@gmail.com',
     'olafabtech@gmail.com',
+    'nathanieltwjackson@gmail.com'
 ];
 
 const useRole = () => {

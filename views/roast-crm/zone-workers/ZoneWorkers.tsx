@@ -3,11 +3,17 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import AvatarComponent from '~/components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '~/constants';
 import Empty from '~/components/atoms/empty';
 import { FlatListSkeleton } from '~/components/layout/skeleton';
+import { Icon } from '@rneui/base';
+import { THEME_CONFIG } from '~/config/appConfig';
+import { ContactChannel } from '~/store/types';
+import { openPhoneNumber } from '../utils/communication';
+import useRole from '~/hooks/role';
 import {
     useGetActiveWorkersQuery,
     useGetInactiveWorkersQuery,
@@ -22,7 +28,15 @@ const workerName = (worker: ZoneWorkerEntry) =>
 
 const workerId = (worker: ZoneWorkerEntry) => worker.workerId ?? worker._id ?? '';
 
-function WorkerRow({ worker, onPress }: { worker: ZoneWorkerEntry; onPress: () => void }) {
+function WorkerRow({
+    worker,
+    onPress,
+    canContact,
+}: {
+    worker: ZoneWorkerEntry;
+    onPress: () => void;
+    canContact: boolean;
+}) {
     return (
         <Pressable onPress={onPress}>
             <Card>
@@ -42,6 +56,26 @@ function WorkerRow({ worker, onPress }: { worker: ZoneWorkerEntry; onPress: () =
                             </Text>
                         )}
                     </View>
+                    {canContact && !!worker.phoneNumber && (
+                        <View className="flex-row gap-2">
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 px-2"
+                                onPress={openPhoneNumber(worker.phoneNumber, ContactChannel.CALL)}
+                            >
+                                <Icon type="feather" name="phone" color={THEME_CONFIG.blue} />
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 px-2"
+                                onPress={openPhoneNumber(worker.phoneNumber, ContactChannel.WHATSAPP)}
+                            >
+                                <Icon type="ionicon" name="logo-whatsapp" color={THEME_CONFIG.success} />
+                            </Button>
+                        </View>
+                    )}
                 </CardContent>
             </Card>
         </Pressable>
@@ -53,11 +87,13 @@ function WorkerListSection({
     isLoading,
     onPressWorker,
     emptyMessage,
+    canContact,
 }: {
     workers: ZoneWorkerEntry[];
     isLoading: boolean;
     onPressWorker: (worker: ZoneWorkerEntry) => void;
     emptyMessage: string;
+    canContact: boolean;
 }) {
     if (isLoading) return <FlatListSkeleton />;
     if (!workers.length) return <Empty width={320} message={emptyMessage} />;
@@ -65,7 +101,12 @@ function WorkerListSection({
     return (
         <View className="gap-3">
             {workers.map(worker => (
-                <WorkerRow key={workerId(worker)} worker={worker} onPress={() => onPressWorker(worker)} />
+                <WorkerRow
+                    key={workerId(worker)}
+                    worker={worker}
+                    onPress={() => onPressWorker(worker)}
+                    canContact={canContact}
+                />
             ))}
         </View>
     );
@@ -79,6 +120,9 @@ export function ZoneWorkers() {
     }>();
 
     const [activeTab, setActiveTab] = useState<ZoneWorkersFilter>(filter ?? 'active');
+
+    const { isZonalCoordinator, isCampusPastor, isPCU, isInternship, isQC, isSuperAdmin } = useRole();
+    const canContactWorker = isZonalCoordinator || isCampusPastor || isPCU || isInternship || isQC || isSuperAdmin;
 
     const { data: activeWorkers = [], isLoading: loadingActive } = useGetActiveWorkersQuery(
         { zoneId: zoneId as string },
@@ -131,6 +175,7 @@ export function ZoneWorkers() {
                         isLoading={loadingActive}
                         onPressWorker={handlePressWorker}
                         emptyMessage="No active workers this week"
+                        canContact={canContactWorker}
                     />
                 </TabsContent>
 
@@ -140,6 +185,7 @@ export function ZoneWorkers() {
                         isLoading={loadingInactive}
                         onPressWorker={handlePressWorker}
                         emptyMessage="No inactive workers this week"
+                        canContact={canContactWorker}
                     />
                 </TabsContent>
 
@@ -149,6 +195,7 @@ export function ZoneWorkers() {
                         isLoading={loadingZeroEngagement}
                         onPressWorker={handlePressWorker}
                         emptyMessage="No workers with zero engagement"
+                        canContact={canContactWorker}
                     />
                 </TabsContent>
             </ScrollView>

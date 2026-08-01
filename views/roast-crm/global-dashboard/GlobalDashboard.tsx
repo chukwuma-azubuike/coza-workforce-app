@@ -41,18 +41,20 @@ const GlobalDashboard: React.FC = () => {
     const { user, isCampusPastor } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>();
     const [selectedCampus, setSelectedCampus] = useState<string | undefined>(user?.campus?._id);
-    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
+    // Must match the `date` default below so the control always states the filter that's applied
+    // (there is no 7-day option here, so the default period is the shortest one offered).
+    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>('1-month');
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
     const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'>>({
-        startDate: dayjs().subtract(7, 'day').valueOf(),
+        startDate: dayjs().subtract(1, 'month').valueOf(),
         endDate: dayjs().valueOf(),
     });
 
-    const handleDateRangeChange = useCallback((period: TimeRange | '') => {
+    const handleDateRangeChange = useCallback((period: TimeRange | 'all') => {
         setSelectedPeriodCode(period);
 
-        if (!period.includes('-')) return;
+        if (period === 'all') return setDate({});
 
         const [number, category] = period.split('-');
 
@@ -172,19 +174,19 @@ const GlobalDashboard: React.FC = () => {
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
-                        items={zones}
                         labelKey="name"
                         value={selectedZone}
                         className="!h-10"
                         placeholder="All zones"
                         onValueChange={handleZoneChange}
+                        items={[{ _id: 'null', name: 'All zones' }, ...zones]}
                     />
                 </View>
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
                         items={[
-                            { _id: '', name: 'All Time' },
+                            { _id: 'all', name: 'All Time' },
                             { _id: '1-month', name: 'Past 1 Month' },
                             { _id: '3-month', name: 'Past 3 Months' },
                             { _id: '6-month', name: 'Past 6 Months' },
