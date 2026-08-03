@@ -14,29 +14,50 @@ import FormErrorMessage from '~/components/ui/error-message';
 import { DismissKeyboard } from '~/components/DismissKeyboard';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
+import getErrorMessage from '~/utils/getErrorMessage';
 
 const ResetPassword: React.FC = () => {
-    const { email, OTP } = useLocalSearchParams<IResetPasswordPayload>();
+    // Route params always arrive as strings, handed over by forgot-password.
+    const { email, OTP } = useLocalSearchParams<Pick<IResetPasswordPayload, 'email' | 'OTP'>>();
 
-    const [resetPassword, { reset, isSuccess, isError, isLoading }] = useResetPasswordMutation();
+    const [resetPassword, { reset, isLoading }] = useResetPasswordMutation();
+
+    const { setModalState } = useModal();
+
+    const navigateToLogin = () => router.replace('/login');
+
+    // The email and OTP are handed over by the forgot-password screen. Without
+    // them there is nothing to reset against, so send the user back to restart.
+    React.useEffect(() => {
+        if (!email || !OTP) {
+            setModalState({
+                status: 'error',
+                message: 'Your reset link has expired. Please request a new code.',
+            });
+            router.replace('/forgot-password');
+        }
+    }, [email, OTP]);
 
     const onSubmit = async (value: Omit<IResetPasswordPayload, 'OTP' | 'email'>) => {
+        if (!email || !OTP) return;
+
         const response = await resetPassword({ password: value.password, email, OTP } as IResetPasswordPayload);
 
         if ('error' in response) {
             setModalState({
                 status: 'error',
-                message: JSON.stringify(response.error),
+                message: getErrorMessage(response.error, "We couldn't reset your password. Please try again."),
             });
             reset();
+            return;
         }
-        if ('data' in response) {
-            setModalState({
-                status: 'success',
-                message: 'Password reset successful',
-            });
-            navigateToLogin();
-        }
+
+        setModalState({
+            status: 'success',
+            message: 'Password reset successful',
+        });
+        // Let the success toast land before the screen changes underneath it.
+        setTimeout(navigateToLogin, 500);
     };
 
     const initialValues: IResetPasswordPayload = {
@@ -45,10 +66,6 @@ const ResetPassword: React.FC = () => {
         password: '',
         confirmPassword: '',
     };
-
-    const navigateToLogin = () => router.push('/login');
-
-    const { setModalState } = useModal();
 
     return (
         <SafeAreaView className="flex-1">

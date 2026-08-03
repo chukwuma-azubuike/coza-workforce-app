@@ -16,16 +16,9 @@ import APP_VARIANT from '~/config/envConfig';
 import Loading from '~/components/atoms/loading';
 import OtpInput from '~/components/OtpInput';
 import FormErrorMessage from '~/components/ui/error-message';
+import getErrorMessage from '~/utils/getErrorMessage';
 
 const RESEND_SECONDS = 60;
-
-const getErrorMessage = (error: unknown, fallback: string): string => {
-    const data = (error as any)?.data;
-    if (typeof data?.message === 'string') return data.message;
-    if (Array.isArray(data?.message)) return data.message.filter(Boolean).join('\n');
-    if (typeof (error as any)?.error === 'string') return (error as any).error;
-    return fallback;
-};
 
 const WelcomeVerifyEmail: React.FC = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
