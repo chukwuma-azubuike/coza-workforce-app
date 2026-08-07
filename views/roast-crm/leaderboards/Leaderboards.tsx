@@ -160,7 +160,7 @@ const Leaderboards: React.FC = () => {
                 </View>
             )}
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-1 pb-[620px]">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-1">
                 <TabsList>
                     <TabsTrigger value="workers">
                         <Text>Workers</Text>
@@ -170,7 +170,7 @@ const Leaderboards: React.FC = () => {
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="workers">
+                <TabsContent value="workers" className="pb-[620px]">
                     <FlatListComponent
                         itemHeight={216}
                         style={{ flex: 0 }}
@@ -184,7 +184,7 @@ const Leaderboards: React.FC = () => {
                     />
                 </TabsContent>
 
-                <TabsContent value="zones">
+                <TabsContent value="zones" className="pb-[0px]">
                     <FlatListComponent
                         refreshing={false}
                         itemHeight={219.7}
