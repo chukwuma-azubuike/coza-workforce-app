@@ -8,13 +8,13 @@ import {
     HeroStat,
     InfoChip,
     LinkButton,
-    LinkRow,
     NoteBlock,
     ReportSection,
     StatGrid,
     StatTile,
     num,
 } from './primitives';
+import { LinkPreviewList } from '@components/composite/link-preview';
 
 // Report data is dynamically shaped per department; intentionally untyped here.
 type AnyReport = any;
@@ -65,10 +65,30 @@ export const AttendanceReportView: React.FC<{ data: AnyReport }> = ({ data }) =>
             <ReportSection title="Attendance">
                 <StatGrid
                     items={[
-                        { label: 'Male', value: male, containerClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400' },
-                        { label: 'Female', value: female, containerClass: 'bg-pink-100 dark:bg-pink-900/20', textClass: 'text-pink-700 dark:text-pink-400' },
-                        { label: 'Infants', value: infants, containerClass: 'bg-amber-100 dark:bg-amber-900/20', textClass: 'text-amber-700 dark:text-amber-400' },
-                        { label: 'Total', value: total, containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                        {
+                            label: 'Male',
+                            value: male,
+                            containerClass: 'bg-blue-100 dark:bg-blue-900/20',
+                            textClass: 'text-blue-700 dark:text-blue-400',
+                        },
+                        {
+                            label: 'Female',
+                            value: female,
+                            containerClass: 'bg-pink-100 dark:bg-pink-900/20',
+                            textClass: 'text-pink-700 dark:text-pink-400',
+                        },
+                        {
+                            label: 'Infants',
+                            value: infants,
+                            containerClass: 'bg-amber-100 dark:bg-amber-900/20',
+                            textClass: 'text-amber-700 dark:text-amber-400',
+                        },
+                        {
+                            label: 'Total',
+                            value: total,
+                            containerClass: 'bg-green-100 dark:bg-green-900/20',
+                            textClass: 'text-green-700 dark:text-green-400',
+                        },
                     ]}
                 />
             </ReportSection>
@@ -129,12 +149,18 @@ export const TransferReportView: React.FC<{ data: AnyReport }> = ({ data }) => {
         const minors = num(l?.minorCount);
         return [l?.name || '—', adults, minors, adults + minors];
     });
-    const adults = data?.total?.adults != null ? num(data.total.adults) : locations.reduce((s, l) => s + num(l?.adultCount), 0);
-    const minors = data?.total?.minors != null ? num(data.total.minors) : locations.reduce((s, l) => s + num(l?.minorCount), 0);
+    const adults =
+        data?.total?.adults != null ? num(data.total.adults) : locations.reduce((s, l) => s + num(l?.adultCount), 0);
+    const minors =
+        data?.total?.minors != null ? num(data.total.minors) : locations.reduce((s, l) => s + num(l?.minorCount), 0);
 
     return (
         <>
-            <HeroStat label="Total transferred" value={adults + minors} sublabel={`${adults} adults · ${minors} minors`} />
+            <HeroStat
+                label="Total transferred"
+                value={adults + minors}
+                sublabel={`${adults} adults · ${minors} minors`}
+            />
             <ReportSection title="Pick-up locations">
                 <DataTable headers={['Location', 'Adults', 'Minors', 'Total']} rows={rows} />
             </ReportSection>
@@ -152,9 +178,7 @@ export const ServiceReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
                 <InfoChip label="Start" value={fmtTime(data?.serviceStartTime)} />
                 <InfoChip label="End" value={fmtTime(data?.serviceEndTime)} />
             </View>
-            {data?.serviceReportLink ? (
-                <LinkButton label="Open service report" url={data.serviceReportLink} />
-            ) : null}
+            {data?.serviceReportLink ? <LinkButton label="Open service report" url={data.serviceReportLink} /> : null}
         </ReportSection>
         <NoteBlock label="Observations" text={data?.observations} />
         <AttachmentImage url={data?.imageUrl} />
@@ -183,21 +207,24 @@ export const WittyReportView: React.FC<{ data: AnyReport }> = ({ data }) => {
             <ReportSection title="Online reach">
                 <StatGrid
                     items={[
-                        { label: 'Online first timers', value: num(data?.onlineFirstTimersCount), containerClass: 'bg-indigo-100 dark:bg-indigo-900/20', textClass: 'text-indigo-700 dark:text-indigo-400' },
-                        { label: 'Online new converts', value: num(data?.onlineConvertsCount), containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                        {
+                            label: 'Online first timers',
+                            value: num(data?.onlineFirstTimersCount),
+                            containerClass: 'bg-indigo-100 dark:bg-indigo-900/20',
+                            textClass: 'text-indigo-700 dark:text-indigo-400',
+                        },
+                        {
+                            label: 'Online new converts',
+                            value: num(data?.onlineConvertsCount),
+                            containerClass: 'bg-green-100 dark:bg-green-900/20',
+                            textClass: 'text-green-700 dark:text-green-400',
+                        },
                     ]}
                 />
             </ReportSection>
             {linkedPosts.length > 0 && (
                 <ReportSection title="Social media posts">
-                    {linkedPosts.map((p, i) => (
-                        <LinkRow
-                            key={i}
-                            label={p?.platform || 'Post'}
-                            url={p?.url}
-                            isLast={i === linkedPosts.length - 1}
-                        />
-                    ))}
+                    <LinkPreviewList posts={linkedPosts} />
                 </ReportSection>
             )}
             <NoteBlock label="Online inquiries" text={data?.onlineInquiries} />
@@ -246,10 +273,30 @@ export const PruReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
         <ReportSection title="Desk activity">
             <StatGrid
                 items={[
-                    { label: 'Enquiries', value: num(data?.enquiryCount), containerClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400' },
-                    { label: 'Vehicle dedications', value: num(data?.vehicleDedicationCount), containerClass: 'bg-indigo-100 dark:bg-indigo-900/20', textClass: 'text-indigo-700 dark:text-indigo-400' },
-                    { label: 'Missing items', value: num(data?.missingItemsCount), containerClass: 'bg-amber-100 dark:bg-amber-900/20', textClass: 'text-amber-700 dark:text-amber-400' },
-                    { label: 'Praise reports', value: num(data?.praiseReportDeskCount), containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
+                    {
+                        label: 'Enquiries',
+                        value: num(data?.enquiryCount),
+                        containerClass: 'bg-blue-100 dark:bg-blue-900/20',
+                        textClass: 'text-blue-700 dark:text-blue-400',
+                    },
+                    {
+                        label: 'Vehicle dedications',
+                        value: num(data?.vehicleDedicationCount),
+                        containerClass: 'bg-indigo-100 dark:bg-indigo-900/20',
+                        textClass: 'text-indigo-700 dark:text-indigo-400',
+                    },
+                    {
+                        label: 'Missing items',
+                        value: num(data?.missingItemsCount),
+                        containerClass: 'bg-amber-100 dark:bg-amber-900/20',
+                        textClass: 'text-amber-700 dark:text-amber-400',
+                    },
+                    {
+                        label: 'Praise reports',
+                        value: num(data?.praiseReportDeskCount),
+                        containerClass: 'bg-green-100 dark:bg-green-900/20',
+                        textClass: 'text-green-700 dark:text-green-400',
+                    },
                 ]}
             />
         </ReportSection>
@@ -264,10 +311,25 @@ export const WelfareReportView: React.FC<{ data: AnyReport }> = ({ data }) => (
         <ReportSection title="Support & aid">
             <StatGrid
                 items={[
-                    { label: 'Medical support', value: num(data?.medicalSupportCount), containerClass: 'bg-blue-100 dark:bg-blue-900/20', textClass: 'text-blue-700 dark:text-blue-400' },
+                    {
+                        label: 'Medical support',
+                        value: num(data?.medicalSupportCount),
+                        containerClass: 'bg-blue-100 dark:bg-blue-900/20',
+                        textClass: 'text-blue-700 dark:text-blue-400',
+                    },
                     { label: 'Aid requests', value: num(data?.aidRequestCount) },
-                    { label: 'Aid treated', value: num(data?.aidTreatedCount), containerClass: 'bg-green-100 dark:bg-green-900/20', textClass: 'text-green-700 dark:text-green-400' },
-                    { label: 'Aid declined', value: num(data?.aidDeclinedCount), containerClass: 'bg-red-100 dark:bg-red-900/20', textClass: 'text-red-700 dark:text-red-400' },
+                    {
+                        label: 'Aid treated',
+                        value: num(data?.aidTreatedCount),
+                        containerClass: 'bg-green-100 dark:bg-green-900/20',
+                        textClass: 'text-green-700 dark:text-green-400',
+                    },
+                    {
+                        label: 'Aid declined',
+                        value: num(data?.aidDeclinedCount),
+                        containerClass: 'bg-red-100 dark:bg-red-900/20',
+                        textClass: 'text-red-700 dark:text-red-400',
+                    },
                 ]}
             />
         </ReportSection>
