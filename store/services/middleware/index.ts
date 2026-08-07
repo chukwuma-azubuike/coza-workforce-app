@@ -14,7 +14,7 @@ import { scoreMappingServiceSlice } from '../score-mapping';
 import { groupHeadServiceSlice } from '../grouphead';
 import { groupServiceSlice } from '../group';
 import { uploadServiceSlice } from '../upload';
-import { dismissModalListenerMiddleware } from '~/store/listener-middleware/app';
+import { modalListenerMiddleware } from '~/store/listener-middleware/modal';
 import { Middleware } from '@reduxjs/toolkit';
 import { roastCrmApi } from '../roast-crm';
 import { gspDashboardServiceSlice } from '../gsp-dashboard';
@@ -36,7 +36,7 @@ const middlewaresSlices: Array<Middleware> = [
     groupHeadServiceSlice.middleware,
     groupServiceSlice.middleware,
     uploadServiceSlice.middleware,
-    dismissModalListenerMiddleware.middleware,
+    modalListenerMiddleware.middleware,
     roastCrmApi.middleware,
     gspDashboardServiceSlice.middleware,
 ];

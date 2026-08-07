@@ -3,6 +3,7 @@ import React from 'react';
 import Utils from '@utils/index';
 import { useAppDispatch, useAppSelector } from '~/store/hooks';
 import { userActions, userSelectors } from '~/store/actions/users';
+import { modalActions } from '~/store/actions/modal';
 import { ThunkDispatch } from '@reduxjs/toolkit';
 import { IStore } from '~/store';
 import { useLogoutMutation } from '~/store/services/account';
@@ -44,6 +45,9 @@ export const useAuth = () => {
 };
 
 export const logOutfn = (dispatch: ThunkDispatch<IStore, any, any>) => {
+    // Nothing from the previous session should survive on screen.
+    dispatch(modalActions.clear());
+
     Utils.clearCurrentUserStorage().then(_res => {
         Utils.clearStorage().then(_res => {
             dispatch(userActions.clearSession());
