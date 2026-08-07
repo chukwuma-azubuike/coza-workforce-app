@@ -64,10 +64,7 @@ function AdminMultiPicker<T extends { _id: string }>({
         [selectedIds, items] // eslint-disable-line react-hooks/exhaustive-deps
     );
 
-    const campusItems = useMemo(
-        () => [{ _id: '__all__', campusName: 'All campuses' }, ...campuses],
-        [campuses]
-    );
+    const campusItems = useMemo(() => [{ _id: '__all__', campusName: 'All campuses' }, ...campuses], [campuses]);
 
     const showEmpty = !isLoading && items.length === 0;
 
@@ -76,9 +73,7 @@ function AdminMultiPicker<T extends { _id: string }>({
             {selectedItems.length > 0 && (
                 <View className="gap-2">
                     <View className="flex-row items-center justify-between">
-                        <Text className="!text-[11px] text-muted-foreground">
-                            {selectedItems.length} selected
-                        </Text>
+                        <Text className="!text-[11px] text-muted-foreground">{selectedItems.length} selected</Text>
                         {onClear ? (
                             <TouchableOpacity onPress={onClear} hitSlop={8}>
                                 <Text className="!text-[11px] text-primary font-semibold">Clear all</Text>
@@ -107,7 +102,7 @@ function AdminMultiPicker<T extends { _id: string }>({
                 labelKey="campusName"
                 valueKey="_id"
                 onValueChange={(val: string) => onCampusChange(val === '__all__' ? null : val)}
-                placeholder={{ label: 'All campuses', value: '__all__' }}
+                placeholder="All campuses"
             />
 
             <View className="gap-1.5">

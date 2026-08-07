@@ -1,15 +1,15 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
-import { Church, Home, Save, Users2Icon, X } from 'lucide-react-native';
+import React, { memo, useCallback, useState } from 'react';
+import { Church, Home, Save, Users2Icon } from 'lucide-react-native';
 import { Button } from '~/components/ui/button';
 import { Textarea } from '~/components/ui/textarea';
 import { Label } from '~/components/ui/label';
 import { MessageSquare, MapPin, User } from 'lucide-react-native';
 
 import { useAddZoneMutation, useUpdateZoneMutation } from '~/store/services/roast-crm';
-import { Alert, TouchableOpacity, View } from 'react-native';
+import { Alert, View } from 'react-native';
 import useRole from '~/hooks/role';
 
-import { FieldArray, Formik } from 'formik';
+import { Formik } from 'formik';
 import { IDepartment, Zone } from '@store/types';
 import ErrorBoundary from '@components/composite/error-boundary';
 import FormErrorMessage from '~/components/ui/error-message';
@@ -20,29 +20,24 @@ import { ZoneFormValidationSchema } from '../../utils/validation';
 import * as Haptics from 'expo-haptics';
 import { useGetCampusesQuery } from '~/store/services/campus';
 import { useGetDepartmentsByCampusIdQuery } from '~/store/services/department';
-import { Badge } from '~/components/ui/badge';
-import { Text } from '~/components/ui/text';
 
 const ZoneForm: React.FC<{ setModalVisible: () => void; initialValues?: Zone }> = ({
     setModalVisible,
     initialValues,
 }) => {
     const { user: currentUser, isSuperAdmin } = useRole();
-    const [selectedCampus, setSelectedCampus] = useState(currentUser?.campus._id);
+    // A super admin can edit a zone outside their own campus, and the department
+    // list has to follow the zone being edited or its saved departments resolve
+    // to nothing.
+    const [selectedCampus, setSelectedCampus] = useState(initialValues?.campusId ?? currentUser?.campus._id);
 
     const { data: campuses = [] } = useGetCampusesQuery();
-    const { data: departments = [] } = useGetDepartmentsByCampusIdQuery(selectedCampus);
-    const departmentIndex = useMemo(
-        () =>
-            Object.fromEntries(
-                departments?.map(({ _id: id, departmentName: name, description }) => [id, { id, name, description }])
-            ),
-        [departments]
-    );
+    // `isLoading`, not `isFetching`: this gates the picker, and a background
+    // refetch on focus shouldn't blank a list the user is already looking at.
+    const { data: departments = [], isLoading: isLoadingDepartments } =
+        useGetDepartmentsByCampusIdQuery(selectedCampus);
     const [addZone, { isLoading }] = useAddZoneMutation();
     const [updateZone, { isLoading: updating }] = useUpdateZoneMutation();
-
-    const [newDepartment, setNewDepartment] = useState<string>();
 
     const onSubmit = useCallback(async (value: Partial<Zone>) => {
         try {
@@ -163,7 +158,8 @@ const ZoneForm: React.FC<{ setModalVisible: () => void; initialValues?: Zone }> 
                                         value={values?.campusId}
                                         placeholder="Select campus"
                                         onValueChange={value => {
-                                            setFieldValue('departments', []);
+                                            // The departments field parks and
+                                            // restores itself off `scopeKey`.
                                             setSelectedCampus(value);
                                             handleChange('campusId')(value) as any;
                                         }}
@@ -173,63 +169,36 @@ const ZoneForm: React.FC<{ setModalVisible: () => void; initialValues?: Zone }> 
                                     )}
                                 </View>
 
-                                <View className="gap-4">
-                                    <View className="gap-2">
-                                        <View className="items-center gap-2 flex-row">
-                                            <Users2Icon color="gray" size={16} />
-                                            <Label>Department</Label>
-                                        </View>
-                                        <PickerSelect<IDepartment>
-                                            valueKey="_id"
-                                            className="!h-12"
-                                            value={newDepartment}
-                                            labelKey="departmentName"
-                                            items={departments || []}
-                                            placeholder="Select department"
-                                            onValueChange={newDepartment => {
-                                                if (!departmentIndex[newDepartment]) return;
-
-                                                const alreadyAdded = values.departments.map(
-                                                    department => department.id
-                                                );
-
-                                                if (
-                                                    newDepartment &&
-                                                    Array.isArray(values.departments) &&
-                                                    !alreadyAdded.includes(newDepartment)
-                                                ) {
-                                                    setFieldValue('departments', [
-                                                        ...values.departments?.concat([
-                                                            departmentIndex[newDepartment] as any,
-                                                        ]),
-                                                    ]);
-                                                    setNewDepartment(undefined);
-                                                }
-                                            }}
-                                        />
+                                <View className="gap-2">
+                                    <View className="items-center gap-2 flex-row">
+                                        <Users2Icon color="gray" size={16} />
+                                        <Label>Departments</Label>
                                     </View>
-                                </View>
-
-                                {values.departments.length > 0 && (
-                                    <FieldArray
-                                        name="departments"
-                                        render={arrayHelpers => (
-                                            <View className="gap-4 flex-wrap flex-row">
-                                                {values?.departments?.map((department, idx) => (
-                                                    <Badge key={idx} className="h-10 flex-row" variant="outline">
-                                                        <Text className="text-sm ml-2">{department?.name}</Text>
-                                                        <TouchableOpacity
-                                                            className="p-2"
-                                                            onPress={() => arrayHelpers.remove(idx)}
-                                                        >
-                                                            <X color="red" size={18} />
-                                                        </TouchableOpacity>
-                                                    </Badge>
-                                                ))}
-                                            </View>
+                                    <PickerSelect<IDepartment>
+                                        multiple
+                                        valueKey="_id"
+                                        className="!h-12"
+                                        labelKey="departmentName"
+                                        items={departments || []}
+                                        placeholder="Select departments"
+                                        isLoading={isLoadingDepartments}
+                                        scopeKey={values?.campusId}
+                                        values={(values?.departments ?? []).map(
+                                            department => department.id ?? department._id
                                         )}
+                                        onValuesChange={(_ids, selected: IDepartment[]) => {
+                                            setFieldValue(
+                                                'departments',
+                                                selected.map(department => ({
+                                                    id: department._id,
+                                                    _id: department._id,
+                                                    name: department.departmentName,
+                                                    description: department.description,
+                                                }))
+                                            );
+                                        }}
                                     />
-                                )}
+                                </View>
 
                                 <View className="gap-2 mb-2">
                                     <View className="items-center gap-2 flex-row">
