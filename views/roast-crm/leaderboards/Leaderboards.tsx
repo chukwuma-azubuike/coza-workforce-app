@@ -7,39 +7,15 @@ import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import useRole from '~/hooks/role';
 import PickerSelect from '~/components/ui/picker-select';
-import { Alert } from '~/components/ui/alert';
 import { Skeleton } from '~/components/ui/skeleton';
 import FlatListComponent from '~/components/composite/flat-list';
 import { WorkerListView } from './WorkerListView';
 import dayjs from 'dayjs';
 import { ZoneListView } from './ZoneListView';
+import { ScoringGuide } from './ScoringGuide';
 
-// Matches the same cool -> warm -> green funnel-progress convention used for the assimilation
-// funnel/stage cards elsewhere in Roast CRM (see STAGE_BAR_COLOR in zone-dashboard/components/ZoneStats.tsx).
-// `engagement` isn't a pipeline stage - it's scored per-contact-logged, not per-guest - so it
-// gets its own indigo dot rather than reusing a funnel color.
-const LEGEND_DOT_COLOR: Record<string, string> = {
-    invited: 'bg-blue-600',
-    attended: 'bg-cyan-600',
-    discipled: 'bg-amber-600',
-    assimilated: 'bg-green-600',
-    engagement: 'bg-indigo-600',
-};
-
-// The backend only gives us a label + points value per stage, so the "conversational"
-// framing here is a fixed action-clause per known stage key (falls back to the raw label for
-// any stage this app doesn't recognize yet).
-const LEGEND_ACTION: Record<string, string> = {
-    invited: 'Invite a guest',
-    attended: 'Get them to attend a service',
-    discipled: 'Walk with them through discipleship',
-    assimilated: 'See them fully assimilated',
-    engagement: "Update the engagement timeline with a guest",
-};
-
-// Most stages score `pointsPerGuest`; `engagement` scores `pointsPerEngagement` instead.
-const legendPoints = (entry: { pointsPerGuest?: number; pointsPerEngagement?: number }) =>
-    entry.pointsPerGuest ?? entry.pointsPerEngagement ?? 0;
+// Breathing room under the last card so it clears the tab bar when scrolled to the end.
+const LIST_CONTENT_STYLE = { paddingBottom: 24 };
 
 const Leaderboards: React.FC = () => {
     const { user: currentUser, isSuperAdmin, isGlobalPastor } = useRole();
@@ -109,7 +85,7 @@ const Leaderboards: React.FC = () => {
     }
 
     return (
-        <View className="py-4 px-2 gap-6">
+        <View className="flex-1 pt-4 px-2 gap-4">
             {/* Header */}
             <View className="flex-row items-center justify-between">
                 <Text className="text-2xl flex-1 font-bold">Leaderboards</Text>
@@ -131,36 +107,11 @@ const Leaderboards: React.FC = () => {
                 {/* </View> */}
             </View>
 
-            {activeTab === 'workers' && !!scoringLegend && (
-                <View className="gap-3">
-                    <Text className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-                        How workers earn points
-                    </Text>
-                    <View className="gap-1">
-                        {Object.entries(scoringLegend).map(([key, entry]) =>
-                            entry ? (
-                                <View key={key} className="flex-row items-center gap-1.5">
-                                    <View
-                                        className={`w-2.5 h-2.5 rounded-full ${LEGEND_DOT_COLOR[key] ?? 'bg-muted'}`}
-                                    />
-                                    <Text className="text-muted-foreground text-sm line-clamp-none flex-1">
-                                        {LEGEND_ACTION[key] ?? entry.label}
-                                    </Text>
-                                    <Text className="text-sm font-semibold">+{legendPoints(entry)} pts</Text>
-                                </View>
-                            ) : null
-                        )}
-                    </View>
-                    <Alert className="rounded-lg !p-3 border-l-4 border-l-yellow-400 bg-yellow-50 dark:bg-yellow-300/30">
-                        <Text className="text-sm line-clamp-none">
-                            Points are only awarded for updates made in the app - a call, visit, or stage change
-                            that isn't logged here won't count.
-                        </Text>
-                    </Alert>
-                </View>
-            )}
+            {activeTab === 'workers' && !!scoringLegend && <ScoringGuide scoringLegend={scoringLegend} />}
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-1">
+            {/* The list owns the scroll: everything above is fixed chrome, so the tab panel takes the
+                remaining height rather than being padded down to a guessed offset. */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 gap-2">
                 <TabsList>
                     <TabsTrigger value="workers">
                         <Text>Workers</Text>
@@ -170,28 +121,28 @@ const Leaderboards: React.FC = () => {
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="workers" className="pb-[620px]">
+                <TabsContent value="workers" className="flex-1">
                     <FlatListComponent
                         itemHeight={216}
-                        style={{ flex: 0 }}
                         refreshing={false}
                         isLoading={isLoadingWorkers}
                         data={workerLeaderboard}
                         renderItemComponent={renderWorkerItem}
+                        contentContainerStyle={LIST_CONTENT_STYLE}
                         emptyComponent={
                             <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>
                         }
                     />
                 </TabsContent>
 
-                <TabsContent value="zones" className="pb-[0px]">
+                <TabsContent value="zones" className="flex-1">
                     <FlatListComponent
                         refreshing={false}
                         itemHeight={219.7}
-                        style={{ flex: 0 }}
                         data={zoneLeaderboard}
                         isLoading={isLoadingZones}
                         renderItemComponent={renderZoneItem}
+                        contentContainerStyle={LIST_CONTENT_STYLE}
                         emptyComponent={
                             <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>
                         }
