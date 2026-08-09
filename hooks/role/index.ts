@@ -273,6 +273,7 @@ const useRole = () => {
         isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,
         isCampusPastor: roleName === ROLES.campusPastor || roleName === ROLES.campusCoordinator,
         isQcHOD: roleName === ROLES.HOD && (departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME),
+        isPcuHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.PCU,
 
         // Departments
         isCTS: departmentName === DEPARTMENTS.CTS,

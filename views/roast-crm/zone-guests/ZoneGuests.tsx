@@ -30,8 +30,8 @@ export function ZoneGuests() {
         zoneName?: string;
         stageId?: string;
     }>();
-    const { user, isZonalCoordinator, isHOD, isAHOD } = useRole();
-    const hasZoneRights = isZonalCoordinator || isHOD || isAHOD;
+    const { user, isSuperAdmin, isInternshipHOD, isPcuHOD, isCampusPastor, isQcHOD } = useRole();
+    const canBulkReassign = isSuperAdmin || isInternshipHOD || isPcuHOD || isCampusPastor || isQcHOD;
 
     // Nothing that costs a frame runs until the push animation has settled - the list and its
     // queries are the expensive part, and mounting them during the transition is what made
@@ -175,7 +175,7 @@ export function ZoneGuests() {
                             assimilationSubStages={assimilationSubStages}
                         />
                     </View>
-                    {hasZoneRights && (
+                    {canBulkReassign && (
                         <BulkActions
                             workers={workers}
                             bulkReassignMode={bulkReassignMode}
