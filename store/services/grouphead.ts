@@ -98,7 +98,7 @@ export interface IGHWordReview {
 export const groupHeadServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: ['GHReport', 'GHWordReview'],
 

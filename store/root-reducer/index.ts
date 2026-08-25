@@ -22,6 +22,7 @@ import modalSlice from '../actions/modal';
 import { roastCrmApi } from '../services/roast-crm';
 import roastCRMState from '../actions/roast-crm';
 import { gspDashboardServiceSlice } from '../services/gsp-dashboard';
+import { notificationServiceSlice } from '../services/notification';
 import gspDashboardStateSlice from '../actions/gsp-dashboard';
 
 const rootReducer = combineReducers({
@@ -45,6 +46,7 @@ const rootReducer = combineReducers({
     [uploadServiceSlice.reducerPath]: uploadServiceSlice.reducer,
     [userStateSlice.reducerPath]: userStateSlice.reducer,
     [notificationsSlice.reducerPath]: notificationsSlice.reducer,
+    [notificationServiceSlice.reducerPath]: notificationServiceSlice.reducer,
     [roastCrmApi.reducerPath]: roastCrmApi.reducer,
     [roastCRMState.reducerPath]: roastCRMState.reducer,
     [gspDashboardServiceSlice.reducerPath]: gspDashboardServiceSlice.reducer,

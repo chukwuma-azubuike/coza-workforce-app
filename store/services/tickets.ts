@@ -21,7 +21,7 @@ type ITicketListResponse = IDefaultResponse<ITicket[]>;
 
 export const ticketServiceSlice = createApi({
     reducerPath: SERVICE_URL,
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: [SERVICE_URL, 'Ticket', 'UserTickets', 'DepartmentTickets', 'CampusTickets', 'GroupTickets', 'TicketCategories'],
 

@@ -16,8 +16,9 @@ import { useFonts } from 'expo-font';
 import '~/global.css';
 import Routing from '~/components/Routing';
 import { PersistGate } from 'redux-persist/integration/react';
-import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
 import ErrorBoundary from '~/components/composite/error-boundary';
+import { parseNotificationData } from '~/utils/notification-routing';
+import { getNotificationBehaviour } from '~/utils/notification-presentation';
 import useExpoUpdate from '~/hooks/expo-update';
 import removeBadPersistIfAny from '~/utils/removeBadPersistIfAny';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -32,15 +33,12 @@ const DARK_THEME: Theme = {
     colors: NAV_THEME.dark,
 };
 
+/**
+ * Registered at module scope, before any component mounts: a notification can arrive
+ * during the very first frame, and a handler installed inside an effect would miss it.
+ */
 Notifications.setNotificationHandler({
-    handleNotification: async () => ({
-        shouldShowAlert: true,
-        shouldShowBanner: true,
-        shouldShowList: true,
-        shouldPlaySound: true,
-        shouldSetBadge: false,
-        priority: Notifications.AndroidNotificationPriority.MAX,
-    }),
+    handleNotification: async notification => getNotificationBehaviour(parseNotificationData(notification).priority),
 });
 
 export {
@@ -76,11 +74,13 @@ export default function RootLayout() {
         hasMounted.current = true;
     }, []);
 
-    useNotificationObserver();
+    // `useNotificationObserver` used to run here. It now lives inside `Routing`, which is
+    // the first component under the Redux `Provider` — it has to read the signed-in user
+    // to know whether a cold-start target may be navigated to yet.
     useExpoUpdate();
 
     if (!isColorSchemeLoaded || (!loaded && !error)) {
-        return <BootScreen isDark={true} />
+        return <BootScreen isDark={true} />;
     }
 
     return (

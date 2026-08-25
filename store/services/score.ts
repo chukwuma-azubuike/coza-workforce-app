@@ -7,7 +7,7 @@ const SERVICE_URL = 'score';
 export const scoreServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     refetchOnFocus: true,
     refetchOnReconnect: true,

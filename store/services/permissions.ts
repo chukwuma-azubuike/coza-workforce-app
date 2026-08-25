@@ -32,7 +32,7 @@ interface IPermissionReportPayload extends IReportDownloadPayload {
 export const permissionsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: [
         SERVICE_URL,
