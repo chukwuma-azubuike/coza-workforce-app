@@ -136,3 +136,18 @@ export const resolveNotificationTarget = (data: INotificationData): INotificatio
         isFallback: !isRoutable,
     };
 };
+
+/**
+ * The same resolution for an inbox row.
+ *
+ * §8.2 — the row persists the routing target the push carried, so a tap in the centre
+ * must land exactly where a tap in the tray does. Sharing the resolver rather than the
+ * shape is what keeps that true as the rules change: the allowlist, the `/` rewrite and
+ * the param flattening all apply to both, or to neither.
+ */
+export const resolveInboxRowTarget = (row: { _id?: string; url?: string; content?: unknown }): INotificationTarget =>
+    resolveNotificationTarget({
+        url: row.url,
+        content: toContentObject(row.content),
+        notificationId: row._id,
+    });

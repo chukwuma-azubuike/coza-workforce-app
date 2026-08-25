@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { useAppSelector } from '~/store/hooks';
+import { useMarkNotificationsReadMutation } from '~/store/services/notification';
 import { userSelectors } from '~/store/actions/users';
 import { INotificationTarget, parseNotificationData, resolveNotificationTarget } from '~/utils/notification-routing';
 
@@ -24,6 +25,13 @@ import { INotificationTarget, parseNotificationData, resolveNotificationTarget }
 const useNotificationObserver = () => {
     const user = useAppSelector(userSelectors.selectCurrentUser);
     const isAuthenticated = !!user?.userId;
+    const [markRead] = useMarkNotificationsReadMutation();
+
+    /**
+     * The signed-in user, readable from the listener callbacks for the same reason as
+     * `isAuthenticatedRef` below — they run outside the render cycle.
+     */
+    const userIdRef = useRef<string | undefined>((user?.userId ?? user?._id) as string | undefined);
 
     /**
      * A target that arrived before there was a signed-in user to show it to.
@@ -65,10 +73,19 @@ const useNotificationObserver = () => {
 
         pending.current = null;
 
+        // Reading it in the tray *is* reading it. Leaving the row unread would make the
+        // bell contradict what the user just did, and the inbox is the durable record —
+        // fire-and-forget, because a failed read receipt must not cost the navigation.
+        if (target.notificationId && userIdRef.current) {
+            markRead({ userId: userIdRef.current, notificationIds: [target.notificationId] })
+                .unwrap()
+                .catch(() => {});
+        }
+
         // `push`, never `replace`: the user is being taken somewhere *on top of* where
         // they were, and back must return them to it.
         router.push({ pathname: target.pathname as any, params: target.params });
-    }, []);
+    }, [markRead]);
 
     const handleResponse = useCallback(
         (response?: Notifications.NotificationResponse | null) => {
@@ -141,13 +158,14 @@ const useNotificationObserver = () => {
      */
     useEffect(() => {
         isAuthenticatedRef.current = isAuthenticated;
+        userIdRef.current = (user?.userId ?? user?._id) as string | undefined;
 
         if (isAuthenticated) {
             flushPending();
         } else {
             pending.current = null;
         }
-    }, [isAuthenticated, flushPending]);
+    }, [isAuthenticated, user, flushPending]);
 };
 
 export default useNotificationObserver;

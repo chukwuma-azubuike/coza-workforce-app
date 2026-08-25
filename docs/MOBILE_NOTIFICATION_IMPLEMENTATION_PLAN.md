@@ -298,8 +298,13 @@ layout and filter chips; replace the data layer:
 
 - `app/(stack)/notifications/index.tsx` returns `<></>` today — the route resolves, so it never
   404s and nothing logs. Re-export the view.
-- Un-comment the bell in `views/app/home/group-head/gh-top-bar.tsx:54` and hang the unread count
-  on it. `config/navigation.ts:114` already points at `/notifications`.
+- Hang the bell and its unread count on the top bar. `config/navigation.ts:114` already points
+  at `/notifications`.
+  ⚠️ **Correction:** this plan named `views/app/home/group-head/gh-top-bar.tsx:54`, which is an
+  orphan — nothing imports it, so un-commenting there changes nothing on screen. The live top bar
+  is `components/TopNav.tsx`, used by the worker home (`views/app/home/workers/clocker.tsx:126`)
+  and the Roast CRM tabs; `views/app/home/top-nav.tsx` is a second orphan with the same
+  commented-out bell. The bell went into `components/TopNav.tsx`; both orphans were left alone.
 - **This unblocks `GENERAL_NOTIFICATION`** — until it ships, that type lands on a blank screen.
 
 ---

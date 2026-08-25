@@ -18,6 +18,7 @@ import { modalListenerMiddleware } from '~/store/listener-middleware/modal';
 import { Middleware } from '@reduxjs/toolkit';
 import { roastCrmApi } from '../roast-crm';
 import { gspDashboardServiceSlice } from '../gsp-dashboard';
+import { notificationServiceSlice } from '../notification';
 
 const middlewaresSlices: Array<Middleware> = [
     accountServiceSlice.middleware,
@@ -39,6 +40,7 @@ const middlewaresSlices: Array<Middleware> = [
     modalListenerMiddleware.middleware,
     roastCrmApi.middleware,
     gspDashboardServiceSlice.middleware,
+    notificationServiceSlice.middleware,
 ];
 
 export default middlewaresSlices;
