@@ -107,10 +107,10 @@ const NotificationListRow: React.FC<INotificationRowProps> = memo(({ row, isRead
                 than colour, which a worker with a colour vision deficiency cannot read. */}
             <View className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${isRead ? 'bg-transparent' : 'bg-primary'}`} />
             <View className="flex-1 gap-0.5">
-                <Text className={`!text-[13px] text-foreground ${isRead ? 'font-medium' : 'font-bold'}`}>
+                <Text className={`!text-[13px] line-clamp-2 text-foreground ${isRead ? 'font-medium' : 'font-bold'}`}>
                     {row.title}
                 </Text>
-                <Text className="!text-[12px] text-foreground leading-snug">{row.message}</Text>
+                <Text className="!text-[12px] line-clamp-none text-foreground leading-snug">{row.message}</Text>
                 <Text className="!text-[11px] text-muted-foreground mt-0.5">{dayjs(row.createdAt).fromNow()}</Text>
             </View>
         </View>

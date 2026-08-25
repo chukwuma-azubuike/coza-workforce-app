@@ -18,8 +18,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({ title, description, icon
     return (
         <View style={[{ alignItems: 'center', justifyContent: 'center', padding: 16 }, style]}>
             {icon && <View style={{ marginBottom: 12 }}>{icon}</View>}
-            {title && <Text className="font-bold text-lg text-center mb-2">{title}</Text>}
-            {description && <Text className="text-sm text-muted-foreground text-center mb-4">{description}</Text>}
+            {title && <Text className="font-bold text-lg text-center mb-2 line-clamp-none">{title}</Text>}
+            {description && (
+                <Text className="text-sm text-muted-foreground text-center mb-4 line-clamp-none">{description}</Text>
+            )}
             {action && (
                 <Button variant="outline" onPress={action.onPress}>
                     {action.label}
