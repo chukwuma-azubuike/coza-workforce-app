@@ -230,7 +230,7 @@ const ROLE_STATUS_MAP: Partial<Record<LogicalRole, RoleStatusMap>> = {
     },
     CAMPUS_PASTOR: {
         [IReportStatus.DRAFT]:                m('Pending',            'idle'),
-        [IReportStatus.HOD_SUBMITTED]:         m('Pending',            'idle'),
+        [IReportStatus.HOD_SUBMITTED]:         m('Needs your review',            'actionable'), // TODO: Return to "Pending", "idle" after all campuses have a GH
         [IReportStatus.GH_CHANGE_REQUESTED]:   m('Pending',            'idle'),
         [IReportStatus.GH_APPROVED]:           m('Needs your review',  'actionable'),  // ⚡
         [IReportStatus.CP_CHANGE_REQUESTED]:   m('Changes requested',  'returned'),

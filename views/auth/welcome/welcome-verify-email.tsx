@@ -1,6 +1,6 @@
 import { Text } from '~/components/ui/text';
 import React from 'react';
-import { Alert, KeyboardAvoidingView, Platform, SafeAreaView, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, SafeAreaView, TouchableOpacity, View } from 'react-native';
 import { Formik } from 'formik';
 import { EmailSchema } from '@utils/schemas';
 import { useLazySendOTPQuery, useValidateEmailOTPMutation } from '@store/services/account';
@@ -16,63 +16,102 @@ import APP_VARIANT from '~/config/envConfig';
 import Loading from '~/components/atoms/loading';
 import OtpInput from '~/components/OtpInput';
 import FormErrorMessage from '~/components/ui/error-message';
+import getErrorMessage from '~/utils/getErrorMessage';
+
+const RESEND_SECONDS = 60;
 
 const WelcomeVerifyEmail: React.FC = () => {
     const [modalVisible, setModalVisible] = React.useState<boolean>(false);
     const [email, setEmail] = React.useState<string>('');
+    const [sendError, setSendError] = React.useState<string | null>(null);
+    const [otpError, setOtpError] = React.useState<string | null>(null);
+    const [secondsLeft, setSecondsLeft] = React.useState<number>(0);
+    // Bumping this remounts the OTP field, clearing it after a failed attempt.
+    const [otpResetKey, setOtpResetKey] = React.useState<number>(0);
 
     const [sendOtp, { isLoading, isFetching }] = useLazySendOTPQuery();
     const [validateEmail, { isLoading: validatingOTP }] = useValidateEmailOTPMutation();
 
-    const hideModal = () => {
-        setModalVisible(false);
+    // Countdown for the "Resend code" affordance.
+    React.useEffect(() => {
+        if (secondsLeft <= 0) return;
+        const timer = setInterval(() => setSecondsLeft(prev => (prev <= 1 ? 0 : prev - 1)), 1000);
+        return () => clearInterval(timer);
+    }, [secondsLeft]);
+
+    const requestOtp = async (targetEmail: string) => {
+        setSendError(null);
+        setOtpError(null);
+        const response = await sendOtp(targetEmail);
+
+        if (response.data) {
+            setModalVisible(true);
+            setSecondsLeft(RESEND_SECONDS);
+            return true;
+        }
+
+        setSendError(getErrorMessage(response.error, "We couldn't find or reach that email. Please check and retry."));
+        return false;
     };
 
     const handleSubmit = async (values: { email: string }) => {
-        try {
-            setEmail(Utils.formatEmail(values.email));
-            const response = await sendOtp(Utils.formatEmail(values.email));
+        const formatted = Utils.formatEmail(values.email);
+        setEmail(formatted);
+        await requestOtp(formatted);
+    };
 
-            if (response.error) {
-                Alert.alert(
-                    'Failed',
-                    `${(response.error as any)?.data?.message || (response.error as any)?.TypeError}`
-                );
-            }
-
-            if (response.data) {
-                setModalVisible(true);
-            }
-        } catch (error) {}
+    const handleResend = async () => {
+        if (secondsLeft > 0 || !email) return;
+        setOtpError(null);
+        setOtpResetKey(prev => prev + 1);
+        await requestOtp(email);
     };
 
     const handleValidateOtp = async (otp: string) => {
-        if (otp.length === 6) {
-            try {
-                const response = await validateEmail({ email, otp: +otp });
+        if (otp.length !== 6) return;
+        setOtpError(null);
 
-                if (response.error) {
-                    Alert.alert('OTP validation failed', `${(response.error as any)?.data?.message}`);
-                }
-                if (response.data) {
-                    router.replace({ pathname: '/register', params: response.data as any });
-                }
-            } catch (error) {}
+        const response = await validateEmail({ email, otp: +otp });
+
+        if (response.data) {
+            const params = response.data as any;
+            setModalVisible(false);
+            // Defer navigation until the dialog's FadeOut exit animation (300ms)
+            // has finished. Replacing the screen while the modal is still
+            // animating out tears the native view down mid-draw and crashes
+            // Android's new architecture (Fabric dispatchGetDisplayList NPE).
+            setTimeout(() => {
+                router.replace({ pathname: '/register', params });
+            }, 500);
+            return;
         }
+
+        setOtpError(getErrorMessage(response.error, 'That code is incorrect or has expired. Please try again.'));
+        setOtpResetKey(prev => prev + 1);
+    };
+
+    const closeModal = () => {
+        setModalVisible(false);
+        setOtpError(null);
     };
 
     const isIOS = Platform.OS === 'ios';
+    const sending = isLoading || isFetching;
 
     return (
         <>
             <SafeAreaView className="flex-1">
                 <KeyboardAvoidingView behavior={isIOS ? 'padding' : 'height'} className="flex-1">
                     <View className="flex-1 justify-between">
-                        <View className="px-4 w-full gap-6 pt-20">
+                        <View className="px-4 w-full gap-8 pt-20">
                             <View className="px-4 gap-6 w-full items-center justify-center">
                                 <Logo />
-                                <Text className="text-2xl">{APP_VARIANT.APP_NAME}</Text>
-                                <Text className="text-muted-foreground">{APP_VARIANT.APP_SLOGAN}</Text>
+                            </View>
+                            <View className="gap-1">
+                                <Text className="text-2xl font-bold text-center">Let's verify your email</Text>
+                                <Text className="text-muted-foreground text-center">
+                                    We'll send a 6-digit code to confirm it's you.
+                                </Text>
                             </View>
                             <Formik
                                 onSubmit={handleSubmit}
@@ -85,23 +124,25 @@ const WelcomeVerifyEmail: React.FC = () => {
                                             <Label>Email</Label>
                                             <Input
                                                 placeholder="jondoe@gmail.com"
-                                                leftIcon={{
-                                                    type: 'ionicons',
-                                                    name: 'mail-outline',
-                                                }}
+                                                leftIcon={{ type: 'ionicons', name: 'mail-outline' }}
                                                 value={values.email}
+                                                autoCapitalize="none"
                                                 keyboardType="email-address"
-                                                onChangeText={handleChange('email')}
+                                                onChangeText={text => {
+                                                    setSendError(null);
+                                                    handleChange('email')(text);
+                                                }}
                                             />
                                             {!!errors.email && touched.email && (
                                                 <FormErrorMessage>{errors.email}</FormErrorMessage>
                                             )}
+                                            {!!sendError && <FormErrorMessage>{sendError}</FormErrorMessage>}
                                         </View>
                                         <Button
                                             onPress={handleSubmit as any}
-                                            isLoading={isLoading || isFetching}
-                                            disabled={!isValid || !values.email}
-                                            loadingText="Checking for your email..."
+                                            isLoading={sending}
+                                            disabled={!isValid || !values.email || sending}
+                                            loadingText="Checking your email..."
                                         >
                                             Continue
                                         </Button>
@@ -121,18 +162,43 @@ const WelcomeVerifyEmail: React.FC = () => {
                     </View>
                 </KeyboardAvoidingView>
             </SafeAreaView>
-            <Dialog open={modalVisible} onOpenChange={hideModal}>
+            <Dialog open={modalVisible} onOpenChange={open => !open && closeModal()}>
                 <DialogContent className="max-w-md">
-                    <View className="gap-10">
-                        <Text className="text-center text-3xl font-bold">Verification</Text>
+                    <View className="gap-6">
+                        <View className="gap-2">
+                            <Text className="text-center text-3xl font-bold">Verification</Text>
+                            <Text className="text-center text-base text-muted-foreground">
+                                Enter the 6-digit code sent to{'\n'}
+                                <Text className="font-medium text-foreground">{email}</Text>
+                            </Text>
+                        </View>
+
                         {validatingOTP ? (
                             <Loading spinnerProps={{ size: 'large' }} />
                         ) : (
-                            <Text className="text-center text-base max-w-xs mx-auto text-muted-foreground">
-                                Please enter the OTP code we sent to your email address
-                            </Text>
+                            <OtpInput key={otpResetKey} disabled={validatingOTP} onTextChange={handleValidateOtp} />
                         )}
-                        <OtpInput disabled={validatingOTP} onTextChange={handleValidateOtp} />
+
+                        {!!otpError && (
+                            <View className="items-center">
+                                <FormErrorMessage>{otpError}</FormErrorMessage>
+                            </View>
+                        )}
+
+                        <View className="items-center gap-3">
+                            {secondsLeft > 0 ? (
+                                <Text className="text-muted-foreground">Resend code in {secondsLeft}s</Text>
+                            ) : (
+                                <TouchableOpacity disabled={sending} onPress={handleResend}>
+                                    <Text className="text-primary font-medium">
+                                        {sending ? 'Sending...' : 'Resend code'}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                            <TouchableOpacity onPress={closeModal}>
+                                <Text className="text-muted-foreground">Wrong email? Go back</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </DialogContent>
             </Dialog>

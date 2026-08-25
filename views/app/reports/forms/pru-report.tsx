@@ -49,7 +49,7 @@ const PruReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IPruReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Desk activity">
                         {NUMERIC_FIELDS.map(field => (
                             <NumberField
@@ -76,9 +76,10 @@ const PruReport: React.FC = () => {
                         reportId={params?._id}
                         reportType={reportType}
                         status={status}
-                        ghComment={(params as any)?.ghComment}
-                        pastorComment={(params as any)?.pastorComment}
-                        gspComment={(params as any)?.gspComment}
+                        awaitingRole={params?.awaitingRole}
+                        ghComment={params?.ghComment}
+                        pastorComment={params?.pastorComment}
+                        gspComment={params?.gspComment}
                     />
                     <If condition={!isCampusPastor && !isGSP}>
                         <SubmitButton

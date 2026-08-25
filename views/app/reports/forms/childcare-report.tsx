@@ -69,7 +69,7 @@ const ChildcareReport: React.FC = () => {
             initialValues={INITIAL_VALUES}
         >
             {({ handleChange, values, handleSubmit, setFieldValue }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Children present">
                         {/* header */}
                         <View className="flex-row items-center gap-3">
@@ -121,9 +121,10 @@ const ChildcareReport: React.FC = () => {
                         reportId={params?._id}
                         reportType={reportType}
                         status={status}
-                        ghComment={(params as any)?.ghComment}
-                        pastorComment={(params as any)?.pastorComment}
-                        gspComment={(params as any)?.gspComment}
+                        awaitingRole={params?.awaitingRole}
+                        ghComment={params?.ghComment}
+                        pastorComment={params?.pastorComment}
+                        gspComment={params?.gspComment}
                     />
                     <If condition={!isCampusPastor && !isGSP}>
                         <SubmitButton

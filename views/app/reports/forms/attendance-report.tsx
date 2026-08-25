@@ -49,7 +49,7 @@ const AttendanceReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IAttendanceReportPayload}
         >
             {({ handleChange, handleSubmit, values, setFieldValue }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Attendance">
                         <NumberField
                             label="Number of male guests"
@@ -88,9 +88,10 @@ const AttendanceReport: React.FC = () => {
                         reportId={params?._id}
                         reportType={reportType}
                         status={status}
-                        ghComment={(params as any)?.ghComment}
-                        pastorComment={(params as any)?.pastorComment}
-                        gspComment={(params as any)?.gspComment}
+                        awaitingRole={params?.awaitingRole}
+                        ghComment={params?.ghComment}
+                        pastorComment={params?.pastorComment}
+                        gspComment={params?.gspComment}
                     />
                     <If condition={!isCampusPastor && !isGSP}>
                         <SubmitButton

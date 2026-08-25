@@ -18,13 +18,16 @@ import { uploadServiceSlice } from '@store/services/upload';
 import userStateSlice from '../actions/users';
 import appStateSlice from '../actions/app';
 import notificationsSlice from '../actions/notifications';
+import modalSlice from '../actions/modal';
 import { roastCrmApi } from '../services/roast-crm';
 import roastCRMState from '../actions/roast-crm';
 import { gspDashboardServiceSlice } from '../services/gsp-dashboard';
+import { notificationServiceSlice } from '../services/notification';
 import gspDashboardStateSlice from '../actions/gsp-dashboard';
 
 const rootReducer = combineReducers({
     [appStateSlice.reducerPath]: appStateSlice.reducer,
+    [modalSlice.reducerPath]: modalSlice.reducer,
     [accountServiceSlice.reducerPath]: accountServiceSlice.reducer,
     [attendanceServiceSlice.reducerPath]: attendanceServiceSlice.reducer,
     [complianceServiceSlice.reducerPath]: complianceServiceSlice.reducer,
@@ -43,6 +46,7 @@ const rootReducer = combineReducers({
     [uploadServiceSlice.reducerPath]: uploadServiceSlice.reducer,
     [userStateSlice.reducerPath]: userStateSlice.reducer,
     [notificationsSlice.reducerPath]: notificationsSlice.reducer,
+    [notificationServiceSlice.reducerPath]: notificationServiceSlice.reducer,
     [roastCrmApi.reducerPath]: roastCrmApi.reducer,
     [roastCRMState.reducerPath]: roastCRMState.reducer,
     [gspDashboardServiceSlice.reducerPath]: gspDashboardServiceSlice.reducer,

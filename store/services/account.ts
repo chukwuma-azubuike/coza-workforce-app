@@ -113,10 +113,10 @@ export type ILoginResponse = IDefaultResponse<{
 export interface IAddNotificationTokenPayload {
     email: string;
     deviceId: string;
-    fcmToken?: string;
-    appVersion: string;
     expoPushToken: string;
     platform: Platform['OS'];
+    /** Optional server-side; `nativeApplicationVersion` is genuinely null on some platforms. */
+    appVersion?: string;
 }
 
 export type IRegisterResponse = IDefaultResponse<IUser>;
@@ -193,7 +193,7 @@ export const accountServiceSlice = createApi({
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     endpoints: endpoint => ({
         /*********** Authentication **********/

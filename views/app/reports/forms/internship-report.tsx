@@ -43,7 +43,7 @@ const InternshipReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IInternshipReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Class">
                         <TextField
                             label="Class taken"
@@ -90,9 +90,10 @@ const InternshipReport: React.FC = () => {
                         reportId={params?._id}
                         reportType={reportType}
                         status={status}
-                        ghComment={(params as any)?.ghComment}
-                        pastorComment={(params as any)?.pastorComment}
-                        gspComment={(params as any)?.gspComment}
+                        awaitingRole={params?.awaitingRole}
+                        ghComment={params?.ghComment}
+                        pastorComment={params?.pastorComment}
+                        gspComment={params?.gspComment}
                     />
                     <If condition={!isCampusPastor && !isGSP}>
                         <SubmitButton

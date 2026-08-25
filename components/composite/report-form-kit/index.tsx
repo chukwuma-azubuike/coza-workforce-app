@@ -9,28 +9,45 @@ import { Textarea } from '~/components/ui/textarea';
 import { Button } from '~/components/ui/button';
 import ViewWrapper from '@components/layout/viewWrapper';
 import ReportStatusPill from '@components/composite/report-status-pill';
+import ReviewHistory from '@components/composite/review-history';
+import { useGetGhReportDetailQuery } from '@store/services/grouphead';
 import { cn } from '~/lib/utils';
 
 // ─── Screen shell ───────────────────────────────────────────────────────────
 // Consistent chrome for every report form: a header (service date + status pill)
-// over a padded, scrollable, keyboard-aware body.
+// over a padded, scrollable, keyboard-aware body. Surfaces the full review
+// history right up top, so the HOD sees what every reviewer said before they
+// start editing. The HOD-facing report-fetch endpoints don't return
+// reviewHistory yet, so this fetches it directly from the same `/gh/reports/:id`
+// detail endpoint the GH/CP/GSP approvals screen already uses — if the backend
+// denies a role/ownership check, the query just fails quietly and nothing renders.
 export const ReportFormShell: React.FC<{
     updatedAt?: string | number;
     status?: string;
+    reportId?: string;
+    reportType?: string;
     children: React.ReactNode;
-}> = ({ updatedAt, status, children }) => (
-    <ViewWrapper scroll avoidKeyboard noPadding>
-        <View className="px-4 pt-3 pb-12 gap-4">
-            <View className="flex-row items-center justify-between">
-                <Text className="text-base font-medium text-muted-foreground">
-                    {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
-                </Text>
-                {status ? <ReportStatusPill status={status} size="sm" /> : null}
+}> = ({ updatedAt, status, reportId, reportType, children }) => {
+    const { data: detail } = useGetGhReportDetailQuery(
+        { reportId: reportId as string, reportType },
+        { skip: !reportId }
+    );
+
+    return (
+        <ViewWrapper scroll avoidKeyboard noPadding>
+            <View className="px-4 pt-3 pb-12 gap-4">
+                <View className="flex-row items-center justify-between">
+                    <Text className="text-base font-medium text-muted-foreground">
+                        {dayjs(updatedAt || undefined).format('DD MMMM, YYYY')}
+                    </Text>
+                    {status ? <ReportStatusPill status={status} size="sm" /> : null}
+                </View>
+                <ReviewHistory history={detail?.reviewHistory} />
+                {children}
             </View>
-            {children}
-        </View>
-    </ViewWrapper>
-);
+        </ViewWrapper>
+    );
+};
 
 // ─── Section card ───────────────────────────────────────────────────────────
 export const FormSection: React.FC<{ title?: string; description?: string; children: React.ReactNode }> = ({

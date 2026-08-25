@@ -3,6 +3,18 @@ import { ContactChannel, Guest } from '~/store/types';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { roastCRMActions } from '~/store/actions/roast-crm';
 
+// Unlike openPhoneAndPersist below, contacting a worker isn't a guest-assimilation event, so
+// there's nothing to persist to the guest-contact timeline - this just opens the dialer/WhatsApp.
+export const openPhoneNumber = (phoneNumber: string | undefined | null, type: ContactChannel) => async () => {
+    if (!phoneNumber) return;
+
+    const url = type === ContactChannel.CALL ? `tel:${phoneNumber}` : `https://wa.me/${phoneNumber}`;
+    const can = await Linking.canOpenURL(url);
+    if (!can) return;
+
+    await Linking.openURL(url);
+};
+
 export const openPhoneAndPersist =
     (guest: Guest, type: ContactChannel, dispatch: Dispatch) =>
     async (): Promise<{ id: string; startedAt: string }> => {

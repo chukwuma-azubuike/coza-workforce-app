@@ -40,7 +40,7 @@ const GuestReport: React.FC = () => {
             initialValues={INITIAL_VALUES as unknown as IGuestReportPayload}
         >
             {({ handleChange, handleSubmit, values }) => (
-                <ReportFormShell updatedAt={updatedAt} status={status as string}>
+                <ReportFormShell updatedAt={updatedAt} status={status as string} reportId={params?._id} reportType={reportType}>
                     <FormSection title="Guests">
                         <NumberField
                             label="Number of first timers"
@@ -70,9 +70,10 @@ const GuestReport: React.FC = () => {
                         reportId={params?._id}
                         reportType={reportType}
                         status={status}
-                        ghComment={(params as any)?.ghComment}
-                        pastorComment={(params as any)?.pastorComment}
-                        gspComment={(params as any)?.gspComment}
+                        awaitingRole={params?.awaitingRole}
+                        ghComment={params?.ghComment}
+                        pastorComment={params?.pastorComment}
+                        gspComment={params?.gspComment}
                     />
                     <If condition={!isCampusPastor && !isGSP}>
                         <SubmitButton

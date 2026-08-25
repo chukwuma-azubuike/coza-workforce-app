@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import useRole from '@hooks/role';
 import useModal from '@hooks/modal/useModal';
 import { useTransitionReportMutation } from '@store/services/grouphead';
-import { IReportStatus } from '@store/types';
+import { AwaitingRole, IReportStatus } from '@store/types';
 import {
     actionsFor,
     makeIdempotencyKey,
@@ -19,6 +19,9 @@ interface ReportFormParams {
     status?: IReportStatus | string;
     reportType?: string;
     departmentName?: string;
+    // Backend-authoritative role this report is waiting on — needed to detect the
+    // headless-GH path, where a HOD resubmits directly from CP_CHANGE_REQUESTED.
+    awaitingRole?: AwaitingRole;
 }
 
 /**
@@ -35,16 +38,21 @@ export function useReportFormSubmit(updateReport: UpdateTrigger, params: ReportF
     const [transitionReport, { isLoading: isTransitioning }] = useTransitionReportMutation();
 
     // Only HOD/AHOD move the report into review; everyone else just saves data.
-    const submitAction = actionsFor((params.status as IReportStatus) ?? IReportStatus.DRAFT, role).find(
-        a => a.toStatus === IReportStatus.HOD_SUBMITTED
-    );
+    const submitAction = actionsFor(
+        (params.status as IReportStatus) ?? IReportStatus.DRAFT,
+        role,
+        params.awaitingRole
+    ).find(a => a.toStatus === IReportStatus.HOD_SUBMITTED);
 
     const submit = async (values: any) => {
         delete (values as any).__EXPO_ROUTER_key;
         // Strip workflow fields — status is no longer written via this endpoint.
         const { status: _status, pastorComment: _pastorComment, ...payload } = values;
 
-        const res = await (updateReport({ ...payload, userId: user?.userId }) as Promise<{ data?: unknown; error?: any }>);
+        const res = await (updateReport({ ...payload, userId: user?.userId }) as Promise<{
+            data?: unknown;
+            error?: any;
+        }>);
 
         if (res && 'error' in res && res.error) {
             setModalState({
@@ -61,6 +69,10 @@ export function useReportFormSubmit(updateReport: UpdateTrigger, params: ReportF
                     reportId: params._id,
                     reportType,
                     toStatus: submitAction.toStatus,
+                    // Some report forms (welfare, pru, protocol, witty, internship) collect
+                    // a "Comment" field — carry it onto the transition so it lands in
+                    // reviewHistory, not just the report document.
+                    comment: values.comment || undefined,
                     idempotencyKey: makeIdempotencyKey(),
                 }).unwrap();
             } catch (err) {

@@ -214,10 +214,25 @@ export const CreateUserSchema = Yup.object().shape({
     roleId: Yup.string().required('Role is required.'),
 });
 
+export const REPORT_TYPE_OPTIONS = [
+    'ChildCareReport',
+    'AttendanceReport',
+    'GuestReport',
+    'SecurityReport',
+    'TransferReport',
+    'ServiceReport',
+    'InternshipReport',
+    'WelfareReport',
+    'WittyReport',
+    'PruReport',
+    'ProtocolReport',
+] as const;
+
 export const CreateDepartmentSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
     description: Yup.string(),
     campusId: Yup.string(),
+    reportType: Yup.string().oneOf([...REPORT_TYPE_OPTIONS], 'Invalid report type'),
 });
 
 export const CreateCampusSchema = Yup.object().shape({

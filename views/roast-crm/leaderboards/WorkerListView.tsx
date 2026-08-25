@@ -4,13 +4,27 @@ import { Card, CardContent } from '~/components/ui/card';
 // import { Badge } from '~/components/ui/badge';
 // import { Progress } from '~/components/ui/progress';
 
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { WorkerLeaderboardEntry } from '~/store/types';
 import { getRankIcon, getTrendIcon } from '../utils/icons';
 import AvatarComponent from '~/components/atoms/avatar';
+import { router } from 'expo-router';
+import { AVATAR_FALLBACK_URL } from '~/constants';
 
-export const WorkerListView: React.FC<WorkerLeaderboardEntry> = (
+export const WorkerListView: React.FC<WorkerLeaderboardEntry> = props => {
+    const handlePress = () => {
+        router.push({ pathname: '/roast-crm/worker-profile', params: props as any });
+    };
+
+    return (
+        <Pressable onPress={handlePress}>
+            <WorkerListViewCard {...props} />
+        </Pressable>
+    );
+};
+
+const WorkerListViewCard: React.FC<WorkerLeaderboardEntry> = (
     //     {
     //     worker,
     //     zone,
@@ -47,7 +61,7 @@ export const WorkerListView: React.FC<WorkerLeaderboardEntry> = (
                     <View className="flex-row items-center justify-between gap-4 w-full">
                         <View className="flex-row items-center gap-4">
                             <Text>{getRankIcon(position ?? 1)}</Text>
-                            <AvatarComponent imageUrl={pictureUrl} alt={`${name}-picture`} />
+                            <AvatarComponent imageUrl={pictureUrl || AVATAR_FALLBACK_URL} alt={`${name}-picture`} />
                             <View>
                                 <Text className="font-semibold">{name}</Text>
                                 <Text className="text-base text-muted-foreground">

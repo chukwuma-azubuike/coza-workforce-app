@@ -18,6 +18,7 @@ import {
     IDepartmentReportResponse,
     IService,
     IReportStatus,
+    AwaitingRole,
     REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -90,12 +91,14 @@ export interface ICampusReportSummary<R = unknown> {
     departmentalReport: {
         campus: string;
         status: IReportStatus;
+        awaitingRole?: AwaitingRole;
         departmentName: string;
         report: {
             _id: string;
             departmentId: string;
             serviceId: string;
             status: IReportStatus;
+            awaitingRole?: AwaitingRole;
         } & R;
     }[];
     incidentReport: {
@@ -109,6 +112,7 @@ export interface ICampusReportSummary<R = unknown> {
 export interface IDepartmentReportListById {
     _id: string;
     status: IStatus;
+    awaitingRole?: AwaitingRole;
     createdAt: string;
     updatedAt: string;
     updatedBy: string;
@@ -172,7 +176,7 @@ export interface IGlobalReportList extends Array<IGlobalReport> {}
 export const reportsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: [
         SERVICE_URL,
@@ -526,8 +530,7 @@ export const reportsServiceSlice = createApi({
 
             providesTags: (_result, _error, { campusId }) => [{ type: 'CampusReport', id: campusId }, SERVICE_URL],
 
-            transformResponse: (res: IDefaultResponse<ICampusReportList>) =>
-                res?.data.filter(report => report.serviceTime <= new Date().getTime()), // Filter out services later than same day
+            transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
         }),
 
         getGlobalReportList: endpoint.query<IGlobalReportList, IGlobalReportListPayload>({

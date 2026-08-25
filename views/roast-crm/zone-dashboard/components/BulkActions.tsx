@@ -8,7 +8,7 @@ import PickerSelect from '~/components/ui/picker-select';
 interface BulkActionsProps {
     bulkReassignMode: boolean;
     selectedGuests: string[];
-    workers: IUser[];
+    workers: Array<Pick<IUser, '_id' | 'firstName' | 'lastName'>>;
     onBulkReassignStart: () => void;
     onBulkReassignCancel: () => void;
     onWorkerSelect: (workerId: string) => void;
@@ -37,9 +37,8 @@ export function BulkActions({
                 valueKey="_id"
                 items={workers}
                 labelKey="firstName"
-                // value={stageFilter}
                 className="!w-44 !h-10"
-                placeholder="Select stage"
+                placeholder="Reassign to..."
                 onValueChange={onWorkerSelect}
                 customLabel={user => `${user?.firstName} ${user.lastName}`}
             />

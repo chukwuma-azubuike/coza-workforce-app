@@ -35,9 +35,13 @@ const useOnApiResponse = (props: IOnApiResponseProps) => {
     const { setModalState } = useModal();
     const dispatch = useAppDispatch();
 
+    // Callbacks are usually inline literals at the call site; holding them in a ref keeps them out
+    // of the dependency array so the effect fires once per response instead of once per render.
+    const callbacks = React.useRef({ failureCallback, successCallback });
+    callbacks.current = { failureCallback, successCallback };
+
     React.useEffect(() => {
-        if (isLoading) {
-        }
+        const { failureCallback, successCallback } = callbacks.current;
 
         if (isError) {
             {
@@ -45,7 +49,7 @@ const useOnApiResponse = (props: IOnApiResponseProps) => {
                     setModalState({
                         defaultRender: true,
                         status: error?.error ? 'error' : 'info',
-                        message: error?.data?.data?.message || error?.error,
+                        message: error?.data?.data?.message || error?.error || 'Something went wrong',
                     });
             }
 
@@ -78,7 +82,7 @@ const useOnApiResponse = (props: IOnApiResponseProps) => {
                 }
             }
         }
-    }, [props]);
+    }, [isError, isSuccess, data, error]);
 
     return {
         data,

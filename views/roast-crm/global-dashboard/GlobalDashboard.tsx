@@ -4,6 +4,7 @@ import { BarChart3, Users, Award, Calendar } from 'lucide-react-native';
 import { Option } from '~/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs';
 import {
+    useGetAnalyticsQuery,
     useGetDropoffAnalyticsQuery,
     useGetGlobalAnalyticsQuery,
     useGetRecommendationsQuery,
@@ -16,6 +17,13 @@ import { TrendChart } from './charts/TrendChart';
 import { TopPerformingWorkers, TopPerformingZones } from './performers/TopPerformers';
 import { DropoffAnalysis } from './analytics/DropoffAnalysis';
 import { RecommendationsCard } from './analytics/RecommendationsCard';
+import {
+    ActiveVsInactiveTrendCard,
+    StageDropOffCard,
+    StageFunnelCard,
+    WeeklyGuestTrendCard,
+    WorkerLeaderboardTrendCard,
+} from './charts/InsightsPanels';
 import { StatsCard } from './StatsCard';
 import PickerSelect from '~/components/ui/picker-select';
 import dayjs from 'dayjs';
@@ -26,33 +34,35 @@ import Error from '~/components/atoms/error';
 import useRole from '~/hooks/role';
 import { useGetCampusesQuery } from '~/store/services/campus';
 
-type TimeRange = '1-month' | '3-month' | '6-months' | '1-year';
-type TabValues = 'overview' | 'zones' | 'trends' | 'analytics';
+type TimeRange = '1-month' | '3-month' | '6-month' | '1-year';
+type TabValues = 'overview' | 'zones' | 'trends' | 'analytics' | 'insights';
 
 const GlobalDashboard: React.FC = () => {
-    const { user } = useRole();
+    const { user, isCampusPastor } = useRole();
     const [selectedZone, setSelectedZone] = useState<string>();
     const [selectedCampus, setSelectedCampus] = useState<string | undefined>(user?.campus?._id);
-    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
+    // Must match the `date` default below so the control always states the filter that's applied
+    // (there is no 7-day option here, so the default period is the shortest one offered).
+    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>('1-month');
     const [selectedTab, setSelectedTab] = useState<TabValues>('overview');
 
     const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'>>({
-        startDate: dayjs().subtract(7, 'day').toISOString(),
-        endDate: dayjs().toISOString(),
+        startDate: dayjs().subtract(1, 'month').valueOf(),
+        endDate: dayjs().valueOf(),
     });
 
-    const handleDateRangeChange = useCallback((period: TimeRange) => {
+    const handleDateRangeChange = useCallback((period: TimeRange | 'all') => {
         setSelectedPeriodCode(period);
 
-        if (!period.includes('-')) return;
+        if (period === 'all') return setDate({});
 
         const [number, category] = period.split('-');
 
         setDate({
             startDate: dayjs()
                 .subtract(Number(number), category as 'month' | 'year')
-                .toISOString(),
-            endDate: dayjs().toISOString(),
+                .valueOf(),
+            endDate: dayjs().valueOf(),
         });
     }, []);
 
@@ -112,6 +122,16 @@ const GlobalDashboard: React.FC = () => {
         campusId: selectedCampus,
     });
 
+    const {
+        data: insights,
+        isLoading: insightsLoading,
+        isFetching: insightsFetching,
+    } = useGetAnalyticsQuery({
+        ...date,
+        zoneId: selectedZone,
+        campusId: selectedCampus,
+    });
+
     if (isLoading) {
         return (
             <View className="p-2 gap-6 flex-1">
@@ -147,25 +167,26 @@ const GlobalDashboard: React.FC = () => {
                         value={selectedCampus}
                         className="!h-10"
                         placeholder="Church"
+                        disabled={isCampusPastor}
                         onValueChange={handleCampusChange}
                     />
                 </View>
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
-                        items={zones}
                         labelKey="name"
                         value={selectedZone}
                         className="!h-10"
                         placeholder="All zones"
                         onValueChange={handleZoneChange}
+                        items={[{ _id: 'null', name: 'All zones' }, ...zones]}
                     />
                 </View>
                 <View className="flex-1">
                     <PickerSelect
                         valueKey="_id"
                         items={[
-                            { _id: '', name: 'All Time' },
+                            { _id: 'all', name: 'All Time' },
                             { _id: '1-month', name: 'Past 1 Month' },
                             { _id: '3-month', name: 'Past 3 Months' },
                             { _id: '6-month', name: 'Past 6 Months' },
@@ -192,7 +213,7 @@ const GlobalDashboard: React.FC = () => {
                                     title="Total Guests"
                                     iconColor="text-blue-500"
                                     value={analytics.totalGuests}
-                                    // trend={{ value: 12, label: '% this month', direction: 'up' }}
+                                // trend={{ value: 12, label: '% this month', direction: 'up' }}
                                 />
                             </View>
                             <View style={{ flex: 1, minWidth: 150 }}>
@@ -201,7 +222,7 @@ const GlobalDashboard: React.FC = () => {
                                     title="Conversion Rate"
                                     iconColor="text-green-500"
                                     value={`${analytics.conversionRates?.averageConversion ?? 0}%`}
-                                    // trend={{ value: 3, label: '% this month', direction: 'up' }}
+                                // trend={{ value: 3, label: '% this month', direction: 'up' }}
                                 />
                             </View>
                             <View style={{ flex: 1, minWidth: 150 }}>
@@ -219,7 +240,7 @@ const GlobalDashboard: React.FC = () => {
                                     title="Active Workers"
                                     iconColor="text-orange-500"
                                     value={analytics.totalActiveUsers ?? 0}
-                                    // trend={{ value: 2, label: ' this month', direction: 'up' }}
+                                // trend={{ value: 2, label: ' this month', direction: 'up' }}
                                 />
                             </View>
                         </View>
@@ -237,6 +258,9 @@ const GlobalDashboard: React.FC = () => {
                                 </TabsTrigger>
                                 <TabsTrigger value="analytics">
                                     <Text>Analytics</Text>
+                                </TabsTrigger>
+                                <TabsTrigger value="insights">
+                                    <Text>Insights</Text>
                                 </TabsTrigger>
                             </TabsList>
 
@@ -294,6 +318,45 @@ const GlobalDashboard: React.FC = () => {
                                             <RecommendationsCard
                                                 recommendations={recommendations?.recommendations || []}
                                                 isLoading={recommendationsLoading || recommendationsFetching}
+                                            />
+                                        </ErrorBoundary>
+                                    </View>
+                                </View>
+                            </TabsContent>
+
+                            <TabsContent value="insights">
+                                <View className="flex-row flex-wrap" style={{ gap: 16 }}>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <StageFunnelCard data={insights?.stageFunnel} isLoading={insightsLoading || insightsFetching} />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <StageDropOffCard data={insights?.stageDropOff} isLoading={insightsLoading || insightsFetching} />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <WeeklyGuestTrendCard
+                                                data={insights?.weeklyGuestTrend}
+                                                isLoading={insightsLoading || insightsFetching}
+                                            />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <WorkerLeaderboardTrendCard
+                                                data={insights?.workerLeaderboardTrend}
+                                                isLoading={insightsLoading || insightsFetching}
+                                            />
+                                        </ErrorBoundary>
+                                    </View>
+                                    <View style={{ flex: 1, minWidth: 300 }}>
+                                        <ErrorBoundary>
+                                            <ActiveVsInactiveTrendCard
+                                                data={insights?.activeVsInactiveTrend}
+                                                isLoading={insightsLoading || insightsFetching}
                                             />
                                         </ErrorBoundary>
                                     </View>

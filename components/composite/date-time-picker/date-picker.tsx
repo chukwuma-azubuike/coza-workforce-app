@@ -44,11 +44,35 @@ const DateTimePickerLegend: React.FC<IDateTimePickerLegendProps> = React.memo(
     }: IDateTimePickerLegendProps) => {
         const isIOS = Platform.OS === 'ios';
 
-        const [date, setDate] = React.useState<Date>(initialValue ? dayjs(initialValue).toDate() : new Date());
+        // Clamp any date into [minimumDate, maximumDate]. The native Android
+        // picker throws an out-of-range exception if `value` falls outside the
+        // bounds — which happened on the DOB field, whose default of "today"
+        // exceeded a maximumDate of "18 years ago".
+        const clampDate = React.useCallback(
+            (input: Date): Date => {
+                let result = input;
+                if (minimumDate && result < minimumDate) result = minimumDate;
+                if (maximumDate && result > maximumDate) result = maximumDate;
+                return result;
+            },
+            [minimumDate, maximumDate]
+        );
+
+        const [date, setDate] = React.useState<Date>(
+            clampDate(initialValue ? dayjs(initialValue).toDate() : maximumDate ?? new Date())
+        );
         const [open, setOpen] = React.useState<boolean>(isIOS);
+        // `date` is seeded to a clamped default so the native picker never opens
+        // out of range — but we only treat it as a real selection once the user
+        // (or an initialValue) actually picks one, so the button still shows the
+        // placeholder until then.
+        const [hasSelected, setHasSelected] = React.useState<boolean>(!!initialValue);
 
         const onChange = (_: DateTimePickerEvent, selectedDate?: Date) => {
-            selectedDate && setDate(selectedDate);
+            if (selectedDate) {
+                setDate(selectedDate);
+                setHasSelected(true);
+            }
             if (!isIOS) {
                 setOpen(false);
             }
@@ -88,8 +112,13 @@ const DateTimePickerLegend: React.FC<IDateTimePickerLegendProps> = React.memo(
                             props.className
                         )}
                     >
-                        <Text className={`text-left w-full ${!initialValue && 'font-normal'}`}>
-                            {!initialValue && !date
+                        <Text
+                            className={cn(
+                                'text-left w-full',
+                                !hasSelected && 'font-normal text-muted-foreground'
+                            )}
+                        >
+                            {!hasSelected
                                 ? placeholder
                                 : dayjs(date).format(
                                       mode === 'date'
@@ -103,7 +132,7 @@ const DateTimePickerLegend: React.FC<IDateTimePickerLegendProps> = React.memo(
                 )}
                 {open && (
                     <DateTimePicker
-                        value={value ? new Date(value) : date}
+                        value={clampDate(value ? new Date(value) : date)}
                         mode={mode as any}
                         onChange={onChange}
                         accentColor={THEME_CONFIG.primary}
