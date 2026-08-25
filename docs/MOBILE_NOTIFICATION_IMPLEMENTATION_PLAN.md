@@ -22,12 +22,21 @@ tab/param from the URL, so the corrections below land on the right screen *and* 
 
 | `url` emitted today | Exists? | Send instead | `content` to send | Why |
 |---|---|---|---|---|
-| `/attendance/clock-in` | ❌ | `/` | `{}` | The clock-in CTA lives on the home tab, not in `/attendance`. §7.2 rule 4 — land on the actionable state. |
-| `/attendance/clock-out` | ❌ | `/` | `{}` | Same button, same screen. |
+| `/attendance/clock-in` | ❌ | `/(tabs)` | `{}` | The clock-in CTA lives on the home tab, not in `/attendance`. §7.2 rule 4 — land on the actionable state. |
+| `/attendance/clock-out` | ❌ | `/(tabs)` | `{}` | Same button, same screen. |
 | `/attendance/department-summary` | ❌ | `/attendance` | `{ "tabKey": "teamAttendance" }` | `views/app/attendance/index.tsx:27,64` reads `params.tabKey` and selects that tab. `teamAttendance` is the HOD/AHOD department view. |
 | `/reports/my-reports` | ❌ | `/reports` | `{}` | The reports index is `/reports`; there is no `my-reports`. |
 
 `/permissions/permission-details` and `/tickets/ticket-details` are ✅ correct — no change.
+
+⚠️ **`/(tabs)`, not `/` — corrected during Phase 2.** Three files claim the bare `/`:
+`app/index.tsx` (the Welcome screen), `app/(auth)/index.tsx` and `app/(tabs)/index.tsx`. Sending
+`/` is therefore a coin toss that can drop a signed-in user on the sign-in landing page, which is
+why `components/Routing.tsx` has always entered the home tab as `router.replace('/(tabs)')`.
+The parenthesised segment is an Expo Router *group* — it never appears in a URL and is the only
+unambiguous way to name a group's index. The app now rewrites a `/` target to `/(tabs)` before
+navigating (`constants/notification-routes.ts`), so either spelling works on this build onward;
+send `/(tabs)` so it is also right for anyone still on the current release.
 
 ### 0.2 Report routes — resolved, and the answer is a single route (§4.1.1)
 
@@ -220,6 +229,30 @@ Plus, from the contract:
 - Keep **no** `type → route` lookup table on the client. The catalog is the backend's; duplicating
   it is how the two drift. `constants/notification-types.ts`'s legacy `NOTIFICATION_TYPES_ROUTING`
   (keyed on old `routeName`/`tabKey` pairs) is dead — delete it.
+
+### 2.4 Found while building Phase 2 — ⚠️ not fixed, needs a decision
+
+**iOS dev and preview builds mint sandbox push tokens against a production APNs entitlement.**
+
+`app.json` sets `ios.entitlements["aps-environment"] = "production"` unconditionally — verified
+across all three variants with `APP_VARIANT=<v> npx expo config --type prebuild --json` — while
+`registerForPushNotificationsAsync` requests the token with `development: ENV !== 'production'`.
+So the device registers with production APNs and Expo is told to deliver via sandbox. That is
+exactly the §4.3 failure mode: delivery stops, the app sees nothing, and the only evidence is a
+`DeviceNotRegistered` line in an Expo receipt nobody reads.
+
+It bites the two variants the team tests on, so **it will look like Phase 1 and Phase 2 do not
+work on iOS**. The `development` flag needs to track the entitlement, not `ENV`:
+
+| variant | distribution | `aps-environment` | token `development` |
+|---|---|---|---|
+| `development` | internal / ad-hoc | `development` | `true` |
+| `preview` | TestFlight — **an App Store build, production APNs** | `production` | `false` |
+| `production` | App Store | `production` | `false` |
+
+Note `preview` keeps the production entitlement: TestFlight is not a sandbox. Left unchanged
+because it turns on iOS distribution details worth confirming before a build, and it can only be
+verified on a device.
 
 ---
 

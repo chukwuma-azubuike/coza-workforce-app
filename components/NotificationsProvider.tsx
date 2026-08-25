@@ -10,6 +10,8 @@ import { useAddDeviceTokenMutation } from '~/store/services/account';
 import * as Application from 'expo-application';
 import { ENV } from '~/config/envConfig';
 import { getDeviceId } from '~/utils/device';
+import { ANDROID_NOTIFICATION_CHANNELS } from '~/constants/notification-channels';
+import { getBadgeCount } from '~/utils/notification-presentation';
 
 export { getDeviceId };
 
@@ -17,17 +19,32 @@ export { getDeviceId };
  * Android drops a notification addressed to a channel the device has never created —
  * silently, with no error to the app and none in the Expo receipt. So channels are
  * created on every launch regardless of auth state, before any push can arrive.
+ *
+ * The backend holds `NOTIFICATION_CHANNELS_ENABLED` off until a build declaring these
+ * has shipped, which is why every payload still arrives on `default` today. Creating
+ * them is the half that unblocks the flag; nothing here changes behaviour until it flips.
+ *
+ * Creation is idempotent and cheap, but it is *not* an update path: Android freezes a
+ * channel's importance at creation and lets the user lower it afterwards, so re-running
+ * this on a device that already has the channels only refreshes their names and
+ * descriptions. Getting the importance right the first time is the whole exercise.
  */
 export const setUpAndroidChannels = async () => {
     if (Platform.OS !== 'android') {
         return;
     }
 
-    await Notifications.setNotificationChannelAsync('default', {
-        name: 'Default',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-    });
+    // Sequential rather than `Promise.all`: the calls cross the bridge and their order
+    // is the order the channels appear in Android's settings list, which is the order
+    // the table declares them in.
+    for (const { id, ...channel } of ANDROID_NOTIFICATION_CHANNELS) {
+        try {
+            await Notifications.setNotificationChannelAsync(id, channel);
+        } catch (error) {
+            // One channel failing must not cost the user the other eight — least of all
+            // `default`, which is the fallback everything lands on today.
+        }
+    }
 };
 
 export const registerForPushNotificationsAsync = async () => {
@@ -203,13 +220,26 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
                 .catch(() => {});
         }
 
-        const notificationListener = Notifications.addNotificationReceivedListener(notification => {
+        const record = (notification: Notifications.Notification) => {
             dispatch(notificationActions.setNotification(notification));
-        });
 
+            // The payload's `badge` is the recipient's real unread count at send time, so
+            // it keeps the in-app bell honest without a round trip. `getBadgeCount`
+            // returns `undefined` for an absent badge — `LOW` notifications omit it — and
+            // that absence must leave the count where it is rather than zero it.
+            const unreadCount = getBadgeCount(notification.request?.content?.badge);
+
+            if (unreadCount !== undefined) {
+                dispatch(notificationActions.setUnreadCount(unreadCount));
+            }
+        };
+
+        const notificationListener = Notifications.addNotificationReceivedListener(record);
+
+        // Navigation for a tapped notification lives in `useNotificationObserver`, which
+        // has to hold a target until there is a session to open it in. This only records.
         const responseListener = Notifications.addNotificationResponseReceivedListener(response => {
-            // Handle notification response here
-            dispatch(notificationActions.setNotification(response.notification));
+            record(response.notification);
         });
 
         return () => {

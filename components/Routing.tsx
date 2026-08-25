@@ -11,6 +11,7 @@ import { useAuth } from '~/hooks/auth';
 import { cn } from '~/lib/utils';
 import { Platform } from 'react-native';
 import { appSelectors } from '~/store/actions/app';
+import useNotificationObserver from '~/hooks/push-notifications/useNotificationObserver';
 
 export { ErrorBoundary } from 'expo-router';
 
@@ -44,9 +45,16 @@ const Routing: React.FC = () => {
         update();
     }, [user?.userId, mode]);
 
+    // Declared after the effect above on purpose. Both run in the same commit when a
+    // session appears, and effects fire in declaration order — so `routeToMode`'s
+    // `replace` has already been dispatched by the time a queued notification target is
+    // pushed on top of it. Reverse them and the replace wipes out the destination the
+    // user actually tapped.
+    useNotificationObserver();
+
     return (
         <NotificationsProvider user={user || ({} as any)}>
-            <View className={cn('flex-1', Platform.OS === 'android' ? 'pt-3':'pt-2')}>
+            <View className={cn('flex-1', Platform.OS === 'android' ? 'pt-3' : 'pt-2')}>
                 <NotificationModal />
                 <Stack>
                     <Stack.Screen name="index" options={{ headerShown: false }} />
