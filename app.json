@@ -2,7 +2,7 @@
     "expo": {
         "name": "COZA Workforce",
         "slug": "coza-workforce-app",
-        "version": "2.2.18",
+        "version": "2.3.0",
         "runtimeVersion": {
             "policy": "appVersion"
         },
