@@ -14,7 +14,7 @@ const SERVICE_URL = 'department';
 export const departmentServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     refetchOnFocus: true,
     refetchOnReconnect: true,

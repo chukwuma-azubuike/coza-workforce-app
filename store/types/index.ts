@@ -161,10 +161,20 @@ export interface IToken {
 }
 
 export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
-export interface ILogoutPayload {
-    expoPushToken: string;
-    userId: string;
-}
+/**
+ * The backend deletes the device row matching `expoPushToken` OR `deviceId`, and
+ * rejects with 422 only when neither is supplied — so the union below makes the
+ * invalid call unrepresentable rather than merely discouraged.
+ *
+ * Both are individually optional because the client cannot always produce either one:
+ * registration may have failed, the persisted slice may have rehydrated without a
+ * token, and `getDeviceId()` resolves to null early in the iOS lifecycle. Never skip
+ * the call when one of them exists — the row stays live and the next person to sign
+ * in on that handset keeps receiving the previous user's notifications.
+ */
+export type ILogoutPayload = { userId: string } & (
+    { deviceId: string; expoPushToken?: string } | { deviceId?: string; expoPushToken: string }
+);
 
 export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     roleId: string;

@@ -176,7 +176,7 @@ export interface IGlobalReportList extends Array<IGlobalReport> {}
 export const reportsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: [
         SERVICE_URL,
