@@ -82,7 +82,7 @@ const TopNav: React.FC = () => {
                     <AvatarComponent
                         badge
                         alt="profile-pic"
-                        className="w-10 h-10"
+                        className="w-6 h-6"
                         lastName={user?.lastName}
                         firstName={user?.firstName}
                         badgeColor={STATUS_COLORS[user?.status]}
