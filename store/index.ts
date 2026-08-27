@@ -1,7 +1,7 @@
 import { configureStore, Middleware } from '@reduxjs/toolkit';
-import { setupListeners } from '@reduxjs/toolkit/query';
 import { createLogger } from 'redux-logger';
 import rootReducer from './root-reducer';
+import { setupReactNativeListeners } from './rn-listeners';
 import middlewaresSlices from './services/middleware';
 import {
     PersistConfig,
@@ -61,7 +61,7 @@ const store = configureStore({
 export type IStore = ReturnType<typeof store.getState>;
 
 export const persistor = persistStore(store);
-setupListeners(store.dispatch);
+setupReactNativeListeners(store.dispatch);
 
 export type IAppDispatch = typeof store.dispatch;
 

@@ -137,9 +137,11 @@ export const NOTIFICATION_HOME_ROUTE = '/(tabs)' as const;
  *
  * Groups are organisational and never appear in a URL, so the same screen has two
  * legitimate spellings. The allowlist stores the plain one; this is what lets the
- * group-qualified spelling match it without duplicating all ninety entries.
+ * group-qualified spelling match it without duplicating all ninety entries — and it is
+ * also what lets a target be compared against `usePathname()`, which always reports the
+ * stripped form.
  */
-const withoutGroups = (pathname: string): string => {
+export const stripRouteGroups = (pathname: string): string => {
     const stripped = (pathname.split(/[?#]/)[0] ?? '')
         .split('/')
         .filter(segment => !(segment.startsWith('(') && segment.endsWith(')')))
@@ -156,7 +158,7 @@ const withoutGroups = (pathname: string): string => {
  * stray `?` must not cost the user their destination.
  */
 export const isKnownNotificationRoute = (pathname: string): boolean =>
-    KNOWN_NOTIFICATION_ROUTES.has(withoutGroups(pathname));
+    KNOWN_NOTIFICATION_ROUTES.has(stripRouteGroups(pathname));
 
 /**
  * The path to hand the router: the caller's own spelling, except that a bare `/` is
@@ -164,4 +166,4 @@ export const isKnownNotificationRoute = (pathname: string): boolean =>
  * normalised away — it is the *only* unambiguous way to name the index of a group.
  */
 export const toNavigableRoute = (pathname: string): string =>
-    withoutGroups(pathname) === '/' ? NOTIFICATION_HOME_ROUTE : pathname;
+    stripRouteGroups(pathname) === '/' ? NOTIFICATION_HOME_ROUTE : pathname;
