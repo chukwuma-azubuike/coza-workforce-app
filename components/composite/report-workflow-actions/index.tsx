@@ -10,7 +10,14 @@ import useRole from '@hooks/role';
 import useModal from '@hooks/modal/useModal';
 import { useTransitionReportMutation } from '@store/services/grouphead';
 import { IReportStatus, AwaitingRole } from '@store/types';
-import { actionsFor, isGhTierSkipped, makeIdempotencyKey, toLogicalRole, transitionErrorMessage, ReportAction } from '@constants/report-actions';
+import {
+    actionsFor,
+    isGhTierSkipped,
+    makeIdempotencyKey,
+    toLogicalRole,
+    transitionErrorMessage,
+    ReportAction,
+} from '@constants/report-actions';
 
 interface ReportWorkflowActionsProps {
     reportId?: string;
@@ -29,7 +36,7 @@ interface ReportWorkflowActionsProps {
 const NoteCard: React.FC<{ label: string; comment: string }> = ({ label, comment }) => (
     <View className="rounded-2xl border border-border bg-muted-background p-4 gap-1.5">
         <Text className="!text-[11px] font-bold uppercase tracking-widest text-muted-foreground">{label}</Text>
-        <Text className="!text-[13px] text-foreground leading-snug">"{comment}"</Text>
+        <Text className="!text-[13px] text-foreground leading-snug line-clamp-none">"{comment}"</Text>
     </View>
 );
 
@@ -54,19 +61,32 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
     const [pendingCommentAction, setPendingCommentAction] = useState<ReportAction | null>(null);
     const [transition, { isLoading }] = useTransitionReportMutation();
 
-    const actions = useMemo(() => actionsFor(status as IReportStatus, role, awaitingRole), [status, role, awaitingRole]);
+    const actions = useMemo(
+        () => actionsFor(status as IReportStatus, role, awaitingRole),
+        [status, role, awaitingRole]
+    );
     const ghSkipped = isGhTierSkipped(status, awaitingRole);
 
     const isReviewer = role === 'CAMPUS_PASTOR' || role === 'GSP';
     const isHodLike = role === 'HOD' || role === 'AHOD';
 
     // HOD/AHOD don't act here (the form's own button saves data + resubmits), but
-    // they should see why the report came back. Render just the return note.
+    // they should see why the report came back — it is the whole reason they opened
+    // the form. Both return paths reach a HOD: the Group Head's on the normal flow,
+    // and the Campus Pastor's when the department has no Group Head, which used to
+    // render nothing at all and left them editing without knowing what to fix.
     if (isHodLike) {
-        if (status === IReportStatus.GH_CHANGE_REQUESTED && ghComment) {
+        const returnNote =
+            status === IReportStatus.GH_CHANGE_REQUESTED && ghComment
+                ? { label: 'Group Head requested changes', comment: ghComment }
+                : status === IReportStatus.CP_CHANGE_REQUESTED && pastorComment
+                  ? { label: 'Campus Pastor requested changes', comment: pastorComment }
+                  : null;
+
+        if (returnNote) {
             return (
                 <View className="gap-4">
-                    <NoteCard label="Group Head requested changes" comment={ghComment} />
+                    <NoteCard label={returnNote.label} comment={returnNote.comment} />
                 </View>
             );
         }
@@ -85,7 +105,10 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
                 idempotencyKey: makeIdempotencyKey(),
             }).unwrap();
             setPendingCommentAction(null);
-            setModalState({ status: 'success', message: `Report ${action.variant === 'approve' ? 'approved' : 'returned'}` });
+            setModalState({
+                status: 'success',
+                message: `Report ${action.variant === 'approve' ? 'approved' : 'returned'}`,
+            });
             router.back();
         } catch (err) {
             const info = transitionErrorMessage(err);
@@ -108,10 +131,10 @@ const ReportWorkflowActions: React.FC<ReportWorkflowActionsProps> = ({
         role === 'CAMPUS_PASTOR' && status === IReportStatus.GSP_CHANGE_REQUESTED && gspComment
             ? { label: 'GSP requested changes', comment: gspComment }
             : role === 'GSP' && pastorComment
-                ? { label: 'Campus Pastor note', comment: pastorComment }
-                : ghComment && role === 'CAMPUS_PASTOR'
-                    ? { label: 'Group Head note', comment: ghComment }
-                    : null;
+              ? { label: 'Campus Pastor note', comment: pastorComment }
+              : ghComment && role === 'CAMPUS_PASTOR'
+                ? { label: 'Group Head note', comment: ghComment }
+                : null;
 
     return (
         <View className="gap-4">

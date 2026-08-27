@@ -10,8 +10,14 @@ import AvatarComponent from '@components/atoms/avatar';
 import { AVATAR_FALLBACK_URL } from '@constants/index';
 import { IReviewHistoryEntry } from '@store/types';
 
-interface CpReturnBannerProps {
+interface ReportReturnBannerProps {
     entry: IReviewHistoryEntry;
+    /**
+     * What the viewer is expected to do about it. Rendered as the closing line so the
+     * banner states the ask and the obligation together — omit it for a bystander,
+     * who should see what happened without being told to act on it.
+     */
+    callToAction?: string;
 }
 
 const ROLE_LABELS: Record<string, string> = {
@@ -22,7 +28,15 @@ const ROLE_LABELS: Record<string, string> = {
     AHOD: 'Asst. Head of Department',
 };
 
-const CpReturnBanner: React.FC<CpReturnBannerProps> = ({ entry }) => {
+/**
+ * The reason a report came back, at the top of the screen where it cannot be missed.
+ *
+ * This is the first thing the recipient of a "changes requested" notification needs,
+ * and it used to render only for a Campus Pastor return — so a HOD, the role that
+ * actually has to act, saw the Group Head's reason as an unstyled grey note card
+ * sitting between two others. Any returning role renders the same banner now.
+ */
+const ReportReturnBanner: React.FC<ReportReturnBannerProps> = ({ entry, callToAction }) => {
     const roleLabel = ROLE_LABELS[entry.actorRole] ?? entry.actorRole;
     const timeAgo = dayjs(entry.timestamp).fromNow();
 
@@ -45,13 +59,21 @@ const CpReturnBanner: React.FC<CpReturnBannerProps> = ({ entry }) => {
 
             {entry.comment ? (
                 <View className="bg-red-100 dark:bg-red-900/30 rounded-xl px-3 py-2.5">
-                    <Text className="!text-[13px] text-red-800 dark:text-red-300 leading-snug">
+                    {/* The base Text clamps to one line app-wide; a reviewer's reason is
+                        the one thing on this screen that must never be truncated. */}
+                    <Text className="!text-[13px] text-red-800 dark:text-red-300 leading-snug line-clamp-none">
                         "{entry.comment}"
                     </Text>
                 </View>
+            ) : null}
+
+            {callToAction ? (
+                <Text className="!text-[12px] text-red-700 dark:text-red-400 leading-snug line-clamp-none">
+                    {callToAction}
+                </Text>
             ) : null}
         </View>
     );
 };
 
-export default CpReturnBanner;
+export default ReportReturnBanner;
