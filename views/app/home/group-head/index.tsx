@@ -166,7 +166,6 @@ const GHHome: React.FC<IGHHomeProps> = ({
                 pictureUrl={user?.pictureUrl}
                 serviceName={latestService?.name}
                 serviceTime={latestService?.serviceTime}
-                unread={false}
             />
 
             {isFirstTimeGH ? (
