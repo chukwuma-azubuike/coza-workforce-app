@@ -12,6 +12,7 @@ import { ENV } from '~/config/envConfig';
 import { getDeviceId } from '~/utils/device';
 import { ANDROID_NOTIFICATION_CHANNELS } from '~/constants/notification-channels';
 import { getBadgeCount } from '~/utils/notification-presentation';
+import { notificationServiceSlice } from '~/store/services/notification';
 
 export { getDeviceId };
 
@@ -232,6 +233,21 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
             if (unreadCount !== undefined) {
                 dispatch(notificationActions.setUnreadCount(unreadCount));
             }
+
+            // A push is only ever a hint that the inbox changed, so treat it as one and
+            // refetch rather than synthesising a row from the payload: it carries an id,
+            // a title and a body, but not the `category`, `audience` or `expiresAt` the
+            // list renders and filters on. Invalidating is what makes an open
+            // notification centre pick up the row as it arrives rather than on the next
+            // pull-to-refresh — on the first page, at least; a reader scrolled deep into
+            // the list only refetches the page they are on, which is offset pagination
+            // behaving as it always does here. It also replaces the badge hint above with
+            // the authoritative count, which
+            // matters most for the notifications that carry no badge at all (`LOW`) or
+            // none at the time it was sent (quiet hours). Nothing is subscribed to either
+            // tag unless a screen is actually showing it, so this is free when it is not
+            // needed.
+            dispatch(notificationServiceSlice.util.invalidateTags(['notification', 'unreadCount']));
         };
 
         const notificationListener = Notifications.addNotificationReceivedListener(record);

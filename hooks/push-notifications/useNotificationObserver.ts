@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
+import { router, useGlobalSearchParams, usePathname } from 'expo-router';
 import { useAppSelector } from '~/store/hooks';
 import { useMarkNotificationsReadMutation } from '~/store/services/notification';
 import { userSelectors } from '~/store/actions/users';
 import { INotificationTarget, parseNotificationData, resolveNotificationTarget } from '~/utils/notification-routing';
+import { stripRouteGroups } from '~/constants/notification-routes';
 
 /**
  * Takes the user where a tapped notification points.
@@ -26,6 +27,24 @@ const useNotificationObserver = () => {
     const user = useAppSelector(userSelectors.selectCurrentUser);
     const isAuthenticated = !!user?.userId;
     const [markRead] = useMarkNotificationsReadMutation();
+
+    /**
+     * Where the user is standing right now.
+     *
+     * Only the foreground path can be standing anywhere — a cold start has no screen yet
+     * and a background tap resumes onto whatever was last open — which is why this exists
+     * at all: a push about the ticket you are *currently reading* is common, and pushing
+     * its route again stacks a second identical screen whose back gesture lands on a
+     * stale twin of itself. The notification centre already refuses to do this to itself
+     * (`views/app/notifications`); this extends the same refusal to every route.
+     *
+     * Held in a ref because the listener callbacks run outside the render cycle and would
+     * otherwise close over the route the user was on when the listener was registered.
+     */
+    const pathname = usePathname();
+    const routeParams = useGlobalSearchParams();
+    const currentRoute = useRef({ pathname, params: routeParams });
+    currentRoute.current = { pathname, params: routeParams };
 
     /**
      * The signed-in user, readable from the listener callbacks for the same reason as
@@ -64,6 +83,29 @@ const useNotificationObserver = () => {
      */
     const isAuthenticatedRef = useRef(isAuthenticated);
 
+    /**
+     * True when the target is the screen already on top, params and all.
+     *
+     * Deliberately strict: every param the notification carries must match, so a push
+     * about ticket B while ticket A is open still navigates. The failure this guards
+     * against is a duplicate; the failure it could *cause* is a tap that appears to do
+     * nothing, so it only fires when the user is provably looking at the exact thing the
+     * notification points at — where a duplicate is strictly the worse outcome.
+     */
+    const isAlreadyOpen = useCallback((target: INotificationTarget) => {
+        const current = currentRoute.current;
+
+        if (stripRouteGroups(current.pathname) !== stripRouteGroups(target.pathname)) {
+            return false;
+        }
+
+        // Compared as strings because that is what the router stores: every param is
+        // serialised on the way into a route, so a numeric id arrives back as `'42'`.
+        return Object.entries(target.params).every(
+            ([key, value]) => String(current.params[key] ?? '') === String(value)
+        );
+    }, []);
+
     const flushPending = useCallback(() => {
         const target = pending.current;
 
@@ -82,10 +124,17 @@ const useNotificationObserver = () => {
                 .catch(() => {});
         }
 
+        // Checked after the read receipt, not before: the user acted on the notification
+        // either way, and the row must stop being unread whether or not there is anywhere
+        // new to go.
+        if (isAlreadyOpen(target)) {
+            return;
+        }
+
         // `push`, never `replace`: the user is being taken somewhere *on top of* where
         // they were, and back must return them to it.
         router.push({ pathname: target.pathname as any, params: target.params });
-    }, [markRead]);
+    }, [markRead, isAlreadyOpen]);
 
     const handleResponse = useCallback(
         (response?: Notifications.NotificationResponse | null) => {

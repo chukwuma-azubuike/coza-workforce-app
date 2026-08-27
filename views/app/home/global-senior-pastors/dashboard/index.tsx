@@ -97,7 +97,6 @@ const GSPDashboard: React.FC = () => {
                 pictureUrl={user?.pictureUrl}
                 serviceName={latestService?.name}
                 serviceTime={latestService?.serviceTime}
-                unread={false}
             />
             <View className="px-4 pt-2 pb-3 flex-row items-center justify-between gap-3">
                 <View className="flex-1 gap-0.5">

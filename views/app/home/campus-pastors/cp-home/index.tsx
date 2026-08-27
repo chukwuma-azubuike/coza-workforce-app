@@ -163,7 +163,6 @@ const CPHome: React.FC<CPHomeProps> = ({
                 pictureUrl={user?.pictureUrl}
                 serviceName={latestService?.name}
                 serviceTime={latestService?.serviceTime}
-                unread={false}
             />
 
             {isInitialLoad ? (
