@@ -70,22 +70,22 @@ export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(({
     // Legacy attendance calculation
     // const totalAttendance = Math.round(((cumulativeAttendance as number) / TOTAL_ATTAINABLE_SCORE) * 100);
 
-    const isNinetyPercent = React.useMemo(() => {
-        const numberOfSessions = sessions?.length ?? 0;
-        const numberOfClockIns = minifiedAttendance.reduce((total, attendance) => {
-            if (attendance.clockIn) total += 1;
-            return total;
-        }, 0);
+    // const isNinetyPercent = React.useMemo(() => {
+    //     const numberOfSessions = sessions?.length ?? 0;
+    //     const numberOfClockIns = minifiedAttendance.reduce((total, attendance) => {
+    //         if (attendance.clockIn) total += 1;
+    //         return total;
+    //     }, 0);
 
-        return numberOfClockIns >= numberOfSessions - 1;
-    }, [sessions, minifiedAttendance]);
+    //     return numberOfClockIns >= numberOfSessions - 1;
+    // }, [sessions, minifiedAttendance]);
 
     const percantageAttendance = Math.round(((cumulativeAttendance as number) / TOTAL_ATTAINABLE_SCORE) * 100) || 0;
 
     const totalAttendance = (() => {
         switch (true) {
-            case isNinetyPercent && percantageAttendance < 90:
-                return 90;
+            // case isNinetyPercent && percantageAttendance < 90:
+            //     return 90;
             case cumulativeAttendance === 0 || TOTAL_ATTAINABLE_SCORE === 0:
                 return 0;
             default:
