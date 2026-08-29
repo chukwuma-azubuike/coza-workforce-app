@@ -138,10 +138,22 @@ export default ({ config }) => {
         'com.apple.security.application-groups': [roastAppGroup],
     };
 
-    // Needed by @bacons/apple-targets to sign the extension. Kept in the environment
-    // rather than the repo so a fork does not inherit somebody else's team.
-    if (process.env.APPLE_TEAM_ID) {
-        config.ios.appleTeamId = process.env.APPLE_TEAM_ID;
+    /**
+     * Needed by @bacons/apple-targets to sign the widget extension.
+     *
+     * Both names are read on purpose. `.easignore` excludes every `.env*` file, so a value
+     * that only lives in `.env.local` reaches a local `prebuild` and never reaches an EAS
+     * builder — where the extension would then be generated with no `DEVELOPMENT_TEAM`.
+     * `EXPO_APPLE_TEAM_ID` is what `eas.json` already exports, so reading it closes that
+     * gap without inventing a new secret.
+     *
+     * ⚠️ `eas.json` sets it on the **development** profile only. Preview and production
+     * need the same entry before the widget ships through them.
+     */
+    const appleTeamId = process.env.APPLE_TEAM_ID || process.env.EXPO_APPLE_TEAM_ID;
+
+    if (appleTeamId) {
+        config.ios.appleTeamId = appleTeamId;
     }
 
     // Dynamically set package for Android

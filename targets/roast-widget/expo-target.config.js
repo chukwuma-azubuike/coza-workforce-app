@@ -17,13 +17,24 @@ module.exports = config => ({
     bundleIdentifier: '.roastwidget',
 
     /**
-     * Matches the app. WidgetKit itself works from iOS 14, so the widget ships to
-     * everybody; interactive completion needs iOS 17 and is gated with `@available`
-     * inside `RoastWidgetView.swift` rather than by raising this floor.
+     * 16.0, not the app's 15.1 — forced by `AppIntents`.
+     *
+     * That framework does not exist before iOS 16, and this plugin has no way to weak-link
+     * it (there is no build-settings escape hatch in the target config). Linked as
+     * required against a 15.1 target, dyld cannot load the extension at all on iOS 15: the
+     * widget does not appear, with no error surfaced anywhere.
+     *
+     * So the floor moves to where the framework actually exists. iOS 15 devices keep the
+     * whole app and simply have no widget. Interactive completion still needs iOS 17 and
+     * is gated with `@available` inside `RoastWidgetView.swift`, which is what the iOS 16
+     * deep-link fallback is for.
      */
-    deploymentTarget: '15.1',
+    deploymentTarget: '16.0',
 
     frameworks: ['SwiftUI', 'WidgetKit', 'AppIntents'],
+
+    /** Falls back to the app's team; set explicitly so a missing app-level value is loud. */
+    appleTeamId: config.ios?.appleTeamId,
 
     colors: {
         $accent: { color: '#6B079C', darkColor: '#A855F7' },
