@@ -4,17 +4,12 @@ import {
     User,
     Zone,
     GuestFormData,
-    NotificationProps,
-    NotificationType,
-    NotificationPriority,
     GlobalAnalytics,
-    TrendDirection,
     WorkerLeaderboardEntry,
     ZoneLeaderboardEntry,
     Achievement,
     AchievementRarity,
     PipelineStage,
-    NotificationRule,
     REST_API_VERBS,
     IDefaultResponse,
     GetGuestPayload,
@@ -47,86 +42,10 @@ import { roastBaseQuery } from './fetch-utils';
 import { ROLES } from '~/hooks/role';
 
 // Helper to get current ISO timestamp
-const uuid = () => Math.random().toString(36).substring(2, 10);
-
 const mockUsers: User[] = [
     { _id: 'user-worker-1', name: 'Worker 1', role: ROLES.worker },
     { _id: 'user-worker-2', name: 'Worker 2', role: ROLES.worker },
     { _id: 'user-coord-1', name: 'Coordinator', role: ROLES.zonalCoordinator, zoneIds: ['zone-1'] },
-];
-
-// Mock notification data
-const mockNotifications: NotificationProps[] = [
-    {
-        _id: uuid(),
-        type: NotificationType.FOLLOW_UP,
-        title: 'Follow-up Due',
-        message: "Sarah Johnson needs a follow-up call - it's been 2 days since last contact",
-        guestName: 'Sarah Johnson',
-        guestId: 'guest1',
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        isRead: false,
-        priority: NotificationPriority.HIGH,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.MILESTONE,
-        title: 'Milestone Completed',
-        message: 'Mike Chen completed "First Visit" milestone',
-        guestName: 'Mike Chen',
-        guestId: 'guest2',
-        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
-        isRead: false,
-        priority: NotificationPriority.MEDIUM,
-        actionRequired: false,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.STAGNANT,
-        title: 'Guest Needs Attention',
-        message: "Emily Rodriguez hasn't had contact in 7 days and may be losing interest",
-        guestName: 'Emily Rodriguez',
-        guestId: 'guest3',
-        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
-        isRead: true,
-        priority: NotificationPriority.HIGH,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.ASSIGNMENT,
-        title: 'New Guest Assigned',
-        message: 'Lisa Zhang has been assigned to you for follow-up',
-        guestName: 'Lisa Zhang',
-        guestId: 'guest5',
-        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
-        isRead: true,
-        priority: NotificationPriority.MEDIUM,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.REMINDER,
-        title: 'Weekly Report Due',
-        message: 'Your weekly guest activity report is due tomorrow',
-        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        isRead: true,
-        priority: NotificationPriority.MEDIUM,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.WELCOME,
-        title: 'Welcome Message Sent',
-        message: 'Welcome message sent to David Kim via WhatsApp',
-        guestName: 'David Kim',
-        guestId: 'guest4',
-        createdAt: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), // 1.5 days ago
-        isRead: true,
-        priority: NotificationPriority.LOW,
-        actionRequired: false,
-    },
 ];
 
 const mockCurrentUserAchievements: Achievement[] = [
@@ -157,36 +76,6 @@ const mockCurrentUserAchievements: Achievement[] = [
         description: 'Complete 50 home visits',
         rarity: AchievementRarity.EPIC,
         points: 750,
-    },
-];
-
-const mockNotificationRules: NotificationRule[] = [
-    {
-        id: 'n1',
-        name: 'Stagnant Guest Alert',
-        description: "Alert coordinator when a guest hasn't been contacted in 7 days",
-        triggerEvent: 'stagnant_guest',
-        conditions: { daysSinceContact: 7 },
-        recipients: ['coordinator'],
-        isActive: true,
-    },
-    {
-        id: 'n2',
-        name: 'Milestone Celebration',
-        description: 'Notify team when important milestones are completed',
-        triggerEvent: 'milestone_completed',
-        conditions: { priority: 'high' },
-        recipients: ['worker', 'coordinator'],
-        isActive: true,
-    },
-    {
-        id: 'n3',
-        name: 'Stage Transition Alert',
-        description: 'Alert admin when guests move to final stage',
-        triggerEvent: 'stage_transition',
-        conditions: { stage: 'joined' },
-        recipients: ['admin'],
-        isActive: true,
     },
 ];
 
@@ -251,7 +140,6 @@ export const roastCrmApi = createApi({
         'Zone',
         'User',
         'Timeline',
-        'Notification',
         'CurrentUser',
         'Analytics',
         'Leaderboard',
@@ -512,30 +400,6 @@ export const roastCrmApi = createApi({
             ],
         }),
 
-        // Notification Queries
-        getNotifications: builder.query<NotificationProps[], void>({
-            query: () => ({
-                url: `/notifications`,
-                method: REST_API_VERBS.GET,
-            }),
-
-            transformResponse() {
-                return mockNotifications;
-            },
-            providesTags: result =>
-                result
-                    ? [...result.map(({ _id }) => ({ type: 'Notification' as const, _id }))]
-                    : [{ type: 'Notification', _id: 'LIST' }],
-        }),
-
-        markNotificationAsRead: builder.mutation<NotificationProps, string>({
-            query: _id => ({
-                url: `/notifications/${_id}/read`,
-                method: REST_API_VERBS.PATCH,
-            }),
-            invalidatesTags: (_result, _error, _id) => [{ type: 'Notification', _id }],
-        }),
-
         // Users Query
         getZoneUsers: builder.query<Array<ZoneUsersResponse['users'][0]['profile']>, ZoneUsersPayload>({
             query: params => ({
@@ -689,17 +553,6 @@ export const roastCrmApi = createApi({
             providesTags: ['PipelineStages'],
         }),
 
-        getNotificationRules: builder.query<NotificationRule[], void>({
-            query: () => ({
-                url: `/pipeline/notification-rules`,
-                method: REST_API_VERBS.GET,
-            }),
-            transformResponse() {
-                return mockNotificationRules;
-            },
-            providesTags: ['Pipeline'],
-        }),
-
         updatePipelineStage: builder.mutation<PipelineStage, Partial<PipelineStage> & { id: string }>({
             query: ({ id, ...patch }) => ({
                 url: `/assimilation-stages/${id}`,
@@ -722,15 +575,6 @@ export const roastCrmApi = createApi({
             query: id => ({
                 url: `/assimilation-stages/${id}`,
                 method: REST_API_VERBS.DELETE,
-            }),
-            invalidatesTags: ['Pipeline'],
-        }),
-
-        updateNotificationRule: builder.mutation<NotificationRule, Partial<NotificationRule> & { id: string }>({
-            query: ({ id, ...patch }) => ({
-                url: `/pipeline/notification-rules/${id}`,
-                method: REST_API_VERBS.PATCH,
-                body: patch,
             }),
             invalidatesTags: ['Pipeline'],
         }),
@@ -822,8 +666,6 @@ export const {
     useGetTimelineQuery,
     useAddTimelineMutation,
     useUpdateTimelineMutation,
-    useGetNotificationsQuery,
-    useMarkNotificationAsReadMutation,
     useGetZoneUsersQuery,
     useGetActiveWorkersQuery,
     useGetInactiveWorkersQuery,
@@ -839,11 +681,9 @@ export const {
     useGetAchievementsQuery,
     useGetAssimilationStagesQuery,
     useGetAssimilationSubStagesQuery,
-    useGetNotificationRulesQuery,
     useUpdatePipelineStageMutation,
     useCreatePipelineStageMutation,
     useDeletePipelineStageMutation,
-    useUpdateNotificationRuleMutation,
     useGetZoneDashboardQuery,
     useGetDropoffAnalyticsQuery,
     useGetRecommendationsQuery,

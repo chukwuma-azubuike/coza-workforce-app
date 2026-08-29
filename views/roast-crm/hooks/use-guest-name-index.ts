@@ -6,6 +6,14 @@ export interface IGuestName {
     lastName: string;
     /** `"Ada Obi"`, or just `"Ada"` when there is no surname on record. */
     fullName: string;
+    /**
+     * For the Today feed's one-tap Call.
+     *
+     * A task carries a `guestId` and a composed sentence, never a number — so the same
+     * cache read that resolves the name has to resolve this too, or the primary action on
+     * a `CALL_DUE` row degrades into "open the profile and look".
+     */
+    phoneNumber?: string;
 }
 
 /**
@@ -43,6 +51,7 @@ const useGuestNameIndex = (): Record<string, IGuestName> => {
                         firstName,
                         lastName,
                         fullName: [firstName, lastName].filter(Boolean).join(' '),
+                        phoneNumber: guest.phoneNumber,
                     },
                 ];
             })

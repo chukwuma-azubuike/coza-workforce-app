@@ -45,6 +45,19 @@ export interface IRoastEngagementState {
 
     /** Local date of the last successful engagement ping. Gates the at-risk schedule. */
     lastPingLocalDate: string | null;
+
+    /**
+     * Milestones whose celebration has already played on this device.
+     *
+     * The server's `milestoneReached` is only non-null on the single response that crossed
+     * the threshold — a worker who crosses 30 days while the app is closed would otherwise
+     * never see it. Tracking what has been *shown* against the server's `milestonesAwarded`
+     * is what lets the celebration wait for them, and play exactly once when it does.
+     */
+    celebratedMilestones: number[];
+
+    /** The Today explainer is a one-time thing. Cleared with the session, deliberately. */
+    hasSeenTodayIntro: boolean;
 }
 
 const initialState: IRoastEngagementState = {
@@ -54,6 +67,8 @@ const initialState: IRoastEngagementState = {
     scheduled: {},
     lastSyncAt: null,
     lastPingLocalDate: null,
+    celebratedMilestones: [],
+    hasSeenTodayIntro: false,
 };
 
 const roastEngagementState = createSlice({
@@ -108,6 +123,16 @@ const roastEngagementState = createSlice({
             }
         },
 
+        dismissTodayIntro(state) {
+            state.hasSeenTodayIntro = true;
+        },
+
+        markMilestoneCelebrated(state, { payload }: PayloadAction<number>) {
+            if (!state.celebratedMilestones.includes(payload)) {
+                state.celebratedMilestones.push(payload);
+            }
+        },
+
         /** Replaces the whole ledger — the scheduler reconciles wholesale, never row by row. */
         setScheduled(state, { payload }: PayloadAction<Record<string, IScheduledRecord>>) {
             state.scheduled = payload;
@@ -134,6 +159,8 @@ const roastEngagementState = createSlice({
         selectScheduled: store => store.scheduled,
         selectLastSyncAt: store => store.lastSyncAt,
         selectLastPingLocalDate: store => store.lastPingLocalDate,
+        selectCelebratedMilestones: store => store.celebratedMilestones,
+        selectHasSeenTodayIntro: store => store.hasSeenTodayIntro,
     },
 });
 

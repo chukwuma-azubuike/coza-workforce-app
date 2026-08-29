@@ -4,5 +4,7 @@ export { default as useOutboxFlush } from './use-outbox-flush';
 export { default as useReminderScheduler } from './use-reminder-scheduler';
 export { default as useRoastNotificationActions } from './use-roast-notification-actions';
 export { default as useStreak } from './use-streak';
+export { default as useReduceMotion } from './use-reduce-motion';
+export { default as useWidgetSnapshot } from './use-widget-snapshot';
 export { default as useRoastEngagement } from './use-roast-engagement';
 export * from './use-local-date';

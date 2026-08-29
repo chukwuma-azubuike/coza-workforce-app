@@ -17,6 +17,20 @@ import Loading from '~/components/atoms/loading';
 
 const tabRoutes = [
     {
+        name: 'Today',
+        // Path stays `notifications` — ADR-006. The route renders the Task Feed; the
+        // inbox is the bell in `TopNav` and lives at `/notifications`.
+        href: '/roast-crm/(tabs)/notifications',
+        pathname: '/roast-crm/notifications',
+        options: { title: 'Today' },
+        users: ['all'],
+        departments: ['all'],
+        departmentUsers: ['all'],
+        inMenuBar: true,
+        inMore: false,
+        icon: { name: 'fire', type: 'font-awesome-5' },
+    },
+    {
         name: 'My Guests',
         href: '/roast-crm/(tabs)/my-guests',
         pathname: '/roast-crm/my-guests',
@@ -64,16 +78,6 @@ const tabRoutes = [
         href: '/roast-crm/(tabs)/leaderboards',
         pathname: '/roast-crm/leaderboards',
     },
-    // {
-    //     name: 'Notifications',
-    //     options: { title: 'Notifications' },
-    //     users: ['all'],
-    //     inMenuBar: true,
-    //     inMore: false,
-    //     icon: { name: 'notifications', type: 'ionicon' },
-    //     href: '/roast-crm/(tabs)/notifications',
-    //     pathname: '/roast-crm/notifications',
-    // },
     {
         name: 'Settings',
         options: { title: 'Settings' },
@@ -114,36 +118,38 @@ const TabLayout: React.FC = () => {
         <View className="relative flex-1">
             <TopNav />
             <View className="flex-1">{ready ? <Slot /> : <Loading cover />}</View>
-            {ready && <View className="flex-row justify-around pt-4 bg-background border-t-border border-t-[0.5px]">
-                {filteredRoutes.map((route, index) => {
-                    const isFocused = pathname == route.pathname;
+            {ready && (
+                <View className="flex-row justify-around pt-4 bg-background border-t-border border-t-[0.5px]">
+                    {filteredRoutes.map((route, index) => {
+                        const isFocused = pathname == route.pathname;
 
-                    const color = isFocused
-                        ? isLightColorScheme
-                            ? THEME_CONFIG.primary
-                            : THEME_CONFIG.primaryLight
-                        : THEME_CONFIG.lightGray;
+                        const color = isFocused
+                            ? isLightColorScheme
+                                ? THEME_CONFIG.primary
+                                : THEME_CONFIG.primaryLight
+                            : THEME_CONFIG.lightGray;
 
-                    return (
-                        <Link
-                            href={route.href as any}
-                            key={`route-${index}`}
-                            className="text-foreground"
-                            onPress={handlePress}
-                            asChild
-                        >
-                            <TouchableOpacity activeOpacity={0.6}>
-                                <View className="!w-20 sm:!w-28 gap-1 items-center">
-                                    <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
-                                    <Text style={{ color }} className="text-xs font-light">
-                                        {route.name}
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </Link>
-                    );
-                })}
-            </View>}
+                        return (
+                            <Link
+                                href={route.href as any}
+                                key={`route-${index}`}
+                                className="text-foreground"
+                                onPress={handlePress}
+                                asChild
+                            >
+                                <TouchableOpacity activeOpacity={0.6}>
+                                    <View className="!w-20 sm:!w-28 gap-1 items-center">
+                                        <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
+                                        <Text style={{ color }} className="text-xs font-light">
+                                            {route.name}
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </Link>
+                        );
+                    })}
+                </View>
+            )}
         </View>
     );
 };
