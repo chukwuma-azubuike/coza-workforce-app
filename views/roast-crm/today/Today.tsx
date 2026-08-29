@@ -226,7 +226,7 @@ const Today: React.FC = () => {
                         {!hasSeenIntro && (
                             <View className="flex-row gap-3 items-start bg-muted rounded-2xl p-4 mt-3">
                                 <Icon type="feather" name="info" size={16} color={THEME_CONFIG.primary} />
-                                <Text className="flex-1 !text-sm text-muted-foreground">
+                                <Text className="flex-1 !text-sm text-muted-foreground line-clamp-none">
                                     Roast will tell you who needs you each morning. Set your own reminders from any
                                     guest's profile.
                                 </Text>

@@ -23,7 +23,7 @@ const EmptyToday: React.FC<EmptyTodayProps> = ({ streak = 0 }) => (
 
         <Text className="!text-lg font-semibold text-center">{ROAST_COPY.today.emptyTitle}</Text>
 
-        <Text className="!text-sm text-muted-foreground text-center">
+        <Text className="!text-sm text-muted-foreground text-center line-clamp-none">
             {streak > 0
                 ? `You've cleared every guest on your list. ${pluralise(streak, 'day')} on and counting.`
                 : ROAST_COPY.today.emptyBody}

@@ -95,7 +95,7 @@ const ReminderRow: React.FC<ReminderRowProps> = ({
                     )}
 
                     <Text
-                        className={cn('!text-sm text-muted-foreground', isCompleted && 'line-through')}
+                        className={cn('!text-sm text-muted-foreground line-clamp-none', isCompleted && 'line-through')}
                         numberOfLines={2}
                     >
                         {reminder.note}
@@ -108,7 +108,7 @@ const ReminderRow: React.FC<ReminderRowProps> = ({
                             size={12}
                             color={isOverdue ? THEME_CONFIG.error : THEME_CONFIG.lightGray}
                         />
-                        <Text className={cn('!text-xs', isOverdue ? 'text-destructive' : 'text-muted-foreground')}>
+                        <Text className={cn('!text-xs line-clamp-none', isOverdue ? 'text-destructive' : 'text-muted-foreground')}>
                             {isCompleted
                                 ? `Done ${dayjs(reminder.completedAt).fromNow()}`
                                 : `${dueAt.format('ddd D MMM, h:mm A')} · ${dueAt.fromNow()}`}
