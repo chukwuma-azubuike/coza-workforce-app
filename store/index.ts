@@ -19,6 +19,7 @@ import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import userStateSlice from './actions/users';
 import appStateSlice from './actions/app';
 import roastCRMState from './actions/roast-crm';
+import roastEngagementState from './actions/roast-engagement';
 import notificationsSlice from './actions/notifications';
 import gspDashboardStateSlice from './actions/gsp-dashboard';
 
@@ -32,6 +33,7 @@ const persistConfig: PersistConfig<ReturnType<typeof rootReducer>> = {
         userStateSlice.reducerPath,
         appStateSlice.reducerPath,
         roastCRMState.reducerPath,
+        roastEngagementState.reducerPath,
         notificationsSlice.reducerPath,
         gspDashboardStateSlice.reducerPath,
     ],

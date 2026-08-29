@@ -35,6 +35,7 @@ import useRole from '~/hooks/role';
 import useDebounce from '~/hooks/debounce/use-debounce';
 import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
 import Error from '~/components/atoms/error';
+import RemindersEntryButton from '../reminders/RemindersEntryButton';
 
 function MyGuestsDashboard() {
     const { user } = useRole();
@@ -90,7 +91,10 @@ function MyGuestsDashboard() {
     const assimilationStageIndex = useAssimilationStageIndex();
     const assimilationSubStagesIndex = useAssimilationSubStageIndex();
 
-    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests?.data, 'assimilationSubStageId'), [guests?.data]);
+    const groupedGuestsByAssimilationId = useMemo(
+        () => groupBy<Guest>(guests?.data, 'assimilationSubStageId'),
+        [guests?.data]
+    );
     const transformedAssimilationSubStages = useMemo(
         (): columnDataType<Guest, HeaderParams>[] =>
             assimilationSubStages.map((stage, index) => {
@@ -119,7 +123,7 @@ function MyGuestsDashboard() {
     const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
         try {
             await updateGuest({ _id: guestId, assimilationSubStageId });
-        } catch (error) { }
+        } catch (error) {}
     }, []);
 
     const onDragEnd = useCallback(
@@ -169,7 +173,10 @@ function MyGuestsDashboard() {
                     <View className="gap-4">
                         {/* Header with Stats */}
                         <View className="gap-4 px-2 pt-2">
-                            <Text className="text-2xl font-bold leading-none">My Guests</Text>
+                            <View className="flex-row items-center justify-between">
+                                <Text className="text-2xl font-bold leading-none">My Guests</Text>
+                                <RemindersEntryButton />
+                            </View>
                             <View className="flex-row flex-wrap gap-3">
                                 {loadingGuestCounts ? (
                                     <>

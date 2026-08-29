@@ -13,6 +13,7 @@ import { getDeviceId } from '~/utils/device';
 import { ANDROID_NOTIFICATION_CHANNELS } from '~/constants/notification-channels';
 import { getBadgeCount } from '~/utils/notification-presentation';
 import { notificationServiceSlice } from '~/store/services/notification';
+import { setUpRoastNotificationCategories } from '~/utils/local-notifications';
 
 export { getDeviceId };
 
@@ -220,6 +221,12 @@ export const NotificationsProvider: React.FC<{ children: React.ReactNode; user: 
                 .then(channels => dispatch(notificationActions.setChannels(channels ?? [])))
                 .catch(() => {});
         }
+
+        // Registered on every launch, regardless of auth state, and before any reminder
+        // can be scheduled. A notification naming a category the device has not registered
+        // still arrives — it just arrives without its buttons, which is the one failure
+        // here that looks like the feature working.
+        setUpRoastNotificationCategories();
 
         const record = (notification: Notifications.Notification) => {
             dispatch(notificationActions.setNotification(notification));

@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     Guest,
     User,
@@ -42,8 +42,8 @@ import {
     ScoringLegend,
     UserZoneDetailsResponse,
 } from '../types';
-import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
+import { roastBaseQuery } from './fetch-utils';
 import { ROLES } from '~/hooks/role';
 
 // Helper to get current ISO timestamp
@@ -240,19 +240,10 @@ const SERVICE_URL = 'roast-crm';
 export const roastCrmApi = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchBaseQuery({
-        baseUrl: APP_VARIANT.CRM_API_BASE_URL,
-        prepareHeaders: async headers => {
-            const userSession = (await Utils.retrieveUserSession()) || '';
-            const token = !!userSession && JSON.parse(userSession)?.token.token;
-
-            if (token) {
-                headers.set('authorization', `Bearer ${token}`);
-            }
-
-            return headers;
-        },
-    }),
+    // Shared with `roastEngagementApi` rather than declared inline. Two services now sit
+    // on this base URL, and a second copy of `prepareHeaders` is a second place for the
+    // session shape to go stale.
+    baseQuery: roastBaseQuery,
 
     tagTypes: [
         'Guest',
