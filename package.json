@@ -31,6 +31,7 @@
         "workflow:production": "eas workflow:run .eas/workflows/deploy-to-production.yml"
     },
     "dependencies": {
+        "@bacons/apple-targets": "5.0.0",
         "@expo/fingerprint": "~0.15.5",
         "@expo/vector-icons": "^15.0.3",
         "@react-native-async-storage/async-storage": "2.2.0",
@@ -115,6 +116,7 @@
         "react": "19.1.0",
         "react-dom": "19.1.0",
         "react-native": "0.81.5",
+        "react-native-android-widget": "0.22.1",
         "react-native-blob-util": "0.24.7",
         "react-native-date-picker": "5.0.12",
         "react-native-device-info": "14.0.4",

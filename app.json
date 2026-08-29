@@ -94,7 +94,26 @@
             ],
             "@react-native-community/datetimepicker",
             "expo-web-browser",
-            "react-native-pdf-jsi"
+            "react-native-pdf-jsi",
+            [
+                "react-native-android-widget",
+                {
+                    "widgets": [
+                        {
+                            "name": "RoastToday",
+                            "label": "Roast — Today",
+                            "description": "Who needs you today, and your streak.",
+                            "minWidth": "250dp",
+                            "minHeight": "110dp",
+                            "targetCellWidth": 4,
+                            "targetCellHeight": 2,
+                            "resizeMode": "horizontal|vertical",
+                            "updatePeriodMillis": 1800000
+                        }
+                    ]
+                }
+            ],
+            "@bacons/apple-targets"
         ],
         "experiments": {
             "typedRoutes": true

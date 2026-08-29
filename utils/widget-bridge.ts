@@ -1,6 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+import APP_VARIANT from '@config/envConfig';
 import ROAST_COPY from '~/constants/roast-copy';
 import { IStreakState, ITaskCounts, ROAST_TASK_KIND, RoastTask } from '~/store/types';
+import { reloadWidgets, setWidgetSnapshot } from '~/modules/roast-widget-bridge';
 
 /**
  * The home-screen widget's data contract, and the app-side half of writing it.
@@ -174,25 +177,106 @@ export const widgetFooterFor = (snapshot: IRoastWidgetSnapshot): string => {
 };
 
 /**
- * Persists the snapshot where the widgets will read it.
+ * Reads back what was last written.
  *
- * Today it writes to `AsyncStorage` only, which no widget can see — the shared containers
- * do not exist until the native targets land in Phase 4 (`RE-N1` / `RE-N3`). That is the
- * intended state, not an omission: the contract, the ordering and the redaction are being
- * exercised in production from Phase 1 so that Phase 4 adds one hop rather than a data
- * model.
+ * Used by the Android widget's headless task, which has no store to read from and only
+ * this file to go on. A snapshot from a *newer* contract version is rejected rather than
+ * coerced — see `v` above; a widget that renders a shape it does not understand is worse
+ * than one that renders its previous frame.
+ */
+export const readWidgetSnapshot = async (): Promise<IRoastWidgetSnapshot | null> => {
+    try {
+        const raw = await AsyncStorage.getItem(WIDGET_SNAPSHOT_KEY);
+
+        if (!raw) {
+            return null;
+        }
+
+        const parsed = JSON.parse(raw) as IRoastWidgetSnapshot;
+
+        return parsed?.v === 1 ? parsed : null;
+    } catch {
+        return null;
+    }
+};
+
+/**
+ * Asks Android to redraw.
  *
- * ⚠️ **When the native targets land**, this function gains a second write — the iOS App
- * Group `UserDefaults` and the Android `SharedPreferences` the widget provider reads —
- * followed by a reload request to each. It must stay the *only* writer, so the clear on
- * logout has exactly one thing to undo.
+ * `require`d lazily rather than imported, and that is not a style choice: the widget
+ * component imports `widgetFooterFor` from this file, so a top-level import here would be
+ * a cycle — and a cycle that only bites at module-init time, which is the hardest kind to
+ * diagnose. Deferring the resolution to call time breaks it cleanly.
+ *
+ * Also keeps `react-native-android-widget` off the iOS import graph entirely.
+ */
+const requestAndroidWidgetUpdate = async (snapshot: IRoastWidgetSnapshot): Promise<void> => {
+    if (Platform.OS !== 'android') {
+        return;
+    }
+
+    try {
+        const { requestWidgetUpdate } = require('react-native-android-widget');
+        const RoastWidget = require('~/widgets/RoastWidget').default;
+        const React = require('react');
+        const { ANDROID_WIDGET_NAME } = require('~/constants/widget');
+
+        await requestWidgetUpdate({
+            widgetName: ANDROID_WIDGET_NAME,
+            renderWidget: () => ({
+                light: React.createElement(RoastWidget, { snapshot }),
+                dark: React.createElement(RoastWidget, { snapshot, isDark: true }),
+            }),
+            // Nobody has placed the widget. Not a failure, and not worth logging on every
+            // single write for the majority of users who never will.
+            widgetNotFound: () => {},
+        });
+    } catch {
+        // A dev client built before the plugin was added has no native side to talk to.
+    }
+};
+
+/**
+ * Persists the snapshot everywhere a widget can read it. **The only writer.**
+ *
+ * Three hops, in this order:
+ *
+ * 1. `AsyncStorage` — the app's own copy, and the one the Android headless task reads.
+ * 2. The **iOS App Group** container, which is the only thing a WidgetKit extension can
+ *    see, followed by a `reloadAllTimelines()`.
+ * 3. An explicit Android redraw. The `updatePeriodMillis` floor is thirty minutes, so the
+ *    explicit call is what actually keeps the widget fresh; the period is just the floor
+ *    for a backgrounded app.
+ *
+ * Steps 2 and 3 are what make the sign-out clear real. A cleared file with no reload
+ * request leaves the previous user's guest names rendered on the home screen until the
+ * next refresh — on a shared campus handset, that is the whole risk, unmitigated.
+ *
+ * Every hop swallows its own failure. A widget that misses one update shows its last
+ * frame; a write path that throws takes out sign-out.
  */
 export const writeWidgetSnapshot = async (snapshot: IRoastWidgetSnapshot): Promise<void> => {
+    const json = JSON.stringify(snapshot);
+
     try {
-        await AsyncStorage.setItem(WIDGET_SNAPSHOT_KEY, JSON.stringify(snapshot));
+        await AsyncStorage.setItem(WIDGET_SNAPSHOT_KEY, json);
     } catch {
         // A stale widget is a papercut. A crash on the write path is not.
     }
+
+    if (Platform.OS === 'ios') {
+        const appGroup = APP_VARIANT.IOS_APP_GROUP;
+
+        if (appGroup) {
+            setWidgetSnapshot(appGroup, WIDGET_SNAPSHOT_KEY, json);
+        } else {
+            // No group configured — an older binary. Still worth asking for a reload so a
+            // widget reading a previously-written snapshot is not left stale forever.
+            reloadWidgets();
+        }
+    }
+
+    await requestAndroidWidgetUpdate(snapshot);
 };
 
 /**

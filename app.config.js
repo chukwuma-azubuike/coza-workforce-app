@@ -28,6 +28,17 @@ const getDynamicUniqueIdentifier = (platform, baseConfig) => {
     return baseIdentifier; // Production uses the base identifier
 };
 
+/**
+ * The App Group the app and the widget extension share.
+ *
+ * Suffixed per variant along with the bundle id, because a group shared across variants
+ * means the dev build's widget renders production guest names — or, worse, the reverse.
+ *
+ * ⚠️ Mirrored by `SnapshotStore.appGroup` in `targets/roast-widget/Snapshot.swift`, which
+ * derives the same string from the extension's own bundle id. Change one, change both.
+ */
+const roastAppGroupFor = iosBundleIdentifier => `group.${iosBundleIdentifier}.roast`;
+
 const getDynamicAppName = baseConfig => {
     const baseName = baseConfig.name || 'COZA Workforce'; // Use original name or fallback
     if (IS_DEV) {
@@ -74,10 +85,7 @@ const getGoogleServicesJson = () => {
     let googleServicesFile = './google-services.json';
 
     if (process.env.ANDROID_GOOGLE_SERVICES_JSON) {
-        fs.writeFileSync(
-            './google-services.json',
-            process.env.ANDROID_GOOGLE_SERVICES_JSON
-        );
+        fs.writeFileSync('./google-services.json', process.env.ANDROID_GOOGLE_SERVICES_JSON);
     }
 
     return googleServicesFile;
@@ -94,10 +102,7 @@ const getGoogleServicesInfoPlist = () => {
     // }
 
     if (process.env.IOS_GOOGLE_SERVICES_INFO_PLIST) {
-        fs.writeFileSync(
-            './GoogleService-Info.plist',
-            process.env.IOS_GOOGLE_SERVICES_INFO_PLIST
-        );
+        fs.writeFileSync('./GoogleService-Info.plist', process.env.IOS_GOOGLE_SERVICES_INFO_PLIST);
     }
 
     return googleServicesInfoPlist;
@@ -123,6 +128,22 @@ export default ({ config }) => {
         };
     }
 
+    // The App Group the Roast widget reads its snapshot from. Declared on the app here;
+    // `@bacons/apple-targets` mirrors this array onto the extension automatically, which
+    // is what stops the two drifting apart.
+    const roastAppGroup = roastAppGroupFor(config.ios.bundleIdentifier);
+
+    config.ios.entitlements = {
+        ...(config.ios.entitlements || {}),
+        'com.apple.security.application-groups': [roastAppGroup],
+    };
+
+    // Needed by @bacons/apple-targets to sign the extension. Kept in the environment
+    // rather than the repo so a fork does not inherit somebody else's team.
+    if (process.env.APPLE_TEAM_ID) {
+        config.ios.appleTeamId = process.env.APPLE_TEAM_ID;
+    }
+
     // Dynamically set package for Android
     if (config.android) {
         config.android.package = getDynamicUniqueIdentifier('android', config);
@@ -139,6 +160,9 @@ export default ({ config }) => {
     config.extra = {
         ...(config.extra || {}),
         APP_VARIANT: process.env.APP_VARIANT || 'production',
+        // Read back by `config/envConfig.ts` so the JS side writes into the same container
+        // the extension reads, without the variant rule being written down twice.
+        IOS_APP_GROUP: roastAppGroup,
     };
 
     // The 'config' object has now been modified with your dynamic values.
