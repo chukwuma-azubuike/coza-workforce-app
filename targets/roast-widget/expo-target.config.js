@@ -36,10 +36,28 @@ module.exports = config => ({
     /** Falls back to the app's team; set explicitly so a missing app-level value is loud. */
     appleTeamId: config.ios?.appleTeamId,
 
+    /**
+     * ⚠️ **`light` / `dark`, not `color` / `darkColor`.**
+     *
+     * `@bacons/apple-targets` v5 reads `color.light` and `color.dark` (see
+     * `build/with-widget.js`, `withConfigColors`). Its README still shows the older
+     * `{ color, darkColor }` shape in one example, and that shape is not an error — the
+     * keys are simply never read, so every colorset is generated **empty**.
+     *
+     * An empty colorset still resolves: `Color("$accent")` finds the asset and gets no
+     * colour, which paints as nothing. On a dark widget that is invisible, and it took out
+     * every glyph and every filled control on the surface at once — the kind icon, the
+     * mark-done circle, the contact buttons' fill and the streak flame — while leaving
+     * everything drawn from `.primary`, `.secondary` or `Color.white` looking perfectly
+     * correct. Nothing failed loudly; the widget just quietly rendered as text.
+     *
+     * These three names are also mirrored in `constants/widget-theme.ts` as hex, which is
+     * why the Android widget was unaffected and could not have caught this.
+     */
     colors: {
-        $accent: { color: '#6B079C', darkColor: '#A855F7' },
-        $ember: { color: '#F59E0B', darkColor: '#D97706' },
-        $overdue: { color: '#DC2626', darkColor: '#F87171' },
+        $accent: { light: '#3B82F6', dark: '#3B82F6' },
+        $ember: { light: '#F59E0B', dark: '#D97706' },
+        $overdue: { light: '#DC2626', dark: '#F87171' },
     },
 
     /**

@@ -3,7 +3,7 @@
 **Status: built.** §8 records what changed on the way.
 
 The widget works and says the right things. It does not look like something anyone chose.
-This plans the visual rework of both platforms, plus the one piece of *content* that is
+This plans the visual rework of both platforms, plus the one piece of _content_ that is
 missing — the note under each row, which is already in the snapshot and rendered by
 neither widget.
 
@@ -30,7 +30,7 @@ widget gives it the least attention of any element on the surface.
 two lines of text. The only differentiator on the whole surface is a 3pt red bar for
 overdue. A widget's entire job is triage at a glance, and this one cannot be triaged.
 
-**5. Row geometry shifts between rows.** The overdue rail is *inserted into* the flex row
+**5. Row geometry shifts between rows.** The overdue rail is _inserted into_ the flex row
 only when overdue, so an overdue row's text starts 11pt further right than a normal one's.
 Nothing else on the surface says "unfinished" as loudly as text that does not align.
 
@@ -54,17 +54,17 @@ informative string it has and drops it on the floor. This is the note the ask is
 Verified against the installed versions rather than assumed, because the plan lives or
 dies on it.
 
-| Capability | iOS (WidgetKit) | Android (`react-native-android-widget@0.22.1`) |
-|---|---|---|
-| Gradients | ✅ any SwiftUI view in `containerBackground` | ✅ `backgroundGradient` — from/to plus 8 orientations |
-| Rounded cards, per-corner radii | ✅ | ✅ `borderTopLeftRadius` etc. |
-| Vector icons | ✅ SF Symbols, free | ✅ `SvgWidget` takes an **inline SVG string** — no font to install, no asset pipeline |
-| Layering | ✅ `ZStack` | ✅ `OverlapWidget` |
-| Font weight / tracking / line height | ✅ | ✅ `fontWeight`, `letterSpacing`, `lineHeight`, `fontFamily` |
-| Auto-shrink to fit | ✅ `minimumScaleFactor` | ✅ `adjustsFontSizeToFit` |
-| **Shadows / elevation** | ❌ | ❌ |
-| **Animation** | ❌ | ❌ |
-| **Blur / material** | ⚠️ only the system's own container | ❌ |
+| Capability                           | iOS (WidgetKit)                              | Android (`react-native-android-widget@0.22.1`)                                        |
+| ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Gradients                            | ✅ any SwiftUI view in `containerBackground` | ✅ `backgroundGradient` — from/to plus 8 orientations                                 |
+| Rounded cards, per-corner radii      | ✅                                           | ✅ `borderTopLeftRadius` etc.                                                         |
+| Vector icons                         | ✅ SF Symbols, free                          | ✅ `SvgWidget` takes an **inline SVG string** — no font to install, no asset pipeline |
+| Layering                             | ✅ `ZStack`                                  | ✅ `OverlapWidget`                                                                    |
+| Font weight / tracking / line height | ✅                                           | ✅ `fontWeight`, `letterSpacing`, `lineHeight`, `fontFamily`                          |
+| Auto-shrink to fit                   | ✅ `minimumScaleFactor`                      | ✅ `adjustsFontSizeToFit`                                                             |
+| **Shadows / elevation**              | ❌                                           | ❌                                                                                    |
+| **Animation**                        | ❌                                           | ❌                                                                                    |
+| **Blur / material**                  | ⚠️ only the system's own container           | ❌                                                                                    |
 
 The one that shapes the design: **neither platform can draw a shadow.** So depth has to
 come from gradient, hairline and layered fills. Faking a shadow with a dark rectangle is
@@ -172,13 +172,13 @@ This is the part that decides whether the notes fit.
 
 **iOS `systemMedium`** is roughly 155–170pt tall depending on device, ~130pt after padding:
 
-| | pt |
-|---|---|
-| Header (count + pills) | 24 |
-| Gap | 8 |
-| Row card ×2 (title 18 + subtitle 15 + padding 13) | 92 |
-| Gap between rows | 6 |
-| **Total** | **130** |
+|                                                   | pt      |
+| ------------------------------------------------- | ------- |
+| Header (count + pills)                            | 24      |
+| Gap                                               | 8       |
+| Row card ×2 (title 18 + subtitle 15 + padding 13) | 92      |
+| Gap between rows                                  | 6       |
+| **Total**                                         | **130** |
 
 It fits — but **only because M8 removed the unconditional footer.** The notes and the
 footer cannot both exist. When the footer does appear (stale, at-risk) it displaces the
@@ -207,7 +207,7 @@ its alpha channel. The ember gradient flattens. The kind tint vanishes. **The ov
 vanishes.** A design that leans on colour looks considered on the reviewer's phone and
 illegible on the user's.
 
-The existing code already half-anticipates this — *"overdue is never colour alone"*, and
+The existing code already half-anticipates this — _"overdue is never colour alone"_, and
 the row says the word `Overdue`. The rework has to hold that line and extend it:
 
 - Every kind must be distinguishable **by glyph shape**, never by tint.
@@ -219,12 +219,12 @@ Tinted mode must be an explicit item on the test plan, not something discovered 
 
 Secondary risks:
 
-| Risk | Handling |
-|---|---|
-| Dynamic Type / large font scale overflows two rows | `minimumScaleFactor(0.85)` on iOS, `adjustsFontSizeToFit` on Android; subtitle is first to shrink |
-| The two platforms drift apart visually | Tokens in `constants/widget-theme.ts`, mirrored once in `WidgetTheme.swift` with a ⚠️ pointing both ways — the same discipline `Snapshot.swift` already uses |
-| SVG strings bloat the RemoteViews payload | Six glyphs, hand-minified, ~200 bytes each. Measure before and after; RemoteViews has a hard transaction limit |
-| Gradient banding on low-end Android panels | Keep the two stops within ~4% luminance of each other; it is depth, not decoration |
+| Risk                                               | Handling                                                                                                                                                     |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Dynamic Type / large font scale overflows two rows | `minimumScaleFactor(0.85)` on iOS, `adjustsFontSizeToFit` on Android; subtitle is first to shrink                                                            |
+| The two platforms drift apart visually             | Tokens in `constants/widget-theme.ts`, mirrored once in `WidgetTheme.swift` with a ⚠️ pointing both ways — the same discipline `Snapshot.swift` already uses |
+| SVG strings bloat the RemoteViews payload          | Six glyphs, hand-minified, ~200 bytes each. Measure before and after; RemoteViews has a hard transaction limit                                               |
+| Gradient banding on low-end Android panels         | Keep the two stops within ~4% luminance of each other; it is depth, not decoration                                                                           |
 
 ---
 
@@ -232,16 +232,16 @@ Secondary risks:
 
 Mobile only. No backend work — every input already exists in the snapshot.
 
-| Ticket | Work | Est. |
-|---|---|---|
-| **RE-W1** | `constants/widget-theme.ts` — type scale, colours, radii, spacing. `WidgetTheme.swift` mirroring it, with the drift warning both ways. | 1 |
-| **RE-W2** | `constants/widget-glyphs.ts` — six minified SVG strings; the SF Symbol names beside them in the Swift file. One mapping table, two renderings. | 1 |
-| **RE-W3** | iOS: container gradient, row cards, glyph column, always-present rail, streak capsule, checkbox affordance, conditional footer. | 2 |
-| **RE-W4** | Android: the same, in `FlexWidget`/`SvgWidget`/`OverlapWidget`. Raise `minHeight` to `130dp` in `app.json`. | 2 |
-| **RE-W5** | Notes — render `subtitle` on both, one line, and confirm the `hideGuestNames` path still drops it. | 0.5 |
-| **RE-W6** | Empty, signed-out and stale states recomposed. | 1 |
-| **RE-W7** | iOS 18 tinted + dark-tinted pass; Dynamic Type and Android font-scale pass at the largest steps. | 1 |
-| **RE-W8** | Record it in `07_AS_BUILT.md §4`. | 0.5 |
+| Ticket    | Work                                                                                                                                           | Est. |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
+| **RE-W1** | `constants/widget-theme.ts` — type scale, colours, radii, spacing. `WidgetTheme.swift` mirroring it, with the drift warning both ways.         | 1    |
+| **RE-W2** | `constants/widget-glyphs.ts` — six minified SVG strings; the SF Symbol names beside them in the Swift file. One mapping table, two renderings. | 1    |
+| **RE-W3** | iOS: container gradient, row cards, glyph column, always-present rail, streak capsule, checkbox affordance, conditional footer.                | 2    |
+| **RE-W4** | Android: the same, in `FlexWidget`/`SvgWidget`/`OverlapWidget`. Raise `minHeight` to `130dp` in `app.json`.                                    | 2    |
+| **RE-W5** | Notes — render `subtitle` on both, one line, and confirm the `hideGuestNames` path still drops it.                                             | 0.5  |
+| **RE-W6** | Empty, signed-out and stale states recomposed.                                                                                                 | 1    |
+| **RE-W7** | iOS 18 tinted + dark-tinted pass; Dynamic Type and Android font-scale pass at the largest steps.                                               | 1    |
+| **RE-W8** | Record it in `07_AS_BUILT.md §4`.                                                                                                              | 0.5  |
 
 **~9 days.** No native dependency is added, so unlike the device-reminders work this needs
 a rebuild only for the iOS extension — the Android widget is JS and ships over the air.
@@ -258,7 +258,6 @@ a rebuild only for the iOS extension — the Android widget is JS and ships over
 4. **RE-W7 last and non-negotiably.** Tinted mode is the one that makes a good design
    unreadable, and it cannot be checked before the design exists.
 
-
 ---
 
 ## 8. As built
@@ -267,8 +266,8 @@ All eight tickets shipped. What changed from the plan:
 
 **`widgetFooterFor` was kept and repurposed rather than deleted.** Making the footer
 conditional left that helper dead, and the obvious move — inline the rule in each widget —
-would have quietly given up the one thing it existed for: *"shared by both platforms so the
-two widgets cannot word it differently"*. It now returns `string | null` and both platforms
+would have quietly given up the one thing it existed for: _"shared by both platforms so the
+two widgets cannot word it differently"_. It now returns `string | null` and both platforms
 call the same rule. iOS renders the flame as an SF Symbol rather than the emoji the shared
 copy carries, because a symbol takes the ember tint and an emoji ignores it.
 
@@ -280,26 +279,24 @@ the comment now says the cycle is one edge and warns against relying on it.
 
 **An overdue row with no note still shows its time.** The subtitle slot falls back to the
 due time when `subtitle` is absent, because the title row replaces the time with the word
-`OVERDUE` — without the fallback, an overdue row with no note would not say *when*.
+`OVERDUE` — without the fallback, an overdue row with no note would not say _when_.
 
-**`IWidgetPalette` is a widened `Record<…, \`#${string}\`>`.** `typeof WIDGET_COLOURS.light`
-is a type of literal hex strings that the dark palette cannot satisfy. The template literal
-keeps the only constraint that matters — `react-native-android-widget` requires a leading
-`#`, and reads `#RRGGBBAA` web-style before re-ordering to Android's `#AARRGGBB`.
+**`IWidgetPalette` is a widened `Record<…, \`#${string}\`>`.** `typeof WIDGET_COLOURS.light`is a type of literal hex strings that the dark palette cannot satisfy. The template literal
+keeps the only constraint that matters —`react-native-android-widget`requires a leading`#`, and reads `#RRGGBBAA`web-style before re-ordering to Android's`#AARRGGBB`.
 
 ### Verification
 
 - **All seven Swift files typecheck against the iOS 16 SDK** (`swiftc -typecheck -target
-  arm64-apple-ios16.0`), exit 0 — which is a stronger gate than this extension has had
+arm64-apple-ios16.0`), exit 0 — which is a stronger gate than this extension has had
   before. It does **not** validate SF Symbol names, which are runtime strings; all six are
   iOS 13-era except `chart.line.uptrend.xyaxis` (iOS 16), which matches the target floor.
 - `app.json` now declares `minHeight: '130dp'`, confirmed through `expo config --type
-  introspect`.
+introspect`.
 - The Android bundle exports clean.
 
 ### Still unverified, and only a device can
 
-The whole point of the rework is how it *looks*, and none of the above sees a pixel:
+The whole point of the rework is how it _looks_, and none of the above sees a pixel:
 
 1. **iOS 18 tinted and dark-tinted home screens** — the risk in §5. Everything meaningful is
    carried by shape and word, but that is a claim until someone looks at it.
@@ -359,11 +356,11 @@ it costs nothing at all.
 
 ### 9.3 Why the two platforms differ
 
-| | Android | iOS |
-|---|---|---|
-| Mechanism | `OPEN_URI` → `ACTION_VIEW` in the library's receiver | `Link` → the containing app |
-| App launched? | No | Yes |
-| Works offline | Yes | Yes |
+|               | Android                                              | iOS                         |
+| ------------- | ---------------------------------------------------- | --------------------------- |
+| Mechanism     | `OPEN_URI` → `ACTION_VIEW` in the library's receiver | `Link` → the containing app |
+| App launched? | No                                                   | Yes                         |
+| Works offline | Yes                                                  | Yes                         |
 
 **A WidgetKit `Link` does not open the URL it names.** Whatever the scheme, iOS hands it to
 the containing app — so a `tel:` link on a widget reaches the app's URL handler and dials
@@ -431,3 +428,39 @@ device this renders on, and 28 is the floor at which the targets stay hittable.
    app link; nothing about that changes with the caller, but it has not been watched.
 3. **Title truncation on a 4-column widget on a 320dp screen** — the narrowest case, and
    the one the time badge was moved to protect.
+
+## 10. The iOS widget rendered with no colour at all
+
+Caught from a device screenshot, after the above shipped. Every accent-coloured element on
+the iOS widget was invisible: the kind glyph, the mark-done circle, the three contact
+buttons and the streak flame. The rows still drew, the text still read, and nothing failed
+loudly — the widget simply looked like a list of titles.
+
+**`targets/roast-widget/expo-target.config.js` declared its colours in a shape the plugin
+does not read.** `@bacons/apple-targets` v5 takes `{ light, dark }`; the config passed
+`{ color, darkColor }`, which its README still shows in one example. The keys are not
+validated, so `color.light` was simply `undefined` for all three and every colorset was
+generated **empty**.
+
+An empty colorset is worse than a missing one. `Color("$accent")` finds the asset, gets no
+colour, and paints nothing — so there is no "asset not found" line in the device log to go
+looking for. Everything drawn from `.primary`, `.secondary` or `Color.white` was unaffected
+and looked exactly right, which is what made the surface read as a design choice rather
+than a fault.
+
+Two things it hid that are worth recording:
+
+- **The contact strip was never actually missing.** Its glyphs are `Theme.accent` and its
+  fill is `Theme.accent` at 12%, so a row _with_ a number rendered three invisible buttons.
+  Absent and unpaintable are indistinguishable on the surface.
+- **It explains the early truncation of the meta line.** The cluster still claimed its
+  ~117dp of the row, so the note truncated against a gap with nothing drawn in it — which
+  looks like a layout bug and is not one.
+
+The Android widget could not have caught this: `constants/widget-theme.ts` carries the same
+three colours as hex in JS and never touches an asset catalog. That is the mirroring hazard
+`WidgetTheme.swift`'s header warns about, arriving from the direction the warning did not
+anticipate — not a drift between the two palettes, but one of them not existing.
+
+**This ships in the binary, not over the air.** It needs a `prebuild` so the colorsets
+regenerate, and a build — `eas update` cannot carry it.
