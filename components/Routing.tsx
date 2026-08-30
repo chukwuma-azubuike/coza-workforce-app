@@ -22,7 +22,10 @@ const Routing: React.FC = () => {
 
     const routeToMode = () => {
         if (mode === 'crm') {
-            router.replace('/roast-crm/my-guests');
+            // Today, not My Guests. Roast's question is "what do I do now", and the Task
+            // Feed is the only screen that answers it — My Guests answers "who do I have",
+            // which is a thing you go looking for rather than a thing you land on.
+            router.replace('/roast-crm/notifications');
         } else {
             router.replace('/(tabs)');
         }
