@@ -161,19 +161,35 @@ const neutralTitleFor = (kind: ROAST_TASK_KIND): string => {
     }
 };
 
-/** The footer line, shared by both platforms so the two widgets cannot word it differently. */
-export const widgetFooterFor = (snapshot: IRoastWidgetSnapshot): string => {
+/**
+ * The footer line — or `null` when the widget has nothing worth admitting.
+ *
+ * Shared by both platforms so the two widgets cannot word it differently.
+ * ⚠️ Mirrored in `RoastWidgetView.swift`'s `footer`; the rule below is the contract.
+ *
+ * **The footer used to be unconditional and it did four unrelated jobs at identical
+ * emphasis** — stale, "+N more", at-risk, and a healthy streak — while taking a full row's
+ * worth of a surface that only has room for about four. Three of those four have better
+ * homes: the streak is the pill in the header, "+N more" is the chip beside it, and a
+ * healthy streak needs no sentence at all.
+ *
+ * What is left is the one thing the widget genuinely has to say and nothing else can: that
+ * what you are looking at is old, or that your streak is about to end. Reclaiming the rest
+ * of that space is what pays for the note under each row.
+ */
+export const widgetFooterFor = (
+    snapshot: IRoastWidgetSnapshot,
+    { isStale, relative }: { isStale: boolean; relative: string }
+): string | null => {
     if (!snapshot.isSignedIn) {
-        return ROAST_COPY.widget.signedOut;
+        return null;
     }
 
-    if (!snapshot.items.length) {
-        return ROAST_COPY.widget.empty;
+    if (isStale) {
+        return ROAST_COPY.today.stale(relative);
     }
 
-    return snapshot.streak.isAtRisk
-        ? ROAST_COPY.widget.footerAtRisk
-        : ROAST_COPY.widget.footerHealthy(snapshot.streak.current);
+    return snapshot.streak.isAtRisk ? ROAST_COPY.widget.footerAtRisk : null;
 };
 
 /**
@@ -207,6 +223,10 @@ export const readWidgetSnapshot = async (): Promise<IRoastWidgetSnapshot | null>
  * component imports `widgetFooterFor` from this file, so a top-level import here would be
  * a cycle — and a cycle that only bites at module-init time, which is the hardest kind to
  * diagnose. Deferring the resolution to call time breaks it cleanly.
+ *
+ * The component's *type* imports from here are `import type` and erase at build, so the
+ * cycle is currently one edge rather than two. Do not rely on that: it would come back the
+ * moment anything on that side needs a value from this file.
  *
  * Also keeps `react-native-android-widget` off the iOS import graph entirely.
  */

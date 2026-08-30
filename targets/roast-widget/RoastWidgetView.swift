@@ -2,14 +2,30 @@ import SwiftUI
 import WidgetKit
 
 /**
- The `systemMedium` layout — header, two rows, footer.
+ The `systemMedium` layout — header, two row cards, conditional footer.
 
  Medium only, by decision: it is the size most people actually place, and one layout per
  platform is one set of truncation rules to get right rather than three.
 
  The five states from the spec all render through this one view rather than through
  separate ones, because four of them differ by a line of copy and a colour. Splitting them
- into separate views is how two of them quietly stop matching the app.
+ is how two of them quietly stop matching the app.
+
+ ## The vertical budget
+
+ Medium gives roughly 130pt of content after padding, and this spends all of it:
+ header 24 + gap 8 + two 46pt row cards + a 6pt gap between them. **That is only possible
+ because the footer is conditional** — see `footer`. The note under each row and an
+ always-present footer line cannot both exist, and when the footer does appear it displaces
+ the second row's note, which is the right thing to lose.
+
+ ## Tinted mode
+
+ iOS 18 re-renders widgets monochrome from the alpha channel on tinted home screens: the
+ ember gradient flattens, the accent goes, **and the overdue red goes with it**. Nothing
+ here may depend on colour alone — the row says the word `OVERDUE`, the kind is a
+ silhouette rather than a tint, the streak pill inverts its *shape* when at risk, and the
+ pill's numeral is the content with the flame as decoration.
  */
 struct RoastWidgetView: View {
     var entry: RoastEntry
@@ -22,55 +38,97 @@ struct RoastWidgetView: View {
 
     private var remaining: Int { max(0, snapshot.totalItems - rows.count) }
 
+    /// Shown only when the widget has something to admit. See `footer`.
+    private var hasFooter: Bool { snapshot.isStale || snapshot.streak.isAtRisk }
+
     var body: some View {
         if !snapshot.isSignedIn {
             signedOut
         } else {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: Theme.headerGap) {
                 header
 
                 if rows.isEmpty {
-                    Spacer(minLength: 0)
-                    Text("All roasted for today 🔥")
-                        .font(.system(size: 14, weight: .semibold))
-                    Spacer(minLength: 0)
+                    empty
                 } else {
-                    ForEach(rows) { item in
-                        row(item)
+                    VStack(spacing: Theme.rowGap) {
+                        ForEach(rows) { item in
+                            row(item)
+                        }
                     }
-                    Spacer(minLength: 0)
                 }
 
-                footer
+                if hasFooter {
+                    footer
+                }
             }
         }
     }
 
+    // MARK: - States
+
     private var signedOut: some View {
         VStack(spacing: 4) {
-            Text("🔥").font(.system(size: 22))
+            emberMark
             Text("Sign in to see your guests")
-                .font(.system(size: 13))
+                .font(Theme.title)
+                .multilineTextAlignment(.center)
+            Text("Your guests and your streak, on your home screen.")
+                .font(Theme.subtitle)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var empty: some View {
+        VStack(spacing: 3) {
+            emberMark
+            Text("All roasted for today")
+                .font(Theme.title)
+            Text("Nothing is due. You're ahead of it.")
+                .font(Theme.subtitle)
                 .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
+    /// The one piece of ornament on the surface, and the only place the ember appears at size.
+    private var emberMark: some View {
+        Text("🔥")
+            .font(.system(size: 20))
+            .frame(width: 34, height: 34)
+            .background(Circle().fill(Theme.accentFill))
+    }
+
+    // MARK: - Header
+
     private var header: some View {
-        HStack {
+        HStack(spacing: 6) {
             Text(countLabel)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(snapshot.counts.overdue > 0 ? Color("$overdue") : Color.primary)
+                .font(Theme.figure)
+                .foregroundStyle(snapshot.counts.overdue > 0 ? Theme.overdue : Color.primary)
+                .lineLimit(1)
 
-            Spacer()
+            Spacer(minLength: 4)
 
-            // The ember is a glyph rather than a drawing here. A widget is looked at for
-            // about a second, and an animated flame is not available to it anyway.
-            Text("🔥 \(snapshot.streak.current)")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(Color("$ember"))
-                .opacity(snapshot.streak.isAtRisk ? 0.55 : 1)
+            // "+N more" moved out of the footer and into a chip, which is what pays for
+            // the note under each row.
+            if remaining > 0 {
+                Text("+\(remaining)")
+                    .font(Theme.label)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 3)
+                    .background(
+                        RoundedRectangle(cornerRadius: Theme.pillRadius, style: .continuous)
+                            .fill(Theme.rowFill)
+                    )
+            }
+
+            streakPill
         }
+        .frame(height: 24)
     }
 
     private var countLabel: String {
@@ -79,29 +137,109 @@ struct RoastWidgetView: View {
             : "\(snapshot.counts.due) due"
     }
 
+    /**
+     The streak, as a capsule rather than a bare emoji.
+
+     It was `Text("🔥 5")` at 13pt, drawn by whatever emoji font the device shipped — the
+     one delightful thing in the feature getting the least attention on the surface.
+
+     At risk it **inverts** — hollow, ember border, ember numeral — rather than merely
+     dimming. A shape change survives tinted mode; an opacity change does not.
+     */
+    private var streakPill: some View {
+        HStack(spacing: 3) {
+            Image(systemName: "flame.fill")
+                .font(.system(size: 10, weight: .bold))
+            Text("\(snapshot.streak.current)")
+                .font(Theme.figure)
+        }
+        .foregroundStyle(snapshot.streak.isAtRisk ? AnyShapeStyle(Theme.ember) : AnyShapeStyle(Color.white))
+        .padding(.horizontal, 8)
+        .padding(.vertical, 4)
+        .background {
+            if snapshot.streak.isAtRisk {
+                RoundedRectangle(cornerRadius: Theme.pillRadius, style: .continuous)
+                    .strokeBorder(Theme.ember, lineWidth: 1)
+            } else {
+                RoundedRectangle(cornerRadius: Theme.pillRadius, style: .continuous)
+                    .fill(Theme.emberGradient)
+            }
+        }
+        .accessibilityLabel(
+            snapshot.streak.isAtRisk
+                ? "Streak at risk, \(snapshot.streak.current) days"
+                : "\(snapshot.streak.current) day streak"
+        )
+    }
+
+    // MARK: - Rows
+
     private func row(_ item: RoastWidgetSnapshot.Item) -> some View {
         HStack(spacing: 8) {
-            // Overdue is never colour alone — the time under the title reads "Overdue" too.
-            if item.isOverdue {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Color("$overdue"))
-                    .frame(width: 3, height: 26)
-            }
+            /*
+             The rail keeps its lane whether or not the row is overdue.
+
+             It used to be *inserted* into the stack only when overdue, so an overdue row's
+             text began 11pt further right than a normal one's. Nothing on the surface said
+             "unfinished" as loudly as text that did not line up, and a clear rectangle
+             fixes it for the cost of nothing.
+             */
+            RoundedRectangle(cornerRadius: 2)
+                .fill(item.isOverdue ? Theme.overdue : Color.clear)
+                .frame(width: Theme.railWidth)
+
+            Image(systemName: WidgetGlyph.name(for: item.kind))
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundStyle(item.isOverdue ? Theme.overdue : Theme.accent)
+                .frame(width: Theme.glyphColumn)
 
             VStack(alignment: .leading, spacing: 1) {
-                Text(item.title)
-                    .font(.system(size: 13, weight: .medium))
-                    .lineLimit(1)
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text(item.title)
+                        .font(Theme.title)
+                        .tracking(Theme.titleTracking)
+                        .lineLimit(1)
 
-                Text(item.isOverdue ? "Overdue · \(timeLabel(item))" : timeLabel(item))
-                    .font(.system(size: 11))
-                    .foregroundStyle(item.isOverdue ? Color("$overdue") : Color.secondary)
+                    Spacer(minLength: 0)
+
+                    // Never colour alone: the word is what survives tinted mode.
+                    if item.isOverdue {
+                        Text("OVERDUE")
+                            .font(Theme.label)
+                            .tracking(Theme.labelTracking)
+                            .foregroundStyle(Theme.overdue)
+                    } else {
+                        Text(timeLabel(item))
+                            .font(Theme.meta)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+
+                // The note. Already in the snapshot, already redacted under
+                // `hideGuestNames`, and rendered by neither platform until now.
+                if let subtitle = item.subtitle, !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(Theme.subtitle)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.85)
+                } else if item.isOverdue {
+                    // An overdue row with no note still has to say when it was due.
+                    Text(timeLabel(item))
+                        .font(Theme.subtitle)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
-
-            Spacer(minLength: 0)
 
             checkbox(item)
         }
+        .padding(.horizontal, Theme.rowPaddingH)
+        .padding(.vertical, Theme.rowPaddingV)
+        .background(
+            RoundedRectangle(cornerRadius: Theme.rowRadius, style: .continuous)
+                .fill(item.isOverdue ? Theme.overdueFill : Theme.rowFill)
+        )
         // The row itself opens the guest; the checkbox above overrides it.
         .widgetURL(URL(string: item.deepLink))
     }
@@ -132,12 +270,17 @@ struct RoastWidgetView: View {
         }
     }
 
+    /// Filled rather than hairline-outlined, because on iOS 17+ it genuinely is pressable
+    /// and a control that reads as decoration does not get pressed.
     private var checkboxLabel: some View {
         Image(systemName: "checkmark")
-            .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(Color("$accent"))
-            .frame(width: 30, height: 30)
-            .overlay(Circle().strokeBorder(Color.secondary.opacity(0.3), lineWidth: 1))
+            .font(.system(size: 13, weight: .bold))
+            .foregroundStyle(Theme.accent)
+            .frame(width: Theme.checkbox, height: Theme.checkbox)
+            .background(
+                RoundedRectangle(cornerRadius: Theme.checkboxRadius, style: .continuous)
+                    .fill(Theme.accentFill)
+            )
     }
 
     private var fallbackURL: URL {
@@ -152,37 +295,30 @@ struct RoastWidgetView: View {
     }
 
     /**
-     The sixth, implicit state: stale.
+     The sixth, implicit state: stale — plus the streak warning.
+
+     Rendered **only** when one of those is true. It used to be an unconditional grey line
+     doing four unrelated jobs at identical emphasis while taking a full row's worth of
+     height; the healthy-streak wording it used to carry is now the pill in the header, and
+     "+N more" is the chip beside it. Reclaiming that space is what the note under each row
+     is paid for with.
 
      A widget quietly rendering six-hour-old data as though it were current costs trust in
-     everything else it says. Admitting it costs one line.
+     everything else it says. Admitting it costs one line — but only the line it needs.
+
+     ⚠️ **Mirrors `widgetFooterFor` in `utils/widget-bridge.ts`.** Same rule, same wording,
+     two languages. The flame here is an SF Symbol rather than the emoji the shared copy
+     carries, because a symbol takes the ember tint and an emoji ignores it.
      */
     private var footer: some View {
-        Text(footerText)
-            .font(.system(size: 11))
-            .foregroundStyle(.secondary)
-            .lineLimit(1)
-    }
-
-    private var footerText: String {
-        if snapshot.isStale {
-            return "Updated \(relativeLabel)"
+        HStack(spacing: 4) {
+            Image(systemName: snapshot.isStale ? "arrow.clockwise" : "flame")
+                .font(.system(size: 9, weight: .semibold))
+            Text(snapshot.isStale ? "Last updated \(relativeLabel)" : "Roast your game today")
+                .font(Theme.meta)
+                .lineLimit(1)
         }
-
-        if remaining > 0 {
-            return "+\(remaining) more in Roast"
-        }
-
-        if snapshot.streak.isAtRisk {
-            return "Roast your game today 🔥"
-        }
-
-        if snapshot.streak.current > 0 {
-            let unit = snapshot.streak.current == 1 ? "day" : "days"
-            return "\(snapshot.streak.current) \(unit) on — keep the fire going."
-        }
-
-        return "All roasted for today 🔥"
+        .foregroundStyle(snapshot.isStale ? AnyShapeStyle(Color.secondary) : AnyShapeStyle(Theme.ember))
     }
 
     private var relativeLabel: String {

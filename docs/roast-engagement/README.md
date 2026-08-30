@@ -20,6 +20,7 @@ every deviation and why, rather than editing the reasoning out of the originals.
 | 06 | [Delivery plan](./06_DELIVERY_PLAN.md) | PM + leads | Phasing, ticket breakdown, sequencing, risk register, test plan |
 | 07 | [As built](./07_AS_BUILT.md) | Everyone | What shipped, and every place it differs from 00–06 — including seven API contract corrections |
 | 08 | [Device reminders](./08_DEVICE_REMINDERS_PLAN.md) | PM + mobile | Mirroring a reminder into the phone's own Reminders app, calendar or alarm clock — plan and as-built |
+| 09 | [Widget UI](./09_WIDGET_UI_PLAN.md) | Design + mobile | The home-screen widget's visual design, and the note under each row — plan and as-built |
 
 ## Relationship to the existing notification docs
 

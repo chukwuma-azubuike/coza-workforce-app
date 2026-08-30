@@ -123,6 +123,17 @@ picks up the new buttons.
 
 ## 4. Widget deviations
 
+> The widget's **visual** design was reworked after first release — type scale, per-kind
+> glyphs, row cards, the streak capsule, a conditional footer, and the note under each row.
+> [`09_WIDGET_UI_PLAN.md`](./09_WIDGET_UI_PLAN.md) carries the diagnosis, the design and its
+> own as-built. The items below are the structural decisions, which are unchanged.
+
+**The note under each row was in the snapshot from the start and rendered by neither
+platform.** `subtitle` was populated by `buildWidgetSnapshot`, redacted correctly under
+`hideGuestNames`, and decoded by `Snapshot.swift` — the widget was holding the most
+informative string it had and dropping it. Rendering it needed no backend work and no
+contract change.
+
 **Medium only.** `systemMedium` / 4x2, per the reduced-scope ladder in
 [`04_WIDGET_SPEC.md §9`](./04_WIDGET_SPEC.md). The snapshot still carries six items where
 medium shows two, so small and large are a view change, not a data change.

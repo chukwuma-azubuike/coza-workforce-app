@@ -105,7 +105,7 @@
                             "label": "Roast — Today",
                             "description": "Who needs you today, and your streak.",
                             "minWidth": "250dp",
-                            "minHeight": "110dp",
+                            "minHeight": "130dp",
                             "targetCellWidth": 4,
                             "targetCellHeight": 2,
                             "resizeMode": "horizontal|vertical",

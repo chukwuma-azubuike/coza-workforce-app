@@ -15,13 +15,19 @@ struct RoastWidget: Widget {
         StaticConfiguration(kind: kind, provider: Provider()) { entry in
             if #available(iOS 17.0, *) {
                 RoastWidgetView(entry: entry)
-                    .containerBackground(.fill.tertiary, for: .widget)
+                    // A gradient rather than `.fill.tertiary`, which is a flat wash.
+                    // Neither WidgetKit nor RemoteViews can draw a shadow, so depth has to
+                    // come from a gradient and a hairline — and a dark rectangle faking a
+                    // shadow is exactly what makes a widget look cheap. The two stops sit
+                    // within a few percent of each other on purpose: this is depth, not
+                    // decoration, and a wider spread bands on low-end panels.
+                    .containerBackground(for: .widget) { Theme.backgroundGradient }
             } else {
                 // Pre-17 widgets paint their own background and take their own padding;
                 // `containerBackground` does not exist there.
                 RoastWidgetView(entry: entry)
                     .padding(14)
-                    .background(Color(.systemBackground))
+                    .background(Theme.backgroundGradient)
             }
         }
         .configurationDisplayName("Roast")
