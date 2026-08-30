@@ -19,7 +19,7 @@ import {
 import { isWithinQuietHours, localTimezone } from '~/hooks/roast-engagement';
 import { useAppDispatch, useAppSelector } from '~/store/hooks';
 import { roastEngagementActions, roastEngagementSelectors } from '~/store/actions/roast-engagement';
-import { MIRROR_LABELS, MIRROR_PROVIDER, availableProviders } from '~/utils/device-mirror';
+import { MIRROR_LABELS, MIRROR_PROVIDER, mirrorDefaultOptions } from '~/utils/device-mirror';
 import HourPicker from './HourPicker';
 
 /**
@@ -97,7 +97,7 @@ const HourRow: React.FC<{ label: string; hour: number; hint?: string; onPress: (
             </View>
         </View>
 
-        {!!hint && <Text className="!text-xs text-amber-600 dark:text-amber-500 pr-6">{hint}</Text>}
+        {!!hint && <Text className="text-sm text-amber-600 dark:text-amber-500 pr-6">{hint}</Text>}
     </TouchableOpacity>
 );
 
@@ -122,10 +122,14 @@ const NotificationSettings: React.FC = () => {
      *
      * The providers on offer differ by platform — "Reminders" is an iOS concept with no
      * Android counterpart — so a preference that synced to the server would follow a
-     * worker onto a handset where it means nothing. Asked without a due time, so the
-     * 24-hour-only Android alarm is not offered as a standing default it could never keep.
+     * worker onto a handset where it means nothing.
+     *
+     * `mirrorDefaultOptions` rather than `availableProviders`, because this screen has no
+     * due time to test the alarm's 24-hour horizon against. The horizon is applied per
+     * reminder instead, by `resolveMirrorTarget` in the sheet, which falls back to the
+     * calendar and says so.
      */
-    const mirrorOptions = availableProviders();
+    const mirrorOptions = mirrorDefaultOptions();
 
     const [permissionGranted, setPermissionGranted] = useState(true);
     const [picking, setPicking] = useState<HourField | null>(null);
@@ -223,7 +227,7 @@ const NotificationSettings: React.FC = () => {
                 </Card>
             )}
 
-            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 tracking-wide">
+            <Text className="text-sm font-semibold uppercase text-muted-foreground mb-2 tracking-wide">
                 What you hear about
             </Text>
 
@@ -235,7 +239,9 @@ const NotificationSettings: React.FC = () => {
                             <View className="flex-row items-center gap-3 p-4">
                                 <View className="flex-1 gap-0.5">
                                     <Text className="font-medium">{label}</Text>
-                                    <Text className="!text-xs text-muted-foreground">{description}</Text>
+                                    <Text className="text-sm text-muted-foreground line-clamp-none">
+                                        {description}
+                                    </Text>
                                 </View>
                                 <Switch checked={!!prefs[key]} onCheckedChange={checked => patch({ [key]: checked })} />
                             </View>
@@ -244,7 +250,7 @@ const NotificationSettings: React.FC = () => {
                 </CardContent>
             </Card>
 
-            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
+            <Text className="text-sm font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
                 When they arrive
             </Text>
 
@@ -252,7 +258,7 @@ const NotificationSettings: React.FC = () => {
                 <CardContent className="p-0">
                     <View className="px-4 pt-4 gap-0.5">
                         <Text className="font-medium">Your two daily digests</Text>
-                        <Text className="!text-xs text-muted-foreground">
+                        <Text className="text-sm text-muted-foreground line-clamp-none">
                             Everything above is gathered into a morning digest and an evening prompt, so you get two
                             nudges a day instead of five. Reminders you set yourself are not affected.
                         </Text>
@@ -280,14 +286,14 @@ const NotificationSettings: React.FC = () => {
                         changes it at noon and hears nothing concludes it is broken. And
                         delivery is evaluated on a quarter-hour tick, so promising the
                         minute would be a promise the server cannot keep. */}
-                    <Text className="!text-xs text-muted-foreground px-4 pb-4">
+                    <Text className="text-sm text-muted-foreground px-4 pb-4 line-clamp-none">
                         Takes effect from your next digest — changing the time won&apos;t re-send today&apos;s. Digests
                         arrive within about 15 minutes of the hour.
                     </Text>
                 </CardContent>
             </Card>
 
-            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
+            <Text className="text-sm font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
                 Quiet hours
             </Text>
 
@@ -296,7 +302,7 @@ const NotificationSettings: React.FC = () => {
                     <View className="flex-row items-center gap-3 p-4">
                         <View className="flex-1 gap-0.5">
                             <Text className="font-medium">Quiet hours</Text>
-                            <Text className="!text-xs text-muted-foreground">
+                            <Text className="text-sm text-muted-foreground line-clamp-none">
                                 Nudges wait until quiet hours end. Reminders you set yourself still come through.
                             </Text>
                         </View>
@@ -327,7 +333,7 @@ const NotificationSettings: React.FC = () => {
                 </CardContent>
             </Card>
 
-            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
+            <Text className="text-sm font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
                 Privacy
             </Text>
 
@@ -335,7 +341,7 @@ const NotificationSettings: React.FC = () => {
                 <CardContent className="p-4 flex-row items-center gap-3">
                     <View className="flex-1 gap-0.5">
                         <Text className="font-medium">Hide guest names</Text>
-                        <Text className="!text-xs text-muted-foreground">
+                        <Text className="text-sm text-muted-foreground line-clamp-none">
                             Notifications and the home-screen widget show a count instead of a name, so nobody reading
                             over your shoulder learns who you're following up.
                         </Text>
@@ -347,7 +353,7 @@ const NotificationSettings: React.FC = () => {
                 </CardContent>
             </Card>
 
-            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
+            <Text className="text-sm font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
                 On this phone
             </Text>
 
@@ -355,7 +361,7 @@ const NotificationSettings: React.FC = () => {
                 <CardContent className="p-4 gap-3">
                     <View className="gap-0.5">
                         <Text className="font-medium">Also add reminders to</Text>
-                        <Text className="!text-xs text-muted-foreground">
+                        <Text className="text-sm text-muted-foreground line-clamp-none">
                             New reminders get a copy in your phone&apos;s own app, so they survive the notification
                             being swiped away. You can change this on any single reminder.
                         </Text>
@@ -390,16 +396,29 @@ const NotificationSettings: React.FC = () => {
                         })}
                     </View>
 
-                    <Text className="!text-[11px] text-muted-foreground">
-                        Copies are removed when you complete or delete the reminder, and when you sign out.
-                        {mirrorDefault === MIRROR_PROVIDER.CALENDAR
-                            ? ' Calendar entries sync wherever that calendar syncs.'
-                            : ''}
-                    </Text>
+                    {/* The alarm breaks both halves of the ordinary promise — the horizon and the
+                        cleanup — so it gets its own paragraph rather than a clause appended to a
+                        sentence that would then be false. */}
+                    {mirrorDefault === MIRROR_PROVIDER.ANDROID_ALARM ? (
+                        <Text className="!text-[11px] text-muted-foreground line-clamp-none">
+                            An alarm can&apos;t hold a date, so this only applies to reminders due within a day.
+                            Anything further out gets a calendar entry instead, and the reminder itself shows you which.
+                            Your clock keeps an alarm once it has one — Roast can&apos;t take that back, so you&apos;ll
+                            dismiss it yourself. Calendar copies are removed when you complete or delete the reminder,
+                            and when you sign out.
+                        </Text>
+                    ) : (
+                        <Text className="!text-[11px] text-muted-foreground line-clamp-none">
+                            Copies are removed when you complete or delete the reminder, and when you sign out.
+                            {mirrorDefault === MIRROR_PROVIDER.CALENDAR
+                                ? ' Calendar entries sync wherever that calendar syncs.'
+                                : ''}
+                        </Text>
+                    )}
                 </CardContent>
             </Card>
 
-            <Text className={cn('!text-xs text-muted-foreground mt-6 text-center')}>
+            <Text className={cn('text-sm text-muted-foreground mt-6 text-center')}>
                 Times are in {prefs.timezone || localTimezone()}.
             </Text>
 

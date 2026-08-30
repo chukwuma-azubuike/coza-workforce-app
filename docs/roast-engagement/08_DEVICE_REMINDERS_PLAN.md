@@ -228,7 +228,7 @@ Everything in §5 shipped. What the plan left open, and how it was answered:
 | Decision | Answer | Where |
 |---|---|---|
 | **D-1** — governance sign-off for guest names leaving the sandbox | ⚠️ **Still open.** The code is written so the answer can be "no" cheaply: the whole feature is off unless a worker turns it on, and the default is `null`. | — |
-| **D-2** — ship the Android alarm | **Yes, inside a 24-hour horizon.** `availableProviders(dueAt)` simply does not return it for anything further out, so the UI cannot offer a date the intent could not honour. | `utils/device-mirror.ts` |
+| **D-2** — ship the Android alarm | **Yes, inside a 24-hour horizon.** `availableProviders(dueAt)` simply does not return it for anything further out, so the UI cannot offer a date the intent could not honour. Amended — see *The alarm is a standing default too* below. | `utils/device-mirror.ts` |
 | **D-3** — Calendar on iOS as well as Reminders | **No.** iOS is offered Reminders only. One line in `availableProviders` reverses it. | `utils/device-mirror.ts` |
 | **D-4** — which Android calendar | Primary if the device names one, else the first that accepts a write, else `null` and the option quietly fails. | `writableEventCalendarId` |
 | **D-5** — Play Store permission declaration | ⚠️ **Still open.** Note that `expo-calendar`'s plugin adds **`READ_CALENDAR` as well as `WRITE_CALENDAR`**, unconditionally. Roast only ever writes; the read permission is the plugin's, not ours, and the declaration has to account for it anyway. | `app.json` |
@@ -253,6 +253,25 @@ temporary id until the refetch lands — and a reconcile in that window sees a l
 with no matching reminder and correctly concludes the reminder is gone. It would have
 deleted the mirror a second after writing it. `MIRROR_SETTLE_MS` closes that window.
 
+**The alarm is a standing default too, and falls back when it cannot be kept.** As first
+shipped, the alarm existed only in the reminder sheet: the settings screen asked
+`availableProviders()` with no due time, the horizon check failed for want of one, and the
+option vanished. Correct in the narrow sense and wrong in practice — it made the alarm a
+choice an Android worker re-made on every same-day reminder, which is most of what a
+follow-up call is.
+
+Settings now asks `mirrorDefaultOptions()`, which offers the alarm with no horizon test
+because it has no due time to test. The horizon is applied per reminder instead, by
+`resolveMirrorTarget(preferred, dueAt)`, which returns the calendar when an alarm
+preference meets a reminder more than a day out. The calendar rather than nothing: the
+worker's standing answer to "also put this on my phone" was *yes*, and the alarm was the
+*how*.
+
+Two properties make that safe to do at all. The preference is stored **unresolved**, so an
+alarm choice survives a trip out to Saturday and back to tonight. And the sheet renders the
+*resolved* provider as the selected chip with a line saying why it changed — a fallback the
+worker cannot see is indistinguishable from a setting that does not work.
+
 **`useReminderMirror` is split in two.** `useMirrorTarget` is the write half and has no
 effects, so a screen can call it; `useReminderMirror` adds the reconcile and is mounted
 once from `useRoastEngagement`, beside the notification scheduler. Mounting the whole hook
@@ -260,6 +279,14 @@ per sheet would have run a reconcile loop for every sheet on screen.
 
 ### What still cannot be done, and is not a bug
 
+- **An edited alarm leaves the old one behind.** The reconcile deletes and re-writes every
+  other provider when the wording or the time drifts; an alarm cannot be deleted, so doing
+  the same would leave the stale one ringing and add a second beside it. The reconcile
+  therefore skips alarms entirely — which matters more than it sounds, because the title
+  drifts on its own when the guest-name index resolves, and that alone would have
+  duplicated every mirrored alarm on the next foreground. A change the *worker* makes goes
+  through `applyMirror`, which does write the new alarm, and the sheet says in as many
+  words that the old one is still on their clock.
 - **An Android alarm cannot be deleted by us, ever.** `ACTION_SET_ALARM` returns nothing
   identifying and Android exposes no API to list or remove one. It survives completing the
   reminder, deleting it, and signing out. The sheet says so in as many words rather than

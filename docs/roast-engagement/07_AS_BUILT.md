@@ -142,6 +142,14 @@ also reaches a worker whose streak is 0. See
 The two live next to each other on the settings screen, and the asymmetry is deliberate:
 a deadline whose warning the worker can move is not much of a warning.
 
+**The device-mirror alarm is offered as a default, and degrades visibly.** `availableProviders`
+withholds the Android alarm without a due time to check its 24-hour horizon against, which
+left the settings screen — which has no due time by definition — unable to offer it at all.
+`mirrorDefaultOptions` is the version for that screen; `resolveMirrorTarget` applies the
+horizon per reminder and falls back to the calendar, with the resolved provider shown as
+the selected chip rather than the stored intent. See
+[`08_DEVICE_REMINDERS_PLAN.md §7`](./08_DEVICE_REMINDERS_PLAN.md).
+
 ## 4. Widget deviations
 
 > The widget's **visual** design was reworked after first release — type scale, per-kind

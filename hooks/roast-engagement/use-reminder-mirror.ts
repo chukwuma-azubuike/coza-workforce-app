@@ -75,17 +75,28 @@ export const useMirrorTarget = () => {
     const applyMirror = useCallback(
         async (reminder: IRoastReminder, provider: MIRROR_PROVIDER | null) => {
             const existing = mirrored[reminder._id];
+            const mirrorable = mirrorableFor(reminder);
 
-            if (existing && existing.provider !== provider) {
+            // Content as well as provider, because the reconcile below no longer picks up
+            // drift on alarms — it cannot, without ringing the phone twice. An edited time
+            // on an alarm-mirrored reminder has to be acted on here or nowhere.
+            const unchanged =
+                !!existing && existing.provider === provider && existing.contentKey === mirrorContentKey(mirrorable);
+
+            if (unchanged) {
+                return;
+            }
+
+            if (existing) {
                 await deleteMirror(existing);
                 dispatch(roastEngagementActions.clearMirror(reminder._id));
             }
 
-            if (!provider || mirrored[reminder._id]?.provider === provider) {
+            if (!provider) {
                 return;
             }
 
-            const record = await createMirror(provider, mirrorableFor(reminder));
+            const record = await createMirror(provider, mirrorable);
 
             // `null` means denied, or no writable calendar. The reminder itself already
             // saved, so there is nothing to roll back and nothing worth interrupting the
@@ -176,6 +187,22 @@ const useReminderMirror = () => {
                 const mirrorable = mirrorableFor(reminder);
 
                 if (record.contentKey === mirrorContentKey(mirrorable)) {
+                    continue;
+                }
+
+                // The alarm is never re-created here. Every other provider is fixed by
+                // deleting and re-writing; an alarm cannot be deleted, so the same path
+                // would leave the stale one ringing and add a second beside it — and the
+                // worker cannot remove either from inside Roast.
+                //
+                // Drift also arrives here unprompted. `mirrorableFor` reads the guest-name
+                // index, which resolves after the reminder list does, so the title changes
+                // from "A guest" to a real name with nobody touching anything. That alone
+                // would duplicate every mirrored alarm on the next foreground.
+                //
+                // A change the worker made themselves is handled in `applyMirror`, where
+                // there is a sheet to disclose the leftover alarm on.
+                if (record.provider === MIRROR_PROVIDER.ANDROID_ALARM) {
                     continue;
                 }
 

@@ -74,10 +74,10 @@ const TaskRow: React.FC<TaskRowProps> = ({ task, onPress, onPrimary, onDismiss }
     }, [onPrimary, task]);
 
     return (
-        <Card className={cn('mb-3 overflow-hidden', task.isOverdue && 'border-destructive')}>
+        <Card className={cn('mb-3 overflow-hidden', task.isOverdue && 'border-rose-500')}>
             <View className="flex-row">
                 {/* Colour alone never carries "overdue" — the label below says it too. */}
-                {task.isOverdue && <View className="w-1 bg-destructive" />}
+                {task.isOverdue && <View className="w-1 bg-rose-500" />}
 
                 <CardContent className="flex-1 p-4 gap-2">
                     <TouchableOpacity
@@ -99,7 +99,7 @@ const TaskRow: React.FC<TaskRowProps> = ({ task, onPress, onPrimary, onDismiss }
                             </Text>
                             <Text
                                 className={cn(
-                                    '!text-xs',
+                                    'text-sm',
                                     task.isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'
                                 )}
                             >
@@ -114,7 +114,7 @@ const TaskRow: React.FC<TaskRowProps> = ({ task, onPress, onPrimary, onDismiss }
                         )}
 
                         {task.isOverdue && (
-                            <Text className="!text-xs text-destructive font-medium">Overdue · {dueAt.fromNow()}</Text>
+                            <Text className="text-sm text-destructive font-medium">Overdue · {dueAt.fromNow()}</Text>
                         )}
                     </TouchableOpacity>
 
@@ -126,9 +126,9 @@ const TaskRow: React.FC<TaskRowProps> = ({ task, onPress, onPrimary, onDismiss }
                             accessibilityLabel={`${action.label}: ${task.title}`}
                             // 44pt minimum. This is reached for one-handed, often while
                             // walking, and it is the only control on the row that matters.
-                            className="h-11 px-4 rounded-full bg-primary flex-row items-center gap-2"
+                            className="h-11 px-4 rounded-full bg-blue-600 flex-row items-center gap-2"
                         >
-                            <Icon type={action.iconType} name={action.icon} size={15} color="#fff" />
+                            <Icon type={action.iconType} name={action.icon} size={18} color="#fff" />
                             <Text className="!text-sm text-primary-foreground dark:text-white font-medium">
                                 {action.label}
                             </Text>

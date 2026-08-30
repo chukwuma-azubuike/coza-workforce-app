@@ -35,21 +35,20 @@ const StreakHeader: React.FC<StreakHeaderProps> = ({ streak, counts, staleLabel 
                 onPress={() => router.push('/roast-crm/streak')}
                 accessibilityRole="button"
                 // The ember is hidden from assistive tech; this label is the whole header.
-                accessibilityLabel={`${pluralise(current, 'day')} streak, ${
-                    current === 0 ? 'not started' : isAtRisk ? 'at risk' : 'active'
-                }. Open streak details.`}
+                accessibilityLabel={`${pluralise(current, 'day')} streak, ${current === 0 ? 'not started' : isAtRisk ? 'at risk' : 'active'
+                    }. Open streak details.`}
                 className="flex-row items-center gap-3"
             >
                 <StreakEmber current={current} isAtRisk={isAtRisk} size={52} />
 
                 <View className="flex-1">
-                    <Text className="!text-3xl font-bold">{current}</Text>
-                    <Text className="!text-sm text-muted-foreground">
+                    <Text className="text-4xl font-bold">{current}</Text>
+                    <Text className="text-base text-muted-foreground">
                         {current === 0
                             ? 'Check in today to start your streak.'
                             : isAtRisk
-                              ? ROAST_COPY.widget.footerAtRisk
-                              : ROAST_COPY.widget.footerHealthy(current)}
+                                ? ROAST_COPY.widget.footerAtRisk
+                                : ROAST_COPY.widget.footerHealthy(current)}
                     </Text>
                 </View>
 
@@ -60,13 +59,13 @@ const StreakHeader: React.FC<StreakHeaderProps> = ({ streak, counts, staleLabel 
                 <View className="flex-row items-center gap-2">
                     {!!counts && (counts.due > 0 || counts.overdue > 0) && (
                         <>
-                            <Text className="!text-sm text-muted-foreground">
+                            <Text className="text-base text-muted-foreground">
                                 {pluralise(counts.due, 'due', 'due')}
                             </Text>
                             {counts.overdue > 0 && (
                                 <>
-                                    <Text className="!text-sm text-muted-foreground">·</Text>
-                                    <Text className={cn('!text-sm font-semibold text-destructive')}>
+                                    <Text className="text-base text-muted-foreground">·</Text>
+                                    <Text className={cn('text-base font-semibold text-rose-500')}>
                                         {counts.overdue} overdue
                                     </Text>
                                 </>
@@ -87,14 +86,14 @@ const StreakHeader: React.FC<StreakHeaderProps> = ({ streak, counts, staleLabel 
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                     className="p-1"
                 >
-                    <Icon type="feather" name="sliders" size={16} color={THEME_CONFIG.lightGray} />
+                    <Icon type="feather" name="sliders" size={18} color={THEME_CONFIG.lightGray} />
                 </TouchableOpacity>
             </View>
 
             {!!staleLabel && (
                 <View className="flex-row items-center gap-1.5">
-                    <Icon type="feather" name="cloud-off" size={12} color={THEME_CONFIG.lightGray} />
-                    <Text className="!text-xs text-muted-foreground">{staleLabel}</Text>
+                    <Icon type="feather" name="cloud-off" size={18} color={THEME_CONFIG.lightGray} />
+                    <Text className="text-sm text-muted-foreground">{staleLabel}</Text>
                 </View>
             )}
         </View>

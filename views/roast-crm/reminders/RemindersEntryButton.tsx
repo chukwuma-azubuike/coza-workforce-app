@@ -49,23 +49,23 @@ const RemindersEntryButton: React.FC = () => {
             }}
             className={cn(
                 'flex-row items-center gap-2 h-10 px-3 rounded-full border',
-                dueNow ? 'border-primary' : 'border-border'
+                dueNow ? 'border-blue-600' : 'border-border'
             )}
         >
-            <Icon type="feather" name="bell" size={16} color={dueNow ? THEME_CONFIG.primary : THEME_CONFIG.lightGray} />
-            <Text className={cn('!text-sm', dueNow && 'text-primary')}>Reminders</Text>
+            <Icon type="feather" name="bell" size={16} color={dueNow ? THEME_CONFIG.blue : THEME_CONFIG.lightGray} />
+            <Text className={cn('!text-sm', dueNow && 'text-blue-600')}>Reminders</Text>
 
             {!!upcoming && (
                 <View
                     className={cn(
                         'min-w-5 h-5 px-1.5 rounded-full items-center justify-center',
-                        dueNow ? 'bg-primary' : 'bg-muted'
+                        dueNow ? 'bg-blue-600' : 'bg-muted'
                     )}
                 >
                     <Text
                         className={cn(
-                            '!text-[11px]',
-                            dueNow ? 'text-primary-foreground dark:text-white' : 'text-muted-foreground'
+                            'text-sm',
+                            dueNow ? 'text-blue-600 dark:text-white' : 'text-muted-foreground'
                         )}
                     >
                         {upcoming}

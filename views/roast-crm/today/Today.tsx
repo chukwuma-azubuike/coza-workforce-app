@@ -188,7 +188,7 @@ const Today: React.FC = () => {
         ({ item }: { item: Row }) => {
             if (item.kind === 'header') {
                 return (
-                    <Text className="!text-xs font-semibold uppercase text-muted-foreground mt-4 mb-2 tracking-wide">
+                    <Text className="text-sm font-semibold uppercase text-muted-foreground mt-4 mb-2 tracking-wide">
                         {item.label}
                     </Text>
                 );

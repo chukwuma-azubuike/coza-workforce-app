@@ -118,6 +118,9 @@ export const mirrorContentKey = (reminder: IMirrorableReminder): string =>
  * Options that do not apply are **absent, not disabled**: a menu where half the entries
  * are greyed out on each platform is a menu that reads as broken.
  *
+ * Asked with a due time in hand. `mirrorDefaultOptions` is the version for the settings
+ * screen, which has none.
+ *
  * D-3 in the plan: iOS is offered Reminders and not Calendar. A follow-up call is a task,
  * not an appointment, and putting it on the calendar as a 15-minute event clutters the day
  * view of somebody who lives in that view. Android has no Reminders app to send it to, so
@@ -133,9 +136,73 @@ export const availableProviders = (dueAt?: string): MIRROR_PROVIDER[] => {
         return [];
     }
 
-    const withinHorizon = !!dueAt && Date.parse(dueAt) - Date.now() <= ANDROID_ALARM_HORIZON_MS;
+    return isWithinAlarmHorizon(dueAt)
+        ? [MIRROR_PROVIDER.CALENDAR, MIRROR_PROVIDER.ANDROID_ALARM]
+        : [MIRROR_PROVIDER.CALENDAR];
+};
 
-    return withinHorizon ? [MIRROR_PROVIDER.CALENDAR, MIRROR_PROVIDER.ANDROID_ALARM] : [MIRROR_PROVIDER.CALENDAR];
+/** Whether the alarm can honour this due time at all. See `ANDROID_ALARM_HORIZON_MS`. */
+export const isWithinAlarmHorizon = (dueAt?: string): boolean =>
+    !!dueAt && Date.parse(dueAt) - Date.now() <= ANDROID_ALARM_HORIZON_MS;
+
+/**
+ * The providers offerable as a **standing default**, chosen with no due time in hand.
+ *
+ * Wider than `availableProviders` on Android by exactly one entry: the alarm, which that
+ * function withholds without a due time because it cannot know whether the horizon is met.
+ * A settings screen asking "what should new reminders do?" has no due time by definition,
+ * so it asks here instead — and the horizon is then applied per reminder, at the moment
+ * there is a time to apply it to, by `resolveMirrorTarget`.
+ *
+ * The alternative was leaving the alarm out of settings entirely, which is what shipped
+ * first. It made the alarm a choice an Android worker had to re-make on every single
+ * same-day reminder, which is most of what a follow-up call actually is.
+ */
+export const mirrorDefaultOptions = (): MIRROR_PROVIDER[] => {
+    if (Platform.OS === 'ios') {
+        return [MIRROR_PROVIDER.IOS_REMINDERS];
+    }
+
+    return Platform.OS === 'android' ? [MIRROR_PROVIDER.CALENDAR, MIRROR_PROVIDER.ANDROID_ALARM] : [];
+};
+
+/**
+ * What the alarm degrades to when the due time is out of its reach.
+ *
+ * The calendar rather than nothing, because the worker's standing answer to "also put this
+ * on my phone" was *yes*, and the alarm was how — not whether. Honouring the how and
+ * dropping the whether would silently give them no device copy at all on precisely the
+ * reminders far enough out to be forgotten.
+ */
+export const ALARM_FALLBACK_PROVIDER = MIRROR_PROVIDER.CALENDAR;
+
+/**
+ * The provider that will actually be written, given a preference and a due time.
+ *
+ * The preference is an *intent* and is kept unresolved — a worker who picks the alarm for
+ * a reminder due tonight, then moves it to Saturday, then moves it back to tonight, gets
+ * the alarm both times. Resolving eagerly and storing the result would lose the second
+ * one.
+ *
+ * **Nothing here is silent.** The sheet renders the resolved provider as the selected
+ * chip, so a preference that fell back to the calendar shows the calendar selected, next
+ * to a line saying why. A fallback the worker cannot see is just a setting that does not
+ * work.
+ */
+export const resolveMirrorTarget = (preferred: MIRROR_PROVIDER | null, dueAt?: string): MIRROR_PROVIDER | null => {
+    if (!preferred) {
+        return null;
+    }
+
+    const offered = availableProviders(dueAt);
+
+    if (offered.includes(preferred)) {
+        return preferred;
+    }
+
+    return preferred === MIRROR_PROVIDER.ANDROID_ALARM && offered.includes(ALARM_FALLBACK_PROVIDER)
+        ? ALARM_FALLBACK_PROVIDER
+        : null;
 };
 
 /** The label a worker sees. Kept here so the copy and the capability cannot drift apart. */

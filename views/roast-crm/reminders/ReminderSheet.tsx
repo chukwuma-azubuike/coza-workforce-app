@@ -25,7 +25,13 @@ import { Guest, ICreateReminderPayload, IRoastReminder } from '~/store/types';
 import { useCreateReminderMutation, useUpdateReminderMutation } from '~/store/services/roast-engagement';
 import { localTimezone } from '~/hooks/roast-engagement';
 import { useMirrorTarget } from '~/hooks/roast-engagement/use-reminder-mirror';
-import { MIRROR_LABELS, MIRROR_PROVIDER, availableProviders } from '~/utils/device-mirror';
+import {
+    ALARM_FALLBACK_PROVIDER,
+    MIRROR_LABELS,
+    MIRROR_PROVIDER,
+    availableProviders,
+    resolveMirrorTarget,
+} from '~/utils/device-mirror';
 import { ReminderFormValidationSchema } from '../utils/validation';
 import { availableQuickTimes, quickTimeKeyFor } from './quick-times';
 
@@ -36,6 +42,91 @@ interface IReminderFormValues {
     dueAt: string;
     note: string;
 }
+
+/**
+ * "Also add to my phone" — the one control here whose options depend on the time above it.
+ *
+ * `value` is the worker's *intent* and is handed straight back out unchanged. What the
+ * chips reflect is `resolveMirrorTarget(value, dueAt)`: the provider that will actually be
+ * written. The two differ in exactly one case — an alarm preference on a reminder more
+ * than a day out — and rendering the intent there would show "Alarm" selected on a
+ * reminder that is about to get a calendar entry.
+ *
+ * Extracted from the sheet's render prop rather than inlined into it, because it is the
+ * only part of that tree with logic of its own and it was five indents deep.
+ */
+const MirrorPicker: React.FC<{
+    dueAt: string;
+    value: MIRROR_PROVIDER | null;
+    onChange: (provider: MIRROR_PROVIDER | null) => void;
+    /** An alarm already on the clock for this reminder, for content that has since changed. */
+    strandedAlarm?: boolean;
+}> = ({ dueAt, value, onChange, strandedAlarm }) => {
+    const resolved = resolveMirrorTarget(value, dueAt);
+    const fellBack = value === MIRROR_PROVIDER.ANDROID_ALARM && resolved === ALARM_FALLBACK_PROVIDER;
+
+    return (
+        <View className="gap-2 pt-2">
+            <Text className="!text-xs text-muted-foreground">Also add to my phone</Text>
+
+            <View className="flex-row flex-wrap gap-2">
+                {[null, ...availableProviders(dueAt)].map(provider => {
+                    const isSelected = resolved === provider;
+
+                    return (
+                        <TouchableOpacity
+                            key={provider ?? 'none'}
+                            activeOpacity={0.6}
+                            accessibilityRole="button"
+                            accessibilityState={{ selected: isSelected }}
+                            onPress={() => {
+                                Haptics.selectionAsync();
+                                onChange(provider);
+                            }}
+                            className={cn(
+                                'h-10 px-4 rounded-full border justify-center',
+                                isSelected ? 'bg-primary border-primary' : 'border-border'
+                            )}
+                        >
+                            <Text className={cn('!text-sm', isSelected && 'text-primary-foreground dark:text-white')}>
+                                {provider ? MIRROR_LABELS[provider] : 'Just Roast'}
+                            </Text>
+                        </TouchableOpacity>
+                    );
+                })}
+            </View>
+
+            {/* The fallback is announced. A standing preference that quietly does something
+                else is indistinguishable, from the worker's side, from one that is broken. */}
+            {fellBack && (
+                <Text className="!text-[11px] text-amber-600 dark:text-amber-500">
+                    An alarm can&apos;t hold a date, so it only works for something due within a day. This one goes to
+                    your calendar instead.
+                </Text>
+            )}
+
+            {/* Disclosed, because the leftover is the worker's to deal with and they will
+                otherwise meet it at the old time with no idea where it came from. */}
+            {strandedAlarm && (
+                <Text className="!text-[11px] text-amber-600 dark:text-amber-500">
+                    {resolved === MIRROR_PROVIDER.ANDROID_ALARM
+                        ? "Saving sets a new alarm at the new time. The one already on your clock stays there — Roast can't remove it, so dismiss that one yourself."
+                        : "The alarm you set earlier stays on your clock at the old time. Roast can't remove it, so dismiss that one yourself."}
+                </Text>
+            )}
+
+            {/* Said plainly, because the alternative is a worker editing the copy on their
+                phone and wondering why Roast never heard about it. */}
+            {!!resolved && (
+                <Text className="!text-[11px] text-muted-foreground">
+                    {resolved === MIRROR_PROVIDER.ANDROID_ALARM
+                        ? "Your clock app will ring. Roast can't cancel that alarm later — you'll dismiss it yourself."
+                        : "A copy, not a link. Changes you make there won't reach Roast."}
+                </Text>
+            )}
+        </View>
+    );
+};
 
 interface ReminderSheetProps {
     visible: boolean;
@@ -89,6 +180,11 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
      * Seeded from the worker's default on a new reminder, and from what this reminder is
      * *actually* mirrored to when editing — so opening an edit sheet does not silently
      * re-apply a default the worker had turned off for this one.
+     *
+     * Held **unresolved**, as the intent rather than the outcome: an alarm preference on a
+     * reminder pushed out to Saturday and then pulled back to tonight is an alarm again.
+     * `resolveMirrorTarget` applies the horizon at render and at save, against the due
+     * time as it stands at that moment.
      */
     const [mirrorTarget, setMirrorTarget] = useState<MIRROR_PROVIDER | null>(null);
 
@@ -166,7 +262,7 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                     note: values.note.trim(),
                 }).unwrap();
 
-                await applyMirror(saved, mirrorTarget);
+                await applyMirror(saved, resolveMirrorTarget(mirrorTarget, values.dueAt));
                 onSaved?.(saved);
             } else {
                 const payload: ICreateReminderPayload = {
@@ -180,7 +276,7 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                 };
 
                 const saved = await createReminder(payload).unwrap();
-                await applyMirror(saved, mirrorTarget);
+                await applyMirror(saved, resolveMirrorTarget(mirrorTarget, values.dueAt));
                 onSaved?.(saved);
             }
 
@@ -321,63 +417,17 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                                                     can hold depends on it — the Android alarm cannot carry a
                                                     date and so is only shown for something due today. */}
                                                 {!!values.dueAt && !errors.dueAt && (
-                                                    <View className="gap-2 pt-2">
-                                                        <Text className="!text-xs text-muted-foreground">
-                                                            Also add to my phone
-                                                        </Text>
-
-                                                        <View className="flex-row flex-wrap gap-2">
-                                                            {[null, ...availableProviders(values.dueAt)].map(
-                                                                provider => {
-                                                                    const isSelected = mirrorTarget === provider;
-
-                                                                    return (
-                                                                        <TouchableOpacity
-                                                                            key={provider ?? 'none'}
-                                                                            activeOpacity={0.6}
-                                                                            accessibilityRole="button"
-                                                                            accessibilityState={{
-                                                                                selected: isSelected,
-                                                                            }}
-                                                                            onPress={() => {
-                                                                                Haptics.selectionAsync();
-                                                                                setMirrorTarget(provider);
-                                                                            }}
-                                                                            className={cn(
-                                                                                'h-10 px-4 rounded-full border justify-center',
-                                                                                isSelected
-                                                                                    ? 'bg-primary border-primary'
-                                                                                    : 'border-border'
-                                                                            )}
-                                                                        >
-                                                                            <Text
-                                                                                className={cn(
-                                                                                    '!text-sm',
-                                                                                    isSelected &&
-                                                                                        'text-primary-foreground dark:text-white'
-                                                                                )}
-                                                                            >
-                                                                                {provider
-                                                                                    ? MIRROR_LABELS[provider]
-                                                                                    : 'Just Roast'}
-                                                                            </Text>
-                                                                        </TouchableOpacity>
-                                                                    );
-                                                                }
-                                                            )}
-                                                        </View>
-
-                                                        {/* Said plainly, because the alternative is a worker
-                                                            editing the copy on their phone and wondering why
-                                                            Roast never heard about it. */}
-                                                        {!!mirrorTarget && (
-                                                            <Text className="!text-[11px] text-muted-foreground">
-                                                                {mirrorTarget === MIRROR_PROVIDER.ANDROID_ALARM
-                                                                    ? "Your clock app will ring. Roast can't cancel that alarm later — you'll dismiss it yourself."
-                                                                    : "A copy, not a link. Changes you make there won't reach Roast."}
-                                                            </Text>
-                                                        )}
-                                                    </View>
+                                                    <MirrorPicker
+                                                        dueAt={values.dueAt}
+                                                        value={mirrorTarget}
+                                                        onChange={setMirrorTarget}
+                                                        strandedAlarm={
+                                                            !!reminder &&
+                                                            mirrorFor(reminder._id) === MIRROR_PROVIDER.ANDROID_ALARM &&
+                                                            (values.dueAt !== reminder.dueAt ||
+                                                                values.note.trim() !== reminder.note)
+                                                        }
+                                                    />
                                                 )}
                                             </View>
 
