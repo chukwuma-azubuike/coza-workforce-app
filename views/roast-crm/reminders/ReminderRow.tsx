@@ -64,7 +64,7 @@ const ReminderRow: React.FC<ReminderRowProps> = ({
     };
 
     return (
-        <Card className={cn('mb-3', isHighlighted && 'border-primary border-2', isCompleted && 'opacity-60')}>
+        <Card className={cn('mb-3', isHighlighted && 'border-blue-500 border', isCompleted && 'opacity-60')}>
             <CardContent className="p-4 flex-row items-start gap-3">
                 <TouchableOpacity
                     activeOpacity={0.6}
@@ -76,7 +76,7 @@ const ReminderRow: React.FC<ReminderRowProps> = ({
                     hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
                     className={cn(
                         'w-6 h-6 rounded-full border-2 items-center justify-center mt-0.5',
-                        isCompleted ? 'bg-primary border-primary' : 'border-muted-foreground'
+                        isCompleted ? 'bg-blue-500 border-blue-500' : 'border-muted-foreground'
                     )}
                 >
                     {isCompleted && <Icon type="feather" name="check" size={14} color="#fff" />}
@@ -108,7 +108,7 @@ const ReminderRow: React.FC<ReminderRowProps> = ({
                             size={12}
                             color={isOverdue ? THEME_CONFIG.error : THEME_CONFIG.lightGray}
                         />
-                        <Text className={cn('!text-xs line-clamp-none', isOverdue ? 'text-destructive' : 'text-muted-foreground')}>
+                        <Text className={cn('!text-xs line-clamp-none', isOverdue ? 'text-red-500' : 'text-muted-foreground')}>
                             {isCompleted
                                 ? `Done ${dayjs(reminder.completedAt).fromNow()}`
                                 : `${dueAt.format('ddd D MMM, h:mm A')} · ${dueAt.fromNow()}`}
