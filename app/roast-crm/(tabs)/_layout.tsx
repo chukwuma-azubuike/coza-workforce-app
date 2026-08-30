@@ -1,17 +1,13 @@
 import React, { useMemo } from 'react';
-import { Link, Slot } from 'expo-router';
+import { Tabs, TabList, TabTrigger, TabSlot } from 'expo-router/ui';
 
-import { Icon } from '@rneui/themed';
 import * as Haptics from 'expo-haptics';
-import { usePathname } from 'expo-router';
 
 import useRole, { DEPARTMENTS, ROLES } from '@hooks/role';
 
-import { TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import TopNav from '~/components/TopNav';
-import { Text } from '~/components/ui/text';
-import { useColorScheme } from '~/lib/useColorScheme';
-import { THEME_CONFIG } from '~/config/appConfig';
+import { TabButton } from '~/components/TabButton';
 import useDeferHeavy from '~/hooks/performance/defer-heavy';
 import Loading from '~/components/atoms/loading';
 
@@ -92,11 +88,21 @@ const tabRoutes = [
     },
 ];
 
+/**
+ * The Roast tab bar.
+ *
+ * **`Tabs`/`TabSlot`, not `Slot`.** This layout used a bare `<Slot />` with `<Link>`s for
+ * triggers, which renders exactly one route and keeps no navigator state: every tab press
+ * unmounted the screen the worker was on and mounted the next one from nothing. On My
+ * Guests that means tearing down a Kanban board and re-running four queries to go and
+ * glance at Today — and then doing it all again to come back. `TabSlot` keeps each tab
+ * mounted once focused, so the second visit is a re-focus rather than a rebuild.
+ */
 const TabLayout: React.FC = () => {
     const ready = useDeferHeavy();
     const { role, user } = useRole();
-    const pathname = usePathname();
-    const { isLightColorScheme } = useColorScheme();
+
+    const departmentName = user?.department?.departmentName;
 
     const filteredRoutes = useMemo(
         () =>
@@ -104,53 +110,43 @@ const TabLayout: React.FC = () => {
                 route =>
                     route?.users?.includes('all') ||
                     route?.users?.includes(role as string) ||
-                    (route?.departments?.includes(user?.department?.departmentName as string) &&
+                    (route?.departments?.includes(departmentName as string) &&
                         route?.departmentUsers?.includes(role as string))
             ) ?? [],
-        [tabRoutes, role]
+        [role, departmentName]
     );
 
-    const handlePress = () => {
-        Haptics.selectionAsync();
-    };
-
     return (
-        <View className="relative flex-1">
+        <Tabs
+            className="flex-1"
+            options={{
+                backBehavior: 'order',
+                screenListeners: {
+                    tabPress: () => {
+                        Haptics.selectionAsync();
+                    },
+                },
+            }}
+        >
             <TopNav />
-            <View className="flex-1">{ready ? <Slot /> : <Loading cover />}</View>
-            {ready && (
-                <View className="flex-row justify-around pt-4 bg-background border-t-border border-t-[0.5px]">
-                    {filteredRoutes.map((route, index) => {
-                        const isFocused = pathname == route.pathname;
-
-                        const color = isFocused
-                            ? isLightColorScheme
-                                ? THEME_CONFIG.primary
-                                : THEME_CONFIG.primaryLight
-                            : THEME_CONFIG.lightGray;
-
-                        return (
-                            <Link
-                                href={route.href as any}
-                                key={`route-${index}`}
-                                className="text-foreground"
-                                onPress={handlePress}
-                                asChild
-                            >
-                                <TouchableOpacity activeOpacity={0.6}>
-                                    <View className="!w-20 sm:!w-28 gap-1 items-center">
-                                        <Icon name={route.icon.name} type={route.icon.type} size={22} color={color} />
-                                        <Text style={{ color }} className="text-xs font-light">
-                                            {route.name}
-                                        </Text>
-                                    </View>
-                                </TouchableOpacity>
-                            </Link>
-                        );
-                    })}
+            {/*
+             * The gate is on the content only. It used to cover the tab bar too, which
+             * left the worker looking at a bare spinner with no chrome on the way in —
+             * the bar costs nothing to draw and gives the transition something to land on.
+             */}
+            <View className="flex-1">{ready ? <TabSlot /> : <Loading cover />}</View>
+            <TabList asChild>
+                <View className="flex-row justify-around pt-4 px-4 bg-background border-t-border border-t-[0.5px]">
+                    {filteredRoutes.map(route => (
+                        <TabTrigger asChild href={route.href as any} name={route.name} key={route.name}>
+                            <TabButton iconName={route.icon.name} iconType={route.icon.type}>
+                                {route.name}
+                            </TabButton>
+                        </TabTrigger>
+                    ))}
                 </View>
-            )}
-        </View>
+            </TabList>
+        </Tabs>
     );
 };
 

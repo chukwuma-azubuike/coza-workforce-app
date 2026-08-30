@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '@store/hooks';
 import { useGetRolesQuery } from '@store/services/role';
-import { useAuth } from '../auth';
 import { userActions, userSelectors } from '~/store/actions/users';
 import { IUser } from '~/store/types';
 import { useGetUserByIdQuery } from '~/store/services/account';
@@ -51,19 +50,19 @@ export const departments = {
 };
 
 export enum ROLE_HEIRARCHY {
-    'worker' = 1,
-    'zonalCoordinator' = 2,
-    'AHOD' = 3,
-    'HOD' = 3,
-    'internshipHOD' = 3, // Frontend generated
+    worker = 1,
+    zonalCoordinator = 2,
+    AHOD = 3,
+    HOD = 3,
+    internshipHOD = 3, // Frontend generated
     // 'qcHOD' = 1, // Frontend generated
-    'groupHead' = 5,
-    'campusCoordinator' = 5,
-    'campusPastor' = 5,
-    'admin' = 6,
-    'globalAdmin' = 7,
-    'globalPastor' = 8,
-    'superAdmin' = 9,
+    groupHead = 5,
+    campusCoordinator = 5,
+    campusPastor = 5,
+    admin = 6,
+    globalAdmin = 7,
+    globalPastor = 8,
+    superAdmin = 9,
 }
 
 export enum DEPARTMENTS {
@@ -159,7 +158,7 @@ const ROAST_ALPHA_TESTERS = [
     'wealsegun@gmail.com',
     'kristyogunwale93@gmail.com',
     'olafabtech@gmail.com',
-    'nathanieltwjackson@gmail.com'
+    'nathanieltwjackson@gmail.com',
 ];
 
 const useRole = () => {
@@ -219,82 +218,117 @@ const useRole = () => {
         );
     }, [roleObjects, roleName, roles, departmentName, ROLE_HEIRARCHY]);
 
-    const { logOut } = useAuth();
-
+    /**
+     * Sync the refetched profile back into the persisted session — **once**, not once per
+     * caller.
+     *
+     * `useRole` is called from 86 places, so a naive effect here dispatches 86 identical
+     * `updateSession` actions the moment the profile query resolves. Each one produces a
+     * new store state, wakes every `selectCurrentUser` subscriber in the tree, and makes
+     * redux-persist re-serialise the whole persisted slice to AsyncStorage. That is the
+     * shape of a navigation stall: the work is invisible, quadratic in mounted screens,
+     * and lands exactly when a route transition is trying to render.
+     *
+     * The reducer assigns `payload` straight onto `currentUser.profile`, so after the
+     * first dispatch `storedUser` *is* `latestUser` by reference and every other instance
+     * takes the early return.
+     *
+     * There used to be a second effect here that called `logOut()` on mount whenever
+     * there was no user. It has been removed rather than fixed: `Routing` already makes
+     * exactly that check above the whole tree, and 86 copies of it raced 86 concurrent
+     * logout requests. Removing it also removes `useAuth` from every caller of this hook,
+     * and with it the four Redux subscriptions and one mutation hook that came along.
+     */
     React.useEffect(() => {
-        (async () => {
-            if (!currentUser?.userId) {
-                await logOut();
-            }
-        })();
-    }, []);
-
-    React.useEffect(() => {
-        if (latestUser) {
+        if (latestUser && latestUser !== storedUser) {
             dispatch(userActions.updateSession(latestUser));
         }
-    }, [latestUser]);
+    }, [latestUser, storedUser, dispatch]);
 
     const isAlphaTester = React.useMemo(
         () => (currentUser?.email ? ROAST_ALPHA_TESTERS.includes(currentUser?.email) : null),
         [currentUser?.email]
     );
 
-    return {
-        // User Object
-        user: {
+    /**
+     * Memoised, and that is the whole point of this block.
+     *
+     * This hook has 86 call sites and returns a fresh 45-key object — containing a fresh
+     * `user` literal — on every render. Unmemoised, nothing downstream of `useRole` can
+     * ever be `React.memo`'d, no `useMemo` keyed on `user` can ever hit, and every render
+     * of any parent cascades through every consumer. During a route transition, when the
+     * tree is re-rendering anyway, that cascade is the transition's cost.
+     *
+     * `currentUser` is the only dependency that changes in practice; the rest are here so
+     * the object cannot go stale if one of them ever does.
+     */
+    return React.useMemo(
+        () => ({
+            // User Object
+            user: {
+                roleName,
+                ...currentUser,
+                _id: currentUser?.userId || currentUser?._id,
+                userId: currentUser?.userId || currentUser?._id,
+            } as IUser,
+
+            refetch,
+            isFetching,
+
+            //Status
+            isCGWCApproved: currentUser?.isCGWCApproved,
+
+            //Role IDs
+            leaderRoleIds,
+
+            role: roleName,
+
+            // Roles
+            isHOD: roleName === ROLES.HOD,
+            isAHOD: roleName === ROLES.AHOD,
+            isAdmin: roleName === ROLES.admin,
+            isWorker: roleName === ROLES.worker || roleName === ROLES.zonalCoordinator,
+            isZonalCoordinator: roleName === ROLES.zonalCoordinator,
+            isGroupHead: roleName === ROLES.groupHead,
+            isSuperAdmin: roleName === ROLES.superAdmin,
+            isGlobalPastor: roleName === ROLES.globalPastor,
+            isGSP: roleName === ROLES.globalPastor,
+            isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,
+            isCampusPastor: roleName === ROLES.campusPastor || roleName === ROLES.campusCoordinator,
+            isQcHOD: roleName === ROLES.HOD && (departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME),
+            isPcuHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.PCU,
+
+            // Departments
+            isCTS: departmentName === DEPARTMENTS.CTS,
+            isPCU: departmentName === DEPARTMENTS.PCU,
+            isPRU: departmentName === DEPARTMENTS.PRU,
+            isUshery: departmentName === DEPARTMENTS.ushery,
+            isPrograms: departmentName === DEPARTMENTS.programs,
+            isSecurity: departmentName === DEPARTMENTS.security,
+            isChildcare: departmentName === DEPARTMENTS.childcare,
+            isWitty: departmentName === DEPARTMENTS.witty,
+            isInternship: departmentName === DEPARTMENTS.internship || departmentName === 'Internship',
+            isWelfare: departmentName === DEPARTMENTS.welfare,
+            isProtocol: departmentName === DEPARTMENTS.protocol,
+            isQC: departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME,
+
+            // Role Creation
+            rolesPermittedToCreate,
+
+            // Alpha Testers
+            isAlphaTester,
+        }),
+        [
+            currentUser,
             roleName,
-            ...currentUser,
-            _id: currentUser?.userId || currentUser?._id,
-            userId: currentUser?.userId || currentUser?._id,
-        } as IUser,
-
-        refetch,
-        isFetching,
-
-        //Status
-        isCGWCApproved: currentUser?.isCGWCApproved,
-
-        //Role IDs
-        leaderRoleIds,
-
-        role: roleName,
-
-        // Roles
-        isHOD: roleName === ROLES.HOD,
-        isAHOD: roleName === ROLES.AHOD,
-        isAdmin: roleName === ROLES.admin,
-        isWorker: roleName === ROLES.worker || roleName === ROLES.zonalCoordinator,
-        isZonalCoordinator: roleName === ROLES.zonalCoordinator,
-        isGroupHead: roleName === ROLES.groupHead,
-        isSuperAdmin: roleName === ROLES.superAdmin,
-        isGlobalPastor: roleName === ROLES.globalPastor,
-        isGSP: roleName === ROLES.globalPastor,
-        isInternshipHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.internship,
-        isCampusPastor: roleName === ROLES.campusPastor || roleName === ROLES.campusCoordinator,
-        isQcHOD: roleName === ROLES.HOD && (departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME),
-        isPcuHOD: roleName === ROLES.HOD && departmentName === DEPARTMENTS.PCU,
-
-        // Departments
-        isCTS: departmentName === DEPARTMENTS.CTS,
-        isPCU: departmentName === DEPARTMENTS.PCU,
-        isPRU: departmentName === DEPARTMENTS.PRU,
-        isUshery: departmentName === DEPARTMENTS.ushery,
-        isPrograms: departmentName === DEPARTMENTS.programs,
-        isSecurity: departmentName === DEPARTMENTS.security,
-        isChildcare: departmentName === DEPARTMENTS.childcare,
-        isWitty: departmentName === DEPARTMENTS.witty,
-        isInternship: departmentName === DEPARTMENTS.internship || departmentName === 'Internship',
-        isWelfare: departmentName === DEPARTMENTS.welfare,
-        isProtocol: departmentName === DEPARTMENTS.protocol,
-        isQC: departmentName === DEPARTMENTS.QC || departmentName === DEPARTMENTS.ME,
-
-        // Role Creation
-        rolesPermittedToCreate,
-
-        // Alpha Testers
-        isAlphaTester,
-    };
+            departmentName,
+            leaderRoleIds,
+            refetch,
+            isFetching,
+            rolesPermittedToCreate,
+            isAlphaTester,
+        ]
+    );
 };
 
 export default useRole;
