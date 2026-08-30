@@ -21,6 +21,9 @@ export enum NOTIFICATION_CHANNEL {
     CONGRESS = 'congress',
     ANNOUNCEMENTS = 'announcements',
     ACCOUNT = 'account',
+    ROAST_REMINDERS = 'roast-reminders',
+    ROAST_NUDGES = 'roast-nudges',
+    ROAST_STREAK = 'roast-streak',
     DEFAULT = 'default',
 }
 
@@ -33,6 +36,12 @@ export enum NOTIFICATION_CATEGORY {
     ANNOUNCEMENT = 'ANNOUNCEMENT',
     ACCOUNT = 'ACCOUNT',
     SYSTEM = 'SYSTEM',
+    /** A reminder the worker set themselves, on a guest. Never suppressed by the budget. */
+    ROAST_REMINDER = 'ROAST_REMINDER',
+    /** A nudge the system decided to send — the Morning Roast, the evening note prompt. */
+    ROAST_ENGAGEMENT = 'ROAST_ENGAGEMENT',
+    /** Streak at-risk warnings and milestones. */
+    ROAST_STREAK = 'ROAST_STREAK',
 }
 
 /** `data.priority` — always present. Drives foreground presentation, not delivery. */
@@ -66,11 +75,11 @@ export interface INotificationData {
 }
 
 /**
- * The nine channels, in the order they appear in Android's settings list.
+ * The twelve channels, in the order they appear in Android's settings list.
  *
  * ⚠️ `importance` is a **ceiling the user may lower and the payload may never raise**,
  * which is the entire reason for splitting channels — setting everything to MAX gives
- * users one switch again, wearing nine labels. `attendance-summary` is split from
+ * users one switch again, wearing twelve labels. `attendance-summary` is split from
  * `attendance` so a worker can silence the daily digest without silencing their own
  * clock-in reminder; `account` is separate so a security notification cannot be muted
  * along with announcements.
@@ -143,6 +152,38 @@ export const ANDROID_NOTIFICATION_CHANNELS: Array<
         description: 'Sign-in, password and profile security activity on your account.',
         importance: Notifications.AndroidImportance.HIGH,
         vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#2D0060',
+    },
+    {
+        id: NOTIFICATION_CHANNEL.ROAST_REMINDERS,
+        name: 'Guest reminders',
+        description: 'Reminders you set yourself on a guest, at the time you chose.',
+        // The only Roast channel at HIGH, and the only one the worker explicitly asked
+        // for. A reminder they set for 16:00 that arrives silently in the shade is a
+        // reminder that did not work.
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#2D0060',
+    },
+    {
+        id: NOTIFICATION_CHANNEL.ROAST_NUDGES,
+        name: 'Follow-up nudges',
+        description: 'Suggestions about guests who are due a call, a note or an invite.',
+        // DEFAULT, not HIGH: these are the system's opinion about what matters, and a
+        // wrong opinion delivered at HIGH is what gets the whole category muted.
+        importance: Notifications.AndroidImportance.DEFAULT,
+        vibrationPattern: [0, 200],
+        lightColor: '#2D0060',
+    },
+    {
+        id: NOTIFICATION_CHANNEL.ROAST_STREAK,
+        name: 'Streaks',
+        description: 'Your daily engagement streak — at-risk warnings and milestones.',
+        // LOW deliberately. A streak is a game; it earns a badge and a row in the
+        // inbox, never a sound. Anyone who wants more can raise it themselves, and
+        // Android lets them — it only refuses to let us raise it later.
+        importance: Notifications.AndroidImportance.LOW,
+        vibrationPattern: [0],
         lightColor: '#2D0060',
     },
     {

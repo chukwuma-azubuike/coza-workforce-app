@@ -20,7 +20,9 @@ import appStateSlice from '../actions/app';
 import notificationsSlice from '../actions/notifications';
 import modalSlice from '../actions/modal';
 import { roastCrmApi } from '../services/roast-crm';
+import { roastEngagementApi } from '../services/roast-engagement';
 import roastCRMState from '../actions/roast-crm';
+import roastEngagementState from '../actions/roast-engagement';
 import { gspDashboardServiceSlice } from '../services/gsp-dashboard';
 import { notificationServiceSlice } from '../services/notification';
 import gspDashboardStateSlice from '../actions/gsp-dashboard';
@@ -49,6 +51,8 @@ const rootReducer = combineReducers({
     [notificationServiceSlice.reducerPath]: notificationServiceSlice.reducer,
     [roastCrmApi.reducerPath]: roastCrmApi.reducer,
     [roastCRMState.reducerPath]: roastCRMState.reducer,
+    [roastEngagementApi.reducerPath]: roastEngagementApi.reducer,
+    [roastEngagementState.reducerPath]: roastEngagementState.reducer,
     [gspDashboardServiceSlice.reducerPath]: gspDashboardServiceSlice.reducer,
     [gspDashboardStateSlice.reducerPath]: gspDashboardStateSlice.reducer,
 });

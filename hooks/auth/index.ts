@@ -9,6 +9,10 @@ import { ILogoutPayload } from '~/store/types';
 import { useLogoutMutation } from '~/store/services/account';
 import { useNotifications } from '../push-notifications/useNotifications';
 import { getDeviceId } from '~/utils/device';
+import { roastEngagementActions, roastEngagementSelectors } from '~/store/actions/roast-engagement';
+import { cancelAllRoastNotifications } from '~/utils/local-notifications';
+import { deleteAllMirrors } from '~/utils/device-mirror';
+import { clearWidgetSnapshot } from '~/utils/widget-bridge';
 
 export const useAuth = () => {
     const user = useAppSelector(userSelectors.selectCurrentUser);
@@ -65,6 +69,43 @@ export const useAuth = () => {
 export const logOutfn = (dispatch: ThunkDispatch<IStore, any, any>) => {
     // Nothing from the previous session should survive on screen.
     dispatch(modalActions.clear());
+
+    /**
+     * Roast reminders are scheduled on the *device*, not sent from the server, so deleting
+     * the device row above does nothing to them: without this they keep firing for hours
+     * after sign-out, putting a stranger's guest names on the lock screen of a shared
+     * campus handset. Cancelled by identifier prefix, so a schedule this teardown has
+     * never heard of is still caught.
+     *
+     * The widget snapshot is the same leak on a different surface, and is *overwritten*
+     * rather than deleted — a deleted snapshot leaves the widget rendering its last frame
+     * with nothing to trigger a redraw.
+     *
+     * Both are fire-and-forget: neither may delay or block the sign-out the user asked for.
+     */
+    cancelAllRoastNotifications();
+    clearWidgetSnapshot();
+
+    /**
+     * Device mirrors are the same leak, one store further out.
+     *
+     * A reminder mirrored into the iOS Reminders app carries a guest's name **off this
+     * handset** — iCloud syncs it to the worker's Mac and to icloud.com, and a work
+     * calendar event reaches their organisation's servers. Nothing else in this teardown
+     * can reach any of that; the ledger below is the only record that it exists.
+     *
+     * So it runs *before* the reset that erases the ledger, and it reads state through a
+     * thunk because `logOutfn` is handed a dispatch and no store.
+     *
+     * Android alarms cannot be deleted by anyone but the user — see `createAndroidAlarm`.
+     */
+    dispatch((_dispatch, getState) => {
+        deleteAllMirrors(Object.values(roastEngagementSelectors.selectMirrored(getState()) ?? {}));
+    });
+
+    // Persisted, and holds guest names in `cachedFeed` plus the scheduler's and mirror
+    // ledgers. Left alone it rehydrates into the next person's session on this handset.
+    dispatch(roastEngagementActions.reset());
 
     // The notifications slice is persisted, so without this the previous user's push
     // token rehydrates into the next session on the same handset and becomes the
