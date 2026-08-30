@@ -124,13 +124,25 @@ each with its own timing. Delivered independently that is up to five system noti
 a day *before* custom reminders and the streak warning. Workers will mute the category
 inside a fortnight, and the mute takes the reminders they actually wanted with it.
 
-Resolution — a hard budget of **three system notifications per day**:
+Resolution — a hard budget of **four system notifications per day**:
 
 | Slot | Local time | Contains |
 |---|---|---|
-| **Morning Roast** | 08:00 | Call-due + follow-up-overdue + invite-window, composed into one notification |
-| **Evening note prompt** | 20:00 | Interactions logged today without a note, composed into one |
-| **Streak at-risk** | 15:00 | Only when a streak is live and today is not yet engaged |
+| **Morning Roast** | 08:00, worker-set | Call-due + follow-up-overdue + invite-window, composed into one notification |
+| **Evening note prompt** | 19:00, worker-set | Interactions logged today without a note, composed into one |
+| **Streak at-risk — afternoon** | 16:00, fixed | Only when a streak is live and today is not yet engaged |
+| **Streak at-risk — evening** | 19:00, fixed | The same, for the worker who meant to and did not |
+
+> **Amended by [`10_FRONTEND_CHANGE_NOTES.md`](./10_FRONTEND_CHANGE_NOTES.md).** The budget
+> was three; the at-risk warning became two passes, so the ceiling is four. The digest
+> hours are now worker-configurable and their defaults moved (evening 20:00 → 19:00); the
+> two at-risk hours are deliberately **not** configurable, because a deadline whose warning
+> the worker can move is not much of a warning.
+>
+> Worth minuting rather than waving through: the guardrail on this decision is the opt-out
+> rate, and the ceiling just rose by a third. If opt-out passes the 8% in §6, the second
+> at-risk pass is the first thing to reconsider — it is the only slot here that can be
+> removed without losing information the worker cannot get anywhere else.
 
 Progress nudges (US-1.5, *Could*) ride inside the Morning Roast rather than taking a
 fourth slot. Custom reminders are **exempt** — the worker asked for those by name, at that

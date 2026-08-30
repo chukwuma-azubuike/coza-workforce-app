@@ -333,6 +333,20 @@ export interface IRoastNotificationPrefs {
     /** Local hour, 0–23. */
     quietHoursStart: number;
     quietHoursEnd: number;
+    /**
+     * The local hour the composed morning digest arrives. 0–23, default 8.
+     *
+     * Hours only — the server stores no minutes and honours none. Anything that renders
+     * or edits this must be an *hour* control, or it promises a precision that does not
+     * exist on the wire.
+     *
+     * Delivery is evaluated by a tick every 15 minutes per timezone bucket, so a digest
+     * set to 08:00 arrives somewhere in 08:00–08:15. No copy may promise the minute and
+     * nothing may count down to it.
+     */
+    morningDigestHour: number;
+    /** The same, for the evening note prompt. Default 19 — moved from 20 by the server. */
+    eveningDigestHour: number;
     timezone: string;
 }
 

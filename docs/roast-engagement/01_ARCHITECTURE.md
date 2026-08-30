@@ -154,15 +154,28 @@ sequenceDiagram
     A->>R: POST /engagement/ping {localDate, tz, source}
     R->>R: engagedDates.add(localDate) → recompute streak
     R-->>A: {current, longest, isAtRisk, freezesBanked}
-    A->>OS: cancel today's 15:00 at-risk local notification
-    A->>OS: schedule tomorrow's 15:00 at-risk (if streak live)
+    A->>OS: cancel today's 16:00 and 19:00 at-risk local notifications
+    A->>OS: cancel the pre-two-pass 15:00 identifier (upgrade sweep)
+    A->>OS: schedule tomorrow's 16:00 and 19:00 at-risk (if streak live)
     A->>A: rebuild widget snapshot (ember state)
 ```
 
-The cancel-then-reschedule pair is what makes the at-risk warning correct without a server
-round trip at 15:00. The warning exists on the device from the moment a streak is live and
-is *removed* the instant the day is earned — so a worker who engages at 06:00 and then
-loses signal still never gets a warning at 15:00.
+The cancel-then-reschedule pair is what makes the at-risk warnings correct without a server
+round trip in the afternoon. They exist on the device from the moment a streak is live and
+are *removed* the instant the day is earned — so a worker who engages at 06:00 and then
+loses signal still never gets warned.
+
+**Two passes, and both halves of every pair.** Since
+[`10_FRONTEND_CHANGE_NOTES.md §3`](./10_FRONTEND_CHANGE_NOTES.md) the warning fires at
+16:00 *and* 19:00: the afternoon pass catches the worker who has not engaged all day, the
+evening one catches the worker who meant to and did not. Cancelling one of the two is the
+same bug as cancelling neither, half the time.
+
+**The sweep is not optional.** The identifier is keyed by date *and hour*, so the key a
+pre-two-pass build wrote is invisible to every cancel above — including the one that
+protects the worker who has already engaged. That change shipped over the air onto devices
+already holding such a notification, which is why the pair is a triple. See
+[`11_DIGEST_HOURS_PLAN.md §2.2`](./11_DIGEST_HOURS_PLAN.md).
 
 ## 7. Architecture decision records
 

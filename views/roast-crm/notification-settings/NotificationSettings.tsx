@@ -11,12 +11,12 @@ import { Separator } from '~/components/ui/separator';
 import { Skeleton } from '~/components/ui/skeleton';
 import { cn } from '~/lib/utils';
 import { THEME_CONFIG } from '~/config/appConfig';
-import { IRoastNotificationPrefs } from '~/store/types';
+import { IRoastNotificationPrefs, IRoastValidationError } from '~/store/types';
 import {
     useGetNotificationPreferencesQuery,
     useUpdateNotificationPreferencesMutation,
 } from '~/store/services/roast-engagement';
-import { localTimezone } from '~/hooks/roast-engagement';
+import { isWithinQuietHours, localTimezone } from '~/hooks/roast-engagement';
 import { useAppDispatch, useAppSelector } from '~/store/hooks';
 import { roastEngagementActions, roastEngagementSelectors } from '~/store/actions/roast-engagement';
 import { MIRROR_LABELS, MIRROR_PROVIDER, availableProviders } from '~/utils/device-mirror';
@@ -41,8 +41,65 @@ const TOGGLES: Array<{ key: keyof IRoastNotificationPrefs; label: string; descri
     { key: 'invite', label: 'Invites', description: "Guests who haven't been asked to a service yet." },
     { key: 'note', label: 'Note prompts', description: 'A nudge to write up a call while it’s fresh.' },
     { key: 'progress', label: 'Progress', description: 'When a guest is ready to move to the next stage.' },
-    { key: 'streak', label: 'Streak', description: 'The afternoon nudge when your streak is about to end.' },
+    {
+        key: 'streak',
+        label: 'Streak',
+        description: 'Two nudges — afternoon and evening — when your streak is about to end.',
+    },
 ];
+
+/**
+ * Every hour-valued preference on this screen.
+ *
+ * Two of them are configurable delivery times and two are the quiet-hours bounds. The
+ * streak at-risk hours are deliberately **not** here — see `STREAK_AT_RISK_HOURS`.
+ */
+type HourField = 'quietHoursStart' | 'quietHoursEnd' | 'morningDigestHour' | 'eveningDigestHour';
+
+const PICKER_TITLES: Record<HourField, string> = {
+    quietHoursStart: 'Quiet hours start',
+    quietHoursEnd: 'Quiet hours end',
+    morningDigestHour: 'Morning digest',
+    eveningDigestHour: 'Evening prompt',
+};
+
+const formatHour = (hour: number): string => dayjs().hour(hour).minute(0).format('h:mm A');
+
+/**
+ * Pulls something a worker can act on out of a rejected `PATCH`.
+ *
+ * The server returns a field-keyed `errors` map, and that map is the useful half — a
+ * message like "morningDigestHour must be an hour between 0 and 23." names the control
+ * that refused. Falls back to the envelope's `message`, then to a generic line, because a
+ * silent revert is the one outcome that must not happen: the optimistic update has already
+ * snapped the row back, and with no explanation that reads as the setting being broken.
+ */
+const messageFromError = (error: unknown): string => {
+    const data = (error as { data?: Partial<IRoastValidationError> } | undefined)?.data;
+    const fieldErrors = Object.values(data?.errors ?? {});
+
+    return fieldErrors[0] ?? data?.message ?? "That didn't save. Check your connection and try again.";
+};
+
+/** One tappable hour row, with room for a warning underneath it. */
+const HourRow: React.FC<{ label: string; hour: number; hint?: string; onPress: () => void }> = ({
+    label,
+    hour,
+    hint,
+    onPress,
+}) => (
+    <TouchableOpacity activeOpacity={0.6} onPress={onPress} accessibilityRole="button" className="p-4 gap-1">
+        <View className="flex-row items-center justify-between">
+            <Text className="font-medium">{label}</Text>
+            <View className="flex-row items-center gap-1">
+                <Text className="!text-sm text-muted-foreground">{formatHour(hour)}</Text>
+                <Icon type="feather" name="chevron-right" size={16} color={THEME_CONFIG.lightGray} />
+            </View>
+        </View>
+
+        {!!hint && <Text className="!text-xs text-amber-600 dark:text-amber-500 pr-6">{hint}</Text>}
+    </TouchableOpacity>
+);
 
 const openSystemSettings = () => {
     if (Platform.OS === 'ios') {
@@ -71,7 +128,8 @@ const NotificationSettings: React.FC = () => {
     const mirrorOptions = availableProviders();
 
     const [permissionGranted, setPermissionGranted] = useState(true);
-    const [picking, setPicking] = useState<'quietHoursStart' | 'quietHoursEnd' | null>(null);
+    const [picking, setPicking] = useState<HourField | null>(null);
+    const [saveError, setSaveError] = useState<string | null>(null);
 
     // Re-read on mount rather than trusting a cached value: the most common way to reach
     // this screen is straight back from OS settings, having just changed it.
@@ -82,11 +140,20 @@ const NotificationSettings: React.FC = () => {
     }, []);
 
     const patch = useCallback(
-        (changes: Partial<IRoastNotificationPrefs>) => {
-            // The zone travels with every write. The server schedules digests and quiet
-            // hours in the worker's local time, and a worker who moves campus and never
-            // touches this screen would otherwise keep their old city's morning.
-            updatePreferences({ ...changes, timezone: localTimezone() });
+        async (changes: Partial<IRoastNotificationPrefs>) => {
+            setSaveError(null);
+
+            try {
+                // The zone travels with every write. The server schedules digests and quiet
+                // hours in the worker's local time, and a worker who moves campus and never
+                // touches this screen would otherwise keep their old city's morning.
+                await updatePreferences({ ...changes, timezone: localTimezone() }).unwrap();
+            } catch (error) {
+                // The optimistic update has already reverted by the time this runs, so the
+                // control is showing the truth again — what it is not showing is *why*, and
+                // an unexplained snap-back is indistinguishable from a broken setting.
+                setSaveError(messageFromError(error));
+            }
         },
         [updatePreferences]
     );
@@ -100,6 +167,18 @@ const NotificationSettings: React.FC = () => {
             </View>
         );
     }
+
+    /**
+     * The warning for a delivery hour that falls inside quiet hours.
+     *
+     * Shown at the point of choosing, because the alternative is the worker discovering it
+     * by *not* being notified — the one failure mode with no signal at all. The server
+     * accepts the combination deliberately, so this warns and does not block.
+     */
+    const quietHoursHint = (hour: number): string | undefined =>
+        prefs.quietHoursEnabled && isWithinQuietHours(hour, prefs.quietHoursStart, prefs.quietHoursEnd)
+            ? `Quiet hours start at ${formatHour(prefs.quietHoursStart)}, so this won't push. It still lands in your inbox.`
+            : undefined;
 
     return (
         <ScrollView className="flex-1 bg-background" contentContainerStyle={{ padding: 16, paddingBottom: 48 }}>
@@ -132,6 +211,18 @@ const NotificationSettings: React.FC = () => {
                 </Card>
             )}
 
+            {/* Sits above everything rather than beside the control that failed: the
+                optimistic revert has already moved that control back, so the message is
+                explaining a change the worker just watched undo itself. */}
+            {!!saveError && (
+                <Card className="mb-4 border-destructive">
+                    <CardContent className="p-4 flex-row items-start gap-2">
+                        <Icon type="feather" name="alert-circle" size={16} color={THEME_CONFIG.error} />
+                        <Text className="!text-sm flex-1">{saveError}</Text>
+                    </CardContent>
+                </Card>
+            )}
+
             <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 tracking-wide">
                 What you hear about
             </Text>
@@ -150,6 +241,49 @@ const NotificationSettings: React.FC = () => {
                             </View>
                         </View>
                     ))}
+                </CardContent>
+            </Card>
+
+            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
+                When they arrive
+            </Text>
+
+            <Card>
+                <CardContent className="p-0">
+                    <View className="px-4 pt-4 gap-0.5">
+                        <Text className="font-medium">Your two daily digests</Text>
+                        <Text className="!text-xs text-muted-foreground">
+                            Everything above is gathered into a morning digest and an evening prompt, so you get two
+                            nudges a day instead of five. Reminders you set yourself are not affected.
+                        </Text>
+                    </View>
+
+                    <HourRow
+                        label="Morning digest"
+                        hour={prefs.morningDigestHour}
+                        hint={quietHoursHint(prefs.morningDigestHour)}
+                        onPress={() => setPicking('morningDigestHour')}
+                    />
+
+                    <Separator />
+
+                    <HourRow
+                        label="Evening prompt"
+                        hour={prefs.eveningDigestHour}
+                        hint={quietHoursHint(prefs.eveningDigestHour)}
+                        onPress={() => setPicking('eveningDigestHour')}
+                    />
+
+                    {/* Both halves of this matter. The dedupe receipt is keyed on the day,
+                        not the hour, so moving the time after today's digest has already
+                        gone gets you nothing more today — without saying so, a worker who
+                        changes it at noon and hears nothing concludes it is broken. And
+                        delivery is evaluated on a quarter-hour tick, so promising the
+                        minute would be a promise the server cannot keep. */}
+                    <Text className="!text-xs text-muted-foreground px-4 pb-4">
+                        Takes effect from your next digest — changing the time won&apos;t re-send today&apos;s. Digests
+                        arrive within about 15 minutes of the hour.
+                    </Text>
                 </CardContent>
             </Card>
 
@@ -179,28 +313,14 @@ const NotificationSettings: React.FC = () => {
                                 [
                                     ['quietHoursStart', 'From'],
                                     ['quietHoursEnd', 'To'],
-                                ] as Array<['quietHoursStart' | 'quietHoursEnd', string]>
+                                ] as Array<[HourField, string]>
                             ).map(([field, label]) => (
-                                <TouchableOpacity
+                                <HourRow
                                     key={field}
-                                    activeOpacity={0.6}
+                                    label={label}
+                                    hour={prefs[field]}
                                     onPress={() => setPicking(field)}
-                                    accessibilityRole="button"
-                                    className="flex-row items-center justify-between p-4"
-                                >
-                                    <Text className="font-medium">{label}</Text>
-                                    <View className="flex-row items-center gap-1">
-                                        <Text className="!text-sm text-muted-foreground">
-                                            {dayjs().hour(prefs[field]).minute(0).format('h:mm A')}
-                                        </Text>
-                                        <Icon
-                                            type="feather"
-                                            name="chevron-right"
-                                            size={16}
-                                            color={THEME_CONFIG.lightGray}
-                                        />
-                                    </View>
-                                </TouchableOpacity>
+                                />
                             ))}
                         </>
                     )}
@@ -285,7 +405,7 @@ const NotificationSettings: React.FC = () => {
 
             <HourPicker
                 visible={picking !== null}
-                title={picking === 'quietHoursEnd' ? 'Quiet hours end' : 'Quiet hours start'}
+                title={picking ? PICKER_TITLES[picking] : ''}
                 value={picking ? prefs[picking] : 0}
                 onSelect={hour => picking && patch({ [picking]: hour })}
                 onClose={() => setPicking(null)}

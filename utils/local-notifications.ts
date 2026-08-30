@@ -32,13 +32,17 @@ import { REMINDER_STATUS } from '~/store/types';
 export const IOS_PENDING_LIMIT = 64;
 
 /**
- * Held back for the streak at-risk warning and for headroom.
+ * Held back for the streak at-risk warnings and for headroom.
  *
- * Four rather than one because the at-risk warning is rescheduled daily, and a transient
- * overlap between the outgoing and incoming schedule must not be what pushes the app over
- * the cliff.
+ * The ceiling is four: today's two passes and tomorrow's, at 16:00 and 19:00 each. Six
+ * rather than four because the warnings are rescheduled daily, and a transient overlap
+ * between the outgoing and incoming schedule must not be what pushes the app over the
+ * cliff — reserving exactly the ceiling reserves nothing.
+ *
+ * Whatever overflows does **not** land on the streak warnings. It lands on reminders, and
+ * they are dropped in the silence described above.
  */
-export const RESERVED_SLOTS = 4;
+export const RESERVED_SLOTS = 6;
 
 /** What reminders may actually consume. */
 export const REMINDER_BUDGET = IOS_PENDING_LIMIT - RESERVED_SLOTS;
@@ -57,8 +61,35 @@ export const ROAST_IDENTIFIER_PREFIX = 'roast-';
  */
 export const identifierFor = (reminderId: string): string => `${ROAST_IDENTIFIER_PREFIX}reminder:${reminderId}`;
 
-/** The at-risk warning, keyed by the local date it is warning about. */
-export const streakRiskIdentifierFor = (localDate: string): string =>
+/**
+ * An at-risk warning, keyed by the local date it warns about **and the hour it fires**.
+ *
+ * The hour is not decoration. There are two passes a day now, and deterministic
+ * identifiers — which are load-bearing everywhere else in this module, because they make a
+ * duplicate schedule a replace rather than a stack — would otherwise have the evening pass
+ * silently overwrite the afternoon one.
+ */
+export const streakRiskIdentifierFor = (localDate: string, hour: number): string =>
+    `${ROAST_IDENTIFIER_PREFIX}streak-risk:${localDate}@${hour}`;
+
+/**
+ * The identifier a build before the two-pass change would have used.
+ *
+ * Kept so the upgrade can clean up after itself, and it must be, because this change ships
+ * over the air. A device that has already reconciled is holding a pending
+ * `roast-streak-risk:2026-08-30` scheduled for 15:00. Once updated, the app cancels the
+ * `@16` and `@19` keys and nothing anywhere cancels that one — including the ping-cancel
+ * path, whose entire job is to stop warning a worker who has already engaged.
+ *
+ * Left to itself it fires once per upgraded device, at the wrong hour, quite possibly to
+ * somebody who engaged that morning. That is precisely the failure the reschedule exists
+ * to prevent.
+ *
+ * Cancelling an identifier that is not there is already a no-op, so this stays harmless on
+ * a clean install and costs nothing to keep indefinitely — cheaper than a date gate that
+ * would itself need removing later.
+ */
+export const legacyStreakRiskIdentifierFor = (localDate: string): string =>
     `${ROAST_IDENTIFIER_PREFIX}streak-risk:${localDate}`;
 
 /**
@@ -245,25 +276,34 @@ export const scheduleReminder = async (reminder: ISchedulableReminder): Promise<
 };
 
 /**
- * The streak at-risk warning.
+ * A streak at-risk warning.
  *
  * Scheduled with the day count the streak *will* be — see the caller in `use-streak.ts`.
  * A count baked in a day early is off by one on the day it fires.
+ *
+ * `isFinalPass` picks the copy rather than the hour doing it, because the hours live in
+ * `use-local-date.ts` and this module is imported *by* that side of the tree. It also
+ * keeps the decision where it belongs: the last pass is the last pass whatever hour it is
+ * moved to.
  */
 export const scheduleStreakRisk = async ({
     localDate,
+    hour,
     at,
     days,
+    isFinalPass,
 }: {
     localDate: string;
+    hour: number;
     at: Date;
     days: number;
+    isFinalPass: boolean;
 }): Promise<string | null> => {
-    const copy = ROAST_COPY.streak.atRisk(days);
+    const copy = isFinalPass ? ROAST_COPY.streak.atRiskFinal(days) : ROAST_COPY.streak.atRisk(days);
 
     try {
         return await Notifications.scheduleNotificationAsync({
-            identifier: streakRiskIdentifierFor(localDate),
+            identifier: streakRiskIdentifierFor(localDate, hour),
             content: {
                 title: copy.title,
                 body: copy.body,

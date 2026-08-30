@@ -21,6 +21,8 @@ every deviation and why, rather than editing the reasoning out of the originals.
 | 07 | [As built](./07_AS_BUILT.md) | Everyone | What shipped, and every place it differs from 00–06 — including seven API contract corrections |
 | 08 | [Device reminders](./08_DEVICE_REMINDERS_PLAN.md) | PM + mobile | Mirroring a reminder into the phone's own Reminders app, calendar or alarm clock — plan and as-built |
 | 09 | [Widget UI](./09_WIDGET_UI_PLAN.md) | Design + mobile | The home-screen widget's visual design, and the note under each row — plan and as-built |
+| 10 | [Frontend change notes](./10_FRONTEND_CHANGE_NOTES.md) | Backend → mobile | What the deployed backend changed: two digest-hour preferences, and the at-risk reschedule |
+| 11 | [Digest hours](./11_DIGEST_HOURS_PLAN.md) | Mobile | Acting on 10 — worker-set digest hours, the two-pass at-risk warning and its upgrade sweep — plan and as-built |
 
 ## Relationship to the existing notification docs
 

@@ -121,6 +121,27 @@ first given, and an edited note never reached the OS either. Entries persisted b
 builds have no key, mismatch once, and are rescheduled — which is how an existing install
 picks up the new buttons.
 
+**The at-risk warning is two notifications, and the reserve had to grow.** Since
+[`10_FRONTEND_CHANGE_NOTES.md`](./10_FRONTEND_CHANGE_NOTES.md) it fires at 16:00 and 19:00
+rather than once at 15:00, so `streakRiskIdentifierFor` is keyed by date **and hour** —
+without the hour the evening pass would silently replace the afternoon one, since
+deterministic identifiers make a duplicate schedule a replace. That took the ceiling on
+pending at-risk notifications from 2 to 4, which was `RESERVED_SLOTS` exactly, leaving the
+reschedule overlap the reserve exists for with nowhere to go; it is now 6 and
+`REMINDER_BUDGET` is 58. Overflow does not fall on the warnings — it falls on reminders,
+past the iOS cap, in silence.
+
+**A `legacyStreakRiskIdentifierFor` sweep runs on every sync.** That change shipped over
+the air onto devices already holding `roast-streak-risk:<date>` at 15:00, under a key the
+new cancels cannot see — including the cancel that stops a worker who has already engaged
+being told their streak is ending. Unconditional and ahead of the early returns, so it
+also reaches a worker whose streak is 0. See
+[`11_DIGEST_HOURS_PLAN.md §2.2`](./11_DIGEST_HOURS_PLAN.md).
+
+**`morningDigestHour` and `eveningDigestHour` are worker-set; the at-risk hours are not.**
+The two live next to each other on the settings screen, and the asymmetry is deliberate:
+a deadline whose warning the worker can move is not much of a warning.
+
 ## 4. Widget deviations
 
 > The widget's **visual** design was reworked after first release — type scale, per-kind

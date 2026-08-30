@@ -127,9 +127,30 @@ export const ROAST_COPY = {
     }),
 
     streak: {
+        /**
+         * The afternoon pass, at 16:00.
+         *
+         * Aimed at the worker who has not engaged all day. Encouraging rather than urgent
+         * — there are still hours left, and there is a second pass behind this one.
+         */
         atRisk: (days: number): ICopy => ({
             title: `🔥 ${pluralise(days, 'Day')} on! Keep the fire going`,
             body: "You haven't roasted your game today. Check in now to keep your streak.",
+        }),
+
+        /**
+         * The evening pass, at 19:00.
+         *
+         * Deliberately **not** the same words as `atRisk`. The two passes catch different
+         * people — this one catches the worker who meant to and did not — and the same
+         * notification arriving twice, three hours apart, word for word, reads as a glitch
+         * rather than a last call.
+         *
+         * It is also the last thing anybody hears before the streak goes, so it says so.
+         */
+        atRiskFinal: (days: number): ICopy => ({
+            title: `🔥 Last call — ${pluralise(days, 'day')} on the line`,
+            body: 'Your streak ends at midnight. One check-in is all it takes.',
         }),
 
         milestone: (days: number): ICopy => ({
