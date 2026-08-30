@@ -36,7 +36,7 @@ const RemindersEntryButton: React.FC = () => {
             activeOpacity={0.6}
             onPress={() => {
                 Haptics.selectionAsync();
-                router.push('/roast-crm/reminders' as any);
+                router.push('/roast-crm/reminders');
             }}
             className={cn(
                 'flex-row items-center gap-2 h-10 px-3 rounded-full border',

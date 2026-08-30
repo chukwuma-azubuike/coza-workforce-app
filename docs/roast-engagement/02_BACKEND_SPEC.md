@@ -1,5 +1,8 @@
 # Roast Engagement System — Backend Specification
 
+> ⚠️ **Written before implementation.** Where this document and the code disagree,
+> [`07_AS_BUILT.md`](./07_AS_BUILT.md) is correct.
+
 Implements [`01_ARCHITECTURE.md`](./01_ARCHITECTURE.md). Written against the Roast CRM
 API's existing conventions: Mongo-style `_id`, `IDefaultResponse<T>` envelopes
 (`{ status, message, data }`), `Bearer` auth, and the `page`/`limit`/`total`/`pages`

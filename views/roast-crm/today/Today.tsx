@@ -126,7 +126,7 @@ const Today: React.FC = () => {
         }
 
         if (task.guestId) {
-            router.push({ pathname: '/roast-crm/guests/profile' as any, params: { _id: task.guestId } });
+            router.push({ pathname: '/roast-crm/guests/profile', params: { _id: task.guestId } });
         }
     }, []);
 

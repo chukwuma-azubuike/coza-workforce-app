@@ -31,7 +31,7 @@ const EmptyToday: React.FC<EmptyTodayProps> = ({ streak = 0 }) => (
 
         <TouchableOpacity
             activeOpacity={0.6}
-            onPress={() => router.push('/roast-crm/my-guests' as any)}
+            onPress={() => router.push('/roast-crm/my-guests')}
             accessibilityRole="button"
             className="h-11 px-5 mt-3 rounded-full border border-border justify-center"
         >

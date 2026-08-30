@@ -5,6 +5,10 @@ Reminders, Widget & Streaks*).
 
 Read in order. Each document assumes the decisions made in the one before it.
 
+⚠️ **00–06 describe intent, and the feature has since been built.** Where the code and
+these documents disagree, [`07_AS_BUILT.md`](./07_AS_BUILT.md) is correct — it records
+every deviation and why, rather than editing the reasoning out of the originals.
+
 | # | Document | Audience | What it settles |
 |---|---|---|---|
 | 00 | [Technical PRD](./00_TECHNICAL_PRD.md) | Everyone | Scope, the eleven decisions this feature turns on, what we are *not* building, success metrics |
@@ -14,6 +18,7 @@ Read in order. Each document assumes the decisions made in the one before it.
 | 04 | [Widget specification](./04_WIDGET_SPEC.md) | React Native + native | iOS WidgetKit / Android RemoteViews, the snapshot contract, build and privacy implications |
 | 05 | [UX specification](./05_UX_SPEC.md) | Design + React Native | Screen-by-screen, copy registry, motion, empty states, accessibility |
 | 06 | [Delivery plan](./06_DELIVERY_PLAN.md) | PM + leads | Phasing, ticket breakdown, sequencing, risk register, test plan |
+| 07 | [As built](./07_AS_BUILT.md) | Everyone | What shipped, and every place it differs from 00–06 — including seven API contract corrections |
 
 ## Relationship to the existing notification docs
 

@@ -1,5 +1,8 @@
 # Roast Engagement System — Widget Specification
 
+> ⚠️ **Written before implementation.** Where this document and the code disagree,
+> [`07_AS_BUILT.md`](./07_AS_BUILT.md) is correct.
+
 EPIC 3. The highest-risk work in this set: it is the only part that cannot ship over the
 air, the only part requiring native code on both platforms, and the only part where the
 platform — not us — decides how fresh the data is.

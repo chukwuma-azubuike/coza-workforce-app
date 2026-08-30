@@ -1,5 +1,8 @@
 # Roast Engagement System — Mobile Specification
 
+> ⚠️ **Written before implementation.** Where this document and the code disagree,
+> [`07_AS_BUILT.md`](./07_AS_BUILT.md) is correct.
+
 React Native / Expo implementation. Written against this repo's conventions: Expo Router
 file-based routes with logic in `views/`, RTK Query one-service-per-resource, typed
 `useAppSelector`/`useAppDispatch`, NativeWind for styling, Formik + Yup for forms.

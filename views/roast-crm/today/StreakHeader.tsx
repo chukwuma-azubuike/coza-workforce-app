@@ -32,7 +32,7 @@ const StreakHeader: React.FC<StreakHeaderProps> = ({ streak, counts, staleLabel 
         <View className="gap-3 pb-2">
             <TouchableOpacity
                 activeOpacity={0.7}
-                onPress={() => router.push('/roast-crm/streak' as any)}
+                onPress={() => router.push('/roast-crm/streak')}
                 accessibilityRole="button"
                 // The ember is hidden from assistive tech; this label is the whole header.
                 accessibilityLabel={`${pluralise(current, 'day')} streak, ${
@@ -81,7 +81,7 @@ const StreakHeader: React.FC<StreakHeaderProps> = ({ streak, counts, staleLabel 
                     be able to find this on the screen the nudges brought them to. */}
                 <TouchableOpacity
                     activeOpacity={0.6}
-                    onPress={() => router.push('/roast-crm/notification-settings' as any)}
+                    onPress={() => router.push('/roast-crm/notification-settings')}
                     accessibilityRole="button"
                     accessibilityLabel="Notification settings"
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}

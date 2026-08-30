@@ -105,7 +105,7 @@ const Reminders: React.FC = () => {
 
     const openGuest = useCallback((reminder: IRoastReminder) => {
         router.push({
-            pathname: '/roast-crm/guests/profile' as any,
+            pathname: '/roast-crm/guests/profile',
             params: { _id: reminder.guestId, reminderId: reminder._id },
         });
     }, []);
