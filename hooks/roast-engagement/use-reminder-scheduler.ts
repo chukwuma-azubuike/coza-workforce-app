@@ -4,10 +4,12 @@ import { userSelectors } from '~/store/actions/users';
 import { roastEngagementActions, roastEngagementSelectors, IScheduledRecord } from '~/store/actions/roast-engagement';
 import { useGetRemindersQuery } from '~/store/services/roast-engagement';
 import { REMINDER_STATUS } from '~/store/types';
+import { useGetMyGuestsQuery } from '~/store/services/roast-crm';
 import {
     ISchedulableReminder,
     cancelNotification,
     canScheduleNotifications,
+    contentKeyFor,
     diffSchedules,
     identifierFor,
     scheduleReminder,
@@ -60,6 +62,24 @@ const useReminderScheduler = () => {
     const guestNames = useGuestNameIndex();
 
     /**
+     * Whether the guest cache has *settled*, as opposed to merely being empty.
+     *
+     * `useGuestNameIndex` returns `{}` both while the guest list is in flight and when the
+     * worker genuinely has no guests, and the two want opposite behaviour: reconciling
+     * against the first schedules every reminder nameless and numberless, and the content
+     * key then flips a moment later, cancelling and rescheduling the lot. Waiting one tick
+     * costs nothing and removes that churn from every cold start.
+     *
+     * `isError` counts as settled on purpose. A guest list that will not load must not be
+     * able to stop reminders being scheduled at all — a notification reading "Your guest"
+     * is worth far more than no notification.
+     */
+    const { isSuccess: guestsLoaded, isError: guestsFailed } = useGetMyGuestsQuery(undefined, {
+        skip: !isAuthenticated,
+    });
+    const guestsSettled = guestsLoaded || guestsFailed;
+
+    /**
      * The ledger, readable from a callback that is not re-created when it changes.
      *
      * Closing over the rendered value instead would make every reconcile diff against the
@@ -82,7 +102,7 @@ const useReminderScheduler = () => {
     const inFlight = useRef<Promise<void> | null>(null);
 
     const reconcile = useCallback(async () => {
-        if (!isAuthenticated) {
+        if (!isAuthenticated || !guestsSettled) {
             return;
         }
 
@@ -99,6 +119,7 @@ const useReminderScheduler = () => {
                 _id: reminder._id,
                 guestId: reminder.guestId,
                 guestFirstName: guestNames[reminder.guestId]?.firstName,
+                guestPhoneNumber: guestNames[reminder.guestId]?.phoneNumber,
                 note: reminder.note,
                 dueAt: reminder.dueAt,
                 status: reminder.status,
@@ -135,7 +156,11 @@ const useReminderScheduler = () => {
                     // ledger claim a notification exists that does not, and the next
                     // reconcile would then skip re-scheduling it.
                     if (notificationId) {
-                        next[reminder._id] = { notificationId, dueAt: reminder.dueAt };
+                        next[reminder._id] = {
+                            notificationId,
+                            dueAt: reminder.dueAt,
+                            contentKey: contentKeyFor(reminder),
+                        };
                     }
                 })
             );
@@ -151,7 +176,7 @@ const useReminderScheduler = () => {
         if (inFlight.current === chained) {
             inFlight.current = null;
         }
-    }, [dispatch, isAuthenticated, reminders, guestNames]);
+    }, [dispatch, isAuthenticated, guestsSettled, reminders, guestNames]);
 
     useEffect(() => {
         reconcile();

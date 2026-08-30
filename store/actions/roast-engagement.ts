@@ -16,8 +16,16 @@ export interface IOutboxEntry {
 export interface IScheduledRecord {
     /** The identifier Expo returned. Ours is deterministic; theirs is not guaranteed to be. */
     notificationId: string;
-    /** The `dueAt` this schedule was made for — the diff compares against it. */
+    /** The `dueAt` this schedule was made for. Kept for debugging and for the widget. */
     dueAt: string;
+    /**
+     * `contentKeyFor(reminder)` as at the moment it was scheduled — what the diff compares.
+     *
+     * Optional because entries persisted by a build that predates it exist on devices in
+     * the wild. Those mismatch on the first reconcile after the upgrade and are rescheduled
+     * once, which is how an already-installed app picks up the new tray buttons.
+     */
+    contentKey?: string;
 }
 
 export interface IRoastEngagementState {

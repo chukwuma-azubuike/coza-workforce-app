@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { Linking } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import dayjs from 'dayjs';
 import { useAppDispatch, useAppSelector } from '~/store/hooks';
@@ -9,12 +10,26 @@ import {
     useCompleteReminderMutation,
     useSnoozeReminderMutation,
 } from '~/store/services/roast-engagement';
-import { REMINDER_COMPLETED_VIA, QUALIFYING_ACTION_KIND } from '~/store/types';
+import { ContactChannel, REMINDER_COMPLETED_VIA, QUALIFYING_ACTION_KIND } from '~/store/types';
 import { ROAST_ACTION, cancelNotification, identifierFor } from '~/utils/local-notifications';
+import { contactUrlFor } from '~/views/roast-crm/utils/communication';
 import { usePingAction } from './use-engagement-ping';
 
 /**
- * Handles the two buttons on a reminder notification.
+ * The three tray buttons that reach the guest rather than change the reminder.
+ *
+ * All of them foreground the app — see the action definitions in `local-notifications.ts`
+ * — so by the time this runs there is a window to hand the URL to.
+ */
+const CONTACT_ACTIONS: Record<string, ContactChannel> = {
+    [ROAST_ACTION.CALL]: ContactChannel.CALL,
+    [ROAST_ACTION.WHATSAPP]: ContactChannel.WHATSAPP,
+    [ROAST_ACTION.TEXT]: ContactChannel.SMS,
+};
+
+/**
+ * Handles the buttons on a reminder notification — Call, WhatsApp, Text, Mark done and
+ * Snooze.
  *
  * ⚠️ **This hook never navigates.** `useNotificationObserver` already owns that, and owns
  * it properly: it distinguishes cold start from background from foreground, deduplicates
@@ -49,10 +64,11 @@ const useRoastNotificationActions = () => {
     const handleResponse = useCallback(
         async (response: Notifications.NotificationResponse) => {
             const action = response.actionIdentifier;
+            const channel = CONTACT_ACTIONS[action];
 
             // The tap-through case. Routing belongs to `useNotificationObserver`; there is
             // nothing for this hook to do.
-            if (action !== ROAST_ACTION.MARK_DONE && action !== ROAST_ACTION.SNOOZE_1H) {
+            if (!channel && action !== ROAST_ACTION.MARK_DONE && action !== ROAST_ACTION.SNOOZE_1H) {
                 return;
             }
 
@@ -70,6 +86,41 @@ const useRoastNotificationActions = () => {
             }
 
             handled.current.add(key);
+
+            if (channel) {
+                const phoneNumber = typeof data?.['phoneNumber'] === 'string' ? data['phoneNumber'] : undefined;
+
+                // The number is baked into the payload at schedule time, so there is
+                // nothing to look up and nothing that can fail on a cold launch. Its
+                // absence means the guest had no number when the reminder was scheduled
+                // — in which case this button was never registered on the notification
+                // and we should not be here at all.
+                if (!phoneNumber) {
+                    return;
+                }
+
+                const url = contactUrlFor(phoneNumber, channel);
+
+                if (!url) {
+                    return;
+                }
+
+                try {
+                    await Linking.openURL(url);
+                } catch {
+                    // WhatsApp not installed, or a number the dialer will not take. The
+                    // app has already been brought to the front by the action itself and
+                    // `useNotificationObserver` is routing to the guest's profile, where
+                    // every one of these buttons exists again — so the worker lands
+                    // somewhere they can finish the job rather than on an error.
+                }
+
+                // Deliberately does **not** complete the reminder. Reaching someone and
+                // being done with them are different things: a call that rings out still
+                // needs the reminder, and silently clearing it is how a follow-up gets
+                // lost.
+                return;
+            }
 
             if (action === ROAST_ACTION.MARK_DONE) {
                 // Cancel first, and unconditionally. The notification the worker just

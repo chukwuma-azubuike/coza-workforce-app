@@ -31,6 +31,28 @@ import {
  * Every response arrives in the standard `IDefaultResponse` envelope, so every endpoint
  * unwraps `res.data`.
  */
+/**
+ * Whether a cached `getReminders` list is one a given reminder belongs in.
+ *
+ * The same reminder lives in several cache entries under different arguments — the guest
+ * profile's `{ guestId }`, My Reminders' `{ status, limit }`, the scheduler's own
+ * `{ status: UPCOMING, limit: 200 }` — and an optimistic write has to reach all of them or
+ * the number on one screen disagrees with the list on another.
+ *
+ * `status` is a **comma-separated** string on the wire, so it is split rather than
+ * compared; an absent filter means every status and matches everything.
+ */
+const listAcceptsReminder = (
+    args: IRemindersQuery | undefined,
+    reminder: { guestId: string; status: REMINDER_STATUS }
+): boolean => {
+    if (args?.guestId && args.guestId !== reminder.guestId) {
+        return false;
+    }
+
+    return !args?.status || args.status.split(',').includes(reminder.status);
+};
+
 export const roastEngagementApi = createApi({
     reducerPath: 'roastEngagement',
 
@@ -117,6 +139,20 @@ export const roastEngagementApi = createApi({
             transformResponse: (res: IDefaultResponse<IReminderSync>) => res.data,
         }),
 
+        /**
+         * Set a reminder.
+         *
+         * **Optimistic.** The counts this feeds — the badge on My Guests' Reminders
+         * button, the one on the guest profile's card — are the confirmation that the
+         * reminder was set. Waiting for a round trip before either moves means the sheet
+         * closes onto a screen that looks exactly as it did before, which reads as the
+         * save having failed; the worker's usual response is to set it again.
+         *
+         * The provisional row carries a client-side `_id`. It is replaced wholesale when
+         * the invalidation below refetches, so nothing downstream ever has to reconcile
+         * the temporary id with the real one — it only has to survive being rendered,
+         * which is why every field on `IRoastReminder` is populated rather than cast.
+         */
         createReminder: endpoint.mutation<IRoastReminder, ICreateReminderPayload>({
             query: ({ idempotencyKey, ...body }) => ({
                 url: '/reminders',
@@ -128,6 +164,59 @@ export const roastEngagementApi = createApi({
                 ...(idempotencyKey ? { headers: { 'Idempotency-Key': idempotencyKey } } : {}),
             }),
             transformResponse: (res: IDefaultResponse<IRoastReminder>) => res.data,
+
+            async onQueryStarted(payload, { dispatch, queryFulfilled, getState }) {
+                const now = new Date().toISOString();
+
+                const optimistic: IRoastReminder = {
+                    // Prefixed so a row that somehow outlives the refetch is obvious in a
+                    // log rather than looking like a document id.
+                    _id: `optimistic:${payload.idempotencyKey ?? now}`,
+                    // Not read by anything that renders a reminder, and reaching into the
+                    // user slice from here would couple the API layer to it for a field
+                    // the server is about to send back anyway.
+                    userId: '',
+                    guestId: payload.guestId,
+                    note: payload.note,
+                    dueAt: payload.dueAt,
+                    timezone: payload.timezone,
+                    status: REMINDER_STATUS.UPCOMING,
+                    snoozeCount: 0,
+                    idempotencyKey: payload.idempotencyKey ?? null,
+                    createdAt: now,
+                };
+
+                const patches: Array<{ undo: () => void }> = [];
+
+                for (const entry of roastEngagementApi.util.selectInvalidatedBy(getState(), [
+                    { type: 'ReminderList', id: 'LIST' },
+                ])) {
+                    if (entry.endpointName !== 'getReminders') {
+                        continue;
+                    }
+
+                    const args = entry.originalArgs as IRemindersQuery | undefined;
+
+                    if (!listAcceptsReminder(args, optimistic)) {
+                        continue;
+                    }
+
+                    patches.push(
+                        dispatch(
+                            roastEngagementApi.util.updateQueryData('getReminders', args as IRemindersQuery, draft => {
+                                draft.data = [...(draft.data ?? []), optimistic];
+                            })
+                        )
+                    );
+                }
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patches.forEach(patch => patch.undo());
+                }
+            },
+
             invalidatesTags: [{ type: 'ReminderList', id: 'LIST' }, 'Task'],
         }),
 
@@ -274,11 +363,49 @@ export const roastEngagementApi = createApi({
             ],
         }),
 
+        /**
+         * Delete a reminder.
+         *
+         * **Optimistic**, for the same reason as `createReminder` — and more so: this one
+         * is reached through a confirmation dialog, so the worker has already committed
+         * and a row that lingers afterwards reads as the delete having been refused.
+         */
         deleteReminder: endpoint.mutation<void, string>({
             query: _id => ({
                 url: `/reminders/${_id}`,
                 method: REST_API_VERBS.DELETE,
             }),
+
+            async onQueryStarted(_id, { dispatch, queryFulfilled, getState }) {
+                const patches: Array<{ undo: () => void }> = [];
+
+                for (const entry of roastEngagementApi.util.selectInvalidatedBy(getState(), [
+                    { type: 'Reminder', id: _id },
+                ])) {
+                    if (entry.endpointName !== 'getReminders') {
+                        continue;
+                    }
+
+                    patches.push(
+                        dispatch(
+                            roastEngagementApi.util.updateQueryData(
+                                'getReminders',
+                                entry.originalArgs as IRemindersQuery,
+                                draft => {
+                                    draft.data = (draft.data ?? []).filter(reminder => reminder._id !== _id);
+                                }
+                            )
+                        )
+                    );
+                }
+
+                try {
+                    await queryFulfilled;
+                } catch {
+                    patches.forEach(patch => patch.undo());
+                }
+            },
+
             invalidatesTags: (_result, _error, _id) => [
                 { type: 'Reminder', id: _id },
                 { type: 'ReminderList', id: 'LIST' },

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Formik } from 'formik';
+import { Formik, FormikProps } from 'formik';
 import * as Haptics from 'expo-haptics';
 import RNDatePicker from 'react-native-date-picker';
 
@@ -56,6 +56,24 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
     const isEditing = !!reminder;
     const slideAnim = useRef(new Animated.Value(400)).current;
     const [pickerOpen, setPickerOpen] = useState(false);
+    const formikRef = useRef<FormikProps<IReminderFormValues>>(null);
+
+    /**
+     * Bumped every time the sheet is *opened*, and used as the Formik `key`.
+     *
+     * `enableReinitialize` alone does not reset this form: `initialValues` for a new
+     * reminder is the same `{ dueAt: '', note: '' }` every time, so Formik correctly
+     * decides nothing has changed and keeps whatever was last typed. Closing the sheet
+     * after setting a reminder and opening it on the next guest would then show the
+     * previous guest's note and their chosen time already selected.
+     *
+     * Keyed on open rather than on `visible`, so the remount does not blank the fields
+     * mid-slide-out on the way *closed*.
+     */
+    const [openSession, setOpenSession] = useState(0);
+
+    /** Write-only. Its only job is to re-render so the clock-relative text is re-read. */
+    const [, setClockTick] = useState(0);
 
     const [createReminder, { isLoading: creating }] = useCreateReminderMutation();
     const [updateReminder, { isLoading: updating }] = useUpdateReminderMutation();
@@ -76,6 +94,38 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
             bounciness: 4,
         }).start();
     }, [visible, slideAnim]);
+
+    useEffect(() => {
+        if (visible) {
+            setOpenSession(session => session + 1);
+        }
+    }, [visible]);
+
+    /**
+     * Keeps the "When" section honest about a clock that keeps moving.
+     *
+     * Every judgement under that heading is relative to *now* — whether the chosen time
+     * has passed, and the "in 6 minutes" line under it — but Formik only validates on
+     * change, blur and submit. A sheet left open on a time six minutes out therefore goes
+     * on claiming the time is fine, and on saying "in 6 minutes", long after both stopped
+     * being true; the worker only finds out when the server rejects the save.
+     *
+     * Re-rendering re-reads the clock, and `validateForm` re-runs the `is-future` test
+     * against it. Thirty seconds is fine enough to catch the boundary and coarse enough to
+     * be free.
+     */
+    useEffect(() => {
+        if (!visible) {
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setClockTick(tick => tick + 1);
+            formikRef.current?.validateForm();
+        }, 30_000);
+
+        return () => clearInterval(interval);
+    }, [visible]);
 
     const initialValues: IReminderFormValues = {
         guestId: guest._id,
@@ -122,18 +172,30 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
             <Formik<IReminderFormValues>
                 enableReinitialize
                 validateOnChange
+                innerRef={formikRef}
+                key={`${reminder?._id ?? 'new'}:${openSession}`}
                 onSubmit={handleSubmit}
                 initialValues={initialValues}
                 validationSchema={ReminderFormValidationSchema}
             >
                 {({ values, errors, touched, setFieldValue, setFieldTouched, handleSubmit: submit }) => {
-                    const selectedKey = quickTimeKeyFor(values.dueAt);
+                    // Matched against the chips that are actually rendered — see
+                    // `quickTimeKeyFor`. Passing nothing recomputes them against a later
+                    // clock and the selection silently drops off after a minute.
+                    const selectedKey = quickTimeKeyFor(values.dueAt, quickTimes);
                     const remaining = 280 - values.note.length;
 
                     const chooseTime = (date: Date) => {
                         Haptics.selectionAsync();
-                        setFieldValue('dueAt', date.toISOString());
-                        setFieldTouched('dueAt', true);
+
+                        // Touched first and **without validating**, then the value *with*.
+                        // Formik validates against the state it can see at the moment it
+                        // is called, and `setFieldValue` has not re-rendered yet — so
+                        // marking touched second re-runs validation against the previous
+                        // `dueAt` and leaves the error from the old value on screen under
+                        // the new one.
+                        setFieldTouched('dueAt', true, false);
+                        setFieldValue('dueAt', date.toISOString(), true);
                     };
 
                     return (
@@ -284,7 +346,16 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                                                 modal
                                                 mode="datetime"
                                                 open={pickerOpen}
-                                                date={values.dueAt ? new Date(values.dueAt) : new Date()}
+                                                // Clamped to now. Editing an overdue
+                                                // reminder opens on a date that is
+                                                // already below `minimumDate`, which the
+                                                // picker resolves by scrolling to a value
+                                                // it will not then let you confirm.
+                                                date={
+                                                    values.dueAt && Date.parse(values.dueAt) > Date.now()
+                                                        ? new Date(values.dueAt)
+                                                        : new Date()
+                                                }
                                                 // The picker itself refuses the past, so the
                                                 // inline message below is a backstop for a
                                                 // sheet left open, not the primary guard.

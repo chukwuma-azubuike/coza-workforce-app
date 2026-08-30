@@ -99,6 +99,28 @@ sentence, never a number. Without it the primary action on a `CALL_DUE` row degr
 **"Set reminder" lives on `GuestRemindersCard`, not `GuestHeader`** — next to the list it
 adds to, rather than in a header that already carries four actions.
 
+**Five tray actions, not two, and two categories rather than one.** `03_MOBILE_SPEC.md`
+specifies Mark done and Snooze. Call, WhatsApp and Text were added on top, and they lead:
+reaching the guest is why the reminder exists, and it is the one thing with no faster route
+than the tray. Because a category is registered once for the whole app and cannot hide a
+button per-notification, the three contact actions live in a second category
+(`ROAST_REMINDER_CONTACT`) that is only named on reminders whose guest has a number —
+otherwise "Call" would be offered for a guest there is no way to call.
+
+⚠️ **Both platforms truncate, and the ordering is the mitigation.** Android renders the
+first three actions and drops the rest; iOS shows the first four when expanded. So Snooze
+is iOS-and-in-app only, and Mark done is iOS-and-in-app only on a guest with a number. Both
+remain on the reminder row, the Today feed and the widget. Re-ordering the array in
+`setUpRoastNotificationCategories` is the whole of the change if that trade-off looks wrong.
+
+**The schedule ledger stores a content key, not just `dueAt`.** `IScheduledRecord.contentKey`
+covers the note, the guest's first name and their number as well as the time. Diffing on
+`dueAt` alone meant the *first* version scheduled was permanent: the guest list resolves
+after the reminder list does, so the notification kept the nameless, numberless body it was
+first given, and an edited note never reached the OS either. Entries persisted by earlier
+builds have no key, mismatch once, and are rescheduled — which is how an existing install
+picks up the new buttons.
+
 ## 4. Widget deviations
 
 **Medium only.** `systemMedium` / 4x2, per the reduced-scope ladder in

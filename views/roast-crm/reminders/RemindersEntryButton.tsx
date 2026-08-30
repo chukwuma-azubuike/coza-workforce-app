@@ -17,13 +17,22 @@ import { useGetRemindersQuery } from '~/store/services/roast-engagement';
  * across a phone screen and an admin's row is tight as it is; a sixth would push it into
  * a horizontal overflow for the users who have the most to lose from one.
  *
- * The badge counts what is **due or overdue right now**, not everything upcoming. A count
- * of "31" that includes a reminder set for next month is a number nobody acts on, and a
- * badge nobody acts on is a badge people learn to ignore.
+ * **The badge counts everything upcoming; the colour says whether any of it is due.**
+ *
+ * The two carry different jobs. The number is a receipt — a worker who has just set a
+ * reminder needs the button to acknowledge it, and a badge that only counts what is due
+ * *right now* stays on 0 after setting one for tomorrow, which reads as the save having
+ * silently failed. The urgency, which is the thing worth acting on, is carried by the
+ * button turning primary the moment something is actually due.
+ *
+ * Both move without a round trip: `createReminder` and `deleteReminder` patch every
+ * cached reminder list optimistically, this one included.
  */
 const RemindersEntryButton: React.FC = () => {
     const { data: page } = useGetRemindersQuery({ status: REMINDER_STATUS.UPCOMING, limit: 200 });
     const reminders = page?.data ?? [];
+
+    const upcoming = reminders.length;
 
     const dueNow = useMemo(() => {
         const now = Date.now();
@@ -46,9 +55,21 @@ const RemindersEntryButton: React.FC = () => {
             <Icon type="feather" name="bell" size={16} color={dueNow ? THEME_CONFIG.primary : THEME_CONFIG.lightGray} />
             <Text className={cn('!text-sm', dueNow && 'text-primary')}>Reminders</Text>
 
-            {!!dueNow && (
-                <View className="min-w-5 h-5 px-1.5 rounded-full bg-primary items-center justify-center">
-                    <Text className="!text-[11px] text-primary-foreground dark:text-white">{dueNow}</Text>
+            {!!upcoming && (
+                <View
+                    className={cn(
+                        'min-w-5 h-5 px-1.5 rounded-full items-center justify-center',
+                        dueNow ? 'bg-primary' : 'bg-muted'
+                    )}
+                >
+                    <Text
+                        className={cn(
+                            '!text-[11px]',
+                            dueNow ? 'text-primary-foreground dark:text-white' : 'text-muted-foreground'
+                        )}
+                    >
+                        {upcoming}
+                    </Text>
                 </View>
             )}
         </TouchableOpacity>

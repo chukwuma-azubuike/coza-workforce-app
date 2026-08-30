@@ -55,13 +55,28 @@ export const QUICK_TIMES: IQuickTime[] = [
 export const availableQuickTimes = (): Array<IQuickTime & { date: Date }> =>
     QUICK_TIMES.map(option => ({ ...option, date: option.at() as Date })).filter(option => !!option.date);
 
-/** Matches a chosen instant back to a chip, so the selected one stays highlighted. */
-export const quickTimeKeyFor = (dueAt?: string): string | null => {
+/**
+ * Matches a chosen instant back to a chip, so the selected one stays highlighted.
+ *
+ * ⚠️ **`options` must be the chips actually on screen, not a fresh list.** They are
+ * relative times, so recomputing them here compares the worker's choice against a
+ * *different* set of instants than the one they tapped: "In an hour" is `now + 1h`, and a
+ * minute later that same chip means a moment 60 seconds further out. Matching against a
+ * recomputed list therefore loses the highlight roughly a minute after the tap, and the
+ * sheet silently falls back to showing the choice as a custom time.
+ *
+ * Defaulted for callers with no rendered list of their own; every caller that renders
+ * chips should pass its own.
+ */
+export const quickTimeKeyFor = (
+    dueAt?: string,
+    options: Array<Pick<IQuickTime, 'key'> & { date: Date }> = availableQuickTimes()
+): string | null => {
     if (!dueAt) {
         return null;
     }
 
     const chosen = new Date(dueAt).getTime();
 
-    return availableQuickTimes().find(option => Math.abs(option.date.getTime() - chosen) < 60_000)?.key ?? null;
+    return options.find(option => Math.abs(option.date.getTime() - chosen) < 60_000)?.key ?? null;
 };

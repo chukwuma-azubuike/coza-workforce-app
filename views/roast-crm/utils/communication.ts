@@ -3,12 +3,36 @@ import { ContactChannel, Guest } from '~/store/types';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { roastCRMActions } from '~/store/actions/roast-crm';
 
+/**
+ * The URL for reaching a number on a given channel.
+ *
+ * WhatsApp is the one that needs work: `wa.me` accepts digits only, so a number stored the
+ * way people actually type them — `+234 801 234 5678` — has to be stripped before it will
+ * resolve. `tel:` and `sms:` are happy with the raw string on both platforms.
+ *
+ * `VISIT` has no URL; there is nothing on the device to open for it.
+ */
+export const contactUrlFor = (phoneNumber: string, type: ContactChannel): string | null => {
+    switch (type) {
+        case ContactChannel.CALL:
+            return `tel:${phoneNumber}`;
+        case ContactChannel.SMS:
+            return `sms:${phoneNumber}`;
+        case ContactChannel.WHATSAPP:
+            return `https://wa.me/${phoneNumber.replace(/\D/g, '')}`;
+        default:
+            return null;
+    }
+};
+
 // Unlike openPhoneAndPersist below, contacting a worker isn't a guest-assimilation event, so
 // there's nothing to persist to the guest-contact timeline - this just opens the dialer/WhatsApp.
 export const openPhoneNumber = (phoneNumber: string | undefined | null, type: ContactChannel) => async () => {
     if (!phoneNumber) return;
 
-    const url = type === ContactChannel.CALL ? `tel:${phoneNumber}` : `https://wa.me/${phoneNumber}`;
+    const url = contactUrlFor(phoneNumber, type);
+    if (!url) return;
+
     const can = await Linking.canOpenURL(url);
     if (!can) return;
 
