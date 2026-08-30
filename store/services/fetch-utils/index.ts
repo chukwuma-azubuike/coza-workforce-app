@@ -4,7 +4,7 @@ import APP_VARIANT from '@config/envConfig';
 import { fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import Utils from '@utils/index';
 
-const { API_BASE_URL } = APP_VARIANT;
+const { API_BASE_URL, CRM_API_BASE_URL } = APP_VARIANT;
 
 /**
  * Module-private on purpose. Every service on the main API must go through
@@ -98,6 +98,33 @@ export class fetchUtils {
         return result;
     };
 }
+
+/**
+ * The base query for every service on the **Roast CRM API**.
+ *
+ * A second base URL, the same bearer token: Roast authenticates with the Workforce
+ * session, so the header is read from exactly the same place. Shared rather than copied
+ * because two services now sit on this URL — `roastCrmApi` and `roastEngagementApi` — and
+ * a second inline `prepareHeaders` is a second place for the session shape to go stale.
+ *
+ * Deliberately *not* wrapped in the token-refresh logic above: the rotated-token header
+ * is issued by the Workforce API, and capturing one from a Roast response would persist a
+ * token this session never minted.
+ */
+export const roastBaseQuery = fetchBaseQuery({
+    baseUrl: CRM_API_BASE_URL,
+
+    prepareHeaders: async headers => {
+        const userSession = (await Utils.retrieveUserSession()) || '';
+        const token = !!userSession && JSON.parse(userSession)?.token.token;
+
+        if (token) {
+            headers.set('authorization', `Bearer ${token}`);
+        }
+
+        return headers;
+    },
+});
 
 const axiosInstance = axios.create();
 

@@ -16,19 +16,30 @@ const TabLayout: React.FC = () => {
     const { isWorker, isQC, isCGWCApproved, isGroupHead } = useRole();
 
     const tabRoutes = useMemo(
-        () => AppRoutes.filter(route => isGroupHead ? route.ghMenuBar : route.inMenuBar),
+        () => AppRoutes.filter(route => (isGroupHead ? route.ghMenuBar : route.inMenuBar)),
         [isGroupHead]
     );
 
     const pathname = usePathname();
     const progress = useSharedValue(1);
 
+    /**
+     * A cross-fade, not a curtain.
+     *
+     * This ran from opacity 0 over 700ms on **every** pathname change — including a push
+     * deeper into a tab's own stack. So every navigation in the app began with the
+     * destination fully invisible and took the better part of a second to become legible,
+     * regardless of how fast it had actually rendered. The screen was ready; the fade was
+     * the wait.
+     *
+     * 0.6 → 1 over 140ms keeps the softening the effect was there for and puts the
+     * content on screen in the frame it is ready in.
+     */
     useEffect(() => {
-        // animate from 0 -> 1 on path change
-        progress.value = 0;
+        progress.value = 0.6;
         progress.value = withTiming(1, {
-            duration: 700,
-            easing: Easing.out(Easing.cubic),
+            duration: 140,
+            easing: Easing.out(Easing.quad),
         });
     }, [pathname]);
 
@@ -66,10 +77,16 @@ const TabLayout: React.FC = () => {
                         // Roles and permissions filter
                         if (isWorker && !isCGWCApproved && !isQC && route.name === 'More') return;
 
+                        // `reset="onFocus"`, not `"always"`. `"always"` threw away the tab's
+                        // navigation state on every press, so returning to a tab remounted its
+                        // stack from the root even when the worker was already standing on it.
+                        // `"onFocus"` resets only when the tab pressed is the one already
+                        // focused — the standard tap-to-pop-to-root gesture — and leaves a
+                        // genuine tab switch to re-focus what is already mounted.
                         return (
                             <TabTrigger
                                 asChild
-                                reset="always"
+                                reset="onFocus"
                                 href={route.href}
                                 name={route.name}
                                 key={`route-${index}`}
