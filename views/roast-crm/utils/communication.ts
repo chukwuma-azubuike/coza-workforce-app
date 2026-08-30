@@ -1,29 +1,17 @@
 import { Linking } from 'react-native';
 import { ContactChannel, Guest } from '~/store/types';
+import { contactUrlFor } from '~/utils/contact-links';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { roastCRMActions } from '~/store/actions/roast-crm';
 
 /**
- * The URL for reaching a number on a given channel.
+ * Re-exported so every existing call site keeps its import.
  *
- * WhatsApp is the one that needs work: `wa.me` accepts digits only, so a number stored the
- * way people actually type them — `+234 801 234 5678` — has to be stripped before it will
- * resolve. `tel:` and `sms:` are happy with the raw string on both platforms.
- *
- * `VISIT` has no URL; there is nothing on the device to open for it.
+ * The function itself moved to `~/utils/contact-links` when the home-screen widget started
+ * calling it: this module also imports `roastCRMActions`, and the widget's headless task
+ * cannot afford to pull the store's action graph in behind one string builder.
  */
-export const contactUrlFor = (phoneNumber: string, type: ContactChannel): string | null => {
-    switch (type) {
-        case ContactChannel.CALL:
-            return `tel:${phoneNumber}`;
-        case ContactChannel.SMS:
-            return `sms:${phoneNumber}`;
-        case ContactChannel.WHATSAPP:
-            return `https://wa.me/${phoneNumber.replace(/\D/g, '')}`;
-        default:
-            return null;
-    }
-};
+export { contactUrlFor } from '~/utils/contact-links';
 
 // Unlike openPhoneAndPersist below, contacting a worker isn't a guest-assimilation event, so
 // there's nothing to persist to the guest-contact timeline - this just opens the dialer/WhatsApp.

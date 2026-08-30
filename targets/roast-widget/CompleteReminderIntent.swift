@@ -83,9 +83,11 @@ enum CompletionQueue {
 
         var snapshot = SnapshotStore.load()
 
-        guard snapshot.items.contains(where: { $0.id == reminderId }) else { return }
+        // Matched on `reminderId`, not `id`: the button carries the reminder's document
+        // id, which is the only one the server accepts. See `Snapshot.Item.reminderId`.
+        guard snapshot.items.contains(where: { $0.reminderId == reminderId }) else { return }
 
-        snapshot.items.removeAll { $0.id == reminderId }
+        snapshot.items.removeAll { $0.reminderId == reminderId }
         snapshot.totalItems = max(0, snapshot.totalItems - 1)
         snapshot.counts.due = max(0, snapshot.counts.due - 1)
         snapshot.counts.total = max(0, snapshot.counts.total - 1)

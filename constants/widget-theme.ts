@@ -44,14 +44,26 @@ export const WIDGET_SPACE = {
     /** The overdue rail. Present in every row — transparent when the row is not overdue. */
     railWidth: 3,
     glyphColumn: 22,
-    checkbox: 32,
+    /**
+     * Every button in the row's trailing cluster — Call, WhatsApp, Text and the checkbox.
+     *
+     * 28 rather than the 32 the checkbox had alone. Four controls where there was one
+     * means the cluster is now ~120dp of a ~300dp row, and the four dp bought back per
+     * button is four characters of title on the narrowest handset that can hold this
+     * widget. Below 28 the targets stop being reliably hittable, so this is the floor
+     * rather than a preference.
+     */
+    action: 28,
+    /** Tight on purpose: the cluster should read as one control group, not four buttons. */
+    actionGap: 3,
 } as const;
 
 export const WIDGET_RADIUS = {
     container: 24,
     row: 12,
     pill: 11,
-    checkbox: 16,
+    /** Half of `WIDGET_SPACE.action` — the cluster is circular. */
+    action: 14,
 } as const;
 
 /**

@@ -29,3 +29,38 @@ enum WidgetGlyph {
         }
     }
 }
+
+/**
+ The three ways a row can reach a guest, in the order they are rendered.
+
+ ⚠️ **Mirrors `WIDGET_CONTACT_CHANNELS` in `utils/contact-links.ts` and `ACTION_PATHS` in
+ `constants/widget-glyphs.ts`.** The raw values are `ContactChannel`'s, because they travel
+ in the deep link this widget builds and the app parses them straight back into that enum.
+
+ WhatsApp is the awkward one: its brand mark is not an SF Symbol and never will be, so the
+ two platforms cannot draw the same thing. The strip is therefore semantic rather than
+ branded — **one bubble is a text message, two bubbles are the chat app, a handset is a
+ call** — which also survives iOS 18's tinted mode, where a brand colour would not.
+ */
+enum WidgetContactChannel: String, CaseIterable {
+    case call = "CALL"
+    case whatsapp = "WHATSAPP"
+    case sms = "SMS"
+
+    var symbol: String {
+        switch self {
+        case .call: return "phone.fill"
+        case .whatsapp: return "bubble.left.and.bubble.right.fill"
+        case .sms: return "message.fill"
+        }
+    }
+
+    /// What a screen reader says, and what the app's handoff screen shows while it waits.
+    var label: String {
+        switch self {
+        case .call: return "Call"
+        case .whatsapp: return "WhatsApp"
+        case .sms: return "Text"
+        }
+    }
+}

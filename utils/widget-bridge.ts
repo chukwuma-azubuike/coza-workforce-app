@@ -38,6 +38,27 @@ export interface IRoastWidgetSnapshotItem {
     kind: ROAST_TASK_KIND;
     /** Only a reminder can be completed from the widget — the rest need a screen. */
     completable: boolean;
+    /**
+     * The reminder's **document** id, and the only thing `/reminders/:id/complete` accepts.
+     *
+     * `id` above is the task's composite id (`reminder:652b…`), which the completion path
+     * used to send — so every widget completion queued correctly, removed the row
+     * optimistically, and was then rejected by the server. The reminder came back on the
+     * next sync, which is precisely the failure the completion queue exists to prevent.
+     * Present only on `REMINDER` rows, and `completable` now depends on it.
+     */
+    reminderId?: string;
+    /**
+     * The guest's number, so Call / WhatsApp / Text on the row reach them.
+     *
+     * **Absent under `hideGuestNames`**, without exception. This file is readable outside
+     * the app sandbox (`D-10`) and a phone number identifies a person as surely as a name
+     * does — redacting the title and leaving the number would be redacting nothing.
+     *
+     * Absent too when the guest has no number on record, which is what hides the strip
+     * rather than offering three buttons that dial nothing.
+     */
+    phoneNumber?: string;
     deepLink: string;
 }
 
@@ -82,6 +103,7 @@ export const buildWidgetSnapshot = ({
     counts,
     streak,
     isSignedIn,
+    guestPhoneNumbers = {},
     hideGuestNames = false,
     generatedAt = new Date().toISOString(),
 }: {
@@ -89,6 +111,15 @@ export const buildWidgetSnapshot = ({
     counts: ITaskCounts;
     streak: IStreakState | null;
     isSignedIn: boolean;
+    /**
+     * `guestId → number`, resolved by the caller from the guest cache.
+     *
+     * A task carries a `guestId` and a composed sentence, never a number — the same gap
+     * `useGuestNameIndex` exists to close for the Today feed and the notification
+     * scheduler. Passed in rather than looked up here so this stays a pure function, and
+     * so the widget's headless task never tries to read a cache it has no store for.
+     */
+    guestPhoneNumbers?: Record<string, string | undefined>;
     hideGuestNames?: boolean;
     generatedAt?: string;
 }): IRoastWidgetSnapshot => {
@@ -129,7 +160,11 @@ export const buildWidgetSnapshot = ({
             dueAt: task.dueAt,
             isOverdue: task.isOverdue,
             kind: task.kind,
-            completable: task.kind === ROAST_TASK_KIND.REMINDER,
+            // Both halves matter. A `REMINDER` row without a `reminderId` is a server bug,
+            // and offering a checkbox for it would queue a completion nothing can apply.
+            completable: task.kind === ROAST_TASK_KIND.REMINDER && !!task.reminderId,
+            reminderId: task.reminderId,
+            phoneNumber: hideGuestNames ? undefined : task.guestId ? guestPhoneNumbers[task.guestId] : undefined,
             deepLink: task.deepLink,
         })),
         streak: {

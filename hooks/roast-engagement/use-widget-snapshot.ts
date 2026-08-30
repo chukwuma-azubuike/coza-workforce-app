@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useAppSelector } from '~/store/hooks';
 import { userSelectors } from '~/store/actions/users';
 import { roastEngagementSelectors } from '~/store/actions/roast-engagement';
 import { useGetNotificationPreferencesQuery } from '~/store/services/roast-engagement';
 import { buildWidgetSnapshot, writeWidgetSnapshot } from '~/utils/widget-bridge';
+import useGuestNameIndex from '~/views/roast-crm/hooks/use-guest-name-index';
 
 /**
  * Keeps the home-screen widget's snapshot current.
@@ -33,6 +34,24 @@ const useWidgetSnapshot = () => {
     // renders un-redacted until it is known, which matches the server-side default.
     const { data: prefs } = useGetNotificationPreferencesQuery(undefined, { skip: !isSignedIn });
 
+    /**
+     * `guestId → number`, for the row's Call / WhatsApp / Text.
+     *
+     * A cache read in every practical case — every Roast screen has already loaded the
+     * worker's guests — but it does **resolve after the feed does** on a cold start, which
+     * is why it belongs in the dependency list below rather than being read once. The
+     * first write of the morning carries no numbers and the strip is simply absent; the
+     * write that follows a few hundred milliseconds later carries them and the strip
+     * appears. The same late resolution that the notification scheduler's `contentKey`
+     * exists to survive.
+     */
+    const guests = useGuestNameIndex();
+
+    const guestPhoneNumbers = useMemo(
+        () => Object.fromEntries(Object.entries(guests).map(([id, guest]) => [id, guest.phoneNumber])),
+        [guests]
+    );
+
     useEffect(() => {
         // Sign-out is handled by the teardown in `hooks/auth`, which writes the signed-out
         // snapshot. Writing one here too would race it.
@@ -46,11 +65,12 @@ const useWidgetSnapshot = () => {
                 counts: cachedFeed.counts,
                 streak,
                 isSignedIn: true,
+                guestPhoneNumbers,
                 hideGuestNames: !!prefs?.hideGuestNames,
                 generatedAt: cachedFeed.generatedAt,
             })
         );
-    }, [cachedFeed, isSignedIn, prefs?.hideGuestNames, streak]);
+    }, [cachedFeed, guestPhoneNumbers, isSignedIn, prefs?.hideGuestNames, streak]);
 };
 
 export default useWidgetSnapshot;

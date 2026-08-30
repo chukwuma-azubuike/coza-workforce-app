@@ -180,6 +180,37 @@ Notification **tray** actions on Android still launch it — `D-8`'s accepted de
 build once and share; wiring `expo-notifications` into that path is separate work and stays
 in v1.5.
 
+**Five controls per row, not one — Call, WhatsApp, Text and Mark done.** The widget could
+tell a worker who needed them and give them no way to reach anybody. The three contact
+buttons lead, on the same argument the notification tray's do: reaching the guest is why
+the row exists and is the one thing with no faster route. They are absent entirely when
+the guest has no number on record, which is what `IRoastWidgetSnapshotItem.phoneNumber`
+carries — **and it is dropped under `hideGuestNames`**, because redacting a name and
+leaving a number redacts nothing.
+
+⚠️ **Android does it in place; iOS goes through the app.** The library's receiver handles
+`OPEN_URI` as `ACTION_VIEW`, so an Android tap opens the dialer from the launcher with no
+JS task and no app launch. A WidgetKit `Link` does not open the URL it names — it is
+handed to the containing app whatever the scheme — so iOS links to `/roast-crm/contact`,
+a handoff screen that fires the real URL and `replace`s itself with Today. Same buttons,
+same order; the asymmetry is the completion path's, again.
+
+**The trailing cluster cost the time badge its place.** Four buttons at 28 where there was
+one at 32 takes ~90dp off a ~300dp row, and a title fighting a time badge for what is left
+truncates to nothing on a narrow launcher. The time moved down into the note line, which
+now reads `7:30 PM · brought her sister`. That is a net gain: an overdue row *with* a note
+never showed its time at all before, and every row now says when it is due. Only the word
+`OVERDUE` stays on the title line, because it has to be readable without being read.
+
+**The widget was completing the wrong id, and had been since it shipped.** The checkbox
+sent `item.id`, which is the task's **composite** id (`reminder:652b…`) — the very thing
+§2 records as never usable to reach a reminder directly. So every widget completion
+enqueued correctly, removed the row optimistically, and was then rejected by
+`/reminders/:id/complete`; the reminder came back on the next sync. That is precisely the
+failure the completion queue exists to prevent, and it was invisible because the tap looked
+right. The snapshot now carries `reminderId` alongside `id`, both platforms send it, both
+`removeFromSnapshot` implementations match on it, and `completable` is false without it.
+
 **The iOS timeline can only re-evaluate the items it holds.** `Provider.projected` recomputes
 `isOverdue` for the six items in the snapshot. A seventh task tipping overdue is invisible
 until the app writes again. The alternative is waking the widget to recount, which is the

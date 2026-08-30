@@ -27,7 +27,21 @@ export const WIDGET_STALE_AFTER_MS = 6 * 60 * 60 * 1000;
 
 export const WIDGET_CLICK = {
     OPEN_APP: 'OPEN_APP',
+    /**
+     * `ACTION_VIEW` on an arbitrary URI, handled inside the library's own receiver.
+     *
+     * Used for the row's deep link **and** for Call / WhatsApp / Text, which is what lets
+     * an Android worker reach a guest with no app launch and no JS task at all. See
+     * `ContactStrip` in `widgets/RoastWidget.tsx`.
+     */
     OPEN_URI: 'OPEN_URI',
-    /** Completes a reminder in place. Carries `{ reminderId }` in `clickActionData`. */
+    /**
+     * Completes a reminder in place. Carries `{ reminderId }` in `clickActionData`.
+     *
+     * ⚠️ That is the reminder's **document** id, not the task's composite `id`. The two
+     * were the same value until the snapshot started carrying both, and the composite one
+     * is rejected by `/reminders/:id/complete` — silently, because the tap had already
+     * removed the row.
+     */
     COMPLETE_REMINDER: 'ROAST_COMPLETE_REMINDER',
 } as const;

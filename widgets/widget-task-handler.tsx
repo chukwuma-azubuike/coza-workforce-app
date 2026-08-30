@@ -85,9 +85,13 @@ const completeReminder = async (reminderId: string): Promise<void> => {
  * Without this the row sits there until the app next writes a snapshot — which, if the app
  * is not running, could be hours. A checkbox that visibly does nothing is indistinguishable
  * from a broken one.
+ *
+ * Matched on `reminderId`, not on `id`. The row's `id` is the task's composite id and the
+ * button now carries the reminder's document id, because that is the only one the server
+ * accepts — see `IRoastWidgetSnapshotItem.reminderId`.
  */
 const removeFromSnapshot = async (snapshot: IRoastWidgetSnapshot, id: string): Promise<IRoastWidgetSnapshot> => {
-    const items = snapshot.items.filter(item => item.id !== id);
+    const items = snapshot.items.filter(item => item.reminderId !== id);
 
     const updated: IRoastWidgetSnapshot = {
         ...snapshot,

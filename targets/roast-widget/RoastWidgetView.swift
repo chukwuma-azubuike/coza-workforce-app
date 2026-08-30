@@ -202,37 +202,25 @@ struct RoastWidgetView: View {
 
                     Spacer(minLength: 0)
 
-                    // Never colour alone: the word is what survives tinted mode.
+                    // Never colour alone: the word is what survives tinted mode. The time
+                    // that used to sit here has moved down — see `metaLabel`.
                     if item.isOverdue {
                         Text("OVERDUE")
                             .font(Theme.label)
                             .tracking(Theme.labelTracking)
                             .foregroundStyle(Theme.overdue)
-                    } else {
-                        Text(timeLabel(item))
-                            .font(Theme.meta)
-                            .foregroundStyle(.secondary)
                     }
                 }
 
-                // The note. Already in the snapshot, already redacted under
-                // `hideGuestNames`, and rendered by neither platform until now.
-                if let subtitle = item.subtitle, !subtitle.isEmpty {
-                    Text(subtitle)
-                        .font(Theme.subtitle)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .minimumScaleFactor(0.85)
-                } else if item.isOverdue {
-                    // An overdue row with no note still has to say when it was due.
-                    Text(timeLabel(item))
-                        .font(Theme.subtitle)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                }
+                // Time first, then the note — already redacted under `hideGuestNames`.
+                Text(metaLabel(item))
+                    .font(Theme.subtitle)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
 
-            checkbox(item)
+            actions(item)
         }
         .padding(.horizontal, Theme.rowPaddingH)
         .padding(.vertical, Theme.rowPaddingV)
@@ -240,8 +228,81 @@ struct RoastWidgetView: View {
             RoundedRectangle(cornerRadius: Theme.rowRadius, style: .continuous)
                 .fill(item.isOverdue ? Theme.overdueFill : Theme.rowFill)
         )
-        // The row itself opens the guest; the checkbox above overrides it.
+        // The row itself opens the guest; the buttons above override it.
         .widgetURL(URL(string: item.deepLink))
+    }
+
+    /**
+     The meta line — when it is due, and then what it is about.
+
+     The time used to sit at the end of the title line. The trailing cluster grew from one
+     button to four, which costs the text column most of its slack, and a title fighting a
+     time badge for what is left truncates to nothing.
+
+     Moving it down is a gain rather than a concession: an overdue row *with* a note never
+     showed its time at all before, and every row now says when it is due whether or not it
+     has anything else to say.
+     */
+    private func metaLabel(_ item: RoastWidgetSnapshot.Item) -> String {
+        let time = timeLabel(item)
+
+        guard let subtitle = item.subtitle, !subtitle.isEmpty else {
+            return time
+        }
+
+        return "\(time) · \(subtitle)"
+    }
+
+    // MARK: - Actions
+
+    /**
+     The row's trailing cluster: Call, WhatsApp, Text, and Mark done.
+
+     Reaching the guest leads, because it is the reason the row exists and the thing with
+     no faster route — the same ordering argument the notification tray's actions are built
+     on. The three are absent entirely when the guest has no number on record, rather than
+     offered as buttons that dial nothing.
+
+     The hierarchy inside the cluster is **fill weight, not size**: mark-done is solid,
+     the three contact buttons are tinted, and all four are the same circle. A cluster
+     whose primary is merely bigger reads as four unrelated controls.
+     */
+    private func actions(_ item: RoastWidgetSnapshot.Item) -> some View {
+        HStack(spacing: Theme.actionGap) {
+            if let phoneNumber = item.phoneNumber, !phoneNumber.isEmpty {
+                ForEach(WidgetContactChannel.allCases, id: \.rawValue) { channel in
+                    Link(destination: contactURL(channel, phoneNumber: phoneNumber)) {
+                        actionLabel(systemName: channel.symbol, isPrimary: false)
+                    }
+                    .accessibilityLabel("\(channel.label): \(item.title)")
+                }
+            }
+
+            checkbox(item)
+        }
+    }
+
+    /**
+     Where a contact button actually points.
+
+     **A widget `Link` does not open the URL it names** — WidgetKit hands it to the
+     containing app whatever the scheme, so a `tel:` link here would reach the app's URL
+     handler and dial nothing. So it links to `/roast-crm/contact`, which opens the real
+     URL from inside the app, where `Linking` has a window to hand it to.
+
+     Android has no such rule: its widget fires `ACTION_VIEW` straight from the launcher
+     and the dialer opens with nothing else woken. The asymmetry is accepted rather than
+     levelled down, exactly as the completion path's is.
+
+     The number is percent-encoded against `.alphanumerics` rather than the query set,
+     because a leading `+` survives `urlQueryAllowed` intact and is then read back as a
+     space by the app's query parser — turning `+2348012345678` into a number that dials
+     nothing, silently.
+     */
+    private func contactURL(_ channel: WidgetContactChannel, phoneNumber: String) -> URL {
+        let encoded = phoneNumber.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? ""
+
+        return URL(string: "myapp://roast-crm/contact?channel=\(channel.rawValue)&phone=\(encoded)") ?? fallbackURL
     }
 
     /**
@@ -251,35 +312,40 @@ struct RoastWidgetView: View {
      that there are no interactive widgets at all, so the checkbox becomes a deep link —
      the app opens on the guest, where the same action is one tap away. Offering a control
      that looks tappable and silently does nothing would be worse than either.
+
+     Rendered only when the snapshot carries a `reminderId`. That is the reminder's
+     document id; the composite task `id` this used to send is rejected by the server,
+     after the row has already gone.
      */
     @ViewBuilder
     private func checkbox(_ item: RoastWidgetSnapshot.Item) -> some View {
-        if item.completable {
+        if item.completable, let reminderId = item.reminderId, !reminderId.isEmpty {
             if #available(iOS 17.0, *) {
-                Button(intent: CompleteReminderIntent(reminderId: item.id)) {
-                    checkboxLabel
+                Button(intent: CompleteReminderIntent(reminderId: reminderId)) {
+                    actionLabel(systemName: "checkmark", isPrimary: true)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("Mark done: \(item.title)")
             } else {
                 Link(destination: URL(string: item.deepLink) ?? fallbackURL) {
-                    checkboxLabel
+                    actionLabel(systemName: "checkmark", isPrimary: true)
                 }
                 .accessibilityLabel("Open \(item.title) to mark it done")
             }
         }
     }
 
-    /// Filled rather than hairline-outlined, because on iOS 17+ it genuinely is pressable
-    /// and a control that reads as decoration does not get pressed.
-    private var checkboxLabel: some View {
-        Image(systemName: "checkmark")
-            .font(.system(size: 13, weight: .bold))
-            .foregroundStyle(Theme.accent)
-            .frame(width: Theme.checkbox, height: Theme.checkbox)
+    /// Filled rather than hairline-outlined, because these genuinely are pressable and a
+    /// control that reads as decoration does not get pressed — more true of four small
+    /// controls than it was of the one checkbox this started as.
+    private func actionLabel(systemName: String, isPrimary: Bool) -> some View {
+        Image(systemName: systemName)
+            .font(.system(size: 12, weight: .bold))
+            .foregroundStyle(isPrimary ? AnyShapeStyle(Color.white) : AnyShapeStyle(Theme.accent))
+            .frame(width: Theme.action, height: Theme.action)
             .background(
-                RoundedRectangle(cornerRadius: Theme.checkboxRadius, style: .continuous)
-                    .fill(Theme.accentFill)
+                RoundedRectangle(cornerRadius: Theme.actionRadius, style: .continuous)
+                    .fill(isPrimary ? AnyShapeStyle(Theme.accent) : AnyShapeStyle(Theme.accentFill))
             )
     }
 

@@ -2,8 +2,9 @@ import { FlexWidget, SvgWidget, TextWidget } from 'react-native-android-widget';
 
 import ROAST_COPY from '~/constants/roast-copy';
 import { WIDGET_CLICK, WIDGET_STALE_AFTER_MS, WIDGET_VISIBLE_ROWS } from '~/constants/widget';
-import { widgetGlyphFor } from '~/constants/widget-glyphs';
+import { widgetActionGlyphFor, widgetGlyphFor } from '~/constants/widget-glyphs';
 import { IWidgetPalette, WIDGET_COLOURS, WIDGET_RADIUS, WIDGET_SPACE, WIDGET_TYPE } from '~/constants/widget-theme';
+import { WIDGET_CONTACT_CHANNELS, contactChannelLabel, contactUrlFor } from '~/utils/contact-links';
 // `import type`, so this edge erases at build and the require cycle documented in
 // `widget-bridge.ts` stays one-directional.
 import type { IRoastWidgetSnapshot, IRoastWidgetSnapshotItem } from '~/utils/widget-bridge';
@@ -75,22 +76,117 @@ const relativeFor = (iso: string): string => {
 };
 
 /**
+ * One button in a row's trailing cluster.
+ *
+ * Circular, filled, and 28dp — see `WIDGET_SPACE.action` for why that number and not a
+ * larger one. The fill is the point: the cluster used to be a single checkbox, and the
+ * note on it said a control that reads as decoration does not get pressed. That is more
+ * true of four small controls than it was of one.
+ *
+ * The hierarchy inside the cluster is fill weight, not size. Mark-done is the primary and
+ * is **solid**; the three ways of reaching the guest are tinted. All four are the same
+ * shape and the same size, so the row still scans as one control group.
+ */
+const ActionButton: React.FC<{
+    palette: IWidgetPalette;
+    accessibilityLabel: string;
+    isPrimary?: boolean;
+    clickAction: string;
+    clickActionData: Record<string, string>;
+    svg?: string;
+    text?: string;
+}> = ({ palette, accessibilityLabel, isPrimary, clickAction, clickActionData, svg, text }) => (
+    <FlexWidget
+        clickAction={clickAction}
+        clickActionData={clickActionData}
+        accessibilityLabel={accessibilityLabel}
+        style={{
+            width: WIDGET_SPACE.action,
+            height: WIDGET_SPACE.action,
+            borderRadius: WIDGET_RADIUS.action,
+            backgroundColor: isPrimary ? palette.accent : palette.accentFill,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginLeft: WIDGET_SPACE.actionGap,
+        }}
+    >
+        {!!svg && <SvgWidget svg={svg} style={{ width: 14, height: 14 }} />}
+        {!!text && <TextWidget text={text} style={{ fontSize: 14, fontWeight: '700', color: '#FFFFFF' }} />}
+    </FlexWidget>
+);
+
+/**
+ * Call, WhatsApp and Text, straight from the home screen.
+ *
+ * **`OPEN_URI`, not a custom click action.** The library's receiver handles `OPEN_URI`
+ * natively — `ACTION_VIEW` with `FLAG_ACTIVITY_NEW_TASK` — so the dialer opens without a
+ * headless JS task running at all. The alternative would route through
+ * `widget-task-handler`, and `Linking.openURL` from a headless task has no activity to
+ * hand the intent to. This is the one interaction on the surface that needs no app,
+ * no session and no queue.
+ *
+ * iOS cannot do this. A widget `Link` is delivered to the containing app whatever its
+ * scheme, so there the same three buttons deep-link to `/roast-crm/contact`, which opens
+ * the URL from inside the app. Same buttons, same order, one platform doing it in place —
+ * the asymmetry is accepted rather than levelled down, exactly as the completion path is.
+ */
+const ContactStrip: React.FC<{ phoneNumber: string; title: string; palette: IWidgetPalette }> = ({
+    phoneNumber,
+    title,
+    palette,
+}) => (
+    <>
+        {WIDGET_CONTACT_CHANNELS.map(channel => {
+            const uri = contactUrlFor(phoneNumber, channel);
+            const glyph = widgetActionGlyphFor(channel, palette.accent);
+
+            if (!uri || !glyph) {
+                return null;
+            }
+
+            return (
+                <ActionButton
+                    key={channel}
+                    svg={glyph}
+                    palette={palette}
+                    clickAction={WIDGET_CLICK.OPEN_URI}
+                    clickActionData={{ uri }}
+                    accessibilityLabel={`${contactChannelLabel(channel)}: ${title}`}
+                />
+            );
+        })}
+    </>
+);
+
+/**
  * One task.
  *
  * The rail keeps its lane whether or not the row is overdue — it used to be rendered
  * *only* when overdue, so an overdue row's text began 11dp further right than a normal
  * one's. Nothing on the surface said "unfinished" as loudly as text that did not line up.
+ *
+ * ## Where the time went
+ *
+ * It used to sit at the end of the title line. The trailing cluster grew from one button
+ * to four, which costs the text column about 90dp, and a title fighting a time badge for
+ * what is left truncates to nothing on a narrow launcher. So the time moved down and the
+ * meta line now reads `7:30 PM · brought her sister`, in that order.
+ *
+ * That is a gain rather than a concession: an overdue row *with* a note never showed its
+ * time at all before, and every row now states when it is due whether or not it has
+ * something else to say. Only the `OVERDUE` word stays on the title line, because it is
+ * the one thing that has to be readable without reading.
  */
 const Row: React.FC<{ item: IRoastWidgetSnapshotItem; palette: IWidgetPalette }> = ({ item, palette }) => {
     const accent = item.isOverdue ? palette.overdue : palette.accent;
+    const time = timeFor(item.dueAt);
+    const meta = item.subtitle ? `${time} · ${item.subtitle}` : time;
 
     return (
         <FlexWidget
             clickAction={WIDGET_CLICK.OPEN_URI}
             clickActionData={{ uri: item.deepLink }}
-            accessibilityLabel={`${item.title}${item.isOverdue ? ', overdue' : `, ${timeFor(item.dueAt)}`}${
-                item.subtitle ? `, ${item.subtitle}` : ''
-            }`}
+            accessibilityLabel={`${item.title}${item.isOverdue ? ', overdue' : ''}, ${meta}`}
             style={{
                 width: 'match_parent',
                 flexDirection: 'row',
@@ -132,68 +228,54 @@ const Row: React.FC<{ item: IRoastWidgetSnapshotItem; palette: IWidgetPalette }>
                     <FlexWidget style={{ flex: 1 }} />
 
                     {/* Never colour alone. The word is what survives a monochrome render. */}
-                    <TextWidget
-                        text={item.isOverdue ? 'OVERDUE' : timeFor(item.dueAt)}
-                        style={
-                            item.isOverdue
-                                ? {
-                                      fontSize: WIDGET_TYPE.label.size,
-                                      fontWeight: WIDGET_TYPE.label.weight,
-                                      letterSpacing: WIDGET_TYPE.label.letterSpacing,
-                                      color: palette.overdue,
-                                      marginLeft: 6,
-                                  }
-                                : {
-                                      fontSize: WIDGET_TYPE.meta.size,
-                                      fontWeight: WIDGET_TYPE.meta.weight,
-                                      color: palette.muted,
-                                      marginLeft: 6,
-                                  }
-                        }
-                    />
+                    {item.isOverdue && (
+                        <TextWidget
+                            text="OVERDUE"
+                            style={{
+                                fontSize: WIDGET_TYPE.label.size,
+                                fontWeight: WIDGET_TYPE.label.weight,
+                                letterSpacing: WIDGET_TYPE.label.letterSpacing,
+                                color: palette.overdue,
+                                marginLeft: 6,
+                            }}
+                        />
+                    )}
                 </FlexWidget>
 
-                {/* The note. Already in the snapshot, already redacted under
-                    `hideGuestNames`, and rendered by neither platform until now. An
-                    overdue row with no note still has to say when it was due. */}
-                {(!!item.subtitle || item.isOverdue) && (
-                    <TextWidget
-                        text={item.subtitle || timeFor(item.dueAt)}
-                        maxLines={1}
-                        truncate="END"
-                        style={{
-                            fontSize: WIDGET_TYPE.subtitle.size,
-                            fontWeight: WIDGET_TYPE.subtitle.weight,
-                            color: palette.muted,
-                            // First thing to shrink when the system font scale is cranked
-                            // up — the note is the most expendable line in the row.
-                            adjustsFontSizeToFit: true,
-                        }}
-                    />
-                )}
+                {/* Time first, then the note — already redacted under `hideGuestNames`. */}
+                <TextWidget
+                    text={meta}
+                    maxLines={1}
+                    truncate="END"
+                    style={{
+                        fontSize: WIDGET_TYPE.subtitle.size,
+                        fontWeight: WIDGET_TYPE.subtitle.weight,
+                        color: palette.muted,
+                        // First thing to shrink when the system font scale is cranked
+                        // up — the meta line is the most expendable in the row.
+                        adjustsFontSizeToFit: true,
+                    }}
+                />
             </FlexWidget>
 
+            {/* Reaching the guest is why the row exists, so it leads — the same ordering
+                argument the notification tray's actions are built on. Absent entirely when
+                there is no number on record, rather than three buttons that dial nothing. */}
+            {!!item.phoneNumber && <ContactStrip phoneNumber={item.phoneNumber} title={item.title} palette={palette} />}
+
             {/* Only a reminder can be completed from here. Everything else needs a screen,
-                and a checkbox that opened the app would be a checkbox that lied. Filled
-                rather than hairline-outlined, because it genuinely is pressable and a
-                control that reads as decoration does not get pressed. */}
-            {item.completable && (
-                <FlexWidget
+                and a checkbox that opened the app would be a checkbox that lied. */}
+            {item.completable && !!item.reminderId && (
+                <ActionButton
+                    isPrimary
+                    text="✓"
+                    palette={palette}
                     clickAction={WIDGET_CLICK.COMPLETE_REMINDER}
-                    clickActionData={{ reminderId: item.id }}
+                    // The reminder's document id, never the task's composite `id` — see
+                    // `IRoastWidgetSnapshotItem.reminderId`.
+                    clickActionData={{ reminderId: item.reminderId }}
                     accessibilityLabel={`Mark done: ${item.title}`}
-                    style={{
-                        width: WIDGET_SPACE.checkbox,
-                        height: WIDGET_SPACE.checkbox,
-                        borderRadius: WIDGET_RADIUS.checkbox,
-                        backgroundColor: palette.accentFill,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        marginLeft: 6,
-                    }}
-                >
-                    <TextWidget text="✓" style={{ fontSize: 14, fontWeight: '700', color: palette.accent }} />
-                </FlexWidget>
+                />
             )}
         </FlexWidget>
     );

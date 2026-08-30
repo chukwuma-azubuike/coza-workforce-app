@@ -82,6 +82,7 @@ export const KNOWN_NOTIFICATION_ROUTES: ReadonlySet<string> = new Set([
     '/reports/welfare-report',
     '/reports/witty-report',
     '/roast-crm',
+    '/roast-crm/contact',
     '/roast-crm/global-dashboard',
     '/roast-crm/guests/profile',
     '/roast-crm/leaderboards',

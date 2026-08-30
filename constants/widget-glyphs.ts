@@ -1,4 +1,4 @@
-import { ROAST_TASK_KIND } from '~/store/types';
+import { ContactChannel, ROAST_TASK_KIND } from '~/store/types';
 
 /**
  * One glyph per task kind — the thing that lets a widget be triaged at a glance.
@@ -57,3 +57,35 @@ const PATHS: Record<ROAST_TASK_KIND, string> = {
 /** The glyph for a kind, already coloured. Unknown kinds fall back to the reminder bell. */
 export const widgetGlyphFor = (kind: ROAST_TASK_KIND, colour: string): string =>
     svg(PATHS[kind] ?? PATHS[ROAST_TASK_KIND.REMINDER], colour);
+
+/**
+ * The row's action strip — Call, WhatsApp, Text.
+ *
+ * ⚠️ **Mirrored in `targets/roast-widget/WidgetGlyphs.swift`** under `action(for:)`, the
+ * same hand-mirroring the kind table above lives under.
+ *
+ * WhatsApp is the awkward one. Its brand mark is not an SF Symbol and never will be, so
+ * the two platforms cannot draw the same thing — and a green tile would be the only
+ * branded colour on a surface whose whole colour budget is spent on urgency. So the strip
+ * is semantic rather than branded: **one bubble is a text message, two bubbles are the
+ * chat app, a handset is a call.** That distinction survives iOS 18's tinted mode, which a
+ * brand colour would not, and the accessibility label carries the word either way.
+ *
+ * `VISIT` has no glyph because it has no URL — see `contactUrlFor`.
+ */
+const ACTION_PATHS: Partial<Record<ContactChannel, string>> = {
+    /** SF Symbol: `phone.fill` — the same handset the `CALL_DUE` kind uses. */
+    [ContactChannel.CALL]: PATHS[ROAST_TASK_KIND.CALL_DUE],
+    /** SF Symbol: `bubble.left.and.bubble.right.fill` */
+    [ContactChannel.WHATSAPP]:
+        '<path d="M13 8a2 2 0 0 1-2 2H6l-3 3V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2z"/><path d="M17 8h2a2 2 0 0 1 2 2v11l-3-3h-7a2 2 0 0 1-2-2v-1"/>',
+    /** SF Symbol: `message.fill` */
+    [ContactChannel.SMS]: '<path d="M21 14a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+};
+
+/** The glyph for a contact channel, already coloured. `null` for one with nothing to draw. */
+export const widgetActionGlyphFor = (channel: ContactChannel, colour: string): string | null => {
+    const path = ACTION_PATHS[channel];
+
+    return path ? svg(path, colour) : null;
+};

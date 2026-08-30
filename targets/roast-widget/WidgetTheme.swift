@@ -36,13 +36,24 @@ enum Theme {
     static let rowPaddingV: CGFloat = 7
     static let railWidth: CGFloat = 3
     static let glyphColumn: CGFloat = 22
-    static let checkbox: CGFloat = 32
+    /**
+     Every button in the row's trailing cluster — Call, WhatsApp, Text and the checkbox.
+
+     28 rather than the 32 the checkbox had to itself. Four controls where there was one
+     means the cluster is now most of a row's trailing third, and the four points bought
+     back per button are four characters of title on the narrowest device this renders on.
+     Below 28 the targets stop being reliably hittable, so this is a floor.
+     */
+    static let action: CGFloat = 28
+    /// Tight on purpose: the cluster should read as one control group, not four buttons.
+    static let actionGap: CGFloat = 3
 
     // MARK: - Radius
 
     static let rowRadius: CGFloat = 12
     static let pillRadius: CGFloat = 11
-    static let checkboxRadius: CGFloat = 16
+    /// Half of `action` — the cluster is circular.
+    static let actionRadius: CGFloat = 14
 
     // MARK: - Colour
 

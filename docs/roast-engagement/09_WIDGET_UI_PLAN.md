@@ -307,3 +307,127 @@ The whole point of the rework is how it *looks*, and none of the above sees a pi
    or Xiaomi's launcher actually gives is the variable no simulator reproduces. If rows
    clip, option 2 in §4 — note on the first row only — is the fallback.
 3. **Gradient banding** on low-end panels. The two stops sit ~3% apart to avoid it.
+
+---
+
+## 9. Row actions — call, WhatsApp, text
+
+Added after the UI rework shipped. The widget could name the person who needed calling and
+offer no way to call them; the only control on the surface was Mark done.
+
+### 9.1 The shape
+
+```
+┌────────────────────────────────────────────────────┐
+│  3 due · 1 overdue                  ⌜+2⌟  ⌜🔥 5⌟  │
+│                                                    │
+│ ╭────────────────────────────────────────────────╮ │
+│ │▌  ✆  Ada — call back      OVERDUE  ✆ 💬 💬 ⦿  │ │
+│ │▌     9:00 AM · re: baptism class               │ │
+│ ╰────────────────────────────────────────────────╯ │
+│ ╭────────────────────────────────────────────────╮ │
+│ │   ↩  Bola needs a follow-up        ✆ 💬 💬 ⦿   │ │
+│ │      2:30 PM · Last spoke 12 days ago          │ │
+│ ╰────────────────────────────────────────────────╯ │
+└────────────────────────────────────────────────────┘
+```
+
+Four circles at 28, gap 3, in one group. **Hierarchy is fill weight, not size**: Mark done
+is solid accent with a white tick, the three contact buttons are accent at 12% with an
+accent glyph, and all four are the same circle. A cluster whose primary is merely bigger
+reads as four unrelated controls rather than one.
+
+`M7`'s rule still holds and now matters more — a control that reads as decoration does not
+get pressed, and that is truer of four small controls than it was of one.
+
+### 9.2 Where the space came from
+
+The cluster is ~117dp of a ~300dp row. Something on the title line had to go, and the
+candidates were the title, the time and the `OVERDUE` word.
+
+- The **title** is the row's content. Not negotiable.
+- `OVERDUE` is the one thing that has to be legible without being read, and it survives a
+  monochrome render where the rail alone does not. Not negotiable either.
+- The **time** moved down, and the note line became `7:30 PM · <note>`.
+
+That is a gain, not a concession. Under the old layout an overdue row showed `OVERDUE` on
+the title line and the note underneath, so **an overdue row with a note never stated its
+time at all** — the exact row where the time matters most. Every row now does.
+
+The vertical budget is unchanged: the cluster is 28 tall against a text block of ~35, so
+it costs nothing at all.
+
+### 9.3 Why the two platforms differ
+
+| | Android | iOS |
+|---|---|---|
+| Mechanism | `OPEN_URI` → `ACTION_VIEW` in the library's receiver | `Link` → the containing app |
+| App launched? | No | Yes |
+| Works offline | Yes | Yes |
+
+**A WidgetKit `Link` does not open the URL it names.** Whatever the scheme, iOS hands it to
+the containing app — so a `tel:` link on a widget reaches the app's URL handler and dials
+nothing. The iOS buttons therefore point at `myapp://roast-crm/contact?channel=…&phone=…`,
+a screen that fires the real URL from inside the app and `replace`s itself with Today, so
+returning from the dialer lands on the feed rather than on a dead handoff screen.
+
+⚠️ The number is percent-encoded against `.alphanumerics`, not `.urlQueryAllowed`. A
+leading `+` survives the query set intact and is then read back as a space by the app's
+parser — `+2348012345678` becomes a number that dials nothing, silently.
+
+Android needs none of that: the receiver fires the intent from the launcher and nothing
+else wakes. Levelling iOS's hop down onto Android would be giving up the better behaviour
+for symmetry, which is the same call the completion path made.
+
+### 9.4 WhatsApp has no glyph either platform can share
+
+Its brand mark is not an SF Symbol and never will be, and a green tile would be the only
+branded colour on a surface whose entire colour budget is spent on urgency. So the strip is
+**semantic rather than branded**: a handset is a call, one bubble is a text message, two
+bubbles are the chat app. That survives §5's tinted mode, which a brand colour would not,
+and the accessibility label carries the word regardless.
+
+### 9.5 What this does not do
+
+- **No engagement ping from an Android tap.** No JS runs, so nothing can be queued. This
+  matches the app, where `Today`'s call button does not ping either — contacting a guest is
+  not a `QUALIFYING_ACTION_KIND`. If that ever changes, the Android path cannot follow it
+  without giving up in-place opening.
+- **No contact history.** `openPhoneAndPersist` records an outgoing call against the guest
+  timeline; the widget's buttons are `openPhoneNumber`'s equivalent and record nothing.
+
+### 9.6 As built
+
+**A latent completion bug surfaced while wiring the cluster.** The checkbox sent
+`item.id` — the task's **composite** id — where `/reminders/:id/complete` wants the
+reminder's document id. Every widget completion since launch queued, removed its row, and
+was rejected; the reminder returned on the next sync. The snapshot now carries `reminderId`
+separately, both platforms send it, both optimistic removals match on it, and `completable`
+is false without it. See [`07_AS_BUILT.md §4`](./07_AS_BUILT.md).
+
+**`contactUrlFor` moved to `utils/contact-links.ts`.** Its old home imports
+`roastCRMActions`, and the Android widget renders inside a headless task Android gives a
+few seconds to live. `views/roast-crm/utils/communication.ts` re-exports it, so no existing
+call site moved.
+
+**`WIDGET_SPACE.checkbox` became `WIDGET_SPACE.action`,** mirrored into `WidgetTheme.swift`
+as `Theme.action`. 32 → 28: four dp per button is four characters of title on the narrowest
+device this renders on, and 28 is the floor at which the targets stay hittable.
+
+### Verification
+
+- Swift typechecks against the iOS 16 SDK (`swiftc -typecheck -target arm64-apple-ios16.0`),
+  exit 0.
+- `tsc --noEmit` clean across every touched file; the Android bundle exports clean.
+- SF Symbols used: `phone.fill` (iOS 13), `bubble.left.and.bubble.right.fill` (iOS 13),
+  `message.fill` (iOS 13) — all below the iOS 16 floor.
+
+### Still unverified, and only a device can
+
+1. **Whether four 28dp targets are hittable** on a real launcher at real widget widths.
+   The fallback is dropping Text, which is the least-used of the three.
+2. **`https://wa.me/…` routing to WhatsApp rather than a browser** from a launcher-fired
+   `ACTION_VIEW`. It works from inside the app because WhatsApp verifies the domain as an
+   app link; nothing about that changes with the caller, but it has not been watched.
+3. **Title truncation on a 4-column widget on a 320dp screen** — the narrowest case, and
+   the one the time badge was moved to protect.

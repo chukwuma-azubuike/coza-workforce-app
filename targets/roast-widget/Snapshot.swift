@@ -35,6 +35,22 @@ struct RoastWidgetSnapshot: Codable {
         var isOverdue: Bool
         var kind: String
         var completable: Bool
+        /**
+         The reminder's **document** id — the only one `/reminders/:id/complete` accepts.
+
+         `id` is the task's composite id (`reminder:652b…`). The completion path used to
+         send that, which the server rejects after the row has already been removed.
+         Optional because a snapshot written by an older app does not carry it, and the
+         checkbox is simply not offered when it is missing.
+         */
+        var reminderId: String?
+        /**
+         The guest's number, for the row's Call / WhatsApp / Text.
+
+         Absent when there is no number on record, and **always absent** when the worker
+         has `hideGuestNames` on — a number identifies a person as surely as a name does.
+         */
+        var phoneNumber: String?
         var deepLink: String
 
         /// `dueAt` as a date, for the timeline. Invalid input sorts to the distant future
