@@ -24,6 +24,8 @@ import { cn } from '~/lib/utils';
 import { Guest, ICreateReminderPayload, IRoastReminder } from '~/store/types';
 import { useCreateReminderMutation, useUpdateReminderMutation } from '~/store/services/roast-engagement';
 import { localTimezone } from '~/hooks/roast-engagement';
+import { useMirrorTarget } from '~/hooks/roast-engagement/use-reminder-mirror';
+import { MIRROR_LABELS, MIRROR_PROVIDER, availableProviders } from '~/utils/device-mirror';
 import { ReminderFormValidationSchema } from '../utils/validation';
 import { availableQuickTimes, quickTimeKeyFor } from './quick-times';
 
@@ -78,6 +80,26 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
     const [createReminder, { isLoading: creating }] = useCreateReminderMutation();
     const [updateReminder, { isLoading: updating }] = useUpdateReminderMutation();
     const isSaving = creating || updating;
+
+    const { applyMirror, mirrorDefault, mirrorFor } = useMirrorTarget();
+
+    /**
+     * Which device store this reminder also goes to, if any.
+     *
+     * Seeded from the worker's default on a new reminder, and from what this reminder is
+     * *actually* mirrored to when editing — so opening an edit sheet does not silently
+     * re-apply a default the worker had turned off for this one.
+     */
+    const [mirrorTarget, setMirrorTarget] = useState<MIRROR_PROVIDER | null>(null);
+
+    useEffect(() => {
+        if (visible) {
+            setMirrorTarget(reminder ? mirrorFor(reminder._id) : mirrorDefault);
+        }
+        // Read once per open. Re-seeding whenever the ledger changes would overwrite a
+        // choice the worker has just made in this very sheet.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [visible, reminder?._id]);
 
     /**
      * Recomputed each time the sheet opens, never at mount.
@@ -144,6 +166,7 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                     note: values.note.trim(),
                 }).unwrap();
 
+                await applyMirror(saved, mirrorTarget);
                 onSaved?.(saved);
             } else {
                 const payload: ICreateReminderPayload = {
@@ -157,6 +180,7 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                 };
 
                 const saved = await createReminder(payload).unwrap();
+                await applyMirror(saved, mirrorTarget);
                 onSaved?.(saved);
             }
 
@@ -291,6 +315,69 @@ const ReminderSheet: React.FC<ReminderSheetProps> = ({ visible, guest, reminder,
                                                         {dayjs(values.dueAt).format('dddd D MMMM, h:mm A')} ·{' '}
                                                         {dayjs(values.dueAt).fromNow()}
                                                     </Text>
+                                                )}
+
+                                                {/* Offered only once a time exists, because what the phone
+                                                    can hold depends on it — the Android alarm cannot carry a
+                                                    date and so is only shown for something due today. */}
+                                                {!!values.dueAt && !errors.dueAt && (
+                                                    <View className="gap-2 pt-2">
+                                                        <Text className="!text-xs text-muted-foreground">
+                                                            Also add to my phone
+                                                        </Text>
+
+                                                        <View className="flex-row flex-wrap gap-2">
+                                                            {[null, ...availableProviders(values.dueAt)].map(
+                                                                provider => {
+                                                                    const isSelected = mirrorTarget === provider;
+
+                                                                    return (
+                                                                        <TouchableOpacity
+                                                                            key={provider ?? 'none'}
+                                                                            activeOpacity={0.6}
+                                                                            accessibilityRole="button"
+                                                                            accessibilityState={{
+                                                                                selected: isSelected,
+                                                                            }}
+                                                                            onPress={() => {
+                                                                                Haptics.selectionAsync();
+                                                                                setMirrorTarget(provider);
+                                                                            }}
+                                                                            className={cn(
+                                                                                'h-10 px-4 rounded-full border justify-center',
+                                                                                isSelected
+                                                                                    ? 'bg-primary border-primary'
+                                                                                    : 'border-border'
+                                                                            )}
+                                                                        >
+                                                                            <Text
+                                                                                className={cn(
+                                                                                    '!text-sm',
+                                                                                    isSelected &&
+                                                                                        'text-primary-foreground dark:text-white'
+                                                                                )}
+                                                                            >
+                                                                                {provider
+                                                                                    ? MIRROR_LABELS[provider]
+                                                                                    : 'Just Roast'}
+                                                                            </Text>
+                                                                        </TouchableOpacity>
+                                                                    );
+                                                                }
+                                                            )}
+                                                        </View>
+
+                                                        {/* Said plainly, because the alternative is a worker
+                                                            editing the copy on their phone and wondering why
+                                                            Roast never heard about it. */}
+                                                        {!!mirrorTarget && (
+                                                            <Text className="!text-[11px] text-muted-foreground">
+                                                                {mirrorTarget === MIRROR_PROVIDER.ANDROID_ALARM
+                                                                    ? "Your clock app will ring. Roast can't cancel that alarm later — you'll dismiss it yourself."
+                                                                    : "A copy, not a link. Changes you make there won't reach Roast."}
+                                                            </Text>
+                                                        )}
+                                                    </View>
                                                 )}
                                             </View>
 

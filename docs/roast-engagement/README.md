@@ -19,7 +19,7 @@ every deviation and why, rather than editing the reasoning out of the originals.
 | 05 | [UX specification](./05_UX_SPEC.md) | Design + React Native | Screen-by-screen, copy registry, motion, empty states, accessibility |
 | 06 | [Delivery plan](./06_DELIVERY_PLAN.md) | PM + leads | Phasing, ticket breakdown, sequencing, risk register, test plan |
 | 07 | [As built](./07_AS_BUILT.md) | Everyone | What shipped, and every place it differs from 00–06 — including seven API contract corrections |
-| 08 | [Device reminders plan](./08_DEVICE_REMINDERS_PLAN.md) | PM + mobile | **Proposed, not built.** Mirroring a reminder into the phone's own Reminders app, calendar or alarm clock |
+| 08 | [Device reminders](./08_DEVICE_REMINDERS_PLAN.md) | PM + mobile | Mirroring a reminder into the phone's own Reminders app, calendar or alarm clock — plan and as-built |
 
 ## Relationship to the existing notification docs
 

@@ -17,6 +17,9 @@ import {
     useUpdateNotificationPreferencesMutation,
 } from '~/store/services/roast-engagement';
 import { localTimezone } from '~/hooks/roast-engagement';
+import { useAppDispatch, useAppSelector } from '~/store/hooks';
+import { roastEngagementActions, roastEngagementSelectors } from '~/store/actions/roast-engagement';
+import { MIRROR_LABELS, MIRROR_PROVIDER, availableProviders } from '~/utils/device-mirror';
 import HourPicker from './HourPicker';
 
 /**
@@ -53,6 +56,19 @@ const openSystemSettings = () => {
 const NotificationSettings: React.FC = () => {
     const { data: prefs, isLoading } = useGetNotificationPreferencesQuery();
     const [updatePreferences] = useUpdateNotificationPreferencesMutation();
+
+    const dispatch = useAppDispatch();
+    const mirrorDefault = useAppSelector(roastEngagementSelectors.selectMirrorDefault);
+
+    /**
+     * Device-local, and so not part of `patch` below.
+     *
+     * The providers on offer differ by platform — "Reminders" is an iOS concept with no
+     * Android counterpart — so a preference that synced to the server would follow a
+     * worker onto a handset where it means nothing. Asked without a due time, so the
+     * 24-hour-only Android alarm is not offered as a standing default it could never keep.
+     */
+    const mirrorOptions = availableProviders();
 
     const [permissionGranted, setPermissionGranted] = useState(true);
     const [picking, setPicking] = useState<'quietHoursStart' | 'quietHoursEnd' | null>(null);
@@ -208,6 +224,58 @@ const NotificationSettings: React.FC = () => {
                         checked={prefs.hideGuestNames}
                         onCheckedChange={checked => patch({ hideGuestNames: checked })}
                     />
+                </CardContent>
+            </Card>
+
+            <Text className="!text-xs font-semibold uppercase text-muted-foreground mb-2 mt-6 tracking-wide">
+                On this phone
+            </Text>
+
+            <Card>
+                <CardContent className="p-4 gap-3">
+                    <View className="gap-0.5">
+                        <Text className="font-medium">Also add reminders to</Text>
+                        <Text className="!text-xs text-muted-foreground">
+                            New reminders get a copy in your phone&apos;s own app, so they survive the notification
+                            being swiped away. You can change this on any single reminder.
+                        </Text>
+                    </View>
+
+                    <View className="flex-row flex-wrap gap-2">
+                        {[null, ...mirrorOptions].map(provider => {
+                            const isSelected = mirrorDefault === provider;
+
+                            return (
+                                <TouchableOpacity
+                                    key={provider ?? 'none'}
+                                    activeOpacity={0.6}
+                                    accessibilityRole="button"
+                                    accessibilityState={{ selected: isSelected }}
+                                    onPress={() => dispatch(roastEngagementActions.setMirrorDefault(provider))}
+                                    className={cn(
+                                        'h-10 px-4 rounded-full border justify-center',
+                                        isSelected ? 'bg-primary border-primary' : 'border-border'
+                                    )}
+                                >
+                                    <Text
+                                        className={cn(
+                                            '!text-sm',
+                                            isSelected && 'text-primary-foreground dark:text-white'
+                                        )}
+                                    >
+                                        {provider ? MIRROR_LABELS[provider] : 'Nothing'}
+                                    </Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </View>
+
+                    <Text className="!text-[11px] text-muted-foreground">
+                        Copies are removed when you complete or delete the reminder, and when you sign out.
+                        {mirrorDefault === MIRROR_PROVIDER.CALENDAR
+                            ? ' Calendar entries sync wherever that calendar syncs.'
+                            : ''}
+                    </Text>
                 </CardContent>
             </Card>
 

@@ -1,7 +1,8 @@
 # Roast — Mirroring a reminder onto the device · Implementation plan
 
-**Status: proposed, not built.** This document plans the work; nothing in it ships until
-the decisions in §3 are made.
+**Status: built.** The plan below is kept as written; §7 records what was actually
+decided and what changed on the way. Two questions in §3 are still open and are **not**
+engineering questions — see D-1 and D-5.
 
 A Roast reminder currently exists in two places: a row on the server, and a local
 notification scheduled by `use-reminder-scheduler.ts`. Both are ours, and both are only as
@@ -45,11 +46,11 @@ be actively wrong, and the UI has to know that.
 Android gets an alarm; both get calendar. Forcing one shared vocabulary onto them produces
 a menu where half the entries are greyed out on each platform.
 
-### Neither module is installed
+### Neither module was installed
 
 ```
-expo-calendar         — not in package.json
-expo-intent-launcher  — not in package.json
+expo-calendar        ~15.0.8   ← added
+expo-intent-launcher ~13.0.8   ← added
 ```
 
 Both carry native code. **This feature cannot ship as an `eas update`** — it needs
@@ -216,3 +217,60 @@ The honest summary: on iOS this is a genuinely good feature and the platform sup
 properly. On Android the calendar half works and the alarm half is a compromise the UI has
 to apologise for. Ship the iOS half confidently, the Android calendar alongside it, and
 treat the alarm as optional.
+
+
+---
+
+## 7. As built
+
+Everything in §5 shipped. What the plan left open, and how it was answered:
+
+| Decision | Answer | Where |
+|---|---|---|
+| **D-1** — governance sign-off for guest names leaving the sandbox | ⚠️ **Still open.** The code is written so the answer can be "no" cheaply: the whole feature is off unless a worker turns it on, and the default is `null`. | — |
+| **D-2** — ship the Android alarm | **Yes, inside a 24-hour horizon.** `availableProviders(dueAt)` simply does not return it for anything further out, so the UI cannot offer a date the intent could not honour. | `utils/device-mirror.ts` |
+| **D-3** — Calendar on iOS as well as Reminders | **No.** iOS is offered Reminders only. One line in `availableProviders` reverses it. | `utils/device-mirror.ts` |
+| **D-4** — which Android calendar | Primary if the device names one, else the first that accepts a write, else `null` and the option quietly fails. | `writableEventCalendarId` |
+| **D-5** — Play Store permission declaration | ⚠️ **Still open.** Note that `expo-calendar`'s plugin adds **`READ_CALENDAR` as well as `WRITE_CALENDAR`**, unconditionally. Roast only ever writes; the read permission is the plugin's, not ours, and the declaration has to account for it anyway. | `app.json` |
+
+### Deviations from the plan as written
+
+**The default preference is device-local, not on `IRoastNotificationPrefs`.** The plan put
+it in Notification settings without saying where it is stored. It went into the persisted
+`roastEngagementState` slice instead: the available providers differ by platform, so a
+synced preference would put "Reminders" — an iOS-only concept — onto the same worker's
+Android handset, where it means nothing. No backend change was needed for any of this.
+
+**`hideGuestNames` is honoured.** Not in the plan, and it should have been. A calendar
+event titled with a guest's name breaks that promise more thoroughly than a notification
+does, because it is still there tomorrow and on their laptop. Mirrors made under that
+setting are titled "Roast follow-up".
+
+**Mirrors carry a `createdAt`, and the reconcile ignores anything under two minutes old.**
+Not foreseen. A mirror is written against the reminder's real id the moment the server
+returns it, but the cached reminder list is still holding the *optimistic* row under a
+temporary id until the refetch lands — and a reconcile in that window sees a ledger entry
+with no matching reminder and correctly concludes the reminder is gone. It would have
+deleted the mirror a second after writing it. `MIRROR_SETTLE_MS` closes that window.
+
+**`useReminderMirror` is split in two.** `useMirrorTarget` is the write half and has no
+effects, so a screen can call it; `useReminderMirror` adds the reconcile and is mounted
+once from `useRoastEngagement`, beside the notification scheduler. Mounting the whole hook
+per sheet would have run a reconcile loop for every sheet on screen.
+
+### What still cannot be done, and is not a bug
+
+- **An Android alarm cannot be deleted by us, ever.** `ACTION_SET_ALARM` returns nothing
+  identifying and Android exposes no API to list or remove one. It survives completing the
+  reminder, deleting it, and signing out. The sheet says so in as many words rather than
+  implying a cleanup that will not happen.
+- **There is no iOS alarm.** Apple exposes no API at any privilege level.
+- **Nothing reads back.** Ticking the item off in Apple Reminders does not complete the
+  Roast reminder, by design — see §2.2.
+
+### Release note
+
+⚠️ **This needs a new binary.** Both modules are native, so it cannot reach anyone through
+`eas update`. Until a build carrying them is installed, `availableProviders()` still
+returns options and the writes will fail — silently and harmlessly, to `null` — so a stale
+dev client will show the row and appear to do nothing.

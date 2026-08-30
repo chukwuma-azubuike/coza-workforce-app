@@ -9,8 +9,9 @@ import { ILogoutPayload } from '~/store/types';
 import { useLogoutMutation } from '~/store/services/account';
 import { useNotifications } from '../push-notifications/useNotifications';
 import { getDeviceId } from '~/utils/device';
-import { roastEngagementActions } from '~/store/actions/roast-engagement';
+import { roastEngagementActions, roastEngagementSelectors } from '~/store/actions/roast-engagement';
 import { cancelAllRoastNotifications } from '~/utils/local-notifications';
+import { deleteAllMirrors } from '~/utils/device-mirror';
 import { clearWidgetSnapshot } from '~/utils/widget-bridge';
 
 export const useAuth = () => {
@@ -85,8 +86,25 @@ export const logOutfn = (dispatch: ThunkDispatch<IStore, any, any>) => {
     cancelAllRoastNotifications();
     clearWidgetSnapshot();
 
-    // Persisted, and holds guest names in `cachedFeed` plus the scheduler's ledger. Left
-    // alone it rehydrates into the next person's session on this handset.
+    /**
+     * Device mirrors are the same leak, one store further out.
+     *
+     * A reminder mirrored into the iOS Reminders app carries a guest's name **off this
+     * handset** — iCloud syncs it to the worker's Mac and to icloud.com, and a work
+     * calendar event reaches their organisation's servers. Nothing else in this teardown
+     * can reach any of that; the ledger below is the only record that it exists.
+     *
+     * So it runs *before* the reset that erases the ledger, and it reads state through a
+     * thunk because `logOutfn` is handed a dispatch and no store.
+     *
+     * Android alarms cannot be deleted by anyone but the user — see `createAndroidAlarm`.
+     */
+    dispatch((_dispatch, getState) => {
+        deleteAllMirrors(Object.values(roastEngagementSelectors.selectMirrored(getState()) ?? {}));
+    });
+
+    // Persisted, and holds guest names in `cachedFeed` plus the scheduler's and mirror
+    // ledgers. Left alone it rehydrates into the next person's session on this handset.
     dispatch(roastEngagementActions.reset());
 
     // The notifications slice is persisted, so without this the previous user's push
