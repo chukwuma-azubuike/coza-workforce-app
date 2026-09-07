@@ -69,9 +69,11 @@ const GroupReportList = memo(() => {
         { refetchOnMountOrArgChange: true }
     );
 
+    const reports = data?.reports ?? [];
+
     const fetchMoreData = () => {
         if (!isFetching && !isLoading) {
-            if (data?.length) {
+            if (reports.length) {
                 setPage(prev => prev + 1);
             } else {
                 setPage(prev => prev - 1);
@@ -79,7 +81,7 @@ const GroupReportList = memo(() => {
         }
     };
 
-    const { data: moreData } = useFetchMoreData({ dataSet: data, isSuccess: isSuccess, uniqKey: 'createdAt' });
+    const { data: moreData } = useFetchMoreData({ dataSet: reports, isSuccess: isSuccess, uniqKey: 'createdAt' });
 
     const preparedForSortData = React.useMemo(
         () =>

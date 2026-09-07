@@ -1,20 +1,15 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi } from '@reduxjs/toolkit/query/react';
 import {
     Guest,
     User,
     Zone,
     GuestFormData,
-    NotificationProps,
-    NotificationType,
-    NotificationPriority,
     GlobalAnalytics,
-    TrendDirection,
     WorkerLeaderboardEntry,
     ZoneLeaderboardEntry,
     Achievement,
     AchievementRarity,
     PipelineStage,
-    NotificationRule,
     REST_API_VERBS,
     IDefaultResponse,
     GetGuestPayload,
@@ -30,100 +25,27 @@ import {
     ZoneUsersResponse,
     DropOffAnalyticsResponse,
     RecommendationsResponse,
+    IPaginationParams,
+    WorkerProfileResponse,
+    WorkerProfilePayload,
+    WorkerGuestsPayload,
+    ZoneWorkerEntry,
+    ZoneWorkersPeriodPayload,
+    ZeroEngagementWorkersPayload,
+    AnalyticsResponse,
+    AnalyticsPayload,
+    ScoringLegend,
+    UserZoneDetailsResponse,
 } from '../types';
-import APP_VARIANT from '~/config/envConfig';
 import Utils from '~/utils';
+import { roastBaseQuery } from './fetch-utils';
 import { ROLES } from '~/hooks/role';
 
 // Helper to get current ISO timestamp
-const uuid = () => Math.random().toString(36).substring(2, 10);
-
 const mockUsers: User[] = [
     { _id: 'user-worker-1', name: 'Worker 1', role: ROLES.worker },
     { _id: 'user-worker-2', name: 'Worker 2', role: ROLES.worker },
     { _id: 'user-coord-1', name: 'Coordinator', role: ROLES.zonalCoordinator, zoneIds: ['zone-1'] },
-];
-
-// Mock analytics data
-const mockStageDistribution = [
-    { name: 'Invited', value: 212, color: '#3B82F6' },
-    { name: 'Attended', value: 148, color: '#10B981' },
-    { name: 'Discipled', value: 85, color: '#8B5CF6' },
-    { name: 'Joined', value: 54, color: '#6B7280' },
-];
-
-// Mock notification data
-const mockNotifications: NotificationProps[] = [
-    {
-        _id: uuid(),
-        type: NotificationType.FOLLOW_UP,
-        title: 'Follow-up Due',
-        message: "Sarah Johnson needs a follow-up call - it's been 2 days since last contact",
-        guestName: 'Sarah Johnson',
-        guestId: 'guest1',
-        createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
-        isRead: false,
-        priority: NotificationPriority.HIGH,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.MILESTONE,
-        title: 'Milestone Completed',
-        message: 'Mike Chen completed "First Visit" milestone',
-        guestName: 'Mike Chen',
-        guestId: 'guest2',
-        createdAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
-        isRead: false,
-        priority: NotificationPriority.MEDIUM,
-        actionRequired: false,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.STAGNANT,
-        title: 'Guest Needs Attention',
-        message: "Emily Rodriguez hasn't had contact in 7 days and may be losing interest",
-        guestName: 'Emily Rodriguez',
-        guestId: 'guest3',
-        createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
-        isRead: true,
-        priority: NotificationPriority.HIGH,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.ASSIGNMENT,
-        title: 'New Guest Assigned',
-        message: 'Lisa Zhang has been assigned to you for follow-up',
-        guestName: 'Lisa Zhang',
-        guestId: 'guest5',
-        createdAt: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(), // 12 hours ago
-        isRead: true,
-        priority: NotificationPriority.MEDIUM,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.REMINDER,
-        title: 'Weekly Report Due',
-        message: 'Your weekly guest activity report is due tomorrow',
-        createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-        isRead: true,
-        priority: NotificationPriority.MEDIUM,
-        actionRequired: true,
-    },
-    {
-        _id: uuid(),
-        type: NotificationType.WELCOME,
-        title: 'Welcome Message Sent',
-        message: 'Welcome message sent to David Kim via WhatsApp',
-        guestName: 'David Kim',
-        guestId: 'guest4',
-        createdAt: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), // 1.5 days ago
-        isRead: true,
-        priority: NotificationPriority.LOW,
-        actionRequired: false,
-    },
 ];
 
 const mockCurrentUserAchievements: Achievement[] = [
@@ -157,54 +79,60 @@ const mockCurrentUserAchievements: Achievement[] = [
     },
 ];
 
-const mockNotificationRules: NotificationRule[] = [
-    {
-        id: 'n1',
-        name: 'Stagnant Guest Alert',
-        description: "Alert coordinator when a guest hasn't been contacted in 7 days",
-        triggerEvent: 'stagnant_guest',
-        conditions: { daysSinceContact: 7 },
-        recipients: ['coordinator'],
-        isActive: true,
-    },
-    {
-        id: 'n2',
-        name: 'Milestone Celebration',
-        description: 'Notify team when important milestones are completed',
-        triggerEvent: 'milestone_completed',
-        conditions: { priority: 'high' },
-        recipients: ['worker', 'coordinator'],
-        isActive: true,
-    },
-    {
-        id: 'n3',
-        name: 'Stage Transition Alert',
-        description: 'Alert admin when guests move to final stage',
-        triggerEvent: 'stage_transition',
-        conditions: { stage: 'joined' },
-        recipients: ['admin'],
-        isActive: true,
-    },
-];
+// The newer worker-list endpoints (active/inactive/zero-engagement workers) don't publish a
+// response schema, and in practice don't consistently wrap the list as `{ data: [...] }` like
+// the rest of the API - some nest it under a `workers` key instead. Try the plausible shapes and
+// always fall back to `[]` so a mismatched envelope degrades to "no workers" instead of crashing
+// `.map`/`.length` call sites.
+const extractWorkerList = (res: unknown): ZoneWorkerEntry[] => {
+    if (Array.isArray(res)) return res;
+    const data = (res as { data?: unknown } | undefined)?.data;
+    if (Array.isArray(data)) return data;
+    const nested = (data as { workers?: unknown } | undefined)?.workers;
+    if (Array.isArray(nested)) return nested;
+    const resWorkers = (res as { workers?: unknown } | undefined)?.workers;
+    if (Array.isArray(resWorkers)) return resWorkers;
+    return [];
+};
+
+// Same undocumented-envelope problem as extractWorkerList above, for the newer
+// /zone-users/worker-guests/:workerId endpoint - try the plausible shapes for both the guest
+// list and its pagination metadata, and always return something safe to `.map`/`.length` over.
+const extractGuestListResponse = (res: unknown): { pagination?: IPaginationParams; data: Guest[] } => {
+    const asRecord = (value: unknown): Record<string, unknown> | undefined =>
+        value && typeof value === 'object' ? (value as Record<string, unknown>) : undefined;
+
+    const root = asRecord(res);
+    const dataField = root?.['data'];
+    const dataRecord = asRecord(dataField);
+
+    const rawGuests: unknown = Array.isArray(res)
+        ? res
+        : Array.isArray(dataField)
+          ? dataField
+          : Array.isArray(dataRecord?.['guests'])
+            ? dataRecord?.['guests']
+            : Array.isArray(root?.['guests'])
+              ? root?.['guests']
+              : [];
+
+    const pagination = (root?.['pagination'] ?? dataRecord?.['pagination']) as IPaginationParams | undefined;
+
+    return {
+        pagination,
+        data: (rawGuests as Guest[]).map(guest => ({ ...guest, id: guest._id })),
+    };
+};
 
 const SERVICE_URL = 'roast-crm';
 
 export const roastCrmApi = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchBaseQuery({
-        baseUrl: APP_VARIANT.CRM_API_BASE_URL,
-        prepareHeaders: async headers => {
-            const userSession = (await Utils.retrieveUserSession()) || '';
-            const token = !!userSession && JSON.parse(userSession)?.token.token;
-
-            if (token) {
-                headers.set('authorization', `Bearer ${token}`);
-            }
-
-            return headers;
-        },
-    }),
+    // Shared with `roastEngagementApi` rather than declared inline. Two services now sit
+    // on this base URL, and a second copy of `prepareHeaders` is a second place for the
+    // session shape to go stale.
+    baseQuery: roastBaseQuery,
 
     tagTypes: [
         'Guest',
@@ -212,7 +140,6 @@ export const roastCrmApi = createApi({
         'Zone',
         'User',
         'Timeline',
-        'Notification',
         'CurrentUser',
         'Analytics',
         'Leaderboard',
@@ -263,22 +190,26 @@ export const roastCrmApi = createApi({
             providesTags: ['GuestList'],
         }),
 
-        getGuests: builder.query<Guest[], GetGuestPayload>({
-            query: params => ({
+        getGuests: builder.query<{ pagination: IPaginationParams; data: Guest[] }, GetGuestPayload>({
+            query: ({ page = 1, limit = 20, ...params }) => ({
                 url: `/guests/filter`,
                 method: REST_API_VERBS.GET,
-                params,
+                params: { ...params, page, limit },
             }),
 
-            transformResponse: (res: IDefaultResponse<Guest[]>) =>
-                res.data.map(guest => {
-                    return { ...guest, id: guest._id };
-                }),
+            transformResponse: (res: IDefaultResponse<Guest[]>) => {
+                return {
+                    pagination: res.pagination,
+                    data: res.data.map(guest => {
+                        return { ...guest, id: guest._id };
+                    }),
+                };
+            },
 
             providesTags: result =>
                 result
                     ? [
-                          ...result.map(({ _id }) => ({ type: 'Guest' as const, _id })),
+                          ...result.data.map(({ _id }) => ({ type: 'Guest' as const, _id })),
                           { type: 'GuestList', _id: 'LIST' },
                       ]
                     : [{ type: 'GuestList', _id: 'LIST' }],
@@ -330,7 +261,7 @@ export const roastCrmApi = createApi({
                         const arg = query.originalArgs;
                         return dispatch(
                             roastCrmApi.util.updateQueryData('getGuests', arg, draft => {
-                                const guest = draft.find(g => g._id === _id);
+                                const guest = draft.data.find(g => g._id === _id);
                                 if (guest) {
                                     Object.assign(guest, patch);
                                 }
@@ -356,6 +287,29 @@ export const roastCrmApi = createApi({
             },
             invalidatesTags: (_result, _error, { _id }) => [
                 { type: 'Guest', _id },
+                { type: 'GuestList', _id: 'LIST' },
+            ],
+        }),
+
+        deleteGuest: builder.mutation<void, string>({
+            query: _id => ({
+                url: `/guests/${_id}`,
+                method: REST_API_VERBS.DELETE,
+            }),
+            invalidatesTags: (_result, _error, _id) => [
+                { type: 'Guest', _id },
+                { type: 'GuestList', _id: 'LIST' },
+            ],
+        }),
+
+        reassignGuest: builder.mutation<Guest, { guestId: string; toWorkerId: string }>({
+            query: ({ guestId, toWorkerId }) => ({
+                url: `/guests/${guestId}/reassign`,
+                method: REST_API_VERBS.PATCH,
+                body: { toWorkerId },
+            }),
+            invalidatesTags: (_result, _error, { guestId }) => [
+                { type: 'Guest', _id: guestId },
                 { type: 'GuestList', _id: 'LIST' },
             ],
         }),
@@ -446,30 +400,6 @@ export const roastCrmApi = createApi({
             ],
         }),
 
-        // Notification Queries
-        getNotifications: builder.query<NotificationProps[], void>({
-            query: () => ({
-                url: `/notifications`,
-                method: REST_API_VERBS.GET,
-            }),
-
-            transformResponse() {
-                return mockNotifications;
-            },
-            providesTags: result =>
-                result
-                    ? [...result.map(({ _id }) => ({ type: 'Notification' as const, _id }))]
-                    : [{ type: 'Notification', _id: 'LIST' }],
-        }),
-
-        markNotificationAsRead: builder.mutation<NotificationProps, string>({
-            query: _id => ({
-                url: `/notifications/${_id}/read`,
-                method: REST_API_VERBS.PATCH,
-            }),
-            invalidatesTags: (_result, _error, _id) => [{ type: 'Notification', _id }],
-        }),
-
         // Users Query
         getZoneUsers: builder.query<Array<ZoneUsersResponse['users'][0]['profile']>, ZoneUsersPayload>({
             query: params => ({
@@ -487,17 +417,98 @@ export const roastCrmApi = createApi({
                 ),
         }),
 
+        getActiveWorkers: builder.query<ZoneWorkerEntry[], ZoneWorkersPeriodPayload>({
+            query: ({ zoneId, ...params }) => ({
+                url: `/zone-users/zone-summary/${zoneId}/active-workers`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: extractWorkerList,
+
+            providesTags: ['Zone'],
+        }),
+
+        getInactiveWorkers: builder.query<ZoneWorkerEntry[], ZoneWorkersPeriodPayload>({
+            query: ({ zoneId, ...params }) => ({
+                url: `/zone-users/zone-summary/${zoneId}/inactive-workers`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: extractWorkerList,
+
+            providesTags: ['Zone'],
+        }),
+
+        getZeroEngagementWorkers: builder.query<ZoneWorkerEntry[], ZeroEngagementWorkersPayload>({
+            query: params => ({
+                url: `/zone-users/zero-engagement-workers`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: extractWorkerList,
+
+            providesTags: ['Zone'],
+        }),
+
+        getUserZoneDetails: builder.query<UserZoneDetailsResponse, string>({
+            query: userId => ({
+                url: `/zone-users/user-zone-details/${userId}`,
+                method: REST_API_VERBS.GET,
+            }),
+
+            // No published response schema - tolerate either a `{ data: {...} }` envelope or a bare object.
+            transformResponse: (res: IDefaultResponse<UserZoneDetailsResponse> | UserZoneDetailsResponse) =>
+                (res as IDefaultResponse<UserZoneDetailsResponse>)?.data ?? (res as UserZoneDetailsResponse) ?? {},
+
+            providesTags: ['Zone'],
+        }),
+
         // Leaderboard Queries
-        getWorkerLeaderboard: builder.query<WorkerLeaderboardEntry[], LeaderboardPayload>({
+        getWorkerLeaderboard: builder.query<
+            { entries: WorkerLeaderboardEntry[]; scoringLegend?: ScoringLegend },
+            LeaderboardPayload
+        >({
             query: params => ({
                 url: `/leaderboards/global-top-performing-workers`,
                 params,
                 method: REST_API_VERBS.GET,
             }),
 
-            transformResponse: (res: IDefaultResponse<WorkerLeaderboardEntry[]>) => res.data,
+            transformResponse: (
+                res: IDefaultResponse<{ leaderboard: WorkerLeaderboardEntry[]; scoringLegend?: ScoringLegend }>
+            ) => ({
+                entries: res.data?.leaderboard ?? [],
+                scoringLegend: res.data?.scoringLegend,
+            }),
 
             providesTags: ['Leaderboard'],
+        }),
+
+        getWorkerProfile: builder.query<WorkerProfileResponse, WorkerProfilePayload>({
+            query: ({ zoneId, workerId, ...params }) => ({
+                url: `/leaderboards/zone/${zoneId}/worker-profile/${workerId}`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: (res: IDefaultResponse<WorkerProfileResponse>) => res.data,
+
+            providesTags: ['Leaderboard'],
+        }),
+
+        getWorkerGuestsByStage: builder.query<{ pagination?: IPaginationParams; data: Guest[] }, WorkerGuestsPayload>({
+            query: ({ workerId, ...params }) => ({
+                url: `/zone-users/worker-guests/${workerId}`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+
+            transformResponse: extractGuestListResponse,
+
+            providesTags: ['GuestList'],
         }),
 
         getZoneLeaderboard: builder.query<ZoneLeaderboardEntry[], LeaderboardPayload>({
@@ -542,21 +553,10 @@ export const roastCrmApi = createApi({
             providesTags: ['PipelineStages'],
         }),
 
-        getNotificationRules: builder.query<NotificationRule[], void>({
-            query: () => ({
-                url: `/pipeline/notification-rules`,
-                method: REST_API_VERBS.GET,
-            }),
-            transformResponse() {
-                return mockNotificationRules;
-            },
-            providesTags: ['Pipeline'],
-        }),
-
         updatePipelineStage: builder.mutation<PipelineStage, Partial<PipelineStage> & { id: string }>({
             query: ({ id, ...patch }) => ({
-                url: `/pipeline/stages/${id}`,
-                method: REST_API_VERBS.PATCH,
+                url: `/assimilation-stages/${id}`,
+                method: REST_API_VERBS.PUT,
                 body: patch,
             }),
             invalidatesTags: ['Pipeline'],
@@ -564,7 +564,7 @@ export const roastCrmApi = createApi({
 
         createPipelineStage: builder.mutation<PipelineStage, Omit<PipelineStage, 'id'>>({
             query: stage => ({
-                url: `/pipeline/stages`,
+                url: `/assimilation-stages`,
                 method: REST_API_VERBS.POST,
                 body: stage,
             }),
@@ -573,17 +573,8 @@ export const roastCrmApi = createApi({
 
         deletePipelineStage: builder.mutation<void, string>({
             query: id => ({
-                url: `/pipeline/stages/${id}`,
+                url: `/assimilation-stages/${id}`,
                 method: REST_API_VERBS.DELETE,
-            }),
-            invalidatesTags: ['Pipeline'],
-        }),
-
-        updateNotificationRule: builder.mutation<NotificationRule, Partial<NotificationRule> & { id: string }>({
-            query: ({ id, ...patch }) => ({
-                url: `/pipeline/notification-rules/${id}`,
-                method: REST_API_VERBS.PATCH,
-                body: patch,
             }),
             invalidatesTags: ['Pipeline'],
         }),
@@ -601,7 +592,7 @@ export const roastCrmApi = createApi({
 
         getGlobalDashboard: builder.query<ZoneDashboardResponse[], RoastDashboardPayload>({
             query: params => ({
-                url: `/zones-users/reports`,
+                url: `/zone-users/reports`,
                 method: REST_API_VERBS.GET,
                 params,
             }),
@@ -620,6 +611,16 @@ export const roastCrmApi = createApi({
                 return res.data;
                 //  ?? GlobalAnalyticsPayload;
             },
+            providesTags: ['Analytics'],
+        }),
+
+        getAnalytics: builder.query<AnalyticsResponse, AnalyticsPayload>({
+            query: params => ({
+                url: `/analytics`,
+                method: REST_API_VERBS.GET,
+                params,
+            }),
+            transformResponse: (res: IDefaultResponse<AnalyticsResponse>) => res.data,
             providesTags: ['Analytics'],
         }),
 
@@ -656,6 +657,8 @@ export const {
     useGetGuestByIdQuery,
     useCreateGuestMutation,
     useUpdateGuestMutation,
+    useDeleteGuestMutation,
+    useReassignGuestMutation,
     useGetZonesQuery,
     useAddZoneMutation,
     useUpdateZoneMutation,
@@ -663,66 +666,25 @@ export const {
     useGetTimelineQuery,
     useAddTimelineMutation,
     useUpdateTimelineMutation,
-    useGetNotificationsQuery,
-    useMarkNotificationAsReadMutation,
     useGetZoneUsersQuery,
+    useGetActiveWorkersQuery,
+    useGetInactiveWorkersQuery,
+    useGetZeroEngagementWorkersQuery,
+    useGetUserZoneDetailsQuery,
     useGetGlobalDashboardQuery,
     useGetGlobalAnalyticsQuery,
+    useGetAnalyticsQuery,
     useGetWorkerLeaderboardQuery,
+    useGetWorkerProfileQuery,
+    useGetWorkerGuestsByStageQuery,
     useGetZoneLeaderboardQuery,
     useGetAchievementsQuery,
     useGetAssimilationStagesQuery,
     useGetAssimilationSubStagesQuery,
-    useGetNotificationRulesQuery,
     useUpdatePipelineStageMutation,
     useCreatePipelineStageMutation,
     useDeletePipelineStageMutation,
-    useUpdateNotificationRuleMutation,
     useGetZoneDashboardQuery,
     useGetDropoffAnalyticsQuery,
     useGetRecommendationsQuery,
 } = roastCrmApi;
-
-const GlobalAnalyticsPayload = {
-    totalGuests: mockStageDistribution.reduce((sum, stage) => sum + stage.value, 0),
-    conversionRate: Math.round(
-        ((mockStageDistribution.find(s => s.name === 'Joined')?.value || 0) /
-            mockStageDistribution.reduce((sum, stage) => sum + stage.value, 0)) *
-            100
-    ),
-    avgTimeToConversion: 42,
-    activeWorkers: 25,
-    monthlyTrends: [
-        { month: 'Jul', newGuests: 28, converted: 5 },
-        { month: 'Aug', newGuests: 35, converted: 8 },
-        { month: 'Sep', newGuests: 42, converted: 12 },
-        { month: 'Oct', newGuests: 38, converted: 10 },
-        { month: 'Nov', newGuests: 45, converted: 15 },
-        { month: 'Dec', newGuests: 52, converted: 18 },
-    ],
-    zonePerformance: [
-        { zone: 'Central', invited: 45, attended: 32, discipled: 18, joined: 12, conversion: 27 },
-        { zone: 'North', invited: 38, attended: 28, discipled: 15, joined: 8, conversion: 21 },
-        { zone: 'South', invited: 52, attended: 35, discipled: 22, joined: 15, conversion: 29 },
-        { zone: 'East', invited: 41, attended: 29, discipled: 16, joined: 10, conversion: 24 },
-        { zone: 'West', invited: 36, attended: 24, discipled: 14, joined: 9, conversion: 25 },
-    ],
-    stageDistribution: [
-        { name: 'Invited', value: 212, color: '#3B82F6' },
-        { name: 'Attended', value: 148, color: '#10B981' },
-        { name: 'Discipled', value: 85, color: '#8B5CF6' },
-        { name: 'Joined', value: 54, color: '#6B7280' },
-    ],
-    dropOffAnalysis: [
-        { stage: 'Invited → Attended', dropOff: 30, reason: 'No follow-up call' },
-        { stage: 'Attended → Discipled', dropOff: 43, reason: 'Not invited to small group' },
-        { stage: 'Discipled → Joined', dropOff: 36, reason: 'Lack of mentorship' },
-    ],
-    topPerformers: [
-        { name: 'John Worker', zone: 'Central', conversions: 8, trend: TrendDirection.UP },
-        { name: 'Mary Helper', zone: 'South', conversions: 7, trend: TrendDirection.UP },
-        { name: 'Paul Evangelist', zone: 'North', conversions: 6, trend: TrendDirection.STABLE },
-        { name: 'Sarah Minister', zone: 'East', conversions: 5, trend: TrendDirection.DOWN },
-        { name: 'David Pastor', zone: 'West', conversions: 5, trend: TrendDirection.UP },
-    ],
-};

@@ -1,6 +1,7 @@
 import React from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Clocker from './workers/clocker';
+import GHHome from './group-head';
 import { useGetLatestServiceQuery, useGetServicesQuery } from '@store/services/services';
 import useRole from '@hooks/role';
 import { IAttendance, IService } from '@store/types';
@@ -8,16 +9,16 @@ import { useGetAttendanceQuery } from '@store/services/attendance';
 import If from '@components/composite/if-container';
 import GSPView from './global-senior-pastors';
 import Utils from '@utils/index';
-import { CampusReportSummary } from './campus-pastors/report-summary';
+import CPHome from './campus-pastors/cp-home';
 import { LocationObjectCoords } from 'expo-location';
 import useGeoLocation from '@hooks/geo-location';
 import { Platform, View } from 'react-native';
 import ErrorBoundary from '~/components/composite/error-boundary';
 import { StyleSheet } from 'react-native';
 import { HomeContext } from './context';
-import TopNav from '~/components/TopNav';
 import useDeferHeavy from '~/hooks/performance/defer-heavy';
 import Loading from '~/components/atoms/loading';
+import useScreenFocus from '~/hooks/focus';
 
 interface IInitialHomeState {
     latestService: {
@@ -36,7 +37,7 @@ interface IInitialHomeState {
 }
 
 const Home: React.FC = () => {
-    const { user, isGlobalPastor, isCampusPastor } = useRole();
+    const { user, isGlobalPastor, isCampusPastor, isGroupHead } = useRole();
 
     const {
         isError,
@@ -96,6 +97,8 @@ const Home: React.FC = () => {
         Utils.checkLocationPermission(refresh);
     };
 
+    useScreenFocus({ onFocus: handleRefresh });
+
     React.useEffect(() => {
         Utils.checkLocationPermission(refresh);
     }, []);
@@ -111,7 +114,27 @@ const Home: React.FC = () => {
                 >
                     <View style={styles.container}>
                         <If condition={!!user}>
-                            <If condition={!isGlobalPastor}>
+                            <If condition={isGroupHead}>
+                                <GHHome
+                                    refreshLocation={refresh}
+                                    isInRange={isInRange as boolean}
+                                    refreshTrigger={refreshTrigger}
+                                    setRefreshTrigger={setRefreshTrigger}
+                                    deviceCoordinates={deviceCoordinates as any}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </If>
+                            <If condition={isCampusPastor}>
+                                <CPHome
+                                    refreshLocation={refresh}
+                                    isInRange={isInRange as boolean}
+                                    refreshTrigger={refreshTrigger}
+                                    setRefreshTrigger={setRefreshTrigger}
+                                    deviceCoordinates={deviceCoordinates as any}
+                                    verifyRangeBeforeAction={verifyRangeBeforeAction}
+                                />
+                            </If>
+                            <If condition={!isGlobalPastor && !isGroupHead && !isCampusPastor}>
                                 <Clocker
                                     refreshLocation={refresh}
                                     isInRange={isInRange as boolean}
@@ -122,16 +145,8 @@ const Home: React.FC = () => {
                                 />
                             </If>
                             <If condition={isGlobalPastor}>
-                                <TopNav />
                                 <GSPView servicesIsSuccess={servicesIsSuccess} services={services as IService[]} />
                             </If>
-                        </If>
-                        <If condition={isCampusPastor}>
-                            <CampusReportSummary
-                                refetchService={handleRefresh}
-                                campusId={user?.campus?._id as string}
-                                serviceId={latestService?._id as string}
-                            />
                         </If>
                     </View>
                 </SafeAreaView>

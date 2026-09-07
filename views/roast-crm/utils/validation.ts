@@ -35,3 +35,27 @@ export const ZoneFormValidationSchema = Yup.object().shape({
     }).optional(),
     descriptions: Yup.string().optional(),
 });
+
+/**
+ * A custom guest reminder (US-2.1).
+ *
+ * `dueAt` is validated against *now at submit time*, not at mount: a sheet left open for
+ * ten minutes on a time chosen ten minutes ahead would otherwise pass validation and be
+ * rejected by the server, which is the one outcome the inline message exists to prevent.
+ *
+ * The 60-second grace matches the server's — see `02_BACKEND_SPEC.md §2.2`. Without it, a
+ * time the picker itself offered can be refused by the round trip that submits it.
+ */
+export const ReminderFormValidationSchema = Yup.object().shape({
+    guestId: Yup.string().required('A reminder has to be about a guest.'),
+    dueAt: Yup.string()
+        .required('Pick a time.')
+        .test('is-future', "That's already passed — pick a later time.", value => {
+            if (!value) {
+                return false;
+            }
+
+            return new Date(value).getTime() > Date.now() - 60_000;
+        }),
+    note: Yup.string().trim().max(280, 'Keep it under 280 characters.').required('What should this remind you to do?'),
+});

@@ -9,10 +9,16 @@ import {
     ITransferReportPayload,
     IIncidentReportPayload,
     IServiceReportPayload,
+    IWittyReportPayload,
+    IInternshipReportPayload,
+    IPruReportPayload,
+    IWelfareReportPayload,
+    IProtocolReportPayload,
     IDepartment,
     IDepartmentReportResponse,
     IService,
     IReportStatus,
+    AwaitingRole,
     REST_API_VERBS,
 } from '../types';
 import { fetchUtils } from './fetch-utils';
@@ -85,12 +91,14 @@ export interface ICampusReportSummary<R = unknown> {
     departmentalReport: {
         campus: string;
         status: IReportStatus;
+        awaitingRole?: AwaitingRole;
         departmentName: string;
         report: {
             _id: string;
             departmentId: string;
             serviceId: string;
             status: IReportStatus;
+            awaitingRole?: AwaitingRole;
         } & R;
     }[];
     incidentReport: {
@@ -104,6 +112,7 @@ export interface ICampusReportSummary<R = unknown> {
 export interface IDepartmentReportListById {
     _id: string;
     status: IStatus;
+    awaitingRole?: AwaitingRole;
     createdAt: string;
     updatedAt: string;
     updatedBy: string;
@@ -167,7 +176,7 @@ export interface IGlobalReportList extends Array<IGlobalReport> {}
 export const reportsServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: [
         SERVICE_URL,
@@ -182,6 +191,11 @@ export const reportsServiceSlice = createApi({
         'SecurityReport',
         'TransferReport',
         'ChildCareReport',
+        'WittyReport',
+        'InternshipReport',
+        'PruReport',
+        'WelfareReport',
+        'ProtocolReport',
     ],
 
     refetchOnFocus: true,
@@ -288,6 +302,76 @@ export const reportsServiceSlice = createApi({
 
             invalidatesTags: (result, error, { campusId, _id }) => [
                 { type: 'ServiceReport', id: _id },
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL,
+            ],
+        }),
+
+        createWittyReport: endpoint.mutation<void, IWittyReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/updateWittyReport/${body._id}/${body.campusId}`,
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+            invalidatesTags: (result, error, { campusId }) => [
+                'WittyReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL,
+            ],
+        }),
+
+        createInternshipReport: endpoint.mutation<void, IInternshipReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/updateInternshipReport/${body._id}/${body.campusId}`,
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+            invalidatesTags: (result, error, { campusId }) => [
+                'InternshipReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL,
+            ],
+        }),
+
+        createPruReport: endpoint.mutation<void, IPruReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/updatePruReport/${body._id}/${body.campusId}`,
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+            invalidatesTags: (result, error, { campusId }) => [
+                'PruReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL,
+            ],
+        }),
+
+        createWelfareReport: endpoint.mutation<void, IWelfareReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/updateWelfareReport/${body._id}/${body.campusId}`,
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+            invalidatesTags: (result, error, { campusId }) => [
+                'WelfareReport',
+                { type: 'CampusReport', id: campusId },
+                'GSPReport',
+                SERVICE_URL,
+            ],
+        }),
+
+        createProtocolReport: endpoint.mutation<void, IProtocolReportPayload>({
+            query: body => ({
+                url: `/${SERVICE_URL}/updateProtocolReport/${body._id}/${body.campusId}`,
+                method: REST_API_VERBS.PUT,
+                body,
+            }),
+            invalidatesTags: (result, error, { campusId }) => [
+                'ProtocolReport',
                 { type: 'CampusReport', id: campusId },
                 'GSPReport',
                 SERVICE_URL,
@@ -446,8 +530,7 @@ export const reportsServiceSlice = createApi({
 
             providesTags: (_result, _error, { campusId }) => [{ type: 'CampusReport', id: campusId }, SERVICE_URL],
 
-            transformResponse: (res: IDefaultResponse<ICampusReportList>) =>
-                res?.data.filter(report => report.serviceTime <= new Date().getTime()), // Filter out services later than same day
+            transformResponse: (res: IDefaultResponse<ICampusReportList>) => res?.data,
         }),
 
         getGlobalReportList: endpoint.query<IGlobalReportList, IGlobalReportListPayload>({
@@ -486,6 +569,11 @@ export const {
     useGetCampusReportListQuery,
     useGetGlobalReportListQuery,
     useCreateGuestReportMutation,
+    useCreateWittyReportMutation,
+    useCreateInternshipReportMutation,
+    useCreatePruReportMutation,
+    useCreateWelfareReportMutation,
+    useCreateProtocolReportMutation,
     useGetDepartmentalReportQuery,
     useGetCampusReportSummaryQuery,
     useCreateServiceReportMutation,

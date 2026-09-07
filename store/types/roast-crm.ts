@@ -200,10 +200,204 @@ export interface ZoneUsersResponse {
     }[];
 }
 export interface LeaderboardPayload extends IPaginationParams {
-    startDate?: string;
-    endDate?: string;
+    startDate?: number; // epoch milliseconds
+    endDate?: number; // epoch milliseconds
     zoneId?: string;
     campusId?: string;
+}
+
+// Verified 2026-07-19 against a live response from
+// GET /leaderboards/zone/:zoneId/worker-profile/:workerId.
+export interface WorkerStageBreakdownEntry {
+    count: number;
+    points: number;
+}
+
+export interface WorkerStageBreakdown {
+    invited?: WorkerStageBreakdownEntry;
+    attended?: WorkerStageBreakdownEntry;
+    discipled?: WorkerStageBreakdownEntry;
+    assimilated?: WorkerStageBreakdownEntry;
+}
+
+export interface WorkerProfileResponse {
+    workerId: string;
+    name?: string;
+    department?: string;
+    campus?: string;
+    role?: string;
+    pictureUrl?: string;
+    zone?: string;
+    rank?: number;
+    score?: number;
+    stageBreakdown?: WorkerStageBreakdown;
+    totalGuests?: number;
+    guestsInPeriod?: number;
+    conversions?: number;
+    timelines?: number;
+}
+
+export interface WorkerProfilePayload {
+    zoneId: string;
+    workerId: string;
+    startDate?: number;
+    endDate?: number;
+}
+
+export interface WorkerGuestsPayload extends IPaginationParams {
+    workerId: string;
+    stageId: string;
+    zoneId?: string;
+    startDate?: number;
+    endDate?: number;
+}
+
+// Verified 2026-07-19 against live responses from /zone-users/zone-summary/:zoneId/active-workers,
+// .../inactive-workers, and /zone-users/zero-engagement-workers.
+export interface ZoneWorkerEntry {
+    workerId?: string;
+    _id?: string;
+    name?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    phoneNumber?: string;
+    department?: string;
+    role?: string;
+    pictureUrl?: string;
+    zoneId?: string;
+    zoneName?: string;
+    lastActive?: string | null;
+    daysSinceActive?: number | null;
+}
+
+export interface ZoneWorkersPeriodPayload {
+    zoneId: string;
+    startDate?: number;
+    endDate?: number;
+}
+
+// Unverified - GET /zone-users/user-zone-details/:userId publishes no response schema in
+// Swagger (like most of this API). Kept lenient/optional; used defensively to resolve a
+// worker's zoneId directly instead of fuzzy-matching a zone name.
+export interface UserZoneDetailsResponse {
+    zoneId?: string;
+    zoneName?: string;
+    zone?: { _id?: string; name?: string };
+}
+
+export interface ZeroEngagementWorkersPayload {
+    zoneId?: string;
+    campusId?: string;
+    weeks?: number;
+    startDate?: number;
+    endDate?: number;
+}
+
+// GET /analytics - verified 2026-07-19 against a live response, except workerLeaderboardTrend and
+// activeVsInactiveTrend, which came back empty in the sample (no engagement-snapshot history yet -
+// per the docs both "require snapshot data"). Their per-week point shapes are a best-effort guess
+// following the same weekLabel/weekStart convention as the other verified weekly series below.
+export interface StageFunnelPoint {
+    stage?: string;
+    label?: string;
+    count?: number;
+    conversionRate?: number | null;
+    dropOffRate?: number | null;
+}
+
+export interface WeeklyGuestTrendPoint {
+    weekLabel?: string;
+    weekStart?: string;
+    year?: number;
+    week?: number;
+    invited?: number;
+    attended?: number;
+    discipled?: number;
+    joined?: number;
+    total?: number;
+}
+
+export interface WeeklyConversionTrendPoint {
+    weekLabel?: string;
+    weekStart?: string;
+    year?: number;
+    week?: number;
+    total?: number;
+    converted?: number;
+    conversionRate?: number;
+}
+
+export interface WorkerTrendSeriesPoint {
+    weekLabel?: string;
+    weekStart?: string;
+    score?: number;
+}
+
+export interface WorkerTrendSeries {
+    workerId?: string;
+    name?: string;
+    pictureUrl?: string;
+    points?: WorkerTrendSeriesPoint[];
+}
+
+// Unverified (empty sample) - real response is `{ workers: [], weeks: [] }`, not a bare array.
+export interface WorkerLeaderboardTrend {
+    workers?: WorkerTrendSeries[];
+    weeks?: string[];
+}
+
+export interface ActiveVsInactiveTrendPoint {
+    weekLabel?: string;
+    weekStart?: string;
+    active?: number;
+    inactive?: number;
+}
+
+export interface StageDropOffPoint {
+    from?: string;
+    to?: string;
+    fromCount?: number;
+    toCount?: number;
+    retained?: number;
+    dropOff?: number;
+    dropOffRate?: number;
+    conversionRate?: number;
+}
+
+export interface AnalyticsResponse {
+    period?: { start?: string; end?: string };
+    scoringLegend?: ScoringLegend;
+    stageFunnel?: StageFunnelPoint[];
+    weeklyGuestTrend?: WeeklyGuestTrendPoint[];
+    weeklyConversionTrend?: WeeklyConversionTrendPoint[];
+    workerLeaderboardTrend?: WorkerLeaderboardTrend;
+    activeVsInactiveTrend?: ActiveVsInactiveTrendPoint[];
+    stageDropOff?: StageDropOffPoint[];
+}
+
+export interface AnalyticsPayload {
+    zoneId?: string;
+    campusId?: string;
+    startDate?: number;
+    endDate?: number;
+}
+
+// Verified 2026-07-19 - present on both /leaderboards/global-top-performing-workers and /analytics.
+// Updated 2026-08-01: backend added an `engagement` entry, scored per-engagement (not
+// per-guest) via a differently-named `pointsPerEngagement` field.
+export interface ScoringLegendEntry {
+    label: string;
+    pointsPerGuest?: number;
+    pointsPerEngagement?: number;
+}
+
+export interface ScoringLegend {
+    invited?: ScoringLegendEntry;
+    attended?: ScoringLegendEntry;
+    discipled?: ScoringLegendEntry;
+    assimilated?: ScoringLegendEntry;
+    engagement?: ScoringLegendEntry;
 }
 
 export interface WorkerLeaderboardEntry {
@@ -418,8 +612,8 @@ export interface Recommendation {
 export type RecommendationsResponse = { recommendations: Recommendation[] };
 
 export interface RoastDashboardPayload {
-    startDate?: string;
-    endDate?: string;
+    startDate?: number; // epoch milliseconds
+    endDate?: number; // epoch milliseconds
     zoneId?: string;
     campusId?: string;
 }
@@ -501,7 +695,10 @@ export interface FetchCache<P = any, R = any> {
 }
 
 export type GetGuestPayload = Partial<
-    Pick<Guest, 'campusId' | 'assignedToId' | 'zoneId' | 'preferredChannelId' | 'assimilationStageId'>
+    Pick<
+        Guest,
+        'campusId' | 'assignedToId' | 'zoneId' | 'preferredChannelId' | 'assimilationStageId' | 'assimilationSubStageId'
+    >
 > &
     IPaginationParams & { search?: string };
 

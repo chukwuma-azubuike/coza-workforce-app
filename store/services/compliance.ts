@@ -7,7 +7,7 @@ const SERVICE_URL = 'compliance';
 export const complianceServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     endpoints: endpoint => ({
         // createTicket: endpoint.mutation<void, ITicket>({

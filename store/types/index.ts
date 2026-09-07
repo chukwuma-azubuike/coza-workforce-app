@@ -1,6 +1,7 @@
 import { IReportFormProps } from '@views/app/reports/forms/types';
 import APP_VARIANT from '~/config/envConfig';
 export * from './roast-crm';
+export * from './roast-engagement';
 
 // General types
 export interface ILog {
@@ -14,6 +15,8 @@ export type Month = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export interface IPaginationParams {
     page?: number;
     limit?: number;
+    totalPages?: number;
+    total?: number;
 }
 
 export enum ERROR {
@@ -100,6 +103,7 @@ export interface IDefaultResponse<D = unknown> {
     isError: boolean;
     isSuccessful: boolean;
     data: D;
+    pagination: IPaginationParams;
 }
 
 export interface IDefaultErrorResponse<D = null> {
@@ -113,12 +117,38 @@ export interface IDefaultErrorResponse<D = null> {
 export type IStatus = 'APPROVED' | 'DECLINED' | 'PENDING' | 'REVIEW_REQUESTED' | 'REJECTED' | 'SUBMITTED';
 
 export enum IReportStatus {
+    DRAFT = 'DRAFT',
+    HOD_SUBMITTED = 'HOD_SUBMITTED',
+    GH_CHANGE_REQUESTED = 'GH_CHANGE_REQUESTED',
+    GH_APPROVED = 'GH_APPROVED',
+    CP_CHANGE_REQUESTED = 'CP_CHANGE_REQUESTED',
+    CP_APPROVED = 'CP_APPROVED',
+    GSP_CHANGE_REQUESTED = 'GSP_CHANGE_REQUESTED',
+    GSP_APPROVED = 'GSP_APPROVED',
+    // v1 legacy values — kept so old records decode without crashing
     PENDING = 'PENDING',
     APPROVED = 'APPROVED',
     SUBMITTED = 'SUBMITTED',
     GSP_SUBMITTED = 'GSP_SUBMITTED',
     REVIEW_REQUESTED = 'REVIEW_REQUESTED',
 }
+
+export const LEGACY_TO_V2_STATUS: Record<string, IReportStatus> = {
+    PENDING: IReportStatus.HOD_SUBMITTED,
+    SUBMITTED: IReportStatus.GH_APPROVED,
+    GSP_SUBMITTED: IReportStatus.CP_APPROVED,
+    APPROVED: IReportStatus.GSP_APPROVED,
+    REVIEW_REQUESTED: IReportStatus.GH_CHANGE_REQUESTED,
+};
+
+// ─── Headless-GH routing (v2.1) ───────────────────────────────────────────────
+// The role a report is currently waiting on. Backend-authoritative — use this as
+// the single source of truth for who can act, never re-derive it from group
+// membership or status. `null` means terminal (GSP_APPROVED). When a department
+// has no active Group Head the backend collapses the GH tier, so a HOD_SUBMITTED
+// report can carry `awaitingRole: 'CAMPUS_PASTOR'` and a CP_CHANGE_REQUESTED one
+// can carry `awaitingRole: 'HOD'`.
+export type AwaitingRole = 'HOD' | 'GROUP_HEAD' | 'CAMPUS_PASTOR' | 'GSP' | null;
 
 // Authentication
 export interface IAuthParams extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
@@ -132,10 +162,20 @@ export interface IToken {
 }
 
 export type ILoginPayload = Pick<IAuthParams, 'email' | 'password'>;
-export interface ILogoutPayload {
-    expoPushToken: string;
-    userId: string;
-}
+/**
+ * The backend deletes the device row matching `expoPushToken` OR `deviceId`, and
+ * rejects with 422 only when neither is supplied — so the union below makes the
+ * invalid call unrepresentable rather than merely discouraged.
+ *
+ * Both are individually optional because the client cannot always produce either one:
+ * registration may have failed, the persisted slice may have rehydrated without a
+ * token, and `getDeviceId()` resolves to null early in the iOS lifecycle. Never skip
+ * the call when one of them exists — the row stays live and the next person to sign
+ * in on that handset keeps receiving the previous user's notifications.
+ */
+export type ILogoutPayload = { userId: string } & (
+    { deviceId: string; expoPushToken?: string } | { deviceId?: string; expoPushToken: string }
+);
 
 export interface IRegisterPayload extends Omit<IUser, 'id' | 'campus' | 'role' | 'isVerified' | 'isActivated'> {
     roleId: string;
@@ -178,6 +218,7 @@ export interface IUser {
     campus: ICampus;
     campusName?: string;
     status: IUserStatus;
+    groupId?: string;
     socialMedia: {
         facebook: string;
         instagram: string;
@@ -190,7 +231,7 @@ export type IEditProfilePayload = Partial<Omit<IUser, 'email' | 'password'>>;
 
 export interface IUserReport extends Pick<IAttendance, 'user'>, Pick<ITicket, 'user'> {}
 
-export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED' |'UNKNOWN';
+export type IUserStatus = 'ACTIVE' | 'DORMANT' | 'INACTIVE' | 'BLACKLISTED' | 'UNKNOWN';
 
 export interface ICreateUserPayload {
     firstName: string;
@@ -207,6 +248,9 @@ export interface ICreateDepartmentPayload {
     name: string;
     campusId: string;
     description: string;
+    // One of the backend's validated report-type enums. Omit for departments that
+    // don't participate in the HOD→GH→CP→GSP report pipeline.
+    reportType?: string;
 }
 
 export interface IReAssignUserPayload {
@@ -394,9 +438,13 @@ export interface IDepartment {
     _id: string;
     departmentName: string;
     campusId: string;
+    groupId?: string;
     description: string;
     createdAt: string;
     __v: number;
+    // Authoritative signal report-seeding reads first. Absent for departments
+    // outside the HOD→GH→CP→GSP report pipeline.
+    reportType?: string;
 }
 
 // Campus
@@ -459,14 +507,18 @@ export interface IAssignSecondaryRole {
     roleId: string;
 }
 
-// Department
+// Department (second reference — keep in sync with the one above)
 export interface IDepartment {
     _id: string;
     departmentName: string;
     campusId: string;
+    groupId?: string;
     description: string;
     createdAt: string;
     __v: number;
+    // Authoritative signal report-seeding reads first. Absent for departments
+    // outside the HOD→GH→CP→GSP report pipeline.
+    reportType?: string;
 }
 
 export interface IGHDepartment {
@@ -684,6 +736,52 @@ export interface IIncidentReportPayload extends IReportFormProps {
     incident: string;
 }
 
+export interface IWittyReportPayload extends IReportFormProps {
+    incidentReport: string | null;
+    onlineInquiries: string | null;
+    socialMediaPosts: { platform: string; url: string }[];
+    onlineConvertsCount: number;
+    onlineFirstTimersCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IInternshipReportPayload extends IReportFormProps {
+    classMemberCount: number;
+    classTaken: string | null;
+    convertsCompletedClassCount: number;
+    location: string | null;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IPruReportPayload extends IReportFormProps {
+    enquiryCount: number;
+    vehicleDedicationCount: number;
+    missingItemsCount: number;
+    praiseReportDeskCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IWelfareReportPayload extends IReportFormProps {
+    medicalSupportCount: number;
+    medicalIncident: string | null;
+    aidRequestCount: number;
+    aidTreatedCount: number;
+    aidDeclinedCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
+export interface IProtocolReportPayload extends IReportFormProps {
+    incidentCount: number;
+    theft: string | null;
+    specialGuestCount: number;
+    imageUrl: string | null;
+    comment: string | null;
+}
+
 export interface IDepartmentReportResponse {
     departmentName: string;
     departmentalReport: {
@@ -691,6 +789,12 @@ export interface IDepartmentReportResponse {
         departmentName: string;
         report: {
             _id: string;
+            status?: IReportStatus;
+            awaitingRole?: AwaitingRole;
+            ghComment?: string | null;
+            pastorComment?: string | null;
+            gspComment?: string | null;
+            reviewHistory?: IReviewHistoryEntry[];
         };
     };
     incidentReport: unknown[];
@@ -780,4 +884,161 @@ export interface IScoreMapping {
     totalMaxPoints: boolean;
     totalScore: number;
     cummulativeScore: number;
+}
+
+// ─── Group entity (v2.0) ───────────────────────────────────────────────────────
+
+// Shape returned by GET /group (list) — uses count fields, no populated arrays
+export interface IGroupListItem {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    isActive: boolean;
+    campusId?: string;
+    campus?: Pick<ICampus, '_id' | 'campusName'>;
+    ghCount: number;
+    departmentCount: number;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IGroupsListResponse {
+    groups: IGroupListItem[];
+    total: number;
+    page: number;
+    pageSize: number;
+}
+
+// Department entry inside IGroup (enriched for detail endpoints)
+export interface IGroupDepartmentEntry {
+    _id: string;
+    departmentName: string;
+    campusId?: string;
+    campusName?: string;
+    workerCount?: number;
+}
+
+// Shape returned by GET /group/:id (detail) — fully populated
+export interface IGroup extends ILog {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    isActive: boolean;
+    campusId?: string;
+    campus?: Pick<ICampus, '_id' | 'campusName'>;
+    groupHeads: Pick<IUser, '_id' | 'firstName' | 'lastName' | 'pictureUrl'>[];
+    departments: IGroupDepartmentEntry[];
+    ghCount?: number;
+    departmentCount?: number;
+    createdAt: string;
+    updatedAt?: string;
+}
+
+export interface IGroupSummary {
+    groupId: string;
+    groupName: string;
+    departmentCount: number;
+    totalWorkers: number;
+    activeWorkers: number;
+    dormantWorkers: number;
+    inactiveWorkers: number;
+}
+
+export interface IGroupAuditEntry {
+    _id: string;
+    action: string;
+    actorId: string;
+    actorName: string;
+    targetId?: string;
+    targetType?: string;
+    description: string;
+    createdAt: string;
+}
+
+// ─── Report history / audit trail (v2.0) ─────────────────────────────────────
+
+// ─── Review history (v2.1) — shape returned by the unified /transition workflow ──
+// Each entry is the canonical audit record written on a report's reviewHistory[].
+// NOTE: the backend returns the actor's userId (not a display name) and a `timestamp`.
+export interface IReviewHistoryEntry {
+    _id?: string;
+    action: 'SUBMIT' | 'RESUBMIT' | 'APPROVE' | 'CHANGE_REQUESTED' | string;
+    actor: string; // userId
+    actorRole: 'HOD' | 'AHOD' | 'GH' | 'CP' | 'GSP';
+    comment: string | null;
+    timestamp: string;
+}
+
+// ─── GH reports list (v2.0) ───────────────────────────────────────────────────
+
+export interface IGHReportListItem {
+    // Backend identifies a report by `reportId` (+ reportType). `_id` kept optional
+    // for any legacy/cached rows.
+    reportId: string;
+    _id?: string;
+    reportType: string;
+    serviceId: string;
+    serviceName: string;
+    departmentId: string;
+    departmentName: string;
+    campusName?: string;
+    status: IReportStatus;
+    awaitingRole?: AwaitingRole;
+    submittedBy?: { firstName: string; lastName: string; pictureUrl?: string };
+    submittedAt: string;
+    serviceTime: string;
+    preview?: string;
+    attachmentCount?: number;
+    createdAt: string;
+}
+
+export interface IGHReportListResponse {
+    reports: IGHReportListItem[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
+// ─── GH group departments (v2.0) ─────────────────────────────────────────────
+
+export interface IGHGroupDepartment {
+    _id: string;
+    departmentName: string;
+    campusId?: string;
+    campusName?: string;
+    workerCount: number;
+    activeCount: number;
+    dormantCount: number;
+    hodName?: string;
+    hodPictureUrl?: string;
+}
+
+// ─── GH group attendance record (v2.0) ───────────────────────────────────────
+
+export interface IGHGroupAttendanceRecord {
+    userId: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
+    departmentName: string;
+    status: IAttendanceStatus;
+    clockIn?: string;
+    clockOut?: string;
+    isManual?: boolean;
+}
+
+// ─── GH group department roster member (v2.0) ────────────────────────────────
+
+export interface IGHRosterMember {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    pictureUrl?: string;
+    email?: string;
+    role: { _id: string; name: string };
+    membershipStatus?: 'active' | 'dormant' | 'inactive';
+    clockedInToday?: boolean;
+    ticketCount?: number;
 }

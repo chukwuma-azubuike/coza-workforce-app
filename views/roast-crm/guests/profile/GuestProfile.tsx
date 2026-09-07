@@ -3,6 +3,7 @@ import { AssimilationStage, ContactChannel, Guest } from '~/store/types';
 import { useGetGuestByIdQuery, useGetTimelineQuery } from '~/store/services/roast-crm';
 import { GuestHeader } from './GuestHeader';
 import TimelineCard from './TimelineCard';
+import GuestRemindersCard from './GuestRemindersCard';
 import { Card, CardContent } from '~/components/ui/card';
 import { getStageColor } from '../../utils/colors';
 import { getProgressPercentage } from '../../utils/milestones';
@@ -34,7 +35,17 @@ const GuestProfile: React.FC<GuestProfileProps> = ({
 }) => {
     const { user } = useRole();
     const dispatch = useAppDispatch();
-    const guestParams = guestProps ?? (useLocalSearchParams() as unknown as Guest);
+    /**
+     * Read unconditionally.
+     *
+     * This was `guestProps ?? useLocalSearchParams()`, which calls a hook inside a branch.
+     * It happened to work — the branch is stable for the life of a mount — but it is a
+     * hooks-order violation that only stays harmless while nothing above it becomes
+     * conditional, and the reminders card below made this the moment to stop building on
+     * it. The params are cheap; reading them and then choosing costs nothing.
+     */
+    const searchParams = useLocalSearchParams<{ _id?: string; reminderId?: string; focus?: string }>();
+    const guestParams = guestProps ?? (searchParams as unknown as Guest);
     const guestId = guestParams?._id;
 
     const { data: guestRemote } = useGetGuestByIdQuery(guestParams?._id, { skip: !guestParams });
@@ -107,6 +118,10 @@ const GuestProfile: React.FC<GuestProfileProps> = ({
                 {/* Milestones Section */}
                 {/* TODO: TBD */}
                 {/* <MilestonesCard milestones={guest?.milestones ?? []} onToggle={handleMilestoneToggle} /> */}
+
+                {/* Reminders Section — hidden in the call-prompt flow, which is a focused
+                    "did you reach them?" panel rather than the full profile. */}
+                {!guestProps && <GuestRemindersCard guest={guest} highlightReminderId={searchParams.reminderId} />}
 
                 {/* Timeline Section */}
                 <TimelineCard

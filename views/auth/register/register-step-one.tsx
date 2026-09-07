@@ -1,177 +1,136 @@
-import { Text } from '~/components/ui/text';
-import React, { useState } from 'react';
-import { Input } from '~/components/ui/input';
-import { IRegisterFormStepOne, IRegistrationPageStep } from './types';
-import { RegisterFormContext } from './context';
+import React from 'react';
+import { View } from 'react-native';
 import { Formik, FormikConfig } from 'formik';
-import { IRegisterPayload } from '@store/types';
-import { RegisterSchema_1 } from '@utils/schemas';
-import { KeyboardAvoidingView, Platform, SafeAreaView, ScrollView, View } from 'react-native';
+import { ICountry } from 'react-native-international-phone-number';
+import { Text } from '~/components/ui/text';
+import { Input } from '~/components/ui/input';
 import { Label } from '~/components/ui/label';
-import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { PhoneInput } from '~/components/ui/phone-input';
-import { ICountry } from 'react-native-international-phone-number';
-import formatToE164 from '~/utils/formatToE164';
+import FormErrorMessage from '~/components/ui/error-message';
+import { RegisterSchema_1 } from '@utils/schemas';
+import { IRegisterFormStepOne } from './types';
+import { useRegisterForm } from './context';
+import RegisterStepLayout from './components/register-step-layout';
 
-const RegisterStepOne: React.FC<IRegistrationPageStep> = ({ onStepPress }) => {
-    if (!RegisterFormContext) {
-        return (
-            <SafeAreaView className="flex-1">
-                <Text>Step One</Text>
-            </SafeAreaView>
-        );
-    }
-    const { formValues, setFormValues } = React.useContext(RegisterFormContext);
-    const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+const RegisterStepOne: React.FC = () => {
+    const { formValues, goNext, goBack, phoneCountry, setPhoneCountry } = useRegisterForm();
 
-    const handleSelectedCountry = (country: ICountry) => {
-        setSelectedCountry(country);
-    };
+    const handleSelectedCountry = (country: ICountry) => setPhoneCountry(country);
 
-    const onSubmit: FormikConfig<IRegisterFormStepOne>['onSubmit'] = values => {
-        setFormValues(prev => {
-            return {
-                ...prev,
-                ...values,
-                phoneNumber: formValues.phoneNumber
-                    ? formatToE164(formValues.phoneNumber, selectedCountry?.callingCode as string)
-                    : (undefined as any),
-            };
-        });
-
-        onStepPress(1);
-    };
+    // Store the raw national number; conversion to E.164 happens once, at final
+    // submission, so navigating back/forward never re-formats (and corrupts) it.
+    const onSubmit: FormikConfig<IRegisterFormStepOne>['onSubmit'] = values => goNext(values);
 
     return (
-        <SafeAreaView className="flex-1">
-            <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} className="flex-1">
-                <View className="flex-1 px-4 gap-8 pt-8 pb-4">
-                    <Text className="text-3xl font-bold">Register</Text>
-                    <View className="items-center w-full flex-1">
-                        <Formik<IRegisterFormStepOne>
-                            onSubmit={onSubmit}
-                            validateOnMount={false}
-                            validationSchema={RegisterSchema_1}
-                            initialValues={formValues as IRegisterPayload}
-                        >
-                            {({
-                                errors,
-                                values,
-                                touched,
-                                isValid,
-                                handleBlur,
-                                validateForm,
-                                handleChange,
-                                setFieldError,
-                                setFieldTouched,
-                                ...props
-                            }) => {
-                                return (
-                                    <View className="w-full gap-4 flex-1 justify-between">
-                                        <ScrollView className="flex-1">
-                                            <View className="w-full gap-3">
-                                                <View className="gap-1">
-                                                    <Label>First name</Label>
-                                                    <Input
-                                                        leftIcon={{
-                                                            type: 'ionicons',
-                                                            name: 'person-outline',
-                                                        }}
-                                                        onBlur={handleBlur('firstName')}
-                                                        onChangeText={handleChange('firstName')}
-                                                        value={values?.firstName}
-                                                        placeholder="John"
-                                                    />
-                                                    {!!errors.firstName && !!touched.firstName && (
-                                                        <FormErrorMessage>{errors.firstName}</FormErrorMessage>
-                                                    )}
-                                                </View>
-                                                <View className="gap-1">
-                                                    <Label>Last name</Label>
-                                                    <Input
-                                                        leftIcon={{
-                                                            type: 'ionicons',
-                                                            name: 'person-outline',
-                                                        }}
-                                                        placeholder="Doe"
-                                                        value={values?.lastName}
-                                                        onChangeText={handleChange('lastName')}
-                                                    />
-                                                    {!!errors.lastName && !!touched.lastName && (
-                                                        <FormErrorMessage>{errors.lastName}</FormErrorMessage>
-                                                    )}
-                                                </View>
-                                                <View className="gap-1">
-                                                    <Label>Email</Label>
-                                                    <Input
-                                                        leftIcon={{
-                                                            type: 'ionicons',
-                                                            name: 'mail-outline',
-                                                        }}
-                                                        isDisabled
-                                                        value={values?.email}
-                                                        keyboardType="email-address"
-                                                        placeholder="jondoe@gmail.com"
-                                                        onChangeText={handleChange('email')}
-                                                    />
-                                                </View>
-                                                <PhoneInput
-                                                    defaultCountry="NG"
-                                                    value={values.phoneNumber}
-                                                    error={errors.phoneNumber}
-                                                    placeholder="Phone number"
-                                                    touched={touched.phoneNumber}
-                                                    selectedCountry={selectedCountry}
-                                                    onBlur={handleBlur('phoneNumber')}
-                                                    onChangeSelectedCountry={handleSelectedCountry}
-                                                    onChangePhoneNumber={handleChange('phoneNumber')}
-                                                />
-                                                <View className="gap-1">
-                                                    <Label>Address</Label>
-                                                    <Input
-                                                        leftIcon={{
-                                                            name: 'home',
-                                                            type: 'ionicons',
-                                                        }}
-                                                        value={values?.address}
-                                                        onChangeText={handleChange('address')}
-                                                        placeholder="Enter your home address"
-                                                    />
-                                                    {!!errors.address && !!touched.address && (
-                                                        <FormErrorMessage>{errors.address}</FormErrorMessage>
-                                                    )}
-                                                </View>
-                                                <View className="gap-1">
-                                                    <Label>Department</Label>
-                                                    <Input
-                                                        leftIcon={{
-                                                            type: 'ionicons',
-                                                            name: 'people',
-                                                        }}
-                                                        isDisabled
-                                                        value={values?.departmentName}
-                                                        placeholder="Quality Control"
-                                                    />
-                                                </View>
-                                            </View>
-                                        </ScrollView>
-                                        <Button
-                                            disabled={!isValid}
-                                            onPress={() => {
-                                                onSubmit(values, props as any);
-                                            }}
-                                        >
-                                            Continue
-                                        </Button>
-                                    </View>
-                                );
-                            }}
-                        </Formik>
+        <Formik<IRegisterFormStepOne>
+            onSubmit={onSubmit}
+            validateOnMount
+            validationSchema={RegisterSchema_1}
+            initialValues={formValues as IRegisterFormStepOne}
+        >
+            {({ errors, values, touched, isValid, handleBlur, handleChange, handleSubmit }) => (
+                <RegisterStepLayout
+                    title="Personal details"
+                    subtitle="Tell us a bit about yourself to get started."
+                    footer={
+                        <View className="w-full flex-row gap-4">
+                            <Button variant="outline" className="flex-1" onPress={() => goBack(values)}>
+                                Back
+                            </Button>
+                            <Button className="flex-1" disabled={!isValid} onPress={handleSubmit as () => void}>
+                                Continue
+                            </Button>
+                        </View>
+                    }
+                >
+                    <View className="w-full gap-3">
+                        <View className="gap-1">
+                            <Label>First name</Label>
+                            <Input
+                                leftIcon={{ type: 'ionicons', name: 'person-outline' }}
+                                value={values?.firstName}
+                                placeholder="John"
+                                onBlur={handleBlur('firstName')}
+                                onChangeText={handleChange('firstName')}
+                            />
+                            {!!errors.firstName && !!touched.firstName && (
+                                <FormErrorMessage>{errors.firstName}</FormErrorMessage>
+                            )}
+                        </View>
+
+                        <View className="gap-1">
+                            <Label>Last name</Label>
+                            <Input
+                                leftIcon={{ type: 'ionicons', name: 'person-outline' }}
+                                placeholder="Doe"
+                                value={values?.lastName}
+                                onBlur={handleBlur('lastName')}
+                                onChangeText={handleChange('lastName')}
+                            />
+                            {!!errors.lastName && !!touched.lastName && (
+                                <FormErrorMessage>{errors.lastName}</FormErrorMessage>
+                            )}
+                        </View>
+
+                        <View className="gap-1">
+                            <Label>Email</Label>
+                            <Input
+                                isDisabled
+                                value={values?.email}
+                                keyboardType="email-address"
+                                placeholder="jondoe@gmail.com"
+                                leftIcon={{ type: 'ionicons', name: 'mail-outline' }}
+                            />
+                            <Text className="ml-1 text-xs text-green-500">Verified ✓</Text>
+                        </View>
+
+                        <View className="gap-1">
+                            <Label>Phone number</Label>
+                            <PhoneInput
+                                defaultCountry="NG"
+                                value={values.phoneNumber}
+                                error={errors.phoneNumber}
+                                placeholder="Phone number"
+                                touched={touched.phoneNumber}
+                                selectedCountry={phoneCountry}
+                                onBlur={handleBlur('phoneNumber')}
+                                onChangeSelectedCountry={handleSelectedCountry}
+                                onChangePhoneNumber={handleChange('phoneNumber')}
+                            />
+                            {!!errors.phoneNumber && !!touched.phoneNumber && (
+                                <FormErrorMessage>{errors.phoneNumber}</FormErrorMessage>
+                            )}
+                        </View>
+
+                        <View className="gap-1">
+                            <Label>Address</Label>
+                            <Input
+                                leftIcon={{ name: 'home', type: 'ionicons' }}
+                                value={values?.address}
+                                onBlur={handleBlur('address')}
+                                onChangeText={handleChange('address')}
+                                placeholder="Enter your home address"
+                            />
+                            {!!errors.address && !!touched.address && (
+                                <FormErrorMessage>{errors.address}</FormErrorMessage>
+                            )}
+                        </View>
+
+                        <View className="gap-1">
+                            <Label>Department</Label>
+                            <Input
+                                isDisabled
+                                leftIcon={{ type: 'ionicons', name: 'people' }}
+                                value={values?.departmentName}
+                                placeholder="Quality Control"
+                            />
+                            <Text className="ml-1 text-xs text-muted-foreground">Assigned to you by your campus</Text>
+                        </View>
                     </View>
-                </View>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+                </RegisterStepLayout>
+            )}
+        </Formik>
     );
 };
 

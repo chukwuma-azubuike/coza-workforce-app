@@ -2,7 +2,7 @@
     "expo": {
         "name": "COZA Workforce",
         "slug": "coza-workforce-app",
-        "version": "2.2.18",
+        "version": "2.3.2",
         "runtimeVersion": {
             "policy": "appVersion"
         },
@@ -22,7 +22,7 @@
                 "NSLocationAlwaysUsageDescription": "COZA Workforce needs your location to verify your attendance at church events and services."
             },
             "usesAppleSignIn": true,
-"googleServicesFile": "./GoogleService-Info.plist",
+            "googleServicesFile": "./GoogleService-Info.plist",
             "entitlements": {
                 "aps-environment": "production"
             }
@@ -32,12 +32,13 @@
                 "foregroundImage": "./assets/images/android-coza-icon.png",
                 "backgroundColor": "#FFFFFF"
             },
-"package": "com.cozaglobalworkforceapp",
+            "package": "com.cozaglobalworkforceapp",
             "googleServicesFile": "./google-services.json",
             "permissions": [
                 "POST_NOTIFICATIONS",
                 "android.permission.ACCESS_COARSE_LOCATION",
-                "android.permission.ACCESS_FINE_LOCATION"
+                "android.permission.ACCESS_FINE_LOCATION",
+                "com.android.alarm.permission.SET_ALARM"
             ]
         },
         "web": {
@@ -88,12 +89,39 @@
                 "expo-notifications",
                 {
                     "defaultChannel": "default",
-                    "icon": "./assets/images/icon.png"
+                    "icon": "./assets/images/notification-icon.png",
+                    "color": "#2D0060"
                 }
             ],
             "@react-native-community/datetimepicker",
             "expo-web-browser",
-            "react-native-pdf-jsi"
+            "react-native-pdf-jsi",
+            [
+                "react-native-android-widget",
+                {
+                    "widgets": [
+                        {
+                            "name": "RoastToday",
+                            "label": "Roast — Today",
+                            "description": "Who needs you today, and your streak.",
+                            "minWidth": "250dp",
+                            "minHeight": "130dp",
+                            "targetCellWidth": 4,
+                            "targetCellHeight": 2,
+                            "resizeMode": "horizontal|vertical",
+                            "updatePeriodMillis": 1800000
+                        }
+                    ]
+                }
+            ],
+            [
+                "expo-calendar",
+                {
+                    "calendarPermission": "Roast adds a copy of a reminder to your calendar, but only for reminders you ask it to.",
+                    "remindersPermission": "Roast adds a copy of a reminder to your Reminders app, but only for reminders you ask it to."
+                }
+            ],
+            "@bacons/apple-targets"
         ],
         "experiments": {
             "typedRoutes": true

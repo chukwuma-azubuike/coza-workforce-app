@@ -4,8 +4,19 @@ import Constants from 'expo-constants';
 // Get APP_VARIANT from expo constants extra
 export const ENV = Constants.expoConfig?.extra?.APP_VARIANT as string;
 
+/**
+ * The App Group the iOS widget reads its snapshot from.
+ *
+ * Computed in `app.config.js` so it is suffixed per variant alongside the bundle id — a
+ * group shared across variants means the dev build's widget renders production guest
+ * names, or the reverse. Absent on Android and on any binary built before the widget
+ * target existed.
+ */
+export const IOS_APP_GROUP = Constants.expoConfig?.extra?.['IOS_APP_GROUP'] as string | undefined;
+
 const APP_VARIANT = {
     ENV,
+    IOS_APP_GROUP,
     isProd: ENV === 'production',
     SUPPORT_EMAIL: process.env.EXPO_PUBLIC_SUPPORT_EMAIL || '',
     CRM_API_BASE_URL: process.env.EXPO_PUBLIC_ROAST_API_BASE_URL,

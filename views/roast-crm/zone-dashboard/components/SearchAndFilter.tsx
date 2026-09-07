@@ -49,9 +49,9 @@ export function SearchAndFilter({
                     // value={selectedOption}
                     className="!w-44 !h-10"
                     placeholder="Select stage"
-                    onValueChange={option => {
-                        if (option?.value) {
-                            onStageFilterChange(option.value as Guest['assimilationStage'] | 'all');
+                    onValueChange={value => {
+                        if (value) {
+                            onStageFilterChange(value);
                         }
                     }}
                 />

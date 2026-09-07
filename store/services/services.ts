@@ -16,7 +16,7 @@ type IGetLatestServiceResponse = IDefaultResponse<IService>;
 export const servicesServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     tagTypes: [SERVICE_URL, 'Service', 'LatestService', 'ServiceList', 'CampusServices', 'PaginatedServices'],
 

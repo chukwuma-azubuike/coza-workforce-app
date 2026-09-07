@@ -5,19 +5,38 @@ export interface IModalProps {
 }
 
 export type ModalStatus = 'success' | 'error' | 'info' | 'warning';
+
+export interface IModalRender {
+    description: string | React.JSX.Element;
+    status?: ModalStatus;
+    iconType?: string;
+    iconName?: string;
+}
+
 export interface IModalState {
+    /**
+     * @deprecated Visibility is owned by the modal slice — a dispatched modal is always shown.
+     * Kept so existing call sites that spread previous state keep type-checking.
+     */
     open?: boolean;
+    /** Render an explicit "Close" action in addition to tap-to-dismiss. */
     button?: boolean;
+    /** `false` renders the raw message without the status icon treatment. Defaults to `true`. */
     defaultRender?: boolean;
     message?: string | null;
-    render?: {
-        description: string;
-        status: ModalStatus;
-        iconType: string;
-        iconName: string;
-    };
+    /** Full override of the modal body — takes precedence over `message`/`status`. */
+    render?: IModalRender;
     status?: ModalStatus;
-    duration?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
+    /** Optional heading rendered above the body. */
+    title?: string;
+    /** `false` disables backdrop / back-button dismissal (still auto-dismisses). Defaults to `true`. */
+    dismissible?: boolean;
+    /**
+     * Auto-dismiss delay. Accepts seconds (`3`) or milliseconds (`3000`); values are clamped to
+     * a legible 2s–10s window. Pass `0` to keep the modal up until it is dismissed.
+     * Omit it to get a read-time-aware duration derived from the message length and status.
+     */
+    duration?: number;
 }
 export interface INGState {
     state: {

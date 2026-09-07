@@ -23,6 +23,7 @@
             "env": {
                 "APP_VARIANT": "preview",
                 "SENTRY_DNS": "SENTRY_DNS",
+                "EXPO_APPLE_TEAM_ID": "499THBRLGD",
                 "NODE_VERSION": "20"
             },
             "channel": "preview",
@@ -40,6 +41,7 @@
             "env": {
                 "APP_VARIANT": "production",
                 "SENTRY_DNS": "SENTRY_DNS",
+                "EXPO_APPLE_TEAM_ID": "499THBRLGD",
                 "NODE_VERSION": "20"
             },
             "channel": "production",

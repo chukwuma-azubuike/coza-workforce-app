@@ -14,6 +14,7 @@ interface SearchAndFilterProps {
     searchTerm: string;
     loading: boolean;
     showModeToggle?: boolean;
+    showSelector?: boolean;
     viewMode: 'kanban' | 'list';
     setViewMode: (arg: string) => void;
     setSearchTerm: (arg: string) => void;
@@ -28,6 +29,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
     setViewMode,
     viewMode,
     stageFilter,
+    showSelector = true,
     setStageFilter,
     showModeToggle = true,
     assimilationSubStages = [],
@@ -60,7 +62,7 @@ const SearchAndFilter: React.FC<SearchAndFilterProps> = ({
                     className="pl-10 !h-10"
                 />
             </View>
-            {viewMode == 'list' && (
+            {viewMode == 'list' && showSelector && (
                 <PickerSelect
                     valueKey="_id"
                     labelKey="name"

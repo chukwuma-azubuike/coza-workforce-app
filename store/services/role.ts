@@ -7,7 +7,7 @@ const SERVICE_URL = 'role';
 export const roleServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     refetchOnFocus: true,
     refetchOnReconnect: true,

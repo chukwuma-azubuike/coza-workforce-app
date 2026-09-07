@@ -12,34 +12,41 @@ import FlatListComponent from '~/components/composite/flat-list';
 import { WorkerListView } from './WorkerListView';
 import dayjs from 'dayjs';
 import { ZoneListView } from './ZoneListView';
+import { ScoringGuide } from './ScoringGuide';
+
+// Breathing room under the last card so it clears the tab bar when scrolled to the end.
+const LIST_CONTENT_STYLE = { paddingBottom: 24 };
 
 const Leaderboards: React.FC = () => {
     const { user: currentUser, isSuperAdmin, isGlobalPastor } = useRole();
     const [date, setDate] = useState<Pick<LeaderboardPayload, 'endDate' | 'startDate'> | undefined>({
-        startDate: dayjs().subtract(7, 'day').toISOString(),
-        endDate: dayjs().toISOString(),
+        startDate: dayjs().subtract(7, 'day').valueOf(),
+        endDate: dayjs().valueOf(),
     });
-    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>();
+    // Must match the `date` default above, so the control always states the filter that's applied.
+    const [selectedPeriodCode, setSelectedPeriodCode] = useState<string>('7d');
     const [activeTab, setActiveTab] = useState('workers');
 
-    const handleDateRangeChange = useCallback((period: '7d' | '30d' | '90d') => {
+    const handleDateRangeChange = useCallback((period: 'all' | '7d' | '30d' | '90d') => {
         setSelectedPeriodCode(period);
 
-        if (typeof period !== 'object') return setDate(undefined);
+        if (period === 'all') return setDate(undefined);
 
         setDate({
             startDate: dayjs()
-                ?.subtract(Number((period as any)?.replace('d', '')), 'day')
-                ?.toISOString(),
-            endDate: dayjs()?.toISOString(),
+                ?.subtract(Number(period.replace('d', '')), 'day')
+                ?.valueOf(),
+            endDate: dayjs()?.valueOf(),
         });
     }, []);
 
-    const { data: workerLeaderboard = [], isLoading: isLoadingWorkers } = useGetWorkerLeaderboardQuery({
+    const { data: workerLeaderboardData, isLoading: isLoadingWorkers } = useGetWorkerLeaderboardQuery({
         campusId: isGlobalPastor || isSuperAdmin ? undefined : currentUser?.campus?._id,
         limit: 10,
         ...date,
     });
+    const workerLeaderboard = workerLeaderboardData?.entries ?? [];
+    const scoringLegend = workerLeaderboardData?.scoringLegend;
     const { data: zoneLeaderboard = [], isLoading: isLoadingZones } = useGetZoneLeaderboardQuery({
         campusId: isGlobalPastor || isSuperAdmin ? undefined : currentUser?.campus?._id,
         limit: 10,
@@ -78,7 +85,7 @@ const Leaderboards: React.FC = () => {
     }
 
     return (
-        <View className="py-4 px-2 gap-6">
+        <View className="flex-1 pt-4 px-2 gap-4">
             {/* Header */}
             <View className="flex-row items-center justify-between">
                 <Text className="text-2xl flex-1 font-bold">Leaderboards</Text>
@@ -87,7 +94,7 @@ const Leaderboards: React.FC = () => {
                     valueKey="_id"
                     labelKey="name"
                     items={[
-                        { _id: '', name: 'All Time' },
+                        { _id: 'all', name: 'All Time' },
                         { _id: '7d', name: 'Last 7 Days' },
                         { _id: '30d', name: 'Last 30 Days' },
                         { _id: '90d', name: 'Last 90 Days' },
@@ -100,7 +107,11 @@ const Leaderboards: React.FC = () => {
                 {/* </View> */}
             </View>
 
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-1">
+            {activeTab === 'workers' && !!scoringLegend && <ScoringGuide scoringLegend={scoringLegend} />}
+
+            {/* The list owns the scroll: everything above is fixed chrome, so the tab panel takes the
+                remaining height rather than being padded down to a guessed offset. */}
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 gap-2">
                 <TabsList>
                     <TabsTrigger value="workers">
                         <Text>Workers</Text>
@@ -110,28 +121,28 @@ const Leaderboards: React.FC = () => {
                     </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="workers" className="pb-64">
+                <TabsContent value="workers" className="flex-1">
                     <FlatListComponent
                         itemHeight={216}
-                        style={{ flex: 0 }}
                         refreshing={false}
                         isLoading={isLoadingWorkers}
                         data={workerLeaderboard}
                         renderItemComponent={renderWorkerItem}
+                        contentContainerStyle={LIST_CONTENT_STYLE}
                         emptyComponent={
                             <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>
                         }
                     />
                 </TabsContent>
 
-                <TabsContent value="zones" className="pb-64">
+                <TabsContent value="zones" className="flex-1">
                     <FlatListComponent
                         refreshing={false}
                         itemHeight={219.7}
-                        style={{ flex: 0 }}
                         data={zoneLeaderboard}
                         isLoading={isLoadingZones}
                         renderItemComponent={renderZoneItem}
+                        contentContainerStyle={LIST_CONTENT_STYLE}
                         emptyComponent={
                             <Text className="text-muted-foreground text-center my-4">Insufficient data</Text>
                         }

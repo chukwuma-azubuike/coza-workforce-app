@@ -8,6 +8,8 @@ import {
     useGetMyGuestsCountQuery,
     useUpdateGuestMutation,
 } from '~/store/services/roast-crm';
+import useInfiniteData from '~/hooks/fetch-more-data/use-infinite-data';
+import type { GetGuestPayload } from '~/store/types/roast-crm';
 
 import { Text } from '~/components/ui/text';
 import { FloatButton } from '~/components/atoms/button';
@@ -33,6 +35,7 @@ import useRole from '~/hooks/role';
 import useDebounce from '~/hooks/debounce/use-debounce';
 import KanbanColumnSkeleton from '../components/KanbanColumnSkeleton';
 import Error from '~/components/atoms/error';
+import RemindersEntryButton from '../reminders/RemindersEntryButton';
 
 function MyGuestsDashboard() {
     const { user } = useRole();
@@ -48,20 +51,50 @@ function MyGuestsDashboard() {
         isLoading: subStagesLoading,
         error: subStagesError,
     } = useGetAssimilationSubStagesQuery();
+    // Kanban groups guests across every stage, so it needs the full set (gated to kanban mode).
     const {
-        data: guests = [],
-        isLoading,
-        isFetching,
-        refetch,
+        data: guests,
+        isLoading: kanbanLoading,
+        isFetching: kanbanFetching,
+        refetch: kanbanRefetch,
         error: guestsError,
-    } = useGetGuestsQuery({ assignedToId: user?._id, search }, { pollingInterval: 20000 });
+    } = useGetGuestsQuery({ assignedToId: user?._id, search, limit: 200 }, { skip: viewMode !== 'kanban' });
+
+    // List mode paginates server-side with infinite scroll (gated to list mode).
+    const {
+        data: listGuests = [],
+        isLoading: listLoading,
+        isFetching: listFetching,
+        refetch: listRefetch,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+    } = useInfiniteData<Guest, GetGuestPayload>(
+        {
+            limit: 20,
+            search,
+            assignedToId: user?._id,
+            assimilationSubStageId: stageFilter === 'all' ? undefined : stageFilter,
+        },
+        useGetGuestsQuery as any,
+        '_id',
+        viewMode !== 'list'
+    );
+
+    const isLoading = viewMode === 'kanban' ? kanbanLoading : listLoading;
+    const isFetching = viewMode === 'kanban' ? kanbanFetching : listFetching;
+    const refetch = viewMode === 'kanban' ? kanbanRefetch : listRefetch;
+
     const { data: guestCounts, isLoading: loadingGuestCounts } = useGetMyGuestsCountQuery();
     const [updateGuest] = useUpdateGuestMutation();
 
     const assimilationStageIndex = useAssimilationStageIndex();
     const assimilationSubStagesIndex = useAssimilationSubStageIndex();
 
-    const groupedGuestsByAssimilationId = useMemo(() => groupBy<Guest>(guests, 'assimilationSubStageId'), [guests]);
+    const groupedGuestsByAssimilationId = useMemo(
+        () => groupBy<Guest>(guests?.data, 'assimilationSubStageId'),
+        [guests?.data]
+    );
     const transformedAssimilationSubStages = useMemo(
         (): columnDataType<Guest, HeaderParams>[] =>
             assimilationSubStages.map((stage, index) => {
@@ -83,37 +116,9 @@ function MyGuestsDashboard() {
         [assimilationSubStages, groupedGuestsByAssimilationId]
     );
 
-    // Filter guests by current user and search term
-    const userGuests = useMemo(
-        () =>
-            guests?.filter(guest =>
-                `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase())
-            ),
-        [guests, search]
-    );
-
     const handleViewGuest = useCallback((guest: Guest) => {
         router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     }, []);
-
-    const getFilteredGuests = useCallback(() => {
-        let filtered = userGuests;
-
-        if (search) {
-            filtered = filtered?.filter(
-                guest =>
-                    `${guest.firstName} ${guest.lastName}`.toLowerCase().includes(search.toLowerCase()) ||
-                    guest.phoneNumber.includes(search) ||
-                    (guest.address && guest.address.toLowerCase().includes(search.toLowerCase()))
-            );
-        }
-
-        if (stageFilter !== 'all') {
-            filtered = filtered?.filter(guest => guest.assimilationSubStageId === stageFilter);
-        }
-
-        return filtered;
-    }, [userGuests, search, stageFilter]);
 
     const onGuestUpdate = useCallback(async (guestId: string, assimilationSubStageId: string) => {
         try {
@@ -159,7 +164,6 @@ function MyGuestsDashboard() {
         router.push({ pathname: '/roast-crm/guests/profile', params: guest as any });
     };
 
-    const displayGuests = useMemo(() => getFilteredGuests(), [getFilteredGuests]);
     const kanbanContainerHeight = Dimensions.get('window').height - 620;
 
     return (
@@ -169,7 +173,10 @@ function MyGuestsDashboard() {
                     <View className="gap-4">
                         {/* Header with Stats */}
                         <View className="gap-4 px-2 pt-2">
-                            <Text className="text-2xl font-bold leading-none">My Guests</Text>
+                            <View className="flex-row items-center justify-between">
+                                <Text className="text-2xl font-bold leading-none">My Guests</Text>
+                                <RemindersEntryButton />
+                            </View>
                             <View className="flex-row flex-wrap gap-3">
                                 {loadingGuestCounts ? (
                                     <>
@@ -212,7 +219,7 @@ function MyGuestsDashboard() {
                             <KanbanColumnSkeleton />
                             <KanbanColumnSkeleton />
                         </View>
-                    ) : (subStagesError || guestsError) && guests.length < 1 ? (
+                    ) : (subStagesError || guestsError) && (guests?.data ?? [])?.length < 1 ? (
                         <Error message={(subStagesError as any)?.error} />
                     ) : (
                         <ReactNativeKanbanBoard<Guest, HeaderParams>
@@ -228,12 +235,15 @@ function MyGuestsDashboard() {
                 ) : (
                     <Suspense fallback={<Loading cover />}>
                         <GuestListView
-                            refetch={refetch}
-                            isLoading={isLoading}
+                            refetch={listRefetch}
+                            isLoading={listLoading}
+                            hasNextPage={hasNextPage}
                             onGuestUpdate={onGuestUpdate}
+                            fetchNextPage={fetchNextPage}
                             handleViewGuest={handleViewGuest}
+                            isFetchingNextPage={isFetchingNextPage}
                             containerHeight={kanbanContainerHeight}
-                            displayGuests={displayGuests as Guest[]}
+                            displayGuests={listGuests as Guest[]}
                             assimilationSubStages={assimilationSubStages}
                         />
                     </Suspense>

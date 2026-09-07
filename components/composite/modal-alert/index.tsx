@@ -1,41 +1,47 @@
 import React, { ReactNode } from 'react';
-import { Alert, AlertDescription } from '~/components/ui/alert';
+import { AlertDescription } from '~/components/ui/alert';
 import { THEME_CONFIG } from '@config/appConfig';
-import { LucideIcon } from 'lucide-react-native';
 import { Icon } from '@rneui/base';
 import { View } from 'react-native';
+import { cn } from '~/lib/utils';
+import { ModalStatus } from '~/types/app';
+
+/** Default icon per status, so callers only have to pass a status. */
+export const STATUS_ICON: Record<ModalStatus, { name: string; type: string }> = {
+    success: { name: 'checkmark-circle-outline', type: 'ionicon' },
+    info: { name: 'info', type: 'feather' },
+    warning: { name: 'warning-outline', type: 'ionicon' },
+    error: { name: 'error-outline', type: 'material' },
+};
 
 interface IModalAlertComponentProps {
-    status?: 'info' | 'warning' | 'success' | 'error';
-    description: string | JSX.Element | null | undefined;
+    status?: ModalStatus;
+    description: string | React.JSX.Element | null | undefined;
     iconType?: string;
     iconName?: string;
-    icon?: LucideIcon;
     color?: string;
-    backgroundColor?: string;
+    iconSize?: number;
+    className?: string;
     children?: ReactNode;
 }
 
 const ModalAlertComponent: React.FC<IModalAlertComponentProps> = props => {
-    const { status, description, iconName, iconType, color } = props;
+    const { status = 'info', description, iconName, iconType, color, iconSize = 72, className, children } = props;
+
+    const icon = STATUS_ICON[status];
+    const name = iconName || icon.name;
+    const type = iconType || icon.type;
+
+    if (typeof description !== 'string') {
+        return <View className={cn('w-full items-center gap-5', className)}>{description || children}</View>;
+    }
 
     return (
-        <Alert iconClassName="hidden" className="max-w-sm shadow-none border-0">
-            {typeof description === 'string' ? (
-                <View className="w-full h-full justify-center gap-6">
-                    <Icon
-                        size={90}
-                        type={iconType}
-                        name={iconName as string}
-                        color={color ? color : THEME_CONFIG[status || 'info']}
-                    />
-
-                    <AlertDescription className="text-xl line-clamp-none">{description}</AlertDescription>
-                </View>
-            ) : (
-                description
-            )}
-        </Alert>
+        <View className={cn('w-full items-center gap-5', className)}>
+            <Icon size={iconSize} type={type} name={name} color={color || THEME_CONFIG[status]} />
+            <AlertDescription className="line-clamp-none text-center">{description}</AlertDescription>
+            {children}
+        </View>
     );
 };
 

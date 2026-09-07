@@ -29,6 +29,7 @@ jobs:
     get_android_build:
         name: Check for existing android build
         needs: [fingerprint]
+        environment: production
         type: get-build
         params:
             fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
@@ -36,6 +37,7 @@ jobs:
     get_ios_build:
         name: Check for existing ios build
         needs: [fingerprint]
+        environment: production
         type: get-build
         params:
             fingerprint_hash: ${{ needs.fingerprint.outputs.ios_fingerprint_hash }}
@@ -44,6 +46,7 @@ jobs:
         name: Build Android
         needs: [get_android_build]
         if: ${{ !needs.get_android_build.outputs.build_id }}
+        environment: production
         type: build
         params:
             platform: android
@@ -52,6 +55,7 @@ jobs:
         name: Build iOS
         needs: [get_ios_build]
         if: ${{ !needs.get_ios_build.outputs.build_id }}
+        environment: production
         type: build
         params:
             platform: ios
@@ -59,12 +63,14 @@ jobs:
     submit_android_build:
         name: Submit Android Build
         needs: [build_android]
+        environment: production
         type: submit
         params:
             build_id: ${{ needs.build_android.outputs.build_id }}
     submit_ios_build:
         name: Submit iOS Build
         needs: [build_ios]
+        environment: production
         type: submit
         params:
             build_id: ${{ needs.build_ios.outputs.build_id }}
@@ -72,6 +78,7 @@ jobs:
         name: Publish Android update
         needs: [get_android_build]
         if: ${{ needs.get_android_build.outputs.build_id }}
+        environment: production
         type: update
         params:
             branch: production
@@ -80,6 +87,7 @@ jobs:
         name: Publish iOS update
         needs: [get_ios_build]
         if: ${{ needs.get_ios_build.outputs.build_id }}
+        environment: production
         type: update
         params:
             branch: production

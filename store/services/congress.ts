@@ -18,7 +18,7 @@ const SERVICE_URL = 'cgwc';
 export const congressServiceSlice = createApi({
     reducerPath: SERVICE_URL,
 
-    baseQuery: fetchUtils.baseQuery,
+    baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
     refetchOnFocus: true,
     refetchOnReconnect: true,

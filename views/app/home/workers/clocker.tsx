@@ -3,6 +3,7 @@ import ClockButton from './clock-button';
 import Timer from './timer';
 import CampusLocation from './campus-location';
 import ClockStatistics from './clock-statistics';
+import ManualClockInButton from './manual-clockin-button';
 import { CampusAttendanceSummary, TeamAttendanceSummary } from '../campus-pastors/attendance-summary';
 import { GeoCoordinates } from '~/hooks/geo-location';
 import useRole from '@hooks/role';
@@ -43,6 +44,7 @@ const Clocker: React.FC<IClockerProps> = ({
     const {
         isHOD,
         isAHOD,
+        isInternship,
         isCampusPastor,
         user: { department, campus, userId },
     } = useRole();
@@ -149,7 +151,10 @@ const Clocker: React.FC<IClockerProps> = ({
                                     verifyRangeBeforeAction={verifyRangeBeforeAction}
                                 />
                             </ErrorBoundary>
-                            <CampusLocation />
+                            {latestService && isInternship && <ManualClockInButton />}
+                            <View className="items-center gap-5">
+                                <CampusLocation />
+                            </View>
                             <If condition={isAHOD || isHOD}>
                                 <TeamAttendanceSummary
                                     isLoading={attendanceReportLoading}

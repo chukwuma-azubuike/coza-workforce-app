@@ -8,6 +8,7 @@ import { useCreateDepartmentMutation } from '@store/services/department';
 import { ICreateDepartmentPayload } from '@store/types';
 import { Formik, FormikConfig } from 'formik';
 import { CreateDepartmentSchema } from '@utils/schemas';
+import { REPORT_PIPELINE_DEPARTMENTS } from '@constants/report-actions';
 import TextAreaComponent from '@components/atoms/text-area';
 import { useGetCampusesQuery } from '@store/services/campus';
 import If from '@components/composite/if-container';
@@ -38,7 +39,11 @@ const CreateDepartment: React.FC = () => {
 
     const submitForm: FormikConfig<ICreateDepartmentPayload>['onSubmit'] = async (values, { resetForm }) => {
         try {
-            const result = await createDepartment(values);
+            // Omit reportType entirely rather than sending '' — the backend only
+            // accepts a valid enum value or no key at all.
+            const { reportType, ...rest } = values;
+            const payload = reportType ? values : rest;
+            const result = await createDepartment(payload);
 
             if ('data' in result) {
                 setModalState({
@@ -74,6 +79,7 @@ const CreateDepartment: React.FC = () => {
         name: '',
         description: '',
         campusId: campusId || campus?._id,
+        reportType: '',
     };
 
     const handleCampus = (value: string) => {
@@ -94,7 +100,7 @@ const CreateDepartment: React.FC = () => {
                         initialValues={INITIAL_VALUES}
                         validationSchema={CreateDepartmentSchema}
                     >
-                        {({ errors, values, handleChange, handleSubmit }) => (
+                        {({ errors, values, handleChange, handleSubmit, setFieldValue }) => (
                             <View className="w-full gap-1">
                                 <If condition={isGlobalPastor || isSuperAdmin}>
                                     <View>
@@ -112,8 +118,30 @@ const CreateDepartment: React.FC = () => {
                                     </View>
                                 </If>
                                 <View>
+                                    <Label>Report type</Label>
+                                    <PickerSelect
+                                        valueKey="reportType"
+                                        labelKey="departmentName"
+                                        value={values.reportType}
+                                        items={[{ departmentName: 'None — not part of the report pipeline', reportType: '' }, ...REPORT_PIPELINE_DEPARTMENTS]}
+                                        placeholder="Select report type"
+                                        onValueChange={value => {
+                                            setFieldValue('reportType', value);
+                                            // The backend only accepts an exact, standardized departmentName
+                                            // per reportType — lock the name field to it so it can't drift.
+                                            const match = REPORT_PIPELINE_DEPARTMENTS.find(d => d.reportType === value);
+                                            if (match) setFieldValue('name', match.departmentName);
+                                        }}
+                                    />
+                                    {!!errors?.reportType && <FormErrorMessage>{errors?.reportType}</FormErrorMessage>}
+                                </View>
+                                <View>
                                     <Label>Department Name</Label>
-                                    <Input value={values.name} onChangeText={handleChange('name')} />
+                                    <Input
+                                        value={values.name}
+                                        editable={!values.reportType}
+                                        onChangeText={handleChange('name')}
+                                    />
                                     {!!errors?.name && <FormErrorMessage>{errors?.name}</FormErrorMessage>}
                                 </View>
                                 <View>

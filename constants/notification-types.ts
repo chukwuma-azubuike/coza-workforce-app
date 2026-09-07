@@ -18,33 +18,6 @@ export enum NOTIFICATION_TYPES {
     NOTIFY_QC_RETRACTED_TICKET_ISSUED = 'NOTIFY_QC_RETRACTED_TICKET_ISSUED',
 }
 
-interface INotificationRoute {
-    data: any;
-    tabKey: string;
-    routeName: string;
-}
-
-interface INotificationTypesRoute {
-    [key: string]: INotificationRoute;
-}
-
-export const NOTIFICATION_TYPES_ROUTING: INotificationTypesRoute = {
-    CLOCK_IN: { routeName: 'Home', tabKey: '', data: {} },
-    CLOCK_OUT: { routeName: 'Home', tabKey: '', data: {} },
-    SERVICE_REPORT: { routeName: 'Reports', tabKey: '', data: {} },
-    CLOCK_IN_SUMMARY: { routeName: 'Attendance', tabKey: '', data: {} },
-    CLOCK_OUT_SUMMARY: { routeName: 'Attendance', tabKey: '', data: {} },
-    PERMISSION_STATUS: { routeName: 'Permissions', tabKey: '', data: {} },
-    PERMISSION_CREATED: { routeName: 'Permissions', tabKey: 'teamPermissions', data: {} },
-    PERMISSION_SUBMITTED: { routeName: 'Permissions', tabKey: '', data: {} },
-    RETRACT_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
-    NOTIFY_QC_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
-    INDIVIDUAL_TICKET_ISSUED: { routeName: 'Tickets', tabKey: '', data: {} },
-    DEPARTMENT_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'teamTickets', data: {} },
-    NOTIFY_PASTOR_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'campusTickets', data: {} },
-    NOTIFY_QC_RETRACTED_TICKET_ISSUED: { routeName: 'Tickets', tabKey: 'campusTickets', data: {} },
-};
-
 export const STATUS_COLORS: Record<IUserStatus, IStatusColors> = {
     ACTIVE: 'green.500',
     DORMANT: 'red.500',

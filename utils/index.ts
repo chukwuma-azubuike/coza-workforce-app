@@ -315,6 +315,14 @@ class Utils {
 
 export default Utils;
 
+export const extractApiError = (error: unknown, fallback: string): string => {
+    if (error && typeof error === 'object' && 'data' in error) {
+        const msg = (error as { data?: { message?: string } }).data?.message;
+        if (msg) return msg;
+    }
+    return fallback;
+};
+
 type GroupListByKey<A> = {
     key: keyof A;
     array: A[];

@@ -191,10 +191,14 @@ export const GroupAttendanceRow: React.FC<{ item: IAttendance; index: number }> 
                         )}`}
                     </Text>
                 </View>
-                <Text className="w-5/12 font-semibold flex-1">
-                    {item?.campusName}{' '}
-                    <Text className="font-semibold text-muted-foreground">({item?.departmentName})</Text>
-                </Text>
+                {(item?.campusName || item?.departmentName) ? (
+                    <Text className="w-5/12 font-semibold flex-1">
+                        {item?.campusName ? <>{item.campusName}{item?.departmentName ? ' ' : ''}</> : null}
+                        {item?.departmentName ? (
+                            <Text className="font-semibold text-muted-foreground">({item.departmentName})</Text>
+                        ) : null}
+                    </Text>
+                ) : null}
             </View>
             <View className="items-start gap-1">
                 <View className="items-center flex-row gap-1 flex-1 justify-center">
