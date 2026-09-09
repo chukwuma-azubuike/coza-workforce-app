@@ -23,94 +23,93 @@ const isAndroid = Platform.OS === 'android';
 
 interface ICongressAttendance extends Partial<IAttendance> {
     sessions?: IService[];
+    sessionsLoading?: boolean;
 }
 
-export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId, userId, sessions }) => {
-    const {
-        data,
-        isLoading,
-        refetch: refetchAttendance,
-    } = useGetAttendanceQuery({
-        CGWCId: CongressId,
-        userId,
-    });
+export const MyCongressAttendance: React.FC<ICongressAttendance> = React.memo(
+    ({ CongressId, userId, sessions, sessionsLoading }) => {
+        const {
+            data,
+            isLoading,
+            refetch: refetchAttendance,
+        } = useGetAttendanceQuery({
+            CGWCId: CongressId,
+            userId,
+        });
 
-    const minifiedAttendance = React.useMemo(
-        () =>
-            data?.map(attendance => {
-                return { ...attendance, serviceId: attendance?.service?._id || attendance?.serviceId };
-            }) || [],
-        [data]
-    );
+        const minifiedAttendance = React.useMemo(
+            () =>
+                data?.map(attendance => {
+                    return { ...attendance, serviceId: attendance?.service?._id || attendance?.serviceId };
+                }) || [],
+            [data]
+        );
 
-    const minifiedSessions = React.useMemo(
-        () =>
-            sessions?.map(session => {
-                return { serviceId: session._id, name: session.name };
-            }) || [],
-        [sessions]
-    );
+        const minifiedSessions = React.useMemo(
+            () =>
+                sessions?.map(session => {
+                    return { serviceId: session._id, name: session.name };
+                }) || [],
+            [sessions]
+        );
 
-    const mergedSessionsWithAttendance = React.useMemo(() => {
-        if (!!minifiedAttendance?.length) {
-            return Utils.mergeDuplicatesByKey<IAttendance>([...minifiedSessions, ...minifiedAttendance], 'serviceId');
-        }
-        return Utils.mergeDuplicatesByKey<IAttendance>(minifiedSessions, 'serviceId');
-    }, [minifiedSessions, minifiedAttendance]);
+        const mergedSessionsWithAttendance = React.useMemo(() => {
+            if (!!minifiedAttendance?.length) {
+                return Utils.mergeDuplicatesByKey<IAttendance>(
+                    [...minifiedSessions, ...minifiedAttendance],
+                    'serviceId'
+                );
+            }
+            return Utils.mergeDuplicatesByKey<IAttendance>(minifiedSessions, 'serviceId');
+        }, [minifiedSessions, minifiedAttendance]);
 
-    const TOTAL_ATTAINABLE_SCORE = (sessions?.length || 0) * 25;
+        // Only sessions that have already ended count towards the score, otherwise
+        // sessions yet to happen would drag down the score of a fully compliant user.
+        const elapsedSessions = React.useMemo(
+            () =>
+                (sessions ?? []).filter(session => {
+                    const endsAt = session?.serviceEndTime ?? session?.clockInEndTime;
+                    return !!endsAt && dayjs(endsAt).isBefore(dayjs());
+                }),
+            [sessions]
+        );
 
-    const cumulativeAttendance = React.useMemo(() => {
-        if (!!data?.length) {
-            return data?.map(data => data.score)?.reduce((a = 0, b = 0) => a + b);
-        }
-        return 0;
-    }, [data]);
+        const TOTAL_ATTAINABLE_SCORE = elapsedSessions.length * 25;
 
-    // Legacy attendance calculation
-    // const totalAttendance = Math.round(((cumulativeAttendance as number) / TOTAL_ATTAINABLE_SCORE) * 100);
+        const cumulativeAttendance = React.useMemo(
+            () => (data ?? []).reduce((total, attendance) => total + (attendance?.score ?? 0), 0),
+            [data]
+        );
 
-    // const isNinetyPercent = React.useMemo(() => {
-    //     const numberOfSessions = sessions?.length ?? 0;
-    //     const numberOfClockIns = minifiedAttendance.reduce((total, attendance) => {
-    //         if (attendance.clockIn) total += 1;
-    //         return total;
-    //     }, 0);
+        // `null` means there is nothing to score yet (sessions still loading, or none
+        // of them have ended) and renders as a placeholder rather than a percentage.
+        const totalAttendance = React.useMemo(() => {
+            if (sessionsLoading || TOTAL_ATTAINABLE_SCORE === 0) {
+                return null;
+            }
 
-    //     return numberOfClockIns >= numberOfSessions - 1;
-    // }, [sessions, minifiedAttendance]);
+            return Math.min(100, Math.round((cumulativeAttendance / TOTAL_ATTAINABLE_SCORE) * 100));
+        }, [sessionsLoading, cumulativeAttendance, TOTAL_ATTAINABLE_SCORE]);
 
-    const percantageAttendance = Math.round(((cumulativeAttendance as number) / TOTAL_ATTAINABLE_SCORE) * 100) || 0;
+        useScreenFocus({
+            onFocus: refetchAttendance,
+        });
 
-    const totalAttendance = (() => {
-        switch (true) {
-            // case isNinetyPercent && percantageAttendance < 90:
-            //     return 90;
-            case cumulativeAttendance === 0 || TOTAL_ATTAINABLE_SCORE === 0:
-                return 0;
-            default:
-                return percantageAttendance;
-        }
-    })();
-
-    useScreenFocus({
-        onFocus: refetchAttendance,
-    });
-
-    return (
-        <ErrorBoundary>
-            <AttendanceContainer title="My Attendance" score={totalAttendance} scoreType="percent">
-                <ListTable
-                    isLoading={isLoading}
-                    Header={AttendanceHeader}
-                    Column={AttendanceListRow}
-                    data={mergedSessionsWithAttendance}
-                    headerProps={{ titles: ['Session', 'Clock in', 'Clock out', 'Score'] }}
-                />
-            </AttendanceContainer>
-        </ErrorBoundary>
-    );
-});
+        return (
+            <ErrorBoundary>
+                <AttendanceContainer title="My Attendance" score={totalAttendance} scoreType="percent">
+                    <ListTable
+                        isLoading={isLoading}
+                        Header={AttendanceHeader}
+                        Column={AttendanceListRow}
+                        data={mergedSessionsWithAttendance}
+                        headerProps={{ titles: ['Session', 'Clock in', 'Clock out', 'Score'] }}
+                    />
+                </AttendanceContainer>
+            </ErrorBoundary>
+        );
+    }
+);
 
 export const TeamCongressAttendance: React.FC<ICongressAttendance> = React.memo(({ CongressId: CGWCId }) => {
     const { user } = useRole();
@@ -494,7 +493,7 @@ interface IAttendanceContainerProps {
     title: string;
     showTitle?: boolean;
     children: ReactNode;
-    score?: number | string;
+    score?: number | string | null;
     scoreType: 'percent' | 'count';
 }
 
@@ -505,7 +504,9 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
                 <If condition={showTitle}>
                     <View className="py-4 justify-between items-baseline flex-row">
                         <Text className="font-bold text-center pt-3 pb-4">{title}</Text>
-                        {!!score && (
+                        {score == null ? (
+                            <Text className="font-bold pt-3 pb-4 text-center text-xl text-muted-foreground">—</Text>
+                        ) : (
                             <Text
                                 className={cn(
                                     'font-bold pt-3 pb-4 text-center text-xl',
@@ -518,7 +519,7 @@ export const AttendanceContainer: React.FC<IAttendanceContainerProps> = React.me
                                             : +score >= 70 && 'text-green-500'
                                 )}
                             >
-                                {score || 0}
+                                {score}
                                 {scoreType === 'percent' && '%'}
                             </Text>
                         )}
