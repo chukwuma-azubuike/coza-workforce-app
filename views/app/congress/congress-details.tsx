@@ -86,7 +86,12 @@ const CongressDetails: React.FC = () => {
         refetchOnMountOrArgChange: true,
     });
 
-    const { data: sessions, refetch: refetchSessions } = useGetServicesQuery(
+    const {
+        data: sessions,
+        refetch: refetchSessions,
+        isLoading: sessionsIsLoading,
+        isFetching: sessionsIsFetching,
+    } = useGetServicesQuery(
         {
             CGWCId,
             page: 1,
@@ -176,6 +181,7 @@ const CongressDetails: React.FC = () => {
                                 <View>
                                     <MyCongressAttendance
                                         sessions={sessions || []}
+                                        sessionsLoading={sessionsIsLoading || sessionsIsFetching}
                                         CongressId={CGWCId}
                                         userId={userId}
                                     />
