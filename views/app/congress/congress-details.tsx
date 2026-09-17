@@ -22,6 +22,8 @@ import { Separator } from '~/components/ui/separator';
 import { useGetCongressByIdQuery, useGetCongressInstantMessagesQuery } from '~/store/services/congress';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { normalizeUrl } from '~/components/composite/link-preview';
 
 const width = Dimensions.get('window').width;
 
@@ -43,9 +45,9 @@ const CongressDetails: React.FC = () => {
 
     const { setOptions } = useNavigation();
 
-    setOptions({
-        title: params.name,
-    });
+    React.useLayoutEffect(() => {
+        setOptions({ title: params.name });
+    }, [setOptions, params.name]);
 
     const isLeader = isCampusPastor || isGlobalPastor || isHOD || isAHOD || isSuperAdmin || isGroupHead;
     const goToExport = () => {
@@ -57,18 +59,36 @@ const CongressDetails: React.FC = () => {
     const ref = React.useRef<ICarouselInstance>(null);
 
     const CarouselItem: React.FC<{ item: ICongressInstantMessage; index: number }> = ({ item, index }) => {
+        // Links are typed by hand, so normalise before deciding the slide is
+        // tappable — a slide that can't open anything shouldn't look like it can.
+        const link = normalizeUrl(item?.messageLink);
+
         const handlePress = () => {
-            if (!!item?.messageLink) {
-                router.push({ pathname: '/congress/congress-resources', params: item as any });
-            }
+            if (!link) return;
+            router.push({
+                pathname: '/congress/congress-resources',
+                params: { title: item?.title, messageLink: link },
+            });
         };
 
         return (
-            <TouchableOpacity activeOpacity={0.8} onPress={handlePress}>
+            <TouchableOpacity
+                activeOpacity={link ? 0.8 : 1}
+                onPress={handlePress}
+                disabled={!link}
+                accessibilityRole={link ? 'link' : 'none'}
+                accessibilityLabel={link ? `Open resource for ${item?.title}` : item?.title}
+            >
                 <View key={index} style={styles.itemContainer}>
                     <View style={[styles.item, { height: carouselHeight }]}>
                         <Image resizeMode="cover" style={styles.backgroundImage} source={{ uri: item.imageUrl }} />
                         <View style={styles.imageOverlay} />
+                        {!!link && (
+                            <View className="absolute right-3 top-3 flex-row items-center gap-1 rounded-full bg-black/55 px-2.5 py-1">
+                                <Ionicons name="link" size={11} color="#FFF" />
+                                <Text className="!text-[10px] font-semibold text-white">Tap to open</Text>
+                            </View>
+                        )}
                         <View style={styles.itemTextContainer}>
                             <Text>{item.title}</Text>
                             <Text className="italic line-clamp-4">{item.message}</Text>

@@ -2,6 +2,9 @@ import * as Yup from 'yup';
 import 'yup-phone-lite';
 import { countryCodeIso } from '../countryCodeIso';
 import { ICreateServicePayload } from '~/store/types';
+// Imported from the module directly rather than the package index, so schemas
+// don't pull in the link-preview component tree.
+import { normalizeUrl } from '~/components/composite/link-preview/utils';
 
 // Form validation
 
@@ -28,7 +31,10 @@ export const RegisterSchema = Yup.object().shape({
     placeOfWork: Yup.string().required('Your place of work is required.'),
     gender: Yup.string().required('Your gender is required.'),
     maritalStatus: Yup.string().required('Your marital status is required.'),
-    birthDay: Yup.date().nullable().min(new Date(1900, 0, 1)).required('Your birthday is required.'),
+    birthDay: Yup.date()
+        .nullable()
+        .min(new Date(1900, 0, 1))
+        .required('Your birthday is required.'),
     socialMedia: Yup.object().shape({
         facebook: Yup.string(),
         instagram: Yup.string(),
@@ -262,7 +268,13 @@ export const CreateCongressSchema = Yup.object().shape({
 export const CreateCongressInstantMessageSchema = Yup.object().shape({
     title: Yup.string().required('You are required to enter a title'),
     message: Yup.string().required('You are required to enter a message'),
-    messageLink: Yup.string(),
+    // Optional, but if something is typed it has to be openable. `normalizeUrl`
+    // accepts a scheme-less "coza.org.ng/x", so this only rejects real junk.
+    messageLink: Yup.string().test(
+        'is-openable-link',
+        'Enter a valid link, e.g. https://coza.org.ng/resource',
+        value => !`${value ?? ''}`.trim() || !!normalizeUrl(value)
+    ),
 });
 
 export const SubmitCongressFeedbackSchema = Yup.object().shape({
