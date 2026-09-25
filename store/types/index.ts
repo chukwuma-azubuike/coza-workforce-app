@@ -335,26 +335,24 @@ export interface ICreateTicketPayload {
     issuedBy: IUser['_id'];
 }
 
-export interface ICreateServicePayload {
-    serviceType: 'global' | 'local';
-    serviceDate: Date | string;
-    clockInStartTime: string;
-    coordinates: {
-        long: number;
-        lat: number;
-    };
-    isGlobalService: boolean;
-    leadersLateStartTime: string;
-    name: string;
-    rangeToClockIn: number;
-    serviceEndTime: string;
-    serviceTime: string;
-    tag: string;
-    workersLateStartTime: string;
-}
+/** Which flavour of the shared service form is in play. Congress sessions are services linked to a congress. */
+export type IServiceFormVariant = 'service' | 'congress-session';
 
-export interface IUpdateServicePayload extends ICreateServicePayload {
-    _id: string;
+/**
+ * Formik state for the shared service/session form. Dates and times are ISO strings straight from the
+ * pickers; `toServicePayload` combines them into the epoch timestamps the API expects.
+ */
+export interface IServiceFormValues {
+    name: string;
+    tag: string;
+    serviceType: 'global' | 'local' | '';
+    rangeToClockIn: string;
+    serviceDate: string;
+    serviceTime: string;
+    clockInStartTime: string;
+    leadersLateStartTime: string;
+    workersLateStartTime: string;
+    serviceEndTime: string;
 }
 
 export interface IAssignGroupHead {
@@ -540,7 +538,10 @@ export interface IService {
     serviceEndTime: string;
     rangeToClockIn: number;
     createdAt: string;
+    /** Set on congress sessions — the congress they belong to. Absent on regular services. */
     CGWCId?: string;
+    isCGWC?: boolean;
+    CongressId?: string;
     isCongress?: boolean;
     isGlobalService: boolean;
     __v: number;
@@ -615,14 +616,18 @@ export interface ICreateService {
         long: number;
         lat: number;
     };
+    /** Links a congress session to its congress; this is what sets a session apart from a regular service. */
+    CGWCId?: string;
+    isCGWC?: boolean;
     CongressId?: string;
     isCongress?: boolean;
     tag: string[];
-    serviceTime: string | null;
-    clockInStartTime: string | null;
-    workersLateStartTime: string | null;
-    leadersLateStartTime: string | null;
-    serviceEndTime: string | null;
+    /** Epoch seconds. */
+    serviceTime: number | null;
+    clockInStartTime: number | null;
+    workersLateStartTime: number | null;
+    leadersLateStartTime: number | null;
+    serviceEndTime: number | null;
     rangeToClockIn: number;
     isGlobalService: boolean;
 }

@@ -17,7 +17,7 @@ import DateTimePickerLegend from '~/components/composite/date-time-picker/date-p
 const CreateCongress: React.FC = () => {
     const { setModalState } = useModal();
 
-    const [createCongress, { isLoading, data, reset }] = useCreateCongressMutation();
+    const [createCongress, { isLoading, reset }] = useCreateCongressMutation();
 
     const onSubmit: FormikConfig<ICongressPayload>['onSubmit'] = async (values, { resetForm }) => {
         const name = values.name;
@@ -40,13 +40,13 @@ const CreateCongress: React.FC = () => {
                 status: 'success',
             });
             reset();
-            router.push({ pathname: '/congress', params: data as any });
             resetForm({ values: INITIAL_VALUES });
+            router.back();
         }
 
         if ('error' in result) {
             setModalState({
-                message: 'Oops something went wrong',
+                message: (result.error as any)?.data?.data || 'Oops something went wrong',
                 status: 'error',
             });
         }
@@ -56,6 +56,8 @@ const CreateCongress: React.FC = () => {
         name: '',
         endDate: undefined,
         startDate: undefined,
+        registrationStartDate: undefined,
+        registrationEndDate: undefined,
     } as any;
 
     return (
@@ -73,7 +75,7 @@ const CreateCongress: React.FC = () => {
                                 <Label>Name</Label>
                                 <Input
                                     value={values.name}
-                                    placeholder="Service Name"
+                                    placeholder="Congress name"
                                     onChangeText={handleChange('name')}
                                 />
                                 {!!errors?.name && touched.name && <FormErrorMessage>{errors?.name}</FormErrorMessage>}
@@ -99,7 +101,7 @@ const CreateCongress: React.FC = () => {
                                         error={errors.endDate}
                                         touched={touched.endDate}
                                         placeholder="Enter end date"
-                                        minimumDate={dayjs(values?.startDate || undefined).toDate()}
+                                        minimumDate={values?.startDate ? dayjs(values.startDate).toDate() : undefined}
                                         onConfirm={handleChange('endDate') as unknown as (value: Date) => void}
                                     />
                                     {!!errors.endDate && touched.endDate && (
@@ -131,7 +133,11 @@ const CreateCongress: React.FC = () => {
                                         error={errors.registrationEndDate}
                                         touched={touched.registrationEndDate}
                                         placeholder="Enter registration end date"
-                                        minimumDate={dayjs(values?.registrationEndDate || undefined).toDate()}
+                                        minimumDate={
+                                            values?.registrationStartDate
+                                                ? dayjs(values.registrationStartDate).toDate()
+                                                : undefined
+                                        }
                                         onConfirm={
                                             handleChange('registrationEndDate') as unknown as (value: Date) => void
                                         }

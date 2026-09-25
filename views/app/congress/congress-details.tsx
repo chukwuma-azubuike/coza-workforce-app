@@ -24,6 +24,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { normalizeUrl } from '~/components/composite/link-preview';
+import { THEME_CONFIG } from '~/config/appConfig';
 
 const width = Dimensions.get('window').width;
 
@@ -138,8 +139,8 @@ const CongressDetails: React.FC = () => {
         router.push({ pathname: '/congress/create-instant-message', params: { CongressId: CGWCId } });
     };
 
-    const gotoCreateSession = () => {
-        router.push({ pathname: '/service-management/create-congress-session', params: { CongressId: CGWCId } });
+    const gotoSessions = () => {
+        router.push({ pathname: '/congress/congress-sessions', params: { CGWCId } });
     };
 
     const allButtons = [
@@ -152,8 +153,8 @@ const CongressDetails: React.FC = () => {
         {
             color: 'blue.600',
             iconType: 'font-awesome',
-            iconName: 'calendar-plus-o',
-            handleClick: gotoCreateSession,
+            iconName: 'calendar',
+            handleClick: gotoSessions,
         },
     ];
 
@@ -220,6 +221,25 @@ const CongressDetails: React.FC = () => {
                             </View>
                             <Separator className="mt-3 mb-1" />
                         </View>
+                        <If condition={isSuperAdmin}>
+                            <TouchableOpacity
+                                activeOpacity={0.6}
+                                onPress={gotoSessions}
+                                accessibilityRole="button"
+                                className="mx-3 mt-3 flex-row items-center justify-between rounded-2xl border border-border p-4"
+                            >
+                                <View className="flex-row items-center gap-3">
+                                    <Ionicons name="calendar-outline" size={20} color={THEME_CONFIG.primary} />
+                                    <View>
+                                        <Text className="font-semibold">Manage sessions</Text>
+                                        <Text className="text-sm text-muted-foreground">
+                                            {`${sessions?.length ?? 0} scheduled · add, edit or duplicate`}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Ionicons name="chevron-forward" size={18} color={THEME_CONFIG.primary} />
+                            </TouchableOpacity>
+                        </If>
                         <View className="mt-3">
                             <Text className="font-bold px-3 text-xl">Give Feedback</Text>
                             <View style={{ marginBottom: 60, width: '100%' }}>
