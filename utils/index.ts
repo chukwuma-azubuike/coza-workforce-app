@@ -294,23 +294,6 @@ class Utils {
 
         return merged;
     };
-
-    /************** convertToEpoc ***************/
-
-    static concatDateTime = (date: string | Date, time: string | Date) => {
-        const concatedTime = `${dayjs(date).format('YYYY-MM-DD')}T${dayjs(time).format('HH:mm:ss')}.000Z`;
-
-        const res =
-            date && !time
-                ? dayjs(date).subtract(1, 'hour').unix()
-                : time && !date
-                ? dayjs(time).subtract(1, 'hour').unix()
-                : time && date
-                ? dayjs(concatedTime).subtract(1, 'hour').unix()
-                : dayjs(date).unix();
-
-        return res;
-    };
 }
 
 export default Utils;
