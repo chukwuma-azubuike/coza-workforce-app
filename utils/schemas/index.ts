@@ -1,7 +1,12 @@
 import * as Yup from 'yup';
+import dayjs from 'dayjs';
 import 'yup-phone-lite';
 import { countryCodeIso } from '../countryCodeIso';
-import { ICreateServicePayload } from '~/store/types';
+import { IServiceFormValues } from '~/store/types';
+import { minutesOfDay } from '~/utils/service-form';
+// Imported from the module directly rather than the package index, so schemas
+// don't pull in the link-preview component tree.
+import { normalizeUrl } from '~/components/composite/link-preview/utils';
 
 // Form validation
 
@@ -28,7 +33,10 @@ export const RegisterSchema = Yup.object().shape({
     placeOfWork: Yup.string().required('Your place of work is required.'),
     gender: Yup.string().required('Your gender is required.'),
     maritalStatus: Yup.string().required('Your marital status is required.'),
-    birthDay: Yup.date().nullable().min(new Date(1900, 0, 1)).required('Your birthday is required.'),
+    birthDay: Yup.date()
+        .nullable()
+        .min(new Date(1900, 0, 1))
+        .required('Your birthday is required.'),
     socialMedia: Yup.object().shape({
         facebook: Yup.string(),
         instagram: Yup.string(),
@@ -108,28 +116,46 @@ export const LoginSchema = Yup.object().shape({
     password: Yup.string().required('Password is required'),
 });
 
-export const CreateServiceSchema = Yup.object<ICreateServicePayload>().shape({
-    tag: Yup.string().required('You are required to select the service tag.'),
-    serviceType: Yup.string().required('You are required to select the service type.'),
-    name: Yup.string().required('Service name is required.'),
-    serviceDate: Yup.date().required('Field required.'),
-    rangeToClockIn: Yup.number().required('Field required.'),
-    serviceTime: Yup.date().required('Field required'),
-    clockInStartTime: Yup.date().required('Field required'),
-    serviceEndTime: Yup.date().required('Field required'),
-    leadersLateStartTime: Yup.date().required('Field required'),
-    workersLateStartTime: Yup.date().required('Field required'),
-});
+const REQUIRED_TIME = 'Field required.';
 
-export const UpdateServiceSchema = Yup.object().shape({
-    tag: Yup.string().required('You are required to select the service tag'),
-    name: Yup.string().required('Service name is required'),
-    serviceDate: Yup.date().required('Service date is required'),
-    clockInStartTime: Yup.string().required('Clock in time is required'),
-    isGlobalService: Yup.string().required('Service type is required'),
-    leadersLateStartTime: Yup.string().required('Leaders late time is required'),
-    serviceEndTime: Yup.string().required('Service end time is required'),
-    workersLateStartTime: Yup.string().required('Workers late time is required'),
+/** `field` must fall at or after `other` on the clock. Skipped until both are set. */
+const notBefore = (other: keyof IServiceFormValues, message: string) =>
+    Yup.string()
+        .required(REQUIRED_TIME)
+        .test('not-before', message, function (value) {
+            const self = minutesOfDay(value);
+            const bound = minutesOfDay(this.parent[other]);
+            return self === undefined || bound === undefined || self >= bound;
+        });
+
+/** `field` must fall strictly before `other` on the clock. Skipped until both are set. */
+const before = (other: keyof IServiceFormValues, message: string) =>
+    Yup.string()
+        .required(REQUIRED_TIME)
+        .test('before', message, function (value) {
+            const self = minutesOfDay(value);
+            const bound = minutesOfDay(this.parent[other]);
+            return self === undefined || bound === undefined || self < bound;
+        });
+
+/** Shared by regular services and congress sessions, in both create and edit. */
+export const ServiceFormSchema = Yup.object<IServiceFormValues>().shape({
+    tag: Yup.string().required('Select a tag.'),
+    serviceType: Yup.string().required('Select local or global.'),
+    name: Yup.string().trim().required('Name is required.'),
+    rangeToClockIn: Yup.string().required('Select a clock-in range.'),
+    serviceDate: Yup.string().required('Pick a date.'),
+    clockInStartTime: before('serviceEndTime', 'Clock-in must open before the end time.'),
+    leadersLateStartTime: notBefore('clockInStartTime', 'Must be at or after clock-in opens.'),
+    workersLateStartTime: notBefore('clockInStartTime', 'Must be at or after clock-in opens.'),
+    serviceTime: notBefore('clockInStartTime', 'Start must be at or after clock-in opens.'),
+    serviceEndTime: Yup.string()
+        .required(REQUIRED_TIME)
+        .test('after-start', 'End time must be after the start time.', function (value) {
+            const self = minutesOfDay(value);
+            const start = minutesOfDay(this.parent.serviceTime);
+            return self === undefined || start === undefined || self > start;
+        }),
 });
 
 export const AssignGroupHeadSchema = Yup.object().shape({
@@ -251,18 +277,39 @@ export const CreateCampusSchema = Yup.object().shape({
 
 // Congress forms
 
+/** `value` is on or after the date held in the sibling field `other`. Skipped until both are set. */
+const sameDayOrAfter = (other: string) =>
+    function (this: Yup.TestContext, value?: string) {
+        const bound = this.parent[other];
+        return !value || !bound || !dayjs(value).isBefore(dayjs(bound), 'day');
+    };
+
 export const CreateCongressSchema = Yup.object().shape({
-    name: Yup.string().required('You are required to enter a name'),
+    name: Yup.string().trim().required('You are required to enter a name'),
     startDate: Yup.string().required('A start date is required'),
-    endDate: Yup.string().required('An end date is required'),
+    endDate: Yup.string()
+        .required('An end date is required')
+        .test('after-start', 'End date cannot be before the start date', sameDayOrAfter('startDate')),
     registrationStartDate: Yup.string().required('A registration start date is required'),
-    registrationEndDate: Yup.string().required('An registration end date is required'),
+    registrationEndDate: Yup.string()
+        .required('A registration end date is required')
+        .test(
+            'after-registration-start',
+            'Registration cannot close before it opens',
+            sameDayOrAfter('registrationStartDate')
+        ),
 });
 
 export const CreateCongressInstantMessageSchema = Yup.object().shape({
     title: Yup.string().required('You are required to enter a title'),
     message: Yup.string().required('You are required to enter a message'),
-    messageLink: Yup.string(),
+    // Optional, but if something is typed it has to be openable. `normalizeUrl`
+    // accepts a scheme-less "coza.org.ng/x", so this only rejects real junk.
+    messageLink: Yup.string().test(
+        'is-openable-link',
+        'Enter a valid link, e.g. https://coza.org.ng/resource',
+        value => !`${value ?? ''}`.trim() || !!normalizeUrl(value)
+    ),
 });
 
 export const SubmitCongressFeedbackSchema = Yup.object().shape({

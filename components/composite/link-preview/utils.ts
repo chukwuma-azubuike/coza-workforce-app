@@ -281,3 +281,216 @@ export const useLinkMetadata = (url?: string, enabled: boolean = true) => {
 
     return { metadata, status, isLoading: status === 'loading' };
 };
+
+// ─── Link classification ────────────────────────────────────────────────────
+
+/**
+ * What a link actually points at, which decides how it gets rendered. `web` is
+ * the safe default: a WebView copes with anything, a PDF viewer does not.
+ */
+export type ILinkKind = 'pdf' | 'image' | 'video' | 'audio' | 'office' | 'web';
+
+export interface ILinkClassification {
+    kind: ILinkKind;
+    /** Content type the probe reported, when one was reached. */
+    contentType?: string;
+    /** True when the kind came from an extension or host rule, not the network. */
+    isCertain: boolean;
+}
+
+/** Human label for a kind — used by the admin form's preview chip. */
+export const LINK_KIND_LABELS: Record<ILinkKind, string> = {
+    pdf: 'PDF document',
+    image: 'Image',
+    video: 'Video',
+    audio: 'Audio',
+    office: 'Office document',
+    web: 'Web page',
+};
+
+const EXTENSION_KINDS: { match: RegExp; kind: ILinkKind }[] = [
+    { match: /\.pdf$/i, kind: 'pdf' },
+    { match: /\.(png|jpe?g|gif|webp|heic|heif|bmp|svg|avif)$/i, kind: 'image' },
+    { match: /\.(mp4|mov|m4v|webm|m3u8|mkv|3gp)$/i, kind: 'video' },
+    { match: /\.(mp3|m4a|wav|aac|ogg|oga|flac)$/i, kind: 'audio' },
+    { match: /\.(docx?|xlsx?|pptx?|odt|ods|odp)$/i, kind: 'office' },
+];
+
+// Hosts whose pages always render as web pages. Probing them wastes a round
+// trip, and several of them answer HEAD requests with a redirect or a 405.
+const ALWAYS_WEB = [
+    /(^|\.)(google|docs\.google|drive\.google)\.com$/,
+    /(^|\.)dropbox\.com$/,
+    /(^|\.)(youtube\.com|youtu\.be)$/,
+    /(^|\.)(instagram\.com|instagr\.am)$/,
+    /(^|\.)(facebook\.com|fb\.watch|fb\.me)$/,
+    /(^|\.)(twitter\.com|x\.com)$/,
+    /(^|\.)tiktok\.com$/,
+    /(^|\.)linkedin\.com$/,
+    /(^|\.)(threads\.net|threads\.com)$/,
+    /(^|\.)(spotify\.com|spoti\.fi)$/,
+    /(^|\.)mixlr\.com$/,
+    /(^|\.)vimeo\.com$/,
+    /(^|\.)notion\.(so|site)$/,
+    /(^|\.)eventbrite\.com$/,
+];
+
+const OFFICE_MIME = /(msword|ms-excel|ms-powerpoint|officedocument|opendocument|vnd\.oasis|vnd\.openxmlformats)/i;
+
+/**
+ * Maps a Content-Type header onto a kind. Returns `undefined` when the header
+ * says nothing useful (`application/octet-stream` is the common offender).
+ */
+export const kindFromContentType = (contentType?: string | null): ILinkKind | undefined => {
+    const value = (`${contentType ?? ''}`.toLowerCase().split(';')[0] ?? '').trim();
+    if (!value) return undefined;
+
+    if (value === 'application/pdf' || value === 'application/x-pdf') return 'pdf';
+    if (/^image\//.test(value)) return 'image';
+    if (/^video\//.test(value)) return 'video';
+    if (/^audio\//.test(value)) return 'audio';
+    if (OFFICE_MIME.test(value)) return 'office';
+    if (/html|xhtml|xml$/.test(value)) return 'web';
+
+    return undefined;
+};
+
+/**
+ * Extension- and host-based guess only — no network. Synchronous, so forms can
+ * label a link as the user types. `undefined` means "can't tell without asking
+ * the server".
+ */
+export const classifyLinkSync = (url?: string): ILinkKind | undefined => {
+    const href = normalizeUrl(url);
+    if (!href) return undefined;
+
+    const path = pathOf(href);
+    const byExtension = EXTENSION_KINDS.find(({ match }) => match.test(path));
+    if (byExtension) return byExtension.kind;
+
+    const host = hostOf(href);
+    if (ALWAYS_WEB.some(match => match.test(host))) return 'web';
+
+    return undefined;
+};
+
+const KIND_CACHE = new Map<string, ILinkClassification>();
+const KIND_INFLIGHT = new Map<string, Promise<ILinkClassification>>();
+const PROBE_TIMEOUT_MS = 6000;
+
+/**
+ * Asks the server what a URL is, for links that carry no extension — the usual
+ * shape of an S3 object. Tries HEAD first, then a one-byte ranged GET, because
+ * some presigned S3 URLs are signed for GET only and reject HEAD outright.
+ */
+const probeContentType = async (url: string): Promise<string | undefined> => {
+    const attempt = async (init: RequestInit): Promise<string | undefined> => {
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+
+        try {
+            const response = await fetch(url, { ...init, signal: controller.signal });
+            if (!response.ok && response.status !== 206) return undefined;
+            return response.headers.get('content-type') ?? undefined;
+        } catch {
+            return undefined;
+        } finally {
+            clearTimeout(timer);
+        }
+    };
+
+    return (await attempt({ method: 'HEAD' })) ?? (await attempt({ method: 'GET', headers: { Range: 'bytes=0-0' } }));
+};
+
+/**
+ * Resolves what a link points at so the viewer can render it correctly. Falls
+ * back to `web` whenever the answer is unclear or the probe fails — an unknown
+ * URL in a WebView degrades gracefully, the same URL in a PDF viewer does not.
+ * Memoised for the session and de-duplicated while in flight.
+ */
+export const classifyLink = async (url?: string): Promise<ILinkClassification> => {
+    const href = normalizeUrl(url);
+    if (!href) return { kind: 'web', isCertain: false };
+
+    const certain = classifyLinkSync(href);
+    if (certain) return { kind: certain, isCertain: true };
+
+    const cached = KIND_CACHE.get(href);
+    if (cached) return cached;
+
+    const pending = KIND_INFLIGHT.get(href);
+    if (pending) return pending;
+
+    const request = (async (): Promise<ILinkClassification> => {
+        try {
+            const contentType = await probeContentType(href);
+            return { kind: kindFromContentType(contentType) ?? 'web', contentType, isCertain: !!contentType };
+        } finally {
+            KIND_INFLIGHT.delete(href);
+        }
+    })();
+
+    KIND_INFLIGHT.set(href, request);
+    const result = await request;
+    KIND_CACHE.set(href, result);
+    return result;
+};
+
+export type LinkKindStatus = 'idle' | 'resolving' | 'ready';
+
+/**
+ * Hook form of {@link classifyLink}. Reports an immediate kind when the URL
+ * alone is conclusive, so the viewer can skip the resolving state entirely for
+ * a plain `.pdf` link.
+ */
+export const useLinkKind = (url?: string) => {
+    const href = normalizeUrl(url);
+    const immediate = React.useMemo(() => classifyLinkSync(href), [href]);
+
+    const [classification, setClassification] = React.useState<ILinkClassification | undefined>(() =>
+        immediate ? { kind: immediate, isCertain: true } : href ? KIND_CACHE.get(href) : undefined
+    );
+    const [status, setStatus] = React.useState<LinkKindStatus>(() => (immediate ? 'ready' : 'idle'));
+
+    React.useEffect(() => {
+        if (!href) {
+            setClassification(undefined);
+            setStatus('idle');
+            return;
+        }
+
+        if (immediate) {
+            setClassification({ kind: immediate, isCertain: true });
+            setStatus('ready');
+            return;
+        }
+
+        const cached = KIND_CACHE.get(href);
+        if (cached) {
+            setClassification(cached);
+            setStatus('ready');
+            return;
+        }
+
+        let active = true;
+        setStatus('resolving');
+        setClassification(undefined);
+
+        classifyLink(href).then(result => {
+            if (!active) return;
+            setClassification(result);
+            setStatus('ready');
+        });
+
+        return () => {
+            active = false;
+        };
+    }, [href, immediate]);
+
+    return {
+        kind: classification?.kind,
+        contentType: classification?.contentType,
+        status,
+        isResolving: status === 'resolving',
+    };
+};
