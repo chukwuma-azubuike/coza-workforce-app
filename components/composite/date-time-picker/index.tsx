@@ -31,23 +31,34 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 }) => {
     const [date, setDate] = useState<Date>(initialValue ? dayjs(initialValue).toDate() : new Date());
     const [open, setOpen] = useState<boolean>(false);
+    // `date` always holds something for the native picker to open on, but it is only a real value
+    // once picked (or passed in) — until then the button shows the placeholder, not the current time.
+    const [hasSelected, setHasSelected] = useState<boolean>(!!initialValue);
 
     const showPicker = () => {
         setOpen(true);
     };
 
-    const handleConfirmDate = useCallback((date: Date) => {
-        setOpen(false);
-        setDate(date);
+    const handleConfirmDate = useCallback(
+        (date: Date) => {
+            setOpen(false);
+            setDate(date);
+            setHasSelected(true);
 
-        if (onConfirm) {
-            onConfirm(date.toISOString() as unknown as Date);
-        }
-    }, []);
+            if (onConfirm) {
+                onConfirm(date.toISOString() as unknown as Date);
+            }
+        },
+        [onConfirm]
+    );
 
     useEffect(() => {
         if (initialValue) {
             setDate(dayjs(initialValue).toDate());
+            setHasSelected(true);
+        } else if (initialValue === '') {
+            // A controlled field that was cleared, e.g. by a form reset.
+            setHasSelected(false);
         }
     }, [initialValue]);
 
@@ -64,8 +75,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
                     props.className
                 )}
             >
-                <Text className={`text-left w-full ${!initialValue && 'font-normal'}`}>
-                    {!initialValue && !date
+                <Text className={cn('text-left w-full', !hasSelected && 'font-normal text-muted-foreground')}>
+                    {!hasSelected
                         ? placeholder
                         : dayjs(date).format(
                               mode === 'date'

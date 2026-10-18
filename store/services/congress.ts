@@ -20,6 +20,8 @@ export const congressServiceSlice = createApi({
 
     baseQuery: fetchUtils.baseQueryWithTokenRefresh,
 
+    tagTypes: ['Congress', 'CongressList', 'CongressInstantMessages'],
+
     refetchOnFocus: true,
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
@@ -31,6 +33,8 @@ export const congressServiceSlice = createApi({
                 method: REST_API_VERBS.POST,
                 body,
             }),
+
+            invalidatesTags: ['CongressList'],
         }),
 
         updateCongress: endpoint.mutation<void, ICreateService & { _id: string }>({
@@ -39,6 +43,8 @@ export const congressServiceSlice = createApi({
                 method: REST_API_VERBS.PUT,
                 body: args,
             }),
+
+            invalidatesTags: (_result, _error, { _id }) => [{ type: 'Congress', id: _id }, 'CongressList'],
         }),
 
         getCongressById: endpoint.query<ICongress, string>({
@@ -48,6 +54,8 @@ export const congressServiceSlice = createApi({
             }),
 
             transformResponse: (response: IDefaultResponse<ICongress>) => response.data,
+
+            providesTags: (_result, _error, id) => [{ type: 'Congress', id }],
         }),
 
         getCongresss: endpoint.query<ICongress[], Partial<IDefaultQueryParams>>({
@@ -58,6 +66,8 @@ export const congressServiceSlice = createApi({
             }),
 
             transformResponse: (response: IDefaultResponse<ICongress[]>) => response.data,
+
+            providesTags: ['CongressList'],
         }),
 
         getCongressInstantMessages: endpoint.query<ICongressInstantMessage[], Partial<IDefaultQueryParams>>({
@@ -68,6 +78,8 @@ export const congressServiceSlice = createApi({
             }),
 
             transformResponse: (response: IDefaultResponse<ICongressInstantMessage[]>) => response.data,
+
+            providesTags: ['CongressInstantMessages'],
         }),
 
         createCongressInstantMessages: endpoint.mutation<ICongressInstantMessage, ICongressInstantMessagePayload>({
@@ -78,6 +90,8 @@ export const congressServiceSlice = createApi({
             }),
 
             transformResponse: (response: IDefaultResponse<ICongressInstantMessage>) => response.data,
+
+            invalidatesTags: ['CongressInstantMessages'],
         }),
 
         submitCongressFeedback: endpoint.mutation<ICongressFeedback, ICongressFeedbackPayload>({

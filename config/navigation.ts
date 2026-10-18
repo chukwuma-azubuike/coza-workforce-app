@@ -553,6 +553,16 @@ const AppRoutes: IAppRoute[] = [
                 href: '/congress/congress-details',
             },
             {
+                name: 'Congress Sessions',
+                options: { title: 'Sessions' },
+                submenus: [],
+                users: [],
+                inMenuBar: false,
+                inMore: false,
+                icon: { name: 'calendar', type: 'ionicon' },
+                href: '/congress/congress-sessions',
+            },
+            {
                 name: 'Create Instant Message',
                 options: { title: 'Create Instant Message' },
                 submenus: [],

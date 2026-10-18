@@ -12,6 +12,31 @@ import { Input } from '~/components/ui/input';
 import FormErrorMessage from '~/components/ui/error-message';
 import { Button } from '~/components/ui/button';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { Text } from '~/components/ui/text';
+import { THEME_CONFIG } from '~/config/appConfig';
+import { classifyLinkSync, hostOf, LINK_KIND_LABELS, normalizeUrl } from '~/components/composite/link-preview';
+
+/**
+ * Tells the author what the link they typed will actually open as, before they
+ * post it. The kind is resolved from the URL alone — no network call while
+ * typing; anything the URL can't settle is opened as a web page.
+ */
+const LinkKindHint: React.FC<{ url?: string }> = ({ url }) => {
+    const href = normalizeUrl(url);
+    if (!href) return null;
+
+    const kind = classifyLinkSync(href) ?? 'web';
+
+    return (
+        <View className="flex-row items-center gap-1.5 mt-1.5">
+            <Ionicons name="checkmark-circle" size={13} color={THEME_CONFIG.success} />
+            <Text className="!text-[12px] text-muted-foreground">
+                Opens as {LINK_KIND_LABELS[kind].toLowerCase()} · {hostOf(href)}
+            </Text>
+        </View>
+    );
+};
 
 const CreateCongressInstantMessage: React.FC = () => {
     const params = useLocalSearchParams() as unknown as { CongressId: string };
@@ -83,6 +108,23 @@ const CreateCongressInstantMessage: React.FC = () => {
                                     />
                                     {!!errors?.message && touched.message && (
                                         <FormErrorMessage>{errors?.message}</FormErrorMessage>
+                                    )}
+                                </View>
+
+                                <View>
+                                    <Label>Link (optional)</Label>
+                                    <Input
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        keyboardType="url"
+                                        value={values.messageLink}
+                                        placeholder="https://coza.org.ng/resource"
+                                        onChangeText={handleChange('messageLink')}
+                                    />
+                                    {!!errors?.messageLink && touched.messageLink ? (
+                                        <FormErrorMessage>{errors?.messageLink}</FormErrorMessage>
+                                    ) : (
+                                        <LinkKindHint url={values.messageLink} />
                                     )}
                                 </View>
 
